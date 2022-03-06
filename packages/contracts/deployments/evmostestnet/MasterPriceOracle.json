@@ -1,0 +1,443 @@
+{
+  "address": "0x37CF9eA8C6Bb6C020D4B5e7C3C462B02313aaFF4",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldAdmin",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "NewAdmin",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldOracle",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newOracle",
+          "type": "address"
+        }
+      ],
+      "name": "NewDefaultOracle",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "underlying",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldOracle",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newOracle",
+          "type": "address"
+        }
+      ],
+      "name": "NewOracle",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "underlyings",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract IPriceOracle[]",
+          "name": "_oracles",
+          "type": "address[]"
+        }
+      ],
+      "name": "add",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "admin",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "canAdminOverwrite",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newAdmin",
+          "type": "address"
+        }
+      ],
+      "name": "changeAdmin",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "defaultOracle",
+      "outputs": [
+        {
+          "internalType": "contract IPriceOracle",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract ICToken",
+          "name": "cToken",
+          "type": "address"
+        }
+      ],
+      "name": "getUnderlyingPrice",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address[]",
+          "name": "underlyings",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract IPriceOracle[]",
+          "name": "_oracles",
+          "type": "address[]"
+        },
+        {
+          "internalType": "contract IPriceOracle",
+          "name": "_defaultOracle",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_admin",
+          "type": "address"
+        },
+        {
+          "internalType": "bool",
+          "name": "_canAdminOverwrite",
+          "type": "bool"
+        },
+        {
+          "internalType": "address",
+          "name": "_wtoken",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "oracles",
+      "outputs": [
+        {
+          "internalType": "contract IPriceOracle",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "underlying",
+          "type": "address"
+        }
+      ],
+      "name": "price",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "contract IPriceOracle",
+          "name": "newOracle",
+          "type": "address"
+        }
+      ],
+      "name": "setDefaultOracle",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "wtoken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xe9b0e791ab3acd194e7eaab225140b036204012c04dee54f48ad7cb64c099787",
+  "receipt": {
+    "to": "0x4e59b44847b379578588920cA78FbF26c0B4956C",
+    "from": "0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D",
+    "contractAddress": null,
+    "transactionIndex": 0,
+    "gasUsed": "833539",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0xc3ada36cf7b0bd50c899d7039543c4eac6e756650cd1ccc85bf1dbc8265e8be1",
+    "transactionHash": "0xe9b0e791ab3acd194e7eaab225140b036204012c04dee54f48ad7cb64c099787",
+    "logs": [],
+    "blockNumber": 243477,
+    "cumulativeGasUsed": "833539",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 3,
+  "solcInputHash": "cdaa356e21f74b41673ce069a5a3b631",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.11+commit.d7f03943\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldAdmin\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"NewAdmin\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldOracle\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newOracle\",\"type\":\"address\"}],\"name\":\"NewDefaultOracle\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"underlying\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"oldOracle\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"newOracle\",\"type\":\"address\"}],\"name\":\"NewOracle\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"underlyings\",\"type\":\"address[]\"},{\"internalType\":\"contract IPriceOracle[]\",\"name\":\"_oracles\",\"type\":\"address[]\"}],\"name\":\"add\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"admin\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"canAdminOverwrite\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newAdmin\",\"type\":\"address\"}],\"name\":\"changeAdmin\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"defaultOracle\",\"outputs\":[{\"internalType\":\"contract IPriceOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract ICToken\",\"name\":\"cToken\",\"type\":\"address\"}],\"name\":\"getUnderlyingPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address[]\",\"name\":\"underlyings\",\"type\":\"address[]\"},{\"internalType\":\"contract IPriceOracle[]\",\"name\":\"_oracles\",\"type\":\"address[]\"},{\"internalType\":\"contract IPriceOracle\",\"name\":\"_defaultOracle\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_admin\",\"type\":\"address\"},{\"internalType\":\"bool\",\"name\":\"_canAdminOverwrite\",\"type\":\"bool\"},{\"internalType\":\"address\",\"name\":\"_wtoken\",\"type\":\"address\"}],\"name\":\"initialize\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"name\":\"oracles\",\"outputs\":[{\"internalType\":\"contract IPriceOracle\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"underlying\",\"type\":\"address\"}],\"name\":\"price\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"contract IPriceOracle\",\"name\":\"newOracle\",\"type\":\"address\"}],\"name\":\"setDefaultOracle\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"wtoken\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"author\":\"David Lucid <david@rari.capital> (https://github.com/davidlucid)\",\"details\":\"Implements `PriceOracle`.\",\"events\":{\"NewAdmin(address,address)\":{\"details\":\"Event emitted when `admin` is changed.\"},\"NewDefaultOracle(address,address)\":{\"details\":\"Event emitted when the default oracle is changed.\"},\"NewOracle(address,address,address)\":{\"details\":\"Event emitted when an underlying token's oracle is changed.\"}},\"kind\":\"dev\",\"methods\":{\"add(address[],address[])\":{\"details\":\"Sets `_oracles` for `underlyings`.\"},\"canAdminOverwrite()\":{\"details\":\"Returns a boolean indicating if `admin` can overwrite existing assignments of oracles to underlying tokens.\"},\"changeAdmin(address)\":{\"details\":\"Changes the admin and emits an event.\"},\"getUnderlyingPrice(address)\":{\"details\":\"Implements the `PriceOracle` interface for Fuse pools (and Compound v2).\",\"returns\":{\"_0\":\"Price in ETH of the token underlying `cToken`, scaled by `10 ** (36 - underlyingDecimals)`.\"}},\"initialize(address[],address[],address,address,bool,address)\":{\"details\":\"Constructor to initialize state variables.\",\"params\":{\"_admin\":\"The admin who can assign oracles to underlying tokens.\",\"_canAdminOverwrite\":\"Controls if `admin` can overwrite existing assignments of oracles to underlying tokens.\",\"_defaultOracle\":\"The default `PriceOracle` contract to use.\",\"_oracles\":\"The `PriceOracle` contracts to be assigned to `underlyings`.\",\"underlyings\":\"The underlying ERC20 token addresses to link to `_oracles`.\"}},\"price(address)\":{\"details\":\"Attempts to return the price in ETH of `underlying` (implements `BasePriceOracle`).\"},\"setDefaultOracle(address)\":{\"details\":\"Changes the admin and emits an event.\"}},\"stateVariables\":{\"admin\":{\"details\":\"The administrator of this `MasterPriceOracle`.\"},\"defaultOracle\":{\"details\":\"Default/fallback `PriceOracle`.\"},\"noAdminOverwrite\":{\"details\":\"Controls if `admin` can overwrite existing assignments of oracles to underlying tokens.\"},\"oracles\":{\"details\":\"Maps underlying token addresses to `PriceOracle` contracts (can be `BasePriceOracle` contracts too).\"},\"wtoken\":{\"details\":\"The Wrapped native asset address.\"}},\"title\":\"MasterPriceOracle\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"getUnderlyingPrice(address)\":{\"notice\":\"Returns the price in ETH of the token underlying `cToken`.\"}},\"notice\":\"Use a combination of price oracles.\",\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/oracles/MasterPriceOracle.sol\":\"MasterPriceOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":200},\"remappings\":[]},\"sources\":{\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0) (proxy/utils/Initializable.sol)\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../../utils/AddressUpgradeable.sol\\\";\\n\\n/**\\n * @dev This is a base contract to aid in writing upgradeable contracts, or any kind of contract that will be deployed\\n * behind a proxy. Since proxied contracts do not make use of a constructor, it's common to move constructor logic to an\\n * external initializer function, usually called `initialize`. It then becomes necessary to protect this initializer\\n * function so it can only be called once. The {initializer} modifier provided by this contract will have this effect.\\n *\\n * TIP: To avoid leaving the proxy in an uninitialized state, the initializer function should be called as early as\\n * possible by providing the encoded function call as the `_data` argument to {ERC1967Proxy-constructor}.\\n *\\n * CAUTION: When used with inheritance, manual care must be taken to not invoke a parent initializer twice, or to ensure\\n * that all initializers are idempotent. This is not verified automatically as constructors are by Solidity.\\n *\\n * [CAUTION]\\n * ====\\n * Avoid leaving a contract uninitialized.\\n *\\n * An uninitialized contract can be taken over by an attacker. This applies to both a proxy and its implementation\\n * contract, which may impact the proxy. To initialize the implementation contract, you can either invoke the\\n * initializer manually, or you can include a constructor to automatically mark it as initialized when it is deployed:\\n *\\n * [.hljs-theme-light.nopadding]\\n * ```\\n * /// @custom:oz-upgrades-unsafe-allow constructor\\n * constructor() initializer {}\\n * ```\\n * ====\\n */\\nabstract contract Initializable {\\n    /**\\n     * @dev Indicates that the contract has been initialized.\\n     */\\n    bool private _initialized;\\n\\n    /**\\n     * @dev Indicates that the contract is in the process of being initialized.\\n     */\\n    bool private _initializing;\\n\\n    /**\\n     * @dev Modifier to protect an initializer function from being invoked twice.\\n     */\\n    modifier initializer() {\\n        // If the contract is initializing we ignore whether _initialized is set in order to support multiple\\n        // inheritance patterns, but we only do this in the context of a constructor, because in other contexts the\\n        // contract may have been reentered.\\n        require(_initializing ? _isConstructor() : !_initialized, \\\"Initializable: contract is already initialized\\\");\\n\\n        bool isTopLevelCall = !_initializing;\\n        if (isTopLevelCall) {\\n            _initializing = true;\\n            _initialized = true;\\n        }\\n\\n        _;\\n\\n        if (isTopLevelCall) {\\n            _initializing = false;\\n        }\\n    }\\n\\n    /**\\n     * @dev Modifier to protect an initialization function so that it can only be invoked by functions with the\\n     * {initializer} modifier, directly or indirectly.\\n     */\\n    modifier onlyInitializing() {\\n        require(_initializing, \\\"Initializable: contract is not initializing\\\");\\n        _;\\n    }\\n\\n    function _isConstructor() private view returns (bool) {\\n        return !AddressUpgradeable.isContract(address(this));\\n    }\\n}\\n\",\"keccak256\":\"0x372b0bc04e3b4c074559bbbfb1317afddb56de5504158ca25a7f9cd403980445\",\"license\":\"MIT\"},\"@openzeppelin/contracts-upgradeable/utils/AddressUpgradeable.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n// OpenZeppelin Contracts (last updated v4.5.0) (utils/Address.sol)\\n\\npragma solidity ^0.8.1;\\n\\n/**\\n * @dev Collection of functions related to the address type\\n */\\nlibrary AddressUpgradeable {\\n    /**\\n     * @dev Returns true if `account` is a contract.\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * It is unsafe to assume that an address for which this function returns\\n     * false is an externally-owned account (EOA) and not a contract.\\n     *\\n     * Among others, `isContract` will return false for the following\\n     * types of addresses:\\n     *\\n     *  - an externally-owned account\\n     *  - a contract in construction\\n     *  - an address where a contract will be created\\n     *  - an address where a contract lived, but was destroyed\\n     * ====\\n     *\\n     * [IMPORTANT]\\n     * ====\\n     * You shouldn't rely on `isContract` to protect against flash loan attacks!\\n     *\\n     * Preventing calls from contracts is highly discouraged. It breaks composability, breaks support for smart wallets\\n     * like Gnosis Safe, and does not provide security since it can be circumvented by calling from a contract\\n     * constructor.\\n     * ====\\n     */\\n    function isContract(address account) internal view returns (bool) {\\n        // This method relies on extcodesize/address.code.length, which returns 0\\n        // for contracts in construction, since the code is only stored at the end\\n        // of the constructor execution.\\n\\n        return account.code.length > 0;\\n    }\\n\\n    /**\\n     * @dev Replacement for Solidity's `transfer`: sends `amount` wei to\\n     * `recipient`, forwarding all available gas and reverting on errors.\\n     *\\n     * https://eips.ethereum.org/EIPS/eip-1884[EIP1884] increases the gas cost\\n     * of certain opcodes, possibly making contracts go over the 2300 gas limit\\n     * imposed by `transfer`, making them unable to receive funds via\\n     * `transfer`. {sendValue} removes this limitation.\\n     *\\n     * https://diligence.consensys.net/posts/2019/09/stop-using-soliditys-transfer-now/[Learn more].\\n     *\\n     * IMPORTANT: because control is transferred to `recipient`, care must be\\n     * taken to not create reentrancy vulnerabilities. Consider using\\n     * {ReentrancyGuard} or the\\n     * https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html#use-the-checks-effects-interactions-pattern[checks-effects-interactions pattern].\\n     */\\n    function sendValue(address payable recipient, uint256 amount) internal {\\n        require(address(this).balance >= amount, \\\"Address: insufficient balance\\\");\\n\\n        (bool success, ) = recipient.call{value: amount}(\\\"\\\");\\n        require(success, \\\"Address: unable to send value, recipient may have reverted\\\");\\n    }\\n\\n    /**\\n     * @dev Performs a Solidity function call using a low level `call`. A\\n     * plain `call` is an unsafe replacement for a function call: use this\\n     * function instead.\\n     *\\n     * If `target` reverts with a revert reason, it is bubbled up by this\\n     * function (like regular Solidity function calls).\\n     *\\n     * Returns the raw returned data. To convert to the expected return value,\\n     * use https://solidity.readthedocs.io/en/latest/units-and-global-variables.html?highlight=abi.decode#abi-encoding-and-decoding-functions[`abi.decode`].\\n     *\\n     * Requirements:\\n     *\\n     * - `target` must be a contract.\\n     * - calling `target` with `data` must not revert.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(address target, bytes memory data) internal returns (bytes memory) {\\n        return functionCall(target, data, \\\"Address: low-level call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`], but with\\n     * `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, 0, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but also transferring `value` wei to `target`.\\n     *\\n     * Requirements:\\n     *\\n     * - the calling contract must have an ETH balance of at least `value`.\\n     * - the called Solidity function must be `payable`.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value\\n    ) internal returns (bytes memory) {\\n        return functionCallWithValue(target, data, value, \\\"Address: low-level call with value failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCallWithValue-address-bytes-uint256-}[`functionCallWithValue`], but\\n     * with `errorMessage` as a fallback revert reason when `target` reverts.\\n     *\\n     * _Available since v3.1._\\n     */\\n    function functionCallWithValue(\\n        address target,\\n        bytes memory data,\\n        uint256 value,\\n        string memory errorMessage\\n    ) internal returns (bytes memory) {\\n        require(address(this).balance >= value, \\\"Address: insufficient balance for call\\\");\\n        require(isContract(target), \\\"Address: call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.call{value: value}(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(address target, bytes memory data) internal view returns (bytes memory) {\\n        return functionStaticCall(target, data, \\\"Address: low-level static call failed\\\");\\n    }\\n\\n    /**\\n     * @dev Same as {xref-Address-functionCall-address-bytes-string-}[`functionCall`],\\n     * but performing a static call.\\n     *\\n     * _Available since v3.3._\\n     */\\n    function functionStaticCall(\\n        address target,\\n        bytes memory data,\\n        string memory errorMessage\\n    ) internal view returns (bytes memory) {\\n        require(isContract(target), \\\"Address: static call to non-contract\\\");\\n\\n        (bool success, bytes memory returndata) = target.staticcall(data);\\n        return verifyCallResult(success, returndata, errorMessage);\\n    }\\n\\n    /**\\n     * @dev Tool to verifies that a low level call was successful, and revert if it wasn't, either by bubbling the\\n     * revert reason using the provided one.\\n     *\\n     * _Available since v4.3._\\n     */\\n    function verifyCallResult(\\n        bool success,\\n        bytes memory returndata,\\n        string memory errorMessage\\n    ) internal pure returns (bytes memory) {\\n        if (success) {\\n            return returndata;\\n        } else {\\n            // Look for revert reason and bubble it up if present\\n            if (returndata.length > 0) {\\n                // The easiest way to bubble the revert reason is using memory via assembly\\n\\n                assembly {\\n                    let returndata_size := mload(returndata)\\n                    revert(add(32, returndata), returndata_size)\\n                }\\n            } else {\\n                revert(errorMessage);\\n            }\\n        }\\n    }\\n}\\n\",\"keccak256\":\"0x55cf2bd9fc76704ddcdc19834cd288b7de00fc0f298a40ea16a954ae8991db2d\",\"license\":\"MIT\"},\"contracts/external/compound/ICErc20.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity >=0.8.0;\\n\\nimport \\\"./ICToken.sol\\\";\\n\\n/**\\n * @title Compound's CErc20 Contract\\n * @notice CTokens which wrap an EIP-20 underlying\\n * @author Compound\\n */\\ninterface ICErc20 is ICToken {\\n  function underlying() external view returns (address);\\n\\n  function liquidateBorrow(\\n    address borrower,\\n    uint256 repayAmount,\\n    ICToken cTokenCollateral\\n  ) external returns (uint256);\\n}\\n\",\"keccak256\":\"0xb4174a86be37f5d7b0e1f02af3f81dfbc22ae8e7598cf9203169133372f2cde7\",\"license\":\"BSD-3-Clause\"},\"contracts/external/compound/ICToken.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity >=0.8.0;\\n\\n/**\\n * @title Compound's CToken Contract\\n * @notice Abstract base for CTokens\\n * @author Compound\\n */\\ninterface ICToken {\\n  function admin() external view returns (address);\\n\\n  function adminHasRights() external view returns (bool);\\n\\n  function fuseAdminHasRights() external view returns (bool);\\n\\n  function symbol() external view returns (string memory);\\n\\n  function comptroller() external view returns (address);\\n\\n  function adminFeeMantissa() external view returns (uint256);\\n\\n  function fuseFeeMantissa() external view returns (uint256);\\n\\n  function reserveFactorMantissa() external view returns (uint256);\\n\\n  function totalReserves() external view returns (uint256);\\n\\n  function totalAdminFees() external view returns (uint256);\\n\\n  function totalFuseFees() external view returns (uint256);\\n\\n  function isCToken() external view returns (bool);\\n\\n  function isCEther() external view returns (bool);\\n\\n  function balanceOf(address owner) external view returns (uint256);\\n\\n  function balanceOfUnderlying(address owner) external returns (uint256);\\n\\n  function borrowRatePerBlock() external view returns (uint256);\\n\\n  function supplyRatePerBlock() external view returns (uint256);\\n\\n  function totalBorrowsCurrent() external returns (uint256);\\n\\n  function borrowBalanceStored(address account) external view returns (uint256);\\n\\n  function exchangeRateStored() external view returns (uint256);\\n\\n  function getCash() external view returns (uint256);\\n\\n  function redeem(uint256 redeemTokens) external returns (uint256);\\n\\n  function redeemUnderlying(uint256 redeemAmount) external returns (uint256);\\n}\\n\",\"keccak256\":\"0xbf3d448eb93652645ae9fd32453be4651f664d00d218f1d0e4fe181a2a39a27f\",\"license\":\"BSD-3-Clause\"},\"contracts/external/compound/IPriceOracle.sol\":{\"content\":\"// SPDX-License-Identifier: BSD-3-Clause\\npragma solidity >=0.8.0;\\n\\nimport \\\"./ICToken.sol\\\";\\n\\ninterface IPriceOracle {\\n  /**\\n   * @notice Get the underlying price of a cToken asset\\n   * @param cToken The cToken to get the underlying price of\\n   * @return The underlying asset price mantissa (scaled by 1e18).\\n   *  Zero means the price is unavailable.\\n   */\\n  function getUnderlyingPrice(ICToken cToken) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0x501ba6588dc3bbcbcd7629eb294b2249dce97cb78e1c78feb1815d220b488368\",\"license\":\"BSD-3-Clause\"},\"contracts/oracles/BasePriceOracle.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\npragma solidity >=0.8.0;\\n\\nimport \\\"../external/compound/IPriceOracle.sol\\\";\\n\\n/**\\n * @title BasePriceOracle\\n * @notice Returns prices of underlying tokens directly without the caller having to specify a cToken address.\\n * @dev Implements the `PriceOracle` interface.\\n * @author David Lucid <david@rari.capital> (https://github.com/davidlucid)\\n */\\ninterface BasePriceOracle is IPriceOracle {\\n  /**\\n   * @notice Get the price of an underlying asset.\\n   * @param underlying The underlying asset to get the price of.\\n   * @return The underlying asset price in ETH as a mantissa (scaled by 1e18).\\n   * Zero means the price is unavailable.\\n   */\\n  function price(address underlying) external view returns (uint256);\\n}\\n\",\"keccak256\":\"0xfdb8a3439685177d0150249ec4984ab05fc8a9e4c9172dc714fbb456d0810d47\",\"license\":\"UNLICENSED\"},\"contracts/oracles/MasterPriceOracle.sol\":{\"content\":\"// SPDX-License-Identifier: UNLICENSED\\npragma solidity >=0.8.0;\\n\\nimport \\\"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol\\\";\\n\\nimport \\\"../external/compound/IPriceOracle.sol\\\";\\nimport \\\"../external/compound/ICToken.sol\\\";\\nimport \\\"../external/compound/ICErc20.sol\\\";\\n\\nimport \\\"./BasePriceOracle.sol\\\";\\n\\n/**\\n * @title MasterPriceOracle\\n * @notice Use a combination of price oracles.\\n * @dev Implements `PriceOracle`.\\n * @author David Lucid <david@rari.capital> (https://github.com/davidlucid)\\n */\\ncontract MasterPriceOracle is Initializable, IPriceOracle, BasePriceOracle {\\n  /**\\n   * @dev Maps underlying token addresses to `PriceOracle` contracts (can be `BasePriceOracle` contracts too).\\n   */\\n  mapping(address => IPriceOracle) public oracles;\\n\\n  /**\\n   * @dev Default/fallback `PriceOracle`.\\n   */\\n  IPriceOracle public defaultOracle;\\n\\n  /**\\n   * @dev The administrator of this `MasterPriceOracle`.\\n   */\\n  address public admin;\\n\\n  /**\\n   * @dev Controls if `admin` can overwrite existing assignments of oracles to underlying tokens.\\n   */\\n  bool internal noAdminOverwrite;\\n\\n  /**\\n   * @dev The Wrapped native asset address.\\n   */\\n  address public wtoken;\\n\\n  /**\\n   * @dev Returns a boolean indicating if `admin` can overwrite existing assignments of oracles to underlying tokens.\\n   */\\n  function canAdminOverwrite() external view returns (bool) {\\n    return !noAdminOverwrite;\\n  }\\n\\n  /**\\n   * @dev Event emitted when `admin` is changed.\\n   */\\n  event NewAdmin(address oldAdmin, address newAdmin);\\n\\n  /**\\n   * @dev Event emitted when the default oracle is changed.\\n   */\\n  event NewDefaultOracle(address oldOracle, address newOracle);\\n\\n  /**\\n   * @dev Event emitted when an underlying token's oracle is changed.\\n   */\\n  event NewOracle(address underlying, address oldOracle, address newOracle);\\n\\n  /**\\n   * @dev Constructor to initialize state variables.\\n   * @param underlyings The underlying ERC20 token addresses to link to `_oracles`.\\n   * @param _oracles The `PriceOracle` contracts to be assigned to `underlyings`.\\n   * @param _defaultOracle The default `PriceOracle` contract to use.\\n   * @param _admin The admin who can assign oracles to underlying tokens.\\n   * @param _canAdminOverwrite Controls if `admin` can overwrite existing assignments of oracles to underlying tokens.\\n   */\\n  function initialize(\\n    address[] memory underlyings,\\n    IPriceOracle[] memory _oracles,\\n    IPriceOracle _defaultOracle,\\n    address _admin,\\n    bool _canAdminOverwrite,\\n    address _wtoken\\n  ) external initializer {\\n    // Input validation\\n    require(underlyings.length == _oracles.length, \\\"Lengths of both arrays must be equal.\\\");\\n\\n    // Initialize state variables\\n    for (uint256 i = 0; i < underlyings.length; i++) {\\n      address underlying = underlyings[i];\\n      IPriceOracle newOracle = _oracles[i];\\n      oracles[underlying] = newOracle;\\n      emit NewOracle(underlying, address(0), address(newOracle));\\n    }\\n\\n    defaultOracle = _defaultOracle;\\n    admin = _admin;\\n    noAdminOverwrite = !_canAdminOverwrite;\\n    wtoken = _wtoken;\\n  }\\n\\n  /**\\n   * @dev Sets `_oracles` for `underlyings`.\\n   */\\n  function add(address[] calldata underlyings, IPriceOracle[] calldata _oracles) external onlyAdmin {\\n    // Input validation\\n    require(\\n      underlyings.length > 0 && underlyings.length == _oracles.length,\\n      \\\"Lengths of both arrays must be equal and greater than 0.\\\"\\n    );\\n\\n    // Assign oracles to underlying tokens\\n    for (uint256 i = 0; i < underlyings.length; i++) {\\n      address underlying = underlyings[i];\\n      address oldOracle = address(oracles[underlying]);\\n      if (noAdminOverwrite)\\n        require(\\n          oldOracle == address(0),\\n          \\\"Admin cannot overwrite existing assignments of oracles to underlying tokens.\\\"\\n        );\\n      IPriceOracle newOracle = _oracles[i];\\n      oracles[underlying] = newOracle;\\n      emit NewOracle(underlying, oldOracle, address(newOracle));\\n    }\\n  }\\n\\n  /**\\n   * @dev Changes the admin and emits an event.\\n   */\\n  function setDefaultOracle(IPriceOracle newOracle) external onlyAdmin {\\n    IPriceOracle oldOracle = defaultOracle;\\n    defaultOracle = newOracle;\\n    emit NewDefaultOracle(address(oldOracle), address(newOracle));\\n  }\\n\\n  /**\\n   * @dev Changes the admin and emits an event.\\n   */\\n  function changeAdmin(address newAdmin) external onlyAdmin {\\n    address oldAdmin = admin;\\n    admin = newAdmin;\\n    emit NewAdmin(oldAdmin, newAdmin);\\n  }\\n\\n  /**\\n   * @dev Modifier that checks if `msg.sender == admin`.\\n   */\\n  modifier onlyAdmin() {\\n    require(msg.sender == admin, \\\"Sender is not the admin.\\\");\\n    _;\\n  }\\n\\n  /**\\n   * @notice Returns the price in ETH of the token underlying `cToken`.\\n   * @dev Implements the `PriceOracle` interface for Fuse pools (and Compound v2).\\n   * @return Price in ETH of the token underlying `cToken`, scaled by `10 ** (36 - underlyingDecimals)`.\\n   */\\n  function getUnderlyingPrice(ICToken cToken) external view override returns (uint256) {\\n    // Get underlying ERC20 token address\\n    address underlying = address(ICErc20(address(cToken)).underlying());\\n\\n    // Return 1e18 for WETH\\n    if (underlying == wtoken) return 1e18;\\n\\n    // Get underlying price from assigned oracle\\n    IPriceOracle oracle = oracles[underlying];\\n    if (address(oracle) != address(0)) return oracle.getUnderlyingPrice(cToken);\\n    if (address(defaultOracle) != address(0)) return defaultOracle.getUnderlyingPrice(cToken);\\n    revert(\\\"Price oracle not found for this underlying token address.\\\");\\n  }\\n\\n  /**\\n   * @dev Attempts to return the price in ETH of `underlying` (implements `BasePriceOracle`).\\n   */\\n  function price(address underlying) external view override returns (uint256) {\\n    // Return 1e18 for WETH\\n    if (underlying == wtoken) return 1e18;\\n\\n    // Get underlying price from assigned oracle\\n    IPriceOracle oracle = oracles[underlying];\\n    if (address(oracle) != address(0)) return BasePriceOracle(address(oracle)).price(underlying);\\n    if (address(defaultOracle) != address(0)) return BasePriceOracle(address(defaultOracle)).price(underlying);\\n    revert(\\\"Price oracle not found for this underlying token address.\\\");\\n  }\\n}\\n\",\"keccak256\":\"0xf0f5f98aaa368c493cce2ec2951027048d18ac71afd10323e93c6af63b0d0b65\",\"license\":\"UNLICENSED\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b50610e15806100206000396000f3fe608060405234801561001057600080fd5b50600436106100a95760003560e01c80639c9192c6116100715780639c9192c614610137578063addd50991461014a578063aea9107814610173578063c44014d214610194578063f851a440146101a7578063fc57d4df146101ba57600080fd5b8063656b0fd1146100ae57806380dce169146100d1578063882b92a7146100fc5780638f283970146101115780639c0591c814610124575b600080fd5b600354600160a01b900460ff161560405190151581526020015b60405180910390f35b6002546100e4906001600160a01b031681565b6040516001600160a01b0390911681526020016100c8565b61010f61010a366004610b5b565b6101cd565b005b61010f61011f366004610c5e565b610408565b6004546100e4906001600160a01b031681565b61010f610145366004610cc7565b610494565b6100e4610158366004610c5e565b6001602052600090815260409020546001600160a01b031681565b610186610181366004610c5e565b6106ef565b6040519081526020016100c8565b61010f6101a2366004610c5e565b61085b565b6003546100e4906001600160a01b031681565b6101866101c8366004610c5e565b6108df565b600054610100900460ff166101e85760005460ff16156101ec565b303b155b6102545760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084015b60405180910390fd5b600054610100900460ff16158015610276576000805461ffff19166101011790555b85518751146102d55760405162461bcd60e51b815260206004820152602560248201527f4c656e67746873206f6620626f746820617272617973206d757374206265206560448201526438bab0b61760d91b606482015260840161024b565b60005b875181101561039d5760008882815181106102f5576102f5610d33565b60200260200101519050600088838151811061031357610313610d33565b6020908102919091018101516001600160a01b03848116600081815260018552604080822080546001600160a01b03191694861694851790558051928352948201529283015291507f10e7c87bebf274db4de1b5f9fc731d6f83096e550bd871b681314578404d31269060600160405180910390a15050808061039590610d49565b9150506102d8565b50600280546001600160a01b038088166001600160a01b03199283161790925560038054600160a01b8715026001600160a81b031990911688851617179055600480549285169290911691909117905580156103ff576000805461ff00191690555b50505050505050565b6003546001600160a01b031633146104325760405162461bcd60e51b815260040161024b90610d72565b600380546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527ff9ffabca9c8276e99321725bcb43fb076a6c66a54b7f21c4e8146d8519b417dc91015b60405180910390a15050565b6003546001600160a01b031633146104be5760405162461bcd60e51b815260040161024b90610d72565b82158015906104cc57508281145b61053e5760405162461bcd60e51b815260206004820152603860248201527f4c656e67746873206f6620626f746820617272617973206d757374206265206560448201527f7175616c20616e642067726561746572207468616e20302e0000000000000000606482015260840161024b565b60005b838110156106e857600085858381811061055d5761055d610d33565b90506020020160208101906105729190610c5e565b6001600160a01b038181166000908152600160205260409020546003549293501690600160a01b900460ff1615610635576001600160a01b038116156106355760405162461bcd60e51b815260206004820152604c60248201527f41646d696e2063616e6e6f74206f7665727772697465206578697374696e672060448201527f61737369676e6d656e7473206f66206f7261636c657320746f20756e6465726c60648201526b3cb4b733903a37b5b2b7399760a11b608482015260a40161024b565b600085858581811061064957610649610d33565b905060200201602081019061065e9190610c5e565b6001600160a01b0384811660008181526001602090815260409182902080546001600160a01b0319168686169081179091558251938452938716908301528101919091529091507f10e7c87bebf274db4de1b5f9fc731d6f83096e550bd871b681314578404d31269060600160405180910390a150505080806106e090610d49565b915050610541565b5050505050565b6004546000906001600160a01b03838116911614156107175750670de0b6b3a7640000919050565b6001600160a01b038083166000908152600160205260409020541680156107aa576040516315d5220f60e31b81526001600160a01b03848116600483015282169063aea91078906024015b602060405180830381865afa15801561077f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107a39190610da9565b9392505050565b6002546001600160a01b0316156107ed576002546040516315d5220f60e31b81526001600160a01b0385811660048301529091169063aea9107890602401610762565b60405162461bcd60e51b815260206004820152603960248201527f5072696365206f7261636c65206e6f7420666f756e6420666f7220746869732060448201527f756e6465726c79696e6720746f6b656e20616464726573732e00000000000000606482015260840161024b565b6003546001600160a01b031633146108855760405162461bcd60e51b815260040161024b90610d72565b600280546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527f0df2d61fdd201e9633368dca495e2c469e36c48039263448dd8a2a954c19ef1a9101610488565b600080826001600160a01b0316636f307dc36040518163ffffffff1660e01b8152600401602060405180830381865afa158015610920573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906109449190610dc2565b6004549091506001600160a01b038083169116141561096d5750670de0b6b3a764000092915050565b6001600160a01b03808216600090815260016020526040902054168015610a015760405163fc57d4df60e01b81526001600160a01b03858116600483015282169063fc57d4df906024015b602060405180830381865afa1580156109d5573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906109f99190610da9565b949350505050565b6002546001600160a01b0316156107ed5760025460405163fc57d4df60e01b81526001600160a01b0386811660048301529091169063fc57d4df906024016109b8565b634e487b7160e01b600052604160045260246000fd5b604051601f8201601f1916810167ffffffffffffffff81118282101715610a8357610a83610a44565b604052919050565b600067ffffffffffffffff821115610aa557610aa5610a44565b5060051b60200190565b6001600160a01b0381168114610ac457600080fd5b50565b8035610ad281610aaf565b919050565b600082601f830112610ae857600080fd5b81356020610afd610af883610a8b565b610a5a565b82815260059290921b84018101918181019086841115610b1c57600080fd5b8286015b84811015610b40578035610b3381610aaf565b8352918301918301610b20565b509695505050505050565b80358015158114610ad257600080fd5b60008060008060008060c08789031215610b7457600080fd5b863567ffffffffffffffff80821115610b8c57600080fd5b818901915089601f830112610ba057600080fd5b81356020610bb0610af883610a8b565b82815260059290921b8401810191818101908d841115610bcf57600080fd5b948201945b83861015610bf6578535610be781610aaf565b82529482019490820190610bd4565b9a50508a013592505080821115610c0c57600080fd5b50610c1989828a01610ad7565b955050610c2860408801610ac7565b9350610c3660608801610ac7565b9250610c4460808801610b4b565b9150610c5260a08801610ac7565b90509295509295509295565b600060208284031215610c7057600080fd5b81356107a381610aaf565b60008083601f840112610c8d57600080fd5b50813567ffffffffffffffff811115610ca557600080fd5b6020830191508360208260051b8501011115610cc057600080fd5b9250929050565b60008060008060408587031215610cdd57600080fd5b843567ffffffffffffffff80821115610cf557600080fd5b610d0188838901610c7b565b90965094506020870135915080821115610d1a57600080fd5b50610d2787828801610c7b565b95989497509550505050565b634e487b7160e01b600052603260045260246000fd5b6000600019821415610d6b57634e487b7160e01b600052601160045260246000fd5b5060010190565b60208082526018908201527f53656e646572206973206e6f74207468652061646d696e2e0000000000000000604082015260600190565b600060208284031215610dbb57600080fd5b5051919050565b600060208284031215610dd457600080fd5b81516107a381610aaf56fea26469706673582212200db2916b767d0c5bc8f64a2f3132731e254d556d6a5de4452c9dcaac702d69db64736f6c634300080b0033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100a95760003560e01c80639c9192c6116100715780639c9192c614610137578063addd50991461014a578063aea9107814610173578063c44014d214610194578063f851a440146101a7578063fc57d4df146101ba57600080fd5b8063656b0fd1146100ae57806380dce169146100d1578063882b92a7146100fc5780638f283970146101115780639c0591c814610124575b600080fd5b600354600160a01b900460ff161560405190151581526020015b60405180910390f35b6002546100e4906001600160a01b031681565b6040516001600160a01b0390911681526020016100c8565b61010f61010a366004610b5b565b6101cd565b005b61010f61011f366004610c5e565b610408565b6004546100e4906001600160a01b031681565b61010f610145366004610cc7565b610494565b6100e4610158366004610c5e565b6001602052600090815260409020546001600160a01b031681565b610186610181366004610c5e565b6106ef565b6040519081526020016100c8565b61010f6101a2366004610c5e565b61085b565b6003546100e4906001600160a01b031681565b6101866101c8366004610c5e565b6108df565b600054610100900460ff166101e85760005460ff16156101ec565b303b155b6102545760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084015b60405180910390fd5b600054610100900460ff16158015610276576000805461ffff19166101011790555b85518751146102d55760405162461bcd60e51b815260206004820152602560248201527f4c656e67746873206f6620626f746820617272617973206d757374206265206560448201526438bab0b61760d91b606482015260840161024b565b60005b875181101561039d5760008882815181106102f5576102f5610d33565b60200260200101519050600088838151811061031357610313610d33565b6020908102919091018101516001600160a01b03848116600081815260018552604080822080546001600160a01b03191694861694851790558051928352948201529283015291507f10e7c87bebf274db4de1b5f9fc731d6f83096e550bd871b681314578404d31269060600160405180910390a15050808061039590610d49565b9150506102d8565b50600280546001600160a01b038088166001600160a01b03199283161790925560038054600160a01b8715026001600160a81b031990911688851617179055600480549285169290911691909117905580156103ff576000805461ff00191690555b50505050505050565b6003546001600160a01b031633146104325760405162461bcd60e51b815260040161024b90610d72565b600380546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527ff9ffabca9c8276e99321725bcb43fb076a6c66a54b7f21c4e8146d8519b417dc91015b60405180910390a15050565b6003546001600160a01b031633146104be5760405162461bcd60e51b815260040161024b90610d72565b82158015906104cc57508281145b61053e5760405162461bcd60e51b815260206004820152603860248201527f4c656e67746873206f6620626f746820617272617973206d757374206265206560448201527f7175616c20616e642067726561746572207468616e20302e0000000000000000606482015260840161024b565b60005b838110156106e857600085858381811061055d5761055d610d33565b90506020020160208101906105729190610c5e565b6001600160a01b038181166000908152600160205260409020546003549293501690600160a01b900460ff1615610635576001600160a01b038116156106355760405162461bcd60e51b815260206004820152604c60248201527f41646d696e2063616e6e6f74206f7665727772697465206578697374696e672060448201527f61737369676e6d656e7473206f66206f7261636c657320746f20756e6465726c60648201526b3cb4b733903a37b5b2b7399760a11b608482015260a40161024b565b600085858581811061064957610649610d33565b905060200201602081019061065e9190610c5e565b6001600160a01b0384811660008181526001602090815260409182902080546001600160a01b0319168686169081179091558251938452938716908301528101919091529091507f10e7c87bebf274db4de1b5f9fc731d6f83096e550bd871b681314578404d31269060600160405180910390a150505080806106e090610d49565b915050610541565b5050505050565b6004546000906001600160a01b03838116911614156107175750670de0b6b3a7640000919050565b6001600160a01b038083166000908152600160205260409020541680156107aa576040516315d5220f60e31b81526001600160a01b03848116600483015282169063aea91078906024015b602060405180830381865afa15801561077f573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906107a39190610da9565b9392505050565b6002546001600160a01b0316156107ed576002546040516315d5220f60e31b81526001600160a01b0385811660048301529091169063aea9107890602401610762565b60405162461bcd60e51b815260206004820152603960248201527f5072696365206f7261636c65206e6f7420666f756e6420666f7220746869732060448201527f756e6465726c79696e6720746f6b656e20616464726573732e00000000000000606482015260840161024b565b6003546001600160a01b031633146108855760405162461bcd60e51b815260040161024b90610d72565b600280546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527f0df2d61fdd201e9633368dca495e2c469e36c48039263448dd8a2a954c19ef1a9101610488565b600080826001600160a01b0316636f307dc36040518163ffffffff1660e01b8152600401602060405180830381865afa158015610920573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906109449190610dc2565b6004549091506001600160a01b038083169116141561096d5750670de0b6b3a764000092915050565b6001600160a01b03808216600090815260016020526040902054168015610a015760405163fc57d4df60e01b81526001600160a01b03858116600483015282169063fc57d4df906024015b602060405180830381865afa1580156109d5573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906109f99190610da9565b949350505050565b6002546001600160a01b0316156107ed5760025460405163fc57d4df60e01b81526001600160a01b0386811660048301529091169063fc57d4df906024016109b8565b634e487b7160e01b600052604160045260246000fd5b604051601f8201601f1916810167ffffffffffffffff81118282101715610a8357610a83610a44565b604052919050565b600067ffffffffffffffff821115610aa557610aa5610a44565b5060051b60200190565b6001600160a01b0381168114610ac457600080fd5b50565b8035610ad281610aaf565b919050565b600082601f830112610ae857600080fd5b81356020610afd610af883610a8b565b610a5a565b82815260059290921b84018101918181019086841115610b1c57600080fd5b8286015b84811015610b40578035610b3381610aaf565b8352918301918301610b20565b509695505050505050565b80358015158114610ad257600080fd5b60008060008060008060c08789031215610b7457600080fd5b863567ffffffffffffffff80821115610b8c57600080fd5b818901915089601f830112610ba057600080fd5b81356020610bb0610af883610a8b565b82815260059290921b8401810191818101908d841115610bcf57600080fd5b948201945b83861015610bf6578535610be781610aaf565b82529482019490820190610bd4565b9a50508a013592505080821115610c0c57600080fd5b50610c1989828a01610ad7565b955050610c2860408801610ac7565b9350610c3660608801610ac7565b9250610c4460808801610b4b565b9150610c5260a08801610ac7565b90509295509295509295565b600060208284031215610c7057600080fd5b81356107a381610aaf565b60008083601f840112610c8d57600080fd5b50813567ffffffffffffffff811115610ca557600080fd5b6020830191508360208260051b8501011115610cc057600080fd5b9250929050565b60008060008060408587031215610cdd57600080fd5b843567ffffffffffffffff80821115610cf557600080fd5b610d0188838901610c7b565b90965094506020870135915080821115610d1a57600080fd5b50610d2787828801610c7b565b95989497509550505050565b634e487b7160e01b600052603260045260246000fd5b6000600019821415610d6b57634e487b7160e01b600052601160045260246000fd5b5060010190565b60208082526018908201527f53656e646572206973206e6f74207468652061646d696e2e0000000000000000604082015260600190565b600060208284031215610dbb57600080fd5b5051919050565b600060208284031215610dd457600080fd5b81516107a381610aaf56fea26469706673582212200db2916b767d0c5bc8f64a2f3132731e254d556d6a5de4452c9dcaac702d69db64736f6c634300080b0033",
+  "devdoc": {
+    "author": "David Lucid <david@rari.capital> (https://github.com/davidlucid)",
+    "details": "Implements `PriceOracle`.",
+    "events": {
+      "NewAdmin(address,address)": {
+        "details": "Event emitted when `admin` is changed."
+      },
+      "NewDefaultOracle(address,address)": {
+        "details": "Event emitted when the default oracle is changed."
+      },
+      "NewOracle(address,address,address)": {
+        "details": "Event emitted when an underlying token's oracle is changed."
+      }
+    },
+    "kind": "dev",
+    "methods": {
+      "add(address[],address[])": {
+        "details": "Sets `_oracles` for `underlyings`."
+      },
+      "canAdminOverwrite()": {
+        "details": "Returns a boolean indicating if `admin` can overwrite existing assignments of oracles to underlying tokens."
+      },
+      "changeAdmin(address)": {
+        "details": "Changes the admin and emits an event."
+      },
+      "getUnderlyingPrice(address)": {
+        "details": "Implements the `PriceOracle` interface for Fuse pools (and Compound v2).",
+        "returns": {
+          "_0": "Price in ETH of the token underlying `cToken`, scaled by `10 ** (36 - underlyingDecimals)`."
+        }
+      },
+      "initialize(address[],address[],address,address,bool,address)": {
+        "details": "Constructor to initialize state variables.",
+        "params": {
+          "_admin": "The admin who can assign oracles to underlying tokens.",
+          "_canAdminOverwrite": "Controls if `admin` can overwrite existing assignments of oracles to underlying tokens.",
+          "_defaultOracle": "The default `PriceOracle` contract to use.",
+          "_oracles": "The `PriceOracle` contracts to be assigned to `underlyings`.",
+          "underlyings": "The underlying ERC20 token addresses to link to `_oracles`."
+        }
+      },
+      "price(address)": {
+        "details": "Attempts to return the price in ETH of `underlying` (implements `BasePriceOracle`)."
+      },
+      "setDefaultOracle(address)": {
+        "details": "Changes the admin and emits an event."
+      }
+    },
+    "stateVariables": {
+      "admin": {
+        "details": "The administrator of this `MasterPriceOracle`."
+      },
+      "defaultOracle": {
+        "details": "Default/fallback `PriceOracle`."
+      },
+      "noAdminOverwrite": {
+        "details": "Controls if `admin` can overwrite existing assignments of oracles to underlying tokens."
+      },
+      "oracles": {
+        "details": "Maps underlying token addresses to `PriceOracle` contracts (can be `BasePriceOracle` contracts too)."
+      },
+      "wtoken": {
+        "details": "The Wrapped native asset address."
+      }
+    },
+    "title": "MasterPriceOracle",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "getUnderlyingPrice(address)": {
+        "notice": "Returns the price in ETH of the token underlying `cToken`."
+      }
+    },
+    "notice": "Use a combination of price oracles.",
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 210,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "_initialized",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 213,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "_initializing",
+        "offset": 1,
+        "slot": "0",
+        "type": "t_bool"
+      },
+      {
+        "astId": 40123,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "oracles",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_contract(IPriceOracle)33192)"
+      },
+      {
+        "astId": 40127,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "defaultOracle",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(IPriceOracle)33192"
+      },
+      {
+        "astId": 40130,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "admin",
+        "offset": 0,
+        "slot": "3",
+        "type": "t_address"
+      },
+      {
+        "astId": 40133,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "noAdminOverwrite",
+        "offset": 20,
+        "slot": "3",
+        "type": "t_bool"
+      },
+      {
+        "astId": 40136,
+        "contract": "contracts/oracles/MasterPriceOracle.sol:MasterPriceOracle",
+        "label": "wtoken",
+        "offset": 0,
+        "slot": "4",
+        "type": "t_address"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_contract(IPriceOracle)33192": {
+        "encoding": "inplace",
+        "label": "contract IPriceOracle",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_contract(IPriceOracle)33192)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => contract IPriceOracle)",
+        "numberOfBytes": "32",
+        "value": "t_contract(IPriceOracle)33192"
+      }
+    }
+  }
+}

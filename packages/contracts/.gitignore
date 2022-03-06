@@ -1,0 +1,15 @@
+node_modules
+artifacts
+artifacts_forge
+cache
+typechain
+out
+.DS_Store
+.idea
+
+/src/**/*.js
+/src/**/*.map
+.env
+deployments/localhost/
+contracts.iml
+dist

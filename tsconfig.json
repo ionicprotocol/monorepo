@@ -1,0 +1,14 @@
+{
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  },
+  "references": [
+    {
+       "path": "./packages/contracts"
+    },
+    {
+       "path": "./packages/ui"
+    }
+  ]
+}

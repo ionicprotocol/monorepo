@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  hardhat:
+    image: contracts-local
+    environment:
+      - MNEMONIC
+    build:
+      dockerfile: docker/Dockerfile.hardhat
+      context: .
+    entrypoint: ./start-node.sh
+    ports:
+      - "8545:8545"
+    volumes:
+      - app-volume:/usr/src/app/deployments
+
+  liquidation-bot:
+    env_file:
+      - docker/liquidation.env
+    environment:
+      - ETHEREUM_ADMIN_ACCOUNT
+      - ETHEREUM_ADMIN_PRIVATE_KEY
+    build:
+      dockerfile: docker/Dockerfile.liquidation
+      context: .
+    entrypoint: ./liquidation.sh
+
+  e2e:
+    image: contracts-local
+    environment:
+      - ETH_PROVIDER_URL=http://hardhat:8545
+      - MNEMONIC
+    entrypoint: ./setup-pools.sh
+    depends_on:
+      - hardhat
+    volumes:
+      - app-volume:/usr/src/app/deployments
+
+  verify-liquidations:
+    image: contracts-local
+    environment:
+      - ETH_PROVIDER_URL=http://hardhat:8545
+      - MNEMONIC
+    entrypoint: ./e2e.sh
+    depends_on:
+      - hardhat
+      - liquidation-bot
+    volumes:
+      - app-volume:/usr/src/app/deployments
+
+
+volumes:
+  app-volume:

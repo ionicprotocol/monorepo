@@ -1,0 +1,11 @@
+{
+  "name": "monorepo",
+  "packageManager": "yarn@3.2.0",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "@tsconfig/recommended": "^1.0.1"
+  }
+}
