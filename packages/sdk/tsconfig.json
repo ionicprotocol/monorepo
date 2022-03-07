@@ -1,0 +1,10 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "rootDirs": ["./deploy", "./scripts", "./test"],
+    "composite": true
+  },
+  "references": [{
+    "path": "../contracts"
+  }]
+}

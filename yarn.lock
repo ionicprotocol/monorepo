@@ -2137,9 +2137,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@midas-capital/sdk@workspace:*, @midas-capital/sdk@workspace:packages/contracts":
+"@midas-capital/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
-  resolution: "@midas-capital/sdk@workspace:packages/contracts"
+  resolution: "@midas-capital/contracts@workspace:packages/contracts"
+  dependencies:
+    "@typechain/ethers-v5": ^9.0.0
+    typechain: ^7.0.0
+  languageName: unknown
+  linkType: soft
+
+"@midas-capital/sdk@workspace:*, @midas-capital/sdk@workspace:packages/sdk":
+  version: 0.0.0-use.local
+  resolution: "@midas-capital/sdk@workspace:packages/sdk"
   dependencies:
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": ^2.0.2
@@ -12184,6 +12193,7 @@ __metadata:
   resolution: "monorepo@workspace:."
   dependencies:
     "@tsconfig/recommended": ^1.0.1
+    typescript: ^4.6.2
   languageName: unknown
   linkType: soft
 
@@ -16468,7 +16478,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.5.5":
+"typescript@npm:^4.5.5, typescript@npm:^4.6.2":
   version: 4.6.2
   resolution: "typescript@npm:4.6.2"
   bin:
@@ -16488,7 +16498,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.2#~builtin<compat/typescript>":
   version: 4.6.2
   resolution: "typescript@patch:typescript@npm%3A4.6.2#~builtin<compat/typescript>::version=4.6.2&hash=bda367"
   bin:

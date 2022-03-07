@@ -34,7 +34,7 @@
   "exclude": ["api", "node_modules"],
   "references": [
     {
-      "path": "../contracts"
+      "path": "../sdk"
     }
   ]
 }

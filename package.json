@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "devDependencies": {
-    "@tsconfig/recommended": "^1.0.1"
+    "@tsconfig/recommended": "^1.0.1",
+    "typescript": "^4.6.2"
   }
 }
