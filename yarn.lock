@@ -2137,7 +2137,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@midas-capital/contracts@workspace:packages/contracts":
+"@midas-capital/contracts@workspace:*, @midas-capital/contracts@workspace:packages/contracts":
   version: 0.0.0-use.local
   resolution: "@midas-capital/contracts@workspace:packages/contracts"
   dependencies:
@@ -2150,6 +2150,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@midas-capital/sdk@workspace:packages/sdk"
   dependencies:
+    "@midas-capital/contracts": "workspace:*"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": ^2.0.2
     "@openzeppelin/contracts-upgradeable": ^4.5.0
