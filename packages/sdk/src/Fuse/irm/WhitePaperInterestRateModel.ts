@@ -1,12 +1,12 @@
-import { BigNumber, BigNumberish, Contract, utils } from "ethers";
+import { BigNumber, BigNumberish, constants, Contract, utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 
 import { InterestRateModel } from "../types";
-import WhitePaperInterestRateModelArtifact from "../../../artifacts/contracts/compound/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
-import CTokenInterfacesArtifact from "../../../artifacts/contracts/compound/CTokenInterfaces.sol/CTokenInterface.json";
+import WhitePaperInterestRateModelArtifact from "../../../out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
+import CTokenInterfacesArtifact from "../../../out/CTokenInterfaces.sol/CTokenInterface.json";
 
 export default class WhitePaperInterestRateModel implements InterestRateModel {
-  static RUNTIME_BYTECODE_HASH = utils.keccak256(WhitePaperInterestRateModelArtifact.deployedBytecode);
+  static RUNTIME_BYTECODE_HASH = utils.keccak256(WhitePaperInterestRateModelArtifact.deployedBytecode.object);
 
   initialized: boolean | undefined;
   baseRatePerBlock: BigNumber | undefined;
@@ -84,15 +84,15 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
   getBorrowRate(utilizationRate: BigNumber) {
     if (!this.initialized || !this.multiplierPerBlock || !this.baseRatePerBlock)
       throw new Error("Interest rate model class not initialized.");
-    return utilizationRate.mul(this.multiplierPerBlock).div(BigNumber.from(1e18)).add(this.baseRatePerBlock);
+    return utilizationRate.mul(this.multiplierPerBlock).div(constants.WeiPerEther).add(this.baseRatePerBlock);
   }
 
   getSupplyRate(utilizationRate: BigNumber): BigNumber {
     if (!this.initialized || !this.reserveFactorMantissa) throw new Error("Interest rate model class not initialized.");
 
-    const oneMinusReserveFactor = BigNumber.from(1e18).sub(this.reserveFactorMantissa);
+    const oneMinusReserveFactor = constants.WeiPerEther.sub(this.reserveFactorMantissa);
     const borrowRate = this.getBorrowRate(utilizationRate);
-    const rateToPool = borrowRate.mul(oneMinusReserveFactor).div(BigNumber.from(1e18));
-    return utilizationRate.mul(rateToPool).div(BigNumber.from(1e18));
+    const rateToPool = borrowRate.mul(oneMinusReserveFactor).div(constants.WeiPerEther);
+    return utilizationRate.mul(rateToPool).div(constants.WeiPerEther);
   }
 }

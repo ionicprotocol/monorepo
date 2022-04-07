@@ -1,7 +1,6 @@
-import Fuse from "./Fuse";
-import ERC20Abi from "./Fuse/abi/ERC20.json";
+export { default as Fuse } from "./Fuse";
+export { default as ERC20Abi } from "./Fuse/abi/ERC20.json";
 
-export { Fuse };
 export {
   cERC20Conf,
   InterestRateModelConf,
@@ -18,4 +17,9 @@ export {
 } from "./Fuse/types";
 export { SupportedChains } from "./network";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
-export { ERC20Abi };
+
+export {
+  defaults as liquidationConfigDefaults,
+  ChainLiquidationConfig,
+  LiquidationStrategy,
+} from "./modules/liquidation/config";

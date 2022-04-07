@@ -3,6 +3,10 @@ import { BigNumber, BigNumberish, providers } from "ethers";
 import JumpRateModel from "./irm/JumpRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
+import { FuseBase } from ".";
+
+export type GConstructor<T = {}> = new (...args: any[]) => T;
+export type FuseBaseConstructor = GConstructor<FuseBase>;
 
 export type MinifiedContracts = {
   [key: string]: {
@@ -50,11 +54,17 @@ export interface InterestRateModel {
   getSupplyRate(utilizationRate: BigNumber): BigNumber;
 }
 export type Artifact = {
-  contractName: string;
-  sourceName: string;
   abi: any;
-  bytecode: string;
-  deployedBytecode: string;
+  bytecode: {
+    object: string;
+    sourceMap: string;
+    linkReferences: any;
+  };
+  deployedBytecode: {
+    object: string;
+    sourceMap: string;
+    linkReferences: any;
+  };
 };
 
 export type Artifacts = {
@@ -74,6 +84,7 @@ export type cERC20Conf = {
   delegateContractName?: any;
   underlying: string; // underlying ERC20
   comptroller: string; // Address of the comptroller
+  fuseFeeDistributor: string;
   interestRateModel: string; // Address of the IRM
   initialExchangeRateMantissa?: BigNumber; // Initial exchange rate scaled by 1e18
   name: string; // ERC20 name of this token
@@ -166,20 +177,21 @@ export interface USDPricedFuseAsset extends FuseAsset {
 }
 
 export interface FusePoolData {
+  id: number;
   assets: USDPricedFuseAsset[];
+  creator: string;
   comptroller: string;
   name: string;
-  isPrivate: boolean;
   totalLiquidityUSD: number;
   totalSuppliedUSD: number;
   totalBorrowedUSD: number;
   totalSupplyBalanceUSD: number;
   totalBorrowBalanceUSD: number;
-  oracle: string;
-  oracleModel: string | undefined;
-  id?: number;
-  admin: string;
-  isAdminWhitelisted: boolean;
+  blockPosted: BigNumber;
+  timestampPosted: BigNumber;
+  underlyingTokens: string[];
+  underlyingSymbols: string[];
+  whitelistedAdmin: boolean;
 }
 
 export interface FusePool {

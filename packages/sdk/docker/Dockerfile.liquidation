@@ -1,6 +1,0 @@
-FROM ghcr.io/midas-protocol/fuse-liquidator-bot:main
-
-RUN apk add --no-cache bash curl
-
-COPY docker/*.sh ./
-RUN chmod +x *.sh

@@ -5,10 +5,7 @@
   },
   "references": [
     {
-       "path": "./packages/contracts"
-    },
-    {
-       "path": "./packages/ui"
+       "path": "./packages/sdk"
     }
   ]
 }

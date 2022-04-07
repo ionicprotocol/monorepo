@@ -1,14 +1,10 @@
 // We're creating this file to configure. This solves problem 2.
-// CommonJS compilation
+// CommonJS compilation 
 
 {
-  "extends": "./tsconfig-sdk.json",
-  "compilerOptions": {
-    "module": "CommonJS",
-    "outDir": "./dist/cjs",
-    "composite": true
-  },
-  "references": [{
-    "path": "../contracts"
-  }]
-}
+    "extends": "./tsconfig-sdk.json",
+    "compilerOptions": {
+      "module": "CommonJS",
+      "outDir": "./dist/cjs"
+    },
+  }

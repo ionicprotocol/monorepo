@@ -1,10 +1,10 @@
 {
-  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "rootDirs": ["./deploy", "./scripts", "./test"],
-    "composite": true
-  },
-  "references": [{
-    "path": "../contracts"
-  }]
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "allowJs": true,
+    "target": "ES2015",
+    "rootDirs": ["./src"]
+  }
 }
