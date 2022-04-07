@@ -21,7 +21,8 @@
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'src/**/*.ts'",
     "prettier": "npm run prettier:ts",
-    "typechain": "typechain --target ethers-v5 --out-dir './typechain' 'lib/contracts/out/*/**.json'"
+    "typechain": "typechain --target ethers-v5 --out-dir './typechain' 'lib/contracts/out/*/**.json'",
+    "forge": "forge"
   },
   "keywords": [],
   "author": "Midas Capital",
