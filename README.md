@@ -22,3 +22,29 @@ To run `forge` commands inside the `sdk` package, run:
 - `yarn workspace @midas-capital/sdk forge install <SOME_DEP>`
 - `yarn workspace @midas-capital/sdk forge build`
 - etc
+
+## Adding a Package
+
+- Copy source into `packages/my-new-package`.
+- Add reference to root `tsconfig.json`:
+```json
+{
+  ...
+  "references": [
+    ...
+    {
+      "path": "./packages/my-new-package"
+    }
+  ]
+}
+```
+- Add workspace-level dependencies to `package.json` inside the package:
+```json
+{
+  ...
+  "dependencies": {
+    ...
+    "@midas-capital/some-other-package": "workspace:*"
+  }
+}
+- `yarn` from top-level to update dependencies/symlinks.
