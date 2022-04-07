@@ -15,7 +15,7 @@
     "deployments.json"
   ],
   "scripts": {
-    "build": "npm run build:sdk ",
+    "build": "npm run setup && npm run typechain && npm run build:sdk ",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "setup": "cd lib/contracts && forge build",
     "clean": "rm -rf dist",
