@@ -1,4 +1,5 @@
 import { Artifacts, ChainDeployment } from "./Fuse/types";
+import { BigNumber } from "ethers";
 export declare enum SupportedChains {
     bsc = 56,
     chapel = 97,
@@ -12,22 +13,22 @@ export declare enum SupportedChains {
 }
 export declare const chainSpecificParams: {
     1337: {
-        blocksPerYear: any;
+        blocksPerYear: BigNumber;
     };
     97: {
-        blocksPerYear: any;
+        blocksPerYear: BigNumber;
     };
     56: {
-        blocksPerYear: any;
+        blocksPerYear: BigNumber;
     };
     9000: {
-        blocksPerYear: any;
+        blocksPerYear: BigNumber;
     };
     1284: {
-        blocksPerYear: any;
+        blocksPerYear: BigNumber;
     };
     1287: {
-        blocksPerYear: any;
+        blocksPerYear: BigNumber;
     };
 };
 export declare const chainSpecificAddresses: {
@@ -39,7 +40,7 @@ export declare const chainSpecificAddresses: {
         W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
         UNISWAP_V2_ROUTER: string;
         UNISWAP_V2_FACTORY: string;
-        PAIR_INIT_HASH: any;
+        PAIR_INIT_HASH: string;
     };
     97: {
         DAI_POT: string;
@@ -49,7 +50,7 @@ export declare const chainSpecificAddresses: {
         W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
         UNISWAP_V2_ROUTER: string;
         UNISWAP_V2_FACTORY: string;
-        PAIR_INIT_HASH: any;
+        PAIR_INIT_HASH: string;
     };
     56: {
         DAI_POT: string;
@@ -59,7 +60,7 @@ export declare const chainSpecificAddresses: {
         W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
         UNISWAP_V2_ROUTER: string;
         UNISWAP_V2_FACTORY: string;
-        PAIR_INIT_HASH: any;
+        PAIR_INIT_HASH: string;
     };
     9000: {
         DAI_POT: string;
@@ -69,7 +70,7 @@ export declare const chainSpecificAddresses: {
         W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
         UNISWAP_V2_ROUTER: string;
         UNISWAP_V2_FACTORY: string;
-        PAIR_INIT_HASH: any;
+        PAIR_INIT_HASH: string;
     };
     1284: {
         DAI_POT: string;
@@ -79,7 +80,7 @@ export declare const chainSpecificAddresses: {
         W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
         UNISWAP_V2_ROUTER: string;
         UNISWAP_V2_FACTORY: string;
-        PAIR_INIT_HASH: any;
+        PAIR_INIT_HASH: string;
     };
     1287: {
         DAI_POT: string;
@@ -89,7 +90,7 @@ export declare const chainSpecificAddresses: {
         W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
         UNISWAP_V2_ROUTER: string;
         UNISWAP_V2_FACTORY: string;
-        PAIR_INIT_HASH: any;
+        PAIR_INIT_HASH: string;
     };
 };
 export declare const chainOracles: {

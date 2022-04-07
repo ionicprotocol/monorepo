@@ -17,14 +17,17 @@
   "scripts": {
     "build": "npm run build:sdk ",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
+    "setup": "cd lib/contracts && forge build",
     "clean": "rm -rf dist",
-    "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'test/**/*.ts'",
-    "prettier": "npm run prettier:ts && npm run prettier:sol"
+    "prettier:ts": "prettier --write 'src/**/*.ts'",
+    "prettier": "npm run prettier:ts",
+    "typechain": "typechain --target ethers-v5 --out-dir './typechain' 'lib/contracts/out/*/**.json'"
   },
   "keywords": [],
   "author": "Midas Capital",
   "license": "ISC",
   "devDependencies": {
+    "@typechain/ethers-v5": "^10.0.0",
     "@types/chai": "^4.3.0",
     "@types/mocha": "^9.1.0",
     "@types/node": "^17.0.23",
@@ -38,7 +41,9 @@
   },
   "dependencies": {
     "@types/bad-words": "^3.0.1",
+    "axios": "^0.26.1",
     "bad-words": "^3.0.4",
+    "ethers": "^5.6.2",
     "lint-staged": "12.3.7",
     "prettier": "2.6.1"
   }

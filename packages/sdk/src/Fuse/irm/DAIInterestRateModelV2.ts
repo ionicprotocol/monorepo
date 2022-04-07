@@ -2,8 +2,8 @@ import JumpRateModel from "./JumpRateModel";
 import { BigNumberish, Contract, BigNumber, utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 
-import DAIInterestRateModelV2Artifact from "../../../out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
-import CTokenInterfacesArtifact from "../../../out/CTokenInterfaces.sol/CTokenInterface.json";
+import DAIInterestRateModelV2Artifact from "../../../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
+import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 
 export default class DAIInterestRateModelV2 extends JumpRateModel {
   static RUNTIME_BYTECODE_HASH = utils.keccak256(DAIInterestRateModelV2Artifact.deployedBytecode.object);

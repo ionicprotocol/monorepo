@@ -2,8 +2,8 @@ import { BigNumberish, BigNumber, Contract, utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 
 import { InterestRateModel } from "../types";
-import JumpRateModelArtifact from "../../../out/JumpRateModel.sol/JumpRateModel.json";
-import CTokenInterfacesArtifact from "../../../out/CTokenInterfaces.sol/CTokenInterface.json";
+import JumpRateModelArtifact from "../../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
+import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 
 export default class JumpRateModel implements InterestRateModel {
   static RUNTIME_BYTECODE_HASH = utils.keccak256(JumpRateModelArtifact.deployedBytecode.object);

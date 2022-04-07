@@ -12,28 +12,28 @@ import JumpRateModel from "./irm/JumpRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 
-import Deployments from "../../deployments.json";
-import ComptrollerArtifact from "../../out/Comptroller.sol/Comptroller.json";
-import UnitrollerArtifact from "../../out/Unitroller.sol/Unitroller.json";
-import ERC20Artifact from "../../out/ERC20.sol/ERC20.json";
-import CEtherDelegateArtifact from "../../out/CEtherDelegate.sol/CEtherDelegate.json";
-import CEtherDelegatorArtifact from "../../out/CEtherDelegator.sol/CEtherDelegator.json";
-import CErc20DelegateArtifact from "../../out/CErc20Delegate.sol/CErc20Delegate.json";
-import CErc20DelegatorArtifact from "../../out/CErc20Delegator.sol/CErc20Delegator.json";
-import CTokenInterfacesArtifact from "../../out/CTokenInterfaces.sol/CTokenInterface.json";
-import EIP20InterfaceArtifact from "../../out/EIP20Interface.sol/EIP20Interface.json";
-import RewardsDistributorDelegatorArtifact from "../../out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
-import PreferredPriceOracleArtifact from "../../out/PreferredPriceOracle.sol/PreferredPriceOracle.json";
+import Deployments from "../../lib/contracts/deployments.json";
+import ComptrollerArtifact from "../../lib/contracts/out/Comptroller.sol/Comptroller.json";
+import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
+import ERC20Artifact from "../../lib/contracts/out/ERC20.sol/ERC20.json";
+import CEtherDelegateArtifact from "../../lib/contracts/out/CEtherDelegate.sol/CEtherDelegate.json";
+import CEtherDelegatorArtifact from "../../lib/contracts/out/CEtherDelegator.sol/CEtherDelegator.json";
+import CErc20DelegateArtifact from "../../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
+import CErc20DelegatorArtifact from "../../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
+import CTokenInterfacesArtifact from "../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
+import EIP20InterfaceArtifact from "../../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
+import RewardsDistributorDelegatorArtifact from "../../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
+import PreferredPriceOracleArtifact from "../../lib/contracts/out/PreferredPriceOracle.sol/PreferredPriceOracle.json";
 
 // Oracle Artifacts
-import MasterPriceOracleArtifact from "../../out/MasterPriceOracle.sol/MasterPriceOracle.json";
-import SimplePriceOracleArtifact from "../../out/SimplePriceOracle.sol/SimplePriceOracle.json";
-import ChainlinkPriceOracleV2Artifact from "../../out/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
+import MasterPriceOracleArtifact from "../../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
+import SimplePriceOracleArtifact from "../../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
+import ChainlinkPriceOracleV2Artifact from "../../lib/contracts/out/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
 
 // IRM Artifacts
-import JumpRateModelArtifact from "../../out/JumpRateModel.sol/JumpRateModel.json";
-import DAIInterestRateModelV2Artifact from "../../out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
-import WhitePaperInterestRateModelArtifact from "../../out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
+import JumpRateModelArtifact from "../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
+import DAIInterestRateModelV2Artifact from "../../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
+import WhitePaperInterestRateModelArtifact from "../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 
 // Types
 import {
