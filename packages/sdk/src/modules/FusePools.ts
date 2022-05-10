@@ -4,7 +4,9 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 import { FuseBaseConstructor } from "../Fuse/types";
 import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
 import { FusePoolData, NativePricedFuseAsset } from "../Fuse/types";
-import { CErc20Delegate, CErc20PluginDelegate, CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain";
+import { CErc20Delegate } from '../../lib/contracts/typechain/CErc20Delegate';
+import { CErc20PluginDelegate } from '../../lib/contracts/typechain/CErc20PluginDelegate';
+import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
