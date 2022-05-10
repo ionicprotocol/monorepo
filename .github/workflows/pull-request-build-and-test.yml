@@ -41,7 +41,7 @@ jobs:
         run: yarn workspace @midas-capital/sdk build
 
       - name: Run hardhat tests
-        run: yarn workspace @midas-capital/sdk test:hardhat
+        run: yarn workspace @midas-capital/sdk test
 
   # build-and-test-bsc:
   #   env:
