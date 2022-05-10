@@ -1,5 +1,5 @@
 import { constants } from "ethers";
-import { MasterPriceOracle } from "../../lib/contracts/typechain";
+import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { UniswapDeployFnParams } from "../helpers/types";
 
 export const deployUniswapLpOracle = async ({
