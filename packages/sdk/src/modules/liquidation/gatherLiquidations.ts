@@ -2,7 +2,7 @@ import { EncodedLiquidationTx, FusePoolUserWithAssets, LiquidatablePool, PublicP
 import { getPotentialLiquidation } from "./index";
 import { FuseBase } from "../../Fuse";
 import { ChainLiquidationConfig } from "./config";
-import { FusePoolLens } from "../../../typechain/FusePoolLens";
+import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
 
 async function getLiquidatableUsers(
   fuse: FuseBase,
