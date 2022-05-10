@@ -69,13 +69,16 @@ jobs:
           cache: "npm"
 
       - name: Install NPM packages
-        run: npm install
+        run: yarn
+
+      - name: forge module install
+        run: yarn workspace @midas-capital/sdk forge install
 
       - name: Run build
-        run: npm run build
+        run: yarn workspace @midas-capital/sdk build
 
       - name: Run hardhat tests on BSC
-        run: npm run test:bsc
+        run: yarn workspace @midas-capital/sdk test:bsc
 
   # build-and-test-evmostestnet:
   #   env:
