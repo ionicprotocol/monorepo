@@ -27,7 +27,8 @@
     "prettier": "npm run prettier:ts",
     "typechain": "typechain --target ethers-v5 --out-dir './lib/contracts/typechain' './lib/contracts/out/*/**.json'",
     "deploy:simulate:bsc:mainnet": "FORK_URL_BSC=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat deploy --tags simulate",
-    "deploy:bsc:mainnet": "hardhat --network bsc deploy --tags prod"
+    "deploy:bsc:mainnet": "hardhat --network bsc deploy --tags prod",
+    "forge": "forge"
   },
   "keywords": [],
   "author": "Midas Capital",
