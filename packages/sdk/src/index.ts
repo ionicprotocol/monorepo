@@ -11,7 +11,7 @@ export {
   OracleConf,
   InterestRateModel,
   FusePoolData,
-  USDPricedFuseAsset,
+  NativePricedFuseAsset,
   FuseAsset,
   InterestRateModelType,
 } from "./Fuse/types";

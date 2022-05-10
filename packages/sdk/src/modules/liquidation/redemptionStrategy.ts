@@ -1,5 +1,6 @@
 import { BytesLike, Contract, ethers } from "ethers";
 import { FuseBase } from "../../Fuse";
+import { SupportedChains } from "../../network";
 
 type TokenToStrategy = {
   [chainId: number]: {
@@ -19,7 +20,7 @@ enum RedemptionStrategy {
 }
 
 const tokenToStrategyMapping: TokenToStrategy = {
-  56: {
+  [SupportedChains.bsc]: {
     // dai3EPS
     "0x0BC3a8239B0a63E945Ea1bd6722Ba747b9557e56": RedemptionStrategy.CurveLpTokenLiquidatorNoRegistry,
     // 3EPS
@@ -31,10 +32,13 @@ const tokenToStrategyMapping: TokenToStrategy = {
     // jBRL
     "0x316622977073BBC3dF32E7d2A9B3c77596a0a603": RedemptionStrategy.jBRLLiquidator,
   },
-  9001: {
+  [SupportedChains.moonbase_alpha]: {},
+  [SupportedChains.moonbeam]: {},
+  [SupportedChains.evmos_testnet]: {},
+  [SupportedChains.evmos]: {
     "0x -- Kinesis": RedemptionStrategy.CurveLpTokenLiquidatorNoRegistry,
   },
-  1337: {},
+  [SupportedChains.ganache]: {},
 };
 
 export const requiresCustomStrategy = (chainId: number, token: string) => {

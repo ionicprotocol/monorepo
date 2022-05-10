@@ -30,6 +30,8 @@
     "@ethersproject/contracts": "^5.5.0",
     "@ethersproject/providers": "^5.5.2",
     "@midas-capital/sdk": "workspace:*",
+    "@types/node": "^17.0.31",
+    "@typescript-eslint/parser": "^5.22.0",
     "axios": "^0.26.0",
     "dotenv": "^16.0.0",
     "ethers": "^5.5.3"

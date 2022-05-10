@@ -1,0 +1,146 @@
+name: Pull Request - build and run tests
+
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+    branches:
+      - main
+      - development
+
+jobs:
+  build-and-test-local:
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Install NPM packages
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run hardhat tests
+        run: npm run test:hardhat
+
+      - name: Run forge tests
+        run: npm run test:forge
+
+  build-and-test-bsc:
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      FORK_URL_BSC: "${{ secrets.FORK_URL_BSC }}"
+      FORK_BLOCK_NUMBER: 17366495
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Install NPM packages
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run hardhat tests on BSC
+        run: npm run test:bsc
+
+      - name: Run forge tests on BSC
+        run: npm run test:forge:bsc
+
+  build-and-test-evmostestnet:
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      FORK_BLOCK_NUMBER: 897089
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Install NPM packages
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run forge tests on Evmos Testnet
+        run: npm run test:forge:evmostestnet
+
+  build-and-test-moonbeam:
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      FORK_BLOCK_NUMBER: 909353
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install Forge dependencies
+        run: forge install
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
+
+      - name: Install NPM packages
+        run: npm install
+
+      - name: Run build
+        run: npm run build
+
+      - name: Run forge tests on Moonbeam
+        run: npm run test:forge:moonbeam

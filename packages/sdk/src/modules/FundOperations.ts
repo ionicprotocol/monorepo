@@ -1,7 +1,7 @@
 import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
-import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-import { CEtherDelegate } from "../../typechain/CEtherDelegate";
-import { Comptroller } from "../../typechain/Comptroller";
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CEtherDelegate } from "../../lib/contracts/typechain/CEtherDelegate";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseBaseConstructor } from "../Fuse/types";
 import axios from "axios";
 
