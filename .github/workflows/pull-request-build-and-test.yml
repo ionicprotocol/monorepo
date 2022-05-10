@@ -43,41 +43,39 @@ jobs:
       - name: Run hardhat tests
         run: yarn workspace @midas-capital/sdk test
 
-  # build-and-test-bsc:
-  #   env:
-  #     MNEMONIC: "${{ secrets.MNEMONIC }}"
-  #     FORK_URL_BSC: "${{ secrets.FORK_URL_BSC }}"
-  #     FORK_BLOCK_NUMBER: 17366495
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v2
-  #       with:
-  #         submodules: recursive
+  build-and-test-bsc:
+    env:
+      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      FORK_URL_BSC: "${{ secrets.FORK_URL_BSC }}"
+      FORK_BLOCK_NUMBER: 17366495
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: recursive
+          token: "${{ secrets.ACCESS_TOKEN }}"
 
-  #     - name: Install Foundry
-  #       uses: onbjerg/foundry-toolchain@v1
-  #       with:
-  #         version: nightly
+      - name: Install Foundry
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
 
-  #     - name: Install Forge dependencies
-  #       run: forge install
+      - name: Install Forge dependencies
+        run: forge install
 
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 16.x
-  #         cache: "npm"
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+          cache: "npm"
 
-  #     - name: Install NPM packages
-  #       run: npm install
+      - name: Install NPM packages
+        run: npm install
 
-  #     - name: Run build
-  #       run: npm run build
+      - name: Run build
+        run: npm run build
 
-  #     - name: Run hardhat tests on BSC
-  #       run: npm run test:bsc
-
-  #     - name: Run forge tests on BSC
-  #       run: npm run test:forge:bsc
+      - name: Run hardhat tests on BSC
+        run: npm run test:bsc
 
   # build-and-test-evmostestnet:
   #   env:
