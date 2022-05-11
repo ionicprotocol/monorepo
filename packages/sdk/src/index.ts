@@ -16,6 +16,7 @@ export {
   InterestRateModelType,
   DelegateContractName,
   AssetPluginConfig,
+  PluginConfig,
 } from "./Fuse/types";
 export { SupportedChains } from "./network";
 export { filterOnlyObjectProperties } from "./Fuse/utils";

@@ -151,7 +151,7 @@ export const setUpLiquidation = async ({ poolName }) => {
   tx = await simpleOracle.setDirectPrice(erc20Two.underlying, erc20TwoOriginalUnderlyingPrice);
   await tx.wait();
 
-  const deployedAssets = await deployAssets(assets.assets.slice(0, -1), deployer);
+  const deployedAssets = await deployAssets(assets.assets.slice(0, 4), deployer);
 
   deployedEth = deployedAssets.find((a) => a.underlying === constants.AddressZero);
   deployedErc20One = deployedAssets.find((a) => a.underlying === erc20One.underlying);
