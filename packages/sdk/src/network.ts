@@ -163,7 +163,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Mock Touch Strategy",
         strategyAddress: "0xdC206B5684A85ddEb4e2e1Ca48A1fCb5C3d31Ef3",
-        dynamicFlywheel: null,
       },
     ],
   },
@@ -174,7 +173,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "BOMB-BTC LP Autocompounding (beefy)",
         strategyAddress: "0x9015315d6757fd1c8735F7d3f0E7fE3E76934c40",
-        dynamicFlywheel: null,
       },
     ],
     // BOMB
@@ -182,7 +180,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "BOMB Autocompounding (beefy)",
         strategyAddress: "0x9baB520eBB7954D0030E9cF03A9345554994a786",
-        dynamicFlywheel: null,
       },
     ],
     // 3EPS
@@ -223,7 +220,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibWBNB Vault",
         strategyAddress: "0x0b434c33905C2B80bA978B90bFD874dFBa5260b3",
-        dynamicFlywheel: null,
       },
     ],
     // ETH
@@ -231,7 +227,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibETH Vault",
         strategyAddress: "0xCBE401B8874A1C30163740f5f45156088Eb21481",
-        dynamicFlywheel: null,
       },
     ],
     // BUSD
@@ -239,7 +234,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibBUSD Vault",
         strategyAddress: "0x9012ef7414D5c42873D94506b91C1677BF4DfF38",
-        dynamicFlywheel: null,
       },
     ],
     // USDT
@@ -247,7 +241,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibUSDT Vault",
         strategyAddress: "0xF0BbDdd4EF2Ac465f949B45f0c7a8AFFCD09C8AC",
-        dynamicFlywheel: null,
       },
     ],
     // USDC
@@ -255,7 +248,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibUSDC Vault",
         strategyAddress: "0x40bDBA20fc031042d0b4cF804caDe6109DBEb33C",
-        dynamicFlywheel: null,
       },
     ],
     // TUSD
@@ -263,7 +255,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibTUSD Vault",
         strategyAddress: "",
-        dynamicFlywheel: null,
       },
     ],
     // BTCB
@@ -271,7 +262,6 @@ export const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Alpaca Finance ibBTCB Vault",
         strategyAddress: "0xE2f3563b4E7d19bcC3B1F63e61D4D29f6dD7e593",
-        dynamicFlywheel: null,
       },
     ],
   },

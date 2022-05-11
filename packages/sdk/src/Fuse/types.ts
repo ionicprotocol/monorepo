@@ -213,13 +213,13 @@ export interface FusePool {
   timestampPosted: number;
 }
 
-type PluginConfig = {
+export type PluginConfig = {
   strategyName: string;
   strategyAddress: string;
-  dynamicFlywheel: {
+  dynamicFlywheel?: {
     address: string;
     rewardToken: string;
-  } | null;
+  };
 };
 
 export type AssetPluginConfig = {
