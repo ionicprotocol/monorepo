@@ -14,6 +14,8 @@ export {
   NativePricedFuseAsset,
   FuseAsset,
   InterestRateModelType,
+  DelegateContractName,
+  AssetPluginConfig,
 } from "./Fuse/types";
 export { SupportedChains } from "./network";
 export { filterOnlyObjectProperties } from "./Fuse/utils";

@@ -37,13 +37,17 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
       )) as RewardsDistributorDelegate;
     }
 
-    addRewardsDistributorToPool(rewardsDistributorAddress: string, poolAddress: string, options: { from: string }) {
+    async addRewardsDistributorToPool(
+      rewardsDistributorAddress: string,
+      poolAddress: string,
+      options: { from: string }
+    ) {
       const comptrollerInstance = new Contract(
         poolAddress,
         this.artifacts.Comptroller.abi,
         this.provider.getSigner(options.from)
       ) as Comptroller;
-      return comptrollerInstance.functions._addRewardsDistributor(rewardsDistributorAddress);
+      return await comptrollerInstance.functions._addRewardsDistributor(rewardsDistributorAddress);
     }
 
     async fundRewardsDistributor(rewardsDistributorAddress: string, amount: BigNumberish, options: { from: string }) {

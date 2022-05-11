@@ -10,7 +10,7 @@ import {
   FuseSafeLiquidator,
   SimplePriceOracle,
 } from "../lib/contracts/typechain";
-import { cERC20Conf, ChainLiquidationConfig, Fuse, liquidationConfigDefaults } from "../src";
+import { cERC20Conf, ChainLiquidationConfig, liquidationConfigDefaults } from "../src";
 import { DeployedAsset } from "./utils/pool";
 import { liquidateAndVerify, resetPriceOracle } from "./utils/setup";
 import { getOrCreateFuse } from "./utils/fuseSdk";

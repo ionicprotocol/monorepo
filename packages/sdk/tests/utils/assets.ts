@@ -1,6 +1,7 @@
-import { cERC20Conf } from "../../src";
-import { bscAssets } from "../../chainDeploy";
+import { cERC20Conf, DelegateContractName } from "../../src";
+import { Asset, bscAssets } from "../../chainDeploy";
 import { constants } from "ethers";
+import { getOrCreateFuse } from "./fuseSdk";
 
 export const getAssetsConf = async (
   comptroller,
@@ -106,5 +107,57 @@ export const getBscAssetsConf = async (comptroller, fuseFeeDistributor, interest
     adminFee: 0,
     bypassPriceFeedCheck: true,
   };
-  return [bnbConf, btcConf, busdConf];
+  const erc4626Assets = await getBscPluginAssetsConf(
+    comptroller,
+    fuseFeeDistributor,
+    interestRateModelAddress,
+    bscAssets
+  );
+  return [bnbConf, btcConf, busdConf, ...erc4626Assets];
+};
+
+export const getBscPluginAssetsConf = async (
+  comptroller,
+  fuseFeeDistributor,
+  interestRateModelAddress,
+  bscAssets: Asset[]
+) => {
+  const beth = bscAssets.find((b) => b.symbol === "ETH");
+  const bomb = bscAssets.find((b) => b.symbol === "BOMB");
+  const sdk = await getOrCreateFuse();
+
+  const alpacaBusdPlugin = sdk.chainPlugins[beth.underlying][0];
+  const bombPlugin = sdk.chainPlugins[bomb.underlying][0];
+
+  const bethConf: cERC20Conf = {
+    delegateContractName: DelegateContractName.CErc20PluginDelegate,
+    underlying: beth.underlying,
+    comptroller,
+    fuseFeeDistributor,
+    interestRateModel: interestRateModelAddress,
+    name: `alpaca ${beth.name}`,
+    symbol: `m${beth.symbol}`,
+    admin: "true",
+    collateralFactor: 75,
+    reserveFactor: 15,
+    adminFee: 0,
+    bypassPriceFeedCheck: true,
+    plugin: alpacaBusdPlugin.strategyAddress,
+  };
+  const bombConf: cERC20Conf = {
+    delegateContractName: DelegateContractName.CErc20PluginDelegate,
+    underlying: bomb.underlying,
+    comptroller,
+    fuseFeeDistributor,
+    interestRateModel: interestRateModelAddress,
+    name: bomb.name,
+    symbol: bomb.symbol,
+    admin: "true",
+    collateralFactor: 75,
+    reserveFactor: 15,
+    adminFee: 0,
+    bypassPriceFeedCheck: true,
+    plugin: bombPlugin.strategyAddress,
+  };
+  return [bethConf, bombConf];
 };
