@@ -27,7 +27,6 @@ import { tradeAssetForAsset } from "./utils/setup";
       signer: deployer,
       poolName: "Pool-Fund-Operations-Test",
     });
-
     const assets = await poolHelpers.getPoolAssets(poolAddress, sdk.contracts.FuseFeeDistributor.address);
     await setUpPriceOraclePrices(assets.assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(

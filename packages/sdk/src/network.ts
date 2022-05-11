@@ -159,10 +159,10 @@ export const chainPluginConfig: ChainPlugins = {
       },
     ],
     // TOUCH
-    "0x54572129Fd040C19F9ab57A1a152e95C1fEC0dF0": [
+    "0xf9a089C918ad9c484201E7d328C0d29019997117": [
       {
         strategyName: "Mock Touch Strategy",
-        strategyAddress: "0xdC206B5684A85ddEb4e2e1Ca48A1fCb5C3d31Ef3",
+        strategyAddress: "0x56385f347e18452C00801c9E5029E7658B017EB5",
       },
     ],
   },
@@ -223,7 +223,7 @@ export const chainPluginConfig: ChainPlugins = {
       },
     ],
     // ETH
-    "0x2170ed0880ac9a755fd29b2688956bd959f933f8": [
+    "0x2170Ed0880ac9A755fd29B2688956BD959F933F8": [
       {
         strategyName: "Alpaca Finance ibETH Vault",
         strategyAddress: "0xCBE401B8874A1C30163740f5f45156088Eb21481",
