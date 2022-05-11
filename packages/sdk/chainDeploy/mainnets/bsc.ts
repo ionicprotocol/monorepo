@@ -27,7 +27,7 @@ export const assets: Asset[] = [
   },
   {
     symbol: "DAI",
-    underlying: "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
+    underlying: "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3",
     name: "Binance DAI",
     decimals: 18,
   },
@@ -134,9 +134,9 @@ export const assets: Asset[] = [
   },
   // Bomb
   {
-    symbol: "xBOMB",
-    underlying: "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b",
-    name: "xBOMB",
+    symbol: "BOMB",
+    underlying: "0x522348779DCb2911539e76A1042aA922F9C47Ee3",
+    name: "BOMB",
     decimals: 18,
   },
   // Jarvis
@@ -179,7 +179,7 @@ export const deployConfig: ChainDeployConfig = {
       // 0x
       strategy: "BeefyERC4626",
       name: "BOMBBTCLP",
-      underlying: "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6", // BOMB-BTC LP
+      underlying: "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6", // BOMB-BTC PCS LP
       otherParams: ["0x94e85b8e050f3f281cb9597cc0144f1f7af1fe9b"], // Beefy Vault Address
     },
     {
@@ -259,14 +259,14 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "AlpacaERC4626",
-      underlying: "0x2170ed0880ac9a755fd29b2688956bd959f933f8", // ETH
+      underlying: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8", // ETH
       otherParams: ["0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE"], // ibETH
       name: "ETH",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
-      underlying: "0xe9e7cea3dedca5984780bafc599bd69add087d56", // BUSD
+      underlying: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", // BUSD
       otherParams: ["0x7C9e73d4C71dae564d41F78d56439bB4ba87592f"], // ibBUSD
       name: "BUSD",
     },
@@ -442,8 +442,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
   console.log("SimplePriceOracle: ", simplePO.address);
-  ////
 
+  //// Liquidator Redemption Strategies
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,
     args: [],
@@ -465,6 +465,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("XBombLiquidator: ", xbombLiquidator.address);
 
   /// jBRL->BUSD
+  // TODO in the addresses provider?
   let synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
   let expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
   const jarvisSynthereumLiquidator = await deployments.deploy("JarvisSynthereumLiquidator", {
