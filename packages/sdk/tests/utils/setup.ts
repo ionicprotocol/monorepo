@@ -125,7 +125,7 @@ export const setUpLiquidation = async ({ poolName }) => {
     rando
   )) as FuseSafeLiquidator;
 
-  [poolAddress] = await createPool({ poolName });
+  [poolAddress] = await createPool({ poolName, signer: deployer });
   const assets = await getPoolAssets(poolAddress, fuseFeeDistributor.address);
 
   erc20One = assets.assets.find((a) => a.underlying !== constants.AddressZero); // find first one
@@ -151,7 +151,7 @@ export const setUpLiquidation = async ({ poolName }) => {
   tx = await simpleOracle.setDirectPrice(erc20Two.underlying, erc20TwoOriginalUnderlyingPrice);
   await tx.wait();
 
-  const deployedAssets = await deployAssets(assets.assets, bob);
+  const deployedAssets = await deployAssets(assets.assets.slice(0, -1), deployer);
 
   deployedEth = deployedAssets.find((a) => a.underlying === constants.AddressZero);
   deployedErc20One = deployedAssets.find((a) => a.underlying === erc20One.underlying);

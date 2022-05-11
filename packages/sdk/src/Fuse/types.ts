@@ -6,7 +6,7 @@ import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { FuseBase } from ".";
 import { SupportedChains } from "../network";
 
-export type GConstructor<T = {}> = new (...args: any[]) => T;
+export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
 
 export type MinifiedContracts = {
@@ -81,11 +81,12 @@ export type ChainDeployment = {
 
 export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
 
-export type DelegateContractName =
-  | "CErc20Delegate"
-  | "CEtherDelegate"
-  | "CErc20PluginDelegate"
-  | "CErc20PluginRewardsDelegate";
+export enum DelegateContractName {
+  CErc20Delegate = "CErc20Delegate",
+  CEtherDelegate = "CEtherDelegate",
+  CErc20PluginDelegate = "CErc20PluginDelegate",
+  CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
+}
 
 export type cERC20Conf = {
   delegateContractName?: DelegateContractName;

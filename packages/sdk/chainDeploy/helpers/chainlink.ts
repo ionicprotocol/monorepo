@@ -1,6 +1,7 @@
 import { providers } from "ethers";
-import { ChainlinkPriceOracleV2 } from "../../lib/contracts/typechain/ChainlinkPriceOracleV2";
 import { Asset, ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "./types";
+import { ChainlinkPriceOracleV2 } from "../../lib/contracts/typechain/ChainlinkPriceOracleV2";
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 
 export const deployChainlinkOracle = async ({
   ethers,
@@ -40,6 +41,10 @@ export const deployChainlinkOracle = async ({
   await tx.wait();
 
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+
+  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+  tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
+  await tx.wait();
 
   return { cpo: cpo, chainLinkv2: chainLinkv2 };
 };

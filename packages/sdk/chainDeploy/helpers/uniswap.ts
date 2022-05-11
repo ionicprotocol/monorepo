@@ -1,4 +1,5 @@
 import { UniswapTwapPriceOracleV2Factory } from "../../lib/contracts/typechain/UniswapTwapPriceOracleV2Factory";
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { constants } from "ethers";
 import { UniswapDeployFnParams } from "./types";
 
@@ -86,4 +87,8 @@ export const deployUniswapOracle = async ({
       `Master Price Oracle updated for tokens ${updateUnderlyings.join(", ")} with oracles ${updateOracles.join(", ")}`
     );
   }
+
+  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+  let tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
+  await tx.wait();
 };

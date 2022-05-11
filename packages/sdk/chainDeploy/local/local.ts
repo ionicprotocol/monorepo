@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams } from "../helpers/types";
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
@@ -116,5 +117,23 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   });
   await deployERC4626Plugin({ ethers, getNamedAccounts, deployments, run, deployConfig, dynamicFlywheels });
 
+  /// Addresses Provider - set plugins
+  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+  for (const pluginConfig of deployConfig.plugins) {
+    if (pluginConfig) {
+      const plugin = await ethers.getContract(`${pluginConfig.strategy}_${pluginConfig.name}`, deployer);
+      tx = await addressesProvider.setPlugin(pluginConfig.underlying, plugin.address, `${pluginConfig.strategy}_${pluginConfig.name}`);
+      await tx.wait();
+    }
+  }
+
+  /// Addresses Provider - set flywheel rewards
+  for (const dynamicFlywheel of deployConfig.dynamicFlywheels) {
+    if (dynamicFlywheel) {
+      const flywheelRewards = await ethers.getContract(`FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`, deployer);
+      tx = await addressesProvider.setFlywheelRewards(dynamicFlywheel.rewardToken, flywheelRewards.address, `FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`);
+      await tx.wait();
+    }
+  }
   ////
 };
