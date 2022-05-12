@@ -19,16 +19,11 @@ ARG TEMP_DEPS_DIR
 COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
 
-COPY docker/hardhat/start-bsc-node.sh ./
-COPY docker/hardhat/hh-test.sh ./
-COPY docker/hardhat/*.sh ./
-
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
 
 RUN touch /tmp/build/yarn.lock
-RUN chmod +x *.sh
 
 # ----- Install dependencies -----
 # Install dependencies exactly as in the yarn.lock file - no updates.
