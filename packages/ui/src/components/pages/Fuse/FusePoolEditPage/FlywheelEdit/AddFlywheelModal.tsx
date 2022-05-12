@@ -15,11 +15,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Comptroller } from '@midas-capital/sdk/dist/cjs/typechain/Comptroller';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
-
 import ClipboardValue from '@components/shared/ClipboardValue';
 import { ModalDivider } from '@components/shared/Modal';
 import { useRari } from '@context/RariContext';
@@ -29,6 +24,9 @@ import { AddFlywheelModalProps, AddFlywheelProps } from '@type/ComponentPropsTyp
 import { Center } from '@utils/chakraUtils';
 import { createComptroller } from '@utils/createComptroller';
 import { shortAddress } from '@utils/shortAddress';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
   const { fuse } = useRari();
@@ -50,7 +48,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
     if (!flywheel) return;
     try {
       setIsAdding(true);
-      const comptroller = createComptroller(comptrollerAddress, fuse) as Comptroller;
+      const comptroller = createComptroller(comptrollerAddress, fuse);
       const tx = await comptroller.functions._addRewardsDistributor(flywheel?.address, {
         from: accountData?.address,
       });
