@@ -1,9 +1,11 @@
-name: Push - publish package
+name: SDK/Push - Publish
 
 on:
   push:
     branches:
       - main
+    paths:
+      - "packages/sdk/**"
 
 jobs:
   build-and-test-local:
@@ -20,31 +22,35 @@ jobs:
         with:
           version: nightly
 
-      - name: Install Forge dependencies
-        run: forge install
-
       - uses: actions/setup-node@v2
         with:
           node-version: 16.x
           cache: "npm"
 
-      - name: Install NPM packages
-        run: npm install
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install
+
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          name: Install Forge dependencies
+          cmd: workspace @midas-capital/sdk forge install
+
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: workspace @midas-capital/sdk build
 
       - name: Run build
         run: npm run build
 
-      - name: Run hardhat tests
-        run: npm run test:hardhat
-
-      - name: Run forge tests
-        run: echo "do it later"
-        # run: npm run test:forge
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          name: Run hardhat tests
+          cmd: workspace @midas-capital/sdk test:hardhat
 
   release:
     needs:
       - build-and-test-local
-      # - build-and-test-local-forge
     runs-on: ubuntu-latest
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -61,8 +67,20 @@ jobs:
         with:
           node-version: 16.x
           cache: "npm"
-      - run: npm install
-      - run: npm run build
+
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install
+
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          name: Install Forge dependencies
+          cmd: workspace @midas-capital/sdk forge install
+
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: workspace @midas-capital/sdk build
+
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
