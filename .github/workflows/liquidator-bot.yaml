@@ -8,7 +8,7 @@ on:
       - "packages/fuse-liquidator-bot/**"
       - "packages/sdk/**"
   pull_request:
-    branches: [main]
+    branches: [main, development]
     paths:
       - ".github/workflows/liquidator-bot.yaml"
       - "packages/fuse-liquidator-bot/**"
