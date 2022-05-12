@@ -1,0 +1,26 @@
+name: UI/PR - build and test
+
+on:
+  pull_request:
+    branches: [main, staging, development]
+    paths:
+      - "packages/ui/**"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: "npm"
+          cache-dependency-path: package.json
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: install
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: workspace @midas-capital/ui lint
+      - uses: borales/actions-yarn@v2.3.0
+        with:
+          cmd: workspace @midas-capital/ui build
