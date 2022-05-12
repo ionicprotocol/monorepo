@@ -18,10 +18,10 @@ services:
 
   liquidator-bot:
     build:
-      dockerfile: docker/liquidation/Dockerfile
+      dockerfile: docker/liquidator/Dockerfile
       context: .
     env_file:
-      - docker/liquidation/liquidator.env
+      - docker/liquidator/liquidator.env
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
