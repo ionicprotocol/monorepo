@@ -12,5 +12,11 @@
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
     "ts-node": "^10.7.0"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.15"
+  },
+  "scripts": {
+    "build:all": "yarn workspaces foreach -pt --exclude @connext/nxtp-subgraph run build"
   }
 }

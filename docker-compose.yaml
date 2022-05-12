@@ -2,47 +2,42 @@ version: '3.8'
 
 services:
   hardhat:
-    image: contracts
-    environment:
-      - MNEMONIC=${MNEMONIC}
-      - FORK_URL_BSC=${FORK_URL_BSC}
-      - FORK_CHAIN_ID=56
-      - FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER}
     build:
-      dockerfile: Dockerfile.test
+      dockerfile: docker/hardhat/Dockerfile
       context: .
-    entrypoint: ./start-bsc-node.sh
+    environment:
+      - MNEMONIC
+      - FORK_URL_BSC
+      - FORK_CHAIN_ID=56
+      - FORK_BLOCK_NUMBER
     ports:
       - "8545:8545"
     network_mode: host
 
   liquidator-bot:
     build:
-      dockerfile: docker/liquidation/Dockerfile
+      dockerfile: docker/liquidator/Dockerfile
       context: .
     env_file:
-      - docker/liquidation/liquidator.env
+      - docker/liquidator/liquidator.env
+    environment:
+      - ETHEREUM_ADMIN_ACCOUNT
+      - ETHEREUM_ADMIN_PRIVATE_KEY
+      - WEB3_HTTP_PROVIDER_URL=http://localhost:8545
+    network_mode: host
+    restart: always
+
+  twap-bot:
+    build:
+      dockerfile: docker/twap/Dockerfile
+      context: .
+    depends_on:
+      - hardhat
+    env_file:
+      - docker/twap/twap.env
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
       - WEB3_HTTP_PROVIDER_URL=http://0.0.0.0:8545
-    entrypoint: ./hh-bsc-test.sh
     network_mode: host
-
-  twap-bot:
-    build:
-      dockerfile: docker/twap
-      context: .
-    depends_on:
-      - hardhat
-    image: contracts
-    env_file:
-      - docker/twap/twap.env
-    environment:
-      - ETH_PROVIDER_URL=http://0.0.0.0:8545
-      - MNEMONIC=${MNEMONIC}
-      - FORK_URL_BSC=${FORK_URL_BSC}
-      - FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER}
-      - FORK_CHAIN_ID=56
-    entrypoint: ./hh-bsc-test.sh
-    network_mode: host
+    restart: always
