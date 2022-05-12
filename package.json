@@ -12,5 +12,8 @@
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
     "ts-node": "^10.7.0"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.15"
   }
 }
