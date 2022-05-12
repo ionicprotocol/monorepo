@@ -1,12 +1,21 @@
-name: Create and publish a Docker image
+name: Create and publish a Docker image for TWAP
 
 on:
   push:
     branches: [main]
+    paths:
+      - ".github/workflows/twap-bot.yaml"
+      - "packages/fuse-twap-bot/**"
+      - "packages/sdk/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/twap-bot.yaml"
+      - "packages/fuse-twap-bot/**"
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: midas-protocol/twap-bot
+  IMAGE_NAME: midas-protocol/twap
 
 jobs:
   build-and-push-image:
@@ -37,7 +46,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: packages/fuse-twap-bot
+          context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          file: docker/twap/Dockerfile

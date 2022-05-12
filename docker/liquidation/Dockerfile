@@ -1,6 +1,11 @@
 FROM node:16.13-alpine as base
 
+FROM ghcr.io/foundry-rs/foundry:nightly-4604a420c5e23d206ec949219171cb3701e54e28 as foundry
+
+
 FROM node as build
+
+COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 RUN apt update
 RUN apt install git
@@ -18,21 +23,23 @@ ARG TEMP_DEPS_DIR
 # with that same directory structure. build.sh does this.
 COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
+
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
-COPY packages/fuse-twap-bot/package.json /tmp/build/packages/fuse-twap-bot/
+COPY packages/fuse-liquidator-bot/package.json /tmp/build/packages/fuse-liquidator-bot/
+
 RUN touch /tmp/build/yarn.lock
 
 # ----- Install dependencies -----
 # Install dependencies exactly as in the yarn.lock file - no updates.
-RUN SKIP_FORGE=1 yarn install
+RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
-COPY packages/fuse-twap-bot /tmp/build/packages/fuse-twap-bot
+COPY packages/fuse-liquidator-bot /tmp/build/packages/fuse-liquidator-bot
 
-# ----- Lint, test and build -----
-RUN SKIP_FORGE=1 yarn build
+# ----- build -----
+RUN yarn build:all
 
 # ----------------------------------------
 # Copy files to the deployment image.
@@ -48,28 +55,9 @@ COPY --from=build --chown=node:node /tmp/build /home/node
 # This user is created in the base image with uid and gid = 1000.
 USER node
 
-WORKDIR /home/node/packages/fuse-twap-bot
+WORKDIR /home/node/packages/fuse-liquidator-bot
 
 EXPOSE 8080
 
 CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development"]
 
-
-
-#FROM base AS dependencies
-#
-#WORKDIR /usr/src/app
-#
-#COPY package.json ./
-#COPY ecosystem.config.js ./
-#
-#
-#RUN npm set progress=false && \
-#    npm config set depth 0 && \
-#    npm install --only=production && \
-#    npm install pm2 -g
-#
-#COPY --from=base /usr/src/app/build ./build
-#
-#
-#CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development"]
