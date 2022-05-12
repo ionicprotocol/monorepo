@@ -2,16 +2,14 @@ version: '3.8'
 
 services:
   hardhat:
-    image: contracts
-    environment:
-      - MNEMONIC=${MNEMONIC}
-      - FORK_URL_BSC=${FORK_URL_BSC}
-      - FORK_CHAIN_ID=56
-      - FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER}
     build:
-      dockerfile: Dockerfile.test
+      dockerfile: docker/hardhat/Dockerfile
       context: .
-    entrypoint: ./start-bsc-node.sh
+    environment:
+      - MNEMONIC
+      - FORK_URL_BSC
+      - FORK_CHAIN_ID=56
+      - FORK_BLOCK_NUMBER
     ports:
       - "8545:8545"
     network_mode: host
@@ -25,8 +23,9 @@ services:
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
-      - WEB3_HTTP_PROVIDER_URL=http://0.0.0.0:8545
+      - WEB3_HTTP_PROVIDER_URL=http://localhost:8545
     network_mode: host
+    restart: always
 
   twap-bot:
     build:
@@ -37,9 +36,8 @@ services:
     env_file:
       - docker/twap/twap.env
     environment:
-      - ETH_PROVIDER_URL=http://0.0.0.0:8545
-      - MNEMONIC=${MNEMONIC}
-      - FORK_URL_BSC=${FORK_URL_BSC}
-      - FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER}
-      - FORK_CHAIN_ID=56
+      - ETHEREUM_ADMIN_ACCOUNT
+      - ETHEREUM_ADMIN_PRIVATE_KEY
+      - WEB3_HTTP_PROVIDER_URL=http://0.0.0.0:8545
     network_mode: host
+    restart: always
