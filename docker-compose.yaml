@@ -30,11 +30,10 @@ services:
 
   twap-bot:
     build:
-      dockerfile: docker/twap
+      dockerfile: docker/twap/Dockerfile
       context: .
     depends_on:
       - hardhat
-    image: contracts
     env_file:
       - docker/twap/twap.env
     environment:
@@ -43,5 +42,4 @@ services:
       - FORK_URL_BSC=${FORK_URL_BSC}
       - FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER}
       - FORK_CHAIN_ID=56
-    entrypoint: ./hh-bsc-test.sh
     network_mode: host
