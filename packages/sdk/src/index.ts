@@ -11,9 +11,12 @@ export {
   OracleConf,
   InterestRateModel,
   FusePoolData,
-  USDPricedFuseAsset,
+  NativePricedFuseAsset,
   FuseAsset,
   InterestRateModelType,
+  DelegateContractName,
+  AssetPluginConfig,
+  PluginConfig,
 } from "./Fuse/types";
 export { SupportedChains } from "./network";
 export { filterOnlyObjectProperties } from "./Fuse/utils";

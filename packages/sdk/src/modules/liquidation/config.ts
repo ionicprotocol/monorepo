@@ -1,5 +1,6 @@
 import { BigNumber, constants } from "ethers";
 import { FuseBase } from "../../Fuse";
+import { SupportedChains } from "../../network";
 
 export enum LiquidationStrategy {
   DEFAULT = "DEFAULT",
@@ -15,7 +16,7 @@ export enum LiquidationKind {
 
 export const defaults = (fuse: FuseBase) => {
   return {
-    56: {
+    [SupportedChains.bsc]: {
       SUPPORTED_OUTPUT_CURRENCIES: [
         "0x0000000000000000000000000000000000000000",
         "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
@@ -30,7 +31,7 @@ export const defaults = (fuse: FuseBase) => {
       LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
       MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
     },
-    97: {
+    [SupportedChains.chapel]: {
       SUPPORTED_OUTPUT_CURRENCIES: [
         "0x0000000000000000000000000000000000000000",
         "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
@@ -45,7 +46,38 @@ export const defaults = (fuse: FuseBase) => {
       LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
       MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
     },
-    1337: {
+    [SupportedChains.evmos_testnet]: {
+      SUPPORTED_OUTPUT_CURRENCIES: [
+        "0x0000000000000000000000000000000000000000",
+        "0x0b67B0A0Ed150B9F06e0ee90D2f1d3c4b3016D5D",
+      ],
+      SUPPORTED_INPUT_CURRENCIES: [
+        "0x0000000000000000000000000000000000000000",
+        "0x0b67B0A0Ed150B9F06e0ee90D2f1d3c4b3016D5D",
+      ],
+      LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
+      MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    },
+    // TODO: fix these
+    [SupportedChains.moonbase_alpha]: {
+      SUPPORTED_OUTPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
+      SUPPORTED_INPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
+      LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
+      MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    },
+    [SupportedChains.moonbeam]: {
+      SUPPORTED_OUTPUT_CURRENCIES: [
+        "0x0000000000000000000000000000000000000000",
+        "0xAcc15dC74880C9944775448304B263D191c6077F", // WGLMR
+      ],
+      SUPPORTED_INPUT_CURRENCIES: [
+        "0x0000000000000000000000000000000000000000",
+        "0xAcc15dC74880C9944775448304B263D191c6077F", // WGLMR
+      ],
+      LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
+      MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    },
+    [SupportedChains.ganache]: {
       SUPPORTED_OUTPUT_CURRENCIES: [
         "0x0000000000000000000000000000000000000000",
         fuse.chainDeployment.TOUCHToken ? fuse.chainDeployment.TOUCHToken.address : null,
