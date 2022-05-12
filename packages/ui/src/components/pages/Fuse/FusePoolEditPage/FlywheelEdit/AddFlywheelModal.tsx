@@ -15,6 +15,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import React, { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
+
 import ClipboardValue from '@components/shared/ClipboardValue';
 import { ModalDivider } from '@components/shared/Modal';
 import { useRari } from '@context/RariContext';
@@ -24,9 +28,6 @@ import { AddFlywheelModalProps, AddFlywheelProps } from '@type/ComponentPropsTyp
 import { Center } from '@utils/chakraUtils';
 import { createComptroller } from '@utils/createComptroller';
 import { shortAddress } from '@utils/shortAddress';
-import React, { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
   const { fuse } = useRari();
