@@ -15,7 +15,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Comptroller } from '@midas-capital/sdk/dist/cjs/typechain/Comptroller';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -50,7 +49,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
     if (!flywheel) return;
     try {
       setIsAdding(true);
-      const comptroller = createComptroller(comptrollerAddress, fuse) as Comptroller;
+      const comptroller = createComptroller(comptrollerAddress, fuse);
       const tx = await comptroller.functions._addRewardsDistributor(flywheel?.address, {
         from: accountData?.address,
       });
