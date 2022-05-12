@@ -2402,6 +2402,64 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@midas-capital/ui@workspace:packages/ui":
+  version: 0.0.0-use.local
+  resolution: "@midas-capital/ui@workspace:packages/ui"
+  dependencies:
+    "@ajna/pagination": ^1.4.17
+    "@chakra-ui/cli": ^1.9.0
+    "@chakra-ui/icons": ^1.1.7
+    "@chakra-ui/react": ^1.8.8
+    "@emotion/react": ^11.9.0
+    "@emotion/styled": ^11.8.1
+    "@ethersproject/contracts": ^5.6.0
+    "@ethersproject/providers": ^5.6.2
+    "@metamask/jazzicon": ^2.0.0
+    "@midas-capital/sdk": "workspace:*"
+    "@testing-library/react": ^12.1.4
+    "@types/node": 17.0.23
+    "@types/react": ^17.0.44
+    "@types/react-datepicker": ^4.4.0
+    "@types/react-dom": ^17.0.15
+    "@typescript-eslint/eslint-plugin": ^5.17.0
+    "@typescript-eslint/parser": ^5.17.0
+    "@walletconnect/web3-provider": ^1.7.7
+    "@web3-react/core": ^6.1.9
+    "@web3-react/injected-connector": ^6.0.7
+    "@web3-react/walletconnect-connector": ^6.2.13
+    apexcharts: ^3.34.0
+    axios: ^0.26.1
+    eslint: ^8.13.0
+    eslint-config-next: ^12.1.2
+    eslint-config-prettier: ^8.5.0
+    eslint-import-resolver-typescript: ^2.7.0
+    eslint-plugin-import: ^2.25.4
+    eslint-plugin-prettier: ^4.0.0
+    eslint-plugin-react: ^7.29.4
+    ethers: ^5.6.2
+    framer-motion: ^6.2.8
+    fuse.js: ^6.5.3
+    logrocket: ^2.2.1
+    mathjs: ^10.4.2
+    next: ^12.1.4
+    next-i18next: ^10.5.0
+    node-vibrant: ^3.1.6
+    prettier: 2.6.2
+    react: 17.0.2
+    react-apexcharts: ^1.4.0
+    react-datepicker: ^4.7.0
+    react-dom: 17.0.2
+    react-error-boundary: ^3.1.4
+    react-i18next: ^11.16.2
+    react-icons: ^4.3.1
+    react-query: ^3.34.19
+    react-spinners: ^0.11.0
+    typescript: 4.6.3
+    wagmi: ^0.3.5
+    yup: ^0.32.11
+  languageName: unknown
+  linkType: soft
+
 "@next/env@npm:12.1.6":
   version: 12.1.6
   resolution: "@next/env@npm:12.1.6"
@@ -8032,7 +8090,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
+  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
   languageName: node
   linkType: hard
 
@@ -11912,64 +11970,6 @@ __metadata:
   checksum: 22bfa8553f92c7d95afff6de0aeb2aecf750680d41b8c72b02098ccc5bbbb0a384380ff539292dbd3788f5dfc298682f9d38a2b4c101f5ee2c9471d53934c5fa
   languageName: node
   linkType: hard
-
-"midas-ui@workspace:packages/ui":
-  version: 0.0.0-use.local
-  resolution: "midas-ui@workspace:packages/ui"
-  dependencies:
-    "@ajna/pagination": ^1.4.17
-    "@chakra-ui/cli": ^1.9.0
-    "@chakra-ui/icons": ^1.1.7
-    "@chakra-ui/react": ^1.8.8
-    "@emotion/react": ^11.9.0
-    "@emotion/styled": ^11.8.1
-    "@ethersproject/contracts": ^5.6.0
-    "@ethersproject/providers": ^5.6.2
-    "@metamask/jazzicon": ^2.0.0
-    "@midas-capital/sdk": "workspace:*"
-    "@testing-library/react": ^12.1.4
-    "@types/node": 17.0.23
-    "@types/react": ^17.0.44
-    "@types/react-datepicker": ^4.4.0
-    "@types/react-dom": ^17.0.15
-    "@typescript-eslint/eslint-plugin": ^5.17.0
-    "@typescript-eslint/parser": ^5.17.0
-    "@walletconnect/web3-provider": ^1.7.7
-    "@web3-react/core": ^6.1.9
-    "@web3-react/injected-connector": ^6.0.7
-    "@web3-react/walletconnect-connector": ^6.2.13
-    apexcharts: ^3.34.0
-    axios: ^0.26.1
-    eslint: ^8.13.0
-    eslint-config-next: ^12.1.2
-    eslint-config-prettier: ^8.5.0
-    eslint-import-resolver-typescript: ^2.7.0
-    eslint-plugin-import: ^2.25.4
-    eslint-plugin-prettier: ^4.0.0
-    eslint-plugin-react: ^7.29.4
-    ethers: ^5.6.2
-    framer-motion: ^6.2.8
-    fuse.js: ^6.5.3
-    logrocket: ^2.2.1
-    mathjs: ^10.4.2
-    next: ^12.1.4
-    next-i18next: ^10.5.0
-    node-vibrant: ^3.1.6
-    prettier: 2.6.2
-    react: 17.0.2
-    react-apexcharts: ^1.4.0
-    react-datepicker: ^4.7.0
-    react-dom: 17.0.2
-    react-error-boundary: ^3.1.4
-    react-i18next: ^11.16.2
-    react-icons: ^4.3.1
-    react-query: ^3.34.19
-    react-spinners: ^0.11.0
-    typescript: 4.6.3
-    wagmi: ^0.3.5
-    yup: ^0.32.11
-  languageName: unknown
-  linkType: soft
 
 "miller-rabin@npm:^4.0.0":
   version: 4.0.1
