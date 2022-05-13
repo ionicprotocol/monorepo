@@ -25,7 +25,7 @@ export const deployConfig: ChainDeployConfig = {
       // 0xdC206B5684A85ddEb4e2e1Ca48A1fCb5C3d31Ef3
       strategy: "MockERC4626Dynamic",
       underlying: "", // TRIBE
-      flywheelIndex: 0,
+      flywheelIndices: [0],
       otherParams: [],
       name: "MockERC4626Dynamic",
     },
