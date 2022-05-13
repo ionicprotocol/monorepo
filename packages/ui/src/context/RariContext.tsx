@@ -17,10 +17,10 @@ import {
 import { useQueryClient } from 'react-query';
 import { Chain } from 'wagmi';
 
-import { useColors } from '@hooks/useColors';
-import { getScanUrlByChainId, NATIVE_TOKEN_DATA } from '@networkData/index';
-import { handleGenericError } from '@utils/errorHandling';
-import { initFuseWithProviders } from '@utils/web3Providers';
+import { useColors } from '@ui/hooks/useColors';
+import { getScanUrlByChainId, NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { initFuseWithProviders } from '@ui/utils/web3Providers';
 export interface RariContextData {
   fuse: Fuse;
   scanUrl: string | null;

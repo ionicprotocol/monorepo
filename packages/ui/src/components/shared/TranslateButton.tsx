@@ -1,7 +1,7 @@
 import { Select, SelectProps } from '@chakra-ui/react';
 import { useTranslation } from 'react-i18next';
 
-import { useColors } from '@hooks/useColors';
+import { useColors } from '@ui/hooks/useColors';
 
 export const LanguageSelect = (extraProps: SelectProps) => {
   const { i18n } = useTranslation();

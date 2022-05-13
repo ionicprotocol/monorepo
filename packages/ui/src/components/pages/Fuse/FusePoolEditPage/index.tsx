@@ -1,27 +1,27 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { useRari } from '@ui/context/RariContext';
+import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
+import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useColors } from '@ui/hooks/useColors';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useIsSemiSmallScreen } from '@ui/hooks/useIsSemiSmallScreen';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { Center, Column, RowOrColumn } from '@ui/utils/chakraUtils';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
 
-import FuseNavbar from '@components/pages/Fuse/FuseNavbar';
-import AssetConfiguration from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration';
-import AddAssetButton from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
-import AddAssetModal from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal';
-import FlywheelEdit from '@components/pages/Fuse/FusePoolEditPage/FlywheelEdit';
-import PoolConfiguration from '@components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
-import { AdminAlert } from '@components/shared/AdminAlert';
-import DashboardBox from '@components/shared/DashboardBox';
-import PageTransitionLayout from '@components/shared/PageTransitionLayout';
-import { useRari } from '@context/RariContext';
-import { useIsComptrollerAdmin } from '@hooks/fuse/useIsComptrollerAdmin';
-import { useAuthedCallback } from '@hooks/useAuthedCallback';
-import { useColors } from '@hooks/useColors';
-import { useFusePoolData } from '@hooks/useFusePoolData';
-import { useIsSemiSmallScreen } from '@hooks/useIsSemiSmallScreen';
-import { useUSDPrice } from '@hooks/useUSDPrice';
-import { Center, Column, RowOrColumn } from '@utils/chakraUtils';
+import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
+import AssetConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration';
+import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
+import AddAssetModal from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal';
+import FlywheelEdit from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit';
+import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
+import { AdminAlert } from '@ui/components/shared/AdminAlert';
+import DashboardBox from '@ui/components/shared/DashboardBox';
+import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 
 const FusePoolEditPage = memo(() => {
   const isMobile = useIsSemiSmallScreen();

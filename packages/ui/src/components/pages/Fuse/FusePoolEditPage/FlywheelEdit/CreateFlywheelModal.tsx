@@ -21,14 +21,14 @@ import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
-import { ModalDivider } from '@components/shared/Modal';
-import TransactionStepper from '@components/shared/TransactionStepper';
-import { useRari } from '@context/RariContext';
-import { useErrorToast, useSuccessToast } from '@hooks/useToast';
-import { useTokenData } from '@hooks/useTokenData';
-import SmallWhiteCircle from '@images/small-white-circle.png';
-import { CreateFlywheelModalProps, CreateFlywheelProps } from '@type/ComponentPropsType';
-import { Center } from '@utils/chakraUtils';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import TransactionStepper from '@ui/components/shared/TransactionStepper';
+import { useRari } from '@ui/context/RariContext';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import SmallWhiteCircle from '@ui/images/small-white-circle.png';
+import { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
+import { Center } from '@ui/utils/chakraUtils';
 
 const steps = [
   'Deploying Flywheel Core',

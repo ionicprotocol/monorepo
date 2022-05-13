@@ -1,14 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
-import * as React from 'react';
-import { useQuery } from 'react-query';
-
-import CaptionedStat from '@components/shared/CaptionedStat';
-import { ABILLY } from '@constants/index';
+import { ABILLY } from '@ui/constants/index';
 import {
   APYMovingStatProps,
   APYWithRefreshMovingProps,
   RefetchMovingStatProps,
-} from '@type/ComponentPropsType';
+} from '@ui/types/ComponentPropsType';
+import { useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
+import { useQuery } from 'react-query';
+
+import CaptionedStat from '@ui/components/shared/CaptionedStat';
 
 export function useInterval(callback: () => void, delay: number) {
   const intervalId = React.useRef<null | number>(null);

@@ -1,6 +1,9 @@
 // Chakra and UI
 import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
+import { useRari } from '@ui/context/RariContext';
+import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useColors } from '@ui/hooks/useColors';
 import {
   cERC20Conf,
   DelegateContractName,
@@ -8,6 +11,11 @@ import {
   NativePricedFuseAsset,
   PluginConfig,
 } from '@midas-capital/sdk';
+import { TokenData } from '@ui/types/ComponentPropsType';
+import { Center, Column } from '@ui/utils/chakraUtils';
+import { createComptroller, createCToken, createMasterPriceOracle } from '@ui/utils/createComptroller';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 import { BigNumber, constants, ContractFunction, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
@@ -16,23 +24,15 @@ import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { ModalDivider } from '@components/shared/Modal';
-import { PopoverTooltip } from '@components/shared/PopoverTooltip';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SliderWithLabel } from '@components/shared/SliderWithLabel';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, CTokenErrorCodes } from '@constants/index';
-import { useRari } from '@context/RariContext';
-import { useCTokenData } from '@hooks/fuse/useCTokenData';
-import { useColors } from '@hooks/useColors';
-import { TokenData } from '@type/ComponentPropsType';
-import { Center, Column } from '@utils/chakraUtils';
-import { createComptroller, createCToken, createMasterPriceOracle } from '@utils/createComptroller';
-import { handleGenericError } from '@utils/errorHandling';
-import { formatPercentage } from '@utils/formatPercentage';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ui/constants/index';
 
 const IRMChart = dynamic(
-  () => import('@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
+  () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
   {
     ssr: false,
   }

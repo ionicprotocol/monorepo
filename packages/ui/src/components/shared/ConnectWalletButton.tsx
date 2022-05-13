@@ -1,12 +1,12 @@
 import { Button, Center, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { useRari } from '@ui/context/RariContext';
+import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { shortAddress } from '@ui/utils/shortAddress';
 import React, { LegacyRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import AccountModal from '@components/shared/AccountModal';
-import Jazzicon from '@components/shared/Jazzicon';
-import { useRari } from '@context/RariContext';
-import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
-import { shortAddress } from '@utils/shortAddress';
+import AccountModal from '@ui/components/shared/AccountModal';
+import Jazzicon from '@ui/components/shared/Jazzicon';
 
 const ConnectWalletButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();

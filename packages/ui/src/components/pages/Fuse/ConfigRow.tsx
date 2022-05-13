@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Row } from '@utils/chakraUtils';
+import { Row } from '@ui/utils/chakraUtils';
 
 export const ConfigRow = ({
   children,

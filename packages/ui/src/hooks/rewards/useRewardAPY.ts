@@ -1,11 +1,11 @@
 // for supply-side rewards apy:
 // export const
 
-import { useRari } from '@context/RariContext';
-import { useTokensDataAsMap } from '@hooks/useTokenData';
-import { useUSDPrice } from '@hooks/useUSDPrice';
+import { useRari } from '@ui/context/RariContext';
+import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { Fuse } from '@midas-capital/sdk';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import {
   CTokenDataForRewards,
   CTokenIncentivesMap,
@@ -13,14 +13,14 @@ import {
   CTokensDataForRewardsMap,
   RewardsDataForMantissa,
   TokenPrices,
-} from '@type/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@utils/apyUtils';
+} from '@ui/types/ComponentPropsType';
+import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import {
   createComptroller,
   createCToken,
   createMasterPriceOracle,
   createOracle,
-} from '@utils/createComptroller';
+} from '@ui/utils/createComptroller';
 import { BigNumber, utils } from 'ethers';
 import { useQuery } from 'react-query';
 
