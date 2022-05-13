@@ -1,7 +1,6 @@
 import { constants } from "ethers";
-import { Erc4626PluginDeployFnParams, FuseFlywheelDeployFnParams } from "..";
+import { Erc4626PluginDeployFnParams, FuseFlywheelDeployFnParams, PluginConfig } from "..";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
-import ERC20 from "../../lib/contracts/out/ERC20.sol/ERC20.json";
 
 export const deployFlywheelWithDynamicRewards = async ({
   ethers,
@@ -53,6 +52,12 @@ export const deployFlywheelWithDynamicRewards = async ({
   return dynamicFlywheels;
 };
 
+function getFlywheelAddresses(pluginConfig: PluginConfig, dynamicFlywheels: string[]): string[] {
+  return pluginConfig.flywheelIndices
+      ? pluginConfig.flywheelIndices.map((index) => dynamicFlywheels[index])
+      : pluginConfig.flywheelAddresses;
+}
+
 export const deployERC4626Plugin = async ({
   getNamedAccounts,
   deployments,
@@ -63,17 +68,14 @@ export const deployERC4626Plugin = async ({
 
   for (const pluginConfig of deployConfig.plugins) {
     if (pluginConfig) {
-      const hasFlywheel =
-        pluginConfig.flywheelIndex === 0 || pluginConfig.flywheelIndex || pluginConfig.flywheelAddress;
+      const hasFlywheel = pluginConfig.flywheelIndices || pluginConfig.flywheelAddresses;
       let args = hasFlywheel
-        ? [
+          ? [
             pluginConfig.underlying,
-            pluginConfig.flywheelIndex === 0 || pluginConfig.flywheelIndex
-              ? dynamicFlywheels[pluginConfig.flywheelIndex]
-              : pluginConfig.flywheelAddress,
+            ...getFlywheelAddresses(pluginConfig, dynamicFlywheels),
             ...pluginConfig.otherParams,
           ]
-        : [pluginConfig.underlying, ...pluginConfig.otherParams];
+          : [pluginConfig.underlying, ...pluginConfig.otherParams];
 
       console.log(`Deploying ${pluginConfig.strategy}_${pluginConfig.name}`, args);
       const erc4626 = await deployments.deploy(`${pluginConfig.strategy}_${pluginConfig.name}`, {
