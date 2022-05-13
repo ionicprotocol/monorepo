@@ -191,6 +191,14 @@ export const deployConfig: ChainDeployConfig = {
     },
     {
       // 0x
+      strategy: "AutofarmERC4626",
+      underlying: "0xa184088a740c695E156F91f5cC086a06bb78b827", // AUTO
+      otherParams: ["0", "0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
+      flywheelIndices: [2],
+      name: "AUTO",
+    },
+    {
+      // 0x
       strategy: "DotDotLpERC4626",
       underlying: "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452", // 3EPS
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
@@ -209,17 +217,9 @@ export const deployConfig: ChainDeployConfig = {
       // 0x
       strategy: "DotDotLpERC4626",
       underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba", // ust3EPS
-      otherParams: ["0x0000", "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
       name: "ust3EPS",
-    },
-    {
-      // 0x
-      strategy: "AutofarmERC4626",
-      underlying: "0xa184088a740c695E156F91f5cC086a06bb78b827", // AUTO
-      otherParams: ["0", "0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
-      flywheelIndices: [2],
-      name: "AUTO",
     },
     // All of these vaults are depricated
     /*{

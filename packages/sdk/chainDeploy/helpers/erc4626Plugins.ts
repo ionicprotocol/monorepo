@@ -44,7 +44,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       const tx = await flywheelCore.setFlywheelRewards(fdr.address, { from: deployer });
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);
-      dynamicFlywheels.push(fdr.address);
+      dynamicFlywheels.push(fwc.address);
     } else {
       dynamicFlywheels.push(null);
     }
