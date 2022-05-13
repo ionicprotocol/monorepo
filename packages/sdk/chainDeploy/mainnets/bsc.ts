@@ -189,65 +189,66 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: ["0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b"], // xBOMB
       name: "BOMBxBOMB",
     },
-    // {
-    //   // 0x
-    //   strategy: "EllipsisERC4626",
-    //   underlying: "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452", // 3EPS
-    //   otherParams: ["0xcce949De564fE60e7f96C85e55177F8B9E4CF61b"], // lpTokenStaker
-    //   flywheelIndex: 0,
-    //   name: "3EPS",
-    // },
-    // {
-    //   // 0x
-    //   strategy: "EllipsisERC4626",
-    //   underlying: "0x0BC3a8239B0a63E945Ea1bd6722Ba747b9557e56", // dai3EPS
-    //   otherParams: ["0xcce949De564fE60e7f96C85e55177F8B9E4CF61b"], // lpTokenStaker
-    //   flywheelIndex: 0,
-    //   name: "dai3EPS",
-    // },
-    // {
-    //   // 0x
-    //   strategy: "EllipsisERC4626",
-    //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba", // ust3EPS
-    //   otherParams: ["0xcce949De564fE60e7f96C85e55177F8B9E4CF61b"], // lpTokenStaker
-    //   flywheelIndex: 0,
-    //   name: "ust3EPS",
-    // },
-    // TODO I cant tell if these vaults are depricated. Would need to speak with Autofarm to clear this up.
-    /* {
+    {
       // 0x
       strategy: "AutofarmERC4626",
       underlying: "0xa184088a740c695E156F91f5cC086a06bb78b827", // AUTO
-      otherParams: ["","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
-      flywheelIndex:1
+      otherParams: ["0", "0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
+      flywheelIndices: [2],
+      name: "AUTO",
     },
     {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452", // 3EPS
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "3EPS",
+    },
+    {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: "0x0BC3a8239B0a63E945Ea1bd6722Ba747b9557e56", // dai3EPS
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "dai3EPS",
+    },
+    {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba", // ust3EPS
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "ust3EPS",
+    },
+    // All of these vaults are depricated
+    /*{
       // 0x
       strategy: "AutofarmERC4626",
       underlying: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", // WBNB
       otherParams: [ "1","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
-      flywheelIndex:1
+      flywheelIndices: [2]
     },
     {
       // 0x
       strategy: "AutofarmERC4626",
       underlying: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", // BUSD
       otherParams: [ "2","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
-      flywheelIndex:1
+      flywheelIndices: [2]
     },
     {
       // 0x
       strategy: "AutofarmERC4626",
       underlying: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", // BTCB
       otherParams: [ "3","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
-      flywheelIndex:1
+     flywheelIndices: [2]
     },
     {
       // 0x
       strategy: "AutofarmERC4626",
       underlying: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8", // BETH
       otherParams: [ "4","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
-      flywheelIndex:1
+      flywheelIndices: [2]
     }, */
     {
       // 0x
@@ -300,6 +301,7 @@ export const deployConfig: ChainDeployConfig = {
     },
   ],
   dynamicFlywheels: [
+    { rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1", cycleLength: 1, name: "DDD" },
     { rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", cycleLength: 1, name: "EPX" },
     { rewardToken: "0xa184088a740c695E156F91f5cC086a06bb78b827", cycleLength: 1, name: "AUTOv2" },
   ],
