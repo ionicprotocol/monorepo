@@ -15,8 +15,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
-import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
+import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
+import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/typechain/FuseFlywheelCore';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
