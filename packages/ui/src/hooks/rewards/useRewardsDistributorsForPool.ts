@@ -1,4 +1,4 @@
-import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/RewardsDistributorDelegate';
+import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/typechain/RewardsDistributorDelegate';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
