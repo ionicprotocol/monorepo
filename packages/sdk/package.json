@@ -9,7 +9,7 @@
   "description": "",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
-  "types": "./dist/cjs/index.d.ts",
+  "types": "./dist/cjs/src/index.d.ts",
   "files": [
     "/dist/",
     "/artifacts",
@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "npm run setup && npm run typechain && npm run build:sdk",
-    "build:sdk": "npm run build:esm && npm run build:cjs",
+    "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
     "build:cjs": "tsc -p tsconfig-cjs.json",
     "compile": "hardhat compile",
