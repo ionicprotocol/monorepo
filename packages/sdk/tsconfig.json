@@ -6,6 +6,5 @@
     "allowJs": true,
     "target": "ES2015",
     "rootDirs": ["./src", "./tests"]
-  },
-  "include": ["src", "**/*.ts"]
+  }
 }
