@@ -18,7 +18,7 @@ import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
-import { AssetSettings } from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AssetSettings';
+import { AddAssetSettings } from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
 import { ModalDivider } from '@components/shared/Modal';
 import { useRari } from '@context/RariContext';
 import { useTokenData } from '@hooks/useTokenData';
@@ -96,7 +96,7 @@ const AddAsset = ({
       </VStack>
 
       {tokenData && (
-        <AssetSettings
+        <AddAssetSettings
           comptrollerAddress={comptrollerAddress}
           tokenData={tokenData}
           onSuccess={onSuccess}

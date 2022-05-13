@@ -12,6 +12,7 @@ const EditAssetSettings = ({
   comptrollerAddress,
   cTokenAddress,
   isPaused,
+  plugin,
 }: {
   tokenAddress: string;
   poolName: string;
@@ -19,6 +20,7 @@ const EditAssetSettings = ({
   comptrollerAddress: string;
   cTokenAddress: string;
   isPaused: boolean;
+  plugin?: string;
 }) => {
   const { data: tokenData, isLoading } = useTokenData(tokenAddress);
   if (isLoading) {
@@ -38,6 +40,7 @@ const EditAssetSettings = ({
         tokenData={tokenData}
         cTokenAddress={cTokenAddress}
         isPaused={isPaused}
+        deployedPlugin={plugin}
       />
     );
   }
