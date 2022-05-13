@@ -15,13 +15,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
-import { useColors } from '@ui/hooks/useColors';
-import { useTokenData } from '@ui/hooks/useTokenData';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { convertMantissaToAPR } from '@ui/utils/apyUtils';
-import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
-import { useIsMobile } from '@ui/utils/chakraUtils';
 import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -29,6 +23,12 @@ import { useTranslation } from 'react-i18next';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { FundOperationMode } from '@ui/constants/index';
+import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useColors } from '@ui/hooks/useColors';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { convertMantissaToAPR } from '@ui/utils/apyUtils';
+import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { useIsMobile } from '@ui/utils/chakraUtils';
 
 export const BorrowList = ({
   assets,

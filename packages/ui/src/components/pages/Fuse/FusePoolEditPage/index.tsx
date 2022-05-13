@@ -1,13 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
-import { useRari } from '@ui/context/RariContext';
-import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
-import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
-import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useIsSemiSmallScreen } from '@ui/hooks/useIsSemiSmallScreen';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { Center, Column, RowOrColumn } from '@ui/utils/chakraUtils';
 import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -22,6 +14,14 @@ import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolCo
 import { AdminAlert } from '@ui/components/shared/AdminAlert';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
+import { useRari } from '@ui/context/RariContext';
+import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
+import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useColors } from '@ui/hooks/useColors';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useIsSemiSmallScreen } from '@ui/hooks/useIsSemiSmallScreen';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { Center, Column, RowOrColumn } from '@ui/utils/chakraUtils';
 
 const FusePoolEditPage = memo(() => {
   const isMobile = useIsSemiSmallScreen();

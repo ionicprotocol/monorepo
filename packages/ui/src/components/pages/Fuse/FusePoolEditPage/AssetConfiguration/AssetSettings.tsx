@@ -1,9 +1,6 @@
 // Chakra and UI
 import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
-import { useRari } from '@ui/context/RariContext';
-import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
-import { useColors } from '@ui/hooks/useColors';
 import {
   cERC20Conf,
   DelegateContractName,
@@ -11,11 +8,6 @@ import {
   NativePricedFuseAsset,
   PluginConfig,
 } from '@midas-capital/sdk';
-import { TokenData } from '@ui/types/ComponentPropsType';
-import { Center, Column } from '@ui/utils/chakraUtils';
-import { createComptroller, createCToken, createMasterPriceOracle } from '@ui/utils/createComptroller';
-import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
 import { BigNumber, constants, ContractFunction, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
@@ -30,6 +22,18 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useColors } from '@ui/hooks/useColors';
+import { TokenData } from '@ui/types/ComponentPropsType';
+import { Center, Column } from '@ui/utils/chakraUtils';
+import {
+  createComptroller,
+  createCToken,
+  createMasterPriceOracle,
+} from '@ui/utils/createComptroller';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const IRMChart = dynamic(
   () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),

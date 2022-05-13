@@ -15,18 +15,7 @@ import {
   useColorMode,
   useToast,
 } from '@chakra-ui/react';
-import { useRari } from '@ui/context/RariContext';
-import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
-import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
-import { useColors } from '@ui/hooks/useColors';
-import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
-import { useTokenData } from '@ui/hooks/useTokenData';
 import { Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
-import { AmountProps } from '@ui/types/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -45,6 +34,17 @@ import {
   FundOperationMode,
   UserAction,
 } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
+import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { useColors } from '@ui/hooks/useColors';
+import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { AmountProps } from '@ui/types/ComponentPropsType';
+import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const AmountSelect = ({

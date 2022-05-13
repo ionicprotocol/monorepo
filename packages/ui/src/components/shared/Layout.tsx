@@ -1,11 +1,11 @@
 import { Container } from '@chakra-ui/react';
+import { ReactNode } from 'react';
+
+import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
 import { Column } from '@ui/utils/chakraUtils';
-import { ReactNode } from 'react';
-
-import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { loading } = useRari();

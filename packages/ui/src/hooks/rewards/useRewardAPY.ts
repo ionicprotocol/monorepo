@@ -1,10 +1,13 @@
 // for supply-side rewards apy:
 // export const
 
+import { Fuse } from '@midas-capital/sdk';
+import { BigNumber, utils } from 'ethers';
+import { useQuery } from 'react-query';
+
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { Fuse } from '@midas-capital/sdk';
 import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import {
   CTokenDataForRewards,
@@ -21,8 +24,6 @@ import {
   createMasterPriceOracle,
   createOracle,
 } from '@ui/utils/createComptroller';
-import { BigNumber, utils } from 'ethers';
-import { useQuery } from 'react-query';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (

@@ -1,10 +1,10 @@
 import { Avatar, AvatarGroup, AvatarGroupProps, AvatarProps } from '@chakra-ui/avatar';
 import { HStack, Skeleton, Text, useColorMode } from '@chakra-ui/react';
-import { useTokenData } from '@ui/hooks/useTokenData';
 import { motion } from 'framer-motion';
 import React from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useTokenData } from '@ui/hooks/useTokenData';
 
 export const CTokenIcon = ({
   address,
