@@ -1,24 +1,25 @@
 {
   "name": "@midas-capital/sdk",
   "repository": "git://github.com:midas-protocol/contracts.git",
-  "version": "0.1.14",
+  "version": "0.2.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
   },
   "description": "",
-  "main": "./dist/cjs/src/index.js",
+  "main": "./dist/cjs/index.js",
   "module": "./dist/esm/src/index.js",
+  "types": "./dist/cjs/index.d.ts",
   "files": [
     "/dist/",
     "/artifacts",
     "deployments.json"
   ],
   "scripts": {
-    "build": "npm run setup && npm run typechain && npm run build:sdk ",
+    "build": "npm run setup && npm run typechain && npm run build:sdk",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
-    "build:cjs": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
+    "build:cjs": "tsc -p tsc -p tsconfig-cjs.json",
     "compile": "hardhat compile",
     "setup": "cd lib/contracts && forge build",
     "test": "hardhat test",
