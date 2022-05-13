@@ -7,7 +7,7 @@
     "access": "public"
   },
   "description": "",
-  "main": "./dist/cjs/index.js",
+  "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "types": "./dist/cjs/index.d.ts",
   "files": [
@@ -17,9 +17,9 @@
   ],
   "scripts": {
     "build": "npm run setup && npm run typechain && npm run build:sdk",
-    "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
+    "build:sdk": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig-sdk.json",
-    "build:cjs": "tsc -p tsc -p tsconfig-cjs.json",
+    "build:cjs": "tsc -p tsconfig-cjs.json",
     "compile": "hardhat compile",
     "setup": "cd lib/contracts && forge build",
     "test": "hardhat test",
