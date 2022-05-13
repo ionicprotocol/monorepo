@@ -5,6 +5,7 @@ on:
     branches: [main, staging, development]
     paths:
       - "packages/ui/**"
+      - "yarn.lock"
 jobs:
   build:
     runs-on: ubuntu-latest
