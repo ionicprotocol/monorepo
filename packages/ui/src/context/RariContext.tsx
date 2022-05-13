@@ -158,6 +158,7 @@ export const RariProvider = ({
       pendingFunc(pendingTxHash);
       setPendingTxHash('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pendingTxHash, fuse, address]);
 
   useEffect(() => {

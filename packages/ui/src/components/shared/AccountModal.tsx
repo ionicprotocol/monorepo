@@ -10,16 +10,16 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { useRari } from '@ui/context/RariContext';
 import { TransactionResponse } from '@ethersproject/providers';
-import { useColors } from '@ui/hooks/useColors';
-import { Column, Row } from '@ui/utils/chakraUtils';
-import { shortAddress } from '@ui/utils/shortAddress';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
+import { Column, Row } from '@ui/utils/chakraUtils';
+import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { t } = useTranslation();

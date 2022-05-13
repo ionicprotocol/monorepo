@@ -4,7 +4,6 @@ import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 const poolSort = (pools: FusePoolData[]) => {
   return pools.sort((a, b) => {

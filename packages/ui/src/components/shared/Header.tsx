@@ -1,11 +1,11 @@
 import { Box, Link, Menu, MenuButton, MenuItem, MenuList, Portal, Text } from '@chakra-ui/react';
-import { Row } from '@ui/utils/chakraUtils';
 import * as RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { MouseEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { AccountButton } from '@ui/components/shared/AccountButton';
+import { Row } from '@ui/utils/chakraUtils';
 
 export const Header = ({
   isAuthed,

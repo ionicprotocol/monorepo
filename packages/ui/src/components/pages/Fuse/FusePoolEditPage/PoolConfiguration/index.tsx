@@ -13,14 +13,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { useRari } from '@ui/context/RariContext';
-import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
-import { useColors } from '@ui/hooks/useColors';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { Center, Column } from '@ui/utils/chakraUtils';
-import { createComptroller } from '@ui/utils/createComptroller';
-import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
 import { BigNumber, Contract, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
@@ -37,6 +30,13 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { ComptrollerErrorCodes } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useColors } from '@ui/hooks/useColors';
+import { Center, Column } from '@ui/utils/chakraUtils';
+import { createComptroller } from '@ui/utils/createComptroller';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const PoolConfiguration = ({
   assets,
