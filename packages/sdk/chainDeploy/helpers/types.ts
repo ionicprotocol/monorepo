@@ -43,8 +43,8 @@ export type PluginConfig = {
   strategy: string;
   underlying: string;
   otherParams?: string[];
-  flywheelAddress?: string;
-  flywheelIndex?: number;
+  flywheelAddresses?: string[];
+  flywheelIndices?: number[];
 };
 
 export type Asset = {
