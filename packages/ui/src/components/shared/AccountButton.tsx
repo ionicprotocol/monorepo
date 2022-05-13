@@ -1,18 +1,18 @@
 import { AvatarGroup, Text, useDisclosure } from '@chakra-ui/react';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
+import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useColors } from '@ui/hooks/useColors';
+import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import { Center, Row } from '@ui/utils/chakraUtils';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import ClaimRewardsModal from '@components/pages/Fuse/Modals/ClaimRewardsModal';
-import ConnectWalletButton from '@components/shared/ConnectWalletButton';
-import { CTokenIcon } from '@components/shared/CTokenIcon';
-import { GlowingBox } from '@components/shared/GlowingBox';
-import SwitchNetworkButton from '@components/shared/SwitchNetworkButton';
-import { useAllClaimableRewards } from '@hooks/rewards/useAllClaimableRewards';
-import { useAuthedCallback } from '@hooks/useAuthedCallback';
-import { useColors } from '@hooks/useColors';
-import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
-import { Center, Row } from '@utils/chakraUtils';
+import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
+import ConnectWalletButton from '@ui/components/shared/ConnectWalletButton';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import SwitchNetworkButton from '@ui/components/shared/SwitchNetworkButton';
 
 export const AccountButton = memo(() => {
   return (

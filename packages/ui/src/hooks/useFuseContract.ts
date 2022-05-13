@@ -4,7 +4,7 @@ import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/type
 import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/RewardsDistributorDelegate';
 import { useContract } from 'wagmi';
 
-import { useRari } from '@context/RariContext';
+import { useRari } from '@ui/context/RariContext';
 
 function createUseFuseContract<T>(
   contract: string,

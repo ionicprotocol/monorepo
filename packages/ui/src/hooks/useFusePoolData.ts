@@ -1,8 +1,8 @@
 import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { useUSDPrice } from '@hooks/useUSDPrice';
+import { useRari } from '@ui/context/RariContext';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 export const useFusePoolData = (poolId: string) => {
   const { fuse, currentChain, address, coingeckoId } = useRari();

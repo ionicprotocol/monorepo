@@ -1,7 +1,7 @@
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
+import { useRari } from '@ui/context/RariContext';
 
 export const useAllClaimableRewards = () => {
   const { fuse, address } = useRari();

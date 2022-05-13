@@ -5,10 +5,10 @@ import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { useColors } from '@hooks/useColors';
-import { FuseIRMDemoChartOptions } from '@utils/chartOptions';
-import { convertIRMtoCurve } from '@utils/convertIRMtoCurve';
+import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
+import { FuseIRMDemoChartOptions } from '@ui/utils/chartOptions';
+import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 interface IRMChartProps {
   interestRateModelAddress: string;

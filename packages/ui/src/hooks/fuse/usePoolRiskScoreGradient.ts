@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { useColors } from '@hooks/useColors';
-import { letterScore } from '@hooks/useRSS';
+import { useColors } from '@ui/hooks/useColors';
+import { letterScore } from '@ui/hooks/useRSS';
 
 export const usePoolRiskScoreGradient = (rssScore: ReturnType<typeof letterScore> | '?') => {
   const { cRssScore } = useColors();

@@ -1,8 +1,8 @@
 import { Link, Text } from '@chakra-ui/react';
+import { Column, Row } from '@ui/utils/chakraUtils';
 import { useTranslation } from 'react-i18next';
 
-import CopyrightSpacer from '@components/shared/CopyrightSpacer';
-import { Column, Row } from '@utils/chakraUtils';
+import CopyrightSpacer from '@ui/components/shared/CopyrightSpacer';
 
 const Footer = () => {
   const { t } = useTranslation();

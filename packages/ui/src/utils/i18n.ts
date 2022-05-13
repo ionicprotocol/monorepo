@@ -1,9 +1,9 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
-import English from '@locales/en/common.json';
-import ChineseSimplified from '@locales/zh-CN/common.json';
-import ChineseTraditional from '@locales/zh-TW/common.json';
+import English from '@ui/locales/en/common.json';
+import ChineseSimplified from '@ui/locales/zh-CN/common.json';
+import ChineseTraditional from '@ui/locales/zh-TW/common.json';
 
 const findBrowserLang = () => {
   const found: string[] = [];

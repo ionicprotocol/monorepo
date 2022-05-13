@@ -1,8 +1,8 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { DepositModalProps } from '@ui/types/ComponentPropsType';
 import { useEffect, useState } from 'react';
 
-import AmountSelect from '@components/pages/Fuse/Modals/PoolModal/AmountSelect';
-import { DepositModalProps } from '@type/ComponentPropsType';
+import AmountSelect from '@ui/components/pages/Fuse/Modals/PoolModal/AmountSelect';
 
 const DepositModal = (props: DepositModalProps) => {
   const [mode, setMode] = useState(props.defaultMode);
