@@ -1,5 +1,5 @@
-import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/typechain/RewardsDistributorDelegate';
 import { useQuery } from 'react-query';
+import { RewardsDistributorDelegate } from 'sdk/dist/cjs/lib/contracts/typechain/RewardsDistributorDelegate';
 
 import { useRari } from '@ui/context/RariContext';
 import { RewardsDistributor } from '@ui/types/ComponentPropsType';

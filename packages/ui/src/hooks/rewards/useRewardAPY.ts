@@ -135,7 +135,8 @@ export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForR
         const exchangeRateCurrent = await cTokenInstance.callStatic.exchangeRateCurrent();
 
         const underlyingTotalSupply2 =
-          (parseFloat(cTokenTotalSupply) * parseFloat(exchangeRateCurrent)) / 1e18;
+          (parseFloat(cTokenTotalSupply.toString()) * parseFloat(exchangeRateCurrent.toString())) /
+          1e18;
 
         // const underlyingTotalSupply =
         //   parseFloat(
