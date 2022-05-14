@@ -13,13 +13,6 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { isAddress } from '@ethersproject/address';
-import { utils } from 'ethers';
-import LogRocket from 'logrocket';
-import { useRouter } from 'next/router';
-import { memo, ReactNode, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-
 import FusePageLayout from '@components/pages/Fuse/FusePageLayout';
 import DashboardBox from '@components/shared/DashboardBox';
 import PageTransitionLayout from '@components/shared/PageTransitionLayout';
@@ -27,11 +20,17 @@ import { SimpleTooltip } from '@components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@components/shared/SliderWithLabel';
 import { SwitchCSS } from '@components/shared/SwitchCSS';
 import { useRari } from '@context/RariContext';
+import { isAddress } from '@ethersproject/address';
 import { useColors } from '@hooks/useColors';
 import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
 import { Center, Column, Row } from '@utils/chakraUtils';
 import { handleGenericError } from '@utils/errorHandling';
 import { formatPercentage } from '@utils/formatPercentage';
+import { utils } from 'ethers';
+import LogRocket from 'logrocket';
+import { useRouter } from 'next/router';
+import { memo, ReactNode, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const FusePoolCreatePage = memo(() => {
   return (
