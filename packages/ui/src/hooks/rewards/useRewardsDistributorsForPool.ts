@@ -1,8 +1,7 @@
-import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/RewardsDistributorDelegate';
-import { useQuery } from 'react-query';
-
 import { useRari } from '@context/RariContext';
+import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/typechain/RewardsDistributorDelegate';
 import { RewardsDistributor } from '@type/ComponentPropsType';
+import { useQuery } from 'react-query';
 
 export const useRewardsDistributorsForPool = (comptrollerAddress?: string) => {
   const { fuse, currentChain } = useRari();
