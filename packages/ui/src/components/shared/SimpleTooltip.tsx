@@ -1,6 +1,6 @@
 import { Tooltip, TooltipProps } from '@chakra-ui/react';
 
-import { useColors } from '@hooks/useColors';
+import { useColors } from '@ui/hooks/useColors';
 
 export const SimpleTooltip = ({
   label,

@@ -8,7 +8,7 @@ import {
   StatProps,
 } from '@chakra-ui/react';
 
-import { useColors } from '@hooks/useColors';
+import { useColors } from '@ui/hooks/useColors';
 
 const StatLabel = (props: StatLabelProps) => {
   const { cPage } = useColors();

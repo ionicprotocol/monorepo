@@ -3,10 +3,10 @@ import { ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useQueries, useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
-import { TokenData } from '@type/ComponentPropsType';
-import { TokensDataMap } from '@type/TokensDataMap';
+import { useRari } from '@ui/context/RariContext';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { TokenData } from '@ui/types/ComponentPropsType';
+import { TokensDataMap } from '@ui/types/TokensDataMap';
 
 export const fetchTokenData = async (
   address: string,

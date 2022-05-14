@@ -1,4 +1,4 @@
-import '@styles/index.css';
+import '@ui/styles/index.css';
 import { ChakraProvider } from '@chakra-ui/react';
 import LogRocket from 'logrocket';
 import { appWithTranslation } from 'next-i18next';
@@ -7,10 +7,10 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { createClient, Provider as WagmiProvider } from 'wagmi';
 
-import CheckConnection from '@components/shared/CheckConnection';
-import Layout from '@components/shared/Layout';
-import { theme } from '@theme/index';
-import { connectors } from '@utils/connectors';
+import CheckConnection from '@ui/components/shared/CheckConnection';
+import Layout from '@ui/components/shared/Layout';
+import { theme } from '@ui/theme/index';
+import { connectors } from '@ui/utils/connectors';
 
 const queryClient = new QueryClient();
 if (process.env.NODE_ENV !== 'development') {

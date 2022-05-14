@@ -1,7 +1,22 @@
 {
   "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "baseUrl": "./packages",
+    "paths": {
+      "@ui/components/*": ["ui/src/components/*"],
+      "@ui/constants/*": ["ui/src/constants/*"],
+      "@ui/context/*": ["ui/src/context/*"],
+      "@ui/hooks/*": ["ui/src/hooks/*"],
+      "@ui/types/*": ["ui/src/types/*"],
+      "@ui/utils/*": ["ui/src/utils/*"],
+      "@ui/theme/*": ["ui/src/theme/*"],
+      "@ui/networkData/*": ["ui/src/networkData/*"],
+      "@ui/styles/*": ["ui/styles/*"],
+      "@ui/images/*": ["ui/public/images/*"],
+      "@ui/icons/*": ["ui/public/icons/*"],
+      "@ui/locales/*": ["ui/public/locales/*"]
+    }
   },
   "references": [
     {
