@@ -1,21 +1,6 @@
 // Chakra and UI
 import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
-import {
-  cERC20Conf,
-  DelegateContractName,
-  InterestRateModelConf,
-  NativePricedFuseAsset,
-  PluginConfig,
-} from '@midas-capital/sdk';
-import { BigNumber, constants, ContractFunction, utils } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
-import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
-import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
-import { useQueryClient } from 'react-query';
-
 import { ModalDivider } from '@components/shared/Modal';
 import { PopoverTooltip } from '@components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@components/shared/SimpleTooltip';
@@ -25,11 +10,24 @@ import { ComptrollerErrorCodes, CTokenErrorCodes } from '@constants/index';
 import { useRari } from '@context/RariContext';
 import { useCTokenData } from '@hooks/fuse/useCTokenData';
 import { useColors } from '@hooks/useColors';
+import {
+  cERC20Conf,
+  DelegateContractName,
+  InterestRateModelConf,
+  NativePricedFuseAsset,
+  PluginConfig,
+} from '@midas-capital/sdk';
 import { TokenData } from '@type/ComponentPropsType';
 import { Center, Column } from '@utils/chakraUtils';
-import { createComptroller, createCToken, createMasterPriceOracle } from '@utils/createComptroller';
 import { handleGenericError } from '@utils/errorHandling';
 import { formatPercentage } from '@utils/formatPercentage';
+import { BigNumber, constants, ContractFunction, utils } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import LogRocket from 'logrocket';
+import { useTranslation } from 'next-i18next';
+import dynamic from 'next/dynamic';
+import { useEffect, useMemo, useState } from 'react';
+import { useQueryClient } from 'react-query';
 
 const IRMChart = dynamic(
   () => import('@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
@@ -91,6 +89,7 @@ export const AssetSettings = ({
 }) => {
   const { t } = useTranslation();
   const { fuse, address } = useRari();
+  console.log(fuse);
   const toast = useToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();
@@ -113,7 +112,7 @@ export const AssetSettings = ({
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = createMasterPriceOracle(fuse);
+        const masterPriceOracle = fuse.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
           toast({
@@ -225,7 +224,7 @@ export const AssetSettings = ({
   const updateCollateralFactor = async () => {
     if (!cTokenAddress) return;
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -254,7 +253,7 @@ export const AssetSettings = ({
   };
 
   const updateReserveFactor = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -276,7 +275,7 @@ export const AssetSettings = ({
   };
 
   const updateAdminFee = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -298,7 +297,7 @@ export const AssetSettings = ({
   };
 
   const updateInterestRateModel = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     try {
       await testForCTokenErrorAndSend(
@@ -322,7 +321,7 @@ export const AssetSettings = ({
       return;
     }
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
