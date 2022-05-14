@@ -1,4 +1,4 @@
-import { SupportedChains } from '@midas-capital/sdk';
+import { SupportedChains } from 'sdk';
 
 import BSC from '@ui/networkData/networks/BSC';
 import Evmos from '@ui/networkData/networks/Evmos';

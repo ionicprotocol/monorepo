@@ -21,12 +21,12 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
+import { FusePoolData, NativePricedFuseAsset } from 'sdk';
 
 import { FilterButton } from '@ui/components/shared/Buttons';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';

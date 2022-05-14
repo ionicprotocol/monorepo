@@ -1,4 +1,4 @@
-import { FusePoolData } from '@midas-capital/sdk/dist/cjs/src/Fuse/types';
+import { FusePoolData } from 'sdk/dist/cjs/src/Fuse/types';
 import { useMemo } from 'react';
 
 const usePoolSorting = (pools: FusePoolData[], sortBy: string | null): FusePoolData[] => {

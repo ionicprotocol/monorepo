@@ -1,8 +1,8 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { NativePricedFuseAsset } from 'sdk';
 
 import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';

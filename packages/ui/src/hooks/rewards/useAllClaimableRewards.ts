@@ -1,4 +1,4 @@
-import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import { FlywheelClaimableRewards } from 'sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';

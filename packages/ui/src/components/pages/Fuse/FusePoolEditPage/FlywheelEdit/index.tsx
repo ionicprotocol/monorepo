@@ -15,9 +15,9 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/sdk';
 import { useTranslation } from 'next-i18next';
 import React, { useCallback, useMemo, useState } from 'react';
+import { FusePoolData } from 'sdk';
 import { useAccount } from 'wagmi';
 
 import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';

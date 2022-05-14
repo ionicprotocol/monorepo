@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { NativePricedFuseAsset } from 'sdk';
 import { BigNumber, constants, utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery, UseQueryResult } from 'react-query';

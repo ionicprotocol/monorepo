@@ -10,11 +10,11 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/sdk';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { FusePoolData } from 'sdk';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';

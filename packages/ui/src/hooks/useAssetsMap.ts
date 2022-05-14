@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { NativePricedFuseAsset } from 'sdk';
 import { useMemo } from 'react';
 
 import { useTokensData } from '@ui/hooks/useTokenData';

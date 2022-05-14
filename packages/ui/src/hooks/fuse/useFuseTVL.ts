@@ -1,4 +1,4 @@
-import { Fuse } from '@midas-capital/sdk';
+import { Fuse } from 'sdk';
 import { utils } from 'ethers';
 import { useQuery } from 'react-query';
 
