@@ -1,8 +1,8 @@
 import { Flex } from '@chakra-ui/react';
 
-import FuseNavbar from '@components/pages/Fuse/FuseNavbar';
-import { useColors } from '@hooks/useColors';
-import { FusePageLayoutProps } from '@type/ComponentPropsType';
+import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
+import { useColors } from '@ui/hooks/useColors';
+import { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 
 const FusePageLayout = ({ children }: FusePageLayoutProps) => {
   const { cPage } = useColors();

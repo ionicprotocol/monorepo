@@ -8,14 +8,15 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import { ModalDivider } from '@components/shared/Modal';
-import { useRari } from '@context/RariContext';
-import { useSuccessToast } from '@hooks/useToast';
-import { Center } from '@utils/chakraUtils';
-import { handleGenericError } from '@utils/errorHandling';
 import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { useRari } from '@ui/context/RariContext';
+import { useSuccessToast } from '@ui/hooks/useToast';
+import { Center } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
 
 const TransferOwnershipModal = ({
   isOpen,

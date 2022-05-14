@@ -1,10 +1,10 @@
 import { SupportedChains } from '@midas-capital/sdk';
 
-import BSC from '@networkData/networks/BSC';
-import Evmos from '@networkData/networks/Evmos';
-import Ganache from '@networkData/networks/Ganache';
-import Moonbeam from '@networkData/networks/Moonbeam';
-import { ChainMetadata } from '@type/ChainMetaData';
+import BSC from '@ui/networkData/networks/BSC';
+import Evmos from '@ui/networkData/networks/Evmos';
+import Ganache from '@ui/networkData/networks/Ganache';
+import Moonbeam from '@ui/networkData/networks/Moonbeam';
+import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 export const NETWORK_DATA: Record<string, ChainMetadata> = {
   [SupportedChains.ganache]: Ganache.testnet,

@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "target": "es5",
     "lib": ["dom", "dom.iterable", "esnext"],
@@ -14,22 +15,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "downlevelIteration": true,
-    "baseUrl": ".",
-    "paths": {
-      "@components/*": ["src/components/*"],
-      "@constants/*": ["src/constants/*"],
-      "@context/*": ["src/context/*"],
-      "@hooks/*": ["src/hooks/*"],
-      "@type/*": ["src/types/*"],
-      "@utils/*": ["src/utils/*"],
-      "@theme/*": ["src/theme/*"],
-      "@networkData/*": ["src/networkData/*"],
-      "@styles/*": ["styles/*"],
-      "@images/*": ["public/images/*"],
-      "@icons/*": ["public/icons/*"],
-      "@locales/*": ["public/locales/*"]
-    }
+    "downlevelIteration": true
   },
   "include": ["src", "next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["api", "node_modules"]

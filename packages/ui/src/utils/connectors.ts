@@ -2,7 +2,7 @@ import { Chain } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 
-import { getSupportedChains } from '@networkData/index';
+import { getSupportedChains } from '@ui/networkData/index';
 
 const infuraId = process.env.INFURA_ID;
 

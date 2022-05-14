@@ -13,24 +13,25 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import FusePageLayout from '@components/pages/Fuse/FusePageLayout';
-import DashboardBox from '@components/shared/DashboardBox';
-import PageTransitionLayout from '@components/shared/PageTransitionLayout';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SliderWithLabel } from '@components/shared/SliderWithLabel';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
-import { useRari } from '@context/RariContext';
 import { isAddress } from '@ethersproject/address';
-import { useColors } from '@hooks/useColors';
-import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
-import { Center, Column, Row } from '@utils/chakraUtils';
-import { handleGenericError } from '@utils/errorHandling';
-import { formatPercentage } from '@utils/formatPercentage';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { memo, ReactNode, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+
+import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
+import DashboardBox from '@ui/components/shared/DashboardBox';
+import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
+import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { Center, Column, Row } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const FusePoolCreatePage = memo(() => {
   return (

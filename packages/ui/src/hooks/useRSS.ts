@@ -5,7 +5,7 @@ import { useQuery } from 'react-query';
 
 import { useUSDPrice } from './useUSDPrice';
 
-import { useRari } from '@context/RariContext';
+import { useRari } from '@ui/context/RariContext';
 
 export const letterScore = (totalScore: number) => {
   // if (totalScore >= 95) return 'A++';
