@@ -15,20 +15,19 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
-import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
-import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useAccount } from 'wagmi';
-
 import { ModalDivider } from '@components/shared/Modal';
 import TransactionStepper from '@components/shared/TransactionStepper';
 import { useRari } from '@context/RariContext';
 import { useErrorToast, useSuccessToast } from '@hooks/useToast';
 import { useTokenData } from '@hooks/useTokenData';
 import SmallWhiteCircle from '@images/small-white-circle.png';
+import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
+import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/typechain/FuseFlywheelCore';
 import { CreateFlywheelModalProps, CreateFlywheelProps } from '@type/ComponentPropsType';
 import { Center } from '@utils/chakraUtils';
+import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAccount } from 'wagmi';
 
 const steps = [
   'Deploying Flywheel Core',
