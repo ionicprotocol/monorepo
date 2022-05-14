@@ -4,9 +4,12 @@ import JumpRateModel from "./irm/JumpRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { FuseBase } from ".";
-import { SupportedChains } from "../network";
+import { SupportedChains } from "../chainConfig";
+import { DelegateContractName } from "./enums";
 
-export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
+export type GConstructor<T = { sayHello(msg: string): void }> = new (
+  ...args: any[]
+) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
 
 export type MinifiedContracts = {
@@ -79,14 +82,10 @@ export type ChainDeployment = {
   };
 };
 
-export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
-
-export enum DelegateContractName {
-  CErc20Delegate = "CErc20Delegate",
-  CEtherDelegate = "CEtherDelegate",
-  CErc20PluginDelegate = "CErc20PluginDelegate",
-  CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
-}
+export type InterestRateModelType =
+  | JumpRateModel
+  | DAIInterestRateModelV2
+  | WhitePaperInterestRateModel;
 
 export type cERC20Conf = {
   delegateContractName?: DelegateContractName;
@@ -228,4 +227,30 @@ export type AssetPluginConfig = {
 
 export type ChainPlugins = {
   [chain in SupportedChains]: AssetPluginConfig;
+};
+
+export type ChainRedemptionStrategy = {
+  [chain in SupportedChains]: {
+    [token: string]: string;
+  };
+};
+
+export type ChainOracles = {
+  [chain in SupportedChains]: string[];
+};
+
+export type ChainSpecificParams = {
+  [chain in SupportedChains]: {
+    blocksPerYear: BigNumber;
+  };
+};
+
+export type ChainSpecificAddresses = {
+  [chain in SupportedChains]: {
+    W_TOKEN: string;
+    W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
+    UNISWAP_V2_ROUTER: string;
+    UNISWAP_V2_FACTORY: string;
+    PAIR_INIT_HASH: string;
+  };
 };

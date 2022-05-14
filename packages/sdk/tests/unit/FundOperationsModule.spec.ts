@@ -1,11 +1,11 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
-import Fuse from "../src/Fuse";
-import { setUpPriceOraclePrices } from "./utils";
-import * as poolHelpers from "./utils/pool";
+import Fuse from "../../src/Fuse";
+import { setUpPriceOraclePrices } from "../utils";
+import * as poolHelpers from "../utils/pool";
 import { constants, providers, utils } from "ethers";
-import { chainDeployConfig } from "../chainDeploy";
-import { getOrCreateFuse } from "./utils/fuseSdk";
+import { chainDeployConfig } from "../../chainDeploy";
+import { getOrCreateFuse } from "../utils/fuseSdk";
 
 describe("FundOperationsModule", function () {
   let poolAddress: string;

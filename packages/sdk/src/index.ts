@@ -14,11 +14,15 @@ export {
   NativePricedFuseAsset,
   FuseAsset,
   InterestRateModelType,
-  DelegateContractName,
   AssetPluginConfig,
   PluginConfig,
 } from "./Fuse/types";
-export { SupportedChains } from "./network";
+export {
+  DelegateContractName,
+  OracleTypes,
+  RedemptionStrategy,
+} from "./Fuse/enums";
+export { SupportedChains } from "./chainConfig";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
 export {

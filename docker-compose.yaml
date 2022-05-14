@@ -12,7 +12,8 @@ services:
       - FORK_BLOCK_NUMBER
     ports:
       - "8545:8545"
-
+#    volumes:
+#      - ./packages/sdk/deployments/localhost:/tmp/build/packages/sdk/deployments/localhost
   liquidator-bot:
     build:
       dockerfile: docker/liquidator/Dockerfile
