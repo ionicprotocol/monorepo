@@ -1,13 +1,6 @@
 // Chakra and UI
 import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
-import {
-  cERC20Conf,
-  DelegateContractName,
-  InterestRateModelConf,
-  NativePricedFuseAsset,
-  PluginConfig,
-} from '@midas-capital/sdk';
 import { BigNumber, constants, ContractFunction, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
@@ -15,6 +8,13 @@ import { useTranslation } from 'next-i18next';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
+import {
+  cERC20Conf,
+  DelegateContractName,
+  InterestRateModelConf,
+  NativePricedFuseAsset,
+  PluginConfig,
+} from 'sdk';
 
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';

@@ -1,9 +1,9 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import ERC20ABI from '@midas-capital/sdk/dist/cjs/src/Fuse/abi/ERC20.json';
 import axios from 'axios';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Vibrant from 'node-vibrant';
+import ERC20ABI from 'sdk/dist/cjs/src/Fuse/abi/ERC20.json';
 import * as yup from 'yup';
 
 import { CoinGeckoResponse, TokenDataResponse } from '@ui/types/ComponentPropsType';

@@ -13,7 +13,6 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, Contract, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
@@ -21,6 +20,7 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
+import { NativePricedFuseAsset } from 'sdk';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage';

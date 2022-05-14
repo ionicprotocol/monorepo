@@ -1,8 +1,8 @@
 import { AvatarGroup, Box, Button, chakra, Flex, Heading, Text, Tooltip } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/sdk/dist/cjs/src/Fuse/types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
+import { FusePoolData } from 'sdk/dist/cjs/src/Fuse/types';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { useRari } from '@ui/context/RariContext';

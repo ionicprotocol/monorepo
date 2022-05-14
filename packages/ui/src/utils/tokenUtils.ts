@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { NativePricedFuseAsset } from 'sdk';
 
 import { AssetHash, TokenData, TokensDataHash } from '@ui/types/ComponentPropsType';
 

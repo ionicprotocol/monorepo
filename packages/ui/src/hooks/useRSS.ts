@@ -1,4 +1,4 @@
-import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { FusePoolData, NativePricedFuseAsset } from 'sdk';
 import axios from 'axios';
 import { Contract } from 'ethers';
 import { useQuery } from 'react-query';

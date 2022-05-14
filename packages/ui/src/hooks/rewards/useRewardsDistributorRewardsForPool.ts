@@ -1,4 +1,4 @@
-import { RewardsDistributorMarketReward } from '@midas-capital/sdk/dist/cjs/src/modules/RewardsDistributor';
+import { RewardsDistributorMarketReward } from 'sdk/dist/cjs/src/modules/RewardsDistributor';
 import { useQuery } from 'react-query';
 import { useAccount } from 'wagmi';
 

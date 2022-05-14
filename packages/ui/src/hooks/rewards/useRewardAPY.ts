@@ -1,9 +1,9 @@
 // for supply-side rewards apy:
 // export const
 
-import { Fuse } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
 import { useQuery } from 'react-query';
+import { Fuse } from 'sdk';
 
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';

@@ -15,7 +15,6 @@ import {
   useColorMode,
   useToast,
 } from '@chakra-ui/react';
-import { Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -23,6 +22,7 @@ import { useTranslation } from 'next-i18next';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 import { HashLoader } from 'react-spinners';
+import { Fuse, NativePricedFuseAsset } from 'sdk';
 
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { ModalDivider } from '@ui/components/shared/Modal';

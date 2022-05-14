@@ -14,9 +14,9 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
+import { NativePricedFuseAsset } from 'sdk';
 
 import { AssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AssetSettings';
 import { ModalDivider } from '@ui/components/shared/Modal';
