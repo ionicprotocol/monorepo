@@ -11,6 +11,7 @@ node_modules*
 !/packages/fuse-liquidator-bot/.env
 !/packages/fuse-twap-bot/.env
 /.idea/
+.vscode
 
 _tmp
 build

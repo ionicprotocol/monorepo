@@ -1,4 +1,4 @@
-import { useWindowSize } from '@utils/chakraUtils';
+import { useWindowSize } from '@ui/utils/chakraUtils';
 
 export const useIsSmallScreen = () => {
   const { width } = useWindowSize();

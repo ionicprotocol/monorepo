@@ -3,8 +3,8 @@ import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import FusePoolsPage from '@components/pages/Fuse/FusePoolsPage';
-import { useRari } from '@context/RariContext';
+import FusePoolsPage from '@ui/components/pages/Fuse/FusePoolsPage';
+import { useRari } from '@ui/context/RariContext';
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {

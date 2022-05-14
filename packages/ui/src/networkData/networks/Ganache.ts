@@ -1,6 +1,6 @@
 import { SupportedChains } from '@midas-capital/sdk';
 
-import { ChainMetadata } from '@type/ChainMetaData';
+import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 const mainnet: ChainMetadata = {
   chainId: SupportedChains.ganache,
