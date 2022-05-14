@@ -1,9 +1,10 @@
-import { useRari } from '@context/RariContext';
 import { Comptroller } from '@midas-capital/sdk/dist/cjs/typechain/Comptroller';
 import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
 import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/typechain/FuseFlywheelCore';
 import { RewardsDistributorDelegate } from '@midas-capital/sdk/dist/cjs/typechain/RewardsDistributorDelegate';
 import { useContract } from 'wagmi';
+
+import { useRari } from '@ui/context/RariContext';
 
 function createUseFuseContract<T>(
   contract: string,

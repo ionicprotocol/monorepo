@@ -2,7 +2,7 @@ import { Box, Center } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 import { ScaleLoader } from 'react-spinners';
 
-import { useColors } from '@hooks/useColors';
+import { useColors } from '@ui/hooks/useColors';
 
 function LoadingOverlay({ children, isLoading }: { children?: ReactNode; isLoading: boolean }) {
   const { cPage } = useColors();

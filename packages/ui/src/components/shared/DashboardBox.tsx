@@ -1,9 +1,9 @@
 import { Box } from '@chakra-ui/react';
 import React from 'react';
 
-import { DarkGlowingBox } from '@components/shared/GlowingBox';
-import { useColors } from '@hooks/useColors';
-import { ExtendedBoxProps } from '@type/ComponentPropsType';
+import { DarkGlowingBox } from '@ui/components/shared/GlowingBox';
+import { useColors } from '@ui/hooks/useColors';
+import { ExtendedBoxProps } from '@ui/types/ComponentPropsType';
 
 const DashboardBox = ({ children, glow = false, ...props }: ExtendedBoxProps) => {
   const { cCard } = useColors();

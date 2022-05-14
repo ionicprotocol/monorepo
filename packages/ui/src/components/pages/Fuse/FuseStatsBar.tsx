@@ -2,9 +2,9 @@ import { Flex, Heading, Spinner, Text } from '@chakra-ui/react';
 import type { FlexProps } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-import { useFuseTVL } from '@hooks/fuse/useFuseTVL';
-import { useColors } from '@hooks/useColors';
-import { smallUsdFormatter } from '@utils/bigUtils';
+import { useFuseTVL } from '@ui/hooks/fuse/useFuseTVL';
+import { useColors } from '@ui/hooks/useColors';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 const MotionFlex = motion<FlexProps>(Flex);
 

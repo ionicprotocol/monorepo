@@ -1,5 +1,6 @@
-import { useRari } from '@context/RariContext';
 import { useQuery } from 'react-query';
+
+import { useRari } from '@ui/context/RariContext';
 
 export const useExtraPoolInfo = (comptrollerAddress: string) => {
   const { fuse, currentChain, address } = useRari();

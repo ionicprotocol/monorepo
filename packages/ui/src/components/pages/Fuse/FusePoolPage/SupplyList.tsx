@@ -17,28 +17,28 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import PoolModal from '@components/pages/Fuse/Modals/PoolModal/index';
-import { TokenWithLabel } from '@components/shared/CTokenIcon';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, FundOperationMode } from '@constants/index';
-import { useRari } from '@context/RariContext';
-import { useAuthedCallback } from '@hooks/useAuthedCallback';
-import { useColors } from '@hooks/useColors';
-import { useErrorToast } from '@hooks/useToast';
-import { useTokenData } from '@hooks/useTokenData';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { convertMantissaToAPY } from '@utils/apyUtils';
-import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@utils/bigUtils';
-import { Row, useIsMobile } from '@utils/chakraUtils';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 
-import { PopoverTooltip } from '../../../shared/PopoverTooltip';
+import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { ComptrollerErrorCodes, FundOperationMode } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast } from '@ui/hooks/useToast';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
+import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 
 export const SupplyList = ({
   assets,

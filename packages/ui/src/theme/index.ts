@@ -2,15 +2,15 @@ import { extendTheme, ThemeConfig } from '@chakra-ui/react';
 
 import { LinkStyleConfig } from './components/Link';
 
-import { AvatarStyleConfig } from '@theme/components/Avatar';
-import { ButtonStyleConfig } from '@theme/components/Button';
-import { IconButtonStyleConfig } from '@theme/components/IconButton';
-import { InputConfigStyle } from '@theme/components/Input';
-import { ModalStyleConfig } from '@theme/components/Modal';
-import { PopoverStyleConfig } from '@theme/components/Popover';
-import { SelectConfigStyle } from '@theme/components/Select';
-import { StatStyleConfig } from '@theme/components/Stat';
-import { TooltipStyleConfig } from '@theme/components/Tooltip';
+import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
+import { ButtonStyleConfig } from '@ui/theme/components/Button';
+import { IconButtonStyleConfig } from '@ui/theme/components/IconButton';
+import { InputConfigStyle } from '@ui/theme/components/Input';
+import { ModalStyleConfig } from '@ui/theme/components/Modal';
+import { PopoverStyleConfig } from '@ui/theme/components/Popover';
+import { SelectConfigStyle } from '@ui/theme/components/Select';
+import { StatStyleConfig } from '@ui/theme/components/Stat';
+import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
 const config: ThemeConfig = {
   initialColorMode: 'light',

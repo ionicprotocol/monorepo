@@ -1,16 +1,17 @@
-import { useRari } from '@context/RariContext';
-import { useIncentivesWithRates } from '@hooks/rewards/useRewardAPY';
-import { useTokensDataAsMap } from '@hooks/useTokenData';
+import { BigNumber } from 'ethers';
+import { useMemo } from 'react';
+import { useQuery } from 'react-query';
+
+import { useRari } from '@ui/context/RariContext';
+import { useIncentivesWithRates } from '@ui/hooks/rewards/useRewardAPY';
+import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import {
   CTokenIncentivesMap,
   CTokenRewardsDistributorIncentives,
   CTokensUnderlyingMap,
   IncentivesData,
   RewardsDistributorCTokensMap,
-} from '@type/ComponentPropsType';
-import { BigNumber } from 'ethers';
-import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+} from '@ui/types/ComponentPropsType';
 
 export function usePoolIncentives(comptroller?: string): IncentivesData {
   const { fuse, currentChain } = useRari();
