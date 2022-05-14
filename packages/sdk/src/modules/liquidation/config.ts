@@ -1,6 +1,6 @@
 import { BigNumber, constants } from "ethers";
 import { FuseBase } from "../../Fuse";
-import { SupportedChains } from "../../network";
+import { SupportedChains } from "../../chainConfig/network";
 
 export enum LiquidationStrategy {
   DEFAULT = "DEFAULT",
@@ -60,8 +60,12 @@ export const defaults = (fuse: FuseBase) => {
     },
     // TODO: fix these
     [SupportedChains.moonbase_alpha]: {
-      SUPPORTED_OUTPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
-      SUPPORTED_INPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
+      SUPPORTED_OUTPUT_CURRENCIES: [
+        "0x0000000000000000000000000000000000000000",
+      ],
+      SUPPORTED_INPUT_CURRENCIES: [
+        "0x0000000000000000000000000000000000000000",
+      ],
       LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
       MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
     },
@@ -80,13 +84,21 @@ export const defaults = (fuse: FuseBase) => {
     [SupportedChains.ganache]: {
       SUPPORTED_OUTPUT_CURRENCIES: [
         "0x0000000000000000000000000000000000000000",
-        fuse.chainDeployment.TOUCHToken ? fuse.chainDeployment.TOUCHToken.address : null,
-        fuse.chainDeployment.TRIBEToken ? fuse.chainDeployment.TRIBEToken.address : null,
+        fuse.chainDeployment.TOUCHToken
+          ? fuse.chainDeployment.TOUCHToken.address
+          : null,
+        fuse.chainDeployment.TRIBEToken
+          ? fuse.chainDeployment.TRIBEToken.address
+          : null,
       ],
       SUPPORTED_INPUT_CURRENCIES: [
         "0x0000000000000000000000000000000000000000",
-        fuse.chainDeployment.TOUCHToken ? fuse.chainDeployment.TOUCHToken.address : null,
-        fuse.chainDeployment.TRIBEToken ? fuse.chainDeployment.TRIBEToken.address : null,
+        fuse.chainDeployment.TOUCHToken
+          ? fuse.chainDeployment.TOUCHToken.address
+          : null,
+        fuse.chainDeployment.TRIBEToken
+          ? fuse.chainDeployment.TRIBEToken.address
+          : null,
       ],
       LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
       MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -101,7 +113,9 @@ export type ChainLiquidationConfig = {
   MINIMUM_PROFIT_NATIVE: BigNumber;
 };
 
-export const getChainLiquidationConfig = (fuse: FuseBase): ChainLiquidationConfig => {
+export const getChainLiquidationConfig = (
+  fuse: FuseBase
+): ChainLiquidationConfig => {
   return {
     SUPPORTED_OUTPUT_CURRENCIES: process.env.SUPPORTED_OUTPUT_CURRENCIES
       ? process.env.SUPPORTED_OUTPUT_CURRENCIES.split(",")

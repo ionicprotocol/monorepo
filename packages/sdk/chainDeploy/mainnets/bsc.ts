@@ -139,6 +139,12 @@ export const assets: Asset[] = [
     name: "BOMB",
     decimals: 18,
   },
+  {
+    symbol: "Cake LP",
+    underlying: "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6",
+    name: "BOMB-BTC PCS LP",
+    decimals: 18
+  },
   // Jarvis
   {
     symbol: "jBRL",

@@ -77,7 +77,7 @@ task("oracle:update-twap", "Call update on twap oracle to update the last price 
     const fuseModule = await import("../tests/utils/fuseSdk");
     const sdk = await fuseModule.getOrCreateFuse();
 
-    const uniswapTwapRoot = await ethers.getContract("UniswapTwapPriceOracleV2Root", deployer);
+    const uniswapTwapRoot = await ethers.getContractAt("UniswapTwapPriceOracleV2Root", sdk.chainDeployment.UniswapTwapPriceOracleV2Root.address, deployer);
 
     const tx = await uniswapTwapRoot["update(address)"](_pair);
     await tx.wait();
