@@ -1,8 +1,6 @@
-import { useQuery } from 'react-query';
-
 import { useRari } from '@context/RariContext';
 import { Flywheel } from '@type/ComponentPropsType';
-import { createFuseFlywheelCore } from '@utils/createComptroller';
+import { useQuery } from 'react-query';
 
 export const useFlywheel = (flywheelAddress?: string) => {
   const { fuse, currentChain } = useRari();
@@ -13,7 +11,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
       if (!flywheelAddress) return undefined;
       if (!fuse) return undefined;
 
-      const flywheel = createFuseFlywheelCore(flywheelAddress, fuse);
+      const flywheel = fuse.createFuseFlywheelCore(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [authority, booster, rewards, markets, owner, rewardToken] = await Promise.all([
