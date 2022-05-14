@@ -89,7 +89,6 @@ export const AssetSettings = ({
 }) => {
   const { t } = useTranslation();
   const { fuse, address } = useRari();
-  console.log(fuse);
   const toast = useToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();

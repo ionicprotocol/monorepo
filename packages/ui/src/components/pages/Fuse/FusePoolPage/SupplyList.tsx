@@ -17,16 +17,6 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { utils } from 'ethers';
-import LogRocket from 'logrocket';
-import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useQueryClient } from 'react-query';
-
-import { PopoverTooltip } from '../../../shared/PopoverTooltip';
-
 import PoolModal from '@components/pages/Fuse/Modals/PoolModal/index';
 import { TokenWithLabel } from '@components/shared/CTokenIcon';
 import { SimpleTooltip } from '@components/shared/SimpleTooltip';
@@ -37,10 +27,18 @@ import { useAuthedCallback } from '@hooks/useAuthedCallback';
 import { useColors } from '@hooks/useColors';
 import { useErrorToast } from '@hooks/useToast';
 import { useTokenData } from '@hooks/useTokenData';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { convertMantissaToAPY } from '@utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@utils/bigUtils';
 import { Row, useIsMobile } from '@utils/chakraUtils';
-import { createComptroller } from '@utils/createComptroller';
+import { utils } from 'ethers';
+import LogRocket from 'logrocket';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQueryClient } from 'react-query';
+
+import { PopoverTooltip } from '../../../shared/PopoverTooltip';
 
 export const SupplyList = ({
   assets,
@@ -183,7 +181,7 @@ const AssetSupplyRow = ({
   );
 
   const onToggleCollateral = async () => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     let call;
     if (asset.membership) {

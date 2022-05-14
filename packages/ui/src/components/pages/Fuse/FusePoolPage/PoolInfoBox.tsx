@@ -15,15 +15,6 @@ import {
   Tr,
   useClipboard,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { utils } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
-import dynamic from 'next/dynamic';
-import RouterLink from 'next/link';
-import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
-import { useQuery } from 'react-query';
-
 import { PoolDashboardBox } from '@components/pages/Fuse/FusePoolPage/PoolDashboardBox';
 import CaptionedStat from '@components/shared/CaptionedStat';
 import { ModalDivider } from '@components/shared/Modal';
@@ -32,12 +23,19 @@ import { useExtraPoolInfo } from '@hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@hooks/useColors';
 import { useFusePoolData } from '@hooks/useFusePoolData';
 import { useTokenData } from '@hooks/useTokenData';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { shortUsdFormatter } from '@utils/bigUtils';
 import { Center, Column, Row, RowOrColumn, useIsMobile } from '@utils/chakraUtils';
 import { FuseUtilizationChartOptions } from '@utils/chartOptions';
 import { convertIRMtoCurve } from '@utils/convertIRMtoCurve';
-import { createUnitroller } from '@utils/createComptroller';
 import { shortAddress } from '@utils/shortAddress';
+import { utils } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import dynamic from 'next/dynamic';
+import RouterLink from 'next/link';
+import { useRouter } from 'next/router';
+import { useCallback, useState } from 'react';
+import { useQuery } from 'react-query';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -128,7 +126,7 @@ const OracleAndInterestRates = ({
   const acceptOwnership = useCallback(async () => {
     if (!comptrollerAddress) return;
     setIsLoading(true);
-    const unitroller = createUnitroller(comptrollerAddress, fuse);
+    const unitroller = fuse.createUnitroller(comptrollerAddress);
     const tx = await unitroller._acceptAdmin();
     await tx.wait();
     setIsLoading(false);

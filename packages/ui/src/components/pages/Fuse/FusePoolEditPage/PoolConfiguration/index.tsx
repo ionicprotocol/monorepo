@@ -13,15 +13,6 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { BigNumber, Contract, utils } from 'ethers';
-import { parseUnits } from 'ethers/lib/utils';
-import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
-
 import { ConfigRow } from '@components/pages/Fuse/ConfigRow';
 import { WhitelistInfo } from '@components/pages/Fuse/FusePoolCreatePage';
 import TransferOwnershipModal from '@components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
@@ -33,10 +24,17 @@ import { ComptrollerErrorCodes } from '@constants/index';
 import { useRari } from '@context/RariContext';
 import { useExtraPoolInfo } from '@hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@hooks/useColors';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { Center, Column } from '@utils/chakraUtils';
-import { createComptroller } from '@utils/createComptroller';
 import { handleGenericError } from '@utils/errorHandling';
 import { formatPercentage } from '@utils/formatPercentage';
+import { BigNumber, Contract, utils } from 'ethers';
+import { parseUnits } from 'ethers/lib/utils';
+import LogRocket from 'logrocket';
+import { useTranslation } from 'next-i18next';
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 
 const PoolConfiguration = ({
   assets,
@@ -70,7 +68,7 @@ const PoolConfiguration = ({
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -88,7 +86,7 @@ const PoolConfiguration = ({
   };
 
   const addToWhitelist = async (newUser: string) => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -116,7 +114,7 @@ const PoolConfiguration = ({
   };
 
   const removeFromWhitelist = async (removeUser: string) => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -188,7 +186,7 @@ const PoolConfiguration = ({
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -216,7 +214,7 @@ const PoolConfiguration = ({
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(

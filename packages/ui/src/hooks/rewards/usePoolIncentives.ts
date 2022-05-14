@@ -1,7 +1,3 @@
-import { BigNumber } from 'ethers';
-import { useMemo } from 'react';
-import { useQuery } from 'react-query';
-
 import { useRari } from '@context/RariContext';
 import { useIncentivesWithRates } from '@hooks/rewards/useRewardAPY';
 import { useTokensDataAsMap } from '@hooks/useTokenData';
@@ -12,7 +8,9 @@ import {
   IncentivesData,
   RewardsDistributorCTokensMap,
 } from '@type/ComponentPropsType';
-import { createCToken } from '@utils/createComptroller';
+import { BigNumber } from 'ethers';
+import { useMemo } from 'react';
+import { useQuery } from 'react-query';
 
 export function usePoolIncentives(comptroller?: string): IncentivesData {
   const { fuse, currentChain } = useRari();
@@ -105,7 +103,7 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
       if (cTokenAddresses && cTokenAddresses.length) {
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
-            const cTokenInstance = createCToken(cTokenAddress, fuse);
+            const cTokenInstance = fuse.createCToken(cTokenAddress);
             _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
           })
         );
