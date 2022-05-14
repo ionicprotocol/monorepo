@@ -2234,6 +2234,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@midas-capital/sdk@npm:0.2.3":
+  version: 0.2.3
+  resolution: "@midas-capital/sdk@npm:0.2.3"
+  dependencies:
+    "@keydonix/uniswap-oracle-sdk": ^1.0.7
+    "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
+    "@typechain/ethers-v5": ^10.0.0
+    "@types/bad-words": ^3.0.1
+    bad-words: ^3.0.4
+    lint-staged: 12.3.7
+    prettier: 2.6.1
+    prettier-plugin-solidity: 1.0.0-beta.19
+  checksum: 38bbff2ed7b33d66829aa90a3bbb03539cde0ea90f23ca215f87020858d8a57c5fd4d333a42d26e3f27a3eaac45ec6921ebe41cb7f8df13d14d4d725d572660a
+  languageName: node
+  linkType: hard
+
 "@midas-capital/sdk@workspace:*, @midas-capital/sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
   resolution: "@midas-capital/sdk@workspace:packages/sdk"
@@ -2282,7 +2298,7 @@ __metadata:
     "@ethersproject/contracts": ^5.6.0
     "@ethersproject/providers": ^5.6.2
     "@metamask/jazzicon": ^2.0.0
-    "@midas-capital/sdk": "workspace:*"
+    "@midas-capital/sdk": 0.2.3
     "@testing-library/react": ^12.1.4
     "@types/node": 17.0.23
     "@types/react": ^17.0.15
@@ -3009,9 +3025,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:*, @types/node@npm:^17.0.23, @types/node@npm:^17.0.31":
-  version: 17.0.32
-  resolution: "@types/node@npm:17.0.32"
-  checksum: afb05704b42032566b3da8b2d80a68883cd3b888472d1b8b4dd6c84f8fad371454f083d4e28bd30c10589187296119d92aba255638b30067afe062b5922388a5
+  version: 17.0.33
+  resolution: "@types/node@npm:17.0.33"
+  checksum: 6620652cc89ce125e1162e060ec4608c25b3635185e3e5dcaae4ed09e4770dc8bf168ba48bcd7059a1a56087a05000d7ed562e81aea7b6a512e2b13d4409c6b6
   languageName: node
   linkType: hard
 
@@ -3037,9 +3053,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^12.12.6":
-  version: 12.20.51
-  resolution: "@types/node@npm:12.20.51"
-  checksum: 6c6f71c0037e43ceb984a740b76c8cca63f25ae56e95d6c2f473949ceed52b2b69d0faee45660425d8635c7e51b72ddeb6697e71f401b9de3eea21088468d64b
+  version: 12.20.52
+  resolution: "@types/node@npm:12.20.52"
+  checksum: b720ee939a43f1427baf1606deee97e50892ff482bf3d64ab8a1eda3a50802a80866a232aeab337621f6ea4fdc4515147d7829337653e9e99d97c3aaeec3615d
   languageName: node
   linkType: hard
 
@@ -9361,8 +9377,8 @@ __metadata:
   linkType: hard
 
 "hardhat@npm:^2.9.2":
-  version: 2.9.4
-  resolution: "hardhat@npm:2.9.4"
+  version: 2.9.5
+  resolution: "hardhat@npm:2.9.5"
   dependencies:
     "@ethereumjs/block": ^3.6.2
     "@ethereumjs/blockchain": ^5.5.2
@@ -9416,7 +9432,7 @@ __metadata:
     chai: ^4.2.0
   bin:
     hardhat: internal/cli/cli.js
-  checksum: dce08125de50d5cfc9bcff3fdfa5405aeaf2cb857c7d4284148560ad2ef9baf2ff6334c54dd12783c18c266d4ab3c01074c4e3561ede91653218047c4bd2cc76
+  checksum: 231a12c1f19c9d1e468bf90d44ee3808a99e1189952eda8ba134daa732ed8fd6d1237c70adef37fdf3deb7eab0739986f88abd0ef5e7c2d6302d8fb3f13bfa7c
   languageName: node
   linkType: hard
 
@@ -13305,6 +13321,15 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 21b9408476ea1c544b0e45d51ceb94a84789ff92095abb710942d780c862d0daebdb29972d47f6b4d0f7ebbfb0ffbf56cc2cfa3e3e9d1cca54864af185b15b66
+  languageName: node
+  linkType: hard
+
+"prettier@npm:2.6.1":
+  version: 2.6.1
+  resolution: "prettier@npm:2.6.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 78be1f8a3ddfad7c3d8a854b6c8941a3bb1ddfca4225c38d778e0fe1029a55368f71b3bbefff82c689015fbb4d391ec44add957f01308ad2725e01a7c1f37cb6
   languageName: node
   linkType: hard
 
