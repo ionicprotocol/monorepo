@@ -15,12 +15,16 @@ export const minProfitEstimate = async (
   const minEthSeizeAmount = minEthSeizeAmountBreakEven.add(
     BigNumber.from(utils.parseEther(process.env.MINIMUM_PROFIT_NATIVE!))
   );
-  const minSeizeAmount = minEthSeizeAmount.mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
+  const minSeizeAmount = minEthSeizeAmount
+    .mul(SCALE_FACTOR_ONE_18_WEI)
+    .div(outputPrice);
 
   // Check expected seize against minSeizeAmount
   if (seizeAmount.lt(minSeizeAmount)) {
     console.log(
-      `Seize amount of ${utils.formatEther(seizeAmount)} less than min break even of ${minSeizeAmount}, doing nothing`
+      `Seize amount of ${utils.formatEther(
+        seizeAmount
+      )} less than min break even of ${minSeizeAmount}, doing nothing`
     );
     return null;
   }

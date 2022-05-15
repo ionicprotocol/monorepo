@@ -1,9 +1,8 @@
 import { constants, ethers, providers, utils } from "ethers";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams, CurvePoolConfig } from "../helpers/types";
-import { chainSupportedAssets } from "../../src/chainConfig/supportedAssets";
 import { SupportedChains } from "../../src";
-import { assetSymbols } from "../../src/chainConfig/assets";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 
 const assets = chainSupportedAssets[SupportedChains.evmos_testnet]

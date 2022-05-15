@@ -2,7 +2,10 @@ import { sendTransactionToSafeLiquidator } from "./index";
 import { FuseBase } from "../../Fuse";
 import { LiquidatablePool } from "./utils";
 
-export default async function liquidateUnhealthyBorrows(fuse: FuseBase, liquidations: Array<LiquidatablePool>) {
+export default async function liquidateUnhealthyBorrows(
+  fuse: FuseBase,
+  liquidations: Array<LiquidatablePool>
+) {
   for (const liquidatablePool of liquidations) {
     for (const liquidation of liquidatablePool.liquidations) {
       const { method, args, value } = liquidation;
@@ -12,7 +15,9 @@ export default async function liquidateUnhealthyBorrows(fuse: FuseBase, liquidat
       try {
         await sendTransactionToSafeLiquidator(fuse, method, args, value);
       } catch (error) {
-        throw "Error sending sendTransactionToSafeLiquidator transaction: " + error;
+        throw (
+          "Error sending sendTransactionToSafeLiquidator transaction: " + error
+        );
       }
     }
   }

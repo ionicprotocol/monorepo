@@ -1,12 +1,14 @@
 import { BigNumber, BigNumberish, providers } from "ethers";
 
-import JumpRateModel from "./irm/JumpRateModel";
-import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
-import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import { FuseBase } from ".";
-import { SupportedChains } from "../chainConfig";
-import { DelegateContractName } from "./enums";
-import { LiquidationStrategy } from "../modules/liquidation/config";
+import JumpRateModel from "./Fuse/irm/JumpRateModel";
+import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
+import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
+import { FuseBase } from "./Fuse";
+import {
+  DelegateContractName,
+  LiquidationStrategy,
+  SupportedChains,
+} from "./enums";
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (
   ...args: any[]
@@ -238,7 +240,7 @@ export type ChainPlugins = {
   [chain in SupportedChains]: AssetPluginConfig;
 };
 
-export type ChainLiquidationDeafaults = {
+export type ChainLiquidationDefaults = {
   [chain in SupportedChains]: {
     SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
     SUPPORTED_INPUT_CURRENCIES: Array<string>;

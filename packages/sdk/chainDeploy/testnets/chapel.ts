@@ -6,24 +6,27 @@ import {
 } from "../helpers";
 import { ethers } from "ethers";
 import { ChainlinkAsset } from "../helpers/types";
-import { assetSymbols, chapelAssets } from "../../src/chainConfig/assets";
-import { SupportedAsset } from "../../src/Fuse/types";
+import { SupportedAsset } from "../../src/types";
+import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+
+const assets = chainSupportedAssets[SupportedChains.chapel]
 
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
+  wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
   nativeTokenUsdChainlinkFeed: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
   nativeTokenName: "Binance Coin Token (Testnet)",
   nativeTokenSymbol: "TBNB",
-  stableToken: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
-  wBTCToken: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
+  stableToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
+  wBTCToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
   blocksPerYear: 20 * 24 * 365 * 60,
   uniswap: {
     hardcoded: [
       {
         name: "Binance Bitcoin",
         symbol: "BTCB",
-        address: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
+        address: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
       },
     ],
     uniswapData: [],
@@ -35,16 +38,16 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
     uniswapOracleInitialDeployTokens: [
       {
-        token: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.DAI)!.underlying,
-        baseToken: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.DAI)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
       },
       {
-        token: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.SAFEMOON)!.underlying,
-        baseToken: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.SAFEMOON)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
       },
       {
-        token: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDT)!.underlying,
-        baseToken: chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDT)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
       },
     ],
   },
@@ -82,7 +85,7 @@ export const deploy = async ({
     getNamedAccounts,
     deployments,
     deployConfig,
-    assets: chapelAssets,
+    assets: assets,
     chainlinkAssets,
     run,
   });

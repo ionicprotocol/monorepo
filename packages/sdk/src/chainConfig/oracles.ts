@@ -1,6 +1,5 @@
-import { SupportedChains } from "./index";
-import { OracleTypes } from "../";
-import { ChainOracles } from "../Fuse/types";
+import { ChainOracles } from "../types";
+import { OracleTypes, SupportedChains } from "../enums";
 
 const oracles: ChainOracles = {
   [SupportedChains.ganache]: [

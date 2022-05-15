@@ -1,17 +1,6 @@
 import { BigNumber, constants } from "ethers";
 import { FuseBase } from "../../Fuse";
-
-export enum LiquidationStrategy {
-  DEFAULT = "DEFAULT",
-  UNISWAP = "UNISWAP",
-}
-
-export enum LiquidationKind {
-  DEFAULT_NATIVE_BORROW = "DEFAULT_NATIVE_BORROW",
-  DEFAULT_TOKEN_BORROW = "DEFAULT_TOKEN_BORROW",
-  UNISWAP_NATIVE_BORROW = "UNISWAP_NATIVE_BORROW",
-  UNISWAP_TOKEN_BORROW = "UNISWAP_TOKEN_BORROW",
-}
+import { LiquidationKind, LiquidationStrategy } from "../../";
 
 export type ChainLiquidationConfig = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;

@@ -1,11 +1,22 @@
 import { ethers } from "ethers";
-import { SupportedChains } from "./index";
-import { ChainSpecificAddresses } from "../Fuse/types";
-import { assetSymbols, bscAssets } from "./assets";
+import { ChainSpecificAddresses } from "../types";
+import {
+  assetSymbols,
+  auroraAssets,
+  bscAssets,
+  chapelAssets,
+  evmosAssets,
+  evmosTestnetAssets,
+  ganacheAssets,
+  moonbaseAlphaAssets,
+  moonbeamAssets,
+} from "./assets";
+import { SupportedChains } from "../enums";
 
 const chainSpecificAddresses: ChainSpecificAddresses = {
   [SupportedChains.ganache]: {
-    W_TOKEN: bscAssets.find((a) => a.symbol === assetSymbols.WETH)!.underlying,
+    W_TOKEN: ganacheAssets.find((a) => a.symbol === assetSymbols.WETH)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419", // use mainnet
     UNISWAP_V2_ROUTER: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
@@ -15,7 +26,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     ),
   },
   [SupportedChains.chapel]: {
-    W_TOKEN: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+    W_TOKEN: chapelAssets.find((a) => a.symbol === assetSymbols.WBNB)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
     UNISWAP_V2_ROUTER: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
@@ -25,7 +37,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     ),
   },
   [SupportedChains.bsc]: {
-    W_TOKEN: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    W_TOKEN: bscAssets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419",
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
@@ -36,7 +48,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
   },
   // checked
   [SupportedChains.evmos_testnet]: {
-    W_TOKEN: "0x7F865d113DA1cD186271Fa0E5170753733Cf4ED9",
+    W_TOKEN: evmosTestnetAssets.find((a) => a.symbol === assetSymbols.WEVMOS)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED: "",
     UNISWAP_V2_ROUTER: "0x72bd489d3cF0e9cC36af6e306Ff53E56d0f9EFb4",
     UNISWAP_V2_FACTORY: "0x81BC50a2df9cE424843e3c17110E1ab1FedCD4b8",
@@ -46,7 +59,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
   },
   // checked
   [SupportedChains.evmos]: {
-    W_TOKEN: "0xd4949664cd82660aae99bedc034a0dea8a0bd517",
+    W_TOKEN: evmosAssets.find((a) => a.symbol === assetSymbols.WEVMOS)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED: "",
     UNISWAP_V2_ROUTER: "0xFCd2Ce20ef8ed3D43Ab4f8C2dA13bbF1C6d9512F",
     UNISWAP_V2_FACTORY: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
@@ -56,7 +70,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
   },
   // TODO: check addresses
   [SupportedChains.moonbeam]: {
-    W_TOKEN: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    W_TOKEN: moonbeamAssets.find((a) => a.symbol === assetSymbols.WGLMR)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419",
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
@@ -67,7 +82,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
   },
   // TODO: check addresses
   [SupportedChains.moonbase_alpha]: {
-    W_TOKEN: "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+    W_TOKEN: moonbaseAlphaAssets.find((a) => a.symbol === assetSymbols.WDEV)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
     UNISWAP_V2_ROUTER: "0xD99D1c33F9fC3444f8101754aBC46c52416550D1",
@@ -78,7 +94,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
   },
   // TODO: check addresses
   [SupportedChains.aurora]: {
-    W_TOKEN: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    W_TOKEN: auroraAssets.find((a) => a.symbol === assetSymbols.WNEAR)!
+      .underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419",
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",

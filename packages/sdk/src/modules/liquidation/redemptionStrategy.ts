@@ -1,7 +1,7 @@
 import { BytesLike, Contract, ethers } from "ethers";
 import { FuseBase } from "../../Fuse";
 import { redemptionStrategies } from "../../chainConfig";
-import { RedemptionStrategy } from "../../Fuse/enums";
+import { RedemptionStrategy } from "../../enums";
 
 export type StrategyAndData = {
   strategyAddress: string[];

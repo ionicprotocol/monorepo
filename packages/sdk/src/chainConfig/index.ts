@@ -1,22 +1,13 @@
-import { Artifacts, ChainDeployment } from "../Fuse/types";
+import { Artifacts, ChainDeployment } from "../types";
 
 export { default as chainSpecificAddresses } from "./addresses";
 export { default as chainOracles } from "./oracles";
 export { default as chainSpecificParams } from "./params";
 export { default as chainPluginConfig } from "./plugin";
 export { default as redemptionStrategies } from "./redemptionStrategies";
-export { default as liquidationDefaults } from "./liquidation";
-
-export enum SupportedChains {
-  bsc = 56,
-  chapel = 97,
-  ganache = 1337,
-  aurora = 1313161555,
-  evmos = 9001,
-  evmos_testnet = 9000,
-  moonbeam = 1284,
-  moonbase_alpha = 1287,
-}
+export { default as chainLiquidationDefaults } from "./liquidation";
+export { default as chainSupportedAssets } from "./supportedAssets";
+export { default as assetSymbols } from "./assets/assetSymbols";
 
 export const oracleConfig = (
   deployments: ChainDeployment,

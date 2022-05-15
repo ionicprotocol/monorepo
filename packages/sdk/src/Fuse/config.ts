@@ -1,4 +1,5 @@
-import { chainSpecificParams, SupportedChains } from "../chainConfig";
+import { chainSpecificParams } from "../chainConfig";
+import { SupportedChains } from "../enums";
 
 export const COMPTROLLER_ERROR_CODES: Array<string> = [
   "NO_ERROR",

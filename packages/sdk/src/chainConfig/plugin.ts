@@ -1,5 +1,5 @@
-import { ChainPlugins } from "../Fuse/types";
-import { SupportedChains } from "./index";
+import { ChainPlugins } from "../types";
+import { SupportedChains } from "../enums";
 import { assetSymbols, bscAssets } from "./assets";
 
 const chainPluginConfig: ChainPlugins = {

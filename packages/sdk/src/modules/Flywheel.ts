@@ -1,4 +1,3 @@
-import { info } from "console";
 import { BigNumber, constants, Contract, ContractFactory } from "ethers";
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
 import { FuseFlywheelCore__factory } from "../../lib/contracts/typechain/factories/FuseFlywheelCore__factory";
@@ -6,7 +5,7 @@ import { FlywheelCore } from "../../lib/contracts/typechain/FlywheelCore";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
-import { FuseBaseConstructor } from "../Fuse/types";
+import { FuseBaseConstructor } from "../types";
 
 export interface FlywheelClaimableRewards {
   flywheel: string;
@@ -83,27 +82,68 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       rewardInfo: FlywheelStaticRewards.RewardsInfoStruct,
       options: { from: string }
     ) {
-      const staticRewardsInstance = this.getStaticRewardsInstance(staticRewardsAddress, options);
-      return staticRewardsInstance.functions.setRewardsInfo(marketAddress, rewardInfo);
+      const staticRewardsInstance = this.getStaticRewardsInstance(
+        staticRewardsAddress,
+        options
+      );
+      return staticRewardsInstance.functions.setRewardsInfo(
+        marketAddress,
+        rewardInfo
+      );
     }
 
-    setFlywheelRewards(flywheelAddress: string, rewardsAddress: string, options: { from: string }) {
-      const flywheelCoreInstance = this.getFlywheelCoreInstance(flywheelAddress, options);
+    setFlywheelRewards(
+      flywheelAddress: string,
+      rewardsAddress: string,
+      options: { from: string }
+    ) {
+      const flywheelCoreInstance = this.getFlywheelCoreInstance(
+        flywheelAddress,
+        options
+      );
       return flywheelCoreInstance.functions.setFlywheelRewards(rewardsAddress);
     }
 
-    addMarketForRewardsToFlywheelCore(flywheelCoreAddress: string, marketAddress: string, options: { from: string }) {
-      return this.addStrategyForRewardsToFlywheelCore(flywheelCoreAddress, marketAddress, options);
+    addMarketForRewardsToFlywheelCore(
+      flywheelCoreAddress: string,
+      marketAddress: string,
+      options: { from: string }
+    ) {
+      return this.addStrategyForRewardsToFlywheelCore(
+        flywheelCoreAddress,
+        marketAddress,
+        options
+      );
     }
 
-    addStrategyForRewardsToFlywheelCore(flywheelCoreAddress: string, marketAddress: string, options: { from: string }) {
-      const flywheelCoreInstance = this.getFlywheelCoreInstance(flywheelCoreAddress, options);
-      return flywheelCoreInstance.functions.addStrategyForRewards(marketAddress, options);
+    addStrategyForRewardsToFlywheelCore(
+      flywheelCoreAddress: string,
+      marketAddress: string,
+      options: { from: string }
+    ) {
+      const flywheelCoreInstance = this.getFlywheelCoreInstance(
+        flywheelCoreAddress,
+        options
+      );
+      return flywheelCoreInstance.functions.addStrategyForRewards(
+        marketAddress,
+        options
+      );
     }
 
-    addFlywheelCoreToComptroller(flywheelCoreAddress: string, comptrollerAddress: string, options: { from: string }) {
-      const comptrollerInstance = this.getComptrollerInstance(comptrollerAddress, options);
-      return comptrollerInstance.functions._addRewardsDistributor(flywheelCoreAddress, options);
+    addFlywheelCoreToComptroller(
+      flywheelCoreAddress: string,
+      comptrollerAddress: string,
+      options: { from: string }
+    ) {
+      const comptrollerInstance = this.getComptrollerInstance(
+        comptrollerAddress,
+        options
+      );
+      return comptrollerInstance.functions._addRewardsDistributor(
+        flywheelCoreAddress,
+        options
+      );
     }
 
     async accrueFlywheel(
@@ -112,21 +152,37 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       marketAddress: string,
       options: { from: string }
     ) {
-      const flywheelCoreInstance = this.getFlywheelCoreInstance(flywheelAddress, options);
-      return flywheelCoreInstance.functions["accrue(address,address)"](marketAddress, accountAddress, options);
+      const flywheelCoreInstance = this.getFlywheelCoreInstance(
+        flywheelAddress,
+        options
+      );
+      return flywheelCoreInstance.functions["accrue(address,address)"](
+        marketAddress,
+        accountAddress,
+        options
+      );
     }
 
-    async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string, options: { from: string }) {
+    async getFlywheelClaimableRewardsForPool(
+      poolAddress: string,
+      account: string,
+      options: { from: string }
+    ) {
       const pool = await this.getComptrollerInstance(poolAddress, options);
       const marketsOfPool = await pool.getAllMarkets();
 
-      const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
-      const flywheels = rewardDistributorsOfPool.map((address) => this.getFlywheelCoreInstance(address, options));
+      const rewardDistributorsOfPool =
+        await pool.callStatic.getRewardsDistributors();
+      const flywheels = rewardDistributorsOfPool.map((address) =>
+        this.getFlywheelCoreInstance(address, options)
+      );
       const flywheelWithRewards: FlywheelClaimableRewards[] = [];
       for (const flywheel of flywheels) {
         const rewards: FlywheelClaimableRewards["rewards"] = [];
         for (const market of marketsOfPool) {
-          const rewardOfMarket = await flywheel.callStatic["accrue(address,address)"](market, account);
+          const rewardOfMarket = await flywheel.callStatic[
+            "accrue(address,address)"
+          ](market, account);
           if (rewardOfMarket.gt(0)) {
             rewards.push({
               market,
@@ -145,12 +201,22 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       return flywheelWithRewards;
     }
 
-    async getFlywheelClaimableRewards(account: string, options: { from: string }) {
+    async getFlywheelClaimableRewards(
+      account: string,
+      options: { from: string }
+    ) {
       const [comptrollerIndexes, comptrollers, flywheels] =
-        await this.contracts.FusePoolLensSecondary.callStatic.getRewardsDistributorsBySupplier(account, options);
+        await this.contracts.FusePoolLensSecondary.callStatic.getRewardsDistributorsBySupplier(
+          account,
+          options
+        );
 
       return (
-        await Promise.all(comptrollers.map((comp) => this.getFlywheelClaimableRewardsForPool(comp, account, options)))
+        await Promise.all(
+          comptrollers.map((comp) =>
+            this.getFlywheelClaimableRewardsForPool(comp, account, options)
+          )
+        )
       )
         .reduce((acc, curr) => [...acc, ...curr], []) // Flatten Array
         .filter((value, index, self) => self.indexOf(value) === index); // Unique Array;
@@ -164,7 +230,9 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
         this.getFlywheelsByPool(pool, options),
         this.getComptrollerInstance(pool, options).callStatic.getAllMarkets(),
       ]);
-      const strategiesOfFlywheels = await Promise.all(flywheelsOfPool.map((fw) => fw.callStatic.getAllStrategies()));
+      const strategiesOfFlywheels = await Promise.all(
+        flywheelsOfPool.map((fw) => fw.callStatic.getAllStrategies())
+      );
 
       const rewardTokens: string[] = [];
       const marketRewardsInfo = await Promise.all(
@@ -172,7 +240,9 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
           const rewardsInfo = await Promise.all(
             flywheelsOfPool
               // Make sure this market is active in this flywheel
-              .filter((_, fwIndex) => strategiesOfFlywheels[fwIndex].includes(market))
+              .filter((_, fwIndex) =>
+                strategiesOfFlywheels[fwIndex].includes(market)
+              )
               // TODO also check marketState?
               .map(async (fw) => {
                 const rewardToken = await fw.callStatic.rewardToken();
@@ -217,12 +287,23 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       return adaptedMarketRewards;
     }
 
-    async getFlywheelMarketRewardsByPools(pools: string[], options: { from: string }) {
-      return Promise.all(pools.map((pool) => this.getFlywheelMarketRewardsByPool(pool, options)));
+    async getFlywheelMarketRewardsByPools(
+      pools: string[],
+      options: { from: string }
+    ) {
+      return Promise.all(
+        pools.map((pool) => this.getFlywheelMarketRewardsByPool(pool, options))
+      );
     }
 
-    async getFlywheelRewardsInfos(flywheelAddress: string, options: { from: string }) {
-      const flywheelCoreInstance = this.getFlywheelCoreInstance(flywheelAddress, options);
+    async getFlywheelRewardsInfos(
+      flywheelAddress: string,
+      options: { from: string }
+    ) {
+      const flywheelCoreInstance = this.getFlywheelCoreInstance(
+        flywheelAddress,
+        options
+      );
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(options),
         flywheelCoreInstance.callStatic.getAllStrategies(options),
@@ -237,10 +318,22 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       return rewardsInfos;
     }
 
-    async getFlywheelRewardsInfoForMarket(flywheelAddress: string, marketAddress: string, options: { from: string }) {
-      const fwCoreInstance = this.getFlywheelCoreInstance(flywheelAddress, options);
-      const fwRewardsAddress = await fwCoreInstance.callStatic.flywheelRewards(options);
-      const fwRewardsInstance = this.getStaticRewardsInstance(fwRewardsAddress, options);
+    async getFlywheelRewardsInfoForMarket(
+      flywheelAddress: string,
+      marketAddress: string,
+      options: { from: string }
+    ) {
+      const fwCoreInstance = this.getFlywheelCoreInstance(
+        flywheelAddress,
+        options
+      );
+      const fwRewardsAddress = await fwCoreInstance.callStatic.flywheelRewards(
+        options
+      );
+      const fwRewardsInstance = this.getStaticRewardsInstance(
+        fwRewardsAddress,
+        options
+      );
       const [marketState, rewardsInfo] = await Promise.all([
         await fwCoreInstance.callStatic.marketState(marketAddress, options),
         fwRewardsInstance.callStatic.rewardsInfo(marketAddress, options),
@@ -251,9 +344,16 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       };
     }
 
-    async getFlywheelsByPool(poolAddress: string, options: { from: string }): Promise<FlywheelCore[]> {
-      const comptrollerInstance = this.getComptrollerInstance(poolAddress, options);
-      const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors(options);
+    async getFlywheelsByPool(
+      poolAddress: string,
+      options: { from: string }
+    ): Promise<FlywheelCore[]> {
+      const comptrollerInstance = this.getComptrollerInstance(
+        poolAddress,
+        options
+      );
+      const allRewardDistributors =
+        await comptrollerInstance.callStatic.getRewardsDistributors(options);
       const instances = allRewardDistributors.map((address) => {
         return new Contract(
           address,
@@ -275,7 +375,10 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       return instances.filter((_, index) => filterList[index]);
     }
 
-    getStaticRewardsInstance(flywheelCoreAddress: string, options: { from: string }) {
+    getStaticRewardsInstance(
+      flywheelCoreAddress: string,
+      options: { from: string }
+    ) {
       return new Contract(
         flywheelCoreAddress,
         this.artifacts.FlywheelStaticRewards.abi,
@@ -283,7 +386,10 @@ export function withFlywheel<TBase extends FuseBaseConstructor>(Base: TBase) {
       ) as FlywheelStaticRewards;
     }
 
-    getFlywheelCoreInstance(flywheelCoreAddress: string, options: { from: string }) {
+    getFlywheelCoreInstance(
+      flywheelCoreAddress: string,
+      options: { from: string }
+    ) {
       return new Contract(
         flywheelCoreAddress,
         this.artifacts.FuseFlywheelCore.abi,

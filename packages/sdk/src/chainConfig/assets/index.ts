@@ -1,3 +1,5 @@
+export { default as assetSymbols } from "./assetSymbols";
+
 export { default as bscAssets } from "./bsc";
 
 export { default as chapelAssets } from "./chapel";
@@ -12,4 +14,4 @@ export { default as moonbaseAlphaAssets } from "./moonbaseAlpha";
 
 export { default as auroraAssets } from "./aurora";
 
-export { default as assetSymbols } from "./assetSymbols";
+export { default as ganacheAssets } from "./ganache";

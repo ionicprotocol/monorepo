@@ -3,10 +3,9 @@ import { ethers } from "ethers";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 import { deployDiaOracle } from "../helpers/dia";
-import { assetSymbols } from "../../src/chainConfig/assets";
-import { SupportedAsset } from "../../src/Fuse/types";
-import { chainSupportedAssets } from "../../src/chainConfig/supportedAssets";
 import { SupportedChains } from "../../src";
+import { SupportedAsset } from "../../src/types";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.moonbeam]
 

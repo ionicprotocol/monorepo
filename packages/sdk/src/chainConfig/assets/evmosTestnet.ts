@@ -1,4 +1,4 @@
-import { SupportedAsset } from "../../Fuse/types";
+import { SupportedAsset } from "../../types";
 import { assetSymbols } from "./index";
 
 export const assets: SupportedAsset[] = [

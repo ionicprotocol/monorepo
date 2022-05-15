@@ -1,8 +1,12 @@
-import { LiquidationKind } from "./config";
-import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
+import {
+  EncodedLiquidationTx,
+  FusePoolUserWithAssets,
+  logLiquidation,
+} from "./utils";
 import { StrategyAndData } from "./redemptionStrategy";
 import { BigNumber } from "ethers";
 import { FuseBase } from "../../Fuse";
+import { LiquidationKind } from "../../enums";
 
 export default async function encodeLiquidateTx(
   fuse: FuseBase,
@@ -13,12 +17,18 @@ export default async function encodeLiquidateTx(
   liquidationAmount: BigNumber,
   minProfitAmountScaled: BigNumber
 ): Promise<EncodedLiquidationTx> {
-  logLiquidation(borrower, exchangeToTokenAddress, liquidationAmount, borrower.debt[0].underlyingSymbol);
+  logLiquidation(
+    borrower,
+    exchangeToTokenAddress,
+    liquidationAmount,
+    borrower.debt[0].underlyingSymbol
+  );
 
   switch (liquidationKind) {
     case LiquidationKind.DEFAULT_NATIVE_BORROW:
       return {
-        method: "safeLiquidate(address,address,address,uint256,address,address,address[],bytes[])",
+        method:
+          "safeLiquidate(address,address,address,uint256,address,address,address[],bytes[])",
         args: [
           borrower.account,
           borrower.debt[0].cToken,
@@ -33,7 +43,8 @@ export default async function encodeLiquidateTx(
       };
     case LiquidationKind.DEFAULT_TOKEN_BORROW:
       return {
-        method: "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])",
+        method:
+          "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])",
         args: [
           borrower.account,
           liquidationAmount,
