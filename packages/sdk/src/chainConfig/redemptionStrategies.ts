@@ -1,7 +1,7 @@
 import { ChainRedemptionStrategy } from "../types";
 import { RedemptionStrategy, SupportedChains } from "../enums";
 
-const redemptionStrategies: ChainRedemptionStrategy = {
+const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.bsc]: {
     // dai3EPS
     "0x0BC3a8239B0a63E945Ea1bd6722Ba747b9557e56": RedemptionStrategy.CurveLpTokenLiquidatorNoRegistry,
@@ -25,4 +25,4 @@ const redemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.ganache]: {},
 };
 
-export default redemptionStrategies;
+export default chainRedemptionStrategies;
