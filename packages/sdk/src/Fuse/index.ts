@@ -81,6 +81,8 @@ import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistrib
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
+import { ChainLiquidationConfig } from "../modules/liquidation/config";
+import liquidationDefaults from "../chainConfig/liquidation";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -119,6 +121,7 @@ export class FuseBase {
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;
+  public liquidationConfig: ChainLiquidationConfig;
 
   // public methods
 
@@ -143,6 +146,7 @@ export class FuseBase {
     this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
     this.chainSpecificAddresses = chainSpecificAddresses[chainId];
+    this.liquidationConfig = liquidationDefaults[chainId];
 
     this.contracts = {
       FusePoolDirectory: new Contract(

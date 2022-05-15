@@ -26,7 +26,6 @@ export { SupportedChains } from "./chainConfig";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
 export {
-  defaults as liquidationConfigDefaults,
   ChainLiquidationConfig,
   LiquidationStrategy,
 } from "./modules/liquidation/config";
