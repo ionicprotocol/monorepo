@@ -7,7 +7,7 @@ import { SupportedChains } from "../../src";
 import { SupportedAsset } from "../../src/types";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
-const assets = chainSupportedAssets[SupportedChains.moonbeam]
+const assets = chainSupportedAssets[SupportedChains.moonbeam];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
@@ -79,7 +79,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1
+    waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 };

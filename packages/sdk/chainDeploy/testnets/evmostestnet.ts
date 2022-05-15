@@ -4,9 +4,7 @@ import { ChainDeployFnParams, CurvePoolConfig } from "../helpers/types";
 import { SupportedChains } from "../../src";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
-
-const assets = chainSupportedAssets[SupportedChains.evmos_testnet]
-
+const assets = chainSupportedAssets[SupportedChains.evmos_testnet];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a) => a.symbol === assetSymbols.WEVMOS)!.underlying,
@@ -114,10 +112,7 @@ export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDep
       mpoOracles.push(simplePriceOracle.address);
     });
   });
-  tx = await masterPriceOracle.add(
-    mpoUnderlyings,
-    mpoOracles,
-  );
+  tx = await masterPriceOracle.add(mpoUnderlyings, mpoOracles);
   await tx.wait();
   console.log("MasterPriceOracle oracles added", tx.hash);
 };

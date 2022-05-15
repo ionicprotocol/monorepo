@@ -6,7 +6,7 @@ import { SupportedChains } from "../../src";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 
-const assets = chainSupportedAssets[SupportedChains.moonbase_alpha]
+const assets = chainSupportedAssets[SupportedChains.moonbase_alpha];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
@@ -22,8 +22,6 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
   },
 };
-
-
 
 export const deploy = async ({ run, getNamedAccounts, deployments, ethers }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();

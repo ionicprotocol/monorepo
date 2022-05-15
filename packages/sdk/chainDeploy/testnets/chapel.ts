@@ -1,17 +1,11 @@
-import {
-  ChainDeployConfig,
-  ChainlinkFeedBaseCurrency,
-  deployChainlinkOracle,
-  deployUniswapOracle,
-} from "../helpers";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
 import { ChainlinkAsset } from "../helpers/types";
 import { SupportedAsset } from "../../src/types";
 import { SupportedChains } from "../../src";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
-const assets = chainSupportedAssets[SupportedChains.chapel]
-
+const assets = chainSupportedAssets[SupportedChains.chapel];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
@@ -31,9 +25,7 @@ export const deployConfig: ChainDeployConfig = {
     ],
     uniswapData: [],
     // see: https://bsc.kiemtienonline360.com/ for addresses
-    pairInitHashCode: ethers.utils.hexlify(
-      "0xecba335299a6693cb2ebc4782e74669b84290b6378ea3a3873c7231a8d7d1074"
-    ),
+    pairInitHashCode: ethers.utils.hexlify("0xecba335299a6693cb2ebc4782e74669b84290b6378ea3a3873c7231a8d7d1074"),
     uniswapV2RouterAddress: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
     uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
     uniswapOracleInitialDeployTokens: [
@@ -53,12 +45,7 @@ export const deployConfig: ChainDeployConfig = {
   },
 };
 
-export const deploy = async ({
-  run,
-  ethers,
-  getNamedAccounts,
-  deployments,
-}): Promise<void> => {
+export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   ////
   //// ORACLES
   const chainlinkAssets: ChainlinkAsset[] = [

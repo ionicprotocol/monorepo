@@ -41,7 +41,7 @@ task("e2e:unhealthy-pools-became-healthy", "e2e: check pools are healthy").setAc
 task("e2e:admin-fees-are-seized", "e2e: check fees are seized").setAction(async (taskArgs, hre) => {
   // @ts-ignore
   const poolModule = await import("../tests/utils/pool");
-  
+
   // @ts-ignore
   const fuseModule = await import("../tests/utils/fuseSdk");
   const sdk = await fuseModule.getOrCreateFuse();
