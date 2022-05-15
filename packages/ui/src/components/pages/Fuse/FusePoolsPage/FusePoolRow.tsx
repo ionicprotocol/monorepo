@@ -16,20 +16,20 @@ import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import ClipboardValue from '@components/shared/ClipboardValue';
-import { CTokenIcon } from '@components/shared/CTokenIcon';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { useRari } from '@context/RariContext';
-import { usePoolDetails } from '@hooks/fuse/usePoolDetails';
-import { usePoolRiskScoreGradient } from '@hooks/fuse/usePoolRiskScoreGradient';
-import { useRewardTokensOfPool } from '@hooks/rewards/useRewardTokensOfPool';
-import { useColors } from '@hooks/useColors';
-import { useFusePoolData } from '@hooks/useFusePoolData';
-import { letterScore, usePoolRSS } from '@hooks/useRSS';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@utils/apyUtils';
-import { smallUsdFormatter } from '@utils/bigUtils';
-import { Column, Row } from '@utils/chakraUtils';
-import { shortAddress } from '@utils/shortAddress';
+import ClipboardValue from '@ui/components/shared/ClipboardValue';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useRari } from '@ui/context/RariContext';
+import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
+import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
+import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
+import { useColors } from '@ui/hooks/useColors';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
+import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { Column, Row } from '@ui/utils/chakraUtils';
+import { shortAddress } from '@ui/utils/shortAddress';
 
 const PoolRow = ({
   data: pool,

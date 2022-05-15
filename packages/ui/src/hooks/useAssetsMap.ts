@@ -1,14 +1,14 @@
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useMemo } from 'react';
 
-import { useTokensData } from '@hooks/useTokenData';
+import { useTokensData } from '@ui/hooks/useTokenData';
 import {
   AssetHash,
   AssetsMapWithTokenDataReturn,
   NativePricedFuseAssetWithTokenData,
   TokensDataHash,
-} from '@type/ComponentPropsType';
-import { createAssetsMap, createTokensDataMap } from '@utils/tokenUtils';
+} from '@ui/types/ComponentPropsType';
+import { createAssetsMap, createTokensDataMap } from '@ui/utils/tokenUtils';
 
 export const useAssetsMap = (assetsArray: NativePricedFuseAsset[][] | null): AssetHash | null => {
   return useMemo(() => (assetsArray ? createAssetsMap(assetsArray) : null), [assetsArray]);

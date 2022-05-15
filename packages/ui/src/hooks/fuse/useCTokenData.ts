@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { createComptroller, createCToken } from '@utils/createComptroller';
+import { useRari } from '@ui/context/RariContext';
+import { createComptroller, createCToken } from '@ui/utils/createComptroller';
 
 export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
   const { fuse } = useRari();

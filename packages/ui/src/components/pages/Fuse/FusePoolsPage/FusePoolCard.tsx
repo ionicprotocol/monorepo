@@ -4,14 +4,14 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
-import { CTokenIcon } from '@components/shared/CTokenIcon';
-import { useRari } from '@context/RariContext';
-import { usePoolRiskScoreGradient } from '@hooks/fuse/usePoolRiskScoreGradient';
-import { useColors } from '@hooks/useColors';
-import { useFusePoolData } from '@hooks/useFusePoolData';
-import { letterScore, usePoolRSS } from '@hooks/useRSS';
-import { smallUsdFormatter } from '@utils/bigUtils';
-import { Column, Row } from '@utils/chakraUtils';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { useRari } from '@ui/context/RariContext';
+import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
+import { useColors } from '@ui/hooks/useColors';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { Column, Row } from '@ui/utils/chakraUtils';
 
 const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
   const { data: fusePoolData } = useFusePoolData(pool.id.toString());
