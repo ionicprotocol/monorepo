@@ -126,8 +126,8 @@ export const getBscPluginAssetsConf = async (
   const beth = bscAssets.find((b) => b.symbol === "ETH");
   const bomb = bscAssets.find((b) => b.symbol === "BOMB");
   const sdk = await getOrCreateFuse();
-  console.log({bomb})
-  console.log({chainPlugins: sdk.chainPlugins});
+  console.log({ bomb });
+  console.log({ chainPlugins: sdk.chainPlugins });
 
   const alpacaBusdPlugin = sdk.chainPlugins[beth.underlying][0];
   const bombPlugin = sdk.chainPlugins[bomb.underlying][0];

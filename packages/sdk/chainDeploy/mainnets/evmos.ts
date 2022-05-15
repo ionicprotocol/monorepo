@@ -5,7 +5,7 @@ import { SupportedAsset } from "../../src/types";
 import { SupportedChains } from "../../src";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
-const assets = chainSupportedAssets[SupportedChains.evmos]
+const assets = chainSupportedAssets[SupportedChains.evmos];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,

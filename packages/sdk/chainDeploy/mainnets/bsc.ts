@@ -1,28 +1,14 @@
-import {
-  ChainDeployConfig,
-  ChainlinkFeedBaseCurrency,
-  deployChainlinkOracle,
-  deployUniswapOracle,
-} from "../helpers";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
-import {
-  ChainDeployFnParams,
-  ChainlinkAsset,
-  CurvePoolConfig,
-} from "../helpers/types";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
-import {
-  deployERC4626Plugin,
-  deployFlywheelWithDynamicRewards,
-} from "../helpers/erc4626Plugins";
+import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { SupportedChains } from "../../src";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
-
-const assets = chainSupportedAssets[SupportedChains.bsc]
-
+const assets = chainSupportedAssets[SupportedChains.bsc];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
@@ -41,9 +27,7 @@ export const deployConfig: ChainDeployConfig = {
         lpSymbol: "Cake-LP",
       },
     ],
-    pairInitHashCode: ethers.utils.hexlify(
-      "0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"
-    ),
+    pairInitHashCode: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
     uniswapV2RouterAddress: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     uniswapV2FactoryAddress: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
     uniswapOracleInitialDeployTokens: [
@@ -77,11 +61,7 @@ export const deployConfig: ChainDeployConfig = {
       // 0x
       strategy: "AutofarmERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.AUTO)!.underlying, // AUTO
-      otherParams: [
-        "0",
-        "0xa184088a740c695E156F91f5cC086a06bb78b827",
-        "0x0895196562C7868C5Be92459FaE7f877ED450452",
-      ], // poolId, AUTO, AutofarmV2 (Vault Handler)
+      otherParams: ["0", "0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
       flywheelIndices: [2],
       name: "AUTO",
     },
@@ -307,12 +287,7 @@ const curvePools: CurvePoolConfig[] = [
   // },
 ];
 
-export const deploy = async ({
-  run,
-  ethers,
-  getNamedAccounts,
-  deployments,
-}: ChainDeployFnParams): Promise<void> => {
+export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
@@ -361,23 +336,17 @@ export const deploy = async ({
     args: [],
     log: true,
   });
-  if (simplePO.transactionHash)
-    await ethers.provider.waitForTransaction(simplePO.transactionHash);
+  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
   console.log("SimplePriceOracle: ", simplePO.address);
 
   //// Liquidator Redemption Strategies
-  const uniswapLpTokenLiquidator = await deployments.deploy(
-    "UniswapLpTokenLiquidator",
-    {
-      from: deployer,
-      args: [],
-      log: true,
-    }
-  );
+  const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+  });
   if (uniswapLpTokenLiquidator.transactionHash) {
-    await ethers.provider.waitForTransaction(
-      uniswapLpTokenLiquidator.transactionHash
-    );
+    await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
@@ -388,53 +357,32 @@ export const deploy = async ({
     args: [],
     log: true,
   });
-  if (xbombLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
+  if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
   console.log("XBombLiquidator: ", xbombLiquidator.address);
 
   /// jBRL->BUSD
   // TODO in the addresses provider?
-  let synthereumLiquidityPoolAddress =
-    "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
+  let synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
   let expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
-  const jarvisSynthereumLiquidator = await deployments.deploy(
-    "JarvisSynthereumLiquidator",
-    {
-      from: deployer,
-      args: [synthereumLiquidityPoolAddress, expirationTime],
-      log: true,
-    }
-  );
+  const jarvisSynthereumLiquidator = await deployments.deploy("JarvisSynthereumLiquidator", {
+    from: deployer,
+    args: [synthereumLiquidityPoolAddress, expirationTime],
+    log: true,
+  });
   if (jarvisSynthereumLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(
-      jarvisSynthereumLiquidator.transactionHash
-    );
-  console.log(
-    "JarvisSynthereumLiquidator: ",
-    jarvisSynthereumLiquidator.address
-  );
+    await ethers.provider.waitForTransaction(jarvisSynthereumLiquidator.transactionHash);
+  console.log("JarvisSynthereumLiquidator: ", jarvisSynthereumLiquidator.address);
 
   /// EPS
-  const curveOracle = await ethers.getContract(
-    "CurveLpTokenPriceOracleNoRegistry",
-    deployer
-  );
-  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy(
-    "CurveLpTokenLiquidatorNoRegistry",
-    {
-      from: deployer,
-      args: [deployConfig.wtoken, curveOracle.address],
-      log: true,
-    }
-  );
+  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
+  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
+    from: deployer,
+    args: [deployConfig.wtoken, curveOracle.address],
+    log: true,
+  });
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
-    await ethers.provider.waitForTransaction(
-      curveLpTokenLiquidatorNoRegistry.transactionHash
-    );
-  console.log(
-    "CurveLpTokenLiquidatorNoRegistry: ",
-    curveLpTokenLiquidatorNoRegistry.address
-  );
+    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
+  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
   ////
 
@@ -457,14 +405,8 @@ export const deploy = async ({
   });
 
   /// Addresses Provider - set bUSD
-  const addressesProvider = (await ethers.getContract(
-    "AddressesProvider",
-    deployer
-  )) as AddressesProvider;
-  let tx = await addressesProvider.setAddress(
-    "bUSD",
-    assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying
-  );
+  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+  let tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
   await tx.wait();
   ////
 };

@@ -112,7 +112,6 @@ task("swap-token-for-wtoken", "Swap token for WNATIVE")
     console.log(`W Token balance before: ${ethers.utils.formatEther(await account.getBalance())}`);
   });
 
-
 task("swap-token-for-token", "Swap token for token")
   .addParam("token1", "token1 address", undefined, types.string)
   .addParam("token2", "token2 address", undefined, types.string)
