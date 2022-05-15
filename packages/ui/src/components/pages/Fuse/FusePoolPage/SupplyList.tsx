@@ -27,20 +27,20 @@ import { useQueryClient } from 'react-query';
 
 import { PopoverTooltip } from '../../../shared/PopoverTooltip';
 
-import PoolModal from '@components/pages/Fuse/Modals/PoolModal/index';
-import { TokenWithLabel } from '@components/shared/CTokenIcon';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, FundOperationMode } from '@constants/index';
-import { useRari } from '@context/RariContext';
-import { useAuthedCallback } from '@hooks/useAuthedCallback';
-import { useColors } from '@hooks/useColors';
-import { useErrorToast } from '@hooks/useToast';
-import { useTokenData } from '@hooks/useTokenData';
-import { convertMantissaToAPY } from '@utils/apyUtils';
-import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@utils/bigUtils';
-import { Row, useIsMobile } from '@utils/chakraUtils';
-import { createComptroller } from '@utils/createComptroller';
+import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { ComptrollerErrorCodes, FundOperationMode } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast } from '@ui/hooks/useToast';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
+import { Row, useIsMobile } from '@ui/utils/chakraUtils';
+import { createComptroller } from '@ui/utils/createComptroller';
 
 export const SupplyList = ({
   assets,

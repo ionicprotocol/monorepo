@@ -3,8 +3,8 @@ import { HStack, Skeleton, Text, useColorMode } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import React from 'react';
 
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { useTokenData } from '@hooks/useTokenData';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useTokenData } from '@ui/hooks/useTokenData';
 
 export const CTokenIcon = ({
   address,

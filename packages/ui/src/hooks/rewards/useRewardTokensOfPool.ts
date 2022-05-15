@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 import { useAccount } from 'wagmi';
 
-import { useRari } from '@context/RariContext';
+import { useRari } from '@ui/context/RariContext';
 
 export const useRewardTokensOfPool = (poolAddress?: string) => {
   const {
