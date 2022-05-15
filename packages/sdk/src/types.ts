@@ -1,10 +1,10 @@
 import { BigNumber, BigNumberish, providers } from "ethers";
 
-import JumpRateModel from "./irm/JumpRateModel";
-import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
-import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import { FuseBase } from ".";
-import { SupportedChains } from "../network";
+import JumpRateModel from "./Fuse/irm/JumpRateModel";
+import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
+import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
+import { FuseBase } from "./Fuse";
+import { DelegateContractName, LiquidationStrategy, SupportedChains } from "./enums";
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
@@ -80,13 +80,6 @@ export type ChainDeployment = {
 };
 
 export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
-
-export enum DelegateContractName {
-  CErc20Delegate = "CErc20Delegate",
-  CEtherDelegate = "CEtherDelegate",
-  CErc20PluginDelegate = "CErc20PluginDelegate",
-  CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
-}
 
 export type cERC20Conf = {
   delegateContractName?: DelegateContractName;
@@ -222,10 +215,57 @@ export type PluginConfig = {
   };
 };
 
+export type SupportedAsset = {
+  symbol: string;
+  underlying: string;
+  name: string;
+  decimals: number;
+  simplePriceOracleAssetPrice?: BigNumber;
+};
+
 export type AssetPluginConfig = {
   [asset: string]: PluginConfig[];
 };
 
 export type ChainPlugins = {
   [chain in SupportedChains]: AssetPluginConfig;
+};
+
+export type ChainLiquidationDefaults = {
+  [chain in SupportedChains]: {
+    SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
+    SUPPORTED_INPUT_CURRENCIES: Array<string>;
+    LIQUIDATION_STRATEGY: LiquidationStrategy;
+    MINIMUM_PROFIT_NATIVE: BigNumber;
+  };
+};
+
+export type ChainRedemptionStrategy = {
+  [chain in SupportedChains]: {
+    [token: string]: string;
+  };
+};
+
+export type ChainOracles = {
+  [chain in SupportedChains]: string[];
+};
+
+export type ChainSpecificParams = {
+  [chain in SupportedChains]: {
+    blocksPerYear: BigNumber;
+  };
+};
+
+export type ChainSpecificAddresses = {
+  [chain in SupportedChains]: {
+    W_TOKEN: string;
+    W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
+    UNISWAP_V2_ROUTER: string;
+    UNISWAP_V2_FACTORY: string;
+    PAIR_INIT_HASH: string;
+  };
+};
+
+export type ChainSupportedAssets = {
+  [chain in SupportedChains]: SupportedAsset[];
 };

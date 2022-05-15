@@ -1,7 +1,7 @@
 import { BigNumber, BigNumberish, constants, Contract, utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
 
-import { InterestRateModel } from "../types";
+import { InterestRateModel } from "../../types";
 import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 

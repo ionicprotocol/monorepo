@@ -26,7 +26,7 @@ task("oracle:get-price", "Get price of token")
     const oracleModule = await import("../tests/utils/oracle");
     const [tokenAddress, oracle] = await oracleModule.setUpOracleWithToken(_token, _address, ethers, getNamedAccounts);
     const tokenPriceMPO = await oracle.price(tokenAddress);
-    console.log('tokenPriceMPO: ', tokenPriceMPO.toString());
+    console.log("tokenPriceMPO: ", tokenPriceMPO.toString());
     console.log(`Price ${_token ? _token : _address}: ${ethers.utils.formatEther(tokenPriceMPO)}`);
     return tokenPriceMPO;
   });
@@ -77,7 +77,11 @@ task("oracle:update-twap", "Call update on twap oracle to update the last price 
     const fuseModule = await import("../tests/utils/fuseSdk");
     const sdk = await fuseModule.getOrCreateFuse();
 
-    const uniswapTwapRoot = await ethers.getContract("UniswapTwapPriceOracleV2Root", deployer);
+    const uniswapTwapRoot = await ethers.getContractAt(
+      "UniswapTwapPriceOracleV2Root",
+      sdk.chainDeployment.UniswapTwapPriceOracleV2Root.address,
+      deployer
+    );
 
     const tx = await uniswapTwapRoot["update(address)"](_pair);
     await tx.wait();

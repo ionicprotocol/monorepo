@@ -12,8 +12,8 @@ services:
       - FORK_BLOCK_NUMBER
     ports:
       - "8545:8545"
-    network_mode: host
-
+#    volumes:
+#      - ./packages/sdk/deployments/localhost:/tmp/build/packages/sdk/deployments/localhost
   liquidator-bot:
     build:
       dockerfile: docker/liquidator/Dockerfile
@@ -23,8 +23,8 @@ services:
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
-      - WEB3_HTTP_PROVIDER_URL=http://localhost:8545
-    network_mode: host
+      - WEB3_HTTP_PROVIDER_URL=http://hardhat:8545
+    entrypoint: "/bin/sh -c './wait-for-hh.sh && pm2-runtime ecosystem.config.js --env production'"
     restart: always
 
   twap-bot:
@@ -38,6 +38,6 @@ services:
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
-      - WEB3_HTTP_PROVIDER_URL=http://0.0.0.0:8545
-    network_mode: host
+      - WEB3_HTTP_PROVIDER_URL=http://hardhat:8545
+    entrypoint: "/bin/sh -c './wait-for-hh.sh && pm2-runtime ecosystem.config.js --env production'"
     restart: always

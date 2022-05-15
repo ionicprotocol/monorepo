@@ -1,7 +1,7 @@
 // pool utilities used across downstream tests
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { providers, utils } from "ethers";
-import { ethers, getChainId } from "hardhat";
+import { ethers } from "hardhat";
 
 import { cERC20Conf, Fuse, FusePoolData, NativePricedFuseAsset } from "../../src";
 import { getAssetsConf } from "./assets";
