@@ -1,7 +1,7 @@
 import { deployments, ethers } from "hardhat";
 
 import { Fuse } from "../../src";
-import { ChainDeployment } from "../../src/Fuse/types";
+import { ChainDeployment } from "../../src/types";
 
 let fuseSdk: Fuse;
 

@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
-import { SupportedAsset } from "../../src/Fuse/types";
+import { SupportedAsset } from "../../src/types";
 
 export enum ChainlinkFeedBaseCurrency {
   ETH,

@@ -1,11 +1,19 @@
-import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
+import {
+  BigNumber,
+  constants,
+  Contract,
+  ContractTransaction,
+  utils,
+} from "ethers";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CEtherDelegate } from "../../lib/contracts/typechain/CEtherDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FuseBaseConstructor } from "../Fuse/types";
+import { FuseBaseConstructor } from "../types";
 import axios from "axios";
 
-export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withFundOperations<TBase extends FuseBaseConstructor>(
+  Base: TBase
+) {
   return class FundOperations extends Base {
     async fetchGasForCall(amount: BigNumber, address: string) {
       const estimatedGas = BigNumber.from(
@@ -45,9 +53,13 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
           this.provider.getSigner(options.from)
         );
 
-        const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
+        const hasApprovedEnough = (
+          await token.callStatic.allowance(options.from, cTokenAddress)
+        ).gte(amount);
         if (!hasApprovedEnough) {
-          const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
+          const max = BigNumber.from(2)
+            .pow(BigNumber.from(256))
+            .sub(constants.One);
           const approveTx = await token.approve(cTokenAddress, max);
           await approveTx.wait();
         }
@@ -71,7 +83,10 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
         const call = cToken.mint;
 
         if (amount.eq(await this.provider.getBalance(options.from))) {
-          const { gasWEI, gasPrice, estimatedGas } = await this.fetchGasForCall(amount, options.from);
+          const { gasWEI, gasPrice, estimatedGas } = await this.fetchGasForCall(
+            amount,
+            options.from
+          );
 
           tx = await call({
             from: options.from,
@@ -120,7 +135,9 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
           this.provider.getSigner(options.from)
         );
 
-        const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
+        const hasApprovedEnough = (
+          await token.callStatic.allowance(options.from, cTokenAddress)
+        ).gte(amount);
         if (!hasApprovedEnough) {
           const approveTx = await token.approve(cTokenAddress, max);
           await approveTx.wait();
@@ -137,7 +154,10 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
         const call = cToken.repayBorrow;
 
         if (amount.eq(await this.provider.getBalance(options.from))) {
-          const { gasWEI, gasPrice, estimatedGas } = await this.fetchGasForCall(amount, options.from);
+          const { gasWEI, gasPrice, estimatedGas } = await this.fetchGasForCall(
+            amount,
+            options.from
+          );
 
           tx = await call({
             from: options.from,
@@ -155,7 +175,9 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
           this.provider.getSigner(options.from)
         ) as CErc20Delegate;
 
-        let response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
+        let response = (await cToken.callStatic.repayBorrow(
+          isRepayingMax ? max : amount
+        )) as BigNumber;
 
         if (response.toString() !== "0") {
           let errorCode = parseInt(response.toString());
@@ -168,7 +190,11 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
       return { tx, errorCode: null };
     }
 
-    async borrow(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
+    async borrow(
+      cTokenAddress: string,
+      amount: BigNumber,
+      options: { from: string }
+    ) {
       const cToken = new Contract(
         cTokenAddress,
         this.artifacts.CErc20Delegate.abi,
@@ -186,14 +212,20 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
       return { tx, errorCode: null };
     }
 
-    async withdraw(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
+    async withdraw(
+      cTokenAddress: string,
+      amount: BigNumber,
+      options: { from: string }
+    ) {
       const cToken = new Contract(
         cTokenAddress,
         this.artifacts.CErc20Delegate.abi,
         this.provider.getSigner(options.from)
       ) as CErc20Delegate;
 
-      let response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
+      let response = (await cToken.callStatic.redeemUnderlying(
+        amount
+      )) as BigNumber;
 
       if (response.toString() !== "0") {
         let errorCode = parseInt(response.toString());

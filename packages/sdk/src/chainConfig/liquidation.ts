@@ -1,97 +1,141 @@
-import { BigNumber } from "ethers";
-import { LiquidationStrategy } from "../modules/liquidation/config";
-import { ChainLiquidationDeafaults } from "../Fuse/types";
-import { SupportedChains } from "./index";
+import { BigNumber, constants } from "ethers";
+import { ChainLiquidationDefaults, SupportedAsset } from "../types";
+import { LiquidationStrategy, SupportedChains } from "../enums";
+import {
+  assetSymbols,
+  auroraAssets,
+  bscAssets,
+  chapelAssets,
+  evmosAssets,
+  evmosTestnetAssets,
+  ganacheAssets,
+  moonbaseAlphaAssets,
+  moonbeamAssets,
+} from "./assets";
 
-const liquidationDefaults: ChainLiquidationDeafaults = {
+const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.bsc]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
-      "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
-      "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
-      "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+      constants.AddressZero,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
+        .underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!
+        .underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!
+        .underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!
+        .underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+      constants.AddressZero,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
+        .underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   [SupportedChains.chapel]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
-      "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee",
-      "0x8babbb98678facc7342735486c851abd7a0d17ca",
-      "0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8",
+      constants.AddressZero,
+      chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
+        .underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+      constants.AddressZero,
+      chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
+        .underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   [SupportedChains.evmos_testnet]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0x0b67B0A0Ed150B9F06e0ee90D2f1d3c4b3016D5D",
+      constants.AddressZero,
+      evmosTestnetAssets.find(
+        (a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS
+      )!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0x0b67B0A0Ed150B9F06e0ee90D2f1d3c4b3016D5D",
+      constants.AddressZero,
+      evmosTestnetAssets.find(
+        (a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS
+      )!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   [SupportedChains.aurora]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d",
+      constants.AddressZero,
+      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!
+        .underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xC42C30aC6Cc15faC9bD938618BcaA1a1FaE8501d",
+      constants.AddressZero,
+      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!
+        .underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   [SupportedChains.evmos]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0x0b67B0A0Ed150B9F06e0ee90D2f1d3c4b3016D5D",
+      constants.AddressZero,
+      evmosAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!
+        .underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0x0b67B0A0Ed150B9F06e0ee90D2f1d3c4b3016D5D",
+      constants.AddressZero,
+      evmosAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!
+        .underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   // TODO: fix these
   [SupportedChains.moonbase_alpha]: {
-    SUPPORTED_OUTPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
-    SUPPORTED_INPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      moonbaseAlphaAssets.find(
+        (a: SupportedAsset) => a.symbol === assetSymbols.WDEV
+      )!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      moonbaseAlphaAssets.find(
+        (a: SupportedAsset) => a.symbol === assetSymbols.WDEV
+      )!.underlying,
+    ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   [SupportedChains.moonbeam]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xAcc15dC74880C9944775448304B263D191c6077F", // WGLMR
+      constants.AddressZero,
+      moonbeamAssets.find(
+        (a: SupportedAsset) => a.symbol === assetSymbols.WGLMR
+      )!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
-      "0x0000000000000000000000000000000000000000",
-      "0xAcc15dC74880C9944775448304B263D191c6077F", // WGLMR
+      constants.AddressZero,
+      moonbeamAssets.find(
+        (a: SupportedAsset) => a.symbol === assetSymbols.WGLMR
+      )!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },
   [SupportedChains.ganache]: {
-    SUPPORTED_OUTPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
-    SUPPORTED_INPUT_CURRENCIES: ["0x0000000000000000000000000000000000000000"],
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!
+        .underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!
+        .underlying,
+    ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   },

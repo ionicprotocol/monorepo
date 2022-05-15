@@ -1,10 +1,9 @@
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 import { ChainDeployConfig } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
-import { assetSymbols } from "../../src/chainConfig/assets";
-import { SupportedAsset } from "../../src/Fuse/types";
-import { chainSupportedAssets } from "../../src/chainConfig/supportedAssets";
+import { SupportedAsset } from "../../src/types";
 import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.evmos]
 

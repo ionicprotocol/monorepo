@@ -1,5 +1,5 @@
-import { ChainSupportedAssets } from "../Fuse/types";
-import { SupportedChains } from "./index";
+import { SupportedChains } from "../enums";
+import { ChainSupportedAssets } from "../types";
 import {
   bscAssets,
   chapelAssets,
@@ -8,10 +8,11 @@ import {
   moonbaseAlphaAssets,
   moonbeamAssets,
   auroraAssets,
+  ganacheAssets,
 } from "./assets";
 
-export const chainSupportedAssets: ChainSupportedAssets = {
-  [SupportedChains.ganache]: evmosAssets,
+const chainSupportedAssets: ChainSupportedAssets = {
+  [SupportedChains.ganache]: ganacheAssets,
   [SupportedChains.evmos]: evmosAssets,
   [SupportedChains.evmos_testnet]: evmosTestnetAssets,
   [SupportedChains.bsc]: bscAssets,
@@ -20,3 +21,5 @@ export const chainSupportedAssets: ChainSupportedAssets = {
   [SupportedChains.moonbeam]: moonbeamAssets,
   [SupportedChains.aurora]: auroraAssets,
 };
+
+export default chainSupportedAssets;

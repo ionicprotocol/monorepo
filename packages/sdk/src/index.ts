@@ -16,16 +16,15 @@ export {
   InterestRateModelType,
   AssetPluginConfig,
   PluginConfig,
-} from "./Fuse/types";
+} from "./types";
 export {
+  SupportedChains,
   DelegateContractName,
   OracleTypes,
   RedemptionStrategy,
-} from "./Fuse/enums";
-export { SupportedChains } from "./chainConfig";
+  LiquidationStrategy,
+  LiquidationKind,
+} from "./enums";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
-export {
-  ChainLiquidationConfig,
-  LiquidationStrategy,
-} from "./modules/liquidation/config";
+export { ChainLiquidationConfig } from "./modules/liquidation/config";

@@ -1,6 +1,5 @@
-import { SupportedChains } from "./index";
-import { ChainRedemptionStrategy } from "../Fuse/types";
-import { RedemptionStrategy } from "../Fuse/enums";
+import { ChainRedemptionStrategy } from "../types";
+import { RedemptionStrategy, SupportedChains } from "../enums";
 
 const redemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.bsc]: {

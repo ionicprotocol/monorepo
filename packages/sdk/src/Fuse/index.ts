@@ -49,7 +49,9 @@ import {
   InterestRateModelConf,
   InterestRateModelParams,
   OracleConf,
-} from "./types";
+  SupportedAsset,
+} from "../types";
+import { SupportedChains } from "../enums";
 import {
   CTOKEN_ERROR_CODES,
   JUMP_RATE_MODEL_CONF,
@@ -60,8 +62,9 @@ import {
   chainSpecificAddresses,
   irmConfig,
   oracleConfig,
-  SupportedChains,
   chainPluginConfig,
+  chainLiquidationDefaults,
+  chainSupportedAssets,
 } from "../chainConfig";
 
 // SDK modules
@@ -82,7 +85,7 @@ import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
-import liquidationDefaults from "../chainConfig/liquidation";
+import SupportedAssets from "../chainConfig/supportedAssets";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -122,6 +125,7 @@ export class FuseBase {
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;
   public liquidationConfig: ChainLiquidationConfig;
+  public supportedAssets: SupportedAsset[];
 
   // public methods
 
@@ -146,7 +150,8 @@ export class FuseBase {
     this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
     this.chainSpecificAddresses = chainSpecificAddresses[chainId];
-    this.liquidationConfig = liquidationDefaults[chainId];
+    this.liquidationConfig = chainLiquidationDefaults[chainId];
+    this.supportedAssets = chainSupportedAssets[chainId];
 
     this.contracts = {
       FusePoolDirectory: new Contract(

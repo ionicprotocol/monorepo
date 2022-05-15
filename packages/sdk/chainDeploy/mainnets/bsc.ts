@@ -17,9 +17,8 @@ import {
   deployFlywheelWithDynamicRewards,
 } from "../helpers/erc4626Plugins";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { assetSymbols } from "../../src/chainConfig/assets";
-import { chainSupportedAssets } from "../../src/chainConfig/supportedAssets";
 import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 
 const assets = chainSupportedAssets[SupportedChains.bsc]

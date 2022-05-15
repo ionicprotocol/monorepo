@@ -1,7 +1,7 @@
 import { providers } from "ethers";
 import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "./types";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedAsset } from "../../src/Fuse/types";
+import { SupportedAsset } from "../../src/types";
 
 export const deployChainlinkOracle = async ({
   ethers,

@@ -1,7 +1,8 @@
 import { cERC20Conf, DelegateContractName } from "../../src";
-import { Asset, bscAssets } from "../../chainDeploy";
 import { constants } from "ethers";
 import { getOrCreateFuse } from "./fuseSdk";
+import { bscAssets } from "../../src/chainConfig/assets";
+import { SupportedAsset } from "../../src/types";
 
 export const getAssetsConf = async (
   comptroller,
@@ -120,7 +121,7 @@ export const getBscPluginAssetsConf = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress,
-  bscAssets: Asset[]
+  bscAssets: SupportedAsset[]
 ) => {
   const beth = bscAssets.find((b) => b.symbol === "ETH");
   const bomb = bscAssets.find((b) => b.symbol === "BOMB");

@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
-import { SupportedChains } from "./index";
-import { ChainSpecificParams } from "../Fuse/types";
+import { SupportedChains } from "../enums";
+import { ChainSpecificParams } from "../types";
 
 const chainSpecificParams: ChainSpecificParams = {
   [SupportedChains.ganache]: {
