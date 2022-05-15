@@ -1,9 +1,10 @@
 import { BigNumber, constants, Contract, ContractFactory, ethers, providers, utils } from "ethers";
 
-import { cERC20Conf, DelegateContractName, FuseBaseConstructor, InterestRateModelConf } from "../Fuse/types";
+import { cERC20Conf, FuseBaseConstructor, InterestRateModelConf } from "../types";
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
+import { DelegateContractName } from "../enums";
 
 export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class PoolAsset extends Base {
@@ -266,7 +267,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       // Get Comptroller
       const comptroller = this.getComptrollerInstance(conf.comptroller, options);
-
+      console.log(await comptroller.signer.getAddress());
       // Deploy CErc20Delegate implementation contract if necessary
       if (!implementationAddress) {
         implementationAddress = this.chainDeployment.CErc20Delegate.address;

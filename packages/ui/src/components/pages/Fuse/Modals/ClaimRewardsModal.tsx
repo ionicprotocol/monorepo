@@ -15,16 +15,16 @@ import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSigner } from 'wagmi';
 
-import { CTokenIcon } from '@components/shared/CTokenIcon';
-import { ModalDivider } from '@components/shared/Modal';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { useRari } from '@context/RariContext';
-import { useAllClaimableRewards } from '@hooks/rewards/useAllClaimableRewards';
-import { useSuccessToast } from '@hooks/useToast';
-import { useTokenData } from '@hooks/useTokenData';
-import { dynamicFormatter } from '@utils/bigUtils';
-import { Center } from '@utils/chakraUtils';
-import { handleGenericError } from '@utils/errorHandling';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useRari } from '@ui/context/RariContext';
+import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
+import { useSuccessToast } from '@ui/hooks/useToast';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { dynamicFormatter } from '@ui/utils/bigUtils';
+import { Center } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
 
 const ClaimableToken = ({
   data,

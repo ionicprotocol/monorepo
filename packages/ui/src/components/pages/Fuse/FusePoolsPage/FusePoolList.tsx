@@ -21,16 +21,16 @@ import {
 import { FusePoolData } from '@midas-capital/sdk/dist/cjs/src/Fuse/types';
 import { useTranslation } from 'react-i18next';
 
-import PoolCard from '@components/pages/Fuse/FusePoolsPage/FusePoolCard';
-import PoolRow from '@components/pages/Fuse/FusePoolsPage/FusePoolRow';
-import { AlertHero } from '@components/shared/AlertHero';
-import { useRari } from '@context/RariContext';
-import { useFusePools } from '@hooks/fuse/useFusePools';
-import usePoolSorting from '@hooks/fuse/usePoolSorting';
-import { useColors } from '@hooks/useColors';
-import { useFilter } from '@hooks/useFilter';
-import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
-import { useSort } from '@hooks/useSort';
+import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolCard';
+import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolRow';
+import { AlertHero } from '@ui/components/shared/AlertHero';
+import { useRari } from '@ui/context/RariContext';
+import { useFusePools } from '@ui/hooks/fuse/useFusePools';
+import usePoolSorting from '@ui/hooks/fuse/usePoolSorting';
+import { useColors } from '@ui/hooks/useColors';
+import { useFilter } from '@ui/hooks/useFilter';
+import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { useSort } from '@ui/hooks/useSort';
 
 const FusePoolList = () => {
   const filter = useFilter();

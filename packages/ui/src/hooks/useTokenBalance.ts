@@ -2,8 +2,8 @@ import { ERC20Abi, Fuse } from '@midas-capital/sdk';
 import { BigNumber, Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
+import { useRari } from '@ui/context/RariContext';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,

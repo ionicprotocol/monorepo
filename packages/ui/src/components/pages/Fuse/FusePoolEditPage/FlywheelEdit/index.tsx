@@ -20,21 +20,21 @@ import { useTranslation } from 'next-i18next';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 
-import AddFlywheelModal from '@components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';
-import CreateFlywheelModal from '@components/pages/Fuse/FusePoolEditPage/FlywheelEdit/CreateFlywheelModal';
-import EditFlywheelModal from '@components/pages/Fuse/FusePoolEditPage/FlywheelEdit/EditFlywheelModal';
-import ClipboardValue from '@components/shared/ClipboardValue';
-import { CTokenAvatarGroup } from '@components/shared/CTokenIcon';
-import DashboardBox from '@components/shared/DashboardBox';
-import { useIsUpgradeable } from '@hooks/fuse/useIsUpgradable';
-import { useFlywheelsForPool } from '@hooks/rewards/useFlywheelsForPool';
-import { useCTokensUnderlying } from '@hooks/rewards/usePoolIncentives';
-import { useColors } from '@hooks/useColors';
-import { useTokenBalance } from '@hooks/useTokenBalance';
-import { useTokenData } from '@hooks/useTokenData';
-import { Flywheel } from '@type/ComponentPropsType';
-import { Center, Column } from '@utils/chakraUtils';
-import { shortAddress } from '@utils/shortAddress';
+import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';
+import CreateFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/CreateFlywheelModal';
+import EditFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/EditFlywheelModal';
+import ClipboardValue from '@ui/components/shared/ClipboardValue';
+import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
+import DashboardBox from '@ui/components/shared/DashboardBox';
+import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
+import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
+import { useCTokensUnderlying } from '@ui/hooks/rewards/usePoolIncentives';
+import { useColors } from '@ui/hooks/useColors';
+import { useTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { Flywheel } from '@ui/types/ComponentPropsType';
+import { Center, Column } from '@ui/utils/chakraUtils';
+import { shortAddress } from '@ui/utils/shortAddress';
 
 const FlywheelEdit = ({ pool }: { pool: FusePoolData }) => {
   const { isOpen: isAddOpen, onOpen: openAdd, onClose: closeAdd } = useDisclosure();

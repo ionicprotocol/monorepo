@@ -1,9 +1,15 @@
 import { ChainDeployConfig } from "../helpers";
 import { ethers, providers } from "ethers";
-import { Asset, ChainDeployFnParams } from "../helpers/types";
+import { ChainDeployFnParams } from "../helpers/types";
+
+import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+
+const assets = chainSupportedAssets[SupportedChains.moonbase_alpha];
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xA30404AFB4c43D25542687BCF4367F59cc77b5d2",
+  wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
   nativeTokenName: "Dev (Testnet)",
   nativeTokenSymbol: "DEV",
   blocksPerYear: 5 * 24 * 365 * 60, // 12 second blocks, 5 blocks per minute
@@ -16,30 +22,6 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleInitialDeployTokens: [],
   },
 };
-
-export const assets: Asset[] = [
-  {
-    symbol: "ETH",
-    underlying: "0x8cbF5008fa8De192209c6A987D0b3C9c3c7586a6",
-    name: "Ethereum Token",
-    decimals: 18,
-    simplePriceOracleAssetPrice: ethers.utils.parseEther("100"),
-  },
-  {
-    symbol: "BUSD",
-    underlying: "0xe7b932a60E7d0CD08804fB8a3038bCa6218a7Fa2",
-    name: "Binance USD",
-    decimals: 18,
-    simplePriceOracleAssetPrice: ethers.utils.parseEther("0.1"),
-  },
-  {
-    symbol: "USDC",
-    underlying: "0x65C281140d15184de571333387BfCC5e8Fc7c8dc",
-    name: "USDC Coin",
-    decimals: 18,
-    simplePriceOracleAssetPrice: ethers.utils.parseEther("0.1"),
-  },
-];
 
 export const deploy = async ({ run, getNamedAccounts, deployments, ethers }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();

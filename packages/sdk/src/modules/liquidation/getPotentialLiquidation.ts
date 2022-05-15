@@ -7,9 +7,10 @@ import {
 import { BigNumber, constants, utils } from "ethers";
 import { getStrategyAndData } from "./redemptionStrategy";
 import { FuseBase } from "../../Fuse";
-import { ChainLiquidationConfig, getLiquidationKind, LiquidationStrategy } from "./config";
+import { ChainLiquidationConfig, getLiquidationKind } from "./config";
 import { estimateGas } from "./index";
 import encodeLiquidateTx from "./encodeLiquidateTx";
+import { LiquidationStrategy } from "../../enums";
 
 export default async function getPotentialLiquidation(
   fuse: FuseBase,

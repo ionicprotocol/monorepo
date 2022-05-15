@@ -24,20 +24,20 @@ import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
 
-import { PoolDashboardBox } from '@components/pages/Fuse/FusePoolPage/PoolDashboardBox';
-import CaptionedStat from '@components/shared/CaptionedStat';
-import { ModalDivider } from '@components/shared/Modal';
-import { useRari } from '@context/RariContext';
-import { useExtraPoolInfo } from '@hooks/fuse/useExtraPoolInfo';
-import { useColors } from '@hooks/useColors';
-import { useFusePoolData } from '@hooks/useFusePoolData';
-import { useTokenData } from '@hooks/useTokenData';
-import { shortUsdFormatter } from '@utils/bigUtils';
-import { Center, Column, Row, RowOrColumn, useIsMobile } from '@utils/chakraUtils';
-import { FuseUtilizationChartOptions } from '@utils/chartOptions';
-import { convertIRMtoCurve } from '@utils/convertIRMtoCurve';
-import { createUnitroller } from '@utils/createComptroller';
-import { shortAddress } from '@utils/shortAddress';
+import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
+import CaptionedStat from '@ui/components/shared/CaptionedStat';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { useRari } from '@ui/context/RariContext';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useColors } from '@ui/hooks/useColors';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { shortUsdFormatter } from '@ui/utils/bigUtils';
+import { Center, Column, Row, RowOrColumn, useIsMobile } from '@ui/utils/chakraUtils';
+import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
+import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
+import { createUnitroller } from '@ui/utils/createComptroller';
+import { shortAddress } from '@ui/utils/shortAddress';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
