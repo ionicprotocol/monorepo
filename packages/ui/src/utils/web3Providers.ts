@@ -1,7 +1,7 @@
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 import { Fuse } from '@midas-capital/sdk';
 
-import { NETWORK_DATA } from '@networkData/index';
+import { NETWORK_DATA } from '@ui/networkData/index';
 
 export function providerURLForChain(chainId: number) {
   const network = Object.values(NETWORK_DATA).filter((each) => each.chainId === chainId);

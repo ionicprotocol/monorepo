@@ -12,7 +12,7 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 
-import { useColors } from '@hooks/useColors';
+import { useColors } from '@ui/hooks/useColors';
 
 export const PopoverTooltip = ({
   children,

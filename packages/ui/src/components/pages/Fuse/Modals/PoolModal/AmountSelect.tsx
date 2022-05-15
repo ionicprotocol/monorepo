@@ -24,28 +24,28 @@ import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 import { HashLoader } from 'react-spinners';
 
-import DashboardBox from '@components/shared/DashboardBox';
-import { ModalDivider } from '@components/shared/Modal';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
+import DashboardBox from '@ui/components/shared/DashboardBox';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
   FundOperationMode,
   UserAction,
-} from '@constants/index';
-import { useRari } from '@context/RariContext';
-import useUpdatedUserAssets from '@hooks/fuse/useUpdatedUserAssets';
-import { useBorrowLimit } from '@hooks/useBorrowLimit';
-import { useColors } from '@hooks/useColors';
-import { fetchTokenBalance } from '@hooks/useTokenBalance';
-import { useTokenData } from '@hooks/useTokenData';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
-import { AmountProps } from '@type/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@utils/apyUtils';
-import { smallUsdFormatter } from '@utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@utils/chakraUtils';
-import { handleGenericError } from '@utils/errorHandling';
+} from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
+import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { useColors } from '@ui/hooks/useColors';
+import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { AmountProps } from '@ui/types/ComponentPropsType';
+import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
 
 const AmountSelect = ({
   assets,

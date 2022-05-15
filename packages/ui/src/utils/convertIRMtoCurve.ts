@@ -1,7 +1,7 @@
 import { InterestRateModel } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 
-import { getBlockTimePerMinuteByChainId } from '@networkData/index';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
 export const convertIRMtoCurve = (interestRateModel: InterestRateModel, chainId?: number) => {
   const borrowerRates = [];

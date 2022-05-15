@@ -1,8 +1,8 @@
 import { Contract } from '@ethersproject/contracts';
 import { Fuse } from '@midas-capital/sdk';
-import { Comptroller } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/Comptroller';
-import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
-import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
+import { Comptroller } from '@midas-capital/sdk/dist/cjs/typechain/Comptroller';
+import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
+import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/typechain/FuseFlywheelCore';
 
 export const createComptroller = (comptrollerAddress: string, fuse: Fuse) =>
   new Contract(
