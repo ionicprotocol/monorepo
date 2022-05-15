@@ -8,11 +8,10 @@ export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);
 export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: FuseAsset) =>
   BigNumber.from(10).pow(18 - asset.underlyingDecimals.toNumber());
 
-export type ExtendedFusePoolAssetStructOutput =
-  FusePoolLens.FusePoolAssetStructOutput & {
-    borrowBalanceWei?: BigNumber;
-    supplyBalanceWei?: BigNumber;
-  };
+export type ExtendedFusePoolAssetStructOutput = FusePoolLens.FusePoolAssetStructOutput & {
+  borrowBalanceWei?: BigNumber;
+  supplyBalanceWei?: BigNumber;
+};
 
 export type EncodedLiquidationTx = {
   method: string;
@@ -42,11 +41,7 @@ export type PublicPoolUserWithData = {
   liquidationIncentive: BigNumber;
 };
 
-export async function fetchGasLimitForTransaction(
-  fuse: FuseBase,
-  method: string,
-  tx: TransactionRequest
-) {
+export async function fetchGasLimitForTransaction(fuse: FuseBase, method: string, tx: TransactionRequest) {
   try {
     return await fuse.provider.estimateGas(tx);
   } catch (error) {
@@ -63,9 +58,7 @@ export const logLiquidation = (
   console.log(
     `Gathered transaction data for safeLiquidate a ${liquidationTokenSymbol} borrow:
          - Liquidation Amount: ${utils.formatEther(liquidationAmount)}
-         - Underlying Collateral Token: ${
-           borrower.collateral[0].underlyingSymbol
-         }
+         - Underlying Collateral Token: ${borrower.collateral[0].underlyingSymbol}
          - Underlying Debt Token: ${borrower.debt[0].underlyingSymbol}
          - Exchanging liquidated tokens to: ${exchangeToTokenAddress}
          `

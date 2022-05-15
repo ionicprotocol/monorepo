@@ -2,10 +2,7 @@ import { ChainOracles } from "../types";
 import { OracleTypes, SupportedChains } from "../enums";
 
 const oracles: ChainOracles = {
-  [SupportedChains.ganache]: [
-    OracleTypes.SimplePriceOracle,
-    OracleTypes.MasterPriceOracle,
-  ],
+  [SupportedChains.ganache]: [OracleTypes.SimplePriceOracle, OracleTypes.MasterPriceOracle],
   [SupportedChains.chapel]: [
     OracleTypes.MasterPriceOracle,
     OracleTypes.ChainlinkPriceOracleV2,

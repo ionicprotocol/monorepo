@@ -4,15 +4,9 @@ import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
 import { FuseBase } from "./Fuse";
-import {
-  DelegateContractName,
-  LiquidationStrategy,
-  SupportedChains,
-} from "./enums";
+import { DelegateContractName, LiquidationStrategy, SupportedChains } from "./enums";
 
-export type GConstructor<T = { sayHello(msg: string): void }> = new (
-  ...args: any[]
-) => T;
+export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
 
 export type MinifiedContracts = {
@@ -85,10 +79,7 @@ export type ChainDeployment = {
   };
 };
 
-export type InterestRateModelType =
-  | JumpRateModel
-  | DAIInterestRateModelV2
-  | WhitePaperInterestRateModel;
+export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
 
 export type cERC20Conf = {
   delegateContractName?: DelegateContractName;

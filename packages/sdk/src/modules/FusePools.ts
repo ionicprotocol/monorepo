@@ -17,10 +17,7 @@ export type LensPoolsWithData = [
 
 export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
-    async fetchFusePoolData(
-      poolId: string,
-      address?: string
-    ): Promise<FusePoolData> {
+    async fetchFusePoolData(poolId: string, address?: string): Promise<FusePoolData> {
       const {
         comptroller,
         name: _unfiliteredName,
@@ -29,10 +26,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         timestampPosted,
       } = await this.contracts.FusePoolDirectory.pools(Number(poolId));
 
-      const rawData =
-        await this.contracts.FusePoolLens.callStatic.getPoolSummary(
-          comptroller
-        );
+      const rawData = await this.contracts.FusePoolLens.callStatic.getPoolSummary(comptroller);
 
       const underlyingTokens = rawData[2];
       const underlyingSymbols = rawData[3];
@@ -41,12 +35,9 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       const name = filterPoolName(_unfiliteredName);
 
       const assets: NativePricedFuseAsset[] = (
-        await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(
-          comptroller,
-          {
-            from: address,
-          }
-        )
+        await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller, {
+          from: address,
+        })
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
@@ -78,10 +69,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         );
 
         promises.push(
-          this.getAssetInstance<CErc20PluginDelegate>(
-            asset.cToken,
-            "CErc20PluginDelegate"
-          )
+          this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
             .callStatic.plugin()
             .then((plugin) => (asset.plugin = plugin))
             .catch(() =>
@@ -95,29 +83,24 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         );
 
         asset.supplyBalanceNative =
-          Number(utils.formatUnits(asset.supplyBalance)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.supplyBalance)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         asset.borrowBalanceNative =
-          Number(utils.formatUnits(asset.borrowBalance)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.borrowBalance)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSupplyBalanceNative += asset.supplyBalanceNative;
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
-          Number(utils.formatUnits(asset.totalSupply)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.totalSupply)) * Number(utils.formatUnits(asset.underlyingPrice));
         asset.totalBorrowNative =
-          Number(utils.formatUnits(asset.totalBorrow)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.totalBorrow)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
         asset.liquidityNative =
-          Number(utils.formatUnits(asset.liquidity)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalLiquidityNative += asset.liquidityNative;
       }
@@ -126,9 +109,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       return {
         id: Number(poolId),
-        assets: assets.sort((a, b) =>
-          b.liquidityNative > a.liquidityNative ? 1 : -1
-        ),
+        assets: assets.sort((a, b) => (b.liquidityNative > a.liquidityNative ? 1 : -1)),
         creator,
         comptroller,
         name,
@@ -152,16 +133,13 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       verification: boolean;
       options: { from: string };
     }): Promise<(FusePoolData | null)[] | undefined> {
-      const fusePoolsDirectoryResult =
-        await this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(
-          verification,
-          {
-            from: options.from,
-          }
-        );
-      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map(
-        (bn: BigNumber) => bn.toString()
+      const fusePoolsDirectoryResult = await this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(
+        verification,
+        {
+          from: options.from,
+        }
       );
+      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
 
       if (!poolIds.length) {
         return undefined;
@@ -188,23 +166,16 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       const isUnverifiedPools = filter === "unverified-pools";
 
       const req = isCreatedPools
-        ? this.contracts.FusePoolLens.callStatic.getPoolsByAccountWithData(
-            options.from
-          )
+        ? this.contracts.FusePoolLens.callStatic.getPoolsByAccountWithData(options.from)
         : isVerifiedPools
-        ? this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(
-            true
-          )
+        ? this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(true)
         : isUnverifiedPools
-        ? this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(
-            false
-          )
+        ? this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(false)
         : this.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
 
-      const whitelistedPoolsRequest =
-        this.contracts.FusePoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
-          options.from
-        );
+      const whitelistedPoolsRequest = this.contracts.FusePoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
+        options.from
+      );
 
       const responses = await Promise.all([req, whitelistedPoolsRequest]);
 
@@ -219,39 +190,22 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       );
 
       const whitelistedIds = whitelistedPools.map((pool) => pool?.id);
-      const filteredPools = pools.filter(
-        (pool) => !whitelistedIds.includes(pool?.id)
-      );
+      const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
 
       return [...filteredPools, ...whitelistedPools];
     }
 
     getAssetInstance = <T extends CErc20Delegate = CErc20Delegate>(
       address: string,
-      implementation:
-        | "CErc20Delegate"
-        | "CErc20PluginDelegate"
-        | "CErc20PluginRewardsDelegate" = "CErc20Delegate"
+      implementation: "CErc20Delegate" | "CErc20PluginDelegate" | "CErc20PluginRewardsDelegate" = "CErc20Delegate"
     ): T => {
       switch (implementation) {
         case "CErc20PluginDelegate":
-          return new Contract(
-            address,
-            this.chainDeployment[implementation].abi,
-            this.provider
-          ) as T;
+          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
         case "CErc20PluginRewardsDelegate":
-          return new Contract(
-            address,
-            this.chainDeployment[implementation].abi,
-            this.provider
-          ) as T;
+          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
         default:
-          return new Contract(
-            address,
-            this.chainDeployment[implementation].abi,
-            this.provider
-          ) as T;
+          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
       }
     };
   };

@@ -1,9 +1,4 @@
-import {
-  EncodedLiquidationTx,
-  FusePoolUserWithAssets,
-  LiquidatablePool,
-  PublicPoolUserWithData,
-} from "./utils";
+import { EncodedLiquidationTx, FusePoolUserWithAssets, LiquidatablePool, PublicPoolUserWithData } from "./utils";
 import { getPotentialLiquidation } from "./index";
 import { FuseBase } from "../../Fuse";
 import { ChainLiquidationConfig } from "./config";
@@ -17,11 +12,7 @@ async function getLiquidatableUsers(
 ): Promise<Array<EncodedLiquidationTx>> {
   let users: Array<EncodedLiquidationTx> = [];
   for (let user of poolUsers) {
-    const userAssets =
-      await fuse.contracts.FusePoolLens.callStatic.getPoolAssetsByUser(
-        pool.comptroller,
-        user.account
-      );
+    const userAssets = await fuse.contracts.FusePoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
     const userWithAssets: FusePoolUserWithAssets = {
       ...user,
       debt: [],
@@ -48,15 +39,8 @@ export default async function gatherLiquidations(
 ): Promise<Array<LiquidatablePool>> {
   let liquidations: Array<LiquidatablePool> = [];
   for (let pool of pools) {
-    const poolUsers = pool.users
-      .slice()
-      .sort((a, b) => b.totalBorrow.toNumber() - a.totalBorrow.toNumber());
-    const liquidatableUsers = await getLiquidatableUsers(
-      fuse,
-      poolUsers,
-      pool,
-      chainLiquidationConfig
-    );
+    const poolUsers = pool.users.slice().sort((a, b) => b.totalBorrow.toNumber() - a.totalBorrow.toNumber());
+    const liquidatableUsers = await getLiquidatableUsers(fuse, poolUsers, pool, chainLiquidationConfig);
     if (liquidatableUsers.length > 0) {
       liquidations.push({
         comptroller: pool.comptroller,

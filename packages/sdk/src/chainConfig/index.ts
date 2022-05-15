@@ -9,24 +9,12 @@ export { default as chainLiquidationDefaults } from "./liquidation";
 export { default as chainSupportedAssets } from "./supportedAssets";
 export { default as assetSymbols } from "./assets/assetSymbols";
 
-export const oracleConfig = (
-  deployments: ChainDeployment,
-  artifacts: Artifacts,
-  availableOracles: Array<string>
-) => {
-  const asMap = new Map(
-    availableOracles.map((o) => [
-      o,
-      { artifact: artifacts[o], address: deployments[o].address },
-    ])
-  );
+export const oracleConfig = (deployments: ChainDeployment, artifacts: Artifacts, availableOracles: Array<string>) => {
+  const asMap = new Map(availableOracles.map((o) => [o, { artifact: artifacts[o], address: deployments[o].address }]));
   return Object.fromEntries(asMap);
 };
 
-export const irmConfig = (
-  deployments: ChainDeployment,
-  artifacts: Artifacts
-) => {
+export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
   return {
     JumpRateModel: {
       artifact: artifacts.JumpRateModel,

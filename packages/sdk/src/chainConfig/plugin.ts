@@ -26,13 +26,12 @@ const chainPluginConfig: ChainPlugins = {
   [SupportedChains.chapel]: {},
   [SupportedChains.bsc]: {
     // BOMB-BTC LP
-    [bscAssets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying]:
-      [
-        {
-          strategyName: "BOMB-BTC LP Autocompounding (beefy)",
-          strategyAddress: "0x9015315d6757fd1c8735F7d3f0E7fE3E76934c40",
-        },
-      ],
+    [bscAssets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying]: [
+      {
+        strategyName: "BOMB-BTC LP Autocompounding (beefy)",
+        strategyAddress: "0x9015315d6757fd1c8735F7d3f0E7fE3E76934c40",
+      },
+    ],
     // BOMB
     [bscAssets.find((a) => a.symbol === assetSymbols.BOMB)!.underlying]: [
       {

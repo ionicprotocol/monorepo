@@ -12,17 +12,11 @@ export const requiresCustomStrategy = (chainId: number, token: string) => {
   return token in redemptionStrategies[chainId];
 };
 
-export const getStrategyAndData = async (
-  fuse: FuseBase,
-  token: string
-): Promise<StrategyAndData> => {
+export const getStrategyAndData = async (fuse: FuseBase, token: string): Promise<StrategyAndData> => {
   const { chainId } = await fuse.provider.getNetwork();
-  if (!requiresCustomStrategy(chainId, token))
-    return { strategyData: [], strategyAddress: [] };
+  if (!requiresCustomStrategy(chainId, token)) return { strategyData: [], strategyAddress: [] };
 
-  const redemptionStrategy = redemptionStrategies[chainId][
-    token
-  ] as RedemptionStrategy;
+  const redemptionStrategy = redemptionStrategies[chainId][token] as RedemptionStrategy;
   const redemptionStrategyContract = new Contract(
     fuse.chainDeployment[redemptionStrategy].address,
     fuse.chainDeployment[redemptionStrategy].abi,
@@ -34,8 +28,7 @@ export const getStrategyAndData = async (
 
   switch (redemptionStrategy) {
     case RedemptionStrategy.CurveLpTokenLiquidatorNoRegistry:
-      const curveLpOracleAddress =
-        await redemptionStrategyContract.callStatic.oracle();
+      const curveLpOracleAddress = await redemptionStrategyContract.callStatic.oracle();
       const curveLpOracle = new Contract(
         curveLpOracleAddress,
         fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.abi,
@@ -44,12 +37,7 @@ export const getStrategyAndData = async (
       const tokens = await curveLpOracle.callStatic.underlyingTokens(token);
       return {
         ...strategyAndData,
-        strategyData: [
-          new ethers.utils.AbiCoder().encode(
-            ["uint256", "address"],
-            [0, tokens[0]]
-          ),
-        ],
+        strategyData: [new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, tokens[0]])],
       };
 
     case RedemptionStrategy.XBombLiquidator: {

@@ -10,7 +10,7 @@ export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
     // @ts-ignore
     const fuseModule = await import("../tests/utils/fuseSdk");
     // @ts-ignore
-    const sdkModule = await import("../dist/esm/src");
+    const sdkModule = await import("../src");
     const sdk = await fuseModule.getOrCreateFuse();
     let account: SignerWithAddress;
     if (_account === "whale") {
