@@ -4,7 +4,7 @@ export { default as chainSpecificAddresses } from "./addresses";
 export { default as chainOracles } from "./oracles";
 export { default as chainSpecificParams } from "./params";
 export { default as chainPluginConfig } from "./plugin";
-export { default as redemptionStrategies } from "./redemptionStrategies";
+export { default as chainRedemptionStrategies } from "./redemptionStrategies";
 export { default as chainLiquidationDefaults } from "./liquidation";
 export { default as chainSupportedAssets } from "./supportedAssets";
 export { default as assetSymbols } from "./assets/assetSymbols";

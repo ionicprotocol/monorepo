@@ -4,7 +4,7 @@ import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
 import { FuseBase } from "./Fuse";
-import { DelegateContractName, LiquidationStrategy, SupportedChains } from "./enums";
+import { DelegateContractName, LiquidationStrategy, RedemptionStrategy, SupportedChains } from "./enums";
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
@@ -242,7 +242,7 @@ export type ChainLiquidationDefaults = {
 
 export type ChainRedemptionStrategy = {
   [chain in SupportedChains]: {
-    [token: string]: string;
+    [token: string]: RedemptionStrategy;
   };
 };
 

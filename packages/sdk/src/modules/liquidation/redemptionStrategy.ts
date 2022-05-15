@@ -1,6 +1,5 @@
 import { BytesLike, Contract, ethers } from "ethers";
 import { FuseBase } from "../../Fuse";
-import { redemptionStrategies } from "../../chainConfig";
 import { RedemptionStrategy } from "../../enums";
 
 export type StrategyAndData = {
@@ -8,15 +7,10 @@ export type StrategyAndData = {
   strategyData: BytesLike[];
 };
 
-export const requiresCustomStrategy = (chainId: number, token: string) => {
-  return token in redemptionStrategies[chainId];
-};
-
 export const getStrategyAndData = async (fuse: FuseBase, token: string): Promise<StrategyAndData> => {
-  const { chainId } = await fuse.provider.getNetwork();
-  if (!requiresCustomStrategy(chainId, token)) return { strategyData: [], strategyAddress: [] };
+  if (!(token in fuse.redemptionStrategies)) return { strategyData: [], strategyAddress: [] };
 
-  const redemptionStrategy = redemptionStrategies[chainId][token] as RedemptionStrategy;
+  const redemptionStrategy = fuse.redemptionStrategies[token] as RedemptionStrategy;
   const redemptionStrategyContract = new Contract(
     fuse.chainDeployment[redemptionStrategy].address,
     fuse.chainDeployment[redemptionStrategy].abi,

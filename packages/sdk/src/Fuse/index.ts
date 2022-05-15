@@ -45,13 +45,14 @@ import {
   Artifacts,
   AssetPluginConfig,
   ChainDeployment,
+  ChainRedemptionStrategy,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
   OracleConf,
   SupportedAsset,
 } from "../types";
-import { SupportedChains } from "../enums";
+import { RedemptionStrategy, SupportedChains } from "../enums";
 import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
 import {
   chainOracles,
@@ -61,6 +62,7 @@ import {
   chainPluginConfig,
   chainLiquidationDefaults,
   chainSupportedAssets,
+  chainRedemptionStrategies,
 } from "../chainConfig";
 
 // SDK modules
@@ -81,7 +83,6 @@ import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
-import SupportedAssets from "../chainConfig/supportedAssets";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -122,6 +123,7 @@ export class FuseBase {
   public chainPlugins: AssetPluginConfig;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
+  public redemptionStrategies: { [token: string]: RedemptionStrategy };
 
   // public methods
 
@@ -141,9 +143,6 @@ export class FuseBase {
     }
     this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
-    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
-    this.liquidationConfig = chainLiquidationDefaults[chainId];
-    this.supportedAssets = chainSupportedAssets[chainId];
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -216,7 +215,12 @@ export class FuseBase {
       return true;
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
-    this.chainPlugins = chainPluginConfig[this.chainId];
+
+    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
+    this.liquidationConfig = chainLiquidationDefaults[chainId];
+    this.supportedAssets = chainSupportedAssets[chainId];
+    this.chainPlugins = chainPluginConfig[chainId];
+    this.redemptionStrategies = chainRedemptionStrategies[chainId];
   }
 
   async deployPool(
