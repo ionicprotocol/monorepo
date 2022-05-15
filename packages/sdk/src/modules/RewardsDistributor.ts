@@ -3,7 +3,7 @@ import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { ERC20 } from "../../lib/contracts/typechain/ERC20";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
-import { FuseBaseConstructor } from "../Fuse/types";
+import { FuseBaseConstructor } from "../types";
 
 export interface ClaimableReward {
   distributor: string;

@@ -1,11 +1,11 @@
-import { BigNumber, BigNumberish, constants, Contract, utils } from "ethers";
+import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { FuseBaseConstructor } from "../Fuse/types";
+import { FuseBaseConstructor } from "../types";
 import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
-import { FusePoolData, NativePricedFuseAsset } from "../Fuse/types";
-import { CErc20Delegate } from '../../lib/contracts/typechain/CErc20Delegate';
-import { CErc20PluginDelegate } from '../../lib/contracts/typechain/CErc20PluginDelegate';
+import { FusePoolData, NativePricedFuseAsset } from "../types";
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 
 export type LensPoolsWithData = [
@@ -67,7 +67,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
             .mintGuardianPaused(asset.cToken)
             .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
         );
-        
+
         promises.push(
           this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
             .callStatic.plugin()

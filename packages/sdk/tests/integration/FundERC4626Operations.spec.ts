@@ -1,12 +1,12 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
-import Fuse from "../src/Fuse";
-import { setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
-import * as poolHelpers from "./utils/pool";
+import Fuse from "../../src/Fuse";
+import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
+import * as poolHelpers from "../utils/pool";
 import { BigNumber, constants, providers, utils } from "ethers";
-import { getOrCreateFuse } from "./utils/fuseSdk";
-import { SimplePriceOracle } from "../lib/contracts/typechain/SimplePriceOracle";
-import { tradeAssetForAsset } from "./utils/setup";
+import { getOrCreateFuse } from "../utils/fuseSdk";
+import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
+import { tradeAssetForAsset } from "../utils/setup";
 
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("FundOperationsERC4626Module", function () {
   let poolAddress: string;

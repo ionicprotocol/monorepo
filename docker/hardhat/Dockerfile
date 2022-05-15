@@ -35,4 +35,4 @@ COPY packages/sdk /tmp/build/packages/sdk
 RUN yarn build:all
 
 
-CMD ["yarn", "workspace", "@midas-capital/sdk", "hardhat", "node", "--tags", "prod"]
+CMD ["yarn", "workspace", "@midas-capital/sdk", "hardhat", "node", "--no-deploy"]
