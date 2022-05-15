@@ -6,6 +6,7 @@ import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { FuseBase } from ".";
 import { SupportedChains } from "../chainConfig";
 import { DelegateContractName } from "./enums";
+import { LiquidationStrategy } from "../modules/liquidation/config";
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (
   ...args: any[]
@@ -221,12 +222,29 @@ export type PluginConfig = {
   };
 };
 
+export type SupportedAsset = {
+  symbol: string;
+  underlying: string;
+  name: string;
+  decimals: number;
+  simplePriceOracleAssetPrice?: BigNumber;
+};
+
 export type AssetPluginConfig = {
   [asset: string]: PluginConfig[];
 };
 
 export type ChainPlugins = {
   [chain in SupportedChains]: AssetPluginConfig;
+};
+
+export type ChainLiquidationDeafaults = {
+  [chain in SupportedChains]: {
+    SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
+    SUPPORTED_INPUT_CURRENCIES: Array<string>;
+    LIQUIDATION_STRATEGY: LiquidationStrategy;
+    MINIMUM_PROFIT_NATIVE: BigNumber;
+  };
 };
 
 export type ChainRedemptionStrategy = {
@@ -253,4 +271,8 @@ export type ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: string;
     PAIR_INIT_HASH: string;
   };
+};
+
+export type ChainSupportedAssets = {
+  [chain in SupportedChains]: SupportedAsset[];
 };
