@@ -23,7 +23,6 @@ const redemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.chapel]: {},
   [SupportedChains.aurora]: {},
-  [SupportedChains.harmony]: {},
   [SupportedChains.moonbeam]: {},
   [SupportedChains.evmos_testnet]: {},
   [SupportedChains.evmos]: {

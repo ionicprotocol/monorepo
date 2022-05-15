@@ -5,6 +5,7 @@ export { default as chainOracles } from "./oracles";
 export { default as chainSpecificParams } from "./params";
 export { default as chainPluginConfig } from "./plugin";
 export { default as redemptionStrategies } from "./redemptionStrategies";
+export { default as liquidationDefaults } from "./liquidation";
 
 export enum SupportedChains {
   bsc = 56,

@@ -1,5 +1,6 @@
 import { ChainPlugins } from "../Fuse/types";
 import { SupportedChains } from "./index";
+import { assetSymbols, bscAssets } from "./assets";
 
 const chainPluginConfig: ChainPlugins = {
   [SupportedChains.ganache]: {
@@ -25,21 +26,22 @@ const chainPluginConfig: ChainPlugins = {
   [SupportedChains.chapel]: {},
   [SupportedChains.bsc]: {
     // BOMB-BTC LP
-    "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6": [
-      {
-        strategyName: "BOMB-BTC LP Autocompounding (beefy)",
-        strategyAddress: "0x9015315d6757fd1c8735F7d3f0E7fE3E76934c40",
-      },
-    ],
+    [bscAssets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying]:
+      [
+        {
+          strategyName: "BOMB-BTC LP Autocompounding (beefy)",
+          strategyAddress: "0x9015315d6757fd1c8735F7d3f0E7fE3E76934c40",
+        },
+      ],
     // BOMB
-    "0x522348779DCb2911539e76A1042aA922F9C47Ee3": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.BOMB)!.underlying]: [
       {
         strategyName: "BOMB Autocompounding (beefy)",
         strategyAddress: "0x9baB520eBB7954D0030E9cF03A9345554994a786",
       },
     ],
     // 3EPS
-    "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452": [
+    [bscAssets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying]: [
       {
         strategyName: "3EPS LP Staker with EPX Rewards",
         strategyAddress: "",
@@ -50,7 +52,7 @@ const chainPluginConfig: ChainPlugins = {
       },
     ],
     // dai3EPS
-    "0x0BC3a8239B0a63E945Ea1bd6722Ba747b9557e56": [
+    [bscAssets.find((a) => a.symbol === assetSymbols["dai3EPS"])!.underlying]: [
       {
         strategyName: "dai3EPS LP Staker with EPX Rewards",
         strategyAddress: "",
@@ -61,60 +63,60 @@ const chainPluginConfig: ChainPlugins = {
       },
     ],
     // ust3EPS
-    "0x151F1611b2E304DEd36661f65506f9D7D172beba": [
-      {
-        strategyName: "ust3EPS LP Staker with EPX Rewards",
-        strategyAddress: "",
-        dynamicFlywheel: {
-          address: "0x968086e25851D465127Bb536516c2162Cd79B360",
-          rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
-        },
-      },
-    ],
+    // "0x151F1611b2E304DEd36661f65506f9D7D172beba": [
+    //   {
+    //     strategyName: "ust3EPS LP Staker with EPX Rewards",
+    //     strategyAddress: "",
+    //     dynamicFlywheel: {
+    //       address: "0x968086e25851D465127Bb536516c2162Cd79B360",
+    //       rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
+    //     },
+    //   },
+    // ],
     // WBNB
-    "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibWBNB Vault",
         strategyAddress: "0x0b434c33905C2B80bA978B90bFD874dFBa5260b3",
       },
     ],
     // ETH
-    "0x2170Ed0880ac9A755fd29B2688956BD959F933F8": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.ETH)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibETH Vault",
         strategyAddress: "0xCBE401B8874A1C30163740f5f45156088Eb21481",
       },
     ],
     // BUSD
-    "0xe9e7cea3dedca5984780bafc599bd69add087d56": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibBUSD Vault",
         strategyAddress: "0x9012ef7414D5c42873D94506b91C1677BF4DfF38",
       },
     ],
     // USDT
-    "0x55d398326f99059ff775485246999027b3197955": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.USDT)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibUSDT Vault",
         strategyAddress: "0xF0BbDdd4EF2Ac465f949B45f0c7a8AFFCD09C8AC",
       },
     ],
     // USDC
-    "0x8ac76a51cc950d9822d68b83fe1ad97b32cd580d": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.USDC)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibUSDC Vault",
         strategyAddress: "0x40bDBA20fc031042d0b4cF804caDe6109DBEb33C",
       },
     ],
     // TUSD
-    "0x14016e85a25aeb13065688cafb43044c2ef86784": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.TUSD)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibTUSD Vault",
         strategyAddress: "",
       },
     ],
     // BTCB
-    "0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c": [
+    [bscAssets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying]: [
       {
         strategyName: "Alpaca Finance ibBTCB Vault",
         strategyAddress: "0xE2f3563b4E7d19bcC3B1F63e61D4D29f6dD7e593",
