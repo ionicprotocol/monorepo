@@ -1,18 +1,6 @@
-import {
-  BigNumber,
-  constants,
-  Contract,
-  ContractFactory,
-  ethers,
-  providers,
-  utils,
-} from "ethers";
+import { BigNumber, constants, Contract, ContractFactory, ethers, providers, utils } from "ethers";
 
-import {
-  cERC20Conf,
-  FuseBaseConstructor,
-  InterestRateModelConf,
-} from "../types";
+import { cERC20Conf, FuseBaseConstructor, InterestRateModelConf } from "../types";
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
@@ -31,11 +19,9 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       let receipt: providers.TransactionReceipt;
       // Deploy new interest rate model via SDK if requested
       if (
-        [
-          "WhitePaperInterestRateModel",
-          "JumpRateModel",
-          "DAIInterestRateModelV2",
-        ].indexOf(irmConf.interestRateModel!) >= 0
+        ["WhitePaperInterestRateModel", "JumpRateModel", "DAIInterestRateModelV2"].indexOf(
+          irmConf.interestRateModel!
+        ) >= 0
       ) {
         try {
           irmConf.interestRateModel = await this.deployInterestRateModel(
@@ -45,74 +31,42 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
           ); // TODO: anchorMantissa
         } catch (error: any) {
           console.error("Raw Error", error);
-          throw Error(
-            "Deployment of interest rate model failed: " +
-              (error.message ? error.message : error)
-          );
+          throw Error("Deployment of interest rate model failed: " + (error.message ? error.message : error));
         }
       }
       // Deploy new asset to existing pool via SDK
       try {
-        [assetAddress, implementationAddress, receipt] =
-          await this.deployCToken(cTokenConf, options);
+        [assetAddress, implementationAddress, receipt] = await this.deployCToken(cTokenConf, options);
       } catch (error: any) {
-        throw Error(
-          "Deployment of asset to Fuse pool failed: " +
-            (error.message ? error.message : error)
-        );
+        throw Error("Deployment of asset to Fuse pool failed: " + (error.message ? error.message : error));
       }
-      return [
-        assetAddress,
-        implementationAddress,
-        irmConf.interestRateModel!,
-        receipt,
-      ];
+      return [assetAddress, implementationAddress, irmConf.interestRateModel!, receipt];
     }
 
-    async deployCToken(
-      conf: cERC20Conf,
-      options: any
-    ): Promise<[string, string, TransactionReceipt]> {
+    async deployCToken(conf: cERC20Conf, options: any): Promise<[string, string, TransactionReceipt]> {
       // BigNumbers
       // 10% -> 0.1 * 1e18
-      const reserveFactorBN = utils.parseEther(
-        (conf.reserveFactor / 100).toString()
-      );
+      const reserveFactorBN = utils.parseEther((conf.reserveFactor / 100).toString());
       // 5% -> 0.05 * 1e18
       const adminFeeBN = utils.parseEther((conf.adminFee / 100).toString());
       // 50% -> 0.5 * 1e18
       // TODO: find out if this is a number or string. If its a number, parseEther will not work. Also parse Units works if number is between 0 - 0.9
-      const collateralFactorBN = utils.parseEther(
-        (conf.collateralFactor / 100).toString()
-      );
+      const collateralFactorBN = utils.parseEther((conf.collateralFactor / 100).toString());
       // Check collateral factor
-      if (
-        !collateralFactorBN.gte(constants.Zero) ||
-        collateralFactorBN.gt(utils.parseEther("0.9"))
-      )
+      if (!collateralFactorBN.gte(constants.Zero) || collateralFactorBN.gt(utils.parseEther("0.9")))
         throw Error("Collateral factor must range from 0 to 0.9.");
 
       // Check reserve factor + admin fee + Fuse fee
-      if (!reserveFactorBN.gte(constants.Zero))
-        throw Error("Reserve factor cannot be negative.");
-      if (!adminFeeBN.gte(constants.Zero))
-        throw Error("Admin fee cannot be negative.");
+      if (!reserveFactorBN.gte(constants.Zero)) throw Error("Reserve factor cannot be negative.");
+      if (!adminFeeBN.gte(constants.Zero)) throw Error("Admin fee cannot be negative.");
 
       // If reserveFactor or adminFee is greater than zero, we get fuse fee.
       // Sum of reserveFactor and adminFee should not be greater than fuse fee. ? i think
       if (reserveFactorBN.gt(constants.Zero) || adminFeeBN.gt(constants.Zero)) {
-        const fuseFee =
-          await this.contracts.FuseFeeDistributor.interestFeeRate();
-        if (
-          reserveFactorBN
-            .add(adminFeeBN)
-            .add(BigNumber.from(fuseFee))
-            .gt(constants.WeiPerEther)
-        )
+        const fuseFee = await this.contracts.FuseFeeDistributor.interestFeeRate();
+        if (reserveFactorBN.add(adminFeeBN).add(BigNumber.from(fuseFee)).gt(constants.WeiPerEther))
           throw Error(
-            "Sum of reserve factor and admin fee should range from 0 to " +
-              (1 - fuseFee.div(1e18).toNumber()) +
-              "."
+            "Sum of reserve factor and admin fee should range from 0 to " + (1 - fuseFee.div(1e18).toNumber()) + "."
           );
       }
 
@@ -129,29 +83,25 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       switch (conf.delegateContractName) {
         case DelegateContractName.CErc20PluginDelegate:
           implementationAddress =
-            this.chainDeployment.CErc20PluginDelegate &&
-            this.chainDeployment.CErc20PluginDelegate.address
+            this.chainDeployment.CErc20PluginDelegate && this.chainDeployment.CErc20PluginDelegate.address
               ? this.chainDeployment.CErc20PluginDelegate.address
               : null;
           break;
         case DelegateContractName.CErc20PluginRewardsDelegate:
           implementationAddress =
-            this.chainDeployment.CErc20PluginRewardsDelegate &&
-            this.chainDeployment.CErc20PluginRewardsDelegate.address
+            this.chainDeployment.CErc20PluginRewardsDelegate && this.chainDeployment.CErc20PluginRewardsDelegate.address
               ? this.chainDeployment.CErc20PluginRewardsDelegate.address
               : null;
           break;
         case DelegateContractName.CEtherDelegate:
           implementationAddress =
-            this.chainDeployment.CEtherDelegate &&
-            this.chainDeployment.CEtherDelegate.address
+            this.chainDeployment.CEtherDelegate && this.chainDeployment.CEtherDelegate.address
               ? this.chainDeployment.CEtherDelegate.address
               : null;
           break;
         default:
           implementationAddress =
-            this.chainDeployment.CErc20Delegate &&
-            this.chainDeployment.CErc20Delegate.address
+            this.chainDeployment.CErc20Delegate && this.chainDeployment.CErc20Delegate.address
               ? this.chainDeployment.CErc20Delegate.address
               : null;
           break;
@@ -169,13 +119,9 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       options: any,
       implementationAddress: string | null
     ): Promise<[string, string, TransactionReceipt]> {
-      const reserveFactorBN = utils.parseUnits(
-        (conf.reserveFactor / 100).toString()
-      );
+      const reserveFactorBN = utils.parseUnits((conf.reserveFactor / 100).toString());
       const adminFeeBN = utils.parseUnits((conf.adminFee / 100).toString());
-      const collateralFactorBN = utils.parseUnits(
-        (conf.collateralFactor / 100).toString()
-      );
+      const collateralFactorBN = utils.parseUnits((conf.collateralFactor / 100).toString());
 
       // Deploy CEtherDelegate implementation contract if necessary
       if (!implementationAddress) {
@@ -202,17 +148,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       ];
       const abiCoder = new utils.AbiCoder();
       const constructorData = abiCoder.encode(
-        [
-          "address",
-          "address",
-          "address",
-          "string",
-          "string",
-          "address",
-          "bytes",
-          "uint256",
-          "uint256",
-        ],
+        ["address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
         deployArgs
       );
       const comptroller = new Contract(
@@ -221,18 +157,14 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         this.provider.getSigner(options.from)
       );
 
-      const comptrollerWithSigner = comptroller.connect(
-        this.provider.getSigner(options.from)
-      );
+      const comptrollerWithSigner = comptroller.connect(this.provider.getSigner(options.from));
       const errorCode = await comptroller.callStatic._deployMarket(
         ethers.constants.AddressZero,
         constructorData,
         collateralFactorBN
       );
       if (errorCode.toNumber() !== 0) {
-        throw `Failed to _deployMarket: ${
-          this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]
-        }`;
+        throw `Failed to _deployMarket: ${this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
       }
 
       const tx = await comptrollerWithSigner._deployMarket(
@@ -253,8 +185,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       );
 
       const byteCodeHash = utils.keccak256(
-        this.artifacts.CEtherDelegator.bytecode.object +
-          constructorData.substring(2)
+        this.artifacts.CEtherDelegator.bytecode.object + constructorData.substring(2)
       );
 
       const cEtherDelegatorAddress = utils.getCreate2Address(
@@ -267,27 +198,17 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       return [cEtherDelegatorAddress, implementationAddress, receipt];
     }
 
-    async upgradeCErc20(
-      conf: cERC20Conf,
-      cErc20DelegatorAddress: string,
-      implementationData: string
-    ): Promise<string> {
+    async upgradeCErc20(conf: cERC20Conf, cErc20DelegatorAddress: string, implementationData: string): Promise<string> {
       let becomeImplementationAddress: string;
       switch (conf.delegateContractName) {
         case DelegateContractName.CErc20PluginDelegate:
-          becomeImplementationAddress =
-            this.chainDeployment[DelegateContractName.CErc20PluginDelegate]
-              .address;
+          becomeImplementationAddress = this.chainDeployment[DelegateContractName.CErc20PluginDelegate].address;
           break;
         case DelegateContractName.CErc20PluginRewardsDelegate:
-          becomeImplementationAddress =
-            this.chainDeployment[
-              DelegateContractName.CErc20PluginRewardsDelegate
-            ].address;
+          becomeImplementationAddress = this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].address;
           break;
         default:
-          becomeImplementationAddress =
-            this.chainDeployment[DelegateContractName.CErc20Delegate].address;
+          becomeImplementationAddress = this.chainDeployment[DelegateContractName.CErc20Delegate].address;
           break;
       }
       const cToken = new Contract(
@@ -298,18 +219,12 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       console.log(`Setting implementation to ${becomeImplementationAddress}`);
 
-      const tx = await cToken._setImplementationSafe(
-        becomeImplementationAddress,
-        false,
-        implementationData
-      );
+      const tx = await cToken._setImplementationSafe(becomeImplementationAddress, false, implementationData);
       const receipt: TransactionReceipt = await tx.wait();
       if (receipt.status != constants.One.toNumber()) {
         throw `Failed set implementation to ${conf.delegateContractName}`;
       }
-      console.log(
-        `Implementation successfully set to ${conf.delegateContractName}`
-      );
+      console.log(`Implementation successfully set to ${conf.delegateContractName}`);
       return becomeImplementationAddress;
     }
 
@@ -346,19 +261,12 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
     ): Promise<[string, string, TransactionReceipt]> {
       const abiCoder = new utils.AbiCoder();
 
-      const reserveFactorBN = utils.parseUnits(
-        (conf.reserveFactor / 100).toString()
-      );
+      const reserveFactorBN = utils.parseUnits((conf.reserveFactor / 100).toString());
       const adminFeeBN = utils.parseUnits((conf.adminFee / 100).toString());
-      const collateralFactorBN = utils.parseUnits(
-        (conf.collateralFactor / 100).toString()
-      );
+      const collateralFactorBN = utils.parseUnits((conf.collateralFactor / 100).toString());
 
       // Get Comptroller
-      const comptroller = this.getComptrollerInstance(
-        conf.comptroller,
-        options
-      );
+      const comptroller = this.getComptrollerInstance(conf.comptroller, options);
       console.log(await comptroller.signer.getAddress());
       // Deploy CErc20Delegate implementation contract if necessary
       if (!implementationAddress) {
@@ -381,39 +289,18 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       ];
 
       const constructorData = abiCoder.encode(
-        [
-          "address",
-          "address",
-          "address",
-          "address",
-          "string",
-          "string",
-          "address",
-          "bytes",
-          "uint256",
-          "uint256",
-        ],
+        ["address", "address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
         deployArgs
       );
 
-      const errorCode = await comptroller.callStatic._deployMarket(
-        false,
-        constructorData,
-        collateralFactorBN
-      );
+      const errorCode = await comptroller.callStatic._deployMarket(false, constructorData, collateralFactorBN);
 
       if (errorCode.toNumber() !== 0) {
-        throw `Failed to _deployMarket: ${
-          this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]
-        }`;
+        throw `Failed to _deployMarket: ${this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
       }
 
       let tx: ethers.providers.TransactionResponse;
-      tx = await comptroller._deployMarket(
-        false,
-        constructorData,
-        collateralFactorBN
-      );
+      tx = await comptroller._deployMarket(false, constructorData, collateralFactorBN);
       const receipt: TransactionReceipt = await tx.wait();
 
       if (receipt.status != constants.One.toNumber()) {
@@ -426,8 +313,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         [conf.comptroller, conf.underlying, receipt.blockNumber]
       );
       const byteCodeHash = utils.keccak256(
-        this.artifacts.CErc20Delegator.bytecode.object +
-          constructorData.substring(2)
+        this.artifacts.CErc20Delegator.bytecode.object + constructorData.substring(2)
       );
 
       const cErc20DelegatorAddress = utils.getCreate2Address(
@@ -438,11 +324,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       // needed for Erc4626Plugin and Erc4626PluginDelegate
       if (implementationData !== "0x00" && conf.delegateContractName) {
-        implementationAddress = await this.upgradeCErc20(
-          conf,
-          cErc20DelegatorAddress,
-          implementationData
-        );
+        implementationAddress = await this.upgradeCErc20(conf, cErc20DelegatorAddress, implementationData);
       }
       // Return cToken proxy and implementation contract addresses
       return [cErc20DelegatorAddress, implementationAddress, receipt];

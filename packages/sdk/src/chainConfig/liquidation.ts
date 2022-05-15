@@ -17,19 +17,14 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.bsc]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
-        .underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!
-        .underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!
-        .underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!
-        .underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!.underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
-        .underlying,
+      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -37,13 +32,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.chapel]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
-        .underlying,
+      chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!
-        .underlying,
+      chapelAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -51,15 +44,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.evmos_testnet]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      evmosTestnetAssets.find(
-        (a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS
-      )!.underlying,
+      evmosTestnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      evmosTestnetAssets.find(
-        (a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS
-      )!.underlying,
+      evmosTestnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -67,13 +56,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.aurora]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!
-        .underlying,
+      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!
-        .underlying,
+      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -81,13 +68,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.evmos]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      evmosAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!
-        .underlying,
+      evmosAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      evmosAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!
-        .underlying,
+      evmosAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -96,15 +81,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.moonbase_alpha]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      moonbaseAlphaAssets.find(
-        (a: SupportedAsset) => a.symbol === assetSymbols.WDEV
-      )!.underlying,
+      moonbaseAlphaAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      moonbaseAlphaAssets.find(
-        (a: SupportedAsset) => a.symbol === assetSymbols.WDEV
-      )!.underlying,
+      moonbaseAlphaAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -112,15 +93,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.moonbeam]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      moonbeamAssets.find(
-        (a: SupportedAsset) => a.symbol === assetSymbols.WGLMR
-      )!.underlying,
+      moonbeamAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      moonbeamAssets.find(
-        (a: SupportedAsset) => a.symbol === assetSymbols.WGLMR
-      )!.underlying,
+      moonbeamAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
@@ -128,13 +105,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.ganache]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!
-        .underlying,
+      ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!
-        .underlying,
+      ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),

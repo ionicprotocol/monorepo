@@ -161,7 +161,7 @@ export const getOrCreateFuse = async (): Promise<Fuse> => {
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
     if (process.env.INTEGRATION_TEST!) {
-      fuseSdk = new Fuse(ethers.provider, chainId, chainDeployment);
+      fuseSdk = new Fuse(ethers.provider, chainId, null);
     } else if (chainId === 1337) {
       chainDeployment = await getLocalDeployments();
     } else if (process.env.FORK_CHAIN_ID!) {

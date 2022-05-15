@@ -9,9 +9,7 @@ export type ChainLiquidationConfig = {
   MINIMUM_PROFIT_NATIVE: BigNumber;
 };
 
-export const getChainLiquidationConfig = (
-  fuse: FuseBase
-): ChainLiquidationConfig => {
+export const getChainLiquidationConfig = (fuse: FuseBase): ChainLiquidationConfig => {
   return {
     SUPPORTED_OUTPUT_CURRENCIES: process.env.SUPPORTED_OUTPUT_CURRENCIES
       ? process.env.SUPPORTED_OUTPUT_CURRENCIES.split(",")

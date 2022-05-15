@@ -8,7 +8,7 @@ import { SupportedChains } from "../../src";
 import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 
-const assets = chainSupportedAssets[SupportedChains.ganache]
+const assets = chainSupportedAssets[SupportedChains.ganache];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!.underlying,
@@ -23,7 +23,7 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
     hardcoded: [],
     uniswapData: [],
-    uniswapOracleInitialDeployTokens: [],
+    uniswapOracleInitialDeployTokens: []
   },
   plugins: [
     {
@@ -32,24 +32,24 @@ export const deployConfig: ChainDeployConfig = {
       underlying: "", // TRIBE
       flywheelIndices: [0],
       otherParams: [],
-      name: "MockERC4626Dynamic",
+      name: "MockERC4626Dynamic"
     },
     {
       // 0xf52Bd2532Cd02c4dF36107f59717B7CE424532BD
       strategy: "MockERC4626",
       name: "MockERC4626",
       underlying: "", // TOUCH
-      otherParams: [],
-    },
+      otherParams: []
+    }
   ],
   dynamicFlywheels: [
     {
       // 0x681cEEE3d6781394b2ECD7a4b9d5214f537aFeEb
       rewardToken: "", // TOUCH
       cycleLength: 100000,
-      name: "TOUCH",
-    },
-  ],
+      name: "TOUCH"
+    }
+  ]
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: ChainDeployFnParams): Promise<void> => {
@@ -61,7 +61,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     from: deployer,
     args: [ethers.utils.parseEther("1250000000"), deployer],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   const tribeToken = await ethers.getContractAt("TRIBEToken", tribe.address, deployer);
   let tx = await tribeToken.transfer(alice, ethers.utils.parseEther("100000"), { from: deployer });
@@ -73,7 +73,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     from: deployer,
     args: [ethers.utils.parseEther("2250000000"), deployer],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("TOUCHToken: ", touch.address);
   const touchToken = await ethers.getContractAt("TOUCHToken", touch.address, deployer);
@@ -95,7 +95,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     from: bob,
     args: [],
     log: true,
-    waitConfirmations: 1,
+    waitConfirmations: 1
   });
   console.log("SimplePriceOracle: ", simplePO.address);
 
@@ -118,7 +118,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     getNamedAccounts,
     deployments,
     run,
-    deployConfig,
+    deployConfig
   });
   await deployERC4626Plugin({ ethers, getNamedAccounts, deployments, run, deployConfig, dynamicFlywheels });
 
