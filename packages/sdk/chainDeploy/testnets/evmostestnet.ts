@@ -1,9 +1,16 @@
 import { constants, ethers, providers, utils } from "ethers";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams, CurvePoolConfig } from "../helpers/types";
+import { chainSupportedAssets } from "../../src/chainConfig/supportedAssets";
+import { SupportedChains } from "../../src";
+import { assetSymbols } from "../../src/chainConfig/assets";
+
+
+const assets = chainSupportedAssets[SupportedChains.evmos_testnet]
+
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xA30404AFB4c43D25542687BCF4367F59cc77b5d2",
+  wtoken: assets.find((a) => a.symbol === assetSymbols.WEVMOS)!.underlying,
   nativeTokenName: "Evmos (Testnet)",
   nativeTokenSymbol: "TEVMOS",
   blocksPerYear: 12 * 24 * 365 * 60, // 5 second blocks, 12 blocks per minute
@@ -27,23 +34,23 @@ export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDep
   const curvePools: CurvePoolConfig[] = [
     {
       // USD pool
-      lpToken: "0x9449e017c075507d25AE2e4C67e58f390828521A",
+      lpToken: assets.find((a) => a.symbol === assetSymbols.saddleOptUSD)!.underlying,
       pool: "0xacb60B754A82d22666c8686B5e9394413d8C4bCA",
       underlyings: [
-        "0xD933ee21fb77877DbCdDe9DA53Ce82491a8Cd58b",
-        "0x95A1f87865A082202b95306434e246a3124Af25c",
-        "0x965403Ee904c5A04c55Ad941F52b8fDf734f5554",
+        assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
+        assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+        assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
       ],
     },
     {
       // FRAX metapool
-      lpToken: "0x2CA49510481f9b310b67A728d73B30c01dB4B825",
+      lpToken: assets.find((a) => a.symbol === assetSymbols.saddleOptFraxUSD)!.underlying,
       pool: "0x8bf4d6F2FAf7cf24E02567EFC737562574afE842",
       underlyings: [
-        "0xD933ee21fb77877DbCdDe9DA53Ce82491a8Cd58b",
-        "0x95A1f87865A082202b95306434e246a3124Af25c",
-        "0x965403Ee904c5A04c55Ad941F52b8fDf734f5554",
-        "0x595b8DF4eF99f9eb6da0206aa165e8136E4E7770",
+        assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
+        assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+        assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
+        assets.find((a) => a.symbol === assetSymbols.FRAX)!.underlying,
       ],
     },
   ];
