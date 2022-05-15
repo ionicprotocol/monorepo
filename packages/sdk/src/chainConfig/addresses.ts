@@ -1,10 +1,11 @@
 import { ethers } from "ethers";
 import { SupportedChains } from "./index";
 import { ChainSpecificAddresses } from "../Fuse/types";
+import { assetSymbols, bscAssets } from "./assets";
 
 const chainSpecificAddresses: ChainSpecificAddresses = {
   [SupportedChains.ganache]: {
-    W_TOKEN: "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
+    W_TOKEN: bscAssets.find((a) => a.symbol === assetSymbols.WETH)!.underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED:
       "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419", // use mainnet
     UNISWAP_V2_ROUTER: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
