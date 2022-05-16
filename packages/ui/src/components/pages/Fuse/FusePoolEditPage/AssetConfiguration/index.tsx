@@ -85,6 +85,7 @@ const AssetConfiguration = ({
         poolName={poolName}
         poolID={poolID}
         isPaused={selectedAsset.isBorrowPaused}
+        plugin={selectedAsset.plugin}
       />
     </Column>
   );

@@ -66,7 +66,6 @@ const FusePoolEditPage = memo(() => {
 
           <AddAssetModal
             comptrollerAddress={data.comptroller}
-            existingAssets={data.assets}
             poolName={data.name}
             poolID={poolId}
             isOpen={isAddAssetModalOpen}
