@@ -18,12 +18,12 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
-import { FlywheelMarketRewardsInfo } from 'sdk/dist/cjs/src/modules/Flywheel';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';

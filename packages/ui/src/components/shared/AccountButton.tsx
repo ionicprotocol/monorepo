@@ -1,7 +1,7 @@
 import { AvatarGroup, Text, useDisclosure } from '@chakra-ui/react';
+import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlywheelClaimableRewards } from 'sdk/dist/cjs/src/modules/Flywheel';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
 import ConnectWalletButton from '@ui/components/shared/ConnectWalletButton';
