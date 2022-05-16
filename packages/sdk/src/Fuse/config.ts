@@ -1,39 +1,5 @@
-import { chainSpecificParams, SupportedChains } from "../network";
-
-export const SIMPLE_DEPLOY_ORACLES: Array<string> = [
-  "UniswapLpTokenPriceOracle",
-  "UniswapTwapPriceOracle",
-  "FixedTokenPriceOracle",
-  "ChainlinkPriceOracleV2",
-  "UniswapV3TwapPriceOracle",
-  "SimplePriceOracle",
-];
-export const ORACLES: Array<string> = [
-  "SimplePriceOracle",
-  "PreferredPriceOracle",
-  // "Keep3rPriceOracle",
-  "MasterPriceOracle",
-  // "UniswapAnchoredView",
-  // "UniswapView",
-  "UniswapLpTokenPriceOracle",
-  "RecursivePriceOracle",
-  "YVaultV1PriceOracle",
-  "YVaultV2PriceOracle",
-  "AlphaHomoraV1PriceOracle",
-  "SynthetixPriceOracle",
-  "ChainlinkPriceOracleV2",
-  "CurveLpTokenPriceOracle",
-  "CurveLiquidityGaugeV2PriceOracle",
-  "FixedNativePriceOracle",
-  "FixedEurPriceOracle",
-  "FixedTokenPriceOracle",
-  "WSTEthPriceOracle",
-  "UniswapTwapPriceOracle",
-  "UniswapTwapPriceOracleV2",
-  "UniswapV3TwapPriceOracle",
-  "UniswapV3TwapPriceOracleV2",
-  "SushiBarPriceOracle",
-];
+import { chainSpecificParams } from "../chainConfig";
+import { SupportedChains } from "../enums";
 
 export const COMPTROLLER_ERROR_CODES: Array<string> = [
   "NO_ERROR",

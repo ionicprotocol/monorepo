@@ -1,7 +1,7 @@
 import { BigNumber, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
-import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
-import { addCollateral, borrowCollateral } from "./utils/collateral";
+import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
+import { addCollateral, borrowCollateral } from "../utils/collateral";
 import {
   CErc20,
   CEther,
@@ -9,11 +9,12 @@ import {
   FuseFeeDistributor,
   FuseSafeLiquidator,
   SimplePriceOracle,
-} from "../lib/contracts/typechain";
-import { cERC20Conf, ChainLiquidationConfig, liquidationConfigDefaults } from "../src";
-import { DeployedAsset } from "./utils/pool";
-import { liquidateAndVerify, resetPriceOracle } from "./utils/setup";
-import { getOrCreateFuse } from "./utils/fuseSdk";
+} from "../../lib/contracts/typechain";
+import { cERC20Conf, ChainLiquidationConfig } from "../../src";
+import { DeployedAsset } from "../utils/pool";
+import { liquidateAndVerify, resetPriceOracle } from "../utils/setup";
+import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
 
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
@@ -53,7 +54,7 @@ import { getOrCreateFuse } from "./utils/fuseSdk";
     const sdk = await getOrCreateFuse();
 
     liquidationConfigOverrides = {
-      ...liquidationConfigDefaults(sdk)[chainId],
+      ...getChainLiquidationConfig(sdk)[chainId],
     };
     await setUpPriceOraclePrices();
     ({

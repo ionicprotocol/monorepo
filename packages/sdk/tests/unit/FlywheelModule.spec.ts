@@ -1,13 +1,13 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
-import Fuse from "../src/Fuse";
-import { CErc20, EIP20Interface } from "../lib/contracts/typechain";
-import { setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
-import * as collateralHelpers from "./utils/collateral";
-import * as poolHelpers from "./utils/pool";
-import * as timeHelpers from "./utils/time";
+import Fuse from "../../src/Fuse";
+import { CErc20, EIP20Interface } from "../../lib/contracts/typechain";
+import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
+import * as collateralHelpers from "../utils/collateral";
+import * as poolHelpers from "../utils/pool";
+import * as timeHelpers from "../utils/time";
 import { constants } from "ethers";
-import { getOrCreateFuse } from "./utils/fuseSdk";
+import { getOrCreateFuse } from "../utils/fuseSdk";
 
 describe("FlywheelModule", function () {
   let poolAAddress: string;

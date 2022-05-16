@@ -1,23 +1,26 @@
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
-import { Asset, ChainlinkAsset } from "../helpers/types";
+import { ChainlinkAsset } from "../helpers/types";
+import { SupportedAsset } from "../../src/types";
+import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
-const CHAPEL_WTOKEN = "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd";
+const assets = chainSupportedAssets[SupportedChains.chapel];
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: CHAPEL_WTOKEN,
+  wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
   nativeTokenUsdChainlinkFeed: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
   nativeTokenName: "Binance Coin Token (Testnet)",
   nativeTokenSymbol: "TBNB",
-  stableToken: "0xeD24FC36d5Ee211Ea25A80239Fb8C4Cfd80f12Ee",
-  wBTCToken: "0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8",
+  stableToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
+  wBTCToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
   blocksPerYear: 20 * 24 * 365 * 60,
   uniswap: {
     hardcoded: [
       {
         name: "Binance Bitcoin",
         symbol: "BTCB",
-        address: "0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8",
+        address: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
       },
     ],
     uniswapData: [],
@@ -27,53 +30,20 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
     uniswapOracleInitialDeployTokens: [
       {
-        token: "0x8a9424745056Eb399FD19a0EC26A14316684e274", // DAI
-        baseToken: CHAPEL_WTOKEN,
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.DAI)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
       },
       {
-        token: "0xDAcbdeCc2992a63390d108e8507B98c7E2B5584a", // SAFEMOON
-        baseToken: CHAPEL_WTOKEN,
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.SAFEMOON)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
       },
       {
-        token: "0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684", // USDT
-        baseToken: "0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7", // BUSD
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDT)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
       },
     ],
   },
 };
-
-export const assets: Asset[] = [
-  {
-    symbol: "BUSD",
-    underlying: "0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7",
-    name: "Binance USD",
-    decimals: 18,
-  },
-  {
-    symbol: "BTCB",
-    underlying: "0x6ce8da28e2f864420840cf74474eff5fd80e65b8",
-    name: "Binance BTC",
-    decimals: 18,
-  },
-  {
-    symbol: "DAI",
-    underlying: "0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867",
-    name: "Binance DAI",
-    decimals: 18,
-  },
-  {
-    symbol: "ETH",
-    underlying: "0x8babbb98678facc7342735486c851abd7a0d17ca",
-    name: "Binance ETH",
-    decimals: 18,
-  },
-  {
-    symbol: "USDT",
-    underlying: "0x7ef95a0FEE0Dd31b22626fA2e10Ee6A223F8a684",
-    name: "Binance Tether",
-    decimals: 18,
-  },
-];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
   ////
@@ -102,13 +72,19 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     getNamedAccounts,
     deployments,
     deployConfig,
-    assets,
+    assets: assets,
     chainlinkAssets,
     run,
   });
   ////
 
   //// Uniswap Oracle
-  await deployUniswapOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
+  await deployUniswapOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
   ////
 };

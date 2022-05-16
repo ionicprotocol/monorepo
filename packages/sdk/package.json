@@ -28,7 +28,7 @@
     "test:forge:evmostestnet": "forge test --fork-url https://eth.bd.evmos.dev:8545 --fork-block-number ${FORK_BLOCK_NUMBER}",
     "export": "hardhat export --export-all ./deployments.json",
     "clean": "rm -rf dist",
-    "prettier:ts": "prettier --write 'src/**/*.ts'",
+    "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "prettier": "npm run prettier:ts",
     "typechain": "typechain --target ethers-v5 --out-dir './lib/contracts/typechain' './lib/contracts/out/*/**.json'",
     "deploy:simulate:bsc:mainnet": "FORK_URL_BSC=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat deploy --tags simulate",

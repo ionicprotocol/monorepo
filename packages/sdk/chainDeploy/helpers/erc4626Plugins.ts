@@ -54,8 +54,8 @@ export const deployFlywheelWithDynamicRewards = async ({
 
 function getFlywheelAddresses(pluginConfig: PluginConfig, dynamicFlywheels: string[]): string[] {
   return pluginConfig.flywheelIndices
-      ? pluginConfig.flywheelIndices.map((index) => dynamicFlywheels[index])
-      : pluginConfig.flywheelAddresses;
+    ? pluginConfig.flywheelIndices.map((index) => dynamicFlywheels[index])
+    : pluginConfig.flywheelAddresses;
 }
 
 export const deployERC4626Plugin = async ({
@@ -70,12 +70,12 @@ export const deployERC4626Plugin = async ({
     if (pluginConfig) {
       const hasFlywheel = pluginConfig.flywheelIndices || pluginConfig.flywheelAddresses;
       let args = hasFlywheel
-          ? [
+        ? [
             pluginConfig.underlying,
             ...getFlywheelAddresses(pluginConfig, dynamicFlywheels),
             ...pluginConfig.otherParams,
           ]
-          : [pluginConfig.underlying, ...pluginConfig.otherParams];
+        : [pluginConfig.underlying, ...pluginConfig.otherParams];
 
       console.log(`Deploying ${pluginConfig.strategy}_${pluginConfig.name}`, args);
       const erc4626 = await deployments.deploy(`${pluginConfig.strategy}_${pluginConfig.name}`, {
