@@ -2,7 +2,7 @@ import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethe
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CEtherDelegate } from "../../lib/contracts/typechain/CEtherDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FuseBaseConstructor } from "../Fuse/types";
+import { FuseBaseConstructor } from "../types";
 import axios from "axios";
 
 export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBase) {

@@ -45,20 +45,25 @@ import {
   Artifacts,
   AssetPluginConfig,
   ChainDeployment,
+  ChainRedemptionStrategy,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
   OracleConf,
-} from "./types";
-import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, SIMPLE_DEPLOY_ORACLES, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
+  SupportedAsset,
+} from "../types";
+import { RedemptionStrategy, SupportedChains } from "../enums";
+import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
 import {
   chainOracles,
-  chainPluginConfig,
   chainSpecificAddresses,
   irmConfig,
   oracleConfig,
-  SupportedChains,
-} from "../network";
+  chainPluginConfig,
+  chainLiquidationDefaults,
+  chainSupportedAssets,
+  chainRedemptionStrategies,
+} from "../chainConfig";
 
 // SDK modules
 import { withRewardsDistributor } from "../modules/RewardsDistributor";
@@ -77,6 +82,7 @@ import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistrib
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
+import { ChainLiquidationConfig } from "../modules/liquidation/config";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -93,7 +99,6 @@ type ChainSpecificAddresses = {
 
 export class FuseBase {
   // public methods
-  static SIMPLE_DEPLOY_ORACLES = SIMPLE_DEPLOY_ORACLES;
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public provider: JsonRpcProvider | Web3Provider;
 
@@ -116,6 +121,9 @@ export class FuseBase {
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;
+  public liquidationConfig: ChainLiquidationConfig;
+  public supportedAssets: SupportedAsset[];
+  public redemptionStrategies: { [token: string]: RedemptionStrategy };
 
   // public methods
 
@@ -135,7 +143,6 @@ export class FuseBase {
     }
     this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
-    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -208,7 +215,12 @@ export class FuseBase {
       return true;
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
-    this.chainPlugins = chainPluginConfig[this.chainId];
+
+    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
+    this.liquidationConfig = chainLiquidationDefaults[chainId];
+    this.supportedAssets = chainSupportedAssets[chainId];
+    this.chainPlugins = chainPluginConfig[chainId];
+    this.redemptionStrategies = chainRedemptionStrategies[chainId];
   }
 
   async deployPool(
@@ -329,17 +341,6 @@ export class FuseBase {
           conf.kink,
         ];
         modelArtifact = this.artifacts.JumpRateModel;
-        break;
-      case "DAIInterestRateModelV2":
-        if (!conf) conf = JUMP_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
-        deployArgs = [
-          conf.blocksPerYear,
-          conf.jumpMultiplierPerYear,
-          conf.kink,
-          this.chainSpecificAddresses.DAI_POT,
-          this.chainSpecificAddresses.DAI_JUG,
-        ];
-        modelArtifact = this.artifacts.DAIInterestRateModelV2;
         break;
       case "WhitePaperInterestRateModel":
         if (!conf) conf = WHITE_PAPER_RATE_MODEL_CONF(this.chainId).interestRateModelParams;

@@ -4,11 +4,10 @@ import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import ConnectWalletModal from '@components/shared/ConnectWalletModal';
-import LoadingOverlay from '@components/shared/LoadingOverlay';
-import SwitchNetworkModal from '@components/shared/SwitchNetworkModal';
-import { RariProvider } from '@context/RariContext';
-import { isSupportedChainId } from '@networkData/index';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
+import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
+import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
+import { RariProvider } from '@ui/context/RariContext';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
   const { activeChain, chains, isLoading: networkloading, switchNetwork } = useNetwork();

@@ -7,12 +7,14 @@ on:
       - development
     paths:
       - "packages/sdk/**"
+      - "yarn.lock"
   pull_request:
     branches:
       - main
       - development
     paths:
       - "packages/sdk/**"
+      - "yarn.lock"
 
 jobs:
   build-and-test-local:

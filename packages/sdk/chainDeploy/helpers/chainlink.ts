@@ -1,7 +1,7 @@
 import { providers } from "ethers";
-import { Asset, ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "./types";
-import { ChainlinkPriceOracleV2 } from "../../lib/contracts/typechain/ChainlinkPriceOracleV2";
+import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "./types";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { SupportedAsset } from "../../src/types";
 
 export const deployChainlinkOracle = async ({
   ethers,
@@ -25,7 +25,7 @@ export const deployChainlinkOracle = async ({
 
   const chainLinkv2 = await ethers.getContract("ChainlinkPriceOracleV2", deployer);
   tx = await chainLinkv2.setPriceFeeds(
-    chainlinkAssets.map((c) => assets.find((a: Asset) => a.symbol === c.symbol).underlying),
+    chainlinkAssets.map((c) => assets.find((a: SupportedAsset) => a.symbol === c.symbol)!.underlying),
     chainlinkAssets.map((c) => c.aggregator),
     ChainlinkFeedBaseCurrency.USD
   );
@@ -33,7 +33,7 @@ export const deployChainlinkOracle = async ({
   await tx.wait();
   console.log(`Set price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
 
-  const underlyings = chainlinkAssets.map((c) => assets.find((a) => a.symbol === c.symbol).underlying);
+  const underlyings = chainlinkAssets.map((c) => assets.find((a) => a.symbol === c.symbol)!.underlying);
   const oracles = Array(chainlinkAssets.length).fill(chainLinkv2.address);
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);

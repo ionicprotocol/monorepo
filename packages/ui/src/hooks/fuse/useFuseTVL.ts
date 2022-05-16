@@ -2,10 +2,10 @@ import { Fuse } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { useUSDPrice } from '@hooks/useUSDPrice';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
-import { fetchFuseTVL } from '@utils/fetchTVL';
+import { useRari } from '@ui/context/RariContext';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { fetchFuseTVL } from '@ui/utils/fetchTVL';
 
 export const fetchFuseNumberTVL = async (fuse: Fuse, usdPrice: number) => {
   const tvlNative = await fetchFuseTVL(fuse);

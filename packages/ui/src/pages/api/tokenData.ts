@@ -6,8 +6,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import Vibrant from 'node-vibrant';
 import * as yup from 'yup';
 
-import { CoinGeckoResponse, TokenDataResponse } from '@type/ComponentPropsType';
-import { providerURLForChain } from '@utils/web3Providers';
+import { CoinGeckoResponse, TokenDataResponse } from '@ui/types/ComponentPropsType';
+import { providerURLForChain } from '@ui/utils/web3Providers';
 
 const supportedNetworks = new RegExp([1, 56, 97, 1337].join('|'));
 

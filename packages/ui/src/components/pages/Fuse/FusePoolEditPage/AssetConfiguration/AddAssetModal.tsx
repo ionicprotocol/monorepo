@@ -18,26 +18,19 @@ import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
-import { AddAssetSettings } from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
-import { ModalDivider } from '@components/shared/Modal';
-import { useRari } from '@context/RariContext';
-import { useTokenData } from '@hooks/useTokenData';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
+import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { useRari } from '@ui/context/RariContext';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 interface AddAssetProps {
   comptrollerAddress: string;
-  existingAssets: NativePricedFuseAsset[];
   onSuccess?: () => void;
   poolID: string;
   poolName: string;
 }
-const AddAsset = ({
-  comptrollerAddress,
-  existingAssets,
-  onSuccess,
-  poolID,
-  poolName,
-}: AddAssetProps) => {
+const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
   const { currentChain } = useRari();
   const [tokenAddress, setTokenAddress] = useState<string>(
     '0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C'
@@ -102,8 +95,6 @@ const AddAsset = ({
           onSuccess={onSuccess}
           poolName={poolName}
           poolID={poolID}
-          existingAssets={existingAssets}
-          isPaused={false}
         />
       )}
     </VStack>

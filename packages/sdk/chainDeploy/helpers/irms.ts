@@ -1,6 +1,11 @@
 import { IrmDeployFnParams } from "./types";
 
-export const deployIRMs = async ({ ethers, getNamedAccounts, deployments, deployConfig }: IrmDeployFnParams): Promise<void> => {
+export const deployIRMs = async ({
+  ethers,
+  getNamedAccounts,
+  deployments,
+  deployConfig,
+}: IrmDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   //// IRM MODELS|
   const jrm = await deployments.deploy("JumpRateModel", {
