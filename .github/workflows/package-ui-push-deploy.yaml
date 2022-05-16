@@ -19,6 +19,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: "16"
+          cache: "yarn"
 
       - name: Install `foundry`
         uses: onbjerg/foundry-toolchain@v1
@@ -38,9 +39,6 @@ jobs:
 
       - name: Build `sdk`
         run: yarn workspace @midas-capital/sdk build
-
-      - name: Lint `ui`
-        run: yarn workspace @midas-capital/ui lint
 
       - name: Build `ui`
         run: yarn workspace @midas-capital/ui build
