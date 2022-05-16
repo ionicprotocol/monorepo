@@ -32,11 +32,11 @@ jobs:
       - name: Install `foundry libs`
         run: yarn workspace @midas-capital/sdk forge install
 
-      - name: Lint `ui`
-        run: yarn workspace @midas-capital/ui lint
-
       - name: Build `sdk`
         run: yarn workspace @midas-capital/sdk build
+
+      - name: Lint `ui`
+        run: yarn workspace @midas-capital/ui lint
 
       - name: Build `ui`
         run: yarn workspace @midas-capital/ui build
