@@ -31,9 +31,7 @@ interface AddAssetProps {
 }
 const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
   const { currentChain } = useRari();
-  const [tokenAddress, setTokenAddress] = useState<string>(
-    '0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C'
-  );
+  const [tokenAddress, setTokenAddress] = useState<string>('');
 
   const { data: tokenData, isLoading, error } = useTokenData(tokenAddress);
 

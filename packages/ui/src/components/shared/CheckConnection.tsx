@@ -4,6 +4,8 @@ import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
+import { isSupportedChainId } from '../../networkData';
+
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
