@@ -1,5 +1,5 @@
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
-import { Fuse } from 'sdk';
+import { Fuse } from '@midas-capital/sdk';
 
 import { NETWORK_DATA } from '@ui/networkData/index';
 

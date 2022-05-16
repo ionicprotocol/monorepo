@@ -15,10 +15,10 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NativePricedFuseAsset } from 'sdk';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';

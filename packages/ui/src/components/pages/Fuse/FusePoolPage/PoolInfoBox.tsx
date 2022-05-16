@@ -15,6 +15,7 @@ import {
   Tr,
   useClipboard,
 } from '@chakra-ui/react';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import dynamic from 'next/dynamic';
@@ -22,7 +23,6 @@ import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import { useQuery } from 'react-query';
-import { NativePricedFuseAsset } from 'sdk';
 
 import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';

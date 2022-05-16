@@ -1,6 +1,6 @@
 import { BoxProps, FlexProps } from '@chakra-ui/react';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { ReactNode } from 'react';
-import { FusePoolData, NativePricedFuseAsset } from 'sdk';
 
 import { FundOperationMode } from '@ui/constants/index';
 import { TokensDataMap } from '@ui/types/TokensDataMap';

@@ -1,4 +1,4 @@
-import { ERC20Abi, Fuse } from 'sdk';
+import { ERC20Abi, Fuse } from '@midas-capital/sdk';
 import { BigNumber, Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
