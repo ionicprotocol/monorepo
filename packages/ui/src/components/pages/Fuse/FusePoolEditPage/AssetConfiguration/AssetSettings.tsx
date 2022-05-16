@@ -27,11 +27,6 @@ import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { Center, Column } from '@ui/utils/chakraUtils';
-import {
-  createComptroller,
-  createCToken,
-  createMasterPriceOracle,
-} from '@ui/utils/createComptroller';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { formatPercentage } from '@ui/utils/formatPercentage';
 
@@ -130,7 +125,7 @@ export const AssetSettings = ({
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = createMasterPriceOracle(fuse);
+        const masterPriceOracle = fuse.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
           toast({
@@ -247,7 +242,7 @@ export const AssetSettings = ({
   const updateCollateralFactor = async () => {
     if (!cTokenAddress) return;
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -276,7 +271,7 @@ export const AssetSettings = ({
   };
 
   const updateReserveFactor = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -298,7 +293,7 @@ export const AssetSettings = ({
   };
 
   const updateAdminFee = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -320,7 +315,7 @@ export const AssetSettings = ({
   };
 
   const updateInterestRateModel = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     try {
       await testForCTokenErrorAndSend(
@@ -344,7 +339,7 @@ export const AssetSettings = ({
       return;
     }
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);

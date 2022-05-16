@@ -2234,22 +2234,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@midas-capital/sdk@npm:0.2.3":
-  version: 0.2.3
-  resolution: "@midas-capital/sdk@npm:0.2.3"
-  dependencies:
-    "@keydonix/uniswap-oracle-sdk": ^1.0.7
-    "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
-    "@typechain/ethers-v5": ^10.0.0
-    "@types/bad-words": ^3.0.1
-    bad-words: ^3.0.4
-    lint-staged: 12.3.7
-    prettier: 2.6.1
-    prettier-plugin-solidity: 1.0.0-beta.19
-  checksum: 38bbff2ed7b33d66829aa90a3bbb03539cde0ea90f23ca215f87020858d8a57c5fd4d333a42d26e3f27a3eaac45ec6921ebe41cb7f8df13d14d4d725d572660a
-  languageName: node
-  linkType: hard
-
 "@midas-capital/sdk@workspace:*, @midas-capital/sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
   resolution: "@midas-capital/sdk@workspace:packages/sdk"
@@ -2298,7 +2282,7 @@ __metadata:
     "@ethersproject/contracts": ^5.6.0
     "@ethersproject/providers": ^5.6.2
     "@metamask/jazzicon": ^2.0.0
-    "@midas-capital/sdk": 0.2.3
+    "@midas-capital/sdk": "workspace:*"
     "@testing-library/react": ^12.1.4
     "@types/node": 17.0.23
     "@types/react": ^17.0.15
@@ -3888,9 +3872,9 @@ __metadata:
   linkType: hard
 
 "ansi-colors@npm:^4.1.0, ansi-colors@npm:^4.1.1":
-  version: 4.1.2
-  resolution: "ansi-colors@npm:4.1.2"
-  checksum: 132800cd689205939d08c08e149ba9731af10708ec1eefb89a0522b73e658541fea9376e454999126f59da394a89899a8bb315994023d399ff58caab4dd1df2a
+  version: 4.1.3
+  resolution: "ansi-colors@npm:4.1.3"
+  checksum: a9c2ec842038a1fabc7db9ece7d3177e2fe1c5dc6f0c51ecfbf5f39911427b89c00b5dc6b8bd95f82a26e9b16aaae2e83d45f060e98070ce4d1333038edceb0e
   languageName: node
   linkType: hard
 
@@ -11885,11 +11869,11 @@ __metadata:
   linkType: hard
 
 "minimatch@npm:^5.0.1":
-  version: 5.0.1
-  resolution: "minimatch@npm:5.0.1"
+  version: 5.1.0
+  resolution: "minimatch@npm:5.1.0"
   dependencies:
     brace-expansion: ^2.0.1
-  checksum: b34b98463da4754bc526b244d680c69d4d6089451ebe512edaf6dd9eeed0279399cfa3edb19233513b8f830bf4bfcad911dddcdf125e75074100d52f724774f0
+  checksum: 15ce53d31a06361e8b7a629501b5c75491bc2b59712d53e802b1987121d91b433d73fcc5be92974fde66b2b51d8fb28d75a9ae900d249feb792bb1ba2a4f0a90
   languageName: node
   linkType: hard
 
@@ -13342,15 +13326,6 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 21b9408476ea1c544b0e45d51ceb94a84789ff92095abb710942d780c862d0daebdb29972d47f6b4d0f7ebbfb0ffbf56cc2cfa3e3e9d1cca54864af185b15b66
-  languageName: node
-  linkType: hard
-
-"prettier@npm:2.6.1":
-  version: 2.6.1
-  resolution: "prettier@npm:2.6.1"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 78be1f8a3ddfad7c3d8a854b6c8941a3bb1ddfca4225c38d778e0fe1029a55368f71b3bbefff82c689015fbb4d391ec44add957f01308ad2725e01a7c1f37cb6
   languageName: node
   linkType: hard
 
