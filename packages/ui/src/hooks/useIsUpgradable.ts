@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { createComptroller } from '@ui/utils/createComptroller';
 
 export const useIsUpgradeable = (comptrollerAddress: string) => {
   const { fuse, currentChain } = useRari();
@@ -9,7 +8,7 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
   const { data } = useQuery(
     ['useIsUpgradeable', currentChain.id, comptrollerAddress],
     async () => {
-      const comptroller = createComptroller(comptrollerAddress, fuse);
+      const comptroller = fuse.createComptroller(comptrollerAddress);
 
       const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 

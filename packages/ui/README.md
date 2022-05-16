@@ -1,4 +1,3 @@
-
 ## Requirements
 
 We are using `npm` and `node 16` make sure to always use these!
@@ -12,7 +11,7 @@ If you want to run locally, you need to make sure to set SDK version as below
 
 ```text
 .....
-@midas-capital/sdk:  "file:../contracts"
+sdk:  "file:../contracts"
 .....
 ```
 
