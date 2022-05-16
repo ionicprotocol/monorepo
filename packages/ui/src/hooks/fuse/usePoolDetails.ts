@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from 'sdk';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useMemo } from 'react';
 
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';

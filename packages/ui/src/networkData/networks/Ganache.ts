@@ -1,4 +1,4 @@
-import { SupportedChains } from 'sdk';
+import { SupportedChains } from '@midas-capital/sdk';
 
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 

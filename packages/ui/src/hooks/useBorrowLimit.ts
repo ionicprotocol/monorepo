@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from 'sdk';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
