@@ -30,3 +30,4 @@ coverage
 **/.terraform/**
 **/.terraform.lock.hcl
 ops/**/tfvars.json
+**/.env
