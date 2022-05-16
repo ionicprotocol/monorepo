@@ -1,11 +1,11 @@
 import { Button, Center, Img, Text, useDisclosure } from '@chakra-ui/react';
 import React, { LegacyRef, useEffect, useState } from 'react';
 
-import SwitchNetworkModal from '@components/shared/SwitchNetworkModal';
-import { useRari } from '@context/RariContext';
-import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
-import { getChainMetadata } from '@networkData/index';
-import { ChainMetadata } from '@type/ChainMetaData';
+import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
+import { useRari } from '@ui/context/RariContext';
+import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { getChainMetadata } from '@ui/networkData/index';
+import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 const SwitchNetworkButton: React.FC = () => {
   const [chainMetadata, setChainMetadata] = useState<ChainMetadata | undefined>();

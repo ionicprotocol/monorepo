@@ -4,9 +4,14 @@ import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOrac
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams } from "../helpers/types";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+
+const assets = chainSupportedAssets[SupportedChains.ganache];
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+  wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!.underlying,
   nativeTokenName: "Ethereum (Local)",
   nativeTokenSymbol: "ETH",
   stableToken: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
@@ -122,7 +127,11 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   for (const pluginConfig of deployConfig.plugins) {
     if (pluginConfig) {
       const plugin = await ethers.getContract(`${pluginConfig.strategy}_${pluginConfig.name}`, deployer);
-      tx = await addressesProvider.setPlugin(pluginConfig.underlying, plugin.address, `${pluginConfig.strategy}_${pluginConfig.name}`);
+      tx = await addressesProvider.setPlugin(
+        pluginConfig.underlying,
+        plugin.address,
+        `${pluginConfig.strategy}_${pluginConfig.name}`
+      );
       await tx.wait();
     }
   }
@@ -131,7 +140,11 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   for (const dynamicFlywheel of deployConfig.dynamicFlywheels) {
     if (dynamicFlywheel) {
       const flywheelRewards = await ethers.getContract(`FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`, deployer);
-      tx = await addressesProvider.setFlywheelRewards(dynamicFlywheel.rewardToken, flywheelRewards.address, `FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`);
+      tx = await addressesProvider.setFlywheelRewards(
+        dynamicFlywheel.rewardToken,
+        flywheelRewards.address,
+        `FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`
+      );
       await tx.wait();
     }
   }

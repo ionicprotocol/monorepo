@@ -5,10 +5,9 @@ import { Fuse } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { useTokensDataAsMap } from '@hooks/useTokenData';
-import { useUSDPrice } from '@hooks/useUSDPrice';
-import { NATIVE_TOKEN_DATA } from '@networkData/index';
+import { useRari } from '@ui/context/RariContext';
+import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import {
   CTokenDataForRewards,
   CTokenIncentivesMap,
@@ -16,14 +15,14 @@ import {
   CTokensDataForRewardsMap,
   RewardsDataForMantissa,
   TokenPrices,
-} from '@type/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@utils/apyUtils';
+} from '@ui/types/ComponentPropsType';
+import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import {
   createComptroller,
   createCToken,
   createMasterPriceOracle,
   createOracle,
-} from '@utils/createComptroller';
+} from '@ui/utils/createComptroller';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (

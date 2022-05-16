@@ -1,10 +1,10 @@
 import { Heading, ResponsiveValue, Text } from '@chakra-ui/react';
 import * as CSS from 'csstype';
 
-import { useColors } from '@hooks/useColors';
-import { useMaybeResponsiveProp } from '@hooks/useMaybeResponsiveProp';
-import { CaptionedStatProps } from '@type/ComponentPropsType';
-import { Column } from '@utils/chakraUtils';
+import { useColors } from '@ui/hooks/useColors';
+import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
+import { CaptionedStatProps } from '@ui/types/ComponentPropsType';
+import { Column } from '@ui/utils/chakraUtils';
 
 const CaptionedStat = ({
   stat,

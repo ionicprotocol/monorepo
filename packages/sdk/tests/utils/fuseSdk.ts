@@ -1,7 +1,7 @@
 import { deployments, ethers } from "hardhat";
 
 import { Fuse } from "../../src";
-import { ChainDeployment } from "../../src/Fuse/types";
+import { ChainDeployment } from "../../src/types";
 
 let fuseSdk: Fuse;
 
@@ -159,9 +159,10 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
 export const getOrCreateFuse = async (): Promise<Fuse> => {
   if (!fuseSdk) {
     const { chainId } = await ethers.provider.getNetwork();
-
     let chainDeployment: ChainDeployment;
-    if (chainId === 1337) {
+    if (process.env.INTEGRATION_TEST!) {
+      fuseSdk = new Fuse(ethers.provider, chainId, null);
+    } else if (chainId === 1337) {
       chainDeployment = await getLocalDeployments();
     } else if (process.env.FORK_CHAIN_ID!) {
       chainDeployment = await getBscForkDeployments();

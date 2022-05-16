@@ -10,7 +10,7 @@ export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
     // @ts-ignore
     const fuseModule = await import("../tests/utils/fuseSdk");
     // @ts-ignore
-    const sdkModule = await import("../dist/esm/src");
+    const sdkModule = await import("../src");
     const sdk = await fuseModule.getOrCreateFuse();
     let account: SignerWithAddress;
     if (_account === "whale") {
@@ -111,7 +111,6 @@ task("swap-token-for-wtoken", "Swap token for WNATIVE")
     await txn.wait();
     console.log(`W Token balance before: ${ethers.utils.formatEther(await account.getBalance())}`);
   });
-
 
 task("swap-token-for-token", "Swap token for token")
   .addParam("token1", "token1 address", undefined, types.string)

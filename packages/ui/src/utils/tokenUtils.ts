@@ -1,6 +1,6 @@
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 
-import { AssetHash, TokenData, TokensDataHash } from '@type/ComponentPropsType';
+import { AssetHash, TokenData, TokensDataHash } from '@ui/types/ComponentPropsType';
 
 export const createAssetsMap = (assetsArray: NativePricedFuseAsset[][]) => {
   const assetsMap: AssetHash = {};

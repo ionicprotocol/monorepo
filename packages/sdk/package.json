@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/sdk",
   "repository": "git://github.com:midas-protocol/contracts.git",
-  "version": "0.1.14",
+  "version": "0.2.4",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -9,16 +9,17 @@
   "description": "",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
+  "types": "./dist/cjs/src/index.d.ts",
   "files": [
     "/dist/",
     "/artifacts",
     "deployments.json"
   ],
   "scripts": {
-    "build": "npm run setup && npm run typechain && npm run build:sdk ",
+    "build": "npm run setup && npm run typechain && npm run build:sdk",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
-    "build:cjs": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
+    "build:cjs": "tsc -p tsconfig-cjs.json",
     "compile": "hardhat compile",
     "setup": "cd lib/contracts && forge build",
     "test": "hardhat test",
@@ -27,7 +28,7 @@
     "test:forge:evmostestnet": "forge test --fork-url https://eth.bd.evmos.dev:8545 --fork-block-number ${FORK_BLOCK_NUMBER}",
     "export": "hardhat export --export-all ./deployments.json",
     "clean": "rm -rf dist",
-    "prettier:ts": "prettier --write 'src/**/*.ts'",
+    "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "prettier": "npm run prettier:ts",
     "typechain": "typechain --target ethers-v5 --out-dir './lib/contracts/typechain' './lib/contracts/out/*/**.json'",
     "deploy:simulate:bsc:mainnet": "FORK_URL_BSC=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat deploy --tags simulate",

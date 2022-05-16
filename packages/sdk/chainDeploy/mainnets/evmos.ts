@@ -1,9 +1,14 @@
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 import { ChainDeployConfig } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
+import { SupportedAsset } from "../../src/types";
+import { SupportedChains } from "../../src";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+
+const assets = chainSupportedAssets[SupportedChains.evmos];
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xd4949664cd82660aae99bedc034a0dea8a0bd517",
+  wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
   nativeTokenName: "EMVOS",
   nativeTokenSymbol: "PHO",
   blocksPerYear: 8.6 * 24 * 365 * 60,
@@ -21,26 +26,26 @@ export const deployConfig: ChainDeployConfig = {
 
 const diaAssets: DiaAsset[] = [
   {
-    symbol: "ETH",
-    underlying: "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+    symbol: assetSymbols.ETH,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!.underlying,
     feed: "0x5d60C36A600391C3dFc5d76ad18959163613E6ed",
     key: "ETH/USD",
   },
   {
     symbol: "USDC",
-    underlying: "0x51e44FfaD5C2B122C8b635671FCC8139dc636E82",
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC)!.underlying,
     feed: "0x5d60C36A600391C3dFc5d76ad18959163613E6ed",
     key: "USDC/USD",
   },
   {
     symbol: "USDT",
-    underlying: "0xC1Be9a4D5D45BeeACAE296a7BD5fADBfc14602C4",
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDT)!.underlying,
     feed: "0x5d60C36A600391C3dFc5d76ad18959163613E6ed",
     key: "USDT/USD",
   },
   {
     symbol: "FRAX",
-    underlying: "0xE03494D0033687543a80c9B1ca7D6237F2EA8BD8",
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.FRAX)!.underlying,
     feed: "0x5d60C36A600391C3dFc5d76ad18959163613E6ed",
     key: "FRAX/USD",
   },

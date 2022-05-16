@@ -1,7 +1,7 @@
 import func from "./deploy";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { DeployFunction } from "hardhat-deploy/types";
-import {ethers} from 'hardhat';
+import { ethers } from "hardhat";
 
 // use with mainnet forking to simulate the prod deployment
 const simulateDeploy: DeployFunction = async (hre): Promise<void> => {
@@ -10,8 +10,7 @@ const simulateDeploy: DeployFunction = async (hre): Promise<void> => {
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
   }
-  const { config: chainDeployParams }: { config: ChainDeployConfig } =
-      chainDeployConfig[chainId];
+  const { config: chainDeployParams }: { config: ChainDeployConfig } = chainDeployConfig[chainId];
   const fundingValue = hre.ethers.utils.parseEther("100");
   let whale = chainDeployParams.wtoken;
   const balanceOfWToken = await ethers.provider.getBalance(whale);
