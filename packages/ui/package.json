@@ -19,7 +19,7 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.2",
     "@metamask/jazzicon": "^2.0.0",
-    "@midas-capital/sdk": "workspace:*",
+    "@midas-capital/sdk": "0.2.3",
     "@walletconnect/web3-provider": "^1.7.7",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
