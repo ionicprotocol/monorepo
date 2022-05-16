@@ -13,6 +13,8 @@ export enum RedemptionStrategy {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
   XBombLiquidator = "XBombLiquidator",
   jBRLLiquidator = "jBRLLiquidator",
+  // not deployed
+  UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
 }
 
 export enum DelegateContractName {

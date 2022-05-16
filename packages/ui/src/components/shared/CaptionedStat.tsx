@@ -1,5 +1,4 @@
-import { Heading, ResponsiveValue, Text } from '@chakra-ui/react';
-import * as CSS from 'csstype';
+import { Heading, Text, TextProps } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
 import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
@@ -17,10 +16,7 @@ const CaptionedStat = ({
   captionColor,
 }: CaptionedStatProps) => {
   const crossAxisAlignmentStatic = useMaybeResponsiveProp(crossAxisAlignment);
-  const textAlign = crossAxisAlignmentStatic.replace(
-    'flex-',
-    ''
-  ) as ResponsiveValue<CSS.Property.TextAlign>;
+  const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as any;
 
   const { cCard } = useColors();
 
@@ -30,11 +26,12 @@ const CaptionedStat = ({
         <>
           <Caption
             size={captionSize}
-            spacing={spacing ?? 0}
+            mt={spacing ?? 0}
             textAlign={textAlign}
-            text={caption}
             color={captionColor ?? cCard.txtColor}
-          />
+          >
+            {caption}
+          </Caption>
           <Stat size={statSize} text={stat} />
         </>
       ) : (
@@ -42,11 +39,12 @@ const CaptionedStat = ({
           <Stat size={statSize} text={stat} />
           <Caption
             size={captionSize}
-            spacing={spacing ?? 0}
+            mt={spacing ?? 0}
             textAlign={textAlign}
-            text={caption}
             color={captionColor ?? cCard.txtColor}
-          />
+          >
+            {caption}
+          </Caption>
         </>
       )}
     </Column>
@@ -61,19 +59,7 @@ const Stat = ({ size, text }: { size: { md: string; xs: string } | string; text:
   );
 };
 
-const Caption = ({
-  size,
-  textAlign,
-  spacing,
-  text,
-  color = '#858585',
-}: {
-  size: { md: string; xs: string } | string;
-  textAlign: ResponsiveValue<CSS.Property.TextAlign> | undefined;
-  spacing: string | number;
-  text: string;
-  color?: string;
-}) => {
+const Caption = ({ size, textAlign, children, color = '#858585', ...restOfProps }: TextProps) => {
   return (
     <Text
       textTransform="uppercase"
@@ -81,9 +67,9 @@ const Caption = ({
       color={color}
       fontSize={size}
       textAlign={textAlign}
-      mt={spacing ?? 0}
+      {...restOfProps}
     >
-      {text}
+      {children}
     </Text>
   );
 };
