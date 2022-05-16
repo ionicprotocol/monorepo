@@ -6,7 +6,7 @@ import { FuseFlywheelCore } from '../../lib/contracts/typechain/FuseFlywheelCore
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { RewardsDistributorDelegate } from '../../lib/contracts/typechain/RewardsDistributorDelegate';
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { FuseBaseConstructor } from "../Fuse/types";
+import { FuseBaseConstructor } from '../types';
 
 export function withCreateContracts<TBase extends FuseBaseConstructor>(
   Base: TBase
