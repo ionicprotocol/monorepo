@@ -30,7 +30,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Install `foundry libs`
-        run: yarn workspace @midas-capital/sdk foundry install
+        run: yarn workspace @midas-capital/sdk forge install
 
       - name: Lint `ui`
         run: yarn workspace @midas-capital/ui lint
