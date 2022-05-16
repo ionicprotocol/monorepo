@@ -2234,6 +2234,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@midas-capital/sdk@npm:0.2.3":
+  version: 0.2.3
+  resolution: "@midas-capital/sdk@npm:0.2.3"
+  dependencies:
+    "@keydonix/uniswap-oracle-sdk": ^1.0.7
+    "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
+    "@typechain/ethers-v5": ^10.0.0
+    "@types/bad-words": ^3.0.1
+    bad-words: ^3.0.4
+    lint-staged: 12.3.7
+    prettier: 2.6.1
+    prettier-plugin-solidity: 1.0.0-beta.19
+  checksum: 38bbff2ed7b33d66829aa90a3bbb03539cde0ea90f23ca215f87020858d8a57c5fd4d333a42d26e3f27a3eaac45ec6921ebe41cb7f8df13d14d4d725d572660a
+  languageName: node
+  linkType: hard
+
 "@midas-capital/sdk@workspace:*, @midas-capital/sdk@workspace:packages/sdk":
   version: 0.0.0-use.local
   resolution: "@midas-capital/sdk@workspace:packages/sdk"
@@ -2282,7 +2298,7 @@ __metadata:
     "@ethersproject/contracts": ^5.6.0
     "@ethersproject/providers": ^5.6.2
     "@metamask/jazzicon": ^2.0.0
-    "@midas-capital/sdk": "workspace:*"
+    "@midas-capital/sdk": 0.2.3
     "@testing-library/react": ^12.1.4
     "@types/node": 17.0.23
     "@types/react": ^17.0.15
@@ -6502,9 +6518,9 @@ __metadata:
   linkType: hard
 
 "csstype@npm:^3.0.2":
-  version: 3.0.11
-  resolution: "csstype@npm:3.0.11"
-  checksum: 95e56abfe9ca219ae065acb4e43f61771a03170eed919127f558dfa168240867aba7629c8d98a201a0dd06d9a5ce82686f0570031c928516c61816adbc7c877f
+  version: 3.1.0
+  resolution: "csstype@npm:3.1.0"
+  checksum: 644e986cefab86525f0b674a06889cfdbb1f117e5b7d1ce0fc55b0423ecc58807a1ea42ecc75c4f18999d14fc42d1d255f84662a45003a52bb5840e977eb2ffd
   languageName: node
   linkType: hard
 
@@ -13326,6 +13342,15 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 21b9408476ea1c544b0e45d51ceb94a84789ff92095abb710942d780c862d0daebdb29972d47f6b4d0f7ebbfb0ffbf56cc2cfa3e3e9d1cca54864af185b15b66
+  languageName: node
+  linkType: hard
+
+"prettier@npm:2.6.1":
+  version: 2.6.1
+  resolution: "prettier@npm:2.6.1"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 78be1f8a3ddfad7c3d8a854b6c8941a3bb1ddfca4225c38d778e0fe1029a55368f71b3bbefff82c689015fbb4d391ec44add957f01308ad2725e01a7c1f37cb6
   languageName: node
   linkType: hard
 
