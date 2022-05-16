@@ -21,7 +21,6 @@ import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { Center } from '@ui/utils/chakraUtils';
-import { createMasterPriceOracle } from '@ui/utils/createComptroller';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { formatPercentage } from '@ui/utils/formatPercentage';
 
@@ -70,7 +69,7 @@ export const AddAssetSettings = ({
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = createMasterPriceOracle(fuse);
+        const masterPriceOracle = fuse.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
           toast({
