@@ -13,20 +13,20 @@ import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { ModalDivider } from '@components/shared/Modal';
-import { PopoverTooltip } from '@components/shared/PopoverTooltip';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SliderWithLabel } from '@components/shared/SliderWithLabel';
-import { useRari } from '@context/RariContext';
-import { useColors } from '@hooks/useColors';
-import { TokenData } from '@type/ComponentPropsType';
-import { Center } from '@utils/chakraUtils';
-import { createMasterPriceOracle } from '@utils/createComptroller';
-import { handleGenericError } from '@utils/errorHandling';
-import { formatPercentage } from '@utils/formatPercentage';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
+import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
+import { TokenData } from '@ui/types/ComponentPropsType';
+import { Center } from '@ui/utils/chakraUtils';
+import { createMasterPriceOracle } from '@ui/utils/createComptroller';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const IRMChart = dynamic(
-  () => import('@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
+  () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
   {
     ssr: false,
   }

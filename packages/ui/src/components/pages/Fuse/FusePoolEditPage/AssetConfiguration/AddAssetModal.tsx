@@ -14,7 +14,6 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
