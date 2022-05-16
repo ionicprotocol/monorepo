@@ -2234,9 +2234,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@midas-capital/sdk@npm:0.2.3":
-  version: 0.2.3
-  resolution: "@midas-capital/sdk@npm:0.2.3"
+"@midas-capital/sdk@file:../sdk/lib/contracts::locator=%40midas-capital%2Fui%40workspace%3Apackages%2Fui":
+  version: 0.2.2
+  resolution: "@midas-capital/sdk@file:../sdk/lib/contracts#../sdk/lib/contracts::hash=dcbde4&locator=%40midas-capital%2Fui%40workspace%3Apackages%2Fui"
   dependencies:
     "@keydonix/uniswap-oracle-sdk": ^1.0.7
     "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
@@ -2246,7 +2246,7 @@ __metadata:
     lint-staged: 12.3.7
     prettier: 2.6.1
     prettier-plugin-solidity: 1.0.0-beta.19
-  checksum: 38bbff2ed7b33d66829aa90a3bbb03539cde0ea90f23ca215f87020858d8a57c5fd4d333a42d26e3f27a3eaac45ec6921ebe41cb7f8df13d14d4d725d572660a
+  checksum: 387ab0590e23ad279e6b80d678e75015123693cada55f280ac9fd7eb2a89c2bb2349ecad3823a65562cff69438362b9e1f8082cd5402952c4c876b7acade070c
   languageName: node
   linkType: hard
 
@@ -2298,7 +2298,7 @@ __metadata:
     "@ethersproject/contracts": ^5.6.0
     "@ethersproject/providers": ^5.6.2
     "@metamask/jazzicon": ^2.0.0
-    "@midas-capital/sdk": 0.2.3
+    "@midas-capital/sdk": "file:../sdk/lib/contracts"
     "@testing-library/react": ^12.1.4
     "@types/node": 17.0.23
     "@types/react": ^17.0.15
