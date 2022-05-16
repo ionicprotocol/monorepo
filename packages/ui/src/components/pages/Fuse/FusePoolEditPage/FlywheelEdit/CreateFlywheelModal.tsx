@@ -15,7 +15,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-
+import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
+import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
@@ -28,7 +29,6 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
 import { Center } from '@ui/utils/chakraUtils';
-import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
 
 const steps = [
   'Deploying Flywheel Core',

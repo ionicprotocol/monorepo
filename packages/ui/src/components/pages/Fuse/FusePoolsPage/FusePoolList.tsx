@@ -18,7 +18,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/sdk/dist/cjs/src/Fuse/types';
+import { FusePoolData } from '@midas-capital/sdk';
 import { useTranslation } from 'react-i18next';
 
 import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolCard';

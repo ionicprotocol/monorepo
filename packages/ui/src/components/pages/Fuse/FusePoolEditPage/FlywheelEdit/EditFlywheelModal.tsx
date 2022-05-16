@@ -40,7 +40,6 @@ import { Flywheel } from '@ui/types/ComponentPropsType';
 import { Center, Column, Row } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { shortAddress } from '@ui/utils/shortAddress';
-
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
