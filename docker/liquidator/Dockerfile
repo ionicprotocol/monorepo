@@ -51,13 +51,14 @@ RUN npm install pm2 -pg
 
 # ----- Copy files required at runtime by the app -----
 COPY --from=build --chown=node:node /tmp/build /home/node
+COPY docker/wait-for-hh.sh /home/node/packages/fuse-liquidator-bot/wait-for-hh.sh
+
+RUN chmod +x /home/node/packages/fuse-liquidator-bot/wait-for-hh.sh
 
 # This user is created in the base image with uid and gid = 1000.
 USER node
 
 WORKDIR /home/node/packages/fuse-liquidator-bot
-
-EXPOSE 8080
 
 CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development"]
 

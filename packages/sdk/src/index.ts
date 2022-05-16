@@ -14,15 +14,17 @@ export {
   NativePricedFuseAsset,
   FuseAsset,
   InterestRateModelType,
-  DelegateContractName,
   AssetPluginConfig,
   PluginConfig,
-} from "./Fuse/types";
-export { SupportedChains } from "./network";
+} from "./types";
+export {
+  SupportedChains,
+  DelegateContractName,
+  OracleTypes,
+  RedemptionStrategy,
+  LiquidationStrategy,
+  LiquidationKind,
+} from "./enums";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
-export {
-  defaults as liquidationConfigDefaults,
-  ChainLiquidationConfig,
-  LiquidationStrategy,
-} from "./modules/liquidation/config";
+export { ChainLiquidationConfig } from "./modules/liquidation/config";

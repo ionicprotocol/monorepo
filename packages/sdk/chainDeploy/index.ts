@@ -8,8 +8,6 @@ import { deployConfig as deployConfig1287, deploy as deploy1287 } from "./testne
 import { ChainDeployConfig } from "./helpers";
 import { deployConfig as deployConfig1337, deploy as deploy1337 } from "./local/local";
 
-export { assets as bscAssets } from "./mainnets/bsc";
-
 export const chainDeployConfig: Record<number, { config: ChainDeployConfig; deployFunc: any }> = {
   // mainnets
   56: { config: deployConfig56, deployFunc: deploy56 },

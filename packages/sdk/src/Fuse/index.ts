@@ -45,25 +45,25 @@ import {
   Artifacts,
   AssetPluginConfig,
   ChainDeployment,
+  ChainRedemptionStrategy,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
   OracleConf,
-} from "./types";
-import {
-  CTOKEN_ERROR_CODES,
-  JUMP_RATE_MODEL_CONF,
-  SIMPLE_DEPLOY_ORACLES,
-  WHITE_PAPER_RATE_MODEL_CONF,
-} from "./config";
+  SupportedAsset,
+} from "../types";
+import { RedemptionStrategy, SupportedChains } from "../enums";
+import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
 import {
   chainOracles,
-  chainPluginConfig,
   chainSpecificAddresses,
   irmConfig,
   oracleConfig,
-  SupportedChains,
-} from "../network";
+  chainPluginConfig,
+  chainLiquidationDefaults,
+  chainSupportedAssets,
+  chainRedemptionStrategies,
+} from "../chainConfig";
 
 // SDK modules
 import { withRewardsDistributor } from "../modules/RewardsDistributor";
@@ -83,6 +83,7 @@ import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistrib
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
+import { ChainLiquidationConfig } from "../modules/liquidation/config";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -99,7 +100,6 @@ type ChainSpecificAddresses = {
 
 export class FuseBase {
   // public methods
-  static SIMPLE_DEPLOY_ORACLES = SIMPLE_DEPLOY_ORACLES;
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public provider: JsonRpcProvider | Web3Provider;
 
@@ -122,6 +122,9 @@ export class FuseBase {
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;
+  public liquidationConfig: ChainLiquidationConfig;
+  public supportedAssets: SupportedAsset[];
+  public redemptionStrategies: { [token: string]: RedemptionStrategy };
 
   // public methods
 
@@ -135,17 +138,12 @@ export class FuseBase {
     this.chainDeployment =
       chainDeployment ??
       (Deployments[chainId.toString()] &&
-        Deployments[chainId.toString()][
-          Object.keys(Deployments[chainId.toString()])[0]
-        ]?.contracts);
+        Deployments[chainId.toString()][Object.keys(Deployments[chainId.toString()])[0]]?.contracts);
     if (!this.chainDeployment) {
-      throw new Error(
-        `Chain deployment not found or provided for chainId ${chainId}`
-      );
+      throw new Error(`Chain deployment not found or provided for chainId ${chainId}`);
     }
     this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
-    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -176,15 +174,12 @@ export class FuseBase {
     };
     if (this.chainDeployment.FuseFlywheelLensRouter) {
       this.contracts["FuseFlywheelLensRouter"] = new Contract(
-        this.chainDeployment.FuseFlywheelLensRouter?.address ||
-          constants.AddressZero,
+        this.chainDeployment.FuseFlywheelLensRouter?.address || constants.AddressZero,
         this.chainDeployment.FuseFlywheelLensRouter.abi,
         this.provider
       ) as FuseFlywheelLensRouter;
     } else {
-      console.warn(
-        `FuseFlywheelLensRouter not deployed to chain ${this.chainId}`
-      );
+      console.warn(`FuseFlywheelLensRouter not deployed to chain ${this.chainId}`);
     }
     this.artifacts = {
       CErc20Delegate: CErc20DelegateArtifact,
@@ -214,21 +209,19 @@ export class FuseBase {
 
     this.irms = irmConfig(this.chainDeployment, this.artifacts);
     this.availableOracles = chainOracles[chainId].filter((o) => {
-      if (
-        this.artifacts[o] === undefined ||
-        this.chainDeployment[o] === undefined
-      ) {
+      if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
         console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
     });
-    this.oracles = oracleConfig(
-      this.chainDeployment,
-      this.artifacts,
-      this.availableOracles
-    );
-    this.chainPlugins = chainPluginConfig[this.chainId];
+    this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
+
+    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
+    this.liquidationConfig = chainLiquidationDefaults[chainId];
+    this.supportedAssets = chainSupportedAssets[chainId];
+    this.chainPlugins = chainPluginConfig[chainId];
+    this.redemptionStrategies = chainRedemptionStrategies[chainId];
   }
 
   async deployPool(
@@ -256,26 +249,18 @@ export class FuseBase {
       }
 
       // Register new pool with FusePoolDirectory
-      const contract = this.contracts.FusePoolDirectory.connect(
-        this.provider.getSigner(options.from)
-      );
+      const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
       const deployTx = await contract.deployPool(
         poolName,
         implementationAddress,
-        new utils.AbiCoder().encode(
-          ["address"],
-          [this.chainDeployment.FuseFeeDistributor.address]
-        ),
+        new utils.AbiCoder().encode(["address"], [this.chainDeployment.FuseFeeDistributor.address]),
         enforceWhitelist,
         closeFactor,
         liquidationIncentive,
         priceOracle
       );
       const deployReceipt = await deployTx.wait();
-      console.log(
-        `Deployment of pool ${poolName} succeeded!`,
-        deployReceipt.status
-      );
+      console.log(`Deployment of pool ${poolName} succeeded!`, deployReceipt.status);
 
       let poolId: number | undefined;
       try {
@@ -296,12 +281,7 @@ export class FuseBase {
       );
       const byteCodeHash = utils.keccak256(
         this.artifacts.Unitroller.bytecode.object +
-          new utils.AbiCoder()
-            .encode(
-              ["address"],
-              [this.chainDeployment.FuseFeeDistributor.address]
-            )
-            .slice(2)
+          new utils.AbiCoder().encode(["address"], [this.chainDeployment.FuseFeeDistributor.address]).slice(2)
       );
 
       const poolAddress = utils.getCreate2Address(
@@ -330,28 +310,18 @@ export class FuseBase {
         );
 
         // Was enforced by pool deployment, now just add addresses
-        const whitelistTx = await comptroller._setWhitelistStatuses(
-          whitelist,
-          Array(whitelist.length).fill(true)
-        );
+        const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
         const whitelistReceipt = await whitelistTx.wait();
         console.log("Whitelist updated:", whitelistReceipt.status);
       }
 
       return [poolAddress, implementationAddress, priceOracle, poolId];
     } catch (error: any) {
-      throw Error(
-        "Deployment of new Fuse pool failed: " +
-          (error.message ? error.message : error)
-      );
+      throw Error("Deployment of new Fuse pool failed: " + (error.message ? error.message : error));
     }
   }
 
-  async deployInterestRateModel(
-    options: any,
-    model?: string,
-    conf?: InterestRateModelParams
-  ): Promise<string> {
+  async deployInterestRateModel(options: any, model?: string, conf?: InterestRateModelParams): Promise<string> {
     // Default model = JumpRateModel
     if (!model) {
       model = "JumpRateModel";
@@ -363,8 +333,7 @@ export class FuseBase {
 
     switch (model) {
       case "JumpRateModel":
-        if (!conf)
-          conf = JUMP_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
+        if (!conf) conf = JUMP_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
         deployArgs = [
           conf.blocksPerYear,
           conf.baseRatePerYear,
@@ -374,33 +343,14 @@ export class FuseBase {
         ];
         modelArtifact = this.artifacts.JumpRateModel;
         break;
-      case "DAIInterestRateModelV2":
-        if (!conf)
-          conf = JUMP_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
-        deployArgs = [
-          conf.blocksPerYear,
-          conf.jumpMultiplierPerYear,
-          conf.kink,
-          this.chainSpecificAddresses.DAI_POT,
-          this.chainSpecificAddresses.DAI_JUG,
-        ];
-        modelArtifact = this.artifacts.DAIInterestRateModelV2;
-        break;
       case "WhitePaperInterestRateModel":
-        if (!conf)
-          conf = WHITE_PAPER_RATE_MODEL_CONF(
-            this.chainId
-          ).interestRateModelParams;
+        if (!conf) conf = WHITE_PAPER_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
         conf = {
           blocksPerYear: conf.blocksPerYear,
           baseRatePerYear: conf.baseRatePerYear,
           multiplierPerYear: conf.multiplierPerYear,
         };
-        deployArgs = [
-          conf.blocksPerYear,
-          conf.baseRatePerYear,
-          conf.multiplierPerYear,
-        ];
+        deployArgs = [conf.blocksPerYear, conf.baseRatePerYear, conf.multiplierPerYear];
         modelArtifact = this.artifacts.WhitePaperInterestRateModel;
         break;
       default:
@@ -414,43 +364,33 @@ export class FuseBase {
       this.provider.getSigner(options.from)
     );
 
-    const deployedInterestRateModel = await interestRateModelContract.deploy(
-      ...deployArgs
-    );
+    const deployedInterestRateModel = await interestRateModelContract.deploy(...deployArgs);
     return deployedInterestRateModel.address;
   }
 
   async identifyPriceOracle(priceOracleAddress: string) {
     // Get PriceOracle type from runtime bytecode hash
-    const runtimeBytecodeHash = utils.keccak256(
-      await this.provider.getCode(priceOracleAddress)
-    );
+    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(priceOracleAddress));
 
     for (const [name, oracle] of Object.entries(this.oracles)) {
       if (oracle.artifact && oracle.artifact.bytecode) {
         const value = utils.keccak256(oracle.artifact.bytecode.object);
         if (runtimeBytecodeHash == value) return name;
       } else {
-        console.warn(
-          `No Artifact or Bytecode found for enabled Oracle: ${name}`
-        );
+        console.warn(`No Artifact or Bytecode found for enabled Oracle: ${name}`);
       }
     }
     return null;
   }
 
-  async identifyInterestRateModel(
-    interestRateModelAddress: string
-  ): Promise<InterestRateModel | null> {
+  async identifyInterestRateModel(interestRateModelAddress: string): Promise<InterestRateModel | null> {
     // Get interest rate model type from runtime bytecode hash and init class
     const interestRateModels: { [key: string]: any } = {
       JumpRateModel: JumpRateModel,
       DAIInterestRateModelV2: DAIInterestRateModelV2,
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
     };
-    const runtimeBytecodeHash = utils.keccak256(
-      await this.provider.getCode(interestRateModelAddress)
-    );
+    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 
     let irmModel = null;
 
@@ -463,37 +403,22 @@ export class FuseBase {
     return irmModel;
   }
 
-  async getInterestRateModel(
-    assetAddress: string
-  ): Promise<any | undefined | null> {
+  async getInterestRateModel(assetAddress: string): Promise<any | undefined | null> {
     // Get interest rate model address from asset address
-    const assetContract = new Contract(
-      assetAddress,
-      this.artifacts.CTokenInterfaces.abi,
-      this.provider
-    );
-    const interestRateModelAddress: string =
-      await assetContract.callStatic.interestRateModel();
+    const assetContract = new Contract(assetAddress, this.artifacts.CTokenInterfaces.abi, this.provider);
+    const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
-    const interestRateModel = await this.identifyInterestRateModel(
-      interestRateModelAddress
-    );
+    const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
     if (interestRateModel === null) {
       return null;
     }
-    await interestRateModel.init(
-      interestRateModelAddress,
-      assetAddress,
-      this.provider
-    );
+    await interestRateModel.init(interestRateModelAddress, assetAddress, this.provider);
     return interestRateModel;
   }
 
   async getPriceOracle(oracleAddress: string): Promise<string | null> {
     // Get price oracle contract name from runtime bytecode hash
-    const runtimeBytecodeHash = utils.keccak256(
-      await this.provider.getCode(oracleAddress)
-    );
+    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(oracleAddress));
     for (const [name, oracle] of Object.entries(this.oracles)) {
       const value = utils.keccak256(oracle.artifact.deployedBytecode.object);
       if (runtimeBytecodeHash === value) return name;
@@ -502,24 +427,13 @@ export class FuseBase {
   }
 
   async checkCardinality(uniswapV3Pool: string) {
-    const uniswapV3PoolContract = new Contract(
-      uniswapV3Pool,
-      uniswapV3PoolAbiSlim
-    );
-    return (
-      (await uniswapV3PoolContract.methods.slot0().call())
-        .observationCardinalityNext < 64
-    );
+    const uniswapV3PoolContract = new Contract(uniswapV3Pool, uniswapV3PoolAbiSlim);
+    return (await uniswapV3PoolContract.methods.slot0().call()).observationCardinalityNext < 64;
   }
 
   async primeUniswapV3Oracle(uniswapV3Pool, options) {
-    const uniswapV3PoolContract = new Contract(
-      uniswapV3Pool,
-      uniswapV3PoolAbiSlim
-    );
-    await uniswapV3PoolContract.methods
-      .increaseObservationCardinalityNext(64)
-      .send(options);
+    const uniswapV3PoolContract = new Contract(uniswapV3Pool, uniswapV3PoolAbiSlim);
+    await uniswapV3PoolContract.methods.increaseObservationCardinalityNext(64).send(options);
   }
 
   identifyInterestRateModelName = (irmAddress: string): string | null => {
@@ -533,10 +447,7 @@ export class FuseBase {
     return irmName;
   };
 
-  getComptrollerInstance(
-    comptrollerAddress: string,
-    options: { from: string }
-  ) {
+  getComptrollerInstance(comptrollerAddress: string, options: { from: string }) {
     return new Contract(
       comptrollerAddress,
       this.artifacts.Comptroller.abi,
@@ -548,11 +459,7 @@ export class FuseBase {
 const FuseBaseWithModules = withFlywheel(
   withFusePoolLens(
     withRewardsDistributor(
-      withFundOperations(
-        withSafeLiquidator(
-          withFusePools(withAsset(withCreateContracts(FuseBase)))
-        )
-      )
+      withFundOperations(withSafeLiquidator(withFusePools(withAsset(withCreateContracts(FuseBase)))))
     )
   )
 );
