@@ -8,7 +8,6 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import {
   CTokenDataForRewards,
   CTokenIncentivesMap,

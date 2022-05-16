@@ -1,5 +1,4 @@
-import { Box, CloseButton, Heading } from '@chakra-ui/react';
-import { ReactNode } from 'react';
+import { Box, BoxProps, CloseButton, Heading } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
 import { Row } from '@ui/utils/chakraUtils';
@@ -22,7 +21,7 @@ export const ModalTitleWithCloseButton = ({
   );
 };
 
-export const ModalDivider = ({ ...others }: { [key: string]: ReactNode }) => {
+export const ModalDivider = (props: BoxProps) => {
   const { cCard } = useColors();
-  return <Box h="1px" width="100%" flexShrink={0} bg={cCard.dividerColor} {...others} />;
+  return <Box h="1px" width="100%" flexShrink={0} bg={cCard.dividerColor} {...props} />;
 };
