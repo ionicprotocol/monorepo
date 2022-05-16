@@ -15,13 +15,9 @@ jobs:
         with:
           node-version: "16"
           cache: "npm"
-          cache-dependency-path: package.json
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: install
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: workspace @midas-capital/ui lint
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: workspace @midas-capital/ui build
+      - name: Install packages
+        run: yarn install
+      - name: Lint
+        run: yarn workspace @midas-capital/ui lint
+      - name: Lint
+        run: yarn workspace @midas-capital/ui build
