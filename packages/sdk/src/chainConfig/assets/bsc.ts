@@ -127,12 +127,12 @@ export const assets: SupportedAsset[] = [
     name: "Ellipsis.finance DAI/3EPS",
     decimals: 18,
   },
-  {
-    symbol: assetSymbols.ust3EPS,
-    underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba",
-    name: "Ellipsis.finance UST/3EPS",
-    decimals: 18,
-  },
+  // {
+  //   symbol: assetSymbols.ust3EPS,
+  //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba",
+  //   name: "Ellipsis.finance UST/3EPS",
+  //   decimals: 18,
+  // },
   // Bomb
   {
     symbol: assetSymbols.BOMB,
@@ -163,12 +163,6 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols["WBNB-BUSD"],
     underlying: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
     name: "WBNB-BUSD PCS LP",
-    decimals: 18,
-  },
-  {
-    symbol: assetSymbols["WBNB-DAI"],
-    underlying: "0xc7c3cCCE4FA25700fD5574DA7E200ae28BBd36A3",
-    name: "WBNB-DAI PCS LP",
     decimals: 18,
   },
   {
