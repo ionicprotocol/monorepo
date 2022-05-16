@@ -1,9 +1,9 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import ERC20ABI from '@midas-capital/sdk/dist/cjs/src/Fuse/abi/ERC20.json';
 import axios from 'axios';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Vibrant from 'node-vibrant';
+import { erc20ABI } from 'wagmi';
 import * as yup from 'yup';
 
 import { CoinGeckoResponse, TokenDataResponse } from '@ui/types/ComponentPropsType';
@@ -27,7 +27,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   const address = utils.getAddress(rawAddress);
   const tokenContract = new Contract(
     address,
-    ERC20ABI,
+    erc20ABI,
     new JsonRpcProvider(providerURLForChain(Number(chain)))
   );
 
