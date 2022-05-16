@@ -9,10 +9,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlywheelClaimableRewards } from 'sdk/dist/cjs/src/modules/Flywheel';
 import { useSigner } from 'wagmi';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
