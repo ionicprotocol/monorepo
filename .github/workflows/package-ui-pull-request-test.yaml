@@ -15,6 +15,11 @@ jobs:
           submodules: recursive
           token: "${{ secrets.ACCESS_TOKEN }}"
 
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+          cache: "npm"
+
       - name: Install `foundry`
         uses: onbjerg/foundry-toolchain@v1
         with:
@@ -22,11 +27,6 @@ jobs:
 
       - name: Install `foundry libs`
         run: yarn workspace @midas-capital/sdk foundry install
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: "16"
-          cache: "npm"
 
       - name: Clear `yarn` Cache
         run: yarn cache clean
