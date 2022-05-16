@@ -12,6 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         with:
+          submodules: recursive
           token: "${{ secrets.ACCESS_TOKEN }}"
 
       - uses: actions/setup-node@v3
@@ -29,8 +30,9 @@ jobs:
         env:
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Install `foundry libs`
-        run: yarn workspace @midas-capital/sdk forge install
+      # Does not work yet, no access to `contracts` repo
+      # - name: Install `foundry libs`
+      #   run: yarn workspace @midas-capital/sdk forge install
 
       - name: Build `sdk`
         run: yarn workspace @midas-capital/sdk build
