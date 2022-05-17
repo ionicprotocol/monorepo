@@ -25,10 +25,9 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 
-import { PopoverTooltip } from '../../../shared/PopoverTooltip';
-
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { ComptrollerErrorCodes, FundOperationMode } from '@ui/constants/index';
@@ -40,7 +39,6 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
-import { createComptroller } from '@ui/utils/createComptroller';
 
 export const SupplyList = ({
   assets,
@@ -183,7 +181,7 @@ const AssetSupplyRow = ({
   );
 
   const onToggleCollateral = async () => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     let call;
     if (asset.membership) {
