@@ -1,6 +1,7 @@
 [submodule "packages/sdk/lib/ds-test"]
 	path = packages/sdk/lib/ds-test
-	url = https://github.com/dapphub/ds-test
+	url = git@github.com:dapphub/ds-test
 [submodule "packages/sdk/lib/contracts"]
 	path = packages/sdk/lib/contracts
 	url = git@github.com:Midas-Protocol/contracts.git
+	branch = development
