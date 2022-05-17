@@ -73,6 +73,7 @@ export async function deployAssets(assets: cERC20Conf[], signer?: SignerWithAddr
   const sdk = await getOrCreateFuse();
   const deployed: DeployedAsset[] = [];
   for (const assetConf of assets) {
+    console.log("Deploying asset: ", assetConf.name);
     const [assetAddress, implementationAddress, interestRateModel, receipt] = await sdk.deployAsset(
       sdk.JumpRateModelConf,
       assetConf,

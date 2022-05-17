@@ -1,5 +1,5 @@
 import { BigNumber, providers, utils } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, run } from "hardhat";
 import { deployAssets, tradeNativeForAsset } from "./utils";
 import { addCollateral, borrowCollateral } from "./utils/collateral";
 import {
@@ -47,10 +47,14 @@ describe.only("#safeLiquidateWithFlashLoan", () => {
 
   beforeEach(async () => {
     console.log("HERE");
+    const { deployer } = await ethers.getNamedSigners();
     ({ chainId } = await ethers.provider.getNetwork());
     const sdk = await getOrCreateFuse();
     const poolAddresses = await setUpPools([BSC_POOLS.ALPACA, BSC_POOLS.BOMB]);
 
+    console.log(
+      `deployed pools with addresses:\n - ${BSC_POOLS.ALPACA}: ${poolAddresses[0]}\n - ${BSC_POOLS.BOMB}: ${poolAddresses[1]}`
+    );
     alpacaAssets = await getAssetsConf(
       poolAddresses[0],
       sdk.contracts.FuseFeeDistributor.address,
@@ -66,11 +70,16 @@ describe.only("#safeLiquidateWithFlashLoan", () => {
       BSC_POOLS.BOMB
     );
 
-    alpacaDeployedAssets = await deployAssets(alpacaAssets);
-    bombDeployedAssets = await deployAssets(bombAssets);
 
-    console.log(alpacaDeployedAssets)
-    console.log(bombDeployedAssets)
+
+    console.log("----alpacaAssets----\n", alpacaAssets);
+    console.log("----bombAssets----\n", bombAssets);
+
+    alpacaDeployedAssets = await deployAssets(alpacaAssets, deployer);
+    bombDeployedAssets = await deployAssets(bombAssets, deployer);
+
+    console.log(alpacaDeployedAssets);
+    console.log(bombDeployedAssets);
 
     liquidationConfigOverrides = {
       ...getChainLiquidationConfig(sdk)[chainId],

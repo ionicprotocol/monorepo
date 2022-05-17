@@ -25,7 +25,12 @@ describe("FundOperationsModule", function () {
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Pool-Fund-Operations-Test" });
 
-    const assets = await assetHelpers.getAssetsConf(poolAddress, sdk.contracts.FuseFeeDistributor.address, sdk.irms.JumpRateModel.address, ethers);
+    const assets = await assetHelpers.getAssetsConf(
+      poolAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers
+    );
     await poolHelpers.deployAssets(assets, deployer);
   });
 
