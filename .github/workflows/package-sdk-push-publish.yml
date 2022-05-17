@@ -87,3 +87,4 @@ jobs:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
           access: "public"
+          package: "./packages/sdk/package.json"
