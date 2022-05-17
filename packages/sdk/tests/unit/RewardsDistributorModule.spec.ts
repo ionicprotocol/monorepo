@@ -33,7 +33,12 @@ describe.skip("RewardsDistributorModule", function () {
     [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-RewardsDistributor-Test" });
     [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-RewardsDistributor-Test" });
 
-    const assetsA = await assetHelpers.getAssetsConf(poolAAddress, sdk.contracts.FuseFeeDistributor.address, sdk.irms.JumpRateModel.address, ethers);
+    const assetsA = await assetHelpers.getAssetsConf(
+      poolAAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers
+    );
     const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
 
     const erc20One = assetsA.find((a) => a.underlying !== constants.AddressZero); // find first one

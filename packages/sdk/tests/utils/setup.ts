@@ -85,8 +85,7 @@ export const setUpPools = async (poolNames: BSC_POOLS[]) => {
   return poolAddresses;
 };
 
-export const setUpLiquidation = async (poolName: BSC_POOLS | string ) => {
-
+export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
   let eth: cERC20Conf;
   let erc20One: cERC20Conf;
   let erc20Two: cERC20Conf;
