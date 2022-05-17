@@ -16,7 +16,6 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useSuccessToast } from '@ui/hooks/useToast';
 import { Center } from '@ui/utils/chakraUtils';
-import { createUnitroller } from '@ui/utils/createComptroller';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const TransferOwnershipModal = ({
@@ -40,7 +39,7 @@ const TransferOwnershipModal = ({
       setIsTransferring(true);
       const verifiedAddress = utils.getAddress(inputAddress);
 
-      const unitroller = createUnitroller(comptrollerAddress, fuse);
+      const unitroller = fuse.createUnitroller(comptrollerAddress);
 
       const tx = await unitroller._setPendingAdmin(verifiedAddress);
       await tx.wait();

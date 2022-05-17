@@ -1,14 +1,13 @@
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { createComptroller } from '@ui/utils/createComptroller';
 
 export const useExtraPoolInfo = (comptrollerAddress: string) => {
   const { fuse, currentChain, address } = useRari();
 
   const { data } = useQuery(['ExtraPoolInfo', currentChain.id, comptrollerAddress], async () => {
     if (comptrollerAddress) {
-      const comptroller = createComptroller(comptrollerAddress, fuse);
+      const comptroller = fuse.createComptroller(comptrollerAddress);
       const [
         { 0: admin, 1: upgradeable },
         oracle,

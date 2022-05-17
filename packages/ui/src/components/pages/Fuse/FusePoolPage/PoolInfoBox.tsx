@@ -36,7 +36,6 @@ import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, RowOrColumn, useIsMobile } from '@ui/utils/chakraUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
-import { createUnitroller } from '@ui/utils/createComptroller';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
@@ -128,7 +127,7 @@ const OracleAndInterestRates = ({
   const acceptOwnership = useCallback(async () => {
     if (!comptrollerAddress) return;
     setIsLoading(true);
-    const unitroller = createUnitroller(comptrollerAddress, fuse);
+    const unitroller = fuse.createUnitroller(comptrollerAddress);
     const tx = await unitroller._acceptAdmin();
     await tx.wait();
     setIsLoading(false);

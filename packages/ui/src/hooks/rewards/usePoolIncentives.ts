@@ -12,7 +12,6 @@ import {
   IncentivesData,
   RewardsDistributorCTokensMap,
 } from '@ui/types/ComponentPropsType';
-import { createCToken } from '@ui/utils/createComptroller';
 
 export function usePoolIncentives(comptroller?: string): IncentivesData {
   const { fuse, currentChain } = useRari();
@@ -105,7 +104,7 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
       if (cTokenAddresses && cTokenAddresses.length) {
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
-            const cTokenInstance = createCToken(cTokenAddress, fuse);
+            const cTokenInstance = fuse.createCToken(cTokenAddress);
             _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
           })
         );

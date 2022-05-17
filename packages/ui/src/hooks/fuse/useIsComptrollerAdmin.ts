@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { createComptroller } from '@ui/utils/createComptroller';
 
 export const useIsComptrollerAdmin = (comptrollerAddress?: string): boolean => {
   const { fuse, address } = useRari();
@@ -9,7 +8,7 @@ export const useIsComptrollerAdmin = (comptrollerAddress?: string): boolean => {
   const { data } = useQuery(comptrollerAddress + ' admin', async () => {
     if (!comptrollerAddress) return undefined;
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     return await comptroller.callStatic.admin();
   });
