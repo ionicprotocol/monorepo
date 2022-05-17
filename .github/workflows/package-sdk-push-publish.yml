@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - development
-    paths:
-      - "packages/sdk/**"
-      - "yarn.lock"
+    # paths:
+    #   - "packages/sdk/**"
+    #   - "yarn.lock"
 jobs:
   build-and-test-local:
     env:
