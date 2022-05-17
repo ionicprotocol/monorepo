@@ -9,10 +9,12 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../../lib/contracts/typechain";
-import { createPool, deployAssets, DeployedAsset, getPoolAssets } from "./pool";
+import { createPool, DeployedAsset } from "./pool";
 import { expect } from "chai";
 import { cERC20Conf, ChainLiquidationConfig, Fuse } from "../../";
 import { getOrCreateFuse } from "./fuseSdk";
+import { assetSymbols } from "../../src/chainConfig";
+import { BSC_POOLS, getAssetsConf } from "./assets";
 
 export const resetPriceOracle = async (erc20One, erc20Two) => {
   const chainId = parseInt(await getChainId());
@@ -72,7 +74,19 @@ export const tradeAssetForAsset = async ({ token1, token2, amount, account }) =>
   await run("swap-token-for-token", { token1, token2, amount, account });
 };
 
-export const setUpLiquidation = async ({ poolName }) => {
+export const setUpPools = async (poolNames: BSC_POOLS[]) => {
+  let poolAddress: string;
+  const { deployer } = await ethers.getNamedSigners();
+  const poolAddresses: string[] = [];
+  for (const poolName of poolNames) {
+    [poolAddress] = await createPool({ poolName, signer: deployer });
+    poolAddresses.push(poolAddress);
+  }
+  return poolAddresses;
+};
+
+export const setUpLiquidation = async (poolName: BSC_POOLS | string ) => {
+
   let eth: cERC20Conf;
   let erc20One: cERC20Conf;
   let erc20Two: cERC20Conf;
@@ -103,11 +117,6 @@ export const setUpLiquidation = async ({ poolName }) => {
 
   const sdk = await getOrCreateFuse();
 
-  simpleOracle = (await ethers.getContractAt(
-    "SimplePriceOracle",
-    sdk.oracles.SimplePriceOracle.address,
-    deployer
-  )) as SimplePriceOracle;
   oracle = (await ethers.getContractAt(
     "MasterPriceOracle",
     sdk.oracles.MasterPriceOracle.address,
@@ -126,15 +135,22 @@ export const setUpLiquidation = async ({ poolName }) => {
   )) as FuseSafeLiquidator;
 
   [poolAddress] = await createPool({ poolName, signer: deployer });
-  const assets = await getPoolAssets(poolAddress, fuseFeeDistributor.address);
 
-  erc20One = assets.assets.find((a) => a.underlying !== constants.AddressZero); // find first one
+  const assets = await getAssetsConf(
+    poolAddress,
+    fuseFeeDistributor.address,
+    sdk.irms.JumpRateModel.address,
+    ethers,
+    poolName
+  );
+
+  erc20One = assets.find((a) => a.underlying === assetSymbols["BTCB-BOMB"]); // find first one
 
   expect(erc20One.underlying).to.be.ok;
-  erc20Two = assets.assets.find((a) => a.underlying !== constants.AddressZero && a.underlying !== erc20One.underlying); // find second one
+  erc20Two = assets.find((a) => a.underlying !== constants.AddressZero && a.underlying !== erc20One.underlying); // find second one
 
   expect(erc20Two.underlying).to.be.ok;
-  eth = assets.assets.find((a) => a.underlying === constants.AddressZero);
+  eth = assets.find((a) => a.underlying === constants.AddressZero);
 
   erc20OneOriginalUnderlyingPrice = await oracle.callStatic.price(erc20One.underlying);
   erc20TwoOriginalUnderlyingPrice = await oracle.callStatic.price(erc20Two.underlying);
@@ -142,27 +158,6 @@ export const setUpLiquidation = async ({ poolName }) => {
   console.log("Setting up liquis with prices: ");
   console.log(`erc20One: ${erc20One.symbol}, price: ${ethers.utils.formatEther(erc20OneOriginalUnderlyingPrice)}`);
   console.log(`erc20Two: ${erc20Two.symbol}, price: ${ethers.utils.formatEther(erc20TwoOriginalUnderlyingPrice)}`);
-
-  await oracle.add([erc20One.underlying, erc20Two.underlying], Array(2).fill(simpleOracle.address));
-
-  tx = await simpleOracle.setDirectPrice(erc20One.underlying, erc20OneOriginalUnderlyingPrice);
-  await tx.wait();
-
-  tx = await simpleOracle.setDirectPrice(erc20Two.underlying, erc20TwoOriginalUnderlyingPrice);
-  await tx.wait();
-
-  const deployedAssets = await deployAssets(assets.assets.slice(0, 4), deployer);
-
-  deployedEth = deployedAssets.find((a) => a.underlying === constants.AddressZero);
-  deployedErc20One = deployedAssets.find((a) => a.underlying === erc20One.underlying);
-  deployedErc20Two = deployedAssets.find((a) => a.underlying === erc20Two.underlying);
-
-  ethCToken = (await ethers.getContractAt("CEther", deployedEth.assetAddress)) as CEther;
-  erc20OneCToken = (await ethers.getContractAt("CErc20", deployedErc20One.assetAddress)) as CErc20;
-  erc20TwoCToken = (await ethers.getContractAt("CErc20", deployedErc20Two.assetAddress)) as CErc20;
-
-  erc20TwoUnderlying = (await ethers.getContractAt("EIP20Interface", erc20Two.underlying)) as EIP20Interface;
-  erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", erc20One.underlying)) as EIP20Interface;
 
   return {
     poolAddress,
