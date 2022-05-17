@@ -61,7 +61,7 @@ jobs:
       FORK_BLOCK_NUMBER: 17366495
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           submodules: recursive
           token: "${{ secrets.ACCESS_TOKEN }}"
