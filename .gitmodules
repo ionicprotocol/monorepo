@@ -3,4 +3,4 @@
 	url = https://github.com/dapphub/ds-test
 [submodule "packages/sdk/lib/contracts"]
 	path = packages/sdk/lib/contracts
-	url = https://github.com/Midas-Protocol/contracts.git
+	url = git@github.com:Midas-Protocol/contracts.git
