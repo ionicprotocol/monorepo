@@ -119,6 +119,8 @@ export const AddAssetSettings = ({
         : plugin.dynamicFlywheel
         ? DelegateContractName.CErc20PluginRewardsDelegate
         : DelegateContractName.CErc20PluginDelegate,
+      rewardsDistributor: plugin?.dynamicFlywheel?.address,
+      rewardToken: plugin?.dynamicFlywheel?.rewardToken,
     };
     try {
       await fuse.deployAsset(irmConf, tokenConf, { from: address });
