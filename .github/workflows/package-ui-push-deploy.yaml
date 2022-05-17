@@ -40,6 +40,11 @@ jobs:
       - name: Build `sdk`
         run: yarn build:all
 
+#      - name: Vercel manual deploy
+#        run: VERCEL_ORG_ID=$VERCEL_ORG_ID VERCEL_PROJECT_ID=$VERCEL_PROJECT_ID VERCEL_TOKEN=$VERCEL_TOKEN
+
+
+
 #      - name: Build `ui`
 #        run: yarn workspace @midas-capital/ui build
 
