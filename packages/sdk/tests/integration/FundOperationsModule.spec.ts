@@ -3,6 +3,7 @@ import { deployments, ethers } from "hardhat";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices } from "../utils";
 import * as poolHelpers from "../utils/pool";
+import * as assetHelpers from "../utils/assets";
 import { constants, providers, utils } from "ethers";
 import { chainDeployConfig } from "../../chainDeploy";
 import { getOrCreateFuse } from "../utils/fuseSdk";
@@ -24,8 +25,8 @@ describe("FundOperationsModule", function () {
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Pool-Fund-Operations-Test" });
 
-    const assets = await poolHelpers.getPoolAssets(poolAddress, sdk.contracts.FuseFeeDistributor.address);
-    await poolHelpers.deployAssets(assets.assets, deployer);
+    const assets = await assetHelpers.getAssetsConf(poolAddress, sdk.contracts.FuseFeeDistributor.address, sdk.irms.JumpRateModel.address, ethers);
+    await poolHelpers.deployAssets(assets, deployer);
   });
 
   it("user can supply", async function () {
