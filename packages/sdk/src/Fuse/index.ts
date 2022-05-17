@@ -84,6 +84,7 @@ import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
+import { getComptrollerFactory, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -239,12 +240,8 @@ export class FuseBase {
       let implementationAddress = this.chainDeployment.Comptroller.address;
 
       if (!implementationAddress) {
-        const comptrollerContract = new ContractFactory(
-          this.artifacts.Comptroller.abi,
-          this.artifacts.Comptroller.bytecode.object,
-          this.provider.getSigner(options.from)
-        );
-        const deployedComptroller = await comptrollerContract.deploy();
+        const comptrollerFactory = getComptrollerFactory(this.provider.getSigner(options.from));
+        const deployedComptroller = await comptrollerFactory.deploy();
         implementationAddress = deployedComptroller.address;
       }
 
@@ -275,27 +272,16 @@ export class FuseBase {
       }
 
       // Compute Unitroller address
-      const saltsHash = utils.solidityKeccak256(
-        ["address", "string", "uint"],
-        [options.from, poolName, deployReceipt.blockNumber]
-      );
-      const byteCodeHash = utils.keccak256(
-        this.artifacts.Unitroller.bytecode.object +
-          new utils.AbiCoder().encode(["address"], [this.chainDeployment.FuseFeeDistributor.address]).slice(2)
-      );
-
-      const poolAddress = utils.getCreate2Address(
-        this.chainDeployment.FusePoolDirectory.address,
-        saltsHash,
-        byteCodeHash
+      const poolAddress = getPoolAddress(
+        options.from,
+        poolName,
+        deployReceipt.blockNumber,
+        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FusePoolDirectory.address
       );
 
       // Accept admin status via Unitroller
-      const unitroller = new Contract(
-        poolAddress,
-        this.artifacts.Unitroller.abi,
-        this.provider.getSigner(options.from)
-      );
+      const unitroller = getPoolUnitroller(poolAddress, this.provider.getSigner(options.from));
       const acceptTx = await unitroller._acceptAdmin();
       const acceptReceipt = await acceptTx.wait();
       console.log("Accepted admin status for admin:", acceptReceipt.status);
@@ -303,11 +289,7 @@ export class FuseBase {
       // Whitelist
       console.log("enforceWhitelist: ", enforceWhitelist);
       if (enforceWhitelist) {
-        let comptroller = new Contract(
-          poolAddress,
-          this.artifacts.Comptroller.abi,
-          this.provider.getSigner(options.from)
-        );
+        let comptroller = getPoolComptroller(poolAddress, this.provider.getSigner(options.from));
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
