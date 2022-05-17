@@ -16,12 +16,12 @@
     "deployments.json"
   ],
   "scripts": {
-    "build": "npm run setup && npm run typechain && npm run build:sdk",
+    "build": "npm run typechain && npm run build:sdk",
+    "build:forge": "cd lib/contracts && forge build",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
     "build:cjs": "tsc -p tsconfig-cjs.json",
     "compile": "hardhat compile",
-    "setup": "cd lib/contracts && forge build",
     "test": "hardhat test",
     "test:bsc": "FORK_URL=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat test",
     "test:forge:moonbeam": "forge test --fork-url https://rpc.api.moonbeam.network --fork-block-number ${FORK_BLOCK_NUMBER}",
