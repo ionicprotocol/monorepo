@@ -38,10 +38,10 @@ jobs:
       #   run: yarn workspace @midas-capital/sdk forge install
 
       - name: Build `sdk`
-        run: yarn workspace @midas-capital/sdk build
+        run: yarn build:all
 
-      - name: Build `ui`
-        run: yarn workspace @midas-capital/ui build
+#      - name: Build `ui`
+#        run: yarn workspace @midas-capital/ui build
 
   deploy-production:
     needs: [build]
