@@ -1,3 +1,4 @@
+set -x
 # github submodule repo address without https:// prefix
 SUBMODULE_GITHUB=github.com/Midas-Protocol/contracts
 

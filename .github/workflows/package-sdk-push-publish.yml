@@ -3,7 +3,7 @@ name: SDK/Push - Publish
 on:
   push:
     branches:
-      - main
+      - development
     paths:
       - "packages/sdk/**"
       - "yarn.lock"
@@ -59,27 +59,29 @@ jobs:
       - uses: actions/checkout@v2
         with:
           submodules: recursive
+
       - name: Install Foundry
         uses: onbjerg/foundry-toolchain@v1
         with:
           version: nightly
       - uses: actions/setup-node@v2
         with:
-          node-version: 16.x
+          node-version: 16
           cache: "yarn"
 
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: install
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
 
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          name: Install Forge dependencies
-          cmd: workspace @midas-capital/sdk forge install
+      # Not needed as we checkout recursively
+      # Does not work yet, no access to `contracts` repo
+      # - name: Install `foundry libs`
+      #   run: yarn workspace @midas-capital/sdk forge install
 
-      - uses: borales/actions-yarn@v2.3.0
-        with:
-          cmd: workspace @midas-capital/sdk build
+      - name: Build `sdk`
+        run: yarn workspace @midas-capital/sdk build
 
       - uses: JS-DevTools/npm-publish@v1
         with:
