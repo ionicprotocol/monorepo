@@ -1,4 +1,4 @@
-import { FusePoolData } from '@midas-capital/sdk/dist/cjs/src/Fuse/types';
+import { FusePoolData } from '@midas-capital/sdk';
 import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';

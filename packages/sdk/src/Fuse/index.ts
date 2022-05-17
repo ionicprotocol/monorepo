@@ -72,6 +72,7 @@ import { withFusePoolLens } from "../modules/FusePoolLens";
 import { withFlywheel } from "../modules/Flywheel";
 import { withFusePools } from "../modules/FusePools";
 import { withAsset } from "../modules/Asset";
+import { withCreateContracts } from "../modules/CreateContracts";
 
 // Typechain
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
@@ -456,7 +457,11 @@ export class FuseBase {
 }
 
 const FuseBaseWithModules = withFlywheel(
-  withFusePoolLens(withRewardsDistributor(withFundOperations(withSafeLiquidator(withFusePools(withAsset(FuseBase))))))
+  withFusePoolLens(
+    withRewardsDistributor(
+      withFundOperations(withSafeLiquidator(withFusePools(withAsset(withCreateContracts(FuseBase)))))
+    )
+  )
 );
 
 export default class Fuse extends FuseBaseWithModules {}

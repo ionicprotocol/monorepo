@@ -8,7 +8,6 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import {
   CTokenDataForRewards,
   CTokenIncentivesMap,
@@ -18,12 +17,6 @@ import {
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
-import {
-  createComptroller,
-  createCToken,
-  createMasterPriceOracle,
-  createOracle,
-} from '@ui/utils/createComptroller';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -134,7 +127,7 @@ export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForR
     const _map: CTokensDataForRewardsMap = {};
     await Promise.all(
       cTokenAddrs.map(async (cTokenAddr) => {
-        const cTokenInstance = createCToken(cTokenAddr, fuse);
+        const cTokenInstance = fuse.createCToken(cTokenAddr);
         const underlying = await cTokenInstance.callStatic.underlying();
         await cTokenInstance.callStatic.decimals();
         const cTokenTotalSupply = await cTokenInstance.callStatic.totalSupply();
@@ -142,7 +135,8 @@ export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForR
         const exchangeRateCurrent = await cTokenInstance.callStatic.exchangeRateCurrent();
 
         const underlyingTotalSupply2 =
-          (parseFloat(cTokenTotalSupply) * parseFloat(exchangeRateCurrent)) / 1e18;
+          (parseFloat(cTokenTotalSupply.toString()) * parseFloat(exchangeRateCurrent.toString())) /
+          1e18;
 
         // const underlyingTotalSupply =
         //   parseFloat(
@@ -182,12 +176,12 @@ export const getPriceFromOracles = async (
   fuse: Fuse
 ) => {
   // Rari MPO
-  const masterPriceOracle = createMasterPriceOracle(fuse);
+  const masterPriceOracle = fuse.createMasterPriceOracle();
 
   // Pool's MPO
-  const comptrollerInstance = createComptroller(comptroller, fuse);
+  const comptrollerInstance = fuse.createComptroller(comptroller);
   const oracleAddress: string = await comptrollerInstance.callStatic.oracle();
-  const oracleContract = createOracle(oracleAddress, fuse, 'MasterPriceOracle');
+  const oracleContract = fuse.createOracle(oracleAddress, 'MasterPriceOracle');
 
   let price;
   try {
@@ -206,7 +200,7 @@ export const useAssetPricesInEth = (
 ): TokenPrices | undefined => {
   const { fuse, coingeckoId } = useRari();
 
-  createMasterPriceOracle(fuse);
+  fuse.createMasterPriceOracle();
 
   const tokensData = useTokensDataAsMap(tokenAddresses);
   const { data: usdPrice, isLoading, error } = useUSDPrice(coingeckoId);

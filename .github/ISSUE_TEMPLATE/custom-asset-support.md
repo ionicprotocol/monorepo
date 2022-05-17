@@ -13,7 +13,7 @@ We'd like to support yet another custom asset
 **Block Explorer URL**:  https://etherscan.io/address/0x0000000000000000000000000000000000000000
 **Chain**: Ethereum
 
-- [ ] **ChainLink Supported**
+- [ ] **ChainLink / DIA / Flux Supported**
 - [ ] **Requires Custom Oracle** 
 - [ ] **Requires Custom Liquidator**
 
