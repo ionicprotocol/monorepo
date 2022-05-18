@@ -32,5 +32,5 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Build `sdk`
-        run: yarn build:ui
+      - name: Build `ui`
+        run: yarn build:deploy:ui
