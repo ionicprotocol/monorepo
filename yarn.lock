@@ -1239,7 +1239,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@emotion/react@npm:^11.1.4, @emotion/react@npm:^11.9.0":
+"@emotion/react@npm:^11.4.1, @emotion/react@npm:^11.9.0":
   version: 11.9.0
   resolution: "@emotion/react@npm:11.9.0"
   dependencies:
@@ -1629,7 +1629,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/contracts@npm:5.6.1, @ethersproject/contracts@npm:^5.6.0":
+"@ethersproject/contracts@npm:5.6.1, @ethersproject/contracts@npm:^5.6.0, @ethersproject/contracts@npm:^5.6.1":
   version: 5.6.1
   resolution: "@ethersproject/contracts@npm:5.6.1"
   dependencies:
@@ -1704,7 +1704,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/keccak256@npm:5.6.0, @ethersproject/keccak256@npm:>=5.0.0-beta.127, @ethersproject/keccak256@npm:^5.0.0-beta.130, @ethersproject/keccak256@npm:^5.6.0":
+"@ethersproject/keccak256@npm:5.6.0, @ethersproject/keccak256@npm:>=5.0.0-beta.127, @ethersproject/keccak256@npm:^5.6.0":
   version: 5.6.0
   resolution: "@ethersproject/keccak256@npm:5.6.0"
   dependencies:
@@ -1749,7 +1749,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.6.6, @ethersproject/providers@npm:^5.6.0, @ethersproject/providers@npm:^5.6.2":
+"@ethersproject/providers@npm:5.6.6, @ethersproject/providers@npm:^5.6.0, @ethersproject/providers@npm:^5.6.6":
   version: 5.6.6
   resolution: "@ethersproject/providers@npm:5.6.6"
   dependencies:
@@ -2264,25 +2264,25 @@ __metadata:
     "@typechain/ethers-v5": ^10.0.0
     "@typechain/hardhat": ^6.0.0
     "@types/bad-words": ^3.0.1
-    "@types/chai": ^4.3.0
-    "@types/mocha": ^9.1.0
+    "@types/chai": ^4.3.1
+    "@types/mocha": ^9.1.1
     "@types/node": ^17.0.23
     bad-words: ^3.0.4
     bufferutil: ^4.0.6
     chai: ^4.3.6
-    dotenv: ^16.0.0
+    dotenv: ^16.0.1
     ethereum-waffle: ^3.4.4
-    ethers: ^5.6.5
-    hardhat: ^2.9.2
-    hardhat-abi-exporter: ^2.8.0
-    hardhat-deploy: ^0.11.4
+    ethers: ^5.6.6
+    hardhat: ^2.9.5
+    hardhat-abi-exporter: ^2.9.0
+    hardhat-deploy: ^0.11.5
     hardhat-tracer: ^1.0.0-alpha.6
-    lint-staged: 12.3.7
+    lint-staged: 12.4.1
     prettier: 2.6.2
     prettier-plugin-solidity: 1.0.0-beta.19
     ts-node: ^10.7.0
     typechain: ^8.0.0
-    typescript: ^4.6.3
+    typescript: ^4.6.4
     utf-8-validate: ^5.0.9
   languageName: unknown
   linkType: soft
@@ -2297,8 +2297,8 @@ __metadata:
     "@chakra-ui/react": ^1.8.8
     "@emotion/react": ^11.9.0
     "@emotion/styled": ^11.8.1
-    "@ethersproject/contracts": ^5.6.0
-    "@ethersproject/providers": ^5.6.2
+    "@ethersproject/contracts": ^5.6.1
+    "@ethersproject/providers": ^5.6.6
     "@metamask/jazzicon": ^2.0.0
     "@midas-capital/sdk": "workspace:*"
     "@netlify/plugin-nextjs": latest
@@ -2309,17 +2309,13 @@ __metadata:
     "@types/react-dom": ^17.0.15
     "@typescript-eslint/eslint-plugin": ^5.17.0
     "@typescript-eslint/parser": ^5.17.0
-    "@walletconnect/web3-provider": ^1.7.7
-    "@web3-react/core": ^6.1.9
-    "@web3-react/injected-connector": ^6.0.7
-    "@web3-react/walletconnect-connector": ^6.2.13
     apexcharts: ^3.35.2
     axios: ^0.27.2
-    eslint: ^8.13.0
-    eslint-config-next: ^12.1.2
+    eslint: ^8.15.0
+    eslint-config-next: ^12.1.6
     eslint-config-prettier: ^8.5.0
-    eslint-import-resolver-typescript: ^2.7.0
-    eslint-plugin-import: ^2.25.4
+    eslint-import-resolver-typescript: ^2.7.1
+    eslint-plugin-import: ^2.26.0
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-react: ^7.29.4
     ethers: ^5.6.5
@@ -2333,14 +2329,14 @@ __metadata:
     prettier: 2.6.2
     react: 17.0.2
     react-apexcharts: ^1.4.0
-    react-datepicker: ^4.7.0
+    react-datepicker: ^4.8.0
     react-dom: 17.0.2
     react-error-boundary: ^3.1.4
     react-i18next: ^11.16.9
     react-icons: ^4.3.1
     react-query: ^3.39.0
-    react-spinners: ^0.11.0
-    typescript: 4.6.3
+    react-spinners: ^0.12.0
+    typescript: 4.6.4
     wagmi: ^0.3.5
     yup: ^0.32.11
   languageName: unknown
@@ -2963,7 +2959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chai@npm:*, @types/chai@npm:^4.3.0":
+"@types/chai@npm:*, @types/chai@npm:^4.3.1":
   version: 4.3.1
   resolution: "@types/chai@npm:4.3.1"
   checksum: 2ee246b76c469cd620a7a1876a73bc597074361b67d547b4bd96a0c1adb43597ede2d8589ab626192e14349d83cbb646cc11e2c179eeeb43ff11596de94d82c4
@@ -3070,7 +3066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mocha@npm:^9.1.0":
+"@types/mocha@npm:^9.1.1":
   version: 9.1.1
   resolution: "@types/mocha@npm:9.1.1"
   checksum: 516077c0acd9806dc78317f88aaac0df5aaf0bdc2f63dfdadeabdf0b0137953b6ca65472e6ff7c30bc93ce4e0ae76eae70e8d46764b9a8eae4877a928b6ef49a
@@ -3508,7 +3504,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@walletconnect/ethereum-provider@npm:^1.7.1, @walletconnect/ethereum-provider@npm:^1.7.8":
+"@walletconnect/ethereum-provider@npm:^1.7.8":
   version: 1.7.8
   resolution: "@walletconnect/ethereum-provider@npm:1.7.8"
   dependencies:
@@ -3521,18 +3517,6 @@ __metadata:
     eip1193-provider: 1.0.1
     eventemitter3: 4.0.7
   checksum: f92f826c55c851f9678e7fbc1caf2e4a84c1a7090eb09ffa766e21b730402d6f899571de33de7a2b3dff6c190edafa08f579e8a21520eaa06e0db08d8e22093e
-  languageName: node
-  linkType: hard
-
-"@walletconnect/http-connection@npm:^1.7.8":
-  version: 1.7.8
-  resolution: "@walletconnect/http-connection@npm:1.7.8"
-  dependencies:
-    "@walletconnect/types": ^1.7.8
-    "@walletconnect/utils": ^1.7.8
-    eventemitter3: 4.0.7
-    xhr2-cookies: 1.1.0
-  checksum: 83b2fba6bdc321a3a411fb3aaa2fcd49b0a866e6a35d1858dfca80e217375ee55582d7a286235b3e5079dd99fd2f5103f7c542845c5bca685a4aba74894644d0
   languageName: node
   linkType: hard
 
@@ -3651,7 +3635,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@walletconnect/types@npm:^1.7.1, @walletconnect/types@npm:^1.7.8":
+"@walletconnect/types@npm:^1.7.8":
   version: 1.7.8
   resolution: "@walletconnect/types@npm:1.7.8"
   checksum: 9c9d441d50da71e1e5840b68759e4ee1e8cc63b0a34afbeb67d0482416cee0212ad8f9d838b20115f7060db7b77644a650166bc5f649ae525a3cc0061c043980
@@ -3673,20 +3657,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@walletconnect/web3-provider@npm:^1.7.7":
-  version: 1.7.8
-  resolution: "@walletconnect/web3-provider@npm:1.7.8"
-  dependencies:
-    "@walletconnect/client": ^1.7.8
-    "@walletconnect/http-connection": ^1.7.8
-    "@walletconnect/qrcode-modal": ^1.7.8
-    "@walletconnect/types": ^1.7.8
-    "@walletconnect/utils": ^1.7.8
-    web3-provider-engine: 16.0.1
-  checksum: 45e7b4054212fb49f2de72fb3621bcf8e6ff1c1d7cbcd6637e1a4a73c4a551c6b6d662608265463800833119c0fb8b661d01e3f6ba8f6d3a83bd96fb40b55911
-  languageName: node
-  linkType: hard
-
 "@walletconnect/window-getters@npm:1.0.0, @walletconnect/window-getters@npm:^1.0.0":
   version: 1.0.0
   resolution: "@walletconnect/window-getters@npm:1.0.0"
@@ -3700,61 +3670,6 @@ __metadata:
   dependencies:
     "@walletconnect/window-getters": ^1.0.0
   checksum: eec506ff6d35ae6e88db1e38b6f514f6cbf1a45b979878e5e50819d229b616fc645a2b0816145b61acda2701042160a4e0685f080927b87461853a62a887a9e9
-  languageName: node
-  linkType: hard
-
-"@web3-react/abstract-connector@npm:^6.0.7":
-  version: 6.0.7
-  resolution: "@web3-react/abstract-connector@npm:6.0.7"
-  dependencies:
-    "@web3-react/types": ^6.0.7
-  checksum: fa8b0ea3586e248da84756979dd5c5f6ddc2d1657a1698de63a6d0e38035c4b122841bd0e6b00f1a6f1825614b22f6552a584cafec3470ca6fbc2e127ab30b2a
-  languageName: node
-  linkType: hard
-
-"@web3-react/core@npm:^6.1.9":
-  version: 6.1.9
-  resolution: "@web3-react/core@npm:6.1.9"
-  dependencies:
-    "@ethersproject/keccak256": ^5.0.0-beta.130
-    "@web3-react/abstract-connector": ^6.0.7
-    "@web3-react/types": ^6.0.7
-    tiny-invariant: ^1.0.6
-    tiny-warning: ^1.0.3
-  peerDependencies:
-    react: ">=16.8"
-  checksum: b7f3ad62812fb0d000c50447f5b22329ce03942cc681cf01038a450872f79252445083a7fb325c7daf2b4de1f6f89e0298a7a54e0cea0b05872c37d64492af8b
-  languageName: node
-  linkType: hard
-
-"@web3-react/injected-connector@npm:^6.0.7":
-  version: 6.0.7
-  resolution: "@web3-react/injected-connector@npm:6.0.7"
-  dependencies:
-    "@web3-react/abstract-connector": ^6.0.7
-    "@web3-react/types": ^6.0.7
-    tiny-warning: ^1.0.3
-  checksum: 867a634a12326f33d10eead26f557fe505942ec42f5586d0756eb864fa345187b255a7d9b78bd555eb2395f962e9615731bcfefe6cf07ef9971a7fca151377f8
-  languageName: node
-  linkType: hard
-
-"@web3-react/types@npm:^6.0.7":
-  version: 6.0.7
-  resolution: "@web3-react/types@npm:6.0.7"
-  checksum: 29ae264ae4a126e520a64a4b466ea712ee09b934f3fe13b957e09269249ffc882712cf11fff12c1c19dd66e38503075b4adf5e9d5f588ea0dd31bbedf6fa9a42
-  languageName: node
-  linkType: hard
-
-"@web3-react/walletconnect-connector@npm:^6.2.13":
-  version: 6.2.13
-  resolution: "@web3-react/walletconnect-connector@npm:6.2.13"
-  dependencies:
-    "@walletconnect/ethereum-provider": ^1.7.1
-    "@walletconnect/types": ^1.7.1
-    "@web3-react/abstract-connector": ^6.0.7
-    "@web3-react/types": ^6.0.7
-    tiny-invariant: ^1.0.6
-  checksum: 2d0299ce5c733689a967179ef268df6f588c0783ab18182d7e38c6bc913ee2ce313b0afed1c54e104e3849461a558385ff8f30803343108c5788e27cdc1a3445
   languageName: node
   linkType: hard
 
@@ -7140,7 +7055,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^16.0.0":
+"dotenv@npm:^16.0.0, dotenv@npm:^16.0.1":
   version: 16.0.1
   resolution: "dotenv@npm:16.0.1"
   checksum: f459ffce07b977b7f15d8cc4ee69cdff77d4dd8c5dc8c85d2d485ee84655352c2415f9dd09d42b5b5985ced3be186130871b34e2f3e2569ebc72fbc2e8096792
@@ -7473,7 +7388,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:^12.1.2":
+"eslint-config-next@npm:^12.1.6":
   version: 12.1.6
   resolution: "eslint-config-next@npm:12.1.6"
   dependencies:
@@ -7518,7 +7433,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-import-resolver-typescript@npm:^2.5.0, eslint-import-resolver-typescript@npm:^2.7.0, eslint-import-resolver-typescript@npm:^2.7.1":
+"eslint-import-resolver-typescript@npm:^2.5.0, eslint-import-resolver-typescript@npm:^2.7.1":
   version: 2.7.1
   resolution: "eslint-import-resolver-typescript@npm:2.7.1"
   dependencies:
@@ -7727,7 +7642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^8.13.0":
+"eslint@npm:^8.15.0":
   version: 8.15.0
   resolution: "eslint@npm:8.15.0"
   dependencies:
@@ -7839,7 +7754,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eth-block-tracker@npm:4.4.3, eth-block-tracker@npm:^4.4.2":
+"eth-block-tracker@npm:4.4.3":
   version: 4.4.3
   resolution: "eth-block-tracker@npm:4.4.3"
   dependencies:
@@ -7878,7 +7793,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eth-json-rpc-filters@npm:4.2.2, eth-json-rpc-filters@npm:^4.2.1":
+"eth-json-rpc-filters@npm:4.2.2":
   version: 4.2.2
   resolution: "eth-json-rpc-filters@npm:4.2.2"
   dependencies:
@@ -7901,18 +7816,6 @@ __metadata:
     json-rpc-engine: ^3.4.0
     json-rpc-error: ^2.0.0
   checksum: 393e825986c0eedb9a1bb771b84e5b7c4037d8f870ab92cdba9dbaa52b5c7d5755ed02fd80d2a07b5db7a3af2c0b30d37756eb39cd7d2ae39173c6c2ea138e7d
-  languageName: node
-  linkType: hard
-
-"eth-json-rpc-infura@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "eth-json-rpc-infura@npm:5.1.0"
-  dependencies:
-    eth-json-rpc-middleware: ^6.0.0
-    eth-rpc-errors: ^3.0.0
-    json-rpc-engine: ^5.3.0
-    node-fetch: ^2.6.0
-  checksum: 29712d77741b6bc94634d32286095e30e65e793034d1ba80fa14719ddb1a85a34cc8eddc36f0bbe3f9aaa841b80217e5347bb919004068749e0e945eff637a98
   languageName: node
   linkType: hard
 
@@ -8139,7 +8042,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
+  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
   languageName: node
   linkType: hard
 
@@ -8378,7 +8281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5":
+"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.6":
   version: 5.6.6
   resolution: "ethers@npm:5.6.6"
   dependencies:
@@ -9617,7 +9520,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat-abi-exporter@npm:^2.8.0":
+"hardhat-abi-exporter@npm:^2.9.0":
   version: 2.9.0
   resolution: "hardhat-abi-exporter@npm:2.9.0"
   dependencies:
@@ -9629,7 +9532,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat-deploy@npm:^0.11.4":
+"hardhat-deploy@npm:^0.11.5":
   version: 0.11.5
   resolution: "hardhat-deploy@npm:0.11.5"
   dependencies:
@@ -9663,7 +9566,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat@npm:^2.9.2":
+"hardhat@npm:^2.9.5":
   version: 2.9.5
   resolution: "hardhat@npm:2.9.5"
   dependencies:
@@ -11561,9 +11464,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:12.3.7":
-  version: 12.3.7
-  resolution: "lint-staged@npm:12.3.7"
+"lint-staged@npm:12.4.1":
+  version: 12.4.1
+  resolution: "lint-staged@npm:12.4.1"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
@@ -11581,7 +11484,7 @@ __metadata:
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: b595097556880eb2ab7ce2cf105047f6f22525ccfd608fbdc63ab243259aa36a26949576fadff673748fb885e7cb37ad3f4471d964ad54c1205d57a58999ba24
+  checksum: b57183b537064cda6caef6679918bf271903145f7c28d09567e918b8b13094048b579f8df808ea590dbd7ea2ec332327c5e372cf3d77e85b7b0254f6541ce4c3
   languageName: node
   linkType: hard
 
@@ -12839,7 +12742,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:2.6.7, node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6, node-fetch@npm:^2.6.7":
+"node-fetch@npm:2.6.7, node-fetch@npm:^2.0.0, node-fetch@npm:^2.6.1, node-fetch@npm:^2.6.6, node-fetch@npm:^2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
   dependencies:
@@ -14303,7 +14206,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-datepicker@npm:^4.7.0":
+"react-datepicker@npm:^4.8.0":
   version: 4.8.0
   resolution: "react-datepicker@npm:4.8.0"
   dependencies:
@@ -14506,15 +14409,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-spinners@npm:^0.11.0":
-  version: 0.11.0
-  resolution: "react-spinners@npm:0.11.0"
+"react-spinners@npm:^0.12.0":
+  version: 0.12.0
+  resolution: "react-spinners@npm:0.12.0"
   dependencies:
-    "@emotion/react": ^11.1.4
+    "@emotion/react": ^11.4.1
   peerDependencies:
-    react: ^16.0.0 || ^17.0.0
-    react-dom: ^16.0.0 || ^17.0.0
-  checksum: 8ec67898c16c20e6942c15e870ef9f86c7171b79c6db563d9c6c337b0f9bde5bf63c3b1f2ab92cb91de6e610b527f0d814b808bdbb09286c2a53e014b852dab1
+    react: ^16.0.0 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.0.0 || ^17.0.0 || ^18.0.0
+  checksum: ede78eae661df58b08c28a99ca379f95a3926864f7137764f6d7f09a842f84649adf9d147fdbbc8f09664a204e079f785b08fa639d045e439363cfbef24464bf
   languageName: node
   linkType: hard
 
@@ -16415,13 +16318,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tiny-warning@npm:^1.0.3":
-  version: 1.0.3
-  resolution: "tiny-warning@npm:1.0.3"
-  checksum: da62c4acac565902f0624b123eed6dd3509bc9a8d30c06e017104bedcf5d35810da8ff72864400ad19c5c7806fc0a8323c68baf3e326af7cb7d969f846100d71
-  languageName: node
-  linkType: hard
-
 "tinycolor2@npm:^1.4.1":
   version: 1.4.2
   resolution: "tinycolor2@npm:1.4.2"
@@ -16899,7 +16795,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.3":
+"typescript@npm:4.6.4, typescript@npm:^4.6.3, typescript@npm:^4.6.4":
   version: 4.6.4
   resolution: "typescript@npm:4.6.4"
   bin:
@@ -16919,7 +16815,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
   version: 4.6.4
   resolution: "typescript@patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"
   bin:
@@ -17659,36 +17555,6 @@ __metadata:
     xhr: ^2.2.0
     xtend: ^4.0.1
   checksum: 45441e22633184bd5f6ea645e20f99c8002b3b64d3e564cd9d0f65bad7f0755ad2cdf9a88fcac9585e908aacea28cc6e80c0939498ee4f4c6c49107d16e011bf
-  languageName: node
-  linkType: hard
-
-"web3-provider-engine@npm:16.0.1":
-  version: 16.0.1
-  resolution: "web3-provider-engine@npm:16.0.1"
-  dependencies:
-    async: ^2.5.0
-    backoff: ^2.5.0
-    clone: ^2.0.0
-    cross-fetch: ^2.1.0
-    eth-block-tracker: ^4.4.2
-    eth-json-rpc-filters: ^4.2.1
-    eth-json-rpc-infura: ^5.1.0
-    eth-json-rpc-middleware: ^6.0.0
-    eth-rpc-errors: ^3.0.0
-    eth-sig-util: ^1.4.2
-    ethereumjs-block: ^1.2.2
-    ethereumjs-tx: ^1.2.0
-    ethereumjs-util: ^5.1.5
-    ethereumjs-vm: ^2.3.4
-    json-stable-stringify: ^1.0.1
-    promise-to-callback: ^1.0.0
-    readable-stream: ^2.2.9
-    request: ^2.85.0
-    semaphore: ^1.0.3
-    ws: ^5.1.1
-    xhr: ^2.2.0
-    xtend: ^4.0.1
-  checksum: 5a4e2da10efaa96128b28c8962d2a522dc56678ae5fa7f3f64c0c6a824344e49f026760c8754b137180da85afcf65af17de1eff6f8ecebd648aae794a267873b
   languageName: node
   linkType: hard
 
