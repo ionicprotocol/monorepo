@@ -17,6 +17,9 @@
     "@types/react": "^17.0.15"
   },
   "scripts": {
-    "build:all": "yarn workspaces foreach run build"
+    "build:typechain": "yarn workspace @midas-capital/sdk typechain",
+    "build:sdk": "yarn workspace @midas-capital/sdk build:sdk",
+    "build:ui": "yarn workspace @midas-capital/ui build",
+    "build:deploy:ui": "yarn build:typechain && yarn build:sdk && yarn build:ui"
   }
 }
