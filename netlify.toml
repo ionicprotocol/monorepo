@@ -1,0 +1,8 @@
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+
+[build]
+  base    = "./"
+  command = "yarn workspace @midas-capital/sdk typechain && yarn workspace @midas-capital/sdk build:sdk && yarn workspace @midas-capital/ui build"
+  publish = "./packages/ui/.next"
