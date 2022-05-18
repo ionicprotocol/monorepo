@@ -63,15 +63,13 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     ) {
       if (isSupportedChainId(Number(routerChainId))) {
         switchNetwork(Number(routerChainId));
-      } else {
-        router.back();
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [routerChainId, switchNetwork, isReady]);
 
   useEffect(() => {
-    if (isReady && activeChain?.id && routerChainId !== activeChain.id.toString()) {
+    if (activeChain?.id && routerChainId !== activeChain.id.toString()) {
       const chainId = activeChain.id.toString();
       router.push(
         {
@@ -83,7 +81,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id, isReady]);
+  }, [activeChain?.id]);
 
   useEffect(() => {
     if (!isConnecting && !isReconnecting && !activeConnector) {
