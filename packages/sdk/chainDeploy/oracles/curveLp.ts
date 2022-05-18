@@ -19,11 +19,11 @@ export const deployCurveLpOracle = async ({
     proxy: {
       execute: {
         methodName: "initialize",
-        args: [[], [], []]
+        args: [[], [], []],
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",
-    }
+    },
   });
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("CurveLpTokenPriceOracleNoRegistry: ", cpo.address);

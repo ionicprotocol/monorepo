@@ -22,21 +22,20 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { ConfigRow } from '@components/pages/Fuse/ConfigRow';
-import { WhitelistInfo } from '@components/pages/Fuse/FusePoolCreatePage';
-import TransferOwnershipModal from '@components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
-import { CTokenIcon } from '@components/shared/CTokenIcon';
-import { ModalDivider } from '@components/shared/Modal';
-import { SliderWithLabel } from '@components/shared/SliderWithLabel';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
-import { ComptrollerErrorCodes } from '@constants/index';
-import { useRari } from '@context/RariContext';
-import { useExtraPoolInfo } from '@hooks/fuse/useExtraPoolInfo';
-import { useColors } from '@hooks/useColors';
-import { Center, Column } from '@utils/chakraUtils';
-import { createComptroller } from '@utils/createComptroller';
-import { handleGenericError } from '@utils/errorHandling';
-import { formatPercentage } from '@utils/formatPercentage';
+import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
+import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage';
+import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { ComptrollerErrorCodes } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useColors } from '@ui/hooks/useColors';
+import { Center, Column } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const PoolConfiguration = ({
   assets,
@@ -70,7 +69,7 @@ const PoolConfiguration = ({
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -88,7 +87,7 @@ const PoolConfiguration = ({
   };
 
   const addToWhitelist = async (newUser: string) => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -116,7 +115,7 @@ const PoolConfiguration = ({
   };
 
   const removeFromWhitelist = async (removeUser: string) => {
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -188,7 +187,7 @@ const PoolConfiguration = ({
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -216,7 +215,7 @@ const PoolConfiguration = ({
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(

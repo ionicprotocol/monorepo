@@ -3,7 +3,7 @@ import { Box } from '@chakra-ui/layout';
 import React, { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { useColors } from '@hooks/useColors';
+import { useColors } from '@ui/hooks/useColors';
 
 export const AdminAlert = ({
   isAdmin = false,

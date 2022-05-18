@@ -1,14 +1,14 @@
 /*  This is a dynamically imported component on client-side only */
 
-import { Center, Spinner, Text } from '@chakra-ui/react';
+import { Box, Center, Spinner, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { useColors } from '@hooks/useColors';
-import { FuseIRMDemoChartOptions } from '@utils/chartOptions';
-import { convertIRMtoCurve } from '@utils/convertIRMtoCurve';
+import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
+import { FuseIRMDemoChartOptions } from '@ui/utils/chartOptions';
+import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 interface IRMChartProps {
   interestRateModelAddress: string;
@@ -50,25 +50,35 @@ const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChar
       {isLoading && <Spinner />}
       {error && <Text>{"No graph is available for this asset's interest curves."}</Text>}
       {data && (
-        <Chart
-          options={{
-            ...FuseIRMDemoChartOptions,
-            colors: [cChart.borrowColor, cChart.tokenColor],
-          }}
-          type="line"
-          width={'100%'}
-          height={'100%'}
-          series={[
-            {
-              name: 'Borrow Rate',
-              data: data.borrowerRates,
-            },
-            {
-              name: 'Deposit Rate',
-              data: data.supplierRates,
-            },
-          ]}
-        />
+        <Box
+          height="200px"
+          width="100%"
+          color="#000000"
+          overflow="hidden"
+          px={3}
+          className="hide-bottom-tooltip"
+          flexShrink={0}
+        >
+          <Chart
+            options={{
+              ...FuseIRMDemoChartOptions,
+              colors: [cChart.borrowColor, cChart.tokenColor],
+            }}
+            type="line"
+            width={'100%'}
+            height={'100%'}
+            series={[
+              {
+                name: 'Borrow Rate',
+                data: data.borrowerRates,
+              },
+              {
+                name: 'Deposit Rate',
+                data: data.supplierRates,
+              },
+            ]}
+          />
+        </Box>
       )}
     </Center>
   );

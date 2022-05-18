@@ -1,6 +1,6 @@
 import { useColorModeValue } from '@chakra-ui/react';
 
-import { COLOR_PALETTE } from '@theme/index';
+import { COLOR_PALETTE } from '@ui/theme/index';
 
 export function useColors() {
   const cPage = {

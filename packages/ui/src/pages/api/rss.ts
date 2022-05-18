@@ -3,7 +3,7 @@ import axios from 'axios';
 import { median, variance } from 'mathjs';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-import { ThenArg } from '@type/ComponentPropsType';
+import { ThenArg } from '@ui/types/ComponentPropsType';
 
 function clamp(num: number, min: number, max: number) {
   return num <= min ? min : num >= max ? max : num;

@@ -1,7 +1,7 @@
 import { Flex } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
-import { CenterProps, ColumnProps, RowProps } from '@type/ComponentPropsType';
+import { CenterProps, ColumnProps, RowProps } from '@ui/types/ComponentPropsType';
 
 /* Typings */
 

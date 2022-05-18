@@ -4,8 +4,8 @@ import { useRouter } from 'next/router';
 import React, { MouseEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { AccountButton } from '@components/shared/AccountButton';
-import { Row } from '@utils/chakraUtils';
+import { AccountButton } from '@ui/components/shared/AccountButton';
+import { Row } from '@ui/utils/chakraUtils';
 
 export const Header = ({
   isAuthed,

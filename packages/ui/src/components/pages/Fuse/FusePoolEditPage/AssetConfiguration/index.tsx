@@ -3,12 +3,12 @@ import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useTranslation } from 'next-i18next';
 import React, { useEffect, useState } from 'react';
 
-import { ConfigRow } from '@components/pages/Fuse/ConfigRow';
-import AddAssetButton from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
-import EditAssetSettings from '@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
-import { FilterButton } from '@components/shared/Buttons';
-import { ModalDivider } from '@components/shared/Modal';
-import { Center, Column } from '@utils/chakraUtils';
+import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
+import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
+import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
+import { FilterButton } from '@ui/components/shared/Buttons';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { Center, Column } from '@ui/utils/chakraUtils';
 
 const AssetConfiguration = ({
   openAddAssetModal,
@@ -85,6 +85,7 @@ const AssetConfiguration = ({
         poolName={poolName}
         poolID={poolID}
         isPaused={selectedAsset.isBorrowPaused}
+        plugin={selectedAsset.plugin}
       />
     </Column>
   );

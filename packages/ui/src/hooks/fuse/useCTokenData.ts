@@ -1,15 +1,14 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { createComptroller, createCToken } from '@utils/createComptroller';
+import { useRari } from '@ui/context/RariContext';
 
 export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
   const { fuse } = useRari();
 
   const { data } = useQuery(['CTokenData', cTokenAddress], async () => {
     if (comptrollerAddress && cTokenAddress) {
-      const comptroller = createComptroller(comptrollerAddress, fuse);
-      const cToken = createCToken(cTokenAddress, fuse);
+      const comptroller = fuse.createComptroller(comptrollerAddress);
+      const cToken = fuse.createCToken(cTokenAddress);
 
       const [
         adminFeeMantissa,

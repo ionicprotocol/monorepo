@@ -1,7 +1,7 @@
 import { ComponentWithAs, Text, useClipboard, useToast } from '@chakra-ui/react';
 import { ReactNode, useCallback, useEffect } from 'react';
 
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 
 const ClipboardValue = ({
   value = '',
