@@ -73,7 +73,7 @@ const FusePoolList = () => {
         status="warning"
         variant="subtle"
         title="Unexpected Error"
-        description="WE weren't able to retrieve Pools. We are working on it, please try again later."
+        description="Unable to retrieve Pools. Please try again later."
       />
     );
   }
