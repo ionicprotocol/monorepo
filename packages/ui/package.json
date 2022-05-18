@@ -48,6 +48,7 @@
   },
   "devDependencies": {
     "@chakra-ui/cli": "^1.9.0",
+    "@netlify/plugin-nextjs": "latest",
     "@testing-library/react": "^12.1.4",
     "@types/node": "17.0.23",
     "@types/react": "^17.0.15",
