@@ -21,7 +21,7 @@
     "build:sdk": "yarn workspace @midas-capital/sdk build:sdk",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:deploy:ui": "yarn build:typechain && yarn build:sdk && yarn build:ui",
-    "dev:ui": "yarn build:typechain && yarn build:sdk && yarn workspace @midas-capital/ui dev",
+    "dev:ui": "yarn workspace @midas-capital/sdk export; yarn build:typechain && yarn build:sdk && yarn workspace @midas-capital/ui dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node"
   }
 }
