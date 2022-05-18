@@ -15,8 +15,8 @@ import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useConnect } from 'wagmi';
 
-import { ModalDivider } from '@components/shared/Modal';
-import { Column, Row } from '@utils/chakraUtils';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { Column, Row } from '@ui/utils/chakraUtils';
 
 const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { connect, connectors, error: connectError } = useConnect();

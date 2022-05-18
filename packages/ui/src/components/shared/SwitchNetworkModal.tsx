@@ -14,9 +14,9 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
 
-import { FilterButton } from '@components/shared/Buttons';
-import { ModalDivider } from '@components/shared/Modal';
-import { getChainMetadata } from '@networkData/index';
+import { FilterButton } from '@ui/components/shared/Buttons';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { getChainMetadata } from '@ui/networkData/index';
 
 const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { activeChain, chains, switchNetwork } = useNetwork();

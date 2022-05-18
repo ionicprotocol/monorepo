@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
-import { BigNumber } from "ethers";
+import { SupportedAsset } from "../../src/types";
 
 export enum ChainlinkFeedBaseCurrency {
   ETH,
@@ -43,16 +43,8 @@ export type PluginConfig = {
   strategy: string;
   underlying: string;
   otherParams?: string[];
-  flywheelAddress?: string;
-  flywheelIndex?: number;
-};
-
-export type Asset = {
-  symbol: string;
-  underlying: string;
-  name: string;
-  decimals: number;
-  simplePriceOracleAssetPrice?: BigNumber;
+  flywheelAddresses?: string[];
+  flywheelIndices?: number[];
 };
 
 export type ChainlinkAsset = {
@@ -90,7 +82,7 @@ export type IrmDeployFnParams = ChainDeployFnParams & {
 };
 
 export type ChainlinkDeployFnParams = ChainDeployFnParams & {
-  assets: Asset[];
+  assets: SupportedAsset[];
   chainlinkAssets: ChainlinkAsset[];
   deployConfig: ChainDeployConfig;
 };

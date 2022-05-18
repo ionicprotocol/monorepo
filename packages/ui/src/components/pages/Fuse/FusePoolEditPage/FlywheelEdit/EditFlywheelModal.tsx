@@ -28,19 +28,18 @@ import DatePicker from 'react-datepicker';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
-import { FilterButton } from '@components/shared/Buttons';
-import ClipboardValue from '@components/shared/ClipboardValue';
-import { ModalDivider } from '@components/shared/Modal';
-import { useRari } from '@context/RariContext';
-import { useColors } from '@hooks/useColors';
-import { useTokenBalance } from '@hooks/useTokenBalance';
-import { useTokenData } from '@hooks/useTokenData';
-import SmallWhiteCircle from '@images/small-white-circle.png';
-import { Flywheel } from '@type/ComponentPropsType';
-import { Center, Column, Row } from '@utils/chakraUtils';
-import { handleGenericError } from '@utils/errorHandling';
-import { shortAddress } from '@utils/shortAddress';
-
+import { FilterButton } from '@ui/components/shared/Buttons';
+import ClipboardValue from '@ui/components/shared/ClipboardValue';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
+import { useTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useTokenData } from '@ui/hooks/useTokenData';
+import SmallWhiteCircle from '@ui/images/small-white-circle.png';
+import { Flywheel } from '@ui/types/ComponentPropsType';
+import { Center, Column, Row } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {

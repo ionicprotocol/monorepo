@@ -4,10 +4,10 @@ import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { PoolDashboardBox } from '@components/pages/Fuse/FusePoolPage/PoolDashboardBox';
-import { useBorrowLimit } from '@hooks/useBorrowLimit';
-import { smallUsdFormatter } from '@utils/bigUtils';
-import { Row } from '@utils/chakraUtils';
+import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
+import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { Row } from '@ui/utils/chakraUtils';
 
 export const CollateralRatioBar = ({
   assets,

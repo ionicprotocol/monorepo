@@ -1,7 +1,7 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@context/RariContext';
-import { Flywheel } from '@type/ComponentPropsType';
+import { useRari } from '@ui/context/RariContext';
+import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheelsForPool = (comptrollerAddress?: string) => {
   const { fuse, currentChain } = useRari();

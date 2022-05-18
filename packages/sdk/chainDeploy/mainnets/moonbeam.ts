@@ -3,6 +3,11 @@ import { ethers } from "ethers";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 import { deployDiaOracle } from "../helpers/dia";
+import { SupportedChains } from "../../src";
+import { SupportedAsset } from "../../src/types";
+import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+
+const assets = chainSupportedAssets[SupportedChains.moonbeam];
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
@@ -17,33 +22,33 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x985BcA32293A7A496300a48081947321177a86FD",
     uniswapOracleInitialDeployTokens: [
       {
-        token: "0xcd3B51D98478D53F4515A306bE565c6EebeF1D58", // GLINT
-        baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F", // GLMR
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.GLINT)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
       },
     ],
     uniswapOracleLpTokens: [
-      "0xb929914B89584b4081C7966AC6287636F7EfD053", // GLMR-USDC
-      "0x99588867e817023162F4d4829995299054a5fC57", // GLMR-GLINT
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // GLMR-USDC
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying, // GLMR-GLINT
     ],
   },
 };
 
 const diaAssets: DiaAsset[] = [
   {
-    symbol: "ETH",
-    underlying: "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f",
+    symbol: assetSymbols.ETH,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!.underlying,
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
     key: "ETH/USD",
   },
   {
-    symbol: "USDC",
-    underlying: "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b",
+    symbol: assetSymbols.USDC,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC)!.underlying,
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
     key: "USDC/USD",
   },
   {
-    symbol: "FTM",
-    underlying: "0xC19281F22A075E0F10351cd5D6Ea9f0AC63d4327",
+    symbol: assetSymbols.FTM,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.FTM)!.underlying,
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
     key: "FTM/USD",
   },
@@ -74,7 +79,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1
+    waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 };

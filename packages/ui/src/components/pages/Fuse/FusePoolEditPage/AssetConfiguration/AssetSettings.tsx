@@ -16,23 +16,22 @@ import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
-import { ModalDivider } from '@components/shared/Modal';
-import { PopoverTooltip } from '@components/shared/PopoverTooltip';
-import { SimpleTooltip } from '@components/shared/SimpleTooltip';
-import { SliderWithLabel } from '@components/shared/SliderWithLabel';
-import { SwitchCSS } from '@components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, CTokenErrorCodes } from '@constants/index';
-import { useRari } from '@context/RariContext';
-import { useCTokenData } from '@hooks/fuse/useCTokenData';
-import { useColors } from '@hooks/useColors';
-import { TokenData } from '@type/ComponentPropsType';
-import { Center, Column } from '@utils/chakraUtils';
-import { createComptroller, createCToken, createMasterPriceOracle } from '@utils/createComptroller';
-import { handleGenericError } from '@utils/errorHandling';
-import { formatPercentage } from '@utils/formatPercentage';
+import { ModalDivider } from '@ui/components/shared/Modal';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
+import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useColors } from '@ui/hooks/useColors';
+import { TokenData } from '@ui/types/ComponentPropsType';
+import { Center, Column } from '@ui/utils/chakraUtils';
+import { handleGenericError } from '@ui/utils/errorHandling';
+import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const IRMChart = dynamic(
-  () => import('@components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
+  () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
   {
     ssr: false,
   }
@@ -79,6 +78,7 @@ export const AssetSettings = ({
   poolID,
   poolName,
   tokenData,
+  deployedPlugin,
 }: {
   poolName: string;
   poolID: string;
@@ -88,6 +88,7 @@ export const AssetSettings = ({
   isPaused: boolean;
   existingAssets?: NativePricedFuseAsset[];
   onSuccess?: () => void;
+  deployedPlugin?: string;
 }) => {
   const { t } = useTranslation();
   const { fuse, address } = useRari();
@@ -103,6 +104,7 @@ export const AssetSettings = ({
   const [interestRateModel, setInterestRateModel] = useState(
     fuse.chainDeployment.JumpRateModel.address
   );
+  const [deployedPluginName, setDeployedPluginName] = useState('No Plugin');
   const availablePlugins = useMemo(
     () => fuse.chainPlugins[tokenData.address] || [],
     [fuse.chainPlugins, tokenData.address]
@@ -110,10 +112,20 @@ export const AssetSettings = ({
   const [plugin, setPlugin] = useState<PluginConfig | undefined>(undefined);
 
   useEffect(() => {
+    if (deployedPlugin) {
+      availablePlugins.map((plugin) => {
+        if (plugin.strategyAddress === deployedPlugin) {
+          setDeployedPluginName(plugin.strategyName);
+        }
+      });
+    }
+  }, [deployedPlugin, availablePlugins]);
+
+  useEffect(() => {
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = createMasterPriceOracle(fuse);
+        const masterPriceOracle = fuse.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
           toast({
@@ -140,7 +152,12 @@ export const AssetSettings = ({
 
   const deploy = async () => {
     // If pool already contains this asset:
-    if (existingAssets?.some((asset) => asset.underlyingToken === tokenData.address)) {
+    if (
+      existingAssets?.some(
+        (asset) =>
+          asset.underlyingToken === tokenData.address && asset.plugin === plugin?.strategyAddress
+      )
+    ) {
       toast({
         title: 'Error!',
         description: 'You have already added this asset to this pool.',
@@ -225,7 +242,7 @@ export const AssetSettings = ({
   const updateCollateralFactor = async () => {
     if (!cTokenAddress) return;
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -254,7 +271,7 @@ export const AssetSettings = ({
   };
 
   const updateReserveFactor = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -276,7 +293,7 @@ export const AssetSettings = ({
   };
 
   const updateAdminFee = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -298,7 +315,7 @@ export const AssetSettings = ({
   };
 
   const updateInterestRateModel = async () => {
-    const cToken = createCToken(cTokenAddress || '', fuse);
+    const cToken = fuse.createCToken(cTokenAddress || '');
 
     try {
       await testForCTokenErrorAndSend(
@@ -322,7 +339,7 @@ export const AssetSettings = ({
       return;
     }
 
-    const comptroller = createComptroller(comptrollerAddress, fuse);
+    const comptroller = fuse.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
@@ -487,62 +504,6 @@ export const AssetSettings = ({
 
       <ModalDivider />
 
-      {availablePlugins.length > 0 && (
-        <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-          <PopoverTooltip
-            body={
-              <>
-                This token has{' '}
-                <Link href="https://eips.ethereum.org/EIPS/eip-4626" variant={'color'} isExternal>
-                  ERC4626 strategies
-                </Link>{' '}
-                implemented, allowing users to utilize their deposits (e.g. to stake them for
-                rewards) while using them as collateral. To learn mode about it, check out our{' '}
-                <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
-                  docs
-                </Link>
-                .
-              </>
-            }
-          >
-            <HStack>
-              <Text fontWeight="bold">{t('Rewards Plugin')} </Text>
-              <QuestionIcon
-                color={cCard.txtColor}
-                bg={cCard.bgColor}
-                borderRadius={'50%'}
-                ml={1}
-                mb="4px"
-              />
-            </HStack>
-          </PopoverTooltip>
-
-          <Select
-            ml="auto"
-            width="auto"
-            maxW="300px"
-            value={undefined}
-            onChange={(event) => setPlugin(availablePlugins[Number(event.target.value)])}
-            cursor="pointer"
-          >
-            <option value={undefined} style={{ color: cSelect.txtColor }}>
-              No Plugin
-            </option>
-            {availablePlugins.map((plugin, index) => (
-              <option
-                key={plugin.strategyAddress}
-                value={index}
-                style={{ color: cSelect.txtColor }}
-              >
-                {plugin.strategyName}
-              </option>
-            ))}
-          </Select>
-        </Flex>
-      )}
-
-      <ModalDivider />
-
       <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
         <SimpleTooltip
           label={t(
@@ -595,6 +556,70 @@ export const AssetSettings = ({
           </Button>
         ) : null}
       </Flex>
+
+      <ModalDivider></ModalDivider>
+
+      {availablePlugins.length > 0 && (
+        <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
+          <PopoverTooltip
+            body={
+              <>
+                This token has{' '}
+                <Link href="https://eips.ethereum.org/EIPS/eip-4626" variant={'color'} isExternal>
+                  ERC4626 strategies
+                </Link>{' '}
+                implemented, allowing users to utilize their deposits (e.g. to stake them for
+                rewards) while using them as collateral. To learn mode about it, check out our{' '}
+                <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
+                  docs
+                </Link>
+                .
+              </>
+            }
+          >
+            <HStack>
+              <Text fontWeight="bold">{t('Rewards Plugin')} </Text>
+              <QuestionIcon
+                color={cCard.txtColor}
+                bg={cCard.bgColor}
+                borderRadius={'50%'}
+                ml={1}
+                mb="4px"
+              />
+            </HStack>
+          </PopoverTooltip>
+
+          {!cTokenData ? (
+            <Select
+              ml="auto"
+              width="auto"
+              maxW="300px"
+              value={undefined}
+              onChange={(event) => setPlugin(availablePlugins[Number(event.target.value)])}
+              cursor="pointer"
+            >
+              <option value={undefined} style={{ color: cSelect.txtColor }}>
+                No Plugin
+              </option>
+              {availablePlugins.map((plugin, index) => (
+                <option
+                  key={plugin.strategyAddress}
+                  value={index}
+                  style={{ color: cSelect.txtColor }}
+                >
+                  {plugin.strategyName}
+                </option>
+              ))}
+            </Select>
+          ) : (
+            <Text ml={{ base: 'auto' }} mt={{ base: 2 }}>
+              {deployedPluginName}
+            </Text>
+          )}
+        </Flex>
+      )}
+
+      <ModalDivider />
 
       <IRMChart
         adminFee={adminFee}

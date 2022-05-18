@@ -3,9 +3,9 @@ import { BigNumber, constants, utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery, UseQueryResult } from 'react-query';
 
-import { FundOperationMode } from '@constants/index';
-import { useRari } from '@context/RariContext';
-import { useUSDPrice } from '@hooks/useUSDPrice';
+import { FundOperationMode } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 const useUpdatedUserAssets = ({
   mode,
@@ -50,7 +50,7 @@ const useUpdatedUserAssets = ({
           supplyBalance,
 
           supplyBalanceNative:
-            (Number(utils.formatUnits(supplyBalance, 18)) /
+            (Number(utils.formatUnits(supplyBalance, 18)) *
               Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18))) *
             usdPrice,
 

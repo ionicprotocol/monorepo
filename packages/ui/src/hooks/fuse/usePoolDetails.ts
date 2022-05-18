@@ -1,7 +1,7 @@
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useMemo } from 'react';
 
-import { convertMantissaToAPR, convertMantissaToAPY } from '@utils/apyUtils';
+import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
   return useMemo(() => {

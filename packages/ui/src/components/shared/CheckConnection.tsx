@@ -4,13 +4,15 @@ import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import ConnectWalletModal from '@components/shared/ConnectWalletModal';
-import LoadingOverlay from '@components/shared/LoadingOverlay';
-import SwitchNetworkModal from '@components/shared/SwitchNetworkModal';
-import { RariProvider } from '@context/RariContext';
+import { isSupportedChainId } from '../../networkData';
+
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
+import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
+import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
+import { RariProvider } from '@ui/context/RariContext';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
-  const { activeChain, chains, isLoading: networkloading } = useNetwork();
+  const { activeChain, chains, isLoading: networkloading, switchNetwork } = useNetwork();
   const { data: signerData } = useSigner();
   const { activeConnector, isConnecting, isReconnecting } = useConnect();
   const { data: accountData, isLoading: accountLoading } = useAccount();
@@ -53,9 +55,24 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   }, [activeChain, chains, toast]);
 
   useEffect(() => {
+    if (
+      isReady &&
+      activeChain?.id &&
+      routerChainId !== activeChain.id.toString() &&
+      switchNetwork
+    ) {
+      if (isSupportedChainId(Number(routerChainId))) {
+        switchNetwork(Number(routerChainId));
+      } else {
+        router.back();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routerChainId, switchNetwork, isReady]);
+
+  useEffect(() => {
     if (isReady && activeChain?.id && routerChainId !== activeChain.id.toString()) {
       const chainId = activeChain.id.toString();
-
       router.push(
         {
           pathname: `/[chainId]`,
@@ -66,7 +83,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id, isReady, routerChainId]);
+  }, [activeChain?.id, isReady]);
 
   useEffect(() => {
     if (!isConnecting && !isReconnecting && !activeConnector) {

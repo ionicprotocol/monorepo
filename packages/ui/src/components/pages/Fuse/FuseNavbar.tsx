@@ -1,9 +1,9 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import { Box, Button, chakra, Divider, Flex, Link, useColorMode } from '@chakra-ui/react';
 
-import { AccountButton } from '@components/shared/AccountButton';
-import { useColors } from '@hooks/useColors';
-import { useIsSmallScreen } from '@hooks/useIsSmallScreen';
+import { AccountButton } from '@ui/components/shared/AccountButton';
+import { useColors } from '@ui/hooks/useColors';
+import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
 
 const FuseNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();

@@ -1,5 +1,5 @@
 import { BigNumber, utils } from "ethers";
-import { FuseBaseConstructor } from "../../Fuse/types";
+import { FuseBaseConstructor } from "../../types";
 import { gatherLiquidations } from "./index";
 import { LiquidatablePool, PublicPoolUserWithData } from "./utils";
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
@@ -20,7 +20,11 @@ export function withSafeLiquidator<TBase extends FuseBaseConstructor>(Base: TBas
       const [comptrollers, users, closeFactors, liquidationIncentives] =
         await this.contracts.FusePoolLens.callStatic.getPublicPoolUsersWithData(maxHealthFactor);
       if (supportedComptrollers.length === 0) supportedComptrollers = comptrollers;
-      if (configOverrides) this.chainLiquidationConfig = { ...this.chainLiquidationConfig, ...configOverrides };
+      if (configOverrides)
+        this.chainLiquidationConfig = {
+          ...this.chainLiquidationConfig,
+          ...configOverrides,
+        };
       const publicPoolUsersWithData: Array<PublicPoolUserWithData> = comptrollers
         .map((c, i) => {
           return supportedComptrollers.includes(c)
