@@ -17,6 +17,6 @@
     "@types/react": "^17.0.15"
   },
   "scripts": {
-    "build:all": "yarn workspaces foreach -pt --exclude @connext/nxtp-subgraph run build"
+    "build:all": "yarn workspaces foreach run build"
   }
 }
