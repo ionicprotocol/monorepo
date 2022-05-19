@@ -5,6 +5,7 @@ import { Fuse } from "../../src";
 import { setUpPriceOraclePrices } from "../utils";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
+import * as assetHelpers from "../utils/assets";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 use(solidity);
@@ -22,8 +23,13 @@ describe("FusePoolsModule", function () {
     sdk = await getOrCreateFuse();
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Fetching-Pools-Test" });
-    const assets = await poolHelpers.getPoolAssets(poolAddress, sdk.contracts.FuseFeeDistributor.address);
-    await poolHelpers.deployAssets(assets.assets, deployer);
+    const assets = await assetHelpers.getAssetsConf(
+      poolAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers
+    );
+    await poolHelpers.deployAssets(assets, deployer);
   });
 
   describe("fetch pools", async function () {

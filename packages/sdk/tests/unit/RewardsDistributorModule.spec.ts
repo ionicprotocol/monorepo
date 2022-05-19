@@ -8,6 +8,7 @@ import * as poolHelpers from "../utils/pool";
 import * as timeHelpers from "../utils/time";
 import { constants } from "ethers";
 import { getOrCreateFuse } from "../utils/fuseSdk";
+import * as assetHelpers from "../utils/assets";
 
 describe.skip("RewardsDistributorModule", function () {
   let poolAAddress: string;
@@ -32,12 +33,16 @@ describe.skip("RewardsDistributorModule", function () {
     [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-RewardsDistributor-Test" });
     [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-RewardsDistributor-Test" });
 
-    const assetsA = await poolHelpers.getPoolAssets(poolAAddress, sdk.contracts.FuseFeeDistributor.address);
-    const deployedAssetsA = await poolHelpers.deployAssets(assetsA.assets, deployer);
-    await poolHelpers.getPoolAssets(poolBAddress, sdk.contracts.FuseFeeDistributor.address);
+    const assetsA = await assetHelpers.getAssetsConf(
+      poolAAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers
+    );
+    const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
 
-    const erc20One = assetsA.assets.find((a) => a.underlying !== constants.AddressZero); // find first one
-    const erc20Two = assetsA.assets.find(
+    const erc20One = assetsA.find((a) => a.underlying !== constants.AddressZero); // find first one
+    const erc20Two = assetsA.find(
       (a) => a.underlying !== constants.AddressZero && a.underlying !== erc20One.underlying
     ); // find second one
 

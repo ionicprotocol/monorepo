@@ -3,6 +3,7 @@ import { deployments, ethers } from "hardhat";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as poolHelpers from "../utils/pool";
+import * as assetHelpers from "../utils/assets";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
@@ -14,6 +15,7 @@ import { tradeAssetForAsset } from "../utils/setup";
   let chainId: number;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
+  const poolName = "Pool-Fund-Operations-Test";
 
   this.beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
@@ -25,23 +27,25 @@ import { tradeAssetForAsset } from "../utils/setup";
 
     [poolAddress] = await poolHelpers.createPool({
       signer: deployer,
-      poolName: "Pool-Fund-Operations-Test",
+      poolName,
     });
-    const assets = await poolHelpers.getPoolAssets(poolAddress, sdk.contracts.FuseFeeDistributor.address);
-    await setUpPriceOraclePrices(assets.assets.map((a) => a.underlying));
+    const assets = await assetHelpers.getAssetsConf(poolAddress, sdk.contracts.FuseFeeDistributor.address,  sdk.irms.JumpRateModel.address,
+      ethers,
+      poolName);
+    await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",
       sdk.oracles.SimplePriceOracle.address,
       deployer
     )) as SimplePriceOracle;
-    for (const a of assets.assets) {
+    for (const a of assets) {
       await simpleOracle.setDirectPrice(a.underlying, BigNumber.from(1));
     }
-    await poolHelpers.deployAssets(assets.assets, deployer);
+    await poolHelpers.deployAssets(assets, deployer);
 
-    const BTCB = assets.assets.find((a) => a.symbol === "BTCB");
-    const BOMB = assets.assets.find((a) => a.symbol === "BOMB");
-    const ETH = assets.assets.find((a) => a.symbol === "mETH");
+    const BTCB = assets.find((a) => a.symbol === "BTCB");
+    const BOMB = assets.find((a) => a.symbol === "BOMB");
+    const ETH = assets.find((a) => a.symbol === "mETH");
     // acquire some test tokens
     await tradeNativeForAsset({ account: "bob", token: BTCB.underlying, amount: "500" });
     await tradeNativeForAsset({ account: "bob", token: ETH.underlying, amount: "100" });
