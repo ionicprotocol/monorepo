@@ -5,6 +5,7 @@ import { CErc20, EIP20Interface } from "../../lib/contracts/typechain";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as collateralHelpers from "../utils/collateral";
 import * as poolHelpers from "../utils/pool";
+import * as assetHelpers from "../utils/assets";
 import * as timeHelpers from "../utils/time";
 import { constants } from "ethers";
 import { getOrCreateFuse } from "../utils/fuseSdk";
@@ -32,10 +33,15 @@ describe("FlywheelModule", function () {
     [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-RewardsDistributor-Test" });
     [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-RewardsDistributor-Test" });
 
-    const assetsA = await poolHelpers.getPoolAssets(poolAAddress, sdk.contracts.FuseFeeDistributor.address);
-    const deployedAssetsA = await poolHelpers.deployAssets(assetsA.assets, deployer);
+    const assetsA = await assetHelpers.getAssetsConf(
+      poolAAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers
+    );
+    const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
 
-    const [erc20One, erc20Two] = assetsA.assets.filter((a) => a.underlying !== constants.AddressZero);
+    const [erc20One, erc20Two] = assetsA.filter((a) => a.underlying !== constants.AddressZero);
 
     const deployedErc20One = deployedAssetsA.find((a) => a.underlying === erc20One.underlying);
     const deployedErc20Two = deployedAssetsA.find((a) => a.underlying === erc20Two.underlying);
