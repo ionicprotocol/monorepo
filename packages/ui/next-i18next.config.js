@@ -5,7 +5,7 @@ module.exports = {
     locales: ['default', 'en'],
     defaultLocale: 'default',
     localeDetection: false,
-    localePath: path.resolve('.packages/ui/public/locales'),
+    localePath: path.resolve('./public/locales'),
   },
   trailingSlash: true,
 };
