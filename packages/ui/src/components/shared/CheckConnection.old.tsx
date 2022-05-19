@@ -1,4 +1,5 @@
 import { Text, ToastId, useDisclosure, useToast } from '@chakra-ui/react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
@@ -11,28 +12,24 @@ import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { RariProvider } from '@ui/context/RariContext';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
-  const { activeChain, chains, switchNetwork } = useNetwork();
+  const { activeChain, chains, isLoading: networkloading, switchNetwork } = useNetwork();
   const { data: signerData } = useSigner();
-  const { isConnecting, isReconnecting, isConnected } = useConnect();
-  const { data: accountData } = useAccount();
+  const { activeConnector, isConnecting, isReconnecting } = useConnect();
+  const { data: accountData, isLoading: accountLoading } = useAccount();
   const { disconnect } = useDisconnect();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
   const routerChainId = router.query.chainId as string;
-
+  const isReady = router.isReady;
   const toastIdRef = useRef<ToastId | undefined>();
   const toast = useToast();
 
-  console.log({ accountData, activeChain, isConnected, signerData });
-  console.log({ isOpen, onOpen, onClose });
-  console.log({ children });
   useEffect(() => {
-    if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
+    if ((!isConnecting && !isReconnecting && !activeConnector) || activeChain?.unsupported) {
       onOpen();
     }
-  }, [isConnected, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
+  }, [activeConnector, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
 
-  // Show unsupported Network Toast
   useEffect(() => {
     if (activeChain?.unsupported) {
       if (!toastIdRef.current) {
@@ -57,11 +54,10 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     }
   }, [activeChain, chains, toast]);
 
-  // User visits a link of another chain than currently connected
   useEffect(() => {
     if (
-      router.isReady &&
-      activeChain &&
+      isReady &&
+      activeChain?.id &&
       routerChainId !== activeChain.id.toString() &&
       switchNetwork
     ) {
@@ -69,11 +65,11 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
         switchNetwork(Number(routerChainId));
       }
     }
-  }, [routerChainId, switchNetwork, router, activeChain]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routerChainId, switchNetwork, isReady]);
 
-  // User should get redirected to chain he is connected to
   useEffect(() => {
-    if (activeChain?.id && !routerChainId && router.isReady && !activeChain.unsupported) {
+    if (activeChain?.id && routerChainId !== activeChain.id.toString()) {
       const chainId = activeChain.id.toString();
       router.push(
         {
@@ -84,35 +80,46 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
         { shallow: true }
       );
     }
-  }, [activeChain?.id, activeChain?.unsupported, router, routerChainId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChain?.id]);
 
-  // Not Connected
-  if (!isConnected && !isReconnecting) {
-    return <ConnectWalletModal isOpen={isOpen} onClose={onClose} />;
-  }
+  useEffect(() => {
+    if (!isConnecting && !isReconnecting && !activeConnector) {
+      router.push('/', undefined, { shallow: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeConnector, isConnecting, isReconnecting]);
 
-  // Wrong Network
-  if (!activeChain || activeChain.unsupported) {
-    return <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />;
-  }
-
-  // Everything Fine
-  if (activeChain && accountData?.address && signerData?.provider) {
-    return (
-      <RariProvider
-        currentChain={activeChain}
-        chains={chains}
-        signerProvider={signerData.provider}
-        address={accountData.address}
-        disconnect={disconnect}
-      >
-        {children}
-      </RariProvider>
-    );
-  }
-
-  // Loading
-  return <LoadingOverlay isLoading={true} />;
+  return (
+    <>
+      <Head>
+        <title>Midas Capital</title>
+      </Head>
+      {isConnecting || isReconnecting ? (
+        <LoadingOverlay isLoading={true} />
+      ) : !activeConnector ? (
+        <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+      ) : networkloading ? (
+        <LoadingOverlay isLoading={true} />
+      ) : !activeChain || activeChain.unsupported ? (
+        <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
+      ) : !signerData?.provider ? (
+        <LoadingOverlay isLoading={true} />
+      ) : accountLoading || !accountData?.address ? (
+        <LoadingOverlay isLoading={true} />
+      ) : (
+        <RariProvider
+          currentChain={activeChain}
+          chains={chains}
+          signerProvider={signerData.provider}
+          address={accountData.address}
+          disconnect={disconnect}
+        >
+          {children}
+        </RariProvider>
+      )}
+    </>
+  );
 };
 
 export default CheckConnection;
