@@ -52,6 +52,8 @@
     "@types/react-dom": "^17.0.15",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
+    "cypress": "^9.6.1",
+    "cypress-metamask": "^1.0.5-development",
     "eslint": "^8.15.0",
     "eslint-config-next": "^12.1.6",
     "eslint-config-prettier": "^8.5.0",
