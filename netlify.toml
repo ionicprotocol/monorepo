@@ -6,3 +6,7 @@
   base    = "/"
   command = "yarn build:deploy:ui"
   publish = "/packages/ui/.next"
+
+[build.environment]
+  NEXT_PUBLIC_SHOW_TESTNETS = "true"
+  YARN_CHECKSUM_BEHAVIOR = "update"
