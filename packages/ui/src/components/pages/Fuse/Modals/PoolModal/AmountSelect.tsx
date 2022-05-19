@@ -15,7 +15,12 @@ import {
   useColorMode,
   useToast,
 } from '@chakra-ui/react';
-import { Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
+import {
+  ComptrollerErrorCodes,
+  CTokenErrorCodes,
+  Fuse,
+  NativePricedFuseAsset,
+} from '@midas-capital/sdk';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -28,12 +33,7 @@ import DashboardBox from '@ui/components/shared/DashboardBox';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import {
-  ComptrollerErrorCodes,
-  CTokenErrorCodes,
-  FundOperationMode,
-  UserAction,
-} from '@ui/constants/index';
+import { FundOperationMode, UserAction } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
