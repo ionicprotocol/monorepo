@@ -1,16 +1,14 @@
 import { Contract } from "ethers";
-import { CErc20Delegate } from '../../lib/contracts/typechain/CErc20Delegate';
-import { Comptroller } from '../../lib/contracts/typechain/Comptroller';
-import { FlywheelStaticRewards } from '../../lib/contracts/typechain/FlywheelStaticRewards';
-import { FuseFlywheelCore } from '../../lib/contracts/typechain/FuseFlywheelCore';
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
+import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { RewardsDistributorDelegate } from '../../lib/contracts/typechain/RewardsDistributorDelegate';
+import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { FuseBaseConstructor } from '../types';
+import { FuseBaseConstructor } from "../types";
 
-export function withCreateContracts<TBase extends FuseBaseConstructor>(
-  Base: TBase
-) {
+export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
     createComptroller(comptrollerAddress: string) {
       return new Contract(
@@ -21,11 +19,7 @@ export function withCreateContracts<TBase extends FuseBaseConstructor>(
     }
 
     createUnitroller(comptrollerAddress: string) {
-      return new Contract(
-        comptrollerAddress,
-        this.artifacts.Unitroller.abi,
-        this.provider.getSigner()
-      ) as Unitroller;
+      return new Contract(comptrollerAddress, this.artifacts.Unitroller.abi, this.provider.getSigner()) as Unitroller;
     }
 
     createRewardsDistributor(distributorAddress: string) {
@@ -52,11 +46,7 @@ export function withCreateContracts<TBase extends FuseBaseConstructor>(
     }
 
     createOracle(oracleAddress: string, type: string) {
-      return new Contract(
-        oracleAddress,
-        this.chainDeployment[type].abi,
-        this.provider.getSigner()
-      );
+      return new Contract(oracleAddress, this.chainDeployment[type].abi, this.provider.getSigner());
     }
 
     createCToken(cTokenAddress: string) {

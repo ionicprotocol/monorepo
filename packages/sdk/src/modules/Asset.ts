@@ -332,7 +332,6 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       if (implementationData !== "0x00" && conf.delegateContractName) {
         implementationAddress = await this.upgradeCErc20(conf, cErc20DelegatorAddress, implementationData);
         if (conf.delegateContractName === DelegateContractName.CErc20PluginRewardsDelegate) {
-          // TODO approve rewardsToken for flywheels
           await this.approveRewardsDistributors(implementationAddress, options, conf.rewardsDistributorConfig);
         }
       }

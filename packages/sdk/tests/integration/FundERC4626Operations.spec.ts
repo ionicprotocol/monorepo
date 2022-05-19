@@ -29,9 +29,13 @@ import { tradeAssetForAsset } from "../utils/setup";
       signer: deployer,
       poolName,
     });
-    const assets = await assetHelpers.getAssetsConf(poolAddress, sdk.contracts.FuseFeeDistributor.address,  sdk.irms.JumpRateModel.address,
+    const assets = await assetHelpers.getAssetsConf(
+      poolAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
       ethers,
-      poolName);
+      poolName
+    );
     await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",

@@ -70,8 +70,6 @@ describe.only("#safeLiquidateWithFlashLoan", () => {
       BSC_POOLS.BOMB
     );
 
-
-
     console.log("----alpacaAssets----\n", alpacaAssets);
     console.log("----bombAssets----\n", bombAssets);
 
