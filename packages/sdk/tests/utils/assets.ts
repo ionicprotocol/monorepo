@@ -2,6 +2,7 @@ import { cERC20Conf, DelegateContractName } from "../../src";
 import { getOrCreateFuse } from "./fuseSdk";
 import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
 import { assetSymbols } from "../../src/chainConfig";
+import { ethers } from "hardhat";
 
 export enum BSC_POOLS {
   JARVIS = "JARVIS",
@@ -31,7 +32,7 @@ export const getAssetsConf = async (
   let assets: cERC20Conf[];
 
   if (chainId === 31337 || chainId === 1337) {
-    assets = getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
+    assets = await getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
   } else if (chainId === 56) {
     if (poolName) {
       const bscPools = await getBscPools(comptroller, fuseFeeDistributor, interestRateModelAddress);
@@ -43,14 +44,19 @@ export const getAssetsConf = async (
   return assets;
 };
 
-export const getLocalAssetsConf = (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
+export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
   const eth = ganacheAssets.find((b) => b.symbol === assetSymbols.ETH);
   const tribe = ganacheAssets.find((b) => b.symbol === assetSymbols.TRIBE);
   const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
-  const assets = [eth, tribe, touch];
+  // const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
+
+  const assets = [eth, tribe, touch]; // , weth];
+  const tribeUnderlying = await ethers.getContract("TRIBEToken");
+  const touchUnderlying = await ethers.getContract("TOUCHToken");
+  const underlyings = [eth.underlying, tribeUnderlying.address, touchUnderlying.address]; // , weth.underlying]
   return assets.map((a, i) => {
     return {
-      underlying: a.underlying,
+      underlying: underlyings[i],
       comptroller,
       fuseFeeDistributor,
       interestRateModel: interestRateModelAddress,

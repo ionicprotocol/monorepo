@@ -19,7 +19,7 @@ import { cERC20Conf, Fuse } from "../src";
 import { resetPriceOracle } from "./utils/setup";
 import { getOrCreateFuse } from "./utils/fuseSdk";
 
-(process.env.FORK_CHAIN_ID ? describe.skip : describe)("Protocol Liquidation Seizing", () => {
+(process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("Protocol Liquidation Seizing", () => {
   let eth: cERC20Conf;
   let erc20One: cERC20Conf;
   let erc20Two: cERC20Conf;
