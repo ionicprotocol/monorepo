@@ -1,10 +1,11 @@
 import { BigNumber, constants, Contract, ContractFactory, ethers, providers, utils } from "ethers";
 
-import { cERC20Conf, FuseBaseConstructor, InterestRateModelConf } from "../types";
+import { cERC20Conf, FuseBaseConstructor, InterestRateModelConf, RewardsDistributorConfig } from "../types";
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
 import { DelegateContractName } from "../enums";
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 
 export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class PoolAsset extends Base {
@@ -230,28 +231,32 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
     getImplementationData(conf: cERC20Conf): string {
       const abiCoder = new utils.AbiCoder();
-      let implementationData;
-      switch (conf.delegateContractName) {
-        case DelegateContractName.CErc20PluginDelegate:
-          if (!conf.plugin) {
-            throw "CErc20PluginDelegate needs plugin address";
-          }
-          implementationData = abiCoder.encode(["address"], [conf.plugin]);
-          break;
-        case DelegateContractName.CErc20PluginRewardsDelegate:
-          if (!conf.plugin || !conf.rewardsDistributor || !conf.rewardToken) {
-            throw "CErc20PluginRewardsDelegate needs plugin, rewardsDistributor and rewardToken address";
-          }
-          implementationData = abiCoder.encode(
-            ["address", "address", "address"],
-            [conf.plugin, conf.rewardsDistributor, conf.rewardToken]
-          );
-          break;
-        default:
-          implementationData = "0x00";
-          break;
+      if (
+        conf.delegateContractName === DelegateContractName.CErc20PluginDelegate ||
+        conf.delegateContractName === DelegateContractName.CErc20PluginRewardsDelegate
+      ) {
+        if (!conf.plugin) {
+          throw "CErc20PluginDelegate needs plugin address";
+        }
+        return abiCoder.encode(["address"], [conf.plugin]);
       }
-      return implementationData;
+      return "0x00";
+    }
+
+    async approveRewardsDistributors(
+      cToken: string,
+      options: any,
+      rewardsDistributorConfig: RewardsDistributorConfig[]
+    ): Promise<void> {
+      const cTokenWithSigner = new Contract(
+        cToken,
+        this.chainDeployment.CErc20PluginRewardsDelegate.abi,
+        this.provider.getSigner(options.from)
+      ) as CErc20PluginRewardsDelegate;
+
+      for (const rewardsDistributor of rewardsDistributorConfig) {
+        await cTokenWithSigner.approve(rewardsDistributor.rewardToken, rewardsDistributor.rewardsDistributor);
+      }
     }
 
     async deployCErc20(
@@ -325,6 +330,10 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       // needed for Erc4626Plugin and Erc4626PluginDelegate
       if (implementationData !== "0x00" && conf.delegateContractName) {
         implementationAddress = await this.upgradeCErc20(conf, cErc20DelegatorAddress, implementationData);
+        if (conf.delegateContractName === DelegateContractName.CErc20PluginRewardsDelegate) {
+          // TODO approve rewardsToken for flywheels
+          await this.approveRewardsDistributors(implementationAddress, options, conf.rewardsDistributorConfig);
+        }
       }
       // Return cToken proxy and implementation contract addresses
       return [cErc20DelegatorAddress, implementationAddress, receipt];
