@@ -13,7 +13,7 @@ import {
   useDisclosure,
   useToast,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, Contract, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
@@ -29,7 +29,6 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { ComptrollerErrorCodes } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';

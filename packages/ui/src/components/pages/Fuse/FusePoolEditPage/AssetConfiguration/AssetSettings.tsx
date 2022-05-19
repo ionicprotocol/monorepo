@@ -3,6 +3,8 @@ import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
 import {
   cERC20Conf,
+  ComptrollerErrorCodes,
+  CTokenErrorCodes,
   DelegateContractName,
   InterestRateModelConf,
   NativePricedFuseAsset,
@@ -21,7 +23,6 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';

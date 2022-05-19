@@ -1,0 +1,8 @@
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+
+[build]
+  base    = "/"
+  command = "yarn build:deploy:ui"
+  publish = "/packages/ui/.next"
