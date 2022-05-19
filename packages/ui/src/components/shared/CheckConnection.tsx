@@ -23,68 +23,65 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   const toastIdRef = useRef<ToastId | undefined>();
   const toast = useToast();
 
-  console.log({ accountData, activeChain, isConnected, signerData });
-  console.log({ isOpen, onOpen, onClose });
-  console.log({ children });
-  useEffect(() => {
-    if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
-      onOpen();
-    }
-  }, [isConnected, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
+  // useEffect(() => {
+  //   if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
+  //     onOpen();
+  //   }
+  // }, [isConnected, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
 
-  // Show unsupported Network Toast
-  useEffect(() => {
-    if (activeChain?.unsupported) {
-      if (!toastIdRef.current) {
-        toastIdRef.current = toast({
-          title: `Unsupported Network(${activeChain.name}) Detected!`,
-          description: (
-            <>
-              <Text>{`Supported Networks: ${chains.map((chain) => chain.name).join(', ')}`}</Text>
-            </>
-          ),
-          status: 'warning',
-          position: 'bottom-right',
-          duration: null,
-          isClosable: true,
-        });
-      }
-    } else {
-      if (toastIdRef.current) {
-        toast.close(toastIdRef.current);
-        toastIdRef.current = undefined;
-      }
-    }
-  }, [activeChain, chains, toast]);
+  // // Show unsupported Network Toast
+  // useEffect(() => {
+  //   if (activeChain?.unsupported) {
+  //     if (!toastIdRef.current) {
+  //       toastIdRef.current = toast({
+  //         title: `Unsupported Network(${activeChain.name}) Detected!`,
+  //         description: (
+  //           <>
+  //             <Text>{`Supported Networks: ${chains.map((chain) => chain.name).join(', ')}`}</Text>
+  //           </>
+  //         ),
+  //         status: 'warning',
+  //         position: 'bottom-right',
+  //         duration: null,
+  //         isClosable: true,
+  //       });
+  //     }
+  //   } else {
+  //     if (toastIdRef.current) {
+  //       toast.close(toastIdRef.current);
+  //       toastIdRef.current = undefined;
+  //     }
+  //   }
+  // }, [activeChain, chains, toast]);
 
-  // User visits a link of another chain than currently connected
-  useEffect(() => {
-    if (
-      router.isReady &&
-      activeChain &&
-      routerChainId !== activeChain.id.toString() &&
-      switchNetwork
-    ) {
-      if (isSupportedChainId(Number(routerChainId))) {
-        switchNetwork(Number(routerChainId));
-      }
-    }
-  }, [routerChainId, switchNetwork, router, activeChain]);
+  // // User visits a link of another chain than currently connected
+  // useEffect(() => {
+  //   if (
+  //     router.isReady &&
+  //     activeChain &&
+  //     routerChainId !== activeChain.id.toString() &&
+  //     switchNetwork
+  //   ) {
+  //     if (isSupportedChainId(Number(routerChainId))) {
+  //       switchNetwork(Number(routerChainId));
+  //     }
+  //   }
+  // }, [routerChainId, switchNetwork, router, activeChain]);
 
-  // User should get redirected to chain he is connected to
-  useEffect(() => {
-    if (activeChain?.id && !routerChainId && router.isReady && !activeChain.unsupported) {
-      const chainId = activeChain.id.toString();
-      router.push(
-        {
-          pathname: `/[chainId]`,
-          query: { chainId, sortBy: 'supply' },
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-  }, [activeChain?.id, activeChain?.unsupported, router, routerChainId]);
+  // // User should get redirected to chain he is connected to
+  // useEffect(() => {
+  //   if (activeChain?.id && !routerChainId && router.isReady && !activeChain.unsupported) {
+  //     const chainId = activeChain.id.toString();
+  //     router.push(
+  //       {
+  //         pathname: `/[chainId]`,
+  //         query: { chainId, sortBy: 'supply' },
+  //       },
+  //       undefined,
+  //       { shallow: true }
+  //     );
+  //   }
+  // }, [activeChain?.id, activeChain?.unsupported, router, routerChainId]);
 
   // Not Connected
   if (!isConnected && !isReconnecting) {
