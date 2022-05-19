@@ -96,12 +96,8 @@ export type cERC20Conf = {
   adminFee: number;
   bypassPriceFeedCheck: boolean;
   plugin?: string;
-  rewardsDistributorConfig?: RewardsDistributorConfig[];
-};
-
-export type RewardsDistributorConfig = {
-  rewardsDistributor: string;
-  rewardToken: string;
+  rewardsDistributor?: string;
+  rewardToken?: string;
 };
 
 export type OracleConf = {
