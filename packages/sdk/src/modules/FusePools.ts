@@ -73,6 +73,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
             .callStatic.plugin()
             .then((plugin) => (asset.plugin = plugin))
             .catch(() =>
+              // @ts-ignore
               this.getAssetInstance<CErc20PluginRewardsDelegate>(
                 asset.cToken,
                 "CErc20PluginRewardsDelegate"

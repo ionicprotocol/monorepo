@@ -256,7 +256,10 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       ) as CErc20PluginRewardsDelegate;
 
       for (const rewardsDistributor of rewardsDistributorConfig) {
-        await cTokenWithSigner.approve(rewardsDistributor.rewardToken, rewardsDistributor.rewardsDistributor);
+        await cTokenWithSigner["approve(address,address)"](
+          rewardsDistributor.rewardToken,
+          rewardsDistributor.rewardsDistributor
+        );
       }
     }
 
@@ -332,6 +335,9 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       if (implementationData !== "0x00" && conf.delegateContractName) {
         implementationAddress = await this.upgradeCErc20(conf, cErc20DelegatorAddress, implementationData);
         if (conf.delegateContractName === DelegateContractName.CErc20PluginRewardsDelegate) {
+          if (!conf.rewardsDistributorConfig) {
+            throw `${DelegateContractName.CErc20PluginRewardsDelegate} must have a 'rewardsDistributorConfig' defined`;
+          }
           await this.approveRewardsDistributors(implementationAddress, options, conf.rewardsDistributorConfig);
         }
       }
