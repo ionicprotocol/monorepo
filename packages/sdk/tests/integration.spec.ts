@@ -1,12 +1,9 @@
 import { BigNumber, providers, utils } from "ethers";
-import { ethers, run } from "hardhat";
+import { ethers } from "hardhat";
 import { deployAssets, tradeNativeForAsset } from "./utils";
 import { addCollateral, borrowCollateral } from "./utils/collateral";
 import {
-  CErc20,
-  CEther,
   EIP20Interface,
-  FuseFeeDistributor,
   FuseSafeLiquidator,
   SimplePriceOracle,
 } from "../lib/contracts/typechain";
@@ -17,7 +14,7 @@ import { getOrCreateFuse } from "./utils/fuseSdk";
 import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
 import { BSC_POOLS, getAssetsConf } from "./utils/assets";
 
-describe.only("#safeLiquidateWithFlashLoan", () => {
+describe.skip("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
   let alpacaAssets: cERC20Conf[];
   let bombAssets: cERC20Conf[];

@@ -143,7 +143,7 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
     poolName
   );
 
-  erc20One = assets.find((a) => a.underlying === assetSymbols["BTCB-BOMB"]); // find first one
+  erc20One = assets.find((a) => a.underlying === assetSymbols.TOUCH); // find first one
 
   expect(erc20One.underlying).to.be.ok;
   erc20Two = assets.find((a) => a.underlying !== constants.AddressZero && a.underlying !== erc20One.underlying); // find second one
