@@ -1,4 +1,4 @@
-import { Heading, Text, TextProps } from '@chakra-ui/react';
+import { Heading, SystemProps, Text, TextProps } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
 import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
@@ -16,7 +16,7 @@ const CaptionedStat = ({
   captionColor,
 }: CaptionedStatProps) => {
   const crossAxisAlignmentStatic = useMaybeResponsiveProp(crossAxisAlignment);
-  const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as any;
+  const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as SystemProps['textAlign'];
 
   const { cCard } = useColors();
 
