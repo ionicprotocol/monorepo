@@ -31,3 +31,6 @@ coverage
 **/.terraform.lock.hcl
 ops/**/tfvars.json
 **/.env
+
+# Local Netlify folder
+.netlify
