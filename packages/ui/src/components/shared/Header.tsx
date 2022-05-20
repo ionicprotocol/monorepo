@@ -38,19 +38,19 @@ export const Header = ({
         overflowY="hidden"
         transform="translate(0px, 7px)"
       >
-        <HeaderLink name=Overview route="/" />
-        <HeaderLink ml={4} name=Fuse route="/" />
+        <HeaderLink name="Overview" route="/" />
+        <HeaderLink ml={4} name="Fuse" route="/" />
 
         <Box ml={4}>
           <Menu autoSelect={false} placement="bottom">
             <MenuButton>
-              <SubMenuText text=Governance />
+              <SubMenuText text="Governance" />
             </MenuButton>
 
             <Portal>
               <MenuList color="#FFF" minWidth="110px">
-                <SubMenuItem name=Snapshot link="https://vote.rari.capital/" />
-                <SubMenuItem name=Forums link="https://forums.rari.capital/" />
+                <SubMenuItem name="Snapshot" link="https://vote.rari.capital/" />
+                <SubMenuItem name="Forums" link="https://forums.rari.capital/" />
               </MenuList>
             </Portal>
           </Menu>
@@ -69,14 +69,14 @@ export const UtilsLink = ({ isAuthed, ml }: { isAuthed: boolean; ml?: number | s
     <Box ml={ml ?? 0}>
       <Menu autoSelect={false} placement="bottom">
         <MenuButton>
-          <SubMenuText text=Utilities parentLink="/utils" />
+          <SubMenuText text="Utilities" parentLink="/utils" />
         </MenuButton>
 
         <Portal>
           <MenuList color="#FFF" minWidth="110px">
-            {isAuthed && <SubMenuItem name=Positions link="/utils/positions" />}
+            {isAuthed && <SubMenuItem name="Positions" link="/utils/positions" />}
 
-            <SubMenuItem name=Interest Rates link="/utils/interest-rates" />
+            <SubMenuItem name="Interest Rates" link="/utils/interest-rates" />
           </MenuList>
         </Portal>
       </Menu>
@@ -89,7 +89,7 @@ export const SubMenuText = ({ text, parentLink }: { text: string; parentLink?: s
 
   const isOnThisRoute = parentLink ? router.pathname.includes(parentLink) : false;
 
-  return <Text fontWeight={isOnThisRoute ? 'bold' : 'normal'}>{t(text)}</Text>;
+  return <Text fontWeight={isOnThisRoute ? 'bold' : 'normal'}>{text}</Text>;
 };
 
 export const SubMenuItem = ({ name, link }: { name: string; link: string }) => {

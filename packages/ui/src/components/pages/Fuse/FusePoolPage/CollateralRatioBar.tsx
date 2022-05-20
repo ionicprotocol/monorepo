@@ -58,7 +58,7 @@ export const CollateralRatioBar = ({
           </Box>
         </Tooltip>
 
-        <Tooltip label=If your borrow amount reaches this value, you will be liquidated.>
+        <Tooltip label="If your borrow amount reaches this value, you will be liquidated.">
           <Text flexShrink={0} mt="2px" ml={3} fontSize="10px">
             {smallUsdFormatter(maxBorrow)}
           </Text>

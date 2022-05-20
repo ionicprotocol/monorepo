@@ -14,7 +14,6 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';

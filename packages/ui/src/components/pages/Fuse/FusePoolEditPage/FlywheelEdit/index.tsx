@@ -16,7 +16,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/sdk';
-import { useTranslation } from 'next-i18next';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 

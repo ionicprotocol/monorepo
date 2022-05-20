@@ -1,6 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
-import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
