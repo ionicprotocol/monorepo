@@ -9,8 +9,8 @@ assignees: ''
 
 We'd like to support yet another custom asset
 
-**Symbol**: ETH
-**Block Explorer URL**:  https://etherscan.io/address/0x0000000000000000000000000000000000000000
+**Symbol**: ETH 
+**Block Explorer URL**:  https://etherscan.io/address/0x0000000000000000000000000000000000000000 
 **Chain**: Ethereum
 
 - [ ] **ChainLink / DIA / Flux Supported**
