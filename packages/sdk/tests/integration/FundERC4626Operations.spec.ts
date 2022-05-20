@@ -37,7 +37,7 @@ import { BSC_POOLS } from "../utils/assets";
       ethers,
       poolName
     );
-    console.log(assets)
+    console.log(assets);
     await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",

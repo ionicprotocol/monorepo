@@ -86,12 +86,10 @@ export const setUpPools = async (poolNames: BSC_POOLS[]) => {
 };
 
 export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
-
   let poolAddress: string;
   let oracle: MasterPriceOracle;
   let liquidator: FuseSafeLiquidator;
   let fuseFeeDistributor: FuseFeeDistributor;
-
 
   const { deployer, rando } = await ethers.getNamedSigners();
 

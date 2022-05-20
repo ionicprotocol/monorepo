@@ -2,11 +2,7 @@ import { BigNumber, providers, utils } from "ethers";
 import { ethers } from "hardhat";
 import { deployAssets, tradeNativeForAsset } from "./utils";
 import { addCollateral, borrowCollateral } from "./utils/collateral";
-import {
-  EIP20Interface,
-  FuseSafeLiquidator,
-  SimplePriceOracle,
-} from "../lib/contracts/typechain";
+import { EIP20Interface, FuseSafeLiquidator, SimplePriceOracle } from "../lib/contracts/typechain";
 import { cERC20Conf, ChainLiquidationConfig } from "../src";
 import { DeployedAsset } from "./utils/pool";
 import { liquidateAndVerify, setUpPools } from "./utils/setup";
