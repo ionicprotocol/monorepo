@@ -5,8 +5,9 @@ import { addCollateral, borrowCollateral } from "../utils/collateral";
 import {
   EIP20Interface,
   FuseFeeDistributor,
-  FuseSafeLiquidator, MasterPriceOracle,
-  SimplePriceOracle
+  FuseSafeLiquidator,
+  MasterPriceOracle,
+  SimplePriceOracle,
 } from "../../lib/contracts/typechain";
 import { cERC20Conf, ChainLiquidationConfig } from "../../src";
 import { DeployedAsset } from "../utils/pool";
@@ -27,7 +28,6 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
   let simpleOracle: SimplePriceOracle;
   let liquidator: FuseSafeLiquidator;
   let fuseFeeDistributor: FuseFeeDistributor;
-
 
   let erc20OneUnderlying: EIP20Interface;
   let erc20TwoUnderlying: EIP20Interface;
@@ -50,12 +50,7 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
       ...getChainLiquidationConfig(sdk)[chainId],
     };
     await setUpPriceOraclePrices();
-    ({
-      poolAddress,
-      liquidator,
-      oracle,
-      fuseFeeDistributor,
-    } = await setUpLiquidation(poolName));
+    ({ poolAddress, liquidator, oracle, fuseFeeDistributor } = await setUpLiquidation(poolName));
   });
 
   afterEach(async () => {
