@@ -19,7 +19,11 @@
   "scripts": {
     "build:typechain": "yarn workspace @midas-capital/sdk typechain",
     "build:sdk": "yarn workspace @midas-capital/sdk build:sdk",
+    "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
+    "build:liquidator": "yarn workspace @midas-capital/fuse-liquidator-bot build",
+    "build:build:liquidator": "yarn build:typechain && yarn build:sdk && yarn build:liquidator",
+    "build:deploy:twap": "yarn build:typechain && yarn build:sdk && yarn build:twap",
     "build:deploy:ui": "yarn build:typechain && yarn build:sdk && yarn build:ui",
     "dev:ui": "yarn workspace @midas-capital/sdk export; yarn build:typechain && yarn build:sdk && yarn workspace @midas-capital/ui dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node"
