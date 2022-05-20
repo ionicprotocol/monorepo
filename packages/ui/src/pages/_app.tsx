@@ -30,11 +30,12 @@ function MidasDapp({ Component, pageProps }: AppProps) {
       <WagmiProvider client={client}>
         <QueryClientProvider client={queryClient}>
           <ReactQueryDevtools initialIsOpen={false} />
-          <CheckConnection>
+          <h1>Deployement works</h1>
+          {/* <CheckConnection>
             <Layout>
               <Component {...pageProps} />
             </Layout>
-          </CheckConnection>
+          </CheckConnection> */}
         </QueryClientProvider>
       </WagmiProvider>
     </ChakraProvider>
