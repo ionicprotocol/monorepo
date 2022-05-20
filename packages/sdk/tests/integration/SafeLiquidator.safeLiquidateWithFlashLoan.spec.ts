@@ -27,6 +27,7 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
   let poolAddress: string;
   let simpleOracle: SimplePriceOracle;
   let liquidator: FuseSafeLiquidator;
+
   let fuseFeeDistributor: FuseFeeDistributor;
 
   let erc20OneUnderlying: EIP20Interface;
