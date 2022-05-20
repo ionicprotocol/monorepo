@@ -11,11 +11,9 @@ const AddAssetButton = ({
   openAddAssetModal: () => void;
   comptrollerAddress: string;
 }) => {
-  const { t } = useTranslation();
-
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
 
-  return isUpgradeable ? <Button onClick={openAddAssetModal}>{t('Add Asset')}</Button> : null;
+  return isUpgradeable ? <Button onClick={openAddAssetModal}>Add Asset</Button> : null;
 };
 
 export default AddAssetButton;

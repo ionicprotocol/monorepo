@@ -41,8 +41,6 @@ const FlywheelEdit = ({ pool }: { pool: FusePoolData }) => {
   const { isOpen: isEditOpen, onOpen: openEdit, onClose: closeEdit } = useDisclosure();
   const { isOpen: isCreateOpen, onOpen: openCreate, onClose: closeCreate } = useDisclosure();
 
-  const { t } = useTranslation();
-
   const {
     data: flywheels,
     refetch: refetchFlywheels,
@@ -118,11 +116,11 @@ const FlywheelEdit = ({ pool }: { pool: FusePoolData }) => {
           <Table>
             <Thead>
               <Tr>
-                <Th>{t('Address')}</Th>
-                <Th>{t('Reward Token')}</Th>
-                <Th>{t('Active Markets in Pool')}</Th>
-                <Th>{t('Balance')}</Th>
-                <Th>{t('Admin')}</Th>
+                <Th>Address</Th>
+                <Th>Reward Token</Th>
+                <Th>Active Markets in Pool</Th>
+                <Th>Balance</Th>
+                <Th>Admin</Th>
               </Tr>
             </Thead>
 
