@@ -43,6 +43,9 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
+      - name: Update forge deps
+        run: yarn workspace @midas-capital/sdk forge update
+
       - name: Run build
         run: yarn workspace @midas-capital/sdk build
 
