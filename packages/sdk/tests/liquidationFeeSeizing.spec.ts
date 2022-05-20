@@ -75,7 +75,7 @@ import { getOrCreateFuse } from "./utils/fuseSdk";
       oracle,
       simpleOracle,
       fuseFeeDistributor,
-    } = await setUpLiquidation({ poolName }));
+    } = await setUpLiquidation(poolName));
   });
   afterEach(async () => {
     await resetPriceOracle(erc20One, erc20Two);
