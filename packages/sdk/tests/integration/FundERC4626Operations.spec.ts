@@ -57,7 +57,7 @@ import { assetSymbols } from "../../src/chainConfig";
     ).filter((a) => a.symbol !== assetSymbols.BTCB && a.symbol !== assetSymbols.WBNB);
 
     const assets = bombAssets.concat(...baseAssets).concat(...alpacaAssets);
-    console.log("ALL ASSETS", assets)
+    console.log("ALL ASSETS", assets);
     await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",
@@ -67,11 +67,11 @@ import { assetSymbols } from "../../src/chainConfig";
     for (const a of assets) {
       await simpleOracle.setDirectPrice(a.underlying, BigNumber.from(1));
     }
-    const alpacaPlugin = await ethers.getContract("AlpacaERC4626_WBNB", deployer)
+    const alpacaPlugin = await ethers.getContract("AlpacaERC4626_WBNB", deployer);
     const WBNB = alpacaAssets.find((a) => a.symbol === "WBNB");
-    WBNB.plugin = alpacaPlugin.address
+    WBNB.plugin = alpacaPlugin.address;
 
-    console.log("deploying assets: \n", assets)
+    console.log("deploying assets: \n", assets);
     await poolHelpers.deployAssets(assets, deployer);
 
     const BTCB = assets.find((a) => a.symbol === "BTCB");
