@@ -2,7 +2,6 @@ import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -16,8 +15,6 @@ export const CollateralRatioBar = ({
   assets: NativePricedFuseAsset[];
   borrowUSD: number;
 }) => {
-  const { t } = useTranslation();
-
   const maxBorrow = useBorrowLimit(assets);
 
   const ratio = (borrowUSD / maxBorrow) * 100;
@@ -61,7 +58,7 @@ export const CollateralRatioBar = ({
           </Box>
         </Tooltip>
 
-        <Tooltip label={t('If your borrow amount reaches this value, you will be liquidated.')}>
+        <Tooltip label=If your borrow amount reaches this value, you will be liquidated.>
           <Text flexShrink={0} mt="2px" ml={3} fontSize="10px">
             {smallUsdFormatter(maxBorrow)}
           </Text>

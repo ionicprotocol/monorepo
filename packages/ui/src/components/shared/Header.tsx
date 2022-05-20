@@ -2,7 +2,6 @@ import { Box, Link, Menu, MenuButton, MenuItem, MenuList, Portal, Text } from '@
 import * as RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { MouseEventHandler } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { AccountButton } from '@ui/components/shared/AccountButton';
 import { Row } from '@ui/utils/chakraUtils';
@@ -16,8 +15,6 @@ export const Header = ({
   isPool?: boolean;
   padding?: boolean;
 }) => {
-  const { t } = useTranslation();
-
   return (
     <Row
       color="#FFFFFF"
@@ -41,19 +38,19 @@ export const Header = ({
         overflowY="hidden"
         transform="translate(0px, 7px)"
       >
-        <HeaderLink name={t('Overview')} route="/" />
-        <HeaderLink ml={4} name={t('Fuse')} route="/" />
+        <HeaderLink name=Overview route="/" />
+        <HeaderLink ml={4} name=Fuse route="/" />
 
         <Box ml={4}>
           <Menu autoSelect={false} placement="bottom">
             <MenuButton>
-              <SubMenuText text={t('Governance')} />
+              <SubMenuText text=Governance />
             </MenuButton>
 
             <Portal>
               <MenuList color="#FFF" minWidth="110px">
-                <SubMenuItem name={t('Snapshot')} link="https://vote.rari.capital/" />
-                <SubMenuItem name={t('Forums')} link="https://forums.rari.capital/" />
+                <SubMenuItem name=Snapshot link="https://vote.rari.capital/" />
+                <SubMenuItem name=Forums link="https://forums.rari.capital/" />
               </MenuList>
             </Portal>
           </Menu>
@@ -68,20 +65,18 @@ export const Header = ({
 };
 
 export const UtilsLink = ({ isAuthed, ml }: { isAuthed: boolean; ml?: number | string }) => {
-  const { t } = useTranslation();
-
   return (
     <Box ml={ml ?? 0}>
       <Menu autoSelect={false} placement="bottom">
         <MenuButton>
-          <SubMenuText text={t('Utilities')} parentLink="/utils" />
+          <SubMenuText text=Utilities parentLink="/utils" />
         </MenuButton>
 
         <Portal>
           <MenuList color="#FFF" minWidth="110px">
-            {isAuthed && <SubMenuItem name={t('Positions')} link="/utils/positions" />}
+            {isAuthed && <SubMenuItem name=Positions link="/utils/positions" />}
 
-            <SubMenuItem name={t('Interest Rates')} link="/utils/interest-rates" />
+            <SubMenuItem name=Interest Rates link="/utils/interest-rates" />
           </MenuList>
         </Portal>
       </Menu>
@@ -91,7 +86,7 @@ export const UtilsLink = ({ isAuthed, ml }: { isAuthed: boolean; ml?: number | s
 
 export const SubMenuText = ({ text, parentLink }: { text: string; parentLink?: string }) => {
   const router = useRouter();
-  const { t } = useTranslation();
+
   const isOnThisRoute = parentLink ? router.pathname.includes(parentLink) : false;
 
   return <Text fontWeight={isOnThisRoute ? 'bold' : 'normal'}>{t(text)}</Text>;

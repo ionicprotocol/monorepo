@@ -32,7 +32,7 @@ const FusePoolEditPage = memo(() => {
     onClose: closeAddAssetModal,
   } = useDisclosure();
   const authedOpenModal = useAuthedCallback(openAddAssetModal);
-  const { t } = useTranslation();
+
   const { setLoading, coingeckoId } = useRari();
   const router = useRouter();
   const poolId = router.query.poolId as string;
@@ -134,7 +134,7 @@ const FusePoolEditPage = memo(() => {
                   />
                 ) : (
                   <Column expand mainAxisAlignment="center" crossAxisAlignment="center" py={4}>
-                    <Text mb={4}>{t('There are no assets in this pool.')}</Text>
+                    <Text mb={4}>There are no assets in this pool.</Text>
 
                     <AddAssetButton
                       comptrollerAddress={data.comptroller}

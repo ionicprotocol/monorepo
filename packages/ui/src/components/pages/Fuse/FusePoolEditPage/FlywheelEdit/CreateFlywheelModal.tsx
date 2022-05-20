@@ -18,7 +18,6 @@ import {
 import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
 import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
 import React, { useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -40,7 +39,7 @@ const steps = [
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
   const { fuse } = useRari();
   const { data: accountData } = useAccount();
-  const { t } = useTranslation();
+
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
@@ -166,7 +165,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
           <Input
             px={2}
             textAlign="center"
-            placeholder={t('Reward Token Address: 0xXX...XX')}
+            placeholder="Reward Token Address: 0xXX...XX"
             value={rewardToken}
             isInvalid={!!error}
             onChange={(event) => setRewardToken(event.target.value)}
@@ -194,7 +193,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
           disabled={isDeploying || !readyToDeploy}
           onClick={handleDeploy}
         >
-          {isDeploying ? steps[activeStep] : t('Deploy Flywheel')}
+          {isDeploying ? steps[activeStep] : 'Deploy Flywheel'}
         </Button>
       </Box>
     </VStack>
@@ -206,12 +205,11 @@ const CreateFlywheelModal = ({
   onClose,
   ...createFlywheelProps
 }: CreateFlywheelModalProps) => {
-  const { t } = useTranslation();
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Create New Flywheel')}</ModalHeader>
+        <ModalHeader>Create New Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <Center p={4}>
