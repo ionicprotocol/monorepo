@@ -4,11 +4,11 @@ import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as poolHelpers from "../utils/pool";
 import * as assetHelpers from "../utils/assets";
+import { BSC_POOLS } from "../utils/assets";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
 import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
-import { BSC_POOLS } from "../utils/assets";
 import { assetSymbols } from "../../src/chainConfig";
 
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("FundOperationsERC4626Module", function () {
@@ -38,6 +38,15 @@ import { assetSymbols } from "../../src/chainConfig";
       ethers,
       poolName
     );
+    const alpacaAssets = (
+      await assetHelpers.getAssetsConf(
+        poolAddress,
+        sdk.contracts.FuseFeeDistributor.address,
+        sdk.irms.JumpRateModel.address,
+        ethers,
+        BSC_POOLS.ALPACA
+      )
+    ).filter((a) => a.symbol === assetSymbols.WBNB);
     const baseAssets = (
       await assetHelpers.getAssetsConf(
         poolAddress,
@@ -45,9 +54,10 @@ import { assetSymbols } from "../../src/chainConfig";
         sdk.irms.JumpRateModel.address,
         ethers
       )
-    ).filter((a) => a.symbol !== assetSymbols.BTCB);
+    ).filter((a) => a.symbol !== assetSymbols.BTCB && a.symbol !== assetSymbols.WBNB);
 
-    const assets = bombAssets.concat(...baseAssets);
+    const assets = bombAssets.concat(...baseAssets).concat(...alpacaAssets);
+    console.log("ALL ASSETS", assets)
     await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",
@@ -57,11 +67,15 @@ import { assetSymbols } from "../../src/chainConfig";
     for (const a of assets) {
       await simpleOracle.setDirectPrice(a.underlying, BigNumber.from(1));
     }
+    const alpacaPlugin = await ethers.getContract("AlpacaERC4626_WBNB", deployer)
+    const WBNB = alpacaAssets.find((a) => a.symbol === "WBNB");
+    WBNB.plugin = alpacaPlugin.address
+
+    console.log("deploying assets: \n", assets)
     await poolHelpers.deployAssets(assets, deployer);
 
     const BTCB = assets.find((a) => a.symbol === "BTCB");
     const BOMB = assets.find((a) => a.symbol === "BOMB");
-    const WBNB = baseAssets.find((a) => a.symbol === "WBNB");
 
     // acquire some test tokens
     await tradeNativeForAsset({ account: "bob", token: BTCB.underlying, amount: "500" });

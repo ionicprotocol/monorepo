@@ -103,18 +103,21 @@ export const getAlpacaPoolAssets = async (
   const sdk = await getOrCreateFuse();
 
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
-  const alpaca = bscAssets.find((b) => b.symbol === assetSymbols.ALPACA);
+  const usdc = bscAssets.find((b) => b.symbol === assetSymbols.USDC);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
   const ethPlugin = sdk.chainPlugins[eth.underlying][0];
-  const alpacaPlugin = sdk.chainPlugins[eth.underlying][0];
-  const busdPlugin = sdk.chainPlugins[eth.underlying][0];
+  const usdcPlugin = sdk.chainPlugins[usdc.underlying][0];
+  const busdPlugin = sdk.chainPlugins[busd.underlying][0];
+  const wbnbPlugin = sdk.chainPlugins[wbnb.underlying][0];
 
-  const assets = [eth, alpaca, busd];
+  const assets = [eth, usdc, busd, wbnb];
 
   const assetConfigs = [
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: ethPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: alpacaPlugin.strategyAddress },
+    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: usdcPlugin.strategyAddress },
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: busdPlugin.strategyAddress },
+    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: wbnbPlugin.strategyAddress },
   ];
   return assets.map((a, i) => {
     return {
