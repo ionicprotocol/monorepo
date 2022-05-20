@@ -78,7 +78,7 @@ export const RariProvider = ({
 
   const toast = useToast();
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+
   const { cPage } = useColors();
 
   const mounted = useRef(false);
@@ -111,8 +111,8 @@ export const RariProvider = ({
         const tx = await fuse.provider.getTransaction(hash);
         if (tx.from === address) {
           toast({
-            title: <>{t('Pending')}!</>,
-            description: <>{t('Transaction is pending now')}.</>,
+            title: <>Pending!</>,
+            description: <>Transaction is pending now.</>,
             status: 'info',
             duration: 2000,
             isClosable: true,
@@ -120,7 +120,7 @@ export const RariProvider = ({
           });
           const res = await tx.wait();
           toast({
-            title: <>{t('Complete')}!</>,
+            title: <>Complete!</>,
             description: (
               <Button
                 href={`${scanUrl}/tx/${tx.hash}`}
@@ -132,7 +132,7 @@ export const RariProvider = ({
                 width="100%"
                 py={2}
               >
-                {t('View Transaction')}
+                View Transaction
               </Button>
             ),
             status: 'success',

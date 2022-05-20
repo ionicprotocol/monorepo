@@ -44,7 +44,6 @@ export const AddAssetSettings = ({
   poolName: string;
   tokenData: TokenData;
 }) => {
-  const { t } = useTranslation();
   const { fuse, address } = useRari();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -161,12 +160,12 @@ export const AddAssetSettings = ({
       <ModalDivider />
       <HStack p={4} w="100%" justifyContent={'space-between'}>
         <SimpleTooltip
-          label={t(
+          label={
             'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Collateral Factor')}{' '}
+            Collateral Factor{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -190,12 +189,12 @@ export const AddAssetSettings = ({
       <ModalDivider />
       <HStack p={4} w="100%" justifyContent={'space-between'}>
         <SimpleTooltip
-          label={t(
+          label={
             "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Reserve Factor')}{' '}
+            Reserve Factor{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -219,12 +218,12 @@ export const AddAssetSettings = ({
       <ModalDivider />
       <HStack p={4} w="100%" justifyContent={'space-between'}>
         <SimpleTooltip
-          label={t(
+          label={
             "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Admin Fee')}{' '}
+            Admin Fee{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -266,7 +265,7 @@ export const AddAssetSettings = ({
               }
             >
               <HStack>
-                <Text fontWeight="bold">{t('Rewards Plugin')} </Text>
+                <Text fontWeight="bold">Rewards Plugin </Text>
                 <QuestionIcon
                   color={cCard.txtColor}
                   bg={cCard.bgColor}
@@ -306,12 +305,12 @@ export const AddAssetSettings = ({
       <ModalDivider />
       <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
         <SimpleTooltip
-          label={t(
+          label={
             'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Interest Model')}{' '}
+            Interest Model{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -357,7 +356,7 @@ export const AddAssetSettings = ({
           onClick={deploy}
           disabled={!isPossible}
         >
-          {t('Add Asset')}
+          Add Asset
         </Button>
       </Center>
     </VStack>

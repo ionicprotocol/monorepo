@@ -1,5 +1,4 @@
 import { Select, SelectProps } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
 
 import { useColors } from '@ui/hooks/useColors';
 

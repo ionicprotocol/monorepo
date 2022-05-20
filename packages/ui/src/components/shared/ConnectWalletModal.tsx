@@ -12,7 +12,6 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useConnect } from 'wagmi';
 
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -20,7 +19,7 @@ import { Column, Row } from '@ui/utils/chakraUtils';
 
 const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { connect, connectors, error: connectError } = useConnect();
-  const { t } = useTranslation();
+
   const toast = useToast();
 
   useEffect(() => {
@@ -41,7 +40,7 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Select a Wallet')}</ModalHeader>
+        <ModalHeader>Select a Wallet</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <ModalBody py={12}>

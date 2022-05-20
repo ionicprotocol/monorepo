@@ -16,7 +16,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useAccount } from 'wagmi';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
@@ -31,7 +30,7 @@ import { shortAddress } from '@ui/utils/shortAddress';
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
   const { fuse } = useRari();
   const { data: accountData } = useAccount();
-  const { t } = useTranslation();
+
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
@@ -79,7 +78,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
         <Input
           px={2}
           textAlign="center"
-          placeholder={t('Flywheel Address: 0xXX...XX')}
+          placeholder="Flywheel Address: 0xXX...XX"
           value={flywheelAddress}
           isInvalid={!!error}
           onChange={(event) => setFlywheelAddress(event.target.value)}
@@ -131,12 +130,11 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
 };
 
 const AddFlywheelModal = ({ isOpen, onClose, ...rest }: AddFlywheelModalProps) => {
-  const { t } = useTranslation();
   return (
     <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Add Existing Flywheel')}</ModalHeader>
+        <ModalHeader>Add Existing Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <Center p={4}>

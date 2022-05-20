@@ -106,13 +106,11 @@ const AddAssetModal = ({
   isOpen: boolean;
   onClose: () => void;
 } & AddAssetProps) => {
-  const { t } = useTranslation();
-
   return (
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Add Asset')}</ModalHeader>
+        <ModalHeader>Add Asset</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <AddAsset onSuccess={onClose} {...addAssetProps} />
