@@ -26,7 +26,7 @@ export const AdminAlert = ({
       {...alertProps}
     >
       <AlertIcon color={cAlert.iconColor} />
-      <span style={{ color: 'black' }}>{t(isAdmin ? isAdminText : isNotAdminText)}</span>
+      <span style={{ color: 'black' }}>{isAdmin ? isAdminText : isNotAdminText}</span>
       <Box h="100%" ml="auto">
         {rightAdornment}
       </Box>
