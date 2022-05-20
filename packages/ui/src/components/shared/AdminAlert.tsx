@@ -1,7 +1,6 @@
 import { Alert, AlertIcon, AlertProps } from '@chakra-ui/alert';
 import { Box } from '@chakra-ui/layout';
 import React, { ReactNode } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { useColors } from '@ui/hooks/useColors';
 
@@ -17,7 +16,6 @@ export const AdminAlert = ({
   isNotAdminText?: string;
   rightAdornment?: ReactNode;
 } & AlertProps) => {
-  const { t } = useTranslation();
   const { cAlert } = useColors();
   return (
     <Alert

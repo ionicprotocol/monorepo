@@ -45,7 +45,6 @@ const PoolConfiguration = ({
   comptrollerAddress: string;
   poolName: string;
 }) => {
-  const { t } = useTranslation();
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
@@ -285,7 +284,7 @@ const PoolConfiguration = ({
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <InputGroup width="100%">
               <InputLeftElement>
-                <Text fontWeight="bold">{t('Pool Name')}:</Text>
+                <Text fontWeight="bold">Pool Name:</Text>
               </InputLeftElement>
               <Input
                 value={inputPoolName}
@@ -304,22 +303,22 @@ const PoolConfiguration = ({
                   isLoading={isSaving}
                   isDisabled={poolName === inputPoolName}
                 >
-                  <Center fontWeight="bold">{t('Save')}</Center>
+                  <Center fontWeight="bold">Save</Center>
                 </Button>
                 <Button variant="silver" ml={2} px={6} onClick={onCancel} isDisabled={isSaving}>
-                  <Center fontWeight="bold">{t('Cancel')}</Center>
+                  <Center fontWeight="bold">Cancel</Center>
                 </Button>
               </ButtonGroup>
             ) : (
               <Button ml="auto" mt={{ base: 2, sm: 0 }} px={6} onClick={() => setIsEditable(true)}>
-                <Center fontWeight="bold">{t('Edit')}</Center>
+                <Center fontWeight="bold">Edit</Center>
               </Button>
             )}
           </Flex>
           <ModalDivider />
           <ConfigRow>
             <Text fontWeight="bold" mr={2}>
-              {t('Assets')}:
+              Assets:
             </Text>
             {assets.length > 0 ? (
               <>
@@ -335,12 +334,12 @@ const PoolConfiguration = ({
                 </Text>
               </>
             ) : (
-              <Text>{t('None')}</Text>
+              <Text>None</Text>
             )}
           </ConfigRow>
           <ModalDivider />
           <ConfigRow>
-            <Text fontWeight="bold">{t('Whitelist')}:</Text>
+            <Text fontWeight="bold">Whitelist:</Text>
             <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
             <Switch
               ml="auto"
@@ -365,12 +364,12 @@ const PoolConfiguration = ({
           <ModalDivider />
 
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <Text fontWeight="bold">{t('Upgradeable')}:</Text>
+            <Text fontWeight="bold">Upgradeable:</Text>
 
             {data.upgradeable ? (
               <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
                 <Button height="35px" ml="auto" onClick={openTransferOwnershipModalOpen}>
-                  <Center fontWeight="bold">{t('Transfer Ownership')}</Center>
+                  <Center fontWeight="bold">Transfer Ownership</Center>
                 </Button>
                 <TransferOwnershipModal
                   isOpen={isTransferOwnershipModalOpen}
@@ -378,12 +377,12 @@ const PoolConfiguration = ({
                   comptrollerAddress={comptrollerAddress}
                 />
                 <Button height="35px" onClick={renounceOwnership} ml="auto">
-                  <Center fontWeight="bold">{t('Renounce Ownership')}</Center>
+                  <Center fontWeight="bold">Renounce Ownership</Center>
                 </Button>
               </Flex>
             ) : (
               <Text ml="auto" fontWeight="bold">
-                {t('Admin Rights Disabled')}
+                Admin Rights Disabled
               </Text>
             )}
           </Flex>
@@ -391,7 +390,7 @@ const PoolConfiguration = ({
           <ModalDivider />
 
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <Text fontWeight="bold">{t('Close Factor')}:</Text>
+            <Text fontWeight="bold">Close Factor:</Text>
             <SliderWithLabel
               ml="auto"
               value={closeFactor}
@@ -407,13 +406,13 @@ const PoolConfiguration = ({
                 mt={{ base: 2, md: 0 }}
                 onClick={updateCloseFactor}
               >
-                {t('Save')}
+                Save
               </Button>
             ) : null}
           </Flex>
           <ModalDivider />
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <Text fontWeight="bold">{t('Liquidation Incentive')}:</Text>
+            <Text fontWeight="bold">Liquidation Incentive:</Text>
             <SliderWithLabel
               ml="auto"
               value={liquidationIncentive}
@@ -431,7 +430,7 @@ const PoolConfiguration = ({
                 mt={{ base: 2, md: 0 }}
                 onClick={updateLiquidationIncentive}
               >
-                {t('Save')}
+                Save
               </Button>
             ) : null}
           </Flex>

@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
 
 import { FilterButton } from '@ui/components/shared/Buttons';
@@ -27,13 +26,12 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     () => chains?.map((chain) => getChainMetadata(chain.id)),
     [chains]
   );
-  const { t } = useTranslation();
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Select a Network')}</ModalHeader>
+        <ModalHeader>Select a Network</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <ModalBody mt={4} mb={6}>

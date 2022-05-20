@@ -1,7 +1,6 @@
 import { AvatarGroup, Text, useDisclosure } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { memo } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
 import ConnectWalletButton from '@ui/components/shared/ConnectWalletButton';
@@ -33,7 +32,7 @@ const ClaimRewardsButton = () => {
   const authedOpenModal = useAuthedCallback(openClaimModal);
 
   const { cCard } = useColors();
-  const { t } = useTranslation();
+
   const isMobile = useIsSmallScreen();
 
   const { data: claimableRewards } = useAllClaimableRewards();
@@ -59,7 +58,7 @@ const ClaimRewardsButton = () => {
           </AvatarGroup>
           {!isMobile && (
             <Text ml={1} mr={1} fontWeight="semibold" color={cCard.txtColor}>
-              {t('Claim Rewards')}
+              Claim Rewards
             </Text>
           )}
         </Center>
