@@ -2,32 +2,28 @@
 name: Custom Asset Support
 about: Add support for specific asset in a specific chain
 title: Support Asset $XXX
-labels: ''
+labels: 'Custom Asset Support'
 assignees: ''
 
 ---
 
-We'd like to support yet another custom asset
+<h3> Custom Asset Information: </h3>
 
-**Symbol**: ETH 
+**Symbol**: *_ETH_* <br>
+**Block Explorer URL**:  *https://etherscan.io/address/0x0000000000000000000000000000000000000000* <br>
+**Chain**: *_Ethereum_*
 
-**Block Explorer URL**:  https://etherscan.io/address/0x0000000000000000000000000000000000000000 
+*Please mark the tasks below, as appropriate.  Then link Github items together using:* ![]()
 
-**Chain**: Ethereum
+- [ ] **ChainLink / DIA / Flux Supported** 
+- [ ] **Requires Custom Oracle** <br>
+&nbsp;&nbsp;&nbsp;- [Link to Custom Oracle Template](https://github.com/Midas-Protocol/contracts/issues/new?assignees=&labels=&template=custom-oracle.md&title=Custom+Oracle+for+%24XXX)
+- [ ] **Requires Custom Liquidator** <br>
+&nbsp;&nbsp;&nbsp;- [Link to Custom Liquidator Template](https://github.com/Midas-Protocol/contracts/issues/new?assignees=&labels=&template=custom-liquidation-strategy.md&title=Custom+Liquidation+Strategy+for+%24XXX)
+- [ ] **ERC-4626 Support** <br>
+&nbsp;&nbsp;&nbsp;&nbsp;- [Link to ERC-4626 Template](https://github.com/Midas-Protocol/contracts/issues/new?assignees=&labels=&template=erc-4626-strategy.md&title=ERC-4626+Strategy+for+%24XXX)
 
-- [ ] **ChainLink / DIA / Flux Supported**
-- [ ] **Requires Custom Oracle** 
-- [ ] **Requires Custom Liquidator**
-
-### External Tasks
-- [ ] **ERC 4626 Support**
-  - Link to ERC4626 ticket: N/A
-- [ ] **Custom Oracle**
-  - Link to Custom Oracle Task: N/A
-- [ ] **Custom Liquidator**
-  - Link to Custom Liquidator Task: N/A
-
-### Tasks
+<h3> Tasks: </h3>
 
 - [ ] Edit the supported assets:  https://github.com/Midas-Protocol/monorepo/tree/development/packages/sdk/src/chainConfig/assets and add the asset to the respective chain
 
