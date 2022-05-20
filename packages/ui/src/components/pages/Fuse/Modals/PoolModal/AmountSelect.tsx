@@ -24,7 +24,6 @@ import {
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 import { HashLoader } from 'react-spinners';
@@ -111,34 +110,28 @@ const AmountSelect = ({
 
   let depositOrWithdrawAlert = null;
   if (mode === FundOperationMode.BORROW && isBorrowPaused) {
-    depositOrWithdrawAlert ="Borrowing is disabled for this asset.";
+    depositOrWithdrawAlert = 'Borrowing is disabled for this asset.';
   } else if (amount === null || amount.isZero()) {
     if (mode === FundOperationMode.SUPPLY) {
-      depositOrWithdrawAlert ="Enter a valid amount to supply.";
+      depositOrWithdrawAlert = 'Enter a valid amount to supply.';
     } else if (mode === FundOperationMode.BORROW) {
-      depositOrWithdrawAlert ="Enter a valid amount to borrow.";
+      depositOrWithdrawAlert = 'Enter a valid amount to borrow.';
     } else if (mode === FundOperationMode.WITHDRAW) {
-      depositOrWithdrawAlert ="Enter a valid amount to withdraw.";
+      depositOrWithdrawAlert = 'Enter a valid amount to withdraw.';
     } else {
-      depositOrWithdrawAlert ="Enter a valid amount to repay.";
+      depositOrWithdrawAlert = 'Enter a valid amount to repay.';
     }
   } else if (amountIsValid === undefined) {
-    depositOrWithdrawAlert = t('Loading your balance of {{token}}...', {
-      token: asset.underlyingSymbol,
-    });
+    depositOrWithdrawAlert = `Loading your balance of ${asset.underlyingSymbol}...`;
   } else if (!amountIsValid) {
     if (mode === FundOperationMode.SUPPLY) {
-      depositOrWithdrawAlert = t("You don't have enough {{token}}!", {
-        token: asset.underlyingSymbol,
-      });
+      depositOrWithdrawAlert = `You don't have enough ${asset.underlyingSymbol}!`;
     } else if (mode === FundOperationMode.REPAY) {
-      depositOrWithdrawAlert = t("You don't have enough {{token}} or are over-repaying!", {
-        token: asset.underlyingSymbol,
-      });
+      depositOrWithdrawAlert = `You don't have enough ${asset.underlyingSymbol} or are over-repaying!`;
     } else if (mode === FundOperationMode.WITHDRAW) {
-      depositOrWithdrawAlert ="You cannot withdraw this much!";
+      depositOrWithdrawAlert = 'You cannot withdraw this much!';
     } else if (mode === FundOperationMode.BORROW) {
-      depositOrWithdrawAlert ="You cannot borrow this much!";
+      depositOrWithdrawAlert = 'You cannot borrow this much!';
     }
   } else {
     depositOrWithdrawAlert = null;
@@ -365,7 +358,7 @@ const AmountSelect = ({
               onClick={onConfirm}
               isDisabled={!amountIsValid}
             >
-              {depositOrWithdrawAlert ??"Confirm"}
+              {depositOrWithdrawAlert ?? 'Confirm'}
             </Button>
           </Column>
         </>
@@ -595,7 +588,7 @@ const StatsColumn = ({
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
             <Text fontWeight="bold" flexShrink={0}>
-              {isSupplyingOrWithdrawing ?"Supply APY') : t('Borrow APR"}:
+              {isSupplyingOrWithdrawing ? 'Supply APY' : 'Borrow APR'}:
             </Text>
             <Text fontWeight="bold" fontSize={updatedAPYDiffIsLarge ? 'sm' : 'lg'}>
               {isSupplyingOrWithdrawing ? supplyAPY.toFixed(2) : borrowAPR.toFixed(2)}%

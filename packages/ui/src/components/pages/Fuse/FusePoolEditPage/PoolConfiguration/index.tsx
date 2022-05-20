@@ -17,7 +17,6 @@ import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk
 import { BigNumber, Contract, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -268,7 +267,7 @@ const PoolConfiguration = ({
   return (
     <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%">
       <Heading size="sm" px={4} py={4}>
-        {t('Pool {{num}} Configuration', { num: poolId })}
+        {`Pool ${poolId} Configuration`}
       </Heading>
 
       <ModalDivider />

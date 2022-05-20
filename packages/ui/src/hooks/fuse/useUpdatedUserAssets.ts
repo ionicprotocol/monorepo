@@ -50,8 +50,8 @@ const useUpdatedUserAssets = ({
           supplyBalance,
 
           supplyBalanceNative:
-            (Number(utils.formatUnits(supplyBalance, 18)) *
-              Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18))) *
+            Number(utils.formatUnits(supplyBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)) *
             usdPrice,
 
           totalSupply,
