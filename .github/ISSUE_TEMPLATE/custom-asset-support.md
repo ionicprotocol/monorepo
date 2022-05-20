@@ -9,7 +9,7 @@ assignees: ''
 
 <h3> Custom Asset Information: </h3> <br>
 
-Use the reference below for Asset Information.  If not found in the table, please notify Nik via Discord <br>
+*Use the reference below for Asset Information.  If not found in the table, please notify Nik via Discord* <br>
 [Link to Notion Custom Asset Table](https://www.notion.so/4627d911ce3c4589aef9f7592650e7b2?v=4b3abb4ebfd44018bcf47496d512b778)
 
 **Symbol**: *_ETH_* <br>
