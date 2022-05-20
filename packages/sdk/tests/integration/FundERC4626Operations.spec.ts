@@ -8,6 +8,7 @@ import { BigNumber, constants, providers, utils } from "ethers";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
 import { tradeAssetForAsset } from "../utils/setup";
+import { BSC_POOLS } from "../utils/assets";
 
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("FundOperationsERC4626Module", function () {
   let poolAddress: string;
@@ -15,7 +16,7 @@ import { tradeAssetForAsset } from "../utils/setup";
   let chainId: number;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
-  const poolName = "Pool-Fund-Operations-Test";
+  const poolName = BSC_POOLS.BOMB;
 
   this.beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
@@ -36,6 +37,7 @@ import { tradeAssetForAsset } from "../utils/setup";
       ethers,
       poolName
     );
+    console.log(assets)
     await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",
@@ -49,10 +51,8 @@ import { tradeAssetForAsset } from "../utils/setup";
 
     const BTCB = assets.find((a) => a.symbol === "BTCB");
     const BOMB = assets.find((a) => a.symbol === "BOMB");
-    const ETH = assets.find((a) => a.symbol === "mETH");
     // acquire some test tokens
     await tradeNativeForAsset({ account: "bob", token: BTCB.underlying, amount: "500" });
-    await tradeNativeForAsset({ account: "bob", token: ETH.underlying, amount: "100" });
     await tradeAssetForAsset({ account: "bob", token1: BTCB.underlying, token2: BOMB.underlying, amount: "0.2" });
   });
 
@@ -63,10 +63,9 @@ import { tradeAssetForAsset } from "../utils/setup";
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
     const BTCB = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "BTCB");
     const BOMB = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "BOMB");
-    const ETH = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "ETH");
 
     const amounts = ["0.1", "1000", "4"];
-    for (const [idx, asset] of [BTCB, BOMB, ETH].entries()) {
+    for (const [idx, asset] of [BTCB, BOMB].entries()) {
       console.log(`Supplying: ${asset.underlyingSymbol}`);
       const res = await sdk.supply(
         asset.cToken,
