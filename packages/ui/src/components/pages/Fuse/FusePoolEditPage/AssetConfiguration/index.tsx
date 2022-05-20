@@ -1,6 +1,5 @@
 import { Box, Heading, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { useTranslation } from 'next-i18next';
 import React, { useEffect, useState } from 'react';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';

@@ -13,7 +13,6 @@ import {
 import { BigNumber, constants, ContractFunction, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';

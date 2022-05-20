@@ -2,7 +2,6 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Button, Link as ChakraLink, useToast } from '@chakra-ui/react';
 import { Provider, Web3Provider } from '@ethersproject/providers';
 import { Fuse } from '@midas-capital/sdk';
-import { useTranslation } from 'next-i18next';
 import {
   createContext,
   Dispatch,
