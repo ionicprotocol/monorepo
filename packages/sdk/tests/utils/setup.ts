@@ -74,6 +74,10 @@ export const tradeAssetForAsset = async ({ token1, token2, amount, account }) =>
   await run("swap-token-for-token", { token1, token2, amount, account });
 };
 
+export const wrapNativeToken = async ({ amount, account }) => {
+  await run("wrap-native-token", { amount, account });
+};
+
 export const setUpPools = async (poolNames: BSC_POOLS[]) => {
   let poolAddress: string;
   const { deployer } = await ethers.getNamedSigners();
