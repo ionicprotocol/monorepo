@@ -34,7 +34,7 @@ export const getAssetsConf = async (
   if (chainId === 31337 || chainId === 1337) {
     assets = await getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
   } else if (chainId === 56) {
-    if (poolName) {
+    if (poolName in BSC_POOLS) {
       const bscPools = await getBscPools(comptroller, fuseFeeDistributor, interestRateModelAddress);
       assets = bscPools[poolName];
     } else {
@@ -75,7 +75,8 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
   const btc = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
   const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
-  const assets = [btc, busd, wbnb];
+  const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
+  const assets = [btc, busd, eth, wbnb];
 
   return assets.map((a, i) => {
     return {
