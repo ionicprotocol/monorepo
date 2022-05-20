@@ -16,7 +16,7 @@ assignees: ''
 **Block Explorer URL**:  *https://etherscan.io/address/0x0000000000000000000000000000000000000000* <br>
 **Chain**: *_Ethereum_*
 
-*Please mark the tasks below, as appropriate.  Then link Github items together using:* ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png)
+*Please mark the tasks below, as appropriate.  Then link supporting Github items together using:* ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png)
 
 - [ ] **ChainLink / DIA / Flux Supported** 
 - [ ] **Requires Custom Oracle** <br>
