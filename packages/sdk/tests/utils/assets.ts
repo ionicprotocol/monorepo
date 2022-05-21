@@ -16,7 +16,7 @@ const getBscPools = async (comptroller, fuseFeeDistributor, interestRateModelAdd
     [BSC_POOLS.JARVIS]: await getJarvisPoolAssets(comptroller, fuseFeeDistributor, interestRateModelAddress),
     [BSC_POOLS.ALPACA]: await getAlpacaPoolAssets(comptroller, fuseFeeDistributor, interestRateModelAddress),
     [BSC_POOLS.BOMB]: await getBombPoolAssets(comptroller, fuseFeeDistributor, interestRateModelAddress),
-    [BSC_POOLS.ELLIPSIS]: await getEllipsisPoolAssets(comptroller, fuseFeeDistributor, interestRateModelAddress)
+    [BSC_POOLS.ELLIPSIS]: await getEllipsisPoolAssets(comptroller, fuseFeeDistributor, interestRateModelAddress),
   };
 };
 
@@ -66,7 +66,7 @@ export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, intere
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
-      bypassPriceFeedCheck: true
+      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -90,7 +90,7 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
-      bypassPriceFeedCheck: true
+      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -117,7 +117,7 @@ export const getAlpacaPoolAssets = async (
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: ethPlugin.strategyAddress },
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: usdcPlugin.strategyAddress },
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: busdPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: wbnbPlugin.strategyAddress }
+    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: wbnbPlugin.strategyAddress },
   ];
   return assets.map((a, i) => {
     return {
@@ -132,7 +132,7 @@ export const getAlpacaPoolAssets = async (
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
-      bypassPriceFeedCheck: true
+      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -158,7 +158,7 @@ export const getJarvisPoolAssets = async (
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
-      bypassPriceFeedCheck: true
+      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -181,7 +181,7 @@ export const getBombPoolAssets = async (
   const assetConfigs = [
     { delegateContractName: DelegateContractName.CErc20Delegate },
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombbtcbPlugin.strategyAddress }
+    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombbtcbPlugin.strategyAddress },
   ];
   return assets.map((a, i) => {
     return {
@@ -196,7 +196,7 @@ export const getBombPoolAssets = async (
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
-      bypassPriceFeedCheck: true
+      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -219,24 +219,23 @@ export const getEllipsisPoolAssets = async (
     {
       delegateContractName: DelegateContractName.CErc20PluginDelegate,
       plugin: dai3EPSPlugin.strategyAddress,
-      rewardsDistributorConfig: dai3EPSPlugin.dynamicFlywheels.map((rd => {
+      rewardsDistributorConfig: dai3EPSPlugin.dynamicFlywheels.map((rd) => {
         return {
           rewardsDistributor: rd.address,
-          rewardToken: rd.rewardToken
+          rewardToken: rd.rewardToken,
         };
-      }))
+      }),
     },
     {
       delegateContractName: DelegateContractName.CErc20PluginDelegate,
       plugin: threeEPSPlugin.strategyAddress,
-      rewardsDistributorConfig: threeEPSPlugin.dynamicFlywheels.map((rd => {
+      rewardsDistributorConfig: threeEPSPlugin.dynamicFlywheels.map((rd) => {
         return {
           rewardsDistributor: rd.address,
-          rewardToken: rd.rewardToken
+          rewardToken: rd.rewardToken,
         };
-      }))
-
-    }
+      }),
+    },
   ];
   return assets.map((a, i) => {
     return {
@@ -251,7 +250,7 @@ export const getEllipsisPoolAssets = async (
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
-      bypassPriceFeedCheck: true
+      bypassPriceFeedCheck: true,
     };
   });
 };
