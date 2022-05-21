@@ -1,34 +1,31 @@
 import { BigNumber, providers, utils } from "ethers";
-import { deployments, ethers } from "hardhat";
-import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
-import { addCollateral, borrowCollateral } from "../utils/collateral";
-import {
-  EIP20Interface,
-  FuseFeeDistributor,
-  FuseSafeLiquidator,
-  MasterPriceOracle,
-  SimplePriceOracle,
-} from "../../lib/contracts/typechain";
-import { cERC20Conf, ChainLiquidationConfig } from "../../src";
-import { DeployedAsset } from "../utils/pool";
-import { liquidateAndVerify, resetPriceOracle } from "../utils/setup";
-import { getOrCreateFuse } from "../utils/fuseSdk";
-import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
+import { ethers } from "hardhat";
+import { deployAssets, tradeNativeForAsset } from "./utils";
+import { addCollateral, borrowCollateral } from "./utils/collateral";
+import { EIP20Interface, FuseSafeLiquidator, SimplePriceOracle } from "../lib/contracts/typechain";
+import { cERC20Conf, ChainLiquidationConfig } from "../src";
+import { DeployedAsset } from "./utils/pool";
+import { liquidateAndVerify, setUpPools } from "./utils/setup";
+import { getOrCreateFuse } from "./utils/fuseSdk";
+import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
+import { BSC_POOLS, getAssetsConf } from "./utils/assets";
 
-(process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("#safeLiquidateWithFlashLoan", () => {
+describe.skip("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
+  let alpacaAssets: cERC20Conf[];
+  let bombAssets: cERC20Conf[];
+  let alpacaDeployedAssets: DeployedAsset[];
+  let bombDeployedAssets: DeployedAsset[];
 
   let eth: cERC20Conf;
   let erc20One: cERC20Conf;
   let erc20Two: cERC20Conf;
-  let oracle: MasterPriceOracle;
+
   let deployedErc20One: DeployedAsset;
 
   let poolAddress: string;
   let simpleOracle: SimplePriceOracle;
   let liquidator: FuseSafeLiquidator;
-
-  let fuseFeeDistributor: FuseFeeDistributor;
 
   let erc20OneUnderlying: EIP20Interface;
   let erc20TwoUnderlying: EIP20Interface;
@@ -42,23 +39,66 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
   let liquidationConfigOverrides: ChainLiquidationConfig;
 
   beforeEach(async () => {
-    poolName = "liquidation - fl - " + Math.random().toString();
+    console.log("HERE");
+    const { deployer } = await ethers.getNamedSigners();
     ({ chainId } = await ethers.provider.getNetwork());
-    await deployments.fixture("prod");
     const sdk = await getOrCreateFuse();
+    const poolAddresses = await setUpPools([BSC_POOLS.ALPACA, BSC_POOLS.BOMB]);
+
+    console.log(
+      `deployed pools with addresses:\n - ${BSC_POOLS.ALPACA}: ${poolAddresses[0]}\n - ${BSC_POOLS.BOMB}: ${poolAddresses[1]}`
+    );
+    alpacaAssets = await getAssetsConf(
+      poolAddresses[0],
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers,
+      BSC_POOLS.ALPACA
+    );
+    bombAssets = await getAssetsConf(
+      poolAddresses[1],
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers,
+      BSC_POOLS.BOMB
+    );
+
+    console.log("----alpacaAssets----\n", alpacaAssets);
+    console.log("----bombAssets----\n", bombAssets);
+
+    alpacaDeployedAssets = await deployAssets(alpacaAssets, deployer);
+    bombDeployedAssets = await deployAssets(bombAssets, deployer);
+
+    console.log(alpacaDeployedAssets);
+    console.log(bombDeployedAssets);
 
     liquidationConfigOverrides = {
       ...getChainLiquidationConfig(sdk)[chainId],
     };
-    await setUpPriceOraclePrices();
-    ({ poolAddress, liquidator, oracle, fuseFeeDistributor } = await setUpLiquidation(poolName));
+    // ({
+    //   poolAddress,
+    //   deployedEth,
+    //   deployedErc20One,
+    //   deployedErc20Two,
+    //   eth,
+    //   erc20One,
+    //   erc20Two,
+    //   ethCToken,
+    //   erc20OneCToken,
+    //   erc20TwoCToken,
+    //   liquidator,
+    //   erc20OneUnderlying,
+    //   erc20TwoUnderlying,
+    //   erc20OneOriginalUnderlyingPrice,
+    //   erc20TwoOriginalUnderlyingPrice,
+    //   simpleOracle,
+    //   fuseFeeDistributor,
+    // } = await setUpLiquidation(poolName));
   });
 
-  afterEach(async () => {
-    await resetPriceOracle(erc20One, erc20Two);
-  });
+  afterEach(async () => {});
 
-  it("FL - should liquidate a native borrow for token collateral", async function () {
+  it("FL - BOMB Pool", async function () {
     const { alice, bob } = await ethers.getNamedSigners();
 
     console.log(
@@ -66,6 +106,7 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
       utils.formatEther(erc20OneOriginalUnderlyingPrice),
       utils.formatEther(erc20TwoOriginalUnderlyingPrice)
     );
+
     // get some liquidity via Uniswap
     await tradeNativeForAsset({ account: "alice", token: erc20One.underlying, amount: "300" });
 

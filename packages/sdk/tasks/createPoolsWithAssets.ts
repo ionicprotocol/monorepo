@@ -40,6 +40,8 @@ task("pools:create", "Create pool if does not exist")
     const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
 
     // @ts-ignore
+    const assetModule = await import("../tests/utils/assets");
+    // @ts-ignore
     const poolModule = await import("../tests/utils/pool");
     // @ts-ignore
     const fuseModule = await import("../tests/utils/fuseSdk");
@@ -69,9 +71,14 @@ task("pools:create", "Create pool if does not exist")
         priceOracleAddress: taskArgs.priceOracle,
       });
       // Deploy Assets
-      const assets = await poolModule.getPoolAssets(poolAddress, fuseFeeDistributor);
-      const deployedAssets = await poolModule.deployAssets(assets.assets, signer);
-      const [erc20One, erc20Two] = assets.assets.filter((a) => a.underlying !== hre.ethers.constants.AddressZero);
+      const assets = await assetModule.getAssetsConf(
+        poolAddress,
+        fuseFeeDistributor,
+        sdk.irms.JumpRateModel.address,
+        hre.ethers
+      );
+      const deployedAssets = await poolModule.deployAssets(assets, signer);
+      const [erc20One, erc20Two] = assets.filter((a) => a.underlying !== hre.ethers.constants.AddressZero);
 
       const deployedErc20One = deployedAssets.find((a) => a.underlying === erc20One.underlying);
       const deployedErc20Two = deployedAssets.find((a) => a.underlying === erc20Two.underlying);

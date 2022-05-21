@@ -12,7 +12,6 @@ import {
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useSigner } from 'wagmi';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -67,7 +66,6 @@ const ClaimableToken = ({
 };
 
 const ClaimRewardsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { t } = useTranslation();
   const { fuse, address } = useRari();
   const toast = useSuccessToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
@@ -108,14 +106,14 @@ const ClaimRewardsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Claim Rewards')}</ModalHeader>
+        <ModalHeader>Claim Rewards</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <VStack m={4}>
           {!claimableRewards ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
-                {t('No rewards available to be claimed')}
+                No rewards available to be claimed
               </Text>
             </Center>
           ) : (
@@ -135,7 +133,7 @@ const ClaimRewardsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () =
                   onClick={claimRewards(claimableRewards)}
                   isLoading={isClaiming}
                 >
-                  {t('Claim All')}
+                  Claim All
                 </Button>
               </Center>
             </>
