@@ -74,6 +74,10 @@ export const tradeAssetForAsset = async ({ token1, token2, amount, account }) =>
   await run("swap-token-for-token", { token1, token2, amount, account });
 };
 
+export const wrapNativeToken = async ({ amount, account }) => {
+  await run("wrap-native-token", { amount, account });
+};
+
 export const setUpPools = async (poolNames: BSC_POOLS[]) => {
   let poolAddress: string;
   const { deployer } = await ethers.getNamedSigners();
@@ -86,33 +90,12 @@ export const setUpPools = async (poolNames: BSC_POOLS[]) => {
 };
 
 export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
-  let eth: cERC20Conf;
-  let erc20One: cERC20Conf;
-  let erc20Two: cERC20Conf;
-
-  let deployedEth: DeployedAsset;
-  let deployedErc20One: DeployedAsset;
-  let deployedErc20Two: DeployedAsset;
-
   let poolAddress: string;
-  let simpleOracle: SimplePriceOracle;
   let oracle: MasterPriceOracle;
   let liquidator: FuseSafeLiquidator;
   let fuseFeeDistributor: FuseFeeDistributor;
 
-  let ethCToken: CEther;
-  let erc20OneCToken: CErc20;
-  let erc20TwoCToken: CErc20;
-
-  let erc20OneUnderlying: EIP20Interface;
-  let erc20TwoUnderlying: EIP20Interface;
-
-  let erc20OneOriginalUnderlyingPrice: BigNumber;
-  let erc20TwoOriginalUnderlyingPrice: BigNumber;
-
-  let tx: providers.TransactionResponse;
-
-  const { bob, deployer, rando } = await ethers.getNamedSigners();
+  const { deployer, rando } = await ethers.getNamedSigners();
 
   const sdk = await getOrCreateFuse();
 
@@ -143,39 +126,15 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
     poolName
   );
 
-  erc20One = assets.find((a) => a.underlying === assetSymbols["BTCB-BOMB"]); // find first one
-
-  expect(erc20One.underlying).to.be.ok;
-  erc20Two = assets.find((a) => a.underlying !== constants.AddressZero && a.underlying !== erc20One.underlying); // find second one
-
-  expect(erc20Two.underlying).to.be.ok;
-  eth = assets.find((a) => a.underlying === constants.AddressZero);
-
-  erc20OneOriginalUnderlyingPrice = await oracle.callStatic.price(erc20One.underlying);
-  erc20TwoOriginalUnderlyingPrice = await oracle.callStatic.price(erc20Two.underlying);
-
-  console.log("Setting up liquis with prices: ");
-  console.log(`erc20One: ${erc20One.symbol}, price: ${ethers.utils.formatEther(erc20OneOriginalUnderlyingPrice)}`);
-  console.log(`erc20Two: ${erc20Two.symbol}, price: ${ethers.utils.formatEther(erc20TwoOriginalUnderlyingPrice)}`);
-
+  for (const asset of assets) {
+    const assetPrice = await oracle.callStatic.price(asset.underlying);
+    console.log("Setting up liquis with prices: ");
+    console.log(`erc20Two: ${asset.symbol}, price: ${ethers.utils.formatEther(assetPrice)}`);
+  }
   return {
     poolAddress,
-    deployedEth,
-    deployedErc20One,
-    deployedErc20Two,
-    eth,
-    erc20One,
-    erc20Two,
-    ethCToken,
-    erc20OneCToken,
-    erc20TwoCToken,
     liquidator,
-    erc20OneUnderlying,
-    erc20TwoUnderlying,
-    erc20OneOriginalUnderlyingPrice,
-    erc20TwoOriginalUnderlyingPrice,
     oracle,
-    simpleOracle,
     fuseFeeDistributor,
   };
 };

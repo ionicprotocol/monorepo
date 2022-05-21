@@ -3,11 +3,10 @@ import { deployments, ethers } from "hardhat";
 import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import { addCollateral, borrowCollateral } from "../utils/collateral";
 import {
-  CErc20,
-  CEther,
   EIP20Interface,
   FuseFeeDistributor,
   FuseSafeLiquidator,
+  MasterPriceOracle,
   SimplePriceOracle,
 } from "../../lib/contracts/typechain";
 import { cERC20Conf, ChainLiquidationConfig } from "../../src";
@@ -22,19 +21,14 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
   let eth: cERC20Conf;
   let erc20One: cERC20Conf;
   let erc20Two: cERC20Conf;
-
-  let deployedEth: DeployedAsset;
+  let oracle: MasterPriceOracle;
   let deployedErc20One: DeployedAsset;
-  let deployedErc20Two: DeployedAsset;
 
   let poolAddress: string;
   let simpleOracle: SimplePriceOracle;
   let liquidator: FuseSafeLiquidator;
-  let fuseFeeDistributor: FuseFeeDistributor;
 
-  let ethCToken: CEther;
-  let erc20OneCToken: CErc20;
-  let erc20TwoCToken: CErc20;
+  let fuseFeeDistributor: FuseFeeDistributor;
 
   let erc20OneUnderlying: EIP20Interface;
   let erc20TwoUnderlying: EIP20Interface;
@@ -57,25 +51,7 @@ import { getChainLiquidationConfig } from "../../src/modules/liquidation/config"
       ...getChainLiquidationConfig(sdk)[chainId],
     };
     await setUpPriceOraclePrices();
-    ({
-      poolAddress,
-      deployedEth,
-      deployedErc20One,
-      deployedErc20Two,
-      eth,
-      erc20One,
-      erc20Two,
-      ethCToken,
-      erc20OneCToken,
-      erc20TwoCToken,
-      liquidator,
-      erc20OneUnderlying,
-      erc20TwoUnderlying,
-      erc20OneOriginalUnderlyingPrice,
-      erc20TwoOriginalUnderlyingPrice,
-      simpleOracle,
-      fuseFeeDistributor,
-    } = await setUpLiquidation(poolName));
+    ({ poolAddress, liquidator, oracle, fuseFeeDistributor } = await setUpLiquidation(poolName));
   });
 
   afterEach(async () => {

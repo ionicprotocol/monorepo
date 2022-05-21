@@ -189,3 +189,30 @@ task("get-token-pair", "Get token pair address")
     console.log(`Token pair: ${pair}`);
     return pair;
   });
+
+task("wrap-native-token", "Get token pair address")
+  .addOptionalParam("amount", "Amount to trade", "100", types.string)
+  .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
+  .setAction(async ({ account: _account, amount: _amount }, { ethers }) => {
+    // @ts-ignore
+    const fuseModule = await import("../tests/utils/fuseSdk");
+    const sdk = await fuseModule.getOrCreateFuse();
+    const account = await ethers.getNamedSigner(_account);
+
+    const wnative = new ethers.Contract(
+      sdk.chainSpecificAddresses.W_TOKEN,
+      [
+        "function deposit() public payable",
+        "function approve(address guy, uint wad) public returns (bool)",
+        "function balanceOf(address owner) public returns (uint256)",
+      ],
+      account
+    );
+    let tx;
+    tx = await wnative.approve(account.address, ethers.constants.MaxInt256);
+    await tx.wait();
+    await wnative.deposit({ value: ethers.utils.parseEther(_amount) });
+    await tx.wait();
+    const balance = await wnative.callStatic.balanceOf(account.address);
+    console.log(`WNATIVE balance: ${ethers.utils.formatEther(balance)}`);
+  });
