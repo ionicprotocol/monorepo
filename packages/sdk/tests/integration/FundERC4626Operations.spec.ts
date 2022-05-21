@@ -57,7 +57,7 @@ import { assetSymbols } from "../../src/chainConfig";
     ).filter((a) => a.symbol !== assetSymbols.BTCB && a.symbol !== assetSymbols.WBNB);
 
     const assets = bombAssets.concat(...baseAssets).concat(...alpacaAssets);
-    console.log("ALL ASSETS", assets);
+
     await setUpPriceOraclePrices(assets.map((a) => a.underlying));
     const simpleOracle = (await ethers.getContractAt(
       "SimplePriceOracle",
