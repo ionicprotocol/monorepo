@@ -210,13 +210,15 @@ export interface FusePool {
   timestampPosted: number;
 }
 
+type DynamicFlywheelConfig = {
+  address: string;
+  rewardToken: string;
+};
+
 export type PluginConfig = {
   strategyName: string;
   strategyAddress: string;
-  dynamicFlywheel?: {
-    address: string;
-    rewardToken: string;
-  };
+  dynamicFlywheels?: DynamicFlywheelConfig[];
 };
 
 export type SupportedAsset = {
