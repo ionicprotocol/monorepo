@@ -24,7 +24,6 @@ import {
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 import { HashLoader } from 'react-spinners';
@@ -73,8 +72,6 @@ const AmountSelect = ({
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
 
-  const { t } = useTranslation();
-
   const { cCard, cSwitch } = useColors();
 
   const updateAmount = (newAmount: string) => {
@@ -113,34 +110,28 @@ const AmountSelect = ({
 
   let depositOrWithdrawAlert = null;
   if (mode === FundOperationMode.BORROW && isBorrowPaused) {
-    depositOrWithdrawAlert = t('Borrowing is disabled for this asset.');
+    depositOrWithdrawAlert = 'Borrowing is disabled for this asset.';
   } else if (amount === null || amount.isZero()) {
     if (mode === FundOperationMode.SUPPLY) {
-      depositOrWithdrawAlert = t('Enter a valid amount to supply.');
+      depositOrWithdrawAlert = 'Enter a valid amount to supply.';
     } else if (mode === FundOperationMode.BORROW) {
-      depositOrWithdrawAlert = t('Enter a valid amount to borrow.');
+      depositOrWithdrawAlert = 'Enter a valid amount to borrow.';
     } else if (mode === FundOperationMode.WITHDRAW) {
-      depositOrWithdrawAlert = t('Enter a valid amount to withdraw.');
+      depositOrWithdrawAlert = 'Enter a valid amount to withdraw.';
     } else {
-      depositOrWithdrawAlert = t('Enter a valid amount to repay.');
+      depositOrWithdrawAlert = 'Enter a valid amount to repay.';
     }
   } else if (amountIsValid === undefined) {
-    depositOrWithdrawAlert = t('Loading your balance of {{token}}...', {
-      token: asset.underlyingSymbol,
-    });
+    depositOrWithdrawAlert = `Loading your balance of ${asset.underlyingSymbol}...`;
   } else if (!amountIsValid) {
     if (mode === FundOperationMode.SUPPLY) {
-      depositOrWithdrawAlert = t("You don't have enough {{token}}!", {
-        token: asset.underlyingSymbol,
-      });
+      depositOrWithdrawAlert = `You don't have enough ${asset.underlyingSymbol}!`;
     } else if (mode === FundOperationMode.REPAY) {
-      depositOrWithdrawAlert = t("You don't have enough {{token}} or are over-repaying!", {
-        token: asset.underlyingSymbol,
-      });
+      depositOrWithdrawAlert = `You don't have enough ${asset.underlyingSymbol} or are over-repaying!`;
     } else if (mode === FundOperationMode.WITHDRAW) {
-      depositOrWithdrawAlert = t('You cannot withdraw this much!');
+      depositOrWithdrawAlert = 'You cannot withdraw this much!';
     } else if (mode === FundOperationMode.BORROW) {
-      depositOrWithdrawAlert = t('You cannot borrow this much!');
+      depositOrWithdrawAlert = 'You cannot borrow this much!';
     }
   } else {
     depositOrWithdrawAlert = null;
@@ -248,10 +239,10 @@ const AmountSelect = ({
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
           <HashLoader size={70} color={cCard.txtColor} loading />
           <Heading mt="30px" textAlign="center" size="md">
-            {t('Check your wallet to submit the transactions')}
+            Check your wallet to submit the transactions
           </Heading>
           <Text fontSize="sm" mt="15px" textAlign="center">
-            {t('Do not close this tab until you submit all transactions!')}
+            Do not close this tab until you submit all transactions!
           </Text>
         </Column>
       ) : (
@@ -339,7 +330,7 @@ const AmountSelect = ({
             {showEnableAsCollateral ? (
               <DashboardBox p={4} width="100%" mt={4}>
                 <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold">{t('Enable As Collateral')}:</Text>
+                  <Text fontWeight="bold">Enable As Collateral:</Text>
                   <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
                   <Switch
                     h="20px"
@@ -367,7 +358,7 @@ const AmountSelect = ({
               onClick={onConfirm}
               isDisabled={!amountIsValid}
             >
-              {depositOrWithdrawAlert ?? t('Confirm')}
+              {depositOrWithdrawAlert ?? 'Confirm'}
             </Button>
           </Column>
         </>
@@ -417,7 +408,7 @@ const TabBar = ({
   setAmount: (value: BigNumber) => void;
 }) => {
   const isSupplySide = mode < 2;
-  const { t } = useTranslation();
+
   const { cOutlineBtn } = useColors();
 
   // Woohoo okay so there's some pretty weird shit going on in this component.
@@ -479,13 +470,13 @@ const TabBar = ({
           <TabList>
             {isSupplySide ? (
               <>
-                <AmountTab mr={2}>{t('Supply')}</AmountTab>
-                <AmountTab>{t('Withdraw')}</AmountTab>
+                <AmountTab mr={2}>Supply</AmountTab>
+                <AmountTab>Withdraw</AmountTab>
               </>
             ) : (
               <>
-                <AmountTab mr={2}>{t('Borrow')}</AmountTab>
-                <AmountTab>{t('Repay')}</AmountTab>
+                <AmountTab mr={2}>Borrow</AmountTab>
+                <AmountTab>Repay</AmountTab>
               </>
             )}
           </TabList>
@@ -508,8 +499,6 @@ const StatsColumn = ({
   amount: BigNumber;
   enableAsCollateral: boolean;
 }) => {
-  const { t } = useTranslation();
-
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
   const updatedAssets: NativePricedFuseAsset[] | undefined = useUpdatedUserAssets({
     mode,
@@ -573,7 +562,7 @@ const StatsColumn = ({
             // color={color}
           >
             <Text fontWeight="bold" flexShrink={0}>
-              {t('Supply Balance')}:
+              Supply Balance:
             </Text>
             <SimpleTooltip
               label={`${supplyBalanceFrom}${
@@ -599,7 +588,7 @@ const StatsColumn = ({
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
             <Text fontWeight="bold" flexShrink={0}>
-              {isSupplyingOrWithdrawing ? t('Supply APY') : t('Borrow APR')}:
+              {isSupplyingOrWithdrawing ? 'Supply APY' : 'Borrow APR'}:
             </Text>
             <Text fontWeight="bold" fontSize={updatedAPYDiffIsLarge ? 'sm' : 'lg'}>
               {isSupplyingOrWithdrawing ? supplyAPY.toFixed(2) : borrowAPR.toFixed(2)}%
@@ -617,7 +606,7 @@ const StatsColumn = ({
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
             <Text fontWeight="bold" flexShrink={0}>
-              {t('Borrow Limit')}:
+              Borrow Limit:
             </Text>
             <Text fontWeight="bold" fontSize={isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
               {smallUsdFormatter(borrowLimit)}
@@ -631,7 +620,7 @@ const StatsColumn = ({
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold">{t('Debt Balance')}:</Text>
+            <Text fontWeight="bold">Debt Balance:</Text>
             <Text fontWeight="bold" fontSize={!isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
               {smallUsdFormatter(asset.borrowBalanceNative)}
               {!isSupplyingOrWithdrawing ? (
@@ -694,7 +683,6 @@ const TokenNameAndMaxButton = ({
     }
   };
 
-  const { t } = useTranslation();
   const { cSolidBtn } = useColors();
 
   return (
@@ -709,7 +697,7 @@ const TokenNameAndMaxButton = ({
       </Row>
 
       <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
-        {t('MAX')}
+        MAX
       </Button>
     </Row>
   );

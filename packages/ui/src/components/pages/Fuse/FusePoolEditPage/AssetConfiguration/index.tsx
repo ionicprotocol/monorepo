@@ -1,6 +1,5 @@
 import { Box, Heading, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { useTranslation } from 'next-i18next';
 import React, { useEffect, useState } from 'react';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
@@ -23,8 +22,6 @@ const AssetConfiguration = ({
   poolName: string;
   poolID: string;
 }) => {
-  const { t } = useTranslation();
-
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -41,7 +38,7 @@ const AssetConfiguration = ({
       flexShrink={0}
     >
       <ConfigRow mainAxisAlignment="space-between">
-        <Heading size="sm">{t('Assets Configuration')}</Heading>
+        <Heading size="sm">Assets Configuration</Heading>
 
         <AddAssetButton
           comptrollerAddress={comptrollerAddress}
@@ -53,7 +50,7 @@ const AssetConfiguration = ({
 
       <ConfigRow>
         <Text fontWeight="bold" mr={2}>
-          {t('Assets:')}
+          Assets:
         </Text>
 
         {assets.map((asset, index, array) => {

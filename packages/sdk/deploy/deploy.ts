@@ -289,10 +289,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     },
     waitConfirmations: 1,
   });
+  console.log(
+    `Initialised MPO with for tokens: ${constants.AddressZero}: ${fixedNativePO.address}, ${chainDeployParams.wtoken}: ${fixedNativePO.address}`
+  );
 
   ////
   //// HELPERS - ADDRESSES PROVIDER
-  const ap = await deployments.deploy("AddressesProvider", {
+  await deployments.deploy("AddressesProvider", {
     from: deployer,
     log: true,
     proxy: {

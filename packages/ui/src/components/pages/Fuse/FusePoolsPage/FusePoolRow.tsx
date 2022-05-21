@@ -14,7 +14,6 @@ import { FusePoolData } from '@midas-capital/sdk';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -59,7 +58,7 @@ const PoolRow = ({
   }, [setShowDetails]);
 
   const router = useRouter();
-  const { t } = useTranslation();
+
   const { scanUrl, setLoading, currentChain } = useRari();
   return (
     <VStack
@@ -189,7 +188,7 @@ const PoolRow = ({
               <Column mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
                   <Text fontWeight="bold" textAlign="center">
-                    {t('Your Borrow Balance')}
+                    Your Borrow Balance
                   </Text>
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
@@ -203,7 +202,7 @@ const PoolRow = ({
               <Column mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
                   <Text fontWeight="bold" textAlign="center">
-                    {t('Your Supply Balance')}
+                    Your Supply Balance
                   </Text>
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
@@ -219,7 +218,7 @@ const PoolRow = ({
               {rewardTokens.length ? (
                 <>
                   <Text fontWeight="bold" textAlign="center" mr={4}>
-                    {t('Rewards')}:
+                    Rewards:
                   </Text>
                   <AvatarGroup size="sm" max={30}>
                     {rewardTokens.map((token, i) => (
@@ -229,7 +228,7 @@ const PoolRow = ({
                 </>
               ) : (
                 <Text fontWeight="bold" textAlign="center">
-                  {t('Rewards ( Not available )')}
+                  Rewards ( Not available )
                 </Text>
               )}
             </Row>
@@ -238,7 +237,7 @@ const PoolRow = ({
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%">
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width={52}>
                 <Text fontWeight="bold" textAlign="center">
-                  {t('Most Supplied Asset')}
+                  Most Supplied Asset
                 </Text>
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" mr={6}>
@@ -261,7 +260,7 @@ const PoolRow = ({
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={2}>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width={52}>
                 <Text fontWeight="bold" textAlign="center">
-                  {t('Top Lending APY')}
+                  Top Lending APY
                 </Text>
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" mr={6}>
@@ -287,7 +286,7 @@ const PoolRow = ({
             </Row>
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={2}>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width={52}>
-                <Text fontWeight="bold">{t('Top Stable Borrow APR')}</Text>
+                <Text fontWeight="bold">Top Stable Borrow APR</Text>
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" mr={6}>
                 {poolDetails?.topBorrowAPRAsset && (
@@ -312,7 +311,7 @@ const PoolRow = ({
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={2}>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width="268px">
                 <Text fontWeight="bold" textAlign="center">
-                  {t('Pool Address')}
+                  Pool Address
                 </Text>
               </Column>
               {fusePoolData?.comptroller && (
