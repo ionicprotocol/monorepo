@@ -174,6 +174,14 @@ export const AssetSettings = ({
     const irmConf: InterestRateModelConf = {
       interestRateModel: interestRateModel,
     };
+    const rdConfig = plugin?.dynamicFlywheels
+      ? plugin.dynamicFlywheels.map((rd) => {
+          return {
+            rewardsDistributor: rd.address,
+            rewardToken: rd.rewardToken,
+          };
+        })
+      : undefined;
     const tokenConf: cERC20Conf = {
       admin: address,
       adminFee: adminFee,
@@ -190,17 +198,20 @@ export const AssetSettings = ({
       plugin: plugin?.strategyAddress,
       delegateContractName: !plugin
         ? DelegateContractName.CErc20Delegate
-        : plugin.dynamicFlywheel
+        : plugin.dynamicFlywheels
         ? DelegateContractName.CErc20PluginRewardsDelegate
         : DelegateContractName.CErc20PluginDelegate,
+      rewardsDistributorConfig: rdConfig,
     };
     try {
       await fuse.deployAsset(irmConf, tokenConf, { from: address });
 
-      if (tokenConf.rewardsDistributor) {
-        await fuse.addRewardsDistributorToPool(tokenConf.rewardsDistributor, comptrollerAddress, {
-          from: address,
-        });
+      if (tokenConf.rewardsDistributorConfig) {
+        for (const rd of tokenConf.rewardsDistributorConfig) {
+          await fuse.addRewardsDistributorToPool(rd.rewardsDistributor, comptrollerAddress, {
+            from: address,
+          });
+        }
       }
 
       LogRocket.track('Fuse-DeployAsset');
