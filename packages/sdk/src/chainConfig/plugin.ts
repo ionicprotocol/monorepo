@@ -9,10 +9,12 @@ const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "Mock Tribe Strategy With TOUCH Rewards",
         strategyAddress: "0x0152B5D6531fb9D58274caA61C5a3070bE0DA12F",
-        dynamicFlywheel: {
-          address: "0xcB8A516b152a2c510d0860b551f157A9a3fc0f24",
-          rewardToken: "0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C", // TOUCH
-        },
+        dynamicFlywheels: [
+          {
+            address: "0xcB8A516b152a2c510d0860b551f157A9a3fc0f24",
+            rewardToken: "0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C", // TOUCH
+          },
+        ],
       },
     ],
     // TOUCH
@@ -44,10 +46,12 @@ const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "3EPS LP Staker with EPX Rewards",
         strategyAddress: "",
-        dynamicFlywheel: {
-          address: "0x968086e25851D465127Bb536516c2162Cd79B360",
-          rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
-        },
+        dynamicFlywheels: [
+          {
+            address: "0x968086e25851D465127Bb536516c2162Cd79B360",
+            rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
+          },
+        ],
       },
     ],
     // dai3EPS
@@ -55,10 +59,12 @@ const chainPluginConfig: ChainPlugins = {
       {
         strategyName: "dai3EPS LP Staker with EPX Rewards",
         strategyAddress: "",
-        dynamicFlywheel: {
-          address: "0x968086e25851D465127Bb536516c2162Cd79B360",
-          rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
-        },
+        dynamicFlywheels: [
+          {
+            address: "0x968086e25851D465127Bb536516c2162Cd79B360",
+            rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
+          },
+        ],
       },
     ],
     // ust3EPS

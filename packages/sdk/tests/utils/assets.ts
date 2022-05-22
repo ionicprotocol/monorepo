@@ -219,14 +219,22 @@ export const getEllipsisPoolAssets = async (
     {
       delegateContractName: DelegateContractName.CErc20PluginDelegate,
       plugin: dai3EPSPlugin.strategyAddress,
-      rewardsDistributor: dai3EPSPlugin.dynamicFlywheel.address,
-      rewardToken: dai3EPSPlugin.dynamicFlywheel.rewardToken,
+      rewardsDistributorConfig: dai3EPSPlugin.dynamicFlywheels.map((rd) => {
+        return {
+          rewardsDistributor: rd.address,
+          rewardToken: rd.rewardToken,
+        };
+      }),
     },
     {
       delegateContractName: DelegateContractName.CErc20PluginDelegate,
       plugin: threeEPSPlugin.strategyAddress,
-      rewardsDistributor: threeEPSPlugin.dynamicFlywheel.address,
-      rewardToken: threeEPSPlugin.dynamicFlywheel.rewardToken,
+      rewardsDistributorConfig: threeEPSPlugin.dynamicFlywheels.map((rd) => {
+        return {
+          rewardsDistributor: rd.address,
+          rewardToken: rd.rewardToken,
+        };
+      }),
     },
   ];
   return assets.map((a, i) => {
