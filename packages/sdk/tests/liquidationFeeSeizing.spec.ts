@@ -19,7 +19,7 @@ import { cERC20Conf, Fuse } from "../src";
 import { resetPriceOracle } from "./utils/setup";
 import { getOrCreateFuse } from "./utils/fuseSdk";
 
-(process.env.FORK_CHAIN_ID ? describe.skip : describe)("Protocol Liquidation Seizing", () => {
+(process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("Protocol Liquidation Seizing", () => {
   let eth: cERC20Conf;
   let erc20One: cERC20Conf;
   let erc20Two: cERC20Conf;
@@ -56,26 +56,7 @@ import { getOrCreateFuse } from "./utils/fuseSdk";
     await deployments.fixture("prod");
     sdk = await getOrCreateFuse();
     await setUpPriceOraclePrices();
-    ({
-      poolAddress,
-      deployedEth,
-      deployedErc20One,
-      deployedErc20Two,
-      eth,
-      erc20One,
-      erc20Two,
-      ethCToken,
-      erc20OneCToken,
-      erc20TwoCToken,
-      liquidator,
-      erc20OneUnderlying,
-      erc20TwoUnderlying,
-      erc20OneOriginalUnderlyingPrice,
-      erc20TwoOriginalUnderlyingPrice,
-      oracle,
-      simpleOracle,
-      fuseFeeDistributor,
-    } = await setUpLiquidation(poolName));
+    ({ poolAddress, liquidator, oracle, fuseFeeDistributor } = await setUpLiquidation(poolName));
   });
   afterEach(async () => {
     await resetPriceOracle(erc20One, erc20Two);

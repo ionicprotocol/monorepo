@@ -2,6 +2,7 @@ import { cERC20Conf, DelegateContractName } from "../../src";
 import { getOrCreateFuse } from "./fuseSdk";
 import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
 import { assetSymbols } from "../../src/chainConfig";
+import { ethers } from "hardhat";
 
 export enum BSC_POOLS {
   JARVIS = "JARVIS",
@@ -31,9 +32,9 @@ export const getAssetsConf = async (
   let assets: cERC20Conf[];
 
   if (chainId === 31337 || chainId === 1337) {
-    assets = getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
+    assets = await getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
   } else if (chainId === 56) {
-    if (poolName) {
+    if (poolName in BSC_POOLS) {
       const bscPools = await getBscPools(comptroller, fuseFeeDistributor, interestRateModelAddress);
       assets = bscPools[poolName];
     } else {
@@ -43,14 +44,19 @@ export const getAssetsConf = async (
   return assets;
 };
 
-export const getLocalAssetsConf = (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
+export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
   const eth = ganacheAssets.find((b) => b.symbol === assetSymbols.ETH);
   const tribe = ganacheAssets.find((b) => b.symbol === assetSymbols.TRIBE);
   const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
-  const assets = [eth, tribe, touch];
+  // const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
+
+  const assets = [eth, tribe, touch]; // , weth];
+  const tribeUnderlying = await ethers.getContract("TRIBEToken");
+  const touchUnderlying = await ethers.getContract("TOUCHToken");
+  const underlyings = [eth.underlying, tribeUnderlying.address, touchUnderlying.address]; // , weth.underlying]
   return assets.map((a, i) => {
     return {
-      underlying: a.underlying,
+      underlying: underlyings[i],
       comptroller,
       fuseFeeDistributor,
       interestRateModel: interestRateModelAddress,
@@ -69,7 +75,8 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
   const btc = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
   const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
-  const assets = [btc, busd, wbnb];
+  const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
+  const assets = [btc, busd, eth, wbnb];
 
   return assets.map((a, i) => {
     return {
@@ -96,18 +103,21 @@ export const getAlpacaPoolAssets = async (
   const sdk = await getOrCreateFuse();
 
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
-  const alpaca = bscAssets.find((b) => b.symbol === assetSymbols.ALPACA);
+  const usdc = bscAssets.find((b) => b.symbol === assetSymbols.USDC);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
   const ethPlugin = sdk.chainPlugins[eth.underlying][0];
-  const alpacaPlugin = sdk.chainPlugins[eth.underlying][0];
-  const busdPlugin = sdk.chainPlugins[eth.underlying][0];
+  const usdcPlugin = sdk.chainPlugins[usdc.underlying][0];
+  const busdPlugin = sdk.chainPlugins[busd.underlying][0];
+  const wbnbPlugin = sdk.chainPlugins[wbnb.underlying][0];
 
-  const assets = [eth, alpaca, busd];
+  const assets = [eth, usdc, busd, wbnb];
 
   const assetConfigs = [
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: ethPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: alpacaPlugin.strategyAddress },
+    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: usdcPlugin.strategyAddress },
     { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: busdPlugin.strategyAddress },
+    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: wbnbPlugin.strategyAddress },
   ];
   return assets.map((a, i) => {
     return {
@@ -209,14 +219,22 @@ export const getEllipsisPoolAssets = async (
     {
       delegateContractName: DelegateContractName.CErc20PluginDelegate,
       plugin: dai3EPSPlugin.strategyAddress,
-      rewardsDistributor: dai3EPSPlugin.dynamicFlywheel.address,
-      rewardToken: dai3EPSPlugin.dynamicFlywheel.rewardToken,
+      rewardsDistributorConfig: dai3EPSPlugin.dynamicFlywheels.map((rd) => {
+        return {
+          rewardsDistributor: rd.address,
+          rewardToken: rd.rewardToken,
+        };
+      }),
     },
     {
       delegateContractName: DelegateContractName.CErc20PluginDelegate,
       plugin: threeEPSPlugin.strategyAddress,
-      rewardsDistributor: threeEPSPlugin.dynamicFlywheel.address,
-      rewardToken: threeEPSPlugin.dynamicFlywheel.rewardToken,
+      rewardsDistributorConfig: threeEPSPlugin.dynamicFlywheels.map((rd) => {
+        return {
+          rewardsDistributor: rd.address,
+          rewardToken: rd.rewardToken,
+        };
+      }),
     },
   ];
   return assets.map((a, i) => {
