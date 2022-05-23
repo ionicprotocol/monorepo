@@ -7,7 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     const resp = await axios.get('https://gasprice.poa.network');
     res.status(200).json(resp.data);
   } catch (e) {
-    console.log('Error in getting gasPrice from https://gasprice.poa.network');
+    console.error('Error in getting gasPrice from https://gasprice.poa.network');
     res.status(400).json({ err: e });
   }
 };
