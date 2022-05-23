@@ -24,7 +24,6 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   const toast = useToast();
 
   useEffect(() => {
-    console.log('zero');
     if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
       onOpen();
     }
@@ -32,7 +31,6 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
 
   // Show unsupported Network Toast
   useEffect(() => {
-    console.log('one');
     if (activeChain?.unsupported) {
       if (!toastIdRef.current) {
         toastIdRef.current = toast({
@@ -58,7 +56,6 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
 
   // User visits a link of another chain than currently connected
   useEffect(() => {
-    console.log('two');
     if (
       router.isReady &&
       activeChain &&
@@ -73,7 +70,6 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
 
   // User should get redirected to chain he is connected to
   useEffect(() => {
-    console.log('three');
     if (activeChain?.id && !routerChainId && router.isReady && !activeChain.unsupported) {
       const chainId = activeChain.id.toString();
       router.push(
