@@ -39,7 +39,7 @@ COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/fuse-twap-bot /tmp/build/packages/fuse-twap-bot
 
 # ----- build -----
-RUN yarn build:all
+RUN yarn build:deploy:twap
 
 # ----------------------------------------
 # Copy files to the deployment image.
