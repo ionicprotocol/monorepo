@@ -14,8 +14,7 @@
       "@ui/networkData/*": ["ui/networkData/*"],
       "@ui/styles/*": ["ui/styles/*"],
       "@ui/images/*": ["ui/public/images/*"],
-      "@ui/icons/*": ["ui/public/icons/*"],
-      "@ui/locales/*": ["ui/public/locales/*"]
+      "@ui/icons/*": ["ui/public/icons/*"]
     }
   },
   "references": [
