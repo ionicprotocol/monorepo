@@ -1,6 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
-import { useTranslation } from 'next-i18next';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
@@ -32,7 +31,7 @@ const FusePoolEditPage = memo(() => {
     onClose: closeAddAssetModal,
   } = useDisclosure();
   const authedOpenModal = useAuthedCallback(openAddAssetModal);
-  const { t } = useTranslation();
+
   const { setLoading, coingeckoId } = useRari();
   const router = useRouter();
   const poolId = router.query.poolId as string;
@@ -134,7 +133,7 @@ const FusePoolEditPage = memo(() => {
                   />
                 ) : (
                   <Column expand mainAxisAlignment="center" crossAxisAlignment="center" py={4}>
-                    <Text mb={4}>{t('There are no assets in this pool.')}</Text>
+                    <Text mb={4}>There are no assets in this pool.</Text>
 
                     <AddAssetButton
                       comptrollerAddress={data.comptroller}

@@ -19,7 +19,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/sdk';
-import { useTranslation } from 'react-i18next';
 
 import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolCard';
 import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolRow';
@@ -41,7 +40,6 @@ const FusePoolList = () => {
   const sortedBySupplyPools = usePoolSorting(filteredPoolsList, 'supply');
   const mostSuppliedPool = sortedBySupplyPools && sortedBySupplyPools[0];
 
-  const { t } = useTranslation();
   const { viewMode } = useRari();
   const { cPage, cOutlineBtn } = useColors();
   const poolsPerPage = 5;
@@ -73,7 +71,7 @@ const FusePoolList = () => {
         status="warning"
         variant="subtle"
         title="Unexpected Error"
-        description="WE weren't able to retrieve Pools. We are working on it, please try again later."
+        description="Unable to retrieve Pools. Please try again later."
       />
     );
   }
@@ -117,27 +115,27 @@ const FusePoolList = () => {
           <HStack px={6} alignItems={'flex-end'}>
             <VStack flex={6}>
               <Text fontWeight="bold" textAlign="center">
-                {t('Pool Name')}
+                Pool Name
               </Text>
             </VStack>
             <VStack flex={2}>
               <Text fontWeight="bold" textAlign="center">
-                {t('Risk Score')}
+                Risk Score
               </Text>
             </VStack>
             <VStack flex={4} alignItems="flex-start">
               <Text fontWeight="bold" textAlign="center">
-                {t('Assets')}
+                Assets
               </Text>
             </VStack>
             <VStack flex={2}>
               <Text fontWeight="bold" textAlign="center">
-                {t('Total Supplied')}
+                Total Supplied
               </Text>
             </VStack>
             <VStack flex={2}>
               <Text fontWeight="bold" textAlign="center">
-                {t('Total Borrowed')}
+                Total Borrowed
               </Text>
             </VStack>
             <VStack flex={1}></VStack>

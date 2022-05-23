@@ -18,7 +18,6 @@ import {
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -50,7 +49,6 @@ export const BorrowList = ({
 
   const isMobile = useIsMobile();
   const { cCard } = useColors();
-  const { t } = useTranslation();
 
   return (
     <Box overflowX="auto">
@@ -147,7 +145,7 @@ export const BorrowList = ({
                 <Tr>
                   <Td colSpan={5}>
                     <Button variant="ghost" width="100%" onClick={() => setIsShow(!isShow)}>
-                      {!isShow ? t('Show unborrowable assets') : t('Hide unborrowable assets')}
+                      {!isShow ? "Show unborrowable assets')" : 'Hide unborrowable assets'}
                     </Button>
                   </Td>
                 </Tr>
@@ -184,8 +182,6 @@ const AssetBorrowRow = ({
   const { data: tokenData } = useTokenData(asset.underlyingToken);
 
   const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock);
-
-  const { t } = useTranslation();
 
   const isMobile = useIsMobile();
 
@@ -265,9 +261,9 @@ const AssetBorrowRow = ({
               </Text>
 
               <SimpleTooltip
-                label={t(
+                label={
                   "Total Value Lent (TVL) measures how much of this asset has been supplied in total. TVL does not account for how much of the lent assets have been borrowed, use 'liquidity' to determine the total unborrowed assets lent."
-                )}
+                }
               >
                 <Text
                   wordBreak={'keep-all'}
@@ -298,9 +294,9 @@ const AssetBorrowRow = ({
 
         <Td verticalAlign={'top'}>
           <SimpleTooltip
-            label={t(
+            label={
               'Liquidity is the amount of this asset that is available to borrow (unborrowed). To see how much has been supplied and borrowed in total, navigate to the Pool Info tab.'
-            )}
+            }
             placement="top-end"
           >
             <VStack alignItems={'flex-end'}>

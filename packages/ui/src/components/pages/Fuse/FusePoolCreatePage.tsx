@@ -18,7 +18,6 @@ import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { memo, ReactNode, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
 import DashboardBox from '@ui/components/shared/DashboardBox';
@@ -46,7 +45,6 @@ const FusePoolCreatePage = memo(() => {
 export default FusePoolCreatePage;
 
 export const CreatePoolConfiguration = () => {
-  const { t } = useTranslation();
   const toast = useToast();
 
   const { fuse, currentChain, address } = useRari();
@@ -139,7 +137,7 @@ export const CreatePoolConfiguration = () => {
     <Box alignSelf={'center'} mx="auto" mt="8%" mb={8}>
       <DashboardBox maxWidth="550px" mx={'auto'} mt={4}>
         <Heading fontWeight="extrabold" size="md" px={4} py={4}>
-          {t('Create Pool')}
+          Create Pool
         </Heading>
 
         <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -193,9 +191,9 @@ export const CreatePoolConfiguration = () => {
 
           <OptionRow>
             <SimpleTooltip
-              label={t(
+              label={
                 "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
-              )}
+              }
             >
               <Text fontWeight="normal">
                 Whitelisted <QuestionIcon ml={1} mb="4px" />
@@ -242,9 +240,9 @@ export const CreatePoolConfiguration = () => {
 
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <SimpleTooltip
-              label={t(
+              label={
                 "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
-              )}
+              }
             >
               <Text fontWeight="normal">
                 Close Factor <QuestionIcon ml={1} mb="4px" />
@@ -266,9 +264,9 @@ export const CreatePoolConfiguration = () => {
 
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <SimpleTooltip
-              label={t(
+              label={
                 "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
-              )}
+              }
             >
               <Text fontWeight="normal">
                 Liquidation Incentive <QuestionIcon ml={1} mb="4px" />
@@ -298,7 +296,7 @@ export const CreatePoolConfiguration = () => {
           disabled={isCreating}
         >
           <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-            {isCreating ? <Spinner /> : t('Create')}
+            {isCreating ? <Spinner /> : 'Create'}
           </Center>
         </Button>
       </Center>
@@ -331,7 +329,7 @@ export const WhitelistInfo = ({
   removeFromWhitelist: (user: string) => void;
 }) => {
   const [_whitelistInput, _setWhitelistInput] = useState('');
-  // const { fuse } = useRari();
+
   const toast = useToast();
   const { cSolidBtn } = useColors();
 

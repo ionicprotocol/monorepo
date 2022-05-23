@@ -44,8 +44,10 @@ import {
   Artifact,
   Artifacts,
   AssetPluginConfig,
+  ChainAddresses,
   ChainDeployment,
   ChainRedemptionStrategy,
+  ChainSpecificAddresses,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
@@ -95,10 +97,6 @@ type OracleConfig = {
 
 type IrmConfig = OracleConfig;
 
-type ChainSpecificAddresses = {
-  [tokenName: string]: string;
-};
-
 export class FuseBase {
   // public methods
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -119,7 +117,7 @@ export class FuseBase {
   public chainId: SupportedChains;
   public chainDeployment: ChainDeployment;
   public oracles: OracleConfig;
-  public chainSpecificAddresses: ChainSpecificAddresses;
+  public chainSpecificAddresses: ChainAddresses;
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;

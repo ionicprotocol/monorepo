@@ -10,8 +10,8 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
+import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNetwork } from 'wagmi';
 
 import { FilterButton } from '@ui/components/shared/Buttons';
@@ -19,18 +19,19 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { getChainMetadata } from '@ui/networkData/index';
 
 const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { activeChain, chains, switchNetwork } = useNetwork();
+  const { activeChain, chains, switchNetworkAsync } = useNetwork();
+  const router = useRouter();
+
   const supportedChains = useMemo(
     () => chains?.map((chain) => getChainMetadata(chain.id)),
     [chains]
   );
-  const { t } = useTranslation();
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Select a Network')}</ModalHeader>
+        <ModalHeader>Select a Network</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <ModalBody mt={4} mb={6}>
@@ -56,7 +57,7 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
             gap={{ base: 4, sm: 6 }}
             mt={6}
           >
-            {switchNetwork &&
+            {switchNetworkAsync &&
               supportedChains.map(
                 (chainMetadata) =>
                   chainMetadata && (
@@ -68,7 +69,17 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                       justifyContent={'flex-start'}
                       disabled={!chainMetadata.enabled}
                       onClick={() => {
-                        switchNetwork(chainMetadata.chainId);
+                        switchNetworkAsync(chainMetadata.chainId).then(() => {
+                          router.push(
+                            {
+                              pathname: `/[chainId]`,
+                              query: { chainId: chainMetadata.chainId, sortBy: 'supply' },
+                            },
+                            undefined,
+                            { shallow: true }
+                          );
+                          onClose();
+                        });
                       }}
                     >
                       <Image

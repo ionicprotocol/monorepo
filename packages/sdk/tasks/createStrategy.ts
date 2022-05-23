@@ -1,4 +1,3 @@
-import { parseEther } from "ethers/lib/utils";
 import { task, types } from "hardhat/config";
 
 // npx hardhat strategy:create --strategy-name AlpacaERC4626 --underlying "" --name Plugin-Alpaca-USDC --symbol pAlUSDC --creator deployer --other-params "" --network localhost

@@ -1,6 +1,5 @@
 import { Button, Center, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import React, { LegacyRef } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import AccountModal from '@ui/components/shared/AccountModal';
 import Jazzicon from '@ui/components/shared/Jazzicon';
@@ -12,8 +11,6 @@ const ConnectWalletButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const isMobile = useIsSmallScreen();
-
-  const { t } = useTranslation();
 
   const { pendingTxHashes, accountBtnElement, address } = useRari();
 
@@ -34,7 +31,7 @@ const ConnectWalletButton: React.FC = () => {
         ) : (
           <>
             <Text mr={2} fontWeight="semibold">
-              {pendingTxHashes.length} {t('Pending')}
+              {pendingTxHashes.length} Pending
             </Text>
             <Spinner w={5} h={5} />
           </>

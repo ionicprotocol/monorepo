@@ -96,8 +96,12 @@ export type cERC20Conf = {
   adminFee: number;
   bypassPriceFeedCheck: boolean;
   plugin?: string;
-  rewardsDistributor?: string;
-  rewardToken?: string;
+  rewardsDistributorConfig?: RewardsDistributorConfig[];
+};
+
+export type RewardsDistributorConfig = {
+  rewardsDistributor: string;
+  rewardToken: string;
 };
 
 export type OracleConf = {
@@ -206,13 +210,15 @@ export interface FusePool {
   timestampPosted: number;
 }
 
+type DynamicFlywheelConfig = {
+  address: string;
+  rewardToken: string;
+};
+
 export type PluginConfig = {
   strategyName: string;
   strategyAddress: string;
-  dynamicFlywheel?: {
-    address: string;
-    rewardToken: string;
-  };
+  dynamicFlywheels?: DynamicFlywheelConfig[];
 };
 
 export type SupportedAsset = {
@@ -256,14 +262,16 @@ export type ChainSpecificParams = {
   };
 };
 
+export type ChainAddresses = {
+  W_TOKEN: string;
+  W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
+  UNISWAP_V2_ROUTER: string;
+  UNISWAP_V2_FACTORY: string;
+  PAIR_INIT_HASH: string;
+};
+
 export type ChainSpecificAddresses = {
-  [chain in SupportedChains]: {
-    W_TOKEN: string;
-    W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
-    UNISWAP_V2_ROUTER: string;
-    UNISWAP_V2_FACTORY: string;
-    PAIR_INIT_HASH: string;
-  };
+  [chain in SupportedChains]: ChainAddresses;
 };
 
 export type ChainSupportedAssets = {

@@ -14,7 +14,6 @@ import {
   ModalOverlay,
   VStack,
 } from '@chakra-ui/react';
-import { useTranslation } from 'next-i18next';
 import { useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
@@ -106,13 +105,11 @@ const AddAssetModal = ({
   isOpen: boolean;
   onClose: () => void;
 } & AddAssetProps) => {
-  const { t } = useTranslation();
-
   return (
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Add Asset')}</ModalHeader>
+        <ModalHeader>Add Asset</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <AddAsset onSuccess={onClose} {...addAssetProps} />

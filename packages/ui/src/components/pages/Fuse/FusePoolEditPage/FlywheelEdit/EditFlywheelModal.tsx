@@ -25,7 +25,6 @@ import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 
 import { FilterButton } from '@ui/components/shared/Buttons';
@@ -72,8 +71,6 @@ const EditFlywheelModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { t } = useTranslation();
-
   const { fuse, address } = useRari();
 
   const { data: tokenData } = useTokenData(flywheel.rewardToken);
@@ -204,7 +201,7 @@ const EditFlywheelModal = ({
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{t('Edit Flywheel Rewards')}</ModalHeader>
+        <ModalHeader>Edit Flywheel Rewards</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <VStack alignItems={'flex-start'} p={4}>
@@ -348,7 +345,7 @@ const EditFlywheelModal = ({
                         width="15%"
                         hidden={isSpeedEditable}
                       >
-                        {t('Edit')}
+                        Edit
                       </Button>
                       <Button
                         onClick={updateRewardInfo}
@@ -401,7 +398,7 @@ const EditFlywheelModal = ({
                         hidden={isDateEditable}
                         width="15%"
                       >
-                        {t('Edit')}
+                        Edit
                       </Button>
                       <Button
                         onClick={updateRewardInfo}

@@ -4,7 +4,6 @@ import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { cERC20Conf, Fuse, FusePoolData, NativePricedFuseAsset } from "../../src";
-import { getAssetsConf } from "./assets";
 import { getOrCreateFuse } from "./fuseSdk";
 
 interface PoolCreationParams {
@@ -65,16 +64,16 @@ export type DeployedAsset = {
   interestRateModel: string;
   receipt: providers.TransactionReceipt;
 };
+
 export async function deployAssets(assets: cERC20Conf[], signer?: SignerWithAddress): Promise<DeployedAsset[]> {
-  const { chainId } = await ethers.provider.getNetwork();
   if (!signer) {
     const { bob } = await ethers.getNamedSigners();
     signer = bob;
   }
   const sdk = await getOrCreateFuse();
-
   const deployed: DeployedAsset[] = [];
   for (const assetConf of assets) {
+    console.log("Deploying asset: ", assetConf.name);
     const [assetAddress, implementationAddress, interestRateModel, receipt] = await sdk.deployAsset(
       sdk.JumpRateModelConf,
       assetConf,
@@ -94,36 +93,8 @@ export async function deployAssets(assets: cERC20Conf[], signer?: SignerWithAddr
       receipt,
     });
   }
-
   return deployed;
 }
-
-export async function getPoolAssets(
-  comptroller: string,
-  fuseFeeDistributor: string,
-  interestRateModelAddress?: string
-): Promise<{ shortName: string; longName: string; assetSymbolPrefix: string; assets: cERC20Conf[] }> {
-  const sdk = await getOrCreateFuse();
-
-  if (!interestRateModelAddress) {
-    interestRateModelAddress = sdk.irms.JumpRateModel.address;
-  }
-  return await poolAssets(interestRateModelAddress, comptroller, fuseFeeDistributor);
-}
-
-export const poolAssets = async (
-  interestRateModelAddress: string,
-  comptroller: string,
-  fuseFeeDistributor: string
-): Promise<{ shortName: string; longName: string; assetSymbolPrefix: string; assets: cERC20Conf[] }> => {
-  const assets = await getAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress, ethers);
-  return {
-    shortName: "Fuse R1",
-    longName: "Rari DAO Fuse Pool R1 (Base)",
-    assetSymbolPrefix: "fr1",
-    assets,
-  };
-};
 
 export const assetInPool = async (
   poolId: string,
