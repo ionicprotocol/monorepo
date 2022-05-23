@@ -17,12 +17,11 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
@@ -30,7 +29,7 @@ import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, FundOperationMode } from '@ui/constants/index';
+import { FundOperationMode } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
@@ -173,7 +172,6 @@ const AssetSupplyRow = ({
   const isMobile = useIsMobile();
 
   const { colorMode } = useColorMode();
-  const { t } = useTranslation();
 
   const rewardsOfThisMarket = useMemo(
     () => rewards.find((r) => r.market === asset.cToken),
@@ -260,9 +258,9 @@ const AssetSupplyRow = ({
                 {tokenData?.symbol ?? asset.underlyingSymbol}
               </Text>
               <SimpleTooltip
-                label={t(
+                label={
                   'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
-                )}
+                }
               >
                 <Text
                   textAlign={'left'}

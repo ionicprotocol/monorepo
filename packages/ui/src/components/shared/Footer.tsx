@@ -1,11 +1,9 @@
 import { Link, Text } from '@chakra-ui/react';
-import { useTranslation } from 'react-i18next';
 
 import CopyrightSpacer from '@ui/components/shared/CopyrightSpacer';
 import { Column, Row } from '@ui/utils/chakraUtils';
 
 const Footer = () => {
-  const { t } = useTranslation();
   return (
     <>
       <Column
@@ -19,7 +17,7 @@ const Footer = () => {
         <Row mainAxisAlignment="center" crossAxisAlignment="center" mt={4} width="100%">
           <Link isExternal href="https://docs.rari.capital/">
             <Text color="white" mx={2} size="sm" textDecoration="underline">
-              {t('Developer Docs')}
+              Developer Docs
             </Text>
           </Link>
 
@@ -29,7 +27,7 @@ const Footer = () => {
 
           <Link isExternal href="https://docs.midas.capital">
             <Text color="white" mx={2} size="sm" textDecoration="underline">
-              {t('Learn')}
+              Learn
             </Text>
           </Link>
 
@@ -39,7 +37,7 @@ const Footer = () => {
 
           <Link target="_blank" href="https://docs.midas.capital/security/#smart-contract-audits">
             <Text color="white" mx={2} size="sm" textDecoration="underline">
-              {t('Audits')}
+              Audits
             </Text>
           </Link>
         </Row>

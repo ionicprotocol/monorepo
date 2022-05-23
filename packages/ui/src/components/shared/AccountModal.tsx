@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { TransactionResponse } from '@ethersproject/providers';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -22,8 +21,6 @@ import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { t } = useTranslation();
-
   const { pendingTxHashes, fuse, scanUrl, disconnect, address } = useRari();
   const { cCard } = useColors();
   const {
@@ -72,7 +69,7 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
         <ModalOverlay />
         <ModalContent>
           <ModalHeader display="flex" alignItems="baseline">
-            {t('Account')}
+            Account
             <Text fontSize={20} fontWeight="light" ml={2}>
               {`( ${shortAddress(address, 6, 4)} )`}
             </Text>
@@ -81,10 +78,10 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
           <ModalDivider />
           <Column width="100%" mainAxisAlignment="flex-start" crossAxisAlignment="center" p={4}>
             <Button width="100%" size="lg" onClick={onSwitchWallet} mb={4}>
-              {t('Switch Wallet')}
+              Switch Wallet
             </Button>
             <Button width="100%" variant="silver" size="lg" onClick={handleDisconnectClick} mb={4}>
-              {t('Disconnect')}
+              Disconnect
             </Button>
             <Column
               mainAxisAlignment="center"
@@ -95,12 +92,12 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             >
               {!pendingTxHashes.length ? (
                 <Text fontSize={20} mb={4}>
-                  {t('Your transactions will appear here')}
+                  Your transactions will appear here
                 </Text>
               ) : (
                 <>
                   <Text fontSize={20} mb={4}>
-                    {t('Pending transactions')}
+                    Pending transactions
                   </Text>
                   {pendingTxHashes.map((hash, index) => (
                     <Button
@@ -127,23 +124,23 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             >
               <Link target="_blank" href="https://docs.midas.capital/">
                 <Text mx={2} size="sm" textDecoration="underline">
-                  {t('Docs')}
+                  Docs
                 </Text>
               </Link>
               <Link target="_blank" href="https://www.notion.so/Midas-Capital">
                 <Text mx={2} size="sm" textDecoration="underline">
-                  {t('Notion')}
+                  Notion
                 </Text>
               </Link>
               <Link target="_blank" href="https://www.notion.so/Midas-Capital-Audit">
                 <Text mx={2} size="sm" textDecoration="underline">
-                  {t('Audit')}
+                  Audit
                 </Text>
               </Link>
             </Row>
 
             <Text mt={4} fontSize="10px" color={cCard.txtColor}>
-              {t('Version')}
+              Version
             </Text>
           </Column>
         </ModalContent>

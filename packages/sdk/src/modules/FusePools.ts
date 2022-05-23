@@ -67,12 +67,12 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
             .mintGuardianPaused(asset.cToken)
             .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
         );
-
         promises.push(
           this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
             .callStatic.plugin()
             .then((plugin) => (asset.plugin = plugin))
             .catch(() =>
+              // @ts-ignore
               this.getAssetInstance<CErc20PluginRewardsDelegate>(
                 asset.cToken,
                 "CErc20PluginRewardsDelegate"

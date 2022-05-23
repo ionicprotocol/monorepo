@@ -39,7 +39,7 @@ COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/fuse-liquidator-bot /tmp/build/packages/fuse-liquidator-bot
 
 # ----- build -----
-RUN yarn build:all
+RUN yarn build:deploy:liquidator
 
 # ----------------------------------------
 # Copy files to the deployment image.

@@ -3,6 +3,8 @@ import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
 import {
   cERC20Conf,
+  ComptrollerErrorCodes,
+  CTokenErrorCodes,
   DelegateContractName,
   InterestRateModelConf,
   NativePricedFuseAsset,
@@ -11,7 +13,6 @@ import {
 import { BigNumber, constants, ContractFunction, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
-import { useTranslation } from 'next-i18next';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
@@ -21,7 +22,6 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { ComptrollerErrorCodes, CTokenErrorCodes } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
@@ -90,7 +90,6 @@ export const AssetSettings = ({
   onSuccess?: () => void;
   deployedPlugin?: string;
 }) => {
-  const { t } = useTranslation();
   const { fuse, address } = useRari();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -175,6 +174,14 @@ export const AssetSettings = ({
     const irmConf: InterestRateModelConf = {
       interestRateModel: interestRateModel,
     };
+    const rdConfig = plugin?.dynamicFlywheels
+      ? plugin.dynamicFlywheels.map((rd) => {
+          return {
+            rewardsDistributor: rd.address,
+            rewardToken: rd.rewardToken,
+          };
+        })
+      : undefined;
     const tokenConf: cERC20Conf = {
       admin: address,
       adminFee: adminFee,
@@ -191,17 +198,20 @@ export const AssetSettings = ({
       plugin: plugin?.strategyAddress,
       delegateContractName: !plugin
         ? DelegateContractName.CErc20Delegate
-        : plugin.dynamicFlywheel
+        : plugin.dynamicFlywheels
         ? DelegateContractName.CErc20PluginRewardsDelegate
         : DelegateContractName.CErc20PluginDelegate,
+      rewardsDistributorConfig: rdConfig,
     };
     try {
       await fuse.deployAsset(irmConf, tokenConf, { from: address });
 
-      if (tokenConf.rewardsDistributor) {
-        await fuse.addRewardsDistributorToPool(tokenConf.rewardsDistributor, comptrollerAddress, {
-          from: address,
-        });
+      if (tokenConf.rewardsDistributorConfig) {
+        for (const rd of tokenConf.rewardsDistributorConfig) {
+          await fuse.addRewardsDistributorToPool(rd.rewardsDistributor, comptrollerAddress, {
+            from: address,
+          });
+        }
       }
 
       LogRocket.track('Fuse-DeployAsset');
@@ -366,9 +376,9 @@ export const AssetSettings = ({
       {cTokenData && (
         <>
           <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <SimpleTooltip label={t('It shows the possibility if you can borrow or not.')}>
+            <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
               <Text fontWeight="bold">
-                {t('Borrowing Possibility')}{' '}
+                Borrowing Possibility{' '}
                 <QuestionIcon
                   color={cCard.txtColor}
                   bg={cCard.bgColor}
@@ -393,12 +403,12 @@ export const AssetSettings = ({
 
       <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
         <SimpleTooltip
-          label={t(
+          label={
             'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Collateral Factor')}{' '}
+            Collateral Factor{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -424,7 +434,7 @@ export const AssetSettings = ({
               mt={{ base: 2, md: 0 }}
               onClick={updateCollateralFactor}
             >
-              {t('Save')}
+              Save
             </Button>
           )}
       </Flex>
@@ -433,12 +443,12 @@ export const AssetSettings = ({
 
       <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
         <SimpleTooltip
-          label={t(
+          label={
             "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Reserve Factor')}{' '}
+            Reserve Factor{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -463,7 +473,7 @@ export const AssetSettings = ({
             mt={{ base: 2, md: 0 }}
             onClick={updateReserveFactor}
           >
-            {t('Save')}
+            Save
           </Button>
         ) : null}
       </Flex>
@@ -471,12 +481,12 @@ export const AssetSettings = ({
 
       <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
         <SimpleTooltip
-          label={t(
+          label={
             "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Admin Fee')}{' '}
+            Admin Fee{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -497,7 +507,7 @@ export const AssetSettings = ({
         {cTokenData &&
         adminFee !== cTokenData.adminFeeMantissa.div(parseUnits('1', 16)).toNumber() ? (
           <Button ml={{ base: 'auto', md: 4 }} mt={{ base: 2, md: 0 }} onClick={updateAdminFee}>
-            {t('Save')}
+            Save
           </Button>
         ) : null}
       </Flex>
@@ -506,12 +516,12 @@ export const AssetSettings = ({
 
       <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
         <SimpleTooltip
-          label={t(
+          label={
             'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
-          )}
+          }
         >
           <Text fontWeight="bold">
-            {t('Interest Model')}{' '}
+            Interest Model{' '}
             <QuestionIcon
               color={cCard.txtColor}
               bg={cCard.bgColor}
@@ -552,7 +562,7 @@ export const AssetSettings = ({
             ml={{ base: 'auto', md: 4 }}
             mt={{ base: 2, md: 0 }}
           >
-            {t('Save')}
+            Save
           </Button>
         ) : null}
       </Flex>
@@ -578,7 +588,7 @@ export const AssetSettings = ({
             }
           >
             <HStack>
-              <Text fontWeight="bold">{t('Rewards Plugin')} </Text>
+              <Text fontWeight="bold">Rewards Plugin </Text>
               <QuestionIcon
                 color={cCard.txtColor}
                 bg={cCard.bgColor}
@@ -636,7 +646,7 @@ export const AssetSettings = ({
             onClick={deploy}
             disabled={!isPossible}
           >
-            {t('Add Asset')}
+            Add Asset
           </Button>
         </Center>
       )}
