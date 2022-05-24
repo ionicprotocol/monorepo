@@ -14,14 +14,16 @@ export const deployFuseSafeLiquidator = async ({
     log: true,
     proxy: {
       execute: {
-        methodName: "initialize",
-        args: [
-          deployConfig.wtoken,
-          deployConfig.uniswap.uniswapV2RouterAddress,
-          deployConfig.stableToken ?? constants.AddressZero,
-          deployConfig.wBTCToken ?? constants.AddressZero,
-          deployConfig.uniswap.pairInitHashCode ?? "0x",
-        ],
+        init: {
+          methodName: "initialize",
+          args: [
+            deployConfig.wtoken,
+            deployConfig.uniswap.uniswapV2RouterAddress,
+            deployConfig.stableToken ?? constants.AddressZero,
+            deployConfig.wBTCToken ?? constants.AddressZero,
+            deployConfig.uniswap.pairInitHashCode ?? "0x",
+          ],
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
