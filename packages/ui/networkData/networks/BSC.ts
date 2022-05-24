@@ -15,7 +15,11 @@ const mainnet: ChainMetadata = {
   rpcUrls: { default: 'https://bsc-dataseed.binance.org/' },
   nativeCurrency: {
     symbol: 'BNB',
-    address: '0x0000000000000000000000000000000000000000',
+    name: 'BSC',
+  },
+  wrappedNativeCurrency: {
+    symbol: 'WBNB',
+    address: '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c',
     name: 'BSC',
     decimals: 18,
     color: '#627EEA',
@@ -37,8 +41,12 @@ const testnet: ChainMetadata = {
   blocksPerMin: 20,
   blockExplorerUrls: { default: { name: 'BscScan(Testnet)', url: 'https://testnet.bscscan.com' } },
   nativeCurrency: {
-    symbol: 'TBNB',
-    address: '0x0000000000000000000000000000000000000000',
+    symbol: 'BNB',
+    name: 'BSC',
+  },
+  wrappedNativeCurrency: {
+    symbol: 'WBNB',
+    address: '0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd',
     name: 'BSC',
     decimals: 18,
     color: '#627EEA',
