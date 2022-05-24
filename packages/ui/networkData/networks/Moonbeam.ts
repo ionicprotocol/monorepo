@@ -15,7 +15,11 @@ const mainnet: ChainMetadata = {
   rpcUrls: { default: 'ttps://rpc.api.moonbeam.network' },
   nativeCurrency: {
     symbol: 'GLMR',
-    address: '0x0000000000000000000000000000000000000000',
+    name: 'Moonbeam',
+  },
+  wrappedNativeCurrency: {
+    symbol: 'WGLMR',
+    address: '0xAcc15dC74880C9944775448304B263D191c6077F',
     name: 'Moonbeam',
     decimals: 18,
     color: '#627EEA',
@@ -40,7 +44,11 @@ const testnet: ChainMetadata = {
   },
   nativeCurrency: {
     symbol: 'DEV',
-    address: '0x0000000000000000000000000000000000000000',
+    name: 'Moonbase Alpha',
+  },
+  wrappedNativeCurrency: {
+    symbol: 'WDEV',
+    address: '0xA30404AFB4c43D25542687BCF4367F59cc77b5d2',
     name: 'Moonbase Alpha',
     decimals: 18,
     color: '#627EEA',

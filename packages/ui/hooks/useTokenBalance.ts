@@ -3,7 +3,7 @@ import { BigNumber, Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
@@ -13,10 +13,10 @@ export const fetchTokenBalance = async (
 ): Promise<BigNumber> => {
   let balance;
 
-  if (!address || address === NATIVE_TOKEN_DATA[chainId as number].address) {
+  if (!address || address === WRAPPED_NATIVE_TOKEN_DATA[chainId as number].address) {
     balance = '0';
   } else if (
-    tokenAddress === NATIVE_TOKEN_DATA[chainId as number].address ||
+    tokenAddress === WRAPPED_NATIVE_TOKEN_DATA[chainId as number].address ||
     tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS'
   ) {
     balance = await fuse.provider.getBalance(address);
