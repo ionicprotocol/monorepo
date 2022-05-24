@@ -55,15 +55,14 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
         <VStack width="100%">
           <InputGroup>
             <Input
-              px={2}
-              textAlign="center"
+              textAlign="left"
               placeholder={'Token Address: 0xXX...XX'}
               value={tokenAddress}
               isInvalid={!!error}
               onChange={(event) => setTokenAddress(event.target.value)}
               autoFocus
             />
-            <InputRightElement>
+            <InputRightElement right={3}>
               {error ? (
                 <CloseIcon color="fail" />
               ) : isLoading ? (
