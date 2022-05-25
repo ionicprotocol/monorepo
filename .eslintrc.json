@@ -1,0 +1,15 @@
+{
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        "alphabetize": { "order": "asc", "caseInsensitive": true },
+        "newlines-between": "always"
+      }
+    ],
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }]
+  }
+}

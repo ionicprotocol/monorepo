@@ -1,5 +1,6 @@
-import { ChainRedemptionStrategy, SupportedAsset } from "../types";
 import { RedemptionStrategy, SupportedChains } from "../enums";
+import { ChainRedemptionStrategy, SupportedAsset } from "../types";
+
 import { assetSymbols, bscAssets, moonbeamAssets } from "./assets";
 
 const chainRedemptionStrategies: ChainRedemptionStrategy = {

@@ -1,5 +1,6 @@
-import { SupportedAsset } from "../../types";
 import { ethers } from "ethers";
+
+import { SupportedAsset } from "../../types";
 
 const assets: SupportedAsset[] = [
   {
