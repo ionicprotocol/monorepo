@@ -46,7 +46,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
             {tokenData && tokenData.symbol}
           </Heading>
           {tokenData?.name && (
-            <Heading as="h2" size="md" isTruncated>
+            <Heading as="h2" size="md">
               {tokenData.name}
             </Heading>
           )}
