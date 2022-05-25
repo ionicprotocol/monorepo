@@ -74,11 +74,11 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Lint `sdk`
-        run: yarn workspace @midas-capital/sdk lint
-
       - name: Build `sdk`
         run: yarn workspace @midas-capital/sdk build
+
+      - name: Lint `sdk`
+        run: yarn workspace @midas-capital/sdk lint
 
       - uses: JS-DevTools/npm-publish@v1
         with:
