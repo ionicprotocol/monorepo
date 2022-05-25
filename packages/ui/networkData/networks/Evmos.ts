@@ -10,8 +10,8 @@ const mainnet: ChainMetadata = {
   img: '/images/evmos.png',
   rpcUrls: { default: 'https://eth.bd.evmos.org' },
   blockExplorerUrls: { default: { name: 'Evmos', url: 'https://evm.evmos.org' } },
-  enabled: false,
-  supported: false,
+  enabled: process.env.EVMOS === 'ture',
+  supported: process.env.EVMOS === 'true',
   blocksPerMin: 20,
   nativeCurrency: {
     name: 'EVMOS',
@@ -33,7 +33,8 @@ const testnet: ChainMetadata = {
   img: '/images/evmos.png',
   rpcUrls: { default: 'https://eth.bd.evmos.dev:8545' },
   enabled: true,
-  supported: process.env.NODE_ENV === 'development' || !!process.env.NEXT_PUBLIC_SHOW_TESTNETS,
+  supported:
+    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   blocksPerMin: 20,
   blockExplorerUrls: { default: { name: 'Evmos', url: 'https://evm.evmos.dev' } },
   nativeCurrency: {
