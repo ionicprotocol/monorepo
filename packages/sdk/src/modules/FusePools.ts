@@ -1,12 +1,12 @@
 import { BigNumber, BigNumberish, Contract, utils } from "ethers";
-import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { FuseBaseConstructor } from "../types";
-import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
-import { FusePoolData, NativePricedFuseAsset } from "../types";
+
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
+import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
+import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
+import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
+import { FuseBaseConstructor, FusePoolData, NativePricedFuseAsset } from "../types";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],

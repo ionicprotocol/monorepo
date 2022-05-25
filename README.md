@@ -4,6 +4,16 @@
 
 ## Installation
 
+### Clone
+
+Make sure you clone submodules together.
+
+`git clone --recurse-submodules`
+
+If you already pulled using just `git clone`, you can use below command to update submodules.
+
+`git submodule update --init --recursive`
+
 ### Dependencies
 
 - Node [`16.x`](https://nodejs.org/en/download/)
@@ -19,6 +29,8 @@ From fresh clone:
 ## Tips
 
 Run _everything_ from the top level.
+
+Ask for **.env** file from the team and add it under packages/sdk
 
 If you want to add packages to modules, you can do so like:
 

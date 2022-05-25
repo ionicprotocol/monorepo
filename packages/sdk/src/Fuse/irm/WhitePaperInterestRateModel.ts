@@ -1,9 +1,9 @@
-import { BigNumber, BigNumberish, constants, Contract, utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
+import { BigNumber, BigNumberish, constants, Contract, utils } from "ethers";
 
-import { InterestRateModel } from "../../types";
-import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
+import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
+import { InterestRateModel } from "../../types";
 
 export default class WhitePaperInterestRateModel implements InterestRateModel {
   static RUNTIME_BYTECODE_HASH = utils.keccak256(WhitePaperInterestRateModelArtifact.deployedBytecode.object);

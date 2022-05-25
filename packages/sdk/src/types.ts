@@ -1,10 +1,10 @@
 import { BigNumber, BigNumberish, providers } from "ethers";
 
-import JumpRateModel from "./Fuse/irm/JumpRateModel";
-import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
-import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
-import { FuseBase } from "./Fuse";
 import { DelegateContractName, LiquidationStrategy, RedemptionStrategy, SupportedChains } from "./enums";
+import { FuseBase } from "./Fuse";
+import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
+import JumpRateModel from "./Fuse/irm/JumpRateModel";
+import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
