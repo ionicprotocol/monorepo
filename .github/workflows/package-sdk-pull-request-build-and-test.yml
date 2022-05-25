@@ -36,6 +36,10 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
+      # Produces required code for linter
+      - name: Build `typechain`
+        run: yarn workspace @midas-capital/sdk typechain
+
       - name: Lint `sdk`
         run: yarn workspace @midas-capital/sdk lint
 
