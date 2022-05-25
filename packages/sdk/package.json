@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/sdk",
-  "repository": "git://github.com:midas-protocol/contracts.git",
-  "version": "0.2.5",
+  "repository": "git://github.com:midas-protocol/monorepo.git",
+  "version": "0.2.6",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -24,16 +24,21 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "test:bsc": "FORK_URL=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat test",
-    "test:forge:moonbeam": "forge test --fork-url https://rpc.api.moonbeam.network --fork-block-number ${FORK_BLOCK_NUMBER}",
-    "test:forge:evmostestnet": "forge test --fork-url https://eth.bd.evmos.dev:8545 --fork-block-number ${FORK_BLOCK_NUMBER}",
+    "test:forge": "cd lib/contracts && forge test",
+    "test:forge:moonbeam": "cd lib/contracts && forge test --fork-url https://rpc.api.moonbeam.network --fork-block-number 1058520",
+    "test:forge:evmostestnet": "cd lib/contracts && forge test --fork-url https://eth.bd.evmos.dev:8545 --fork-block-number 1217475",
     "export": "hardhat export --export-all ./deployments.json",
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "lint:ts": "prettier --list-different 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "prettier": "npm run prettier:ts",
     "typechain": "typechain --target ethers-v5 --out-dir './lib/contracts/typechain' './lib/contracts/out/*/**.json'",
+    "deploy:simulate:bsc:testnet": "FORK_URL_BSC=https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/testnet/archive FORK_BLOCK_NUMBER= FORK_CHAIN_ID=97 hardhat deploy --tags simulate",
     "deploy:simulate:bsc:mainnet": "FORK_URL_BSC=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat deploy --tags simulate",
+    "deploy:bsc:testnet": "hardhat --network chapel deploy --tags prod",
     "deploy:bsc:mainnet": "hardhat --network bsc deploy --tags prod",
+    "deploy:evmos:testnet": "hardhat --network evmostestnet deploy --tags prod",
+    "deploy:moonbeam:mainnet": "hardhat --network moonbeam deploy --tags prod",
     "forge": "forge",
     "hardhat": "hardhat"
   },

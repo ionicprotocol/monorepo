@@ -31,14 +31,14 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
+      - name: Lint `ui`
+        run: yarn workspace @midas-capital/ui lint
+
       - name: Build `typechain`
         run: yarn build:typechain
 
       - name: Build `sdk`
         run: yarn build:sdk
-
-      - name: Lint `ui`
-        run: yarn workspace @midas-capital/ui lint
 
       - name: Build `ui`
         run: yarn build:ui

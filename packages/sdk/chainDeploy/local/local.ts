@@ -133,6 +133,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
         `${pluginConfig.strategy}_${pluginConfig.name}`
       );
       await tx.wait();
+      console.log("setPlugin: ", tx.hash);
     }
   }
 
@@ -146,6 +147,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
         `FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`
       );
       await tx.wait();
+      console.log("setFlywheelRewards: ", tx.hash);
     }
   }
   ////
