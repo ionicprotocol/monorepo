@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - "packages/sdk/**"
-      - "yarn.lock"
+      - 'packages/sdk/**'
+      - 'yarn.lock'
 jobs:
   # build-and-test-local:
   #   env:
@@ -51,12 +51,12 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      MNEMONIC: "${{ secrets.MNEMONIC }}"
+      MNEMONIC: '${{ secrets.MNEMONIC }}'
     steps:
       - uses: actions/checkout@v3
         with:
           submodules: recursive
-          token: "${{ secrets.ACCESS_TOKEN }}"
+          token: '${{ secrets.ACCESS_TOKEN }}'
 
       - name: Install Foundry
         uses: onbjerg/foundry-toolchain@v1
@@ -66,7 +66,7 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: 16
-          cache: "yarn"
+          cache: 'yarn'
 
       - name: Install `packages`
         run: yarn install
@@ -74,15 +74,15 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Lint `sdk`
-        run: yarn workspace @midas-capital/sdk lint:ts
-
       - name: Build `sdk`
         run: yarn workspace @midas-capital/sdk build
+
+      - name: Lint `sdk`
+        run: yarn workspace @midas-capital/sdk lint
 
       - uses: JS-DevTools/npm-publish@v1
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
-          access: "public"
-          package: "./packages/sdk/package.json"
+          access: 'public'
+          package: './packages/sdk/package.json'
