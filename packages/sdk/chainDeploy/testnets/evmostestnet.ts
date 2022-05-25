@@ -69,11 +69,13 @@ export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDep
     log: true,
     proxy: {
       execute: {
-        methodName: "initialize",
-        args: [[], [], []],
+        init: {
+          methodName: "initialize",
+          args: [[], [], []],
+        }
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy",
     },
   });
   console.log("CurveLpTokenPriceOracleNoRegistry: ", cpo.address);

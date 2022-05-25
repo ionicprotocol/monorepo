@@ -20,7 +20,7 @@ coverage
 *.tsBuildInfo
 
 .DS_Store
-.env
+packages/sdk/.env
 .env.local
 .env.development.local
 .env.test.local
@@ -34,3 +34,4 @@ ops/**/tfvars.json
 
 # Local Netlify folder
 .netlify
+monorepo.iml

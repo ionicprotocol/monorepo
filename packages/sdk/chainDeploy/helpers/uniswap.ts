@@ -91,4 +91,5 @@ export const deployUniswapOracle = async ({
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   let tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
 };
