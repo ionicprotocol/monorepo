@@ -1,6 +1,7 @@
 import { BytesLike, Contract, ethers } from "ethers";
-import { FuseBase } from "../../Fuse";
+
 import { RedemptionStrategy } from "../../enums";
+import { FuseBase } from "../../Fuse";
 
 export type StrategyAndData = {
   strategyAddress: string[];
@@ -16,7 +17,7 @@ export const getStrategyAndData = async (fuse: FuseBase, token: string): Promise
     fuse.chainDeployment[redemptionStrategy].abi,
     fuse.provider
   );
-  let strategyAndData = {
+  const strategyAndData = {
     strategyAddress: [redemptionStrategyContract.address],
   };
 

@@ -1,6 +1,8 @@
-import { sendTransactionToSafeLiquidator } from "./index";
 import { FuseBase } from "../../Fuse";
+
 import { LiquidatablePool } from "./utils";
+
+import { sendTransactionToSafeLiquidator } from "./index";
 
 export default async function liquidateUnhealthyBorrows(fuse: FuseBase, liquidations: Array<LiquidatablePool>) {
   for (const liquidatablePool of liquidations) {
