@@ -1118,7 +1118,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinbase/wallet-sdk@npm:^3.1.0":
+"@coinbase/wallet-sdk@npm:^3.0.11":
   version: 3.1.0
   resolution: "@coinbase/wallet-sdk@npm:3.1.0"
   dependencies:
@@ -1756,7 +1756,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.6.8, @ethersproject/providers@npm:^5.6.0, @ethersproject/providers@npm:^5.6.7":
+"@ethersproject/providers@npm:5.6.8, @ethersproject/providers@npm:^5.6.0, @ethersproject/providers@npm:^5.6.6":
   version: 5.6.8
   resolution: "@ethersproject/providers@npm:5.6.8"
   dependencies:
@@ -2319,17 +2319,17 @@ __metadata:
     "@emotion/react": ^11.9.0
     "@emotion/styled": ^11.8.1
     "@ethersproject/contracts": ^5.6.1
-    "@ethersproject/providers": ^5.6.7
+    "@ethersproject/providers": ^5.6.6
     "@metamask/jazzicon": ^2.0.0
     "@midas-capital/sdk": "workspace:*"
     "@netlify/plugin-nextjs": latest
-    "@testing-library/react": ^13.2.0
+    "@testing-library/react": ^12.1.4
     "@types/node": 17.0.35
     "@types/react": ^17.0.45
-    "@types/react-datepicker": ^4.4.1
+    "@types/react-datepicker": ^4.4.0
     "@types/react-dom": ^17.0.17
-    "@typescript-eslint/eslint-plugin": ^5.26.0
-    "@typescript-eslint/parser": ^5.26.0
+    "@typescript-eslint/eslint-plugin": ^5.17.0
+    "@typescript-eslint/parser": ^5.17.0
     apexcharts: ^3.35.2
     axios: ^0.27.2
     eslint: 8.16.0
@@ -2338,11 +2338,11 @@ __metadata:
     eslint-import-resolver-typescript: ^2.7.1
     eslint-plugin-import: ^2.26.0
     eslint-plugin-prettier: ^4.0.0
-    eslint-plugin-react: ^7.30.0
-    ethers: ^5.6.7
+    eslint-plugin-react: ^7.29.4
+    ethers: ^5.6.5
     framer-motion: ^6.3.3
     fuse.js: ^6.6.2
-    logrocket: ^3.0.0
+    logrocket: ^2.2.1
     mathjs: ^10.5.3
     next: ^12.1.6
     next-i18next: ^11.0.0
@@ -2358,7 +2358,7 @@ __metadata:
     react-query: ^3.39.0
     react-spinners: ^0.12.0
     typescript: 4.6.4
-    wagmi: ^0.4.2
+    wagmi: ^0.3.5
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -2823,7 +2823,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/dom@npm:^8.5.0":
+"@testing-library/dom@npm:^8.0.0":
   version: 8.13.0
   resolution: "@testing-library/dom@npm:8.13.0"
   dependencies:
@@ -2839,17 +2839,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.2.0":
-  version: 13.2.0
-  resolution: "@testing-library/react@npm:13.2.0"
+"@testing-library/react@npm:^12.1.4":
+  version: 12.1.5
+  resolution: "@testing-library/react@npm:12.1.5"
   dependencies:
     "@babel/runtime": ^7.12.5
-    "@testing-library/dom": ^8.5.0
-    "@types/react-dom": ^18.0.0
+    "@testing-library/dom": ^8.0.0
+    "@types/react-dom": <18.0.0
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: 29f4a97c932a7fd78a55791a0ae0ba8d33c5241acbade98b6714440981e6e3d86a243e0b22161d3323b549ce059c175ae56d6b5053ad44083ab6e40ca211f19e
+    react: <18.0.0
+    react-dom: <18.0.0
+  checksum: 4abd0490405e709a7df584a0db604e508a4612398bb1326e8fa32dd9393b15badc826dcf6d2f7525437886d507871f719f127b9860ed69ddd204d1fa834f576a
   languageName: node
   linkType: hard
 
@@ -3186,7 +3186,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-datepicker@npm:^4.4.1":
+"@types/react-datepicker@npm:^4.4.0":
   version: 4.4.1
   resolution: "@types/react-datepicker@npm:4.4.1"
   dependencies:
@@ -3198,21 +3198,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:^17.0.17":
+"@types/react-dom@npm:<18.0.0, @types/react-dom@npm:^17.0.17":
   version: 17.0.17
   resolution: "@types/react-dom@npm:17.0.17"
   dependencies:
     "@types/react": ^17
   checksum: 23caf98aa03e968811560f92a2c8f451694253ebe16b670929b24eaf0e7fa62ba549abe9db0ac028a9d8a9086acd6ab9c6c773f163fa21224845edbc00ba6232
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:^18.0.0":
-  version: 18.0.5
-  resolution: "@types/react-dom@npm:18.0.5"
-  dependencies:
-    "@types/react": "*"
-  checksum: cd48b81950f499b52a3f0c08261f00046f9b7c96699fa249c9664e257e820daf6ecac815cd1028cebc9d105094adc39d047d1efd79214394b8b2d515574c0787
   languageName: node
   linkType: hard
 
@@ -3328,7 +3319,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.26.0":
+"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.17.0":
   version: 5.26.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.26.0"
   dependencies:
@@ -3351,7 +3342,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.26.0":
+"@typescript-eslint/parser@npm:^5.17.0, @typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0":
   version: 5.26.0
   resolution: "@typescript-eslint/parser@npm:5.26.0"
   dependencies:
@@ -3459,9 +3450,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:^0.3.3":
-  version: 0.3.3
-  resolution: "@wagmi/core@npm:0.3.3"
+"@wagmi/core@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "@wagmi/core@npm:0.2.5"
   dependencies:
     eventemitter3: ^4.0.7
     zustand: ^4.0.0-rc.1
@@ -3474,7 +3465,7 @@ __metadata:
       optional: true
     "@walletconnect/ethereum-provider":
       optional: true
-  checksum: e1a3eef73446592a68e22fa33c2b1d40aaad2559748dd4ab29db703a1460fa2755d73bbf6a1107b96732245bc4f92f99b6b589418ea99f411f480b03401c680a
+  checksum: 08582b6c1f0b5275066fab86b3164556bc02518cabefee86a7ee6b42ba1776b0886fa774673e2518fb8fd8d57cc154935219007fc400ffaf1c47b35df73536e6
   languageName: node
   linkType: hard
 
@@ -7533,7 +7524,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-plugin-react@npm:^7.29.4, eslint-plugin-react@npm:^7.30.0":
+"eslint-plugin-react@npm:^7.29.4":
   version: 7.30.0
   resolution: "eslint-plugin-react@npm:7.30.0"
   dependencies:
@@ -8286,7 +8277,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.6, ethers@npm:^5.6.7":
+"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.6":
   version: 5.6.8
   resolution: "ethers@npm:5.6.8"
   dependencies:
@@ -11630,10 +11621,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"logrocket@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "logrocket@npm:3.0.0"
-  checksum: 4fa83785ffe673434868c5a9fdeff3e238f3290e83a8a6ff54be9b34e5a301ddc73fbbf6cf628b714c8198c1bf96f943e4141bd59e738c2952ab5bce21accf9c
+"logrocket@npm:^2.2.1":
+  version: 2.2.1
+  resolution: "logrocket@npm:2.2.1"
+  checksum: 23d2880b921e940a17bc711bdd7eef2a87cd607decb98c1e5659bea017baf1ac8225dda7cde9e45ab9b02fcf7a205faed9693db0dc79d77780c45ba4bdd23122
   languageName: node
   linkType: hard
 
@@ -14262,15 +14253,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-query@npm:4.0.0-beta.12":
-  version: 4.0.0-beta.12
-  resolution: "react-query@npm:4.0.0-beta.12"
+"react-query@npm:4.0.0-beta.9":
+  version: 4.0.0-beta.9
+  resolution: "react-query@npm:4.0.0-beta.9"
   dependencies:
     "@babel/runtime": ^7.17.9
     "@types/use-sync-external-store": ^0.0.3
     broadcast-channel: ^3.4.1
     match-sorter: ^6.0.2
-    use-sync-external-store: ^1.1.0
+    use-sync-external-store: ^1.0.0
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   peerDependenciesMeta:
@@ -14278,7 +14269,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: 0e24875e182b8e1b0d2d4db4d0d5bebd93c4bf6689ce6c57416847bcf41c0c3cfc0373087c9df54351f58d0412890be43727743f6f9df0e2c6ad93c5cfec7520
+  checksum: ddd0c5c880d410ddb2691c68c1ed48db7234b4d58ebebc704419c05a5581da217ea2f04fbdac1ec5c64609f8ca7de1be7747a11d93ece1db73d235ad2789e1a6
   languageName: node
   linkType: hard
 
@@ -17003,7 +16994,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:1.1.0, use-sync-external-store@npm:^1.1.0":
+"use-sync-external-store@npm:1.1.0, use-sync-external-store@npm:^1.0.0, use-sync-external-store@npm:^1.1.0":
   version: 1.1.0
   resolution: "use-sync-external-store@npm:1.1.0"
   peerDependencies:
@@ -17155,19 +17146,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.4.2":
-  version: 0.4.3
-  resolution: "wagmi@npm:0.4.3"
+"wagmi@npm:^0.3.5":
+  version: 0.3.5
+  resolution: "wagmi@npm:0.3.5"
   dependencies:
-    "@coinbase/wallet-sdk": ^3.1.0
-    "@wagmi/core": ^0.3.3
+    "@coinbase/wallet-sdk": ^3.0.11
+    "@wagmi/core": ^0.2.5
     "@walletconnect/ethereum-provider": ^1.7.8
-    react-query: 4.0.0-beta.12
+    react-query: 4.0.0-beta.9
     use-sync-external-store: ^1.1.0
   peerDependencies:
     ethers: ">=5.5.1"
     react: ">=17.0.0"
-  checksum: a61991358b19033ae1b33c5f5f82c94460417fa1a563a8cdba82a57d12fa89008c5c8382981752588db1e1be898984d8a3cd173b9eb12126e6e88dcb85b730b3
+  checksum: 29ebba385063fe55fdfeb2e232a4610a9a71d002f126ce09ee6e7bff8cb430693d2911c2303f8ab95ef87a376a15bfd19d019ad4462f2c928d45597a0b09d56d
   languageName: node
   linkType: hard
 
