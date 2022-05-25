@@ -55,7 +55,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
         <VStack width="100%">
           <InputGroup>
             <Input
-              textAlign="left"
+              textAlign="center"
               placeholder={'Token Address: 0xXX...XX'}
               value={tokenAddress}
               isInvalid={!!error}
