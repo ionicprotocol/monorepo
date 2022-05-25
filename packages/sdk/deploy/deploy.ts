@@ -137,14 +137,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     [comptroller.address],
     [true]
   );
-  await tx.wait();
+  await tx.wait(2);
   console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
 
   const autoImplementation = await comptroller.callStatic.autoImplementation();
   console.log("autoImplementation: ", autoImplementation);
   if (!autoImplementation) {
     tx = await comptroller._toggleAutoImplementations(true);
-    await tx.wait();
+    await tx.wait(2);
     console.log("Toggled comptroller AutoImplementation", tx.hash);
   } else {
     console.log("Comptroller AutoImplementation already set");
@@ -153,6 +153,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const fplDeployment = await deployments.deploy("FusePoolLens", {
     from: deployer,
     log: true,
+    waitConfirmations: 1,
   });
 
   if (fplDeployment.transactionHash) await ethers.provider.waitForTransaction(fplDeployment.transactionHash);
@@ -171,7 +172,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       chainDeployParams.uniswap.uniswapData.map((u) => u.lpSymbol),
       chainDeployParams.uniswap.uniswapData.map((u) => u.lpDisplayName)
     );
-    await tx.wait();
+    await tx.wait(2);
     console.log("FusePoolLens initialized", tx.hash);
   } else {
     console.log("FusePoolLens already initialized");
@@ -181,6 +182,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (fpls.transactionHash) await ethers.provider.waitForTransaction(fpls.transactionHash);
   console.log("FusePoolLensSecondary: ", fpls.address);
@@ -189,7 +191,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   directory = await fusePoolLensSecondary.directory();
   if (directory === constants.AddressZero) {
     tx = await fusePoolLensSecondary.initialize(fusePoolDirectory.address);
-    await tx.wait();
+    await tx.wait(2);
     console.log("FusePoolLensSecondary initialized", tx.hash);
   } else {
     console.log("FusePoolLensSecondary already initialized");
@@ -199,6 +201,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (fflrReceipt.transactionHash) await ethers.provider.waitForTransaction(fflrReceipt.transactionHash);
   console.log("FuseFlywheelLensRouter: ", fflrReceipt.address);
@@ -222,7 +225,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     [false],
     [true]
   );
-  receipt = await tx.wait();
+  receipt = await tx.wait(2);
   console.log("Set whitelist for Ether Delegate with status:", receipt.status, tx.hash);
 
   tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
@@ -247,7 +250,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     [false, false, false, false, false, false, false],
     [true, true, true, true, true, true, true]
   );
-  receipt = await tx.wait();
+  receipt = await tx.wait(2);
   console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
 
   await deployments.deploy("InitializableClones", {
@@ -287,7 +290,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
     },
-    waitConfirmations: 1,
+    waitConfirmations: 2,
   });
   console.log(
     `Initialised MPO with for tokens: ${constants.AddressZero}: ${fixedNativePO.address}, ${chainDeployParams.wtoken}: ${fixedNativePO.address}`
@@ -331,14 +334,17 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   /// EXTERNAL ADDRESSES
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
-  await tx.wait();
+  await tx.wait(2);
+  console.log("setAddress: ", tx.hash);
 
   tx = await addressesProvider.setAddress("wtoken", chainDeployParams.wtoken);
-  await tx.wait();
+  await tx.wait(2);
+  console.log("setAddress: ", tx.hash);
 
   /// SYSTEM ADDRESSES
   tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
-  await tx.wait();
+  await tx.wait(2);
+  console.log("setAddress: ", tx.hash);
 };
 
 func.tags = ["prod"];
