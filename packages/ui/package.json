@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint-fix": "eslint ./src/** -c .eslintrc.json --fix --ext ts,tsx,json",
+    "lint-fix": "eslint ./** -c .eslintrc.json --fix --ext ts,tsx,json",
     "postinstall": "chakra-cli tokens ./theme/index.ts"
   },
   "dependencies": {
@@ -52,8 +52,6 @@
     "@types/react-dom": "^17.0.17",
     "@typescript-eslint/eslint-plugin": "^5.17.0",
     "@typescript-eslint/parser": "^5.17.0",
-    "cypress": "^9.6.1",
-    "cypress-metamask": "^1.0.5-development",
     "eslint": "8.16.0",
     "eslint-config-next": "12.1.6",
     "eslint-config-prettier": "^8.5.0",

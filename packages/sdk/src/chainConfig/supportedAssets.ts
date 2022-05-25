@@ -1,14 +1,15 @@
 import { SupportedChains } from "../enums";
 import { ChainSupportedAssets } from "../types";
+
 import {
+  auroraAssets,
   bscAssets,
   chapelAssets,
   evmosAssets,
   evmosTestnetAssets,
+  ganacheAssets,
   moonbaseAlphaAssets,
   moonbeamAssets,
-  auroraAssets,
-  ganacheAssets,
 } from "./assets";
 
 const chainSupportedAssets: ChainSupportedAssets = {

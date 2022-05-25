@@ -1,8 +1,10 @@
-import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
-import { StrategyAndData } from "./redemptionStrategy";
 import { BigNumber } from "ethers";
-import { FuseBase } from "../../Fuse";
+
 import { LiquidationKind } from "../../enums";
+import { FuseBase } from "../../Fuse";
+
+import { StrategyAndData } from "./redemptionStrategy";
+import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
 
 export default async function encodeLiquidateTx(
   fuse: FuseBase,
