@@ -30,7 +30,7 @@ export const deployChainlinkOracle = async ({
     ChainlinkFeedBaseCurrency.USD
   );
   console.log(`Set price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
-  await tx.wait();
+  await tx.wait(2);
   console.log(`Set price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
 
   const underlyings = chainlinkAssets.map((c) => assets.find((a) => a.symbol === c.symbol)!.underlying);
@@ -38,13 +38,14 @@ export const deployChainlinkOracle = async ({
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
   tx = await mpo.add(underlyings, oracles);
-  await tx.wait();
+  await tx.wait(2);
 
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
-  await tx.wait();
+  await tx.wait(2);
+  console.log("setAddress: ", tx.hash);
 
   return { cpo: cpo, chainLinkv2: chainLinkv2 };
 };
