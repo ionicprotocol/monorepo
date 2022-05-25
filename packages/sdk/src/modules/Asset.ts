@@ -1,11 +1,11 @@
+import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { BigNumber, constants, Contract, ContractFactory, ethers, providers, utils } from "ethers";
 
-import { cERC20Conf, FuseBaseConstructor, InterestRateModelConf, RewardsDistributorConfig } from "../types";
-import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
-import { DelegateContractName } from "../enums";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
+import { DelegateContractName } from "../enums";
+import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
+import { cERC20Conf, FuseBaseConstructor, InterestRateModelConf, RewardsDistributorConfig } from "../types";
 
 export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class PoolAsset extends Base {
@@ -136,7 +136,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         implementationAddress = cEtherDelegateDeployed.address;
       }
 
-      let deployArgs = [
+      const deployArgs = [
         conf.comptroller,
         conf.fuseFeeDistributor,
         conf.interestRateModel,
@@ -284,7 +284,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       const implementationData = this.getImplementationData(conf);
       // Deploy CEtherDelegator proxy contract
-      let deployArgs = [
+      const deployArgs = [
         conf.underlying,
         conf.comptroller,
         conf.fuseFeeDistributor,
@@ -308,8 +308,12 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         throw `Failed to _deployMarket: ${this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
       }
 
-      let tx: ethers.providers.TransactionResponse;
-      tx = await comptroller._deployMarket(false, constructorData, collateralFactorBN);
+      const tx: ethers.providers.TransactionResponse = await comptroller._deployMarket(
+        false,
+        constructorData,
+        collateralFactorBN
+      );
+
       const receipt: TransactionReceipt = await tx.wait();
 
       if (receipt.status != constants.One.toNumber()) {

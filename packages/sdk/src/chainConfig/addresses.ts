@@ -1,5 +1,8 @@
 import { ethers } from "ethers";
+
+import { SupportedChains } from "../enums";
 import { ChainSpecificAddresses } from "../types";
+
 import {
   assetSymbols,
   auroraAssets,
@@ -11,7 +14,6 @@ import {
   moonbaseAlphaAssets,
   moonbeamAssets,
 } from "./assets";
-import { SupportedChains } from "../enums";
 
 const chainSpecificAddresses: ChainSpecificAddresses = {
   [SupportedChains.ganache]: {

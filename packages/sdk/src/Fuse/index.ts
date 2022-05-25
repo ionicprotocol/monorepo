@@ -1,91 +1,75 @@
-// Ethers
-import { BigNumber, constants, Contract, ContractFactory, utils } from "ethers";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-
-// ABIs
-import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
-
-// InterestRate Models
-import JumpRateModel from "./irm/JumpRateModel";
-import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
-import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
+import { BigNumber, constants, Contract, ContractFactory, utils } from "ethers";
 
 import Deployments from "../../deployments.json";
-import ComptrollerArtifact from "../../lib/contracts/out/Comptroller.sol/Comptroller.json";
-import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
-import ERC20Artifact from "../../lib/contracts/out/ERC20.sol/ERC20.json";
-import CEtherDelegateArtifact from "../../lib/contracts/out/CEtherDelegate.sol/CEtherDelegate.json";
-import CEtherDelegatorArtifact from "../../lib/contracts/out/CEtherDelegator.sol/CEtherDelegator.json";
 import CErc20DelegateArtifact from "../../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
+import CErc20DelegatorArtifact from "../../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "../../lib/contracts/out/CErc20PluginDelegate.sol/CErc20PluginDelegate.json";
 import CErc20PluginRewardsDelegateArtifact from "../../lib/contracts/out/CErc20PluginRewardsDelegate.sol/CErc20PluginRewardsDelegate.json";
-import CErc20DelegatorArtifact from "../../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
-import CTokenInterfacesArtifact from "../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
-import EIP20InterfaceArtifact from "../../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
-import RewardsDistributorDelegatorArtifact from "../../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
-import RewardsDistributorDelegateArtifact from "../../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
-import FuseFlywheelCoreArtifact from "../../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
-import FlywheelStaticRewardsArtifact from "../../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
-
-// Oracle Artifacts
-import MasterPriceOracleArtifact from "../../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
-import UniswapTwapPriceOracleV2Artifact from "../../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
-import SimplePriceOracleArtifact from "../../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
+import CEtherDelegateArtifact from "../../lib/contracts/out/CEtherDelegate.sol/CEtherDelegate.json";
+import CEtherDelegatorArtifact from "../../lib/contracts/out/CEtherDelegator.sol/CEtherDelegator.json";
 import ChainlinkPriceOracleV2Artifact from "../../lib/contracts/out/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
-import PreferredPriceOracleArtifact from "../../lib/contracts/out/PreferredPriceOracle.sol/PreferredPriceOracle.json";
-
-// IRM Artifacts
-import JumpRateModelArtifact from "../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
+import ComptrollerArtifact from "../../lib/contracts/out/Comptroller.sol/Comptroller.json";
+import CTokenInterfacesArtifact from "../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import DAIInterestRateModelV2Artifact from "../../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
+import EIP20InterfaceArtifact from "../../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
+import ERC20Artifact from "../../lib/contracts/out/ERC20.sol/ERC20.json";
+import FlywheelStaticRewardsArtifact from "../../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
+import FuseFlywheelCoreArtifact from "../../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
+import JumpRateModelArtifact from "../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
+import MasterPriceOracleArtifact from "../../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
+import PreferredPriceOracleArtifact from "../../lib/contracts/out/PreferredPriceOracle.sol/PreferredPriceOracle.json";
+import RewardsDistributorDelegateArtifact from "../../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
+import RewardsDistributorDelegatorArtifact from "../../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
+import SimplePriceOracleArtifact from "../../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
+import UniswapTwapPriceOracleV2Artifact from "../../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
+import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
-
-// Types
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
+import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
+import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
+import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
+import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import {
+  chainLiquidationDefaults,
+  chainOracles,
+  chainPluginConfig,
+  chainRedemptionStrategies,
+  chainSpecificAddresses,
+  chainSupportedAssets,
+  irmConfig,
+  oracleConfig,
+} from "../chainConfig";
+import { RedemptionStrategy, SupportedChains } from "../enums";
+import { withAsset } from "../modules/Asset";
+import { withCreateContracts } from "../modules/CreateContracts";
+import { withFlywheel } from "../modules/Flywheel";
+import { withFundOperations } from "../modules/FundOperations";
+import { withFusePoolLens } from "../modules/FusePoolLens";
+import { withFusePools } from "../modules/FusePools";
+import { ChainLiquidationConfig } from "../modules/liquidation/config";
+import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
+import { withRewardsDistributor } from "../modules/RewardsDistributor";
 import {
   Artifact,
   Artifacts,
   AssetPluginConfig,
   ChainAddresses,
   ChainDeployment,
-  ChainRedemptionStrategy,
-  ChainSpecificAddresses,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
   OracleConf,
   SupportedAsset,
 } from "../types";
-import { RedemptionStrategy, SupportedChains } from "../enums";
+
+import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
 import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
-import {
-  chainOracles,
-  chainSpecificAddresses,
-  irmConfig,
-  oracleConfig,
-  chainPluginConfig,
-  chainLiquidationDefaults,
-  chainSupportedAssets,
-  chainRedemptionStrategies,
-} from "../chainConfig";
-
-// SDK modules
-import { withRewardsDistributor } from "../modules/RewardsDistributor";
-import { withFundOperations } from "../modules/FundOperations";
-import { withFusePoolLens } from "../modules/FusePoolLens";
-import { withFlywheel } from "../modules/Flywheel";
-import { withFusePools } from "../modules/FusePools";
-import { withAsset } from "../modules/Asset";
-import { withCreateContracts } from "../modules/CreateContracts";
-
-// Typechain
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
-import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
-import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
-import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
-import { ChainLiquidationConfig } from "../modules/liquidation/config";
+import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
+import JumpRateModel from "./irm/JumpRateModel";
+import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -97,7 +81,6 @@ type OracleConfig = {
 type IrmConfig = OracleConfig;
 
 export class FuseBase {
-  // public methods
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public provider: JsonRpcProvider | Web3Provider;
 
@@ -123,8 +106,6 @@ export class FuseBase {
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: RedemptionStrategy };
-
-  // public methods
 
   constructor(
     web3Provider: JsonRpcProvider | Web3Provider,
@@ -301,7 +282,7 @@ export class FuseBase {
       // Whitelist
       console.log("enforceWhitelist: ", enforceWhitelist);
       if (enforceWhitelist) {
-        let comptroller = new Contract(
+        const comptroller = new Contract(
           poolAddress,
           this.artifacts.Comptroller.abi,
           this.provider.getSigner(options.from)
