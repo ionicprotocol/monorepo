@@ -1,5 +1,5 @@
-import { ChainOracles } from "../types";
 import { OracleTypes, SupportedChains } from "../enums";
+import { ChainOracles } from "../types";
 
 const oracles: ChainOracles = {
   [SupportedChains.ganache]: [OracleTypes.SimplePriceOracle, OracleTypes.MasterPriceOracle],

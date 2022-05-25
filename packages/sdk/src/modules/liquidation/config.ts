@@ -1,6 +1,7 @@
 import { BigNumber, constants } from "ethers";
-import { FuseBase } from "../../Fuse";
+
 import { LiquidationKind, LiquidationStrategy } from "../../";
+import { FuseBase } from "../../Fuse";
 
 export type ChainLiquidationConfig = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;

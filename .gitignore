@@ -34,3 +34,4 @@ ops/**/tfvars.json
 
 # Local Netlify folder
 .netlify
+cypress

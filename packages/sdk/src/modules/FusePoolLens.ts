@@ -1,4 +1,5 @@
 import { BigNumber } from "ethers";
+
 import { FuseBaseConstructor } from "../types";
 
 export function withFusePoolLens<TBase extends FuseBaseConstructor>(Base: TBase) {
