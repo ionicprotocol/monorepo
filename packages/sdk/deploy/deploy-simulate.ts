@@ -20,6 +20,8 @@ const simulateDeploy: DeployFunction = async (hre): Promise<void> => {
   console.log("whale: ", whale);
 
   const { deployer } = await hre.getNamedAccounts();
+
+  // in case hardhat_impersonateAccount is failing, make sure to be running `hardhat node` instead of deploy
   await ethers.provider.send("hardhat_impersonateAccount", [whale]);
   const signer = hre.ethers.provider.getSigner(whale);
   await signer.sendTransaction({ to: deployer, value: fundingValue });

@@ -217,6 +217,7 @@ type DynamicFlywheelConfig = {
 
 export type PluginConfig = {
   strategyName: string;
+  strategyCode: string;
   strategyAddress: string;
   dynamicFlywheels?: DynamicFlywheelConfig[];
 };

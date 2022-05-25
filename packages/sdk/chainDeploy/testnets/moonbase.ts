@@ -42,13 +42,15 @@ export const deploy = async ({ run, getNamedAccounts, deployments, ethers }: Cha
   const mpoOracles = [];
 
   for (const asset of assets) {
-    const spoContract = await ethers.getContract("SimplePriceOracle", deployer);
-    tx = await spoContract.setDirectPrice(asset.underlying, asset.simplePriceOracleAssetPrice);
-    console.log("set underlying price tx sent: ", asset.underlying, tx.hash);
-    receipt = await tx.wait();
-    console.log("set underlying price tx mined: ", asset.underlying, receipt.transactionHash);
-    mpoUnderlyings.push(asset.underlying);
-    mpoOracles.push(spoContract.address);
+    if (asset.simplePriceOracleAssetPrice) {
+      const spoContract = await ethers.getContract("SimplePriceOracle", deployer);
+      tx = await spoContract.setDirectPrice(asset.underlying, asset.simplePriceOracleAssetPrice);
+      console.log("set underlying price tx sent: ", asset.underlying, tx.hash);
+      receipt = await tx.wait();
+      console.log("set underlying price tx mined: ", asset.underlying, receipt.transactionHash);
+      mpoUnderlyings.push(asset.underlying);
+      mpoOracles.push(spoContract.address);
+    }
   }
 
   const masterPriceOracle = await ethers.getContract("MasterPriceOracle", deployer);
