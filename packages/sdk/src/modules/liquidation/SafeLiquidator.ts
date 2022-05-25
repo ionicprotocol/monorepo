@@ -1,11 +1,12 @@
 import { BigNumber, utils } from "ethers";
+
 import { FuseBaseConstructor } from "../../types";
-import { gatherLiquidations } from "./index";
-import { LiquidatablePool, PublicPoolUserWithData } from "./utils";
+
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
+import { LiquidatablePool, PublicPoolUserWithData } from "./utils";
 
-// import getPotentialLiquidations from "./getPotentialLiquidations";
+import { gatherLiquidations } from "./index";
 
 export function withSafeLiquidator<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class SafeLiquidator extends Base {

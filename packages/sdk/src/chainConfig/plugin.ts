@@ -1,5 +1,6 @@
-import { ChainPlugins } from "../types";
 import { SupportedChains } from "../enums";
+import { ChainPlugins } from "../types";
+
 import { assetSymbols, bscAssets } from "./assets";
 
 const chainPluginConfig: ChainPlugins = {
