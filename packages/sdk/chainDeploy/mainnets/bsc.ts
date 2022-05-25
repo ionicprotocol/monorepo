@@ -335,6 +335,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
   console.log("SimplePriceOracle: ", simplePO.address);
@@ -344,6 +345,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (uniswapLpTokenLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);
@@ -356,6 +358,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
   console.log("XBombLiquidator: ", xbombLiquidator.address);
@@ -368,6 +371,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [synthereumLiquidityPoolAddress, expirationTime],
     log: true,
+    waitConfirmations: 1,
   });
   if (jarvisSynthereumLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(jarvisSynthereumLiquidator.transactionHash);
@@ -379,6 +383,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [deployConfig.wtoken, curveOracle.address],
     log: true,
+    waitConfirmations: 1,
   });
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
@@ -408,5 +413,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   let tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
   ////
+
+  console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };
