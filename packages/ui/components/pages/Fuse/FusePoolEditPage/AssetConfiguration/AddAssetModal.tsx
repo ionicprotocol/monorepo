@@ -1,6 +1,8 @@
 import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
+  Center,
   CircularProgress,
   Flex,
   Heading,
@@ -16,6 +18,8 @@ import {
   Spacer,
   Text,
   VStack,
+  Wrap,
+  WrapItem,
 } from '@chakra-ui/react';
 import { SupportedAsset } from '@midas-capital/sdk/dist/cjs/src/types';
 import { useEffect, useState } from 'react';
@@ -24,6 +28,7 @@ import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/Ass
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 interface AddAssetProps {
@@ -39,6 +44,8 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   const [supportedAssets, setSupportedAssets] = useState<SupportedAsset[] | []>(
     fuse.supportedAssets
   );
+  const [addedAssets, setAddedAssets] = useState<string[] | undefined>();
+  const { data: poolData } = useFusePoolData(poolID);
 
   const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress);
 
@@ -50,6 +57,13 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
     );
     setSupportedAssets(searchResults);
   }, [nameOrAddress, fuse.supportedAssets]);
+
+  useEffect(() => {
+    if (poolData && poolData.assets.length !== 0) {
+      const addresses = poolData.assets.map((asset) => asset.underlyingToken);
+      setAddedAssets(addresses);
+    }
+  }, [poolData]);
 
   return (
     <VStack py={4}>
@@ -102,55 +116,86 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
           poolName={poolName}
           poolID={poolID}
         />
-      ) : supportedAssets.length !== 0 ? (
-        <>
-          <Text textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2} px={6}>
-            Available supported assets
-          </Text>
-          <Flex
-            direction="column"
-            width="100%"
-            alignItems="center"
-            px={6}
-            height="400px"
-            overflow="scroll"
-          >
-            {supportedAssets.map((asset) => {
-              return (
-                <Button
-                  variant="listed"
-                  key={asset.name}
-                  width="100%"
-                  justifyContent="flex-start"
-                  height="60px"
-                  px={2}
-                  onClick={() => setNameOrAddress(asset.underlying)}
-                >
-                  <Flex direction="row" alignContent="center">
-                    <CTokenIcon address={asset.underlying} />
-                    <Flex ml={6} direction="column">
-                      <Text fontSize={24} textAlign="left">
-                        {asset.symbol}
-                      </Text>
-                      <Spacer />
-                      <Text fontWeight="normal" textAlign="left" fontSize={16}>
-                        {asset.name}
-                      </Text>
-                    </Flex>
-                  </Flex>
-                </Button>
-              );
-            })}
-          </Flex>
-        </>
-      ) : error ? (
-        <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
-          Invalid address
-        </Text>
       ) : (
-        <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
-          Not available
-        </Text>
+        <>
+          {poolData?.assets.length !== 0 && (
+            <Box width="100%">
+              <Text textAlign="left" fontSize={18} fontWeight="bold" mt={2} px={6}>
+                Added assets
+              </Text>
+            </Box>
+          )}
+          <Wrap px={5} spacing={2} justify="flex-start" width="100%">
+            {poolData &&
+              poolData.assets.map((asset, index) => {
+                return (
+                  <WrapItem key={index}>
+                    <Button variant="solid">
+                      <CTokenIcon size="sm" address={asset.underlyingToken} />
+                      <Center py={1} pl={2} fontWeight="bold">
+                        {asset.underlyingSymbol}
+                      </Center>
+                    </Button>
+                  </WrapItem>
+                );
+              })}
+          </Wrap>
+
+          {supportedAssets.length !== 0 ? (
+            <>
+              <Box width="100%">
+                <Text textAlign="left" fontSize={18} fontWeight="bold" px={6} mt={4}>
+                  Available supported assets
+                </Text>
+              </Box>
+
+              <Flex
+                direction="column"
+                width="100%"
+                alignItems="center"
+                px={6}
+                height="400px"
+                overflow="scroll"
+              >
+                {supportedAssets.map((asset) => {
+                  return (
+                    <Button
+                      variant="listed"
+                      key={asset.name}
+                      width="100%"
+                      justifyContent="flex-start"
+                      height="60px"
+                      px={2}
+                      onClick={() => setNameOrAddress(asset.underlying)}
+                      disabled={addedAssets && addedAssets.includes(asset.underlying)}
+                    >
+                      <Flex direction="row" alignContent="center">
+                        <CTokenIcon address={asset.underlying} />
+                        <Flex ml={6} direction="column">
+                          <Text fontSize={24} textAlign="left">
+                            {asset.symbol}
+                          </Text>
+                          <Spacer />
+                          <Text fontWeight="normal" textAlign="left" fontSize={16}>
+                            {asset.name}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                    </Button>
+                  );
+                })}
+              </Flex>
+            </>
+          ) : error ? (
+            <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
+              Invalid address
+            </Text>
+          ) : (
+            <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
+              Not available
+            </Text>
+          )}
+        </>
       )}
     </VStack>
   );
