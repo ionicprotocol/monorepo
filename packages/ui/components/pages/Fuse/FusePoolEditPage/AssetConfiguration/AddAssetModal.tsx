@@ -60,7 +60,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
 
   useEffect(() => {
     if (poolData && poolData.assets.length !== 0) {
-      const addresses = poolData.assets.map((asset) => asset.underlyingToken);
+      const addresses = poolData.assets.map((asset) => asset.underlyingToken.toLowerCase());
       setAddedAssets(addresses);
     }
   }, [poolData]);
@@ -167,7 +167,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                       height="60px"
                       px={2}
                       onClick={() => setNameOrAddress(asset.underlying)}
-                      disabled={addedAssets && addedAssets.includes(asset.underlying)}
+                      disabled={addedAssets && addedAssets.includes(asset.underlying.toLowerCase())}
                     >
                       <Flex direction="row" alignContent="center">
                         <CTokenIcon address={asset.underlying} />
