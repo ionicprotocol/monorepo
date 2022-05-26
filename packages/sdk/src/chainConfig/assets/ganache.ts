@@ -1,6 +1,8 @@
-import { SupportedAsset } from "../../types";
-import { assetSymbols } from "./index";
 import { constants } from "ethers";
+
+import { SupportedAsset } from "../../types";
+
+import { assetSymbols } from "./index";
 
 export const assets: SupportedAsset[] = [
   {

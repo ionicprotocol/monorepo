@@ -1,6 +1,8 @@
 import { BigNumber, constants } from "ethers";
-import { ChainLiquidationDefaults, SupportedAsset } from "../types";
+
 import { LiquidationStrategy, SupportedChains } from "../enums";
+import { ChainLiquidationDefaults, SupportedAsset } from "../types";
+
 import {
   assetSymbols,
   auroraAssets,
