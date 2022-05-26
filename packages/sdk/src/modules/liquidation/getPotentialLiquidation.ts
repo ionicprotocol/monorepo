@@ -1,15 +1,19 @@
+import { BigNumber, constants, utils } from "ethers";
+
+import { LiquidationStrategy } from "../../enums";
+import { FuseBase } from "../../Fuse";
+
+import { ChainLiquidationConfig, getLiquidationKind } from "./config";
+import encodeLiquidateTx from "./encodeLiquidateTx";
+import { getStrategyAndData } from "./redemptionStrategy";
 import {
   EncodedLiquidationTx,
   FusePoolUserWithAssets,
   SCALE_FACTOR_ONE_18_WEI,
   SCALE_FACTOR_UNDERLYING_DECIMALS,
 } from "./utils";
-import { BigNumber, constants, utils } from "ethers";
-import { getStrategyAndData } from "./redemptionStrategy";
-import { FuseBase } from "../../Fuse";
-import { ChainLiquidationConfig, getLiquidationKind, LiquidationStrategy } from "./config";
+
 import { estimateGas } from "./index";
-import encodeLiquidateTx from "./encodeLiquidateTx";
 
 export default async function getPotentialLiquidation(
   fuse: FuseBase,

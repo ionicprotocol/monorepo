@@ -1,11 +1,12 @@
 import { BigNumber, utils } from "ethers";
-import { FuseBaseConstructor } from "../../Fuse/types";
-import { gatherLiquidations } from "./index";
-import { LiquidatablePool, PublicPoolUserWithData } from "./utils";
+
+import { FuseBaseConstructor } from "../../types";
+
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
+import { LiquidatablePool, PublicPoolUserWithData } from "./utils";
 
-// import getPotentialLiquidations from "./getPotentialLiquidations";
+import { gatherLiquidations } from "./index";
 
 export function withSafeLiquidator<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class SafeLiquidator extends Base {
@@ -20,7 +21,11 @@ export function withSafeLiquidator<TBase extends FuseBaseConstructor>(Base: TBas
       const [comptrollers, users, closeFactors, liquidationIncentives] =
         await this.contracts.FusePoolLens.callStatic.getPublicPoolUsersWithData(maxHealthFactor);
       if (supportedComptrollers.length === 0) supportedComptrollers = comptrollers;
-      if (configOverrides) this.chainLiquidationConfig = { ...this.chainLiquidationConfig, ...configOverrides };
+      if (configOverrides)
+        this.chainLiquidationConfig = {
+          ...this.chainLiquidationConfig,
+          ...configOverrides,
+        };
       const publicPoolUsersWithData: Array<PublicPoolUserWithData> = comptrollers
         .map((c, i) => {
           return supportedComptrollers.includes(c)

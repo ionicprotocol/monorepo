@@ -1,0 +1,16 @@
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[build]
+  base    = "./"
+  publish = "./packages/ui/.next"
+  command = "yarn build:deploy:ui"
+
+[build.environment]
+  YARN_CHECKSUM_BEHAVIOR = "update"
+
+[context.branch-deploy.environment]
+  NEXT_PUBLIC_SHOW_TESTNETS = "true"
+  EVMOS="false"
+  BSC="false"
+  MOONBEAM="false"

@@ -1,9 +1,10 @@
-import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
-import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-import { CEtherDelegate } from "../../typechain/CEtherDelegate";
-import { Comptroller } from "../../typechain/Comptroller";
-import { FuseBaseConstructor } from "../Fuse/types";
 import axios from "axios";
+import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
+
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CEtherDelegate } from "../../lib/contracts/typechain/CEtherDelegate";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { FuseBaseConstructor } from "../types";
 
 export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class FundOperations extends Base {
@@ -89,10 +90,10 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
           this.provider.getSigner(options.from)
         ) as CErc20Delegate;
 
-        let response = (await cToken.callStatic.mint(amount)) as BigNumber;
+        const response = (await cToken.callStatic.mint(amount)) as BigNumber;
 
         if (response.toString() !== "0") {
-          let errorCode = parseInt(response.toString());
+          const errorCode = parseInt(response.toString());
           return { errorCode };
         }
 
@@ -155,10 +156,10 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
           this.provider.getSigner(options.from)
         ) as CErc20Delegate;
 
-        let response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
+        const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
 
         if (response.toString() !== "0") {
-          let errorCode = parseInt(response.toString());
+          const errorCode = parseInt(response.toString());
           return { errorCode };
         }
 
@@ -175,13 +176,13 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
         this.provider.getSigner(options.from)
       ) as CErc20Delegate;
 
-      let response = (await cToken.callStatic.borrow(amount)) as BigNumber;
+      const response = (await cToken.callStatic.borrow(amount)) as BigNumber;
 
       if (response.toString() !== "0") {
-        let errorCode = parseInt(response.toString());
+        const errorCode = parseInt(response.toString());
         return { errorCode };
       }
-      let tx: ContractTransaction = await cToken.borrow(amount);
+      const tx: ContractTransaction = await cToken.borrow(amount);
 
       return { tx, errorCode: null };
     }
@@ -193,13 +194,13 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
         this.provider.getSigner(options.from)
       ) as CErc20Delegate;
 
-      let response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
+      const response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
 
       if (response.toString() !== "0") {
-        let errorCode = parseInt(response.toString());
+        const errorCode = parseInt(response.toString());
         return { errorCode };
       }
-      let tx: ContractTransaction = await cToken.redeemUnderlying(amount);
+      const tx: ContractTransaction = await cToken.redeemUnderlying(amount);
 
       return { tx, errorCode: null };
     }

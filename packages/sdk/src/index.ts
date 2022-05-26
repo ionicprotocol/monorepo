@@ -11,15 +11,22 @@ export {
   OracleConf,
   InterestRateModel,
   FusePoolData,
-  USDPricedFuseAsset,
+  NativePricedFuseAsset,
   FuseAsset,
   InterestRateModelType,
-} from "./Fuse/types";
-export { SupportedChains } from "./network";
+  AssetPluginConfig,
+  PluginConfig,
+} from "./types";
+export {
+  SupportedChains,
+  DelegateContractName,
+  OracleTypes,
+  RedemptionStrategy,
+  LiquidationStrategy,
+  LiquidationKind,
+  ComptrollerErrorCodes,
+  CTokenErrorCodes,
+} from "./enums";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
-export {
-  defaults as liquidationConfigDefaults,
-  ChainLiquidationConfig,
-  LiquidationStrategy,
-} from "./modules/liquidation/config";
+export { ChainLiquidationConfig } from "./modules/liquidation/config";
