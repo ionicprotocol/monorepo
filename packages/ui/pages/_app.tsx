@@ -5,7 +5,7 @@ import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { createClient, Provider as WagmiProvider } from 'wagmi';
+import { createClient, WagmiConfig } from 'wagmi';
 
 import CheckConnection from '@ui/components/shared/CheckConnection';
 import Layout from '@ui/components/shared/Layout';
@@ -26,7 +26,7 @@ const client = createClient({
 function MidasDapp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
-      <WagmiProvider client={client}>
+      <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
           {isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
           <CheckConnection>
@@ -35,7 +35,7 @@ function MidasDapp({ Component, pageProps }: AppProps) {
             </Layout>
           </CheckConnection>
         </QueryClientProvider>
-      </WagmiProvider>
+      </WagmiConfig>
     </ChakraProvider>
   );
 }
