@@ -2,6 +2,7 @@ import { CheckIcon, CloseIcon } from '@chakra-ui/icons';
 import {
   Button,
   CircularProgress,
+  Flex,
   Heading,
   Image,
   Input,
@@ -12,15 +13,18 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
+  Spacer,
+  Text,
   VStack,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { SupportedAsset } from '@midas-capital/sdk/dist/cjs/src/types';
+import { useEffect, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 interface AddAssetProps {
   comptrollerAddress: string;
@@ -28,11 +32,24 @@ interface AddAssetProps {
   poolID: string;
   poolName: string;
 }
-const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
-  const { currentChain } = useRari();
-  const [tokenAddress, setTokenAddress] = useState<string>('');
 
-  const { data: tokenData, isLoading, error } = useTokenData(tokenAddress);
+const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
+  const { fuse } = useRari();
+  const [nameOrAddress, setNameOrAddress] = useState<string>('');
+  const [supportedAssets, setSupportedAssets] = useState<SupportedAsset[] | []>(
+    fuse.supportedAssets
+  );
+
+  const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress);
+
+  useEffect(() => {
+    const searchResults = fuse.supportedAssets.filter(
+      (asset) =>
+        asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
+        asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())
+    );
+    setSupportedAssets(searchResults);
+  }, [nameOrAddress, fuse.supportedAssets]);
 
   return (
     <VStack py={4}>
@@ -56,10 +73,10 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
           <InputGroup>
             <Input
               textAlign="center"
-              placeholder={'Token Address: 0xXX...XX'}
-              value={tokenAddress}
+              placeholder={'Search name or paste address'}
+              value={nameOrAddress}
               isInvalid={!!error}
-              onChange={(event) => setTokenAddress(event.target.value)}
+              onChange={(event) => setNameOrAddress(event.target.value)}
               autoFocus
             />
             <InputRightElement right={3}>
@@ -72,18 +89,12 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
               ) : null}
             </InputRightElement>
           </InputGroup>
-          <Button
-            alignSelf={'flex-end'}
-            variant={'link'}
-            pr={4}
-            onClick={() => setTokenAddress(WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].address)}
-          >
-            Use {WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].symbol} Address
-          </Button>
         </VStack>
       </VStack>
 
-      {tokenData && (
+      {isLoading ? (
+        <></>
+      ) : tokenData ? (
         <AddAssetSettings
           comptrollerAddress={comptrollerAddress}
           tokenData={tokenData}
@@ -91,6 +102,55 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
           poolName={poolName}
           poolID={poolID}
         />
+      ) : supportedAssets.length !== 0 ? (
+        <>
+          <Text textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2} px={6}>
+            Available supported assets
+          </Text>
+          <Flex
+            direction="column"
+            width="100%"
+            alignItems="center"
+            px={6}
+            height="400px"
+            overflow="scroll"
+          >
+            {supportedAssets.map((asset) => {
+              return (
+                <Button
+                  variant="listed"
+                  key={asset.name}
+                  width="100%"
+                  justifyContent="flex-start"
+                  height="60px"
+                  px={2}
+                  onClick={() => setNameOrAddress(asset.underlying)}
+                >
+                  <Flex direction="row" alignContent="center">
+                    <CTokenIcon address={asset.underlying} />
+                    <Flex ml={6} direction="column">
+                      <Text fontSize={24} textAlign="left">
+                        {asset.symbol}
+                      </Text>
+                      <Spacer />
+                      <Text fontWeight="normal" textAlign="left" fontSize={16}>
+                        {asset.name}
+                      </Text>
+                    </Flex>
+                  </Flex>
+                </Button>
+              );
+            })}
+          </Flex>
+        </>
+      ) : error ? (
+        <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
+          Invalid address
+        </Text>
+      ) : (
+        <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
+          Not available
+        </Text>
       )}
     </VStack>
   );
