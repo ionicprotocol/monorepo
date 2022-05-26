@@ -2,21 +2,14 @@ import { expect } from "chai";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
 
-import { cERC20Conf, ChainLiquidationConfig, Fuse } from "../../";
-import {
-  CErc20,
-  CEther,
-  EIP20Interface,
-  FuseFeeDistributor,
-  FuseSafeLiquidator,
-  MasterPriceOracle,
-  SimplePriceOracle,
-} from "../../lib/contracts/typechain";
-import { assetSymbols } from "../../src/chainConfig";
+import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
+import { ChainLiquidationConfig, Fuse } from "../../src";
 
 import { BSC_POOLS, getAssetsConf } from "./assets";
 import { getOrCreateFuse } from "./fuseSdk";
-import { createPool, DeployedAsset } from "./pool";
+import { createPool } from "./pool";
 
 export const resetPriceOracle = async (erc20One, erc20Two) => {
   const chainId = parseInt(await getChainId());
