@@ -90,6 +90,16 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
         color: mode('ecru', 'ecru')(props),
       },
     }),
+    listed: (props) => ({
+      color: mode('raisinBlack', 'whiteBg')(props),
+      bg: mode('whiteBg', 'raisinBlack')(props),
+      _hover: {
+        bg: mode('silverMetallic30', 'ecru30')(props),
+      },
+      _active: {
+        bg: mode('silverMetallic80', 'ecru80')(props),
+      },
+    }),
   },
   defaultProps: {
     size: 'md',
