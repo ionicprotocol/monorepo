@@ -1,6 +1,8 @@
-import { FuseBase } from "../../Fuse";
-import { SCALE_FACTOR_ONE_18_WEI } from "./utils";
 import { BigNumber, utils } from "ethers";
+
+import { FuseBase } from "../../Fuse";
+
+import { SCALE_FACTOR_ONE_18_WEI } from "./utils";
 
 export const minProfitEstimate = async (
   fuse: FuseBase,

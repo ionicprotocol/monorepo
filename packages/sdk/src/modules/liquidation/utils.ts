@@ -1,5 +1,6 @@
-import { BigNumber, BigNumberish, utils } from "ethers";
 import { TransactionRequest } from "@ethersproject/providers";
+import { BigNumber, BigNumberish, utils } from "ethers";
+
 import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
 import { FuseBase } from "../../Fuse";
 import { FuseAsset } from "../../types";
