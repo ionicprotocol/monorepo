@@ -8,8 +8,8 @@ const mainnet: ChainMetadata = {
   name: 'Moonbeam',
   shortName: 'Moonbeam',
   img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg',
-  enabled: true,
-  supported: true,
+  enabled: process.env.MOONBEAM === 'true',
+  supported: process.env.MOONBEAM === 'true',
   blocksPerMin: 5,
   blockExplorerUrls: { default: { name: 'Moonbeam', url: 'https://moonscan.io/' } },
   rpcUrls: { default: 'ttps://rpc.api.moonbeam.network' },
@@ -37,7 +37,8 @@ const testnet: ChainMetadata = {
   img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg',
   rpcUrls: { default: 'https://rpc.testnet.moonbeam.network' },
   enabled: true,
-  supported: process.env.NODE_ENV === 'development' || !!process.env.NEXT_PUBLIC_SHOW_TESTNETS,
+  supported:
+    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   blocksPerMin: 5,
   blockExplorerUrls: {
     default: { name: 'Moonbeam(Testnet)', url: 'https://moonbase.moonscan.io/' },

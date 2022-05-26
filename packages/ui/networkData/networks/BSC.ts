@@ -8,8 +8,8 @@ const mainnet: ChainMetadata = {
   name: 'Binance Smart Chain',
   shortName: 'BSC',
   img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg',
-  enabled: true,
-  supported: true,
+  enabled: process.env.BSC === 'true',
+  supported: process.env.BSC === 'true',
   blocksPerMin: 20,
   blockExplorerUrls: { default: { name: 'BscScan', url: 'https://bscscan.com' } },
   rpcUrls: { default: 'https://bsc-dataseed.binance.org/' },
@@ -37,7 +37,8 @@ const testnet: ChainMetadata = {
   img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg',
   rpcUrls: { default: 'https://data-seed-prebsc-1-s1.binance.org:8545/' },
   enabled: true,
-  supported: process.env.NODE_ENV === 'development' || !!process.env.NEXT_PUBLIC_SHOW_TESTNETS,
+  supported:
+    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   blocksPerMin: 20,
   blockExplorerUrls: { default: { name: 'BscScan(Testnet)', url: 'https://testnet.bscscan.com' } },
   nativeCurrency: {
