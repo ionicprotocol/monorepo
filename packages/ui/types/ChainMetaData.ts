@@ -19,6 +19,10 @@ export interface ChainMetadata {
   };
   nativeCurrency: {
     symbol: string;
+    name: string;
+  };
+  wrappedNativeCurrency: {
+    symbol: string;
     address: string;
     name: string;
     decimals: number;

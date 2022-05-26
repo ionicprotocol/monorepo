@@ -14,8 +14,12 @@ const mainnet: ChainMetadata = {
   rpcUrls: { default: 'http://localhost:8545' },
   blockExplorerUrls: { default: { name: 'Etherscan', url: 'http://localhost:3000' } },
   nativeCurrency: {
-    symbol: 'ETH',
-    address: '0x0000000000000000000000000000000000000000',
+    symbol: 'WETH',
+    name: 'Ganache',
+  },
+  wrappedNativeCurrency: {
+    symbol: 'WETH',
+    address: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
     name: 'Ganache',
     decimals: 18,
     color: '#627EEA',

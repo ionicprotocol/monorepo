@@ -85,7 +85,7 @@ export const InputConfigStyle: ComponentStyleConfig = {
         backgroundColor: mode('whiteBg', 'raisinBlack')(props),
         borderWidth: '2px',
         fontSize: '16px',
-        paddingInline: '12px',
+        paddingInline: '20px',
         _hover: {
           borderColor: 'ecru',
         },
