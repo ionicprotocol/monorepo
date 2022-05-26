@@ -1,8 +1,8 @@
 import { Button, Center, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import React, { LegacyRef } from 'react';
+import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import AccountModal from '@ui/components/shared/AccountModal';
-import Jazzicon from '@ui/components/shared/Jazzicon';
 import { useRari } from '@ui/context/RariContext';
 import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
 import { shortAddress } from '@ui/utils/shortAddress';
@@ -24,7 +24,7 @@ const ConnectWalletButton: React.FC = () => {
         {pendingTxHashes.length === 0 ? (
           <>
             <HStack>
-              <Jazzicon diameter={23} address={address} style={{ display: 'contents' }} />
+              <Jazzicon diameter={23} seed={jsNumberForAddress(address)} />
               {!isMobile && <Text fontWeight="semibold">{shortAddress(address)}</Text>}
             </HStack>
           </>

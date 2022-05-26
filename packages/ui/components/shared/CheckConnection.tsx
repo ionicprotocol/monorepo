@@ -3,15 +3,14 @@ import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef } from 'react';
 import { useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { isSupportedChainId } from '../../networkData';
-
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { RariProvider } from '@ui/context/RariContext';
+import { isSupportedChainId } from '@ui/networkData/index';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
-  const { activeChain, chains, switchNetwork } = useNetwork();
+  const { activeChain, chains, switchNetwork, isLoading: isNetworkLoading } = useNetwork();
   const { data: signerData } = useSigner();
   const { isConnecting, isReconnecting, isConnected } = useConnect();
   const { data: accountData } = useAccount();
@@ -83,18 +82,18 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     }
   }, [activeChain?.id, activeChain?.unsupported, router, routerChainId]);
 
-  // Not Connected
-  if (!isConnected && !isReconnecting) {
-    return <ConnectWalletModal isOpen={isOpen} onClose={onClose} />;
+  if (isConnecting || isReconnecting || isNetworkLoading) {
+    return <LoadingOverlay isLoading={true} />;
   }
-
-  // Wrong Network
-  if (!activeChain || activeChain.unsupported) {
+  // Not Connected
+  else if (!isConnected && !isConnecting && !isReconnecting) {
+    return <ConnectWalletModal isOpen={isOpen} onClose={onClose} />;
+  } // Wrong Network
+  else if (!activeChain || activeChain.unsupported) {
     return <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />;
   }
-
   // Everything Fine
-  if (activeChain && accountData?.address && signerData?.provider) {
+  else if (activeChain && accountData?.address && signerData?.provider) {
     return (
       <RariProvider
         currentChain={activeChain}
@@ -106,10 +105,10 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
         {children}
       </RariProvider>
     );
+    // !accountData?.address || !signerData?.provider
+  } else {
+    return null;
   }
-
-  // Loading
-  return <LoadingOverlay isLoading={true} />;
 };
 
 export default CheckConnection;
