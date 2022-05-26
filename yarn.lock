@@ -1621,11 +1621,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@ethersproject/contracts@npm:5.6.2, @ethersproject/contracts@npm:^5.6.0, @ethersproject/contracts@npm:^5.6.2":
-=======
-"@ethersproject/contracts@npm:5.6.2, @ethersproject/contracts@npm:^5.6.0, @ethersproject/contracts@npm:^5.6.1":
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   version: 5.6.2
   resolution: "@ethersproject/contracts@npm:5.6.2"
   dependencies:
@@ -1745,11 +1741,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@ethersproject/providers@npm:5.6.8, @ethersproject/providers@npm:^5.6.0, @ethersproject/providers@npm:^5.6.8":
-=======
-"@ethersproject/providers@npm:5.6.8, @ethersproject/providers@npm:^5.6.0, @ethersproject/providers@npm:^5.6.6":
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   version: 5.6.8
   resolution: "@ethersproject/providers@npm:5.6.8"
   dependencies:
@@ -2312,7 +2304,7 @@ __metadata:
     "@types/react-dom": ^18.0.5
     "@typescript-eslint/eslint-plugin": ^5.26.0
     "@typescript-eslint/parser": ^5.26.0
-    apexcharts: ^3.35.2
+    apexcharts: ^3.35.3
     axios: ^0.27.2
     eslint: 8.16.0
     eslint-config-next: 12.1.6
@@ -2742,114 +2734,114 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core-android-arm-eabi@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-android-arm-eabi@npm:1.2.192"
+"@swc/core-android-arm-eabi@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-android-arm-eabi@npm:1.2.194"
   conditions: os=android & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-android-arm64@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-android-arm64@npm:1.2.192"
+"@swc/core-android-arm64@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-android-arm64@npm:1.2.194"
   conditions: os=android & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-arm64@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-darwin-arm64@npm:1.2.192"
+"@swc/core-darwin-arm64@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-darwin-arm64@npm:1.2.194"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-darwin-x64@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-darwin-x64@npm:1.2.192"
+"@swc/core-darwin-x64@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-darwin-x64@npm:1.2.194"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-freebsd-x64@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-freebsd-x64@npm:1.2.192"
+"@swc/core-freebsd-x64@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-freebsd-x64@npm:1.2.194"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm-gnueabihf@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.2.192"
+"@swc/core-linux-arm-gnueabihf@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-linux-arm-gnueabihf@npm:1.2.194"
   conditions: os=linux & cpu=arm
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-gnu@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-linux-arm64-gnu@npm:1.2.192"
+"@swc/core-linux-arm64-gnu@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-linux-arm64-gnu@npm:1.2.194"
   conditions: os=linux & cpu=arm64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-arm64-musl@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-linux-arm64-musl@npm:1.2.192"
+"@swc/core-linux-arm64-musl@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-linux-arm64-musl@npm:1.2.194"
   conditions: os=linux & cpu=arm64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-gnu@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-linux-x64-gnu@npm:1.2.192"
+"@swc/core-linux-x64-gnu@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-linux-x64-gnu@npm:1.2.194"
   conditions: os=linux & cpu=x64 & libc=glibc
   languageName: node
   linkType: hard
 
-"@swc/core-linux-x64-musl@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-linux-x64-musl@npm:1.2.192"
+"@swc/core-linux-x64-musl@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-linux-x64-musl@npm:1.2.194"
   conditions: os=linux & cpu=x64 & libc=musl
   languageName: node
   linkType: hard
 
-"@swc/core-win32-arm64-msvc@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-win32-arm64-msvc@npm:1.2.192"
+"@swc/core-win32-arm64-msvc@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-win32-arm64-msvc@npm:1.2.194"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"@swc/core-win32-ia32-msvc@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-win32-ia32-msvc@npm:1.2.192"
+"@swc/core-win32-ia32-msvc@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-win32-ia32-msvc@npm:1.2.194"
   conditions: os=win32 & cpu=ia32
   languageName: node
   linkType: hard
 
-"@swc/core-win32-x64-msvc@npm:1.2.192":
-  version: 1.2.192
-  resolution: "@swc/core-win32-x64-msvc@npm:1.2.192"
+"@swc/core-win32-x64-msvc@npm:1.2.194":
+  version: 1.2.194
+  resolution: "@swc/core-win32-x64-msvc@npm:1.2.194"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
 "@swc/core@npm:^1.2.177":
-  version: 1.2.192
-  resolution: "@swc/core@npm:1.2.192"
+  version: 1.2.194
+  resolution: "@swc/core@npm:1.2.194"
   dependencies:
-    "@swc/core-android-arm-eabi": 1.2.192
-    "@swc/core-android-arm64": 1.2.192
-    "@swc/core-darwin-arm64": 1.2.192
-    "@swc/core-darwin-x64": 1.2.192
-    "@swc/core-freebsd-x64": 1.2.192
-    "@swc/core-linux-arm-gnueabihf": 1.2.192
-    "@swc/core-linux-arm64-gnu": 1.2.192
-    "@swc/core-linux-arm64-musl": 1.2.192
-    "@swc/core-linux-x64-gnu": 1.2.192
-    "@swc/core-linux-x64-musl": 1.2.192
-    "@swc/core-win32-arm64-msvc": 1.2.192
-    "@swc/core-win32-ia32-msvc": 1.2.192
-    "@swc/core-win32-x64-msvc": 1.2.192
+    "@swc/core-android-arm-eabi": 1.2.194
+    "@swc/core-android-arm64": 1.2.194
+    "@swc/core-darwin-arm64": 1.2.194
+    "@swc/core-darwin-x64": 1.2.194
+    "@swc/core-freebsd-x64": 1.2.194
+    "@swc/core-linux-arm-gnueabihf": 1.2.194
+    "@swc/core-linux-arm64-gnu": 1.2.194
+    "@swc/core-linux-arm64-musl": 1.2.194
+    "@swc/core-linux-x64-gnu": 1.2.194
+    "@swc/core-linux-x64-musl": 1.2.194
+    "@swc/core-win32-arm64-msvc": 1.2.194
+    "@swc/core-win32-ia32-msvc": 1.2.194
+    "@swc/core-win32-x64-msvc": 1.2.194
   dependenciesMeta:
     "@swc/core-android-arm-eabi":
       optional: true
@@ -2879,7 +2871,7 @@ __metadata:
       optional: true
   bin:
     swcx: run_swcx.js
-  checksum: 58541e2b72c37869d6a04d4a9a2e743513c720ce17329825c724d3623a720f626e2cd24eec9bd6b5506a436e903fed1c8ac1a24293f6f6599ff27e87cef5278b
+  checksum: 52f6e2aa73e968ea863fba0a2bb6920ef4b60e349bf3b3bc110f28ea64194b3eeb60f4242ee8e7fe0615d800e3b935bb3f13dbe0246f75e7e763b8093957de3f
   languageName: node
   linkType: hard
 
@@ -3394,11 +3386,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.26.0":
-=======
-"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.17.0, @typescript-eslint/eslint-plugin@npm:^5.26.0":
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   version: 5.26.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.26.0"
   dependencies:
@@ -3421,11 +3409,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.26.0":
-=======
-"@typescript-eslint/parser@npm:^5.17.0, @typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.26.0":
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   version: 5.26.0
   resolution: "@typescript-eslint/parser@npm:5.26.0"
   dependencies:
@@ -4081,7 +4065,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"apexcharts@npm:^3.35.2":
+"apexcharts@npm:^3.35.3":
   version: 3.35.3
   resolution: "apexcharts@npm:3.35.3"
   dependencies:
@@ -5789,9 +5773,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001332":
-  version: 1.0.30001342
-  resolution: "caniuse-lite@npm:1.0.30001342"
-  checksum: 9ad47aec82e85017c59aaa0acee8027d910a715c7481cf66c9b4e296f3d10cc5d96df86d3c3033326b0110f5792b3f117a1dc935e3299abf2139fa345bb326f1
+  version: 1.0.30001343
+  resolution: "caniuse-lite@npm:1.0.30001343"
+  checksum: b8770c0be83e8f1bf52b26d2c9564796195c268bda995ccebc5e67bcb5540cbed9fb03a33500c954628fa99735cddb9c69c54c2af15c37da487cebbdba1f5c60
   languageName: node
   linkType: hard
 
@@ -7159,9 +7143,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.47, electron-to-chromium@npm:^1.4.118":
-  version: 1.4.138
-  resolution: "electron-to-chromium@npm:1.4.138"
-  checksum: 071ae40ede544890a3da8e392affb8b9851e52ad6a2674b4de7ef95da660c66f753844cb3cb1890a26e0cbcb0795a9821402e2adec4b9510ab0f315e124a32e9
+  version: 1.4.139
+  resolution: "electron-to-chromium@npm:1.4.139"
+  checksum: b0156f56db6a84b471bdacaecc5779952c9e4612cbe29867a818c5799ff2cd6a83617b68c3c020ce94b7a396b8288db8236a23d52148a05f567fa19ee309c9c1
   languageName: node
   linkType: hard
 
@@ -8333,11 +8317,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.6, ethers@npm:^5.6.8":
-=======
-"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.6":
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   version: 5.6.8
   resolution: "ethers@npm:5.6.8"
   dependencies:
@@ -8955,33 +8935,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"framer-motion@npm:^6.2.8":
-  version: 6.3.3
-  resolution: "framer-motion@npm:6.3.3"
-=======
-"framer-motion@npm:^6.2.8, framer-motion@npm:^6.3.3":
-  version: 6.3.4
-  resolution: "framer-motion@npm:6.3.4"
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
-  dependencies:
-    "@emotion/is-prop-valid": ^0.8.2
-    framesync: 6.0.1
-    hey-listen: ^1.0.8
-    popmotion: 11.0.3
-    style-value-types: 5.0.0
-    tslib: ^2.1.0
-  peerDependencies:
-    react: ">=16.8 || ^17.0.0 || ^18.0.0"
-    react-dom: ">=16.8 || ^17.0.0 || ^18.0.0"
-  dependenciesMeta:
-    "@emotion/is-prop-valid":
-      optional: true
-  checksum: ea4ea22059f6723804f3890327e4f22c3ead564cbd54dc1df66ff6b010835202e42de0fe325f956074033359904206af72714f01c26859cb80279583908ae3e9
-  languageName: node
-  linkType: hard
-
-"framer-motion@npm:^6.3.4":
+"framer-motion@npm:^6.2.8, framer-motion@npm:^6.3.4":
   version: 6.3.4
   resolution: "framer-motion@npm:6.3.4"
   dependencies:
@@ -11899,11 +11853,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "mathjs@npm:^10.6.0":
-=======
-"mathjs@npm:^10.5.3":
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   version: 10.6.0
   resolution: "mathjs@npm:10.6.0"
   dependencies:
@@ -12447,8 +12397,8 @@ __metadata:
     "@tsconfig/recommended": ^1.0.1
     "@typescript-eslint/eslint-plugin": ^5.26.0
     "@typescript-eslint/parser": ^5.26.0
-    ts-node: ^10.7.0
-    typescript: ^4.6.3
+    ts-node: ^10.8.0
+    typescript: ^4.7.2
   languageName: unknown
   linkType: soft
 
@@ -12726,19 +12676,11 @@ __metadata:
   linkType: hard
 
 "node-abi@npm:^3.3.0":
-<<<<<<< HEAD
-  version: 3.21.0
-  resolution: "node-abi@npm:3.21.0"
-  dependencies:
-    semver: ^7.3.5
-  checksum: 08b5f0c56ad62a35031bb01f2bba6d2dc58c143e0a38dba9cb6e6e7d220d8ac12a9941a93d29209560689bc5ac68651c73226a5c750392b02071300b39e0ce33
-=======
   version: 3.22.0
   resolution: "node-abi@npm:3.22.0"
   dependencies:
     semver: ^7.3.5
   checksum: ad76823920780de39b9712b10c8e5ee424d573b74720b9eeef9ce6523d587f114787aefeabbd34d7a861f9cfab9ac131e1a149243470bb79d6eb5d414a3fa58e
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
   languageName: node
   linkType: hard
 
@@ -16461,7 +16403,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.7.0":
+"ts-node@npm:^10.7.0, ts-node@npm:^10.8.0":
   version: 10.8.0
   resolution: "ts-node@npm:10.8.0"
   dependencies:
@@ -16706,23 +16648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"typescript@npm:4.7.2, typescript@npm:^4.6.3, typescript@npm:^4.6.4":
-  version: 4.7.2
-  resolution: "typescript@npm:4.7.2"
-=======
-"typescript@npm:4.6.4":
-  version: 4.6.4
-  resolution: "typescript@npm:4.6.4"
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 5163585e6b56410f77d5483b698d9489bbee8902c99029eb70cf6d21525a186530ce19a00951af84eefd4a131cc51d0959f5118e25e70ab61f45ac4057dbd1ef
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^4.6.3, typescript@npm:^4.6.4":
+"typescript@npm:4.7.2, typescript@npm:^4.6.4, typescript@npm:^4.7.2":
   version: 4.7.2
   resolution: "typescript@npm:4.7.2"
   bin:
@@ -16742,23 +16668,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"typescript@patch:typescript@4.7.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
-  version: 4.7.2
-  resolution: "typescript@patch:typescript@npm%3A4.7.2#~builtin<compat/typescript>::version=4.7.2&hash=bda367"
-=======
-"typescript@patch:typescript@4.6.4#~builtin<compat/typescript>":
-  version: 4.6.4
-  resolution: "typescript@patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"
->>>>>>> 3ac8251ba6ebe8f392d00016cc5f566fe8b3ad7a
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 09d93fc0983d38eadd9b0427f790b49b4437f45002a87d447be3fbe53120880e87a91dd03e1d900498f99205d6e0b7c9784fe41fca11d56f4bbce371f74bb160
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.7.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.2#~builtin<compat/typescript>":
   version: 4.7.2
   resolution: "typescript@patch:typescript@npm%3A4.7.2#~builtin<compat/typescript>::version=4.7.2&hash=bda367"
   bin:
