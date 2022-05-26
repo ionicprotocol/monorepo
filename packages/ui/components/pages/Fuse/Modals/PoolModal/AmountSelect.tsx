@@ -39,7 +39,7 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import { AmountProps } from '@ui/types/ComponentPropsType';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -153,7 +153,8 @@ const AmountSelect = ({
     try {
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
 
-      const isNativeToken = asset.underlyingToken === NATIVE_TOKEN_DATA[currentChain.id].address;
+      const isNativeToken =
+        asset.underlyingToken === WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].address;
       const isRepayingMax =
         amount.eq(asset.borrowBalance) && !isNativeToken && mode === FundOperationMode.REPAY;
       let tx: ContractTransaction;

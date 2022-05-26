@@ -10,6 +10,7 @@ const chains: Chain[] = Object.values(getSupportedChains()).map((data) => {
   return {
     id: data.chainId,
     name: data.name,
+    network: data.name,
     nativeCurrency: {
       name: data.nativeCurrency.name,
       symbol: data.nativeCurrency.symbol,
