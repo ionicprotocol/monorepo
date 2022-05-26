@@ -4,6 +4,7 @@ import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { cERC20Conf, Fuse, FusePoolData, NativePricedFuseAsset } from "../../src";
+
 import { getOrCreateFuse } from "./fuseSdk";
 
 interface PoolCreationParams {

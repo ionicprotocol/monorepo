@@ -1,11 +1,12 @@
-import { ChainDeployConfig, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
+
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+import { ChainDeployConfig, deployUniswapOracle } from "../helpers";
+import { deployDiaOracle } from "../helpers/dia";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
-import { deployDiaOracle } from "../helpers/dia";
-import { SupportedChains } from "../../src";
-import { SupportedAsset } from "../../src/types";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.moonbeam];
 

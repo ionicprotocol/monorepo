@@ -1,7 +1,6 @@
 import { BigNumber, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
-import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
-import { addCollateral, borrowCollateral } from "../utils/collateral";
+
 import {
   EIP20Interface,
   FuseFeeDistributor,
@@ -10,10 +9,12 @@ import {
   SimplePriceOracle,
 } from "../../lib/contracts/typechain";
 import { cERC20Conf, ChainLiquidationConfig } from "../../src";
+import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
+import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
+import { addCollateral, borrowCollateral } from "../utils/collateral";
+import { getOrCreateFuse } from "../utils/fuseSdk";
 import { DeployedAsset } from "../utils/pool";
 import { liquidateAndVerify, resetPriceOracle } from "../utils/setup";
-import { getOrCreateFuse } from "../utils/fuseSdk";
-import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
 
 (process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;

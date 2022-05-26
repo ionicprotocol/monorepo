@@ -1,10 +1,10 @@
-import { ChainDeployConfig } from "../helpers";
 import { ethers, providers } from "ethers";
-import { ChainDeployFnParams } from "../helpers/types";
 
 import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
+import { ChainDeployConfig } from "../helpers";
+import { ChainDeployFnParams } from "../helpers/types";
 
 const assets = chainSupportedAssets[SupportedChains.moonbase_alpha];
 

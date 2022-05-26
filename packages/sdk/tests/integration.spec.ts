@@ -1,14 +1,16 @@
 import { BigNumber, providers, utils } from "ethers";
 import { ethers } from "hardhat";
-import { deployAssets, tradeNativeForAsset } from "./utils";
-import { addCollateral, borrowCollateral } from "./utils/collateral";
+
 import { EIP20Interface, FuseSafeLiquidator, SimplePriceOracle } from "../lib/contracts/typechain";
 import { cERC20Conf, ChainLiquidationConfig } from "../src";
+import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
+
+import { deployAssets, tradeNativeForAsset } from "./utils";
+import { BSC_POOLS, getAssetsConf } from "./utils/assets";
+import { addCollateral, borrowCollateral } from "./utils/collateral";
+import { getOrCreateFuse } from "./utils/fuseSdk";
 import { DeployedAsset } from "./utils/pool";
 import { liquidateAndVerify, setUpPools } from "./utils/setup";
-import { getOrCreateFuse } from "./utils/fuseSdk";
-import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
-import { BSC_POOLS, getAssetsConf } from "./utils/assets";
 
 describe.skip("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
