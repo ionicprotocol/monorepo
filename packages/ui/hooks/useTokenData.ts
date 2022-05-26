@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQueries, useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
 
@@ -15,7 +15,7 @@ export const fetchTokenData = async (
   let data;
 
   if (chainId) {
-    if (address !== NATIVE_TOKEN_DATA[chainId].address) {
+    if (address !== WRAPPED_NATIVE_TOKEN_DATA[chainId].address) {
       try {
         const tokenData = await axios.post('/api/tokenData', {
           address: address,
@@ -30,7 +30,7 @@ export const fetchTokenData = async (
         throw 'Not a valid token address';
       }
     } else {
-      data = NATIVE_TOKEN_DATA[chainId];
+      data = WRAPPED_NATIVE_TOKEN_DATA[chainId];
     }
   }
 

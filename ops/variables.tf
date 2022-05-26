@@ -13,6 +13,7 @@ variable "az_count" {
 variable "ethereum_admin_account" {
   type = string
 }
+
 variable "ethereum_admin_private_key" {
   type = string
 }

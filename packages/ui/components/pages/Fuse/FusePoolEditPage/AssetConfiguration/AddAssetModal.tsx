@@ -20,7 +20,7 @@ import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/Ass
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 interface AddAssetProps {
   comptrollerAddress: string;
@@ -46,7 +46,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
             {tokenData && tokenData.symbol}
           </Heading>
           {tokenData?.name && (
-            <Heading as="h2" size="md" isTruncated>
+            <Heading as="h2" size="md">
               {tokenData.name}
             </Heading>
           )}
@@ -55,7 +55,6 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
         <VStack width="100%">
           <InputGroup>
             <Input
-              px={2}
               textAlign="center"
               placeholder={'Token Address: 0xXX...XX'}
               value={tokenAddress}
@@ -63,7 +62,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
               onChange={(event) => setTokenAddress(event.target.value)}
               autoFocus
             />
-            <InputRightElement>
+            <InputRightElement right={3}>
               {error ? (
                 <CloseIcon color="fail" />
               ) : isLoading ? (
@@ -77,9 +76,9 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
             alignSelf={'flex-end'}
             variant={'link'}
             pr={4}
-            onClick={() => setTokenAddress(NATIVE_TOKEN_DATA[currentChain.id].address)}
+            onClick={() => setTokenAddress(WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].address)}
           >
-            Use {NATIVE_TOKEN_DATA[currentChain.id].symbol} Address
+            Use {WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].symbol} Address
           </Button>
         </VStack>
       </VStack>
