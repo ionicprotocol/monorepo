@@ -45,6 +45,7 @@ export const deployChainlinkOracle = async ({
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
 
   return { cpo: cpo, chainLinkv2: chainLinkv2 };
 };
