@@ -18,8 +18,10 @@ export const deployCurveLpOracle = async ({
     log: true,
     proxy: {
       execute: {
-        methodName: "initialize",
-        args: [[], [], []],
+        init: {
+          methodName: "initialize",
+          args: [[], [], []],
+        }
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",
