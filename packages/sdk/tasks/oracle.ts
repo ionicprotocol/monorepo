@@ -20,7 +20,7 @@ export default task("oracle:set-price", "Set price of token")
   });
 
 task("oracle:get-price", "Get price of token")
-  .addOptionalParam("token", "Token for which to get the price", undefined, types.string)
+  .addOptionalParam("token", "Token symbol for which to get the price", undefined, types.string)
   .addOptionalParam("address", "Token address for which to get the price", undefined, types.string)
   .setAction(async ({ token: _token, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
     const oracleModule = await import("../tests/utils/oracle");
