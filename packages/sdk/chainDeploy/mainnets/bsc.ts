@@ -1,12 +1,13 @@
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
+
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
-import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.bsc];
 
@@ -365,8 +366,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   /// jBRL->BUSD
   // TODO in the addresses provider?
-  let synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
-  let expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
+  const synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
+  const expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
   const jarvisSynthereumLiquidator = await deployments.deploy("JarvisSynthereumLiquidator", {
     from: deployer,
     args: [synthereumLiquidityPoolAddress, expirationTime],
@@ -411,7 +412,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  let tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
+  const tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
   await tx.wait();
   console.log("setAddress: ", tx.hash);
   ////

@@ -1,9 +1,10 @@
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
-import { ChainlinkAsset } from "../helpers/types";
-import { SupportedAsset } from "../../src/types";
+
 import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import { ChainlinkAsset } from "../helpers/types";
 
 const assets = chainSupportedAssets[SupportedChains.chapel];
 

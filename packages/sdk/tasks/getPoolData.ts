@@ -93,7 +93,6 @@ task("get-position-ratio", "Get unhealthy po data")
     }
 
     let poolUser: string;
-    let fusePoolData;
 
     if (taskArgs.namedUser) {
       poolUser = (await hre.ethers.getNamedSigner(taskArgs.namedUser)).address;
@@ -101,7 +100,7 @@ task("get-position-ratio", "Get unhealthy po data")
       poolUser = taskArgs.userAddress;
     }
 
-    fusePoolData = taskArgs.name
+    const fusePoolData = taskArgs.name
       ? await poolModule.getPoolByName(taskArgs.name, sdk, poolUser)
       : await sdk.fetchFusePoolData(taskArgs.poolId.toString(), poolUser);
 

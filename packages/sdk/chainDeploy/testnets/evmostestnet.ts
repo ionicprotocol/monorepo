@@ -1,8 +1,9 @@
 import { constants, ethers, providers, utils } from "ethers";
+
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams, CurvePoolConfig } from "../helpers/types";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.evmos_testnet];
 
@@ -72,7 +73,7 @@ export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDep
         init: {
           methodName: "initialize",
           args: [[], [], []],
-        }
+        },
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",

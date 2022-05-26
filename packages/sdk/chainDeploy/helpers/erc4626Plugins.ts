@@ -1,4 +1,5 @@
 import { constants } from "ethers";
+
 import { Erc4626PluginDeployFnParams, FuseFlywheelDeployFnParams, PluginConfig } from "..";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 
@@ -69,7 +70,7 @@ export const deployERC4626Plugin = async ({
   for (const pluginConfig of deployConfig.plugins) {
     if (pluginConfig) {
       const hasFlywheel = pluginConfig.flywheelIndices || pluginConfig.flywheelAddresses;
-      let args = hasFlywheel
+      const args = hasFlywheel
         ? [
             pluginConfig.underlying,
             ...getFlywheelAddresses(pluginConfig, dynamicFlywheels),
