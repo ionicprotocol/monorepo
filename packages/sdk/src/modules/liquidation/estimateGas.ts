@@ -1,8 +1,10 @@
-import { FuseBase } from "../../Fuse";
-import { FusePoolUserWithAssets } from "./utils";
 import { BigNumber } from "ethers";
+
+import { LiquidationKind } from "../../enums";
+import { FuseBase } from "../../Fuse";
+
 import { StrategyAndData } from "./redemptionStrategy";
-import { LiquidationKind } from "./config";
+import { FusePoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
   fuse: FuseBase,

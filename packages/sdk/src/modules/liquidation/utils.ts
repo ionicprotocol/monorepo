@@ -1,8 +1,9 @@
-import { FuseAsset } from "../../index";
-import { BigNumber, BigNumberish, utils } from "ethers";
 import { TransactionRequest } from "@ethersproject/providers";
-import { FusePoolLens } from "../../../typechain/FusePoolLens";
+import { BigNumber, BigNumberish, utils } from "ethers";
+
+import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
 import { FuseBase } from "../../Fuse";
+import { FuseAsset } from "../../types";
 
 export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);
 export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: FuseAsset) =>

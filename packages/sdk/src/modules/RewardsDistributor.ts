@@ -1,8 +1,10 @@
 import { BigNumber, BigNumberish, Contract, ContractFactory } from "ethers";
-import { Comptroller } from "../../typechain/Comptroller";
-import { ERC20 } from "../../typechain/ERC20";
-import { RewardsDistributorDelegate } from "../../typechain/RewardsDistributorDelegate";
-import { FuseBaseConstructor } from "../Fuse/types";
+
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { ERC20 } from "../../lib/contracts/typechain/ERC20";
+import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
+import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
+import { FuseBaseConstructor } from "../types";
 
 export interface ClaimableReward {
   distributor: string;
@@ -10,15 +12,15 @@ export interface ClaimableReward {
   amount: BigNumber;
 }
 
-export interface Reward {
+export interface RewardsDistributorReward {
   distributor: string;
   rewardToken: string;
-  speed: BigNumber;
+  rewardsPerBlock: BigNumber;
 }
-export interface MarketReward {
+export interface RewardsDistributorMarketReward {
   cToken: string;
-  supplyRewards: Reward[];
-  borrowRewards: Reward[];
+  supplyRewards: RewardsDistributorReward[];
+  borrowRewards: RewardsDistributorReward[];
 }
 
 export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: TBase) {
@@ -36,17 +38,21 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
       )) as RewardsDistributorDelegate;
     }
 
-    addRewardsDistributorToPool(rewardsDistributorAddress: string, poolAddress: string, options: { from: string }) {
+    async addRewardsDistributorToPool(
+      rewardsDistributorAddress: string,
+      poolAddress: string,
+      options: { from: string }
+    ) {
       const comptrollerInstance = new Contract(
         poolAddress,
         this.artifacts.Comptroller.abi,
         this.provider.getSigner(options.from)
       ) as Comptroller;
-      return comptrollerInstance.functions._addRewardsDistributor(rewardsDistributorAddress);
+      return await comptrollerInstance.functions._addRewardsDistributor(rewardsDistributorAddress);
     }
 
     async fundRewardsDistributor(rewardsDistributorAddress: string, amount: BigNumberish, options: { from: string }) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
 
       const rewardTokenAddress = await rewardsDistributorInstance.rewardToken();
 
@@ -64,7 +70,7 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
       cTokenAddress: string,
       options: { from: string }
     ) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
       return rewardsDistributorInstance.compSupplySpeeds(cTokenAddress);
     }
 
@@ -73,45 +79,52 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
       cTokenAddress: string,
       options: { from: string }
     ) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
       return rewardsDistributorInstance.compSupplySpeeds(cTokenAddress);
     }
 
     updateRewardsDistributorSupplySpeed(
       rewardsDistributorAddress: string,
       cTokenAddress: string,
-      amount: BigNumberish,
+      rewardsPerBlock: BigNumberish,
       options: { from: string }
     ) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
 
-      return rewardsDistributorInstance._setCompSupplySpeed(cTokenAddress, amount);
+      return rewardsDistributorInstance._setCompSupplySpeed(cTokenAddress, rewardsPerBlock);
     }
 
     updateRewardsDistributorBorrowSpeed(
       rewardsDistributorAddress: string,
       cTokenAddress: string,
-      amount: BigNumberish,
+      rewardsPerBlock: BigNumberish,
       options: { from: string }
     ) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
 
-      return rewardsDistributorInstance._setCompBorrowSpeed(cTokenAddress, amount);
+      return rewardsDistributorInstance._setCompBorrowSpeed(cTokenAddress, rewardsPerBlock);
     }
 
     updateRewardsDistributorSpeeds(
       rewardsDistributorAddress: string,
       cTokenAddress: string[],
-      amountSuppliers: BigNumberish[],
-      amountBorrowers: BigNumberish[],
+      rewardsPerBlockSuppliers: BigNumberish[],
+      rewardsPerBlockBorrowers: BigNumberish[],
       options: { from: string }
     ) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
 
-      return rewardsDistributorInstance._setCompSpeeds(cTokenAddress, amountSuppliers, amountBorrowers);
+      return rewardsDistributorInstance._setCompSpeeds(
+        cTokenAddress,
+        rewardsPerBlockSuppliers,
+        rewardsPerBlockBorrowers
+      );
     }
 
-    async getRewardsDistributorMarketRewardsByPool(pool: string, options: { from: string }): Promise<MarketReward[]> {
+    async getRewardsDistributorMarketRewardsByPool(
+      pool: string,
+      options: { from: string }
+    ): Promise<RewardsDistributorMarketReward[]> {
       const rewardSpeedsByPoolResponse = await this.contracts.FusePoolLensSecondary.callStatic.getRewardSpeedsByPool(
         pool,
         options
@@ -125,7 +138,7 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
     ): Promise<
       {
         pool: string;
-        marketRewards: MarketReward[];
+        marketRewards: RewardsDistributorMarketReward[];
       }[]
     > {
       const [allMarkets, distributors, rewardTokens, supplySpeeds, borrowSpeeds] =
@@ -169,12 +182,44 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
       return claimableRewards;
     }
 
+    async getRewardsDistributorsBySupplier(account: string, options: { from: string }) {
+      return await this.contracts.FusePoolLensSecondary.callStatic.getRewardsDistributorsBySupplier(account, options);
+    }
+
+    async getRewardsDistributorsByPool(poolAddress: string, options: { from: string }) {
+      const comptrollerInstance = this.getComptrollerInstance(poolAddress, options);
+      const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors(options);
+      const instances = allRewardDistributors.map((address) => {
+        return new Contract(
+          address,
+          this.artifacts.FuseFlywheelCore.abi,
+          this.provider.getSigner(options.from)
+        ) as FuseFlywheelCore;
+      });
+
+      const filterList = await Promise.all(
+        instances.map(async (instance) => {
+          try {
+            return !(await instance.isFlywheel());
+          } catch (error) {
+            return true;
+          }
+        })
+      );
+
+      const rdInstances = allRewardDistributors
+        .filter((_, index) => filterList[index])
+        .map((address) => this.#getRewardsDistributorInstance(address, options));
+
+      return rdInstances;
+    }
+
     claimAllRewardsDistributorRewards(rewardsDistributorAddress: string, options: { from: string }) {
-      const rewardsDistributorInstance = this.#getRewardsDistributor(rewardsDistributorAddress, options);
+      const rewardsDistributorInstance = this.#getRewardsDistributorInstance(rewardsDistributorAddress, options);
       return rewardsDistributorInstance.functions["claimRewards(address)"](options.from);
     }
 
-    #getRewardsDistributor(rewardsDistributorAddress: string, options: { from: string }) {
+    #getRewardsDistributorInstance(rewardsDistributorAddress: string, options: { from: string }) {
       return new Contract(
         rewardsDistributorAddress,
         this.chainDeployment.RewardsDistributorDelegate.abi,
@@ -188,22 +233,22 @@ export function withRewardsDistributor<TBase extends FuseBaseConstructor>(Base: 
       rewardTokens: string[],
       supplySpeeds: BigNumber[][],
       borrowSpeeds: BigNumber[][]
-    ): MarketReward[] {
-      const marketRewards: MarketReward[] = allMarkets.map((market, marketIndex) => ({
+    ): RewardsDistributorMarketReward[] {
+      const marketRewards: RewardsDistributorMarketReward[] = allMarkets.map((market, marketIndex) => ({
         cToken: market,
         supplyRewards: supplySpeeds[marketIndex]
           .filter((speed) => speed.gt(0))
           .map((speed, speedIndex) => ({
             distributor: distributors[speedIndex],
             rewardToken: rewardTokens[speedIndex],
-            speed,
+            rewardsPerBlock: speed,
           })),
         borrowRewards: borrowSpeeds[marketIndex]
           .filter((speed) => speed.gt(0))
           .map((speed, speedIndex) => ({
             distributor: distributors[speedIndex],
             rewardToken: rewardTokens[speedIndex],
-            speed,
+            rewardsPerBlock: speed,
           })),
       }));
 

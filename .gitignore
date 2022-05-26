@@ -7,6 +7,32 @@
 
 # !.yarn/cache
 .pnp.*
-node_modules
+node_modules*
 !/packages/fuse-liquidator-bot/.env
 !/packages/fuse-twap-bot/.env
+/.idea/
+.vscode
+
+_tmp
+build
+dist*
+coverage
+*.tsBuildInfo
+
+.DS_Store
+packages/sdk/.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.nyc_output
+
+**/.terraform/**
+**/.terraform.lock.hcl
+ops/**/tfvars.json
+**/.env
+
+# Local Netlify folder
+.netlify
+cypress
+monorepo.iml
