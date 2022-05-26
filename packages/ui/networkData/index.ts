@@ -15,13 +15,13 @@ export const NETWORK_DATA: Record<string, ChainMetadata> = {
   [SupportedChains.moonbase_alpha]: Moonbeam.testnet,
 };
 
-export const NATIVE_TOKEN_DATA: Record<number, ChainMetadata['nativeCurrency']> = {
-  [SupportedChains.ganache]: Ganache.testnet.nativeCurrency,
-  [SupportedChains.bsc]: BSC.mainnet.nativeCurrency,
-  [SupportedChains.chapel]: BSC.testnet.nativeCurrency,
-  [SupportedChains.evmos_testnet]: Evmos.testnet.nativeCurrency,
-  [SupportedChains.moonbeam]: Moonbeam.mainnet.nativeCurrency,
-  [SupportedChains.moonbase_alpha]: Moonbeam.testnet.nativeCurrency,
+export const WRAPPED_NATIVE_TOKEN_DATA: Record<number, ChainMetadata['wrappedNativeCurrency']> = {
+  [SupportedChains.ganache]: Ganache.testnet.wrappedNativeCurrency,
+  [SupportedChains.bsc]: BSC.mainnet.wrappedNativeCurrency,
+  [SupportedChains.chapel]: BSC.testnet.wrappedNativeCurrency,
+  [SupportedChains.evmos_testnet]: Evmos.testnet.wrappedNativeCurrency,
+  [SupportedChains.moonbeam]: Moonbeam.mainnet.wrappedNativeCurrency,
+  [SupportedChains.moonbase_alpha]: Moonbeam.testnet.wrappedNativeCurrency,
 };
 
 export const isSupportedChainId = (chainId: number) => {
