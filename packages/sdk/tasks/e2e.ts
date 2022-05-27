@@ -1,5 +1,5 @@
-import { task } from "hardhat/config";
 import { expect } from "chai";
+import { task } from "hardhat/config";
 
 const UnhealthyPoolTypes = {
   TokenBorrowEthCollateral: {
@@ -61,7 +61,7 @@ task("e2e:admin-fees-are-seized", "e2e: check fees are seized").setAction(async 
       }): ${hre.ethers.utils.formatEther(feesAfterLiquidation)}`
     );
     expect(feesAfterLiquidation).to.be.gt(hre.ethers.BigNumber.from(0));
-    let tx = await assetCtoken._withdrawFuseFees(feesAfterLiquidation);
+    const tx = await assetCtoken._withdrawFuseFees(feesAfterLiquidation);
     const receipt = await tx.wait();
     expect(receipt.status).to.eq(1);
     const feesAfterWithdrawal = await assetCtoken.totalFuseFees();

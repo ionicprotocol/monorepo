@@ -1,12 +1,13 @@
-import { deployments, ethers } from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
+import { deployments, ethers } from "hardhat";
+
 import { Fuse } from "../../src";
 import { setUpPriceOraclePrices } from "../utils";
+import * as assetHelpers from "../utils/assets";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
-import * as assetHelpers from "../utils/assets";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 use(solidity);
 

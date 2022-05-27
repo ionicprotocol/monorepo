@@ -1,12 +1,13 @@
-import { ChainDeployConfig } from "../helpers";
 import { ethers } from "ethers";
+
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+import { ChainDeployConfig } from "../helpers";
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams } from "../helpers/types";
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 
 const assets = chainSupportedAssets[SupportedChains.ganache];
 

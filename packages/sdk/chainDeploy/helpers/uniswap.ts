@@ -1,6 +1,8 @@
-import { UniswapTwapPriceOracleV2Factory } from "../../lib/contracts/typechain/UniswapTwapPriceOracleV2Factory";
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { constants } from "ethers";
+
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { UniswapTwapPriceOracleV2Factory } from "../../lib/contracts/typechain/UniswapTwapPriceOracleV2Factory";
+
 import { UniswapDeployFnParams } from "./types";
 
 export const deployUniswapOracle = async ({
@@ -49,13 +51,13 @@ export const deployUniswapOracle = async ({
   );
   if (existingOracle == constants.AddressZero) {
     // deploy oracle with wtoken as base token
-    let tx = await uniTwapOracleFactory.deploy(deployConfig.uniswap.uniswapV2FactoryAddress, deployConfig.wtoken);
+    const tx = await uniTwapOracleFactory.deploy(deployConfig.uniswap.uniswapV2FactoryAddress, deployConfig.wtoken);
     await tx.wait();
   } else {
     console.log("UniswapTwapPriceOracleV2 already deployed at: ", existingOracle);
   }
 
-  for (let tokenPair of deployConfig.uniswap.uniswapOracleInitialDeployTokens) {
+  for (const tokenPair of deployConfig.uniswap.uniswapOracleInitialDeployTokens) {
     console.log("operating on pair: ", tokenPair.token, tokenPair.baseToken);
     let oldBaseTokenOracle = await uniTwapOracleFactory.callStatic.oracles(
       deployConfig.uniswap.uniswapV2FactoryAddress,
@@ -63,7 +65,7 @@ export const deployUniswapOracle = async ({
     );
     console.log(oldBaseTokenOracle, "oldBaseTokenOracle for base token", tokenPair.baseToken);
     if (oldBaseTokenOracle == constants.AddressZero) {
-      let tx = await uniTwapOracleFactory.deploy(deployConfig.uniswap.uniswapV2FactoryAddress, tokenPair.baseToken);
+      const tx = await uniTwapOracleFactory.deploy(deployConfig.uniswap.uniswapV2FactoryAddress, tokenPair.baseToken);
       await tx.wait();
       oldBaseTokenOracle = await uniTwapOracleFactory.callStatic.oracles(
         deployConfig.uniswap.uniswapV2FactoryAddress,
@@ -81,7 +83,7 @@ export const deployUniswapOracle = async ({
   }
 
   if (updateOracles.length) {
-    let tx = await mpo.add(updateUnderlyings, updateOracles);
+    const tx = await mpo.add(updateUnderlyings, updateOracles);
     await tx.wait();
     console.log(
       `Master Price Oracle updated for tokens ${updateUnderlyings.join(", ")} with oracles ${updateOracles.join(", ")}`
@@ -89,7 +91,7 @@ export const deployUniswapOracle = async ({
   }
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  let tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
+  const tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
   await tx.wait();
   console.log("setAddress: ", tx.hash);
 };

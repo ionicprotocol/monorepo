@@ -90,7 +90,7 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
 };
 
 export const getLocalDeployments = async (): Promise<ChainDeployment> => {
-  let chainDeployment: ChainDeployment = {};
+  const chainDeployment: ChainDeployment = {};
 
   const TOUCHToken = await ethers.getContract("TOUCHToken");
   const TOUCHTokenArtifact = await deployments.getArtifact("TOUCHToken");
@@ -102,7 +102,7 @@ export const getLocalDeployments = async (): Promise<ChainDeployment> => {
 };
 
 export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
-  let chainDeployment: ChainDeployment = {};
+  const chainDeployment: ChainDeployment = {};
   const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
   const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
   chainDeployment.WhitePaperInterestRateModel = {

@@ -1,5 +1,5 @@
-import { task, types } from "hardhat/config";
 import { BigNumber, constants, providers } from "ethers";
+import { task, types } from "hardhat/config";
 
 export default task("send-tokens", "Edit deployers")
   .addParam("tokens", "Comma-separated symbols")

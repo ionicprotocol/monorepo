@@ -10,7 +10,13 @@ import { RariProvider } from '@ui/context/RariContext';
 import { isSupportedChainId } from '@ui/networkData/index';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
-  const { activeChain, chains, switchNetwork, isLoading: isNetworkLoading } = useNetwork();
+  const {
+    activeChain,
+    chains,
+    switchNetworkAsync,
+    isLoading: isNetworkLoading,
+    isError,
+  } = useNetwork();
   const { data: signerData } = useSigner();
   const { isConnecting, isReconnecting, isConnected } = useConnect();
   const { data: accountData } = useAccount();
@@ -27,6 +33,25 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
       onOpen();
     }
   }, [isConnected, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
+
+  //user gets error when user is switching network in the UI, then user will be back to the network before.
+  useEffect(() => {
+    if (isError) {
+      if (activeChain?.id) {
+        router.push(
+          {
+            pathname: `/[chainId]`,
+            query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+          },
+          undefined,
+          { shallow: true }
+        );
+      } else {
+        router.push('/', undefined, { shallow: true });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isError]);
 
   // Show unsupported Network Toast
   useEffect(() => {
@@ -55,26 +80,70 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
 
   // User visits a link of another chain than currently connected
   useEffect(() => {
-    if (
-      router.isReady &&
-      activeChain &&
-      routerChainId !== activeChain.id.toString() &&
-      switchNetwork
-    ) {
-      if (isSupportedChainId(Number(routerChainId))) {
-        switchNetwork(Number(routerChainId));
+    const func = async () => {
+      if (
+        router.isReady &&
+        activeChain &&
+        routerChainId !== activeChain.id.toString() &&
+        switchNetworkAsync
+      ) {
+        if (isSupportedChainId(Number(routerChainId))) {
+          try {
+            await switchNetworkAsync(Number(routerChainId));
+          } catch (e) {
+            console.error(e);
+          }
+        } else {
+          router.push(
+            {
+              pathname: `/[chainId]`,
+              query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+            },
+            undefined,
+            { shallow: true }
+          );
+          toast({
+            title: `Wrong Chain ID`,
+            description: (
+              <>
+                <Text>Detected unsupported chain ID in the URL</Text>
+              </>
+            ),
+            status: 'warning',
+            position: 'top-right',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       }
+    };
+
+    func();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [routerChainId, switchNetworkAsync, router]);
+
+  // When user changed network from Metamask, routerChainId should be changed
+  useEffect(() => {
+    if (activeChain?.id && routerChainId !== activeChain.id.toString()) {
+      router.push(
+        {
+          pathname: `/[chainId]`,
+          query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+        },
+        undefined,
+        { shallow: true }
+      );
     }
-  }, [routerChainId, switchNetwork, router, activeChain]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeChain?.id]);
 
   // User should get redirected to chain he is connected to
   useEffect(() => {
     if (activeChain?.id && !routerChainId && router.isReady && !activeChain.unsupported) {
-      const chainId = activeChain.id.toString();
       router.push(
         {
           pathname: `/[chainId]`,
-          query: { chainId, sortBy: 'supply' },
+          query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
         },
         undefined,
         { shallow: true }

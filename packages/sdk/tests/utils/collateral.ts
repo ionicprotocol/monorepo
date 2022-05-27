@@ -1,12 +1,14 @@
-import { BigNumber, constants, Contract, providers, utils } from "ethers";
-import { ERC20Abi, Fuse, NativePricedFuseAsset } from "../../src";
-import { assetInPool, DeployedAsset, getPoolIndex } from "./pool";
-import { expect } from "chai";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { expect } from "chai";
+import { BigNumber, constants, Contract, providers, utils } from "ethers";
 import { ethers } from "hardhat";
-import { MasterPriceOracle, SimplePriceOracle } from "../../lib/contracts/typechain";
+
 import { chainDeployConfig } from "../../chainDeploy";
+import { MasterPriceOracle, SimplePriceOracle } from "../../lib/contracts/typechain";
+import { ERC20Abi, Fuse, NativePricedFuseAsset } from "../../src";
+
 import { getOrCreateFuse } from "./fuseSdk";
+import { assetInPool, DeployedAsset, getPoolIndex } from "./pool";
 
 export async function getAsset(
   sdk: Fuse,
@@ -34,20 +36,18 @@ export async function addCollateral(
   useAsCollateral: boolean
 ) {
   let tx: providers.TransactionResponse;
-  let amountBN: BigNumber;
-  let cToken: Contract;
 
   const sdk = await getOrCreateFuse();
 
   const assetToDeploy = await getAsset(sdk, poolAddress, underlyingSymbol);
 
-  cToken = getCToken(assetToDeploy, sdk, depositor);
+  const cToken: Contract = getCToken(assetToDeploy, sdk, depositor);
   const pool = await ethers.getContractAt("Comptroller.sol:Comptroller", poolAddress, depositor);
   if (useAsCollateral) {
     tx = await pool.enterMarkets([assetToDeploy.cToken]);
     await tx.wait();
   }
-  amountBN = utils.parseUnits(amount, 18);
+  const amountBN: BigNumber = utils.parseUnits(amount, 18);
   await approveAndMint(amountBN, cToken, assetToDeploy.underlyingToken, depositor);
 }
 
@@ -82,8 +82,6 @@ export async function borrowCollateral(
   amount: string
 ) {
   let tx: providers.TransactionResponse;
-  let rec: providers.TransactionReceipt;
-
   const signer = await ethers.getSigner(borrowerAddress);
   const sdk = await getOrCreateFuse();
   const assetToDeploy = await getAsset(sdk, poolAddress, underlyingSymbol);
@@ -96,7 +94,7 @@ export async function borrowCollateral(
   tx = await cToken.callStatic.borrow(utils.parseUnits(amount, 18));
   expect(tx).to.eq(0);
   tx = await cToken.borrow(utils.parseUnits(amount, 18));
-  rec = await tx.wait();
+  const rec: providers.TransactionReceipt = await tx.wait();
   expect(rec.status).to.eq(1);
   const poolId = await getPoolIndex(poolAddress, sdk);
   const assetAfterBorrow = await assetInPool(poolId.toString(), sdk, assetToDeploy.underlyingSymbol, signer.address);
@@ -114,7 +112,6 @@ export async function setupLiquidatablePool(
 ) {
   const { chainId } = await ethers.provider.getNetwork();
   const { alice } = await ethers.getNamedSigners();
-  let tx: providers.TransactionResponse;
   const originalPrice = await oracle.getUnderlyingPrice(token.assetAddress);
 
   await addCollateral(poolAddress, signer, token.symbol, "0.1", true);
@@ -128,7 +125,10 @@ export async function setupLiquidatablePool(
   await borrowCollateral(poolAddress, signer.address, native, borrowAmount);
 
   // Set price of token collateral to 1/10th of what it was
-  tx = await simpleOracle.setDirectPrice(token.underlying, BigNumber.from(originalPrice).mul(6).div(10));
+  const tx: providers.TransactionResponse = await simpleOracle.setDirectPrice(
+    token.underlying,
+    BigNumber.from(originalPrice).mul(6).div(10)
+  );
   await tx.wait();
 }
 

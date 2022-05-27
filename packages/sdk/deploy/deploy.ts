@@ -306,7 +306,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         init: {
           methodName: "initialize",
           args: [deployer],
-        }
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
