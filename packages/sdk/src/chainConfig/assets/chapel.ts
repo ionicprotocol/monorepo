@@ -45,6 +45,24 @@ export const assets: SupportedAsset[] = [
     name: "SafeMoon",
     decimals: 9,
   },
+  {
+    symbol: assetSymbols["WBNB-BUSD"],
+    underlying: "0xe0e92035077c39594793e61802a350347c320cf2",
+    name: "WBNB-BUSD PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["WBNB-DAI"],
+    underlying: "0xAE4C99935B1AA0e76900e86cD155BFA63aB77A2a",
+    name: "WBNB-DAI PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["BUSD-USDT"],
+    underlying: "0xAE4C99935B1AA0e76900e86cD155BFA63aB77A2a",
+    name: "WBNB-DAI PCS LP",
+    decimals: 18,
+  },
 ];
 
 export default assets;
