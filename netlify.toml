@@ -14,3 +14,9 @@
   EVMOS="false"
   BSC="false"
   MOONBEAM="false"
+
+[context.production.environment]
+  NEXT_PUBLIC_SHOW_TESTNETS = "false"
+  EVMOS="false"
+  BSC="true"
+  MOONBEAM="false"
