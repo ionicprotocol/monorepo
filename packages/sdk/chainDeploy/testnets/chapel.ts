@@ -29,6 +29,11 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0xecba335299a6693cb2ebc4782e74669b84290b6378ea3a3873c7231a8d7d1074"),
     uniswapV2RouterAddress: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
     uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
+    uniswapOracleLpTokens: [
+      assets.find((a) => a.symbol === assetSymbols["BUSD-USDT"])!.underlying, // BUSD-USDT PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying, // WBNB-DAI PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying, // WBNB-BUSD PCS LP
+    ],
     uniswapOracleInitialDeployTokens: [
       {
         token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.DAI)!.underlying,
