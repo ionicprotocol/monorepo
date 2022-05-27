@@ -16,7 +16,6 @@ const StatLabel = (props: StatLabelProps) => {
     <ChakraStatLabel
       fontWeight="medium"
       fontFamily="Manrope"
-      isTruncated
       color={cPage.secondary.txtColor}
       {...props}
     />

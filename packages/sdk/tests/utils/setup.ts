@@ -1,20 +1,15 @@
-import { ethers, getChainId, run } from "hardhat";
-import { BigNumber, constants, providers, utils } from "ethers";
-import {
-  CErc20,
-  CEther,
-  EIP20Interface,
-  FuseFeeDistributor,
-  FuseSafeLiquidator,
-  MasterPriceOracle,
-  SimplePriceOracle,
-} from "../../lib/contracts/typechain";
-import { createPool, DeployedAsset } from "./pool";
 import { expect } from "chai";
-import { cERC20Conf, ChainLiquidationConfig, Fuse } from "../../";
-import { getOrCreateFuse } from "./fuseSdk";
-import { assetSymbols } from "../../src/chainConfig";
+import { BigNumber, constants, providers, utils } from "ethers";
+import { ethers, getChainId, run } from "hardhat";
+
+import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
+import { ChainLiquidationConfig, Fuse } from "../../src";
+
 import { BSC_POOLS, getAssetsConf } from "./assets";
+import { getOrCreateFuse } from "./fuseSdk";
+import { createPool } from "./pool";
 
 export const resetPriceOracle = async (erc20One, erc20Two) => {
   const chainId = parseInt(await getChainId());
@@ -90,33 +85,28 @@ export const setUpPools = async (poolNames: BSC_POOLS[]) => {
 };
 
 export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
-  let poolAddress: string;
-  let oracle: MasterPriceOracle;
-  let liquidator: FuseSafeLiquidator;
-  let fuseFeeDistributor: FuseFeeDistributor;
-
   const { deployer, rando } = await ethers.getNamedSigners();
 
   const sdk = await getOrCreateFuse();
 
-  oracle = (await ethers.getContractAt(
+  const oracle: MasterPriceOracle = (await ethers.getContractAt(
     "MasterPriceOracle",
     sdk.oracles.MasterPriceOracle.address,
     deployer
   )) as MasterPriceOracle;
-  fuseFeeDistributor = (await ethers.getContractAt(
+  const fuseFeeDistributor: FuseFeeDistributor = (await ethers.getContractAt(
     "FuseFeeDistributor",
     sdk.contracts.FuseFeeDistributor.address,
     deployer
   )) as FuseFeeDistributor;
 
-  liquidator = (await ethers.getContractAt(
+  const liquidator = (await ethers.getContractAt(
     "FuseSafeLiquidator",
     sdk.contracts.FuseSafeLiquidator.address,
     rando
   )) as FuseSafeLiquidator;
 
-  [poolAddress] = await createPool({ poolName, signer: deployer });
+  const [poolAddress] = await createPool({ poolName, signer: deployer });
 
   const assets = await getAssetsConf(
     poolAddress,
@@ -147,8 +137,6 @@ export const liquidateAndVerify = async (
   liquidationConfigOverrides: ChainLiquidationConfig,
   liquidatorBalanceCalculator: (address: string) => Promise<BigNumber>
 ) => {
-  let tx: providers.TransactionResponse;
-
   const { rando } = await ethers.getNamedSigners();
   const sdk = await getOrCreateFuse();
 
@@ -167,7 +155,7 @@ export const liquidateAndVerify = async (
 
   const liquidatorBalanceBeforeLiquidation = await liquidatorBalanceCalculator(rando.address);
 
-  tx = await liquidator[desiredLiquidation.method](...desiredLiquidation.args, {
+  const tx: providers.TransactionResponse = await liquidator[desiredLiquidation.method](...desiredLiquidation.args, {
     value: desiredLiquidation.value,
   });
   await tx.wait();

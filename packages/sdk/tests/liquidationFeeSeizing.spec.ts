@@ -1,8 +1,8 @@
+import { TransactionReceipt } from "@ethersproject/abstract-provider";
+import { expect } from "chai";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
-import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
-import { DeployedAsset } from "./utils/pool";
-import { setupAndLiquidatePool, setupLiquidatablePool } from "./utils/collateral";
+
 import {
   CErc20,
   CEther,
@@ -12,12 +12,14 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../lib/contracts/typechain";
-import { expect } from "chai";
-import { FUSE_LIQUIDATION_PROTOCOL_FEE_PER_THOUSAND, FUSE_LIQUIDATION_SEIZE_FEE_PER_THOUSAND } from "./utils/config";
-import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { cERC20Conf, Fuse } from "../src";
-import { resetPriceOracle } from "./utils/setup";
+
+import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
+import { setupAndLiquidatePool, setupLiquidatablePool } from "./utils/collateral";
+import { FUSE_LIQUIDATION_PROTOCOL_FEE_PER_THOUSAND, FUSE_LIQUIDATION_SEIZE_FEE_PER_THOUSAND } from "./utils/config";
 import { getOrCreateFuse } from "./utils/fuseSdk";
+import { DeployedAsset } from "./utils/pool";
+import { resetPriceOracle } from "./utils/setup";
 
 (process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("Protocol Liquidation Seizing", () => {
   let eth: cERC20Conf;
