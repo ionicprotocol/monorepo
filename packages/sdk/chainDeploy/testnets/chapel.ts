@@ -5,6 +5,7 @@ import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
+import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.chapel];
 
@@ -92,5 +93,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployments,
     deployConfig,
   });
-  ////
+
+  //// UniswapLp Oracle
+  await deployUniswapLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
 };
