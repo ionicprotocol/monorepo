@@ -144,8 +144,8 @@ export const BorrowList = ({
               {unBorrowableAssets.length !== 0 && (
                 <Tr>
                   <Td colSpan={5}>
-                    <Button variant="ghost" width="100%" onClick={() => setIsShow(!isShow)}>
-                      {!isShow ? "Show unborrowable assets')" : 'Hide unborrowable assets'}
+                    <Button variant="solid" width="100%" onClick={() => setIsShow(!isShow)}>
+                      {!isShow ? 'Show unborrowable assets' : 'Hide unborrowable assets'}
                     </Button>
                   </Td>
                 </Tr>
