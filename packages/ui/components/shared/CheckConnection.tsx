@@ -1,7 +1,7 @@
 import { Text, ToastId, useDisclosure, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { ReactNode, useEffect, useRef } from 'react';
-import { useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
+import { ReactNode, useEffect, useRef, useState } from 'react';
+import { Chain, useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
@@ -15,7 +15,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     chains,
     switchNetworkAsync,
     isLoading: isNetworkLoading,
-    isError,
+    isIdle,
   } = useNetwork();
   const { data: signerData } = useSigner();
   const { isConnecting, isReconnecting, isConnected } = useConnect();
@@ -27,129 +27,124 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
 
   const toastIdRef = useRef<ToastId | undefined>();
   const toast = useToast();
-
+  const [switchedChain, setSwitchedChain] = useState<Chain | undefined>();
   useEffect(() => {
     if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
       onOpen();
     }
   }, [isConnected, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
 
-  //user gets error when user is switching network in the UI, then user will be back to the network before.
-  useEffect(() => {
-    if (isError) {
-      if (activeChain?.id) {
-        router.push(
-          {
-            pathname: `/[chainId]`,
-            query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
-          },
-          undefined,
-          { shallow: true }
-        );
-      } else {
-        router.push('/', undefined, { shallow: true });
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isError]);
-
-  // Show unsupported Network Toast
-  useEffect(() => {
-    if (activeChain?.unsupported) {
-      if (!toastIdRef.current) {
-        toastIdRef.current = toast({
-          title: `Unsupported Network(${activeChain.name}) Detected!`,
-          description: (
-            <>
-              <Text>{`Supported Networks: ${chains.map((chain) => chain.name).join(', ')}`}</Text>
-            </>
-          ),
-          status: 'warning',
-          position: 'bottom-right',
-          duration: null,
-          isClosable: true,
-        });
-      }
-    } else {
-      if (toastIdRef.current) {
-        toast.close(toastIdRef.current);
-        toastIdRef.current = undefined;
-      }
-    }
-  }, [activeChain, chains, toast]);
-
-  // User visits a link of another chain than currently connected
   useEffect(() => {
     const func = async () => {
-      if (
-        router.isReady &&
-        activeChain &&
-        routerChainId !== activeChain.id.toString() &&
-        switchNetworkAsync
-      ) {
-        if (isSupportedChainId(Number(routerChainId))) {
-          try {
-            await switchNetworkAsync(Number(routerChainId));
-          } catch (e) {
-            console.error(e);
+      // if network isn't being changed and router is ready
+      if (!isNetworkLoading && router.isReady) {
+        // if active chain exists
+        if (activeChain?.id) {
+          // if selected chain is unsupported
+          if (activeChain.unsupported) {
+            // if warning notification should show for letting user change to support network
+            if (!toastIdRef.current) {
+              toastIdRef.current = toast({
+                title: `Unsupported Network(${activeChain.name}) Detected!`,
+                description: (
+                  <>
+                    <Text>{`Supported Networks: ${chains
+                      .map((chain) => chain.name)
+                      .join(', ')}`}</Text>
+                  </>
+                ),
+                status: 'warning',
+                position: 'bottom-right',
+                duration: null,
+                isClosable: true,
+              });
+            }
+          }
+          // if selected chain is supported one
+          else {
+            // if warning notification is still displayed, then remove it
+            if (toastIdRef.current) {
+              toast.close(toastIdRef.current);
+              toastIdRef.current = undefined;
+            }
+            // if URL contains routerChainId
+            if (routerChainId) {
+              // if inputed URL contains one of supported chains
+              if (isSupportedChainId(Number(routerChainId))) {
+                // if active chain id is different from router chain id
+                if (activeChain.id.toString() !== routerChainId) {
+                  // if user didn't change network from the metamask, then it will require changing network from metamask
+                  if (isIdle && switchNetworkAsync) {
+                    const chain = await switchNetworkAsync(Number(routerChainId));
+                    setSwitchedChain(chain);
+                  }
+                  // if user changed network from the network, then routerChainId will be changed
+                  if (!isIdle && !switchedChain) {
+                    router
+                      .push(
+                        {
+                          pathname: `/[chainId]`,
+                          query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+                        },
+                        undefined,
+                        { shallow: true }
+                      )
+                      .then(() => {
+                        setSwitchedChain(undefined);
+                      });
+                  }
+                }
+              } else {
+                router.push(
+                  {
+                    pathname: `/[chainId]`,
+                    query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+                  },
+                  undefined,
+                  { shallow: true }
+                );
+                toast({
+                  title: `Wrong Chain ID`,
+                  description: (
+                    <>
+                      <Text>Detected unsupported chain ID in the URL</Text>
+                    </>
+                  ),
+                  status: 'warning',
+                  position: 'top-right',
+                  duration: 5000,
+                  isClosable: true,
+                });
+              }
+            } else {
+              router.push(
+                {
+                  pathname: `/[chainId]`,
+                  query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+                },
+                undefined,
+                { shallow: true }
+              );
+            }
           }
         } else {
-          router.push(
-            {
-              pathname: `/[chainId]`,
-              query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
-            },
-            undefined,
-            { shallow: true }
-          );
-          toast({
-            title: `Wrong Chain ID`,
-            description: (
-              <>
-                <Text>Detected unsupported chain ID in the URL</Text>
-              </>
-            ),
-            status: 'warning',
-            position: 'top-right',
-            duration: 5000,
-            isClosable: true,
-          });
+          router.push('/', undefined, { shallow: true });
         }
       }
     };
 
     func();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [routerChainId, switchNetworkAsync, router]);
-
-  // When user changed network from Metamask, routerChainId should be changed
-  useEffect(() => {
-    if (activeChain?.id && routerChainId !== activeChain.id.toString()) {
-      router.push(
-        {
-          pathname: `/[chainId]`,
-          query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeChain?.id]);
-
-  // User should get redirected to chain he is connected to
-  useEffect(() => {
-    if (activeChain?.id && !routerChainId && router.isReady && !activeChain.unsupported) {
-      router.push(
-        {
-          pathname: `/[chainId]`,
-          query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
-        },
-        undefined,
-        { shallow: true }
-      );
-    }
-  }, [activeChain?.id, activeChain?.unsupported, router, routerChainId]);
+  }, [
+    activeChain,
+    routerChainId,
+    router,
+    switchNetworkAsync,
+    isNetworkLoading,
+    isIdle,
+    toast,
+    chains,
+    switchedChain,
+  ]);
 
   if (isConnecting || isReconnecting || isNetworkLoading) {
     return <LoadingOverlay isLoading={true} />;
