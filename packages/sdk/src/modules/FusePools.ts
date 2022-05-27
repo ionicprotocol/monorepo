@@ -139,7 +139,10 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
           from: options.from,
         }
       );
-      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+      let poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+
+      // TODO: fix this shit later
+      poolIds = poolIds.filter((id) => this.chainId === 97 && id !== "3");
 
       if (!poolIds.length) {
         return undefined;
