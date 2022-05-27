@@ -55,9 +55,6 @@ COPY docker/wait-for-hh.sh /home/node/packages/fuse-liquidator-bot/wait-for-hh.s
 
 RUN chmod +x /home/node/packages/fuse-liquidator-bot/wait-for-hh.sh
 
-# This user is created in the base image with uid and gid = 1000.
-USER node
-
 WORKDIR /home/node/packages/fuse-liquidator-bot
 
 CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development"]
