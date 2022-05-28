@@ -63,6 +63,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   }
 
   if (!basicTokenInfo.logoURL) {
+    basicTokenInfo.logoURL = `/images/tokens/${basicTokenInfo.symbol?.toLowerCase()}.svg`;
     basicTokenInfo.color = '#FFFFFF';
     basicTokenInfo.overlayTextColor = '#000000';
   } else {
