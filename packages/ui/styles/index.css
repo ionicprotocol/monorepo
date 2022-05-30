@@ -10,6 +10,7 @@ html {
 
   background-color: #000000;
   overflow-x: hidden;
+  color: #4e4a45;
 }
 
 * {
@@ -42,29 +43,6 @@ html {
 
 .hover-row:hover {
   background-color: #282727;
-}
-
-/* 
-These fonts only have ASCII glyphs. 
-If you want to add some more glyphs but still remove useless ones go to: https://transfonter.org/ 
-Here's the symbols we currently support: " !"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-*/
-@font-face {
-  font-family: 'Avenir Next';
-  src: url(fonts/AvenirNext-Bold.woff2) format('woff2'),
-    url(fonts/AvenirNext-Bold.woff) format('woff');
-  font-weight: bold;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Avenir Next';
-  src: url(fonts/AvenirNext-Regular.woff2) format('woff2'),
-    url(fonts/AvenirNext-Regular.woff) format('woff');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
 }
 
 @-webkit-keyframes GradientBackgroundAnimation {
@@ -101,7 +79,7 @@ Here's the symbols we currently support: " !"#$%&'()*+,-./0123456789:;<=>?@ABCDE
   }
 }
 
-/* 
+/*
 This fixes these weird white borders around loading base64 images.
 
 More info here: https://stackoverflow.com/questions/13151340/how-to-remove-borders-around-broken-images-in-webkit/33387257
