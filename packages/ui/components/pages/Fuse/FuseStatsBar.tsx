@@ -18,10 +18,11 @@ const FuseStatsBar = () => {
       marginRight="auto"
       marginLeft="auto"
       flexDir={{ base: 'column', lg: 'row' }}
-      alignItems="baseline"
+      alignItems="flex-end"
       justifyContent="center"
-      py="72px"
-      px={{ base: '5vw', lg: 0 }}
+      pt={{ base: '72px', md: '0px' }}
+      pb={{ base: '72px', md: '72px' }}
+      px={{ base: 0, lg: 0 }}
       w="100%"
       gridGap="1.5rem"
     >
@@ -31,17 +32,10 @@ const FuseStatsBar = () => {
         fontSize="sm"
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
-        <Heading fontSize="37px" lineHeight="40px" fontWeight="bold" zIndex="100">
+        <Heading fontSize="37px" lineHeight="40px" fontWeight="bold">
           Unleash the power of your assets
         </Heading>
-        <Text
-          fontSize="18px"
-          lineHeight="31px"
-          mt="19px"
-          textColor={cPage.primary.txtColor}
-          fontWeight="medium"
-          zIndex="100"
-        >
+        <Text fontSize="18px" lineHeight="31px" mt="19px" fontWeight="medium" zIndex="100">
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
@@ -63,12 +57,7 @@ const FuseStatsBar = () => {
         whileHover={{ scale: 1.06 }}
       >
         {fuseTVL !== undefined && fuseTVL !== false ? (
-          <Heading
-            fontWeight="extrabold"
-            fontSize={['36px', '48px']}
-            lineHeight={['60px']}
-            fontFamily="Manrope"
-          >
+          <Heading fontWeight="extrabold" fontSize={['36px', '48px']} lineHeight={['60px']}>
             {smallUsdFormatter(fuseTVL)}
           </Heading>
         ) : (
