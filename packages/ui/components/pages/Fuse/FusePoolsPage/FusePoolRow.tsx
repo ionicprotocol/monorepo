@@ -56,7 +56,6 @@ const PoolRow = ({
   const toggleDetails = useCallback(() => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
-
   const router = useRouter();
 
   const { scanUrl, setLoading, currentChain } = useRari();
@@ -64,20 +63,16 @@ const PoolRow = ({
     <VStack
       borderWidth={4}
       borderRadius={12}
-      borderColor={
-        (isMostSupplied && showDetails) || rewardTokens.length ? 'transparent' : cCard.borderColor
-      }
+      borderColor={rewardTokens.length ? 'transparent' : cCard.borderColor}
       background={
-        showDetails || rewardTokens
+        rewardTokens.length > 0
           ? `linear-gradient(${cCard.bgColor}, ${cCard.bgColor}) padding-box, conic-gradient(red, orange, yellow, lime, aqua, blue, magenta, red) border-box`
-          : isMostSupplied
-          ? cCard.hoverBgColor
           : cCard.bgColor
       }
       width="100%"
       _hover={
         !showDetails
-          ? rewardTokens.length
+          ? rewardTokens.length > 0
             ? {
                 background: `linear-gradient(${cCard.hoverBgColor}, ${cCard.hoverBgColor}) padding-box, conic-gradient(red, orange, yellow, lime, aqua, blue, magenta, red) border-box`,
               }
