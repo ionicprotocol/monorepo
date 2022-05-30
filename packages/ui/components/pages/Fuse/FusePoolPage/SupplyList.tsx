@@ -38,6 +38,7 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
+import { URL_MIDAS_DOCS } from '@ui/utils/constants';
 
 export const SupplyList = ({
   assets,
@@ -302,11 +303,7 @@ const AssetSupplyRow = ({
                   body={
                     <>
                       This token has a ERC4626 strategy enabled. Read more about it{' '}
-                      <ChakraLink
-                        href={process.env.NEXT_PUBLIC_MIDAS_DOCS}
-                        isExternal
-                        variant={'color'}
-                      >
+                      <ChakraLink href={URL_MIDAS_DOCS} isExternal variant={'color'}>
                         in our Docs <ExternalLinkIcon mx="2px" />
                       </ChakraLink>
                       .
