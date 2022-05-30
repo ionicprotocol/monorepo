@@ -25,6 +25,7 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
@@ -58,7 +59,8 @@ const PoolRow = ({
   }, [setShowDetails]);
   const router = useRouter();
 
-  const { scanUrl, setLoading, currentChain } = useRari();
+  const { scanUrl, setLoading, currentChain, coingeckoId } = useRari();
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <VStack
       borderWidth={4}
@@ -134,13 +136,13 @@ const PoolRow = ({
 
         <VStack flex={2}>
           <Text fontWeight="bold" textAlign="center">
-            {smallUsdFormatter(pool.totalSuppliedNative)}
+            {usdPrice && smallUsdFormatter(pool.totalSuppliedNative * usdPrice)}
           </Text>
         </VStack>
 
         <VStack flex={2}>
           <Text fontWeight="bold" textAlign="center">
-            {smallUsdFormatter(pool.totalBorrowedNative)}
+            {usdPrice && smallUsdFormatter(pool.totalBorrowedNative * usdPrice)}
           </Text>
         </VStack>
 
