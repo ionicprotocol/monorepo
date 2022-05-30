@@ -5,5 +5,28 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#68655d",
+    "activityBar.activeBorder": "#103027",
+    "activityBar.background": "#68655d",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#103027",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "sash.hoverBorder": "#68655d",
+    "statusBar.background": "#4d4b45",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#68655d",
+    "statusBarItem.remoteBackground": "#4d4b45",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#4d4b45",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#4d4b4599",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#4d4b45",
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
   }
 }
