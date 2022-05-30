@@ -134,8 +134,8 @@ export const CreatePoolConfiguration = () => {
   const { cCard, cSolidBtn, cSwitch } = useColors();
   const isMobile = useIsSmallScreen();
   return (
-    <Box alignSelf={'center'} mx="auto" mt="8%" mb={8}>
-      <DashboardBox maxWidth="550px" mx={'auto'} mt={4}>
+    <Box alignSelf={'center'} mx="auto">
+      <DashboardBox maxWidth="550px" mx={'auto'}>
         <Heading fontWeight="extrabold" size="md" px={4} py={4}>
           Create Pool
         </Heading>
