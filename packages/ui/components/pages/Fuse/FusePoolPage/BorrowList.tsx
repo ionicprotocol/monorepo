@@ -58,7 +58,6 @@ export const BorrowList = ({
           placement="top"
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
-          fontFamily="Manrope"
         >
           Your Borrow Balance: {smallUsdFormatter(borrowBalanceNative)}
         </TableCaption>
