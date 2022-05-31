@@ -24,8 +24,8 @@ const Layout = ({ children }: { children: ReactNode }) => {
       >
         <Banner
           text="Midas just launched, use at your own risk. "
-          linkText="Read about Smart Contract Risk here."
-          linkUrl="https://www.icba.org/newsroom/blogs/main-street-matters/2021/11/12/the-challenges-and-risks-of-smart-contracts"
+          linkText="Read about our Audit with Zellic here."
+          linkUrl="https://medium.com/midas-capital/audit-with-zellic-29b63f1be25a"
           status="warning"
         ></Banner>
         <Container maxWidth="8xl">
