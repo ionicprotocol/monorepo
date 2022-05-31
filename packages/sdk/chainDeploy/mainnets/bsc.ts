@@ -287,8 +287,8 @@ const curvePools: CurvePoolConfig[] = [
     lpToken: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying,
     pool: "0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3",
     underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.jBRL)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.BRZ)!.underlying,
     ],
   },
 ];
