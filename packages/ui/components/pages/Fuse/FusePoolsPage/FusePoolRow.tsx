@@ -212,7 +212,7 @@ const PoolRow = ({
               </Column>
             </Row>
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={8}>
-              {rewardTokens.length ? (
+              {rewardTokens.length > 0 && (
                 <>
                   <Text fontWeight="bold" textAlign="center" mr={4}>
                     Rewards:
@@ -223,10 +223,6 @@ const PoolRow = ({
                     ))}
                   </AvatarGroup>
                 </>
-              ) : (
-                <Text fontWeight="bold" textAlign="center">
-                  Rewards ( Not available )
-                </Text>
               )}
             </Row>
           </Column>
