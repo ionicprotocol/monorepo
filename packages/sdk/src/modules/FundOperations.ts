@@ -163,7 +163,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
           return { errorCode };
         }
 
-        tx = await cToken.repayBorrow(amount);
+        tx = await cToken.repayBorrow(isRepayingMax ? max : amount);
       }
 
       return { tx, errorCode: null };

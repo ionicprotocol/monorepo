@@ -84,7 +84,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Total Supply
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
+            <Text mt="1.5" fontWeight="bold">
               {usdPrice && smallUsdFormatter(pool.totalSuppliedNative * usdPrice)}
             </Text>
           </Column>
@@ -93,7 +93,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Total borrowed
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
+            <Text mt="1.5" fontWeight="bold">
               {usdPrice && smallUsdFormatter(pool.totalBorrowedNative * usdPrice)}
             </Text>
           </Column>
@@ -104,7 +104,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Your Supply <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
+            <Text mt="1.5" fontWeight="bold">
               {fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceNative)}
             </Text>
           </Column>
@@ -113,7 +113,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Your borrowed <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
+            <Text mt="1.5" fontWeight="bold">
               {fusePoolData && smallUsdFormatter(fusePoolData.totalBorrowBalanceNative)}
             </Text>
           </Column>
