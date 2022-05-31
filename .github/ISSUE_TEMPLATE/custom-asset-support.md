@@ -18,7 +18,7 @@ assignees: ''
 
 *Please mark the tasks below, as appropriate.  Then link supporting Github items together using:* ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png)
 
-- [ ] **ChainLink / DIA / Flux Supported** 
+- [ ] **ChainLink / DIA / Flux Supported** _*OR*_
 - [ ] **Requires Custom Oracle** <br>
 &nbsp;&nbsp;&nbsp;- [Link to Custom Oracle Template](https://github.com/Midas-Protocol/contracts/issues/new?assignees=&labels=&template=custom-oracle.md&title=Custom+Oracle+for+%24XXX)
 - [ ] **Requires Custom Liquidator** <br>
