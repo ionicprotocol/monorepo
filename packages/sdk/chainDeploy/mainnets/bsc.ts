@@ -82,14 +82,14 @@ export const deployConfig: ChainDeployConfig = {
       flywheelIndices: [0, 1],
       name: "dai3EPS",
     },
-    // {
-    //   // 0x
-    //   strategy: "DotDotLpERC4626",
-    //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba", // ust3EPS
-    //   otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
-    //   flywheelIndices: [0, 1],
-    //   name: "ust3EPS",
-    // },
+    {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying, // 2BRL
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "2brl",
+    },
     // All of these vaults are depricated
     /*{
       // 0x
