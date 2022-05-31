@@ -60,7 +60,7 @@ const FusePoolPage = memo(() => {
           justifyContent="flex-start"
         >
           <FuseNavbar />
-          <HStack width={'100%'} mt="9%" mb={8} mx="auto" spacing={6}>
+          <HStack width={'100%'} mx="auto" spacing={6}>
             <ArrowBackIcon
               fontSize="2xl"
               fontWeight="extrabold"
@@ -75,7 +75,7 @@ const FusePoolPage = memo(() => {
                 {data.name}
               </Heading>
             ) : (
-              <Skeleton>hello</Skeleton>
+              <Skeleton>Pool Name</Skeleton>
             )}
             {data?.assets && data?.assets?.length > 0 ? (
               <>

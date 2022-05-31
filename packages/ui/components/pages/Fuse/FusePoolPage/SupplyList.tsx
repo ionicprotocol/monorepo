@@ -67,7 +67,6 @@ export const SupplyList = ({
           placement="top"
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
-          fontFamily="Manrope"
         >
           Your Supply Balance: {smallUsdFormatter(supplyBalanceNative)}
         </TableCaption>

@@ -54,13 +54,7 @@ const FusePoolEditPage = memo(() => {
         <title key="title">{`Edit: ${data.name}`}</title>
       </Head>
       <PageTransitionLayout>
-        <Flex
-          minH="100vh"
-          flexDir="column"
-          alignItems="flex-start"
-          bgColor={cPage.primary.bgColor}
-          justifyContent="flex-start"
-        >
+        <Flex minH="100vh" flexDir="column" alignItems="flex-start" justifyContent="flex-start">
           <FuseNavbar />
 
           <AddAssetModal
@@ -71,15 +65,16 @@ const FusePoolEditPage = memo(() => {
             onClose={closeAddAssetModal}
           />
 
-          <Column
-            mainAxisAlignment="flex-start"
-            crossAxisAlignment="center"
-            bg={cPage.primary.bgColor}
+          <Flex
+            flexDir="column"
+            alignItems="flex-start"
+            bgColor={cPage.primary.bgColor}
+            justifyContent="flex-start"
             color={cPage.primary.txtColor}
             mx="auto"
             width="100%"
           >
-            <HStack width="100%" mt="9%" mb={4} mx="auto" spacing={6}>
+            <HStack width="100%" mx="auto" spacing={6}>
               <ArrowBackIcon
                 fontSize="2xl"
                 fontWeight="extrabold"
@@ -144,7 +139,7 @@ const FusePoolEditPage = memo(() => {
               </DashboardBox>
             </RowOrColumn>
             <FlywheelEdit pool={data} />
-          </Column>
+          </Flex>
         </Flex>
       </PageTransitionLayout>
     </>
