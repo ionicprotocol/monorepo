@@ -13,8 +13,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
 
-import FusePageLayout from '../FusePageLayout';
-
 import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
 import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
@@ -52,7 +50,6 @@ const FusePoolPage = memo(() => {
           <title key="title">{data.name}</title>
         </Head>
       )}
-      <FusePageLayout></FusePageLayout>
 
       <PageTransitionLayout>
         <Flex

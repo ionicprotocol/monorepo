@@ -66,11 +66,13 @@ const FusePoolEditPage = memo(() => {
           />
 
           <Flex
-            minH="100vh"
             flexDir="column"
             alignItems="flex-start"
             bgColor={cPage.primary.bgColor}
             justifyContent="flex-start"
+            color={cPage.primary.txtColor}
+            mx="auto"
+            width="100%"
           >
             <HStack width="100%" mx="auto" spacing={6}>
               <ArrowBackIcon
