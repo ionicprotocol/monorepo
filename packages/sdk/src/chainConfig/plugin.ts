@@ -172,6 +172,7 @@ const chainPluginConfig: ChainPlugins = {
   [SupportedChains.moonbeam]: {},
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.aurora]: {},
+  [SupportedChains.neon_devnet]: {},
 };
 
 export default chainPluginConfig;
