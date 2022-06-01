@@ -67,7 +67,6 @@ export const SupplyList = ({
           placement="top"
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
-          fontFamily="Manrope"
         >
           Your Supply Balance: {smallUsdFormatter(supplyBalanceNative)}
         </TableCaption>
@@ -292,6 +291,9 @@ const AssetSupplyRow = ({
                   as={ChakraLink}
                   href={`${scanUrl}/address/${asset.underlyingToken}`}
                   isExternal
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                 >
                   <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
                 </Button>
@@ -303,7 +305,14 @@ const AssetSupplyRow = ({
                   body={
                     <>
                       This token has a ERC4626 strategy enabled. Read more about it{' '}
-                      <ChakraLink href={URL_MIDAS_DOCS} isExternal variant={'color'}>
+                      <ChakraLink
+                        href={URL_MIDAS_DOCS}
+                        isExternal
+                        variant={'color'}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
                         in our Docs <ExternalLinkIcon mx="2px" />
                       </ChakraLink>
                       .
