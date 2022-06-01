@@ -120,11 +120,11 @@ const liquidationDefaults: ChainLiquidationDefaults = {
   [SupportedChains.neon_devnet]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
-      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON).underlying,
+      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
-      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON).underlying,
+      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
