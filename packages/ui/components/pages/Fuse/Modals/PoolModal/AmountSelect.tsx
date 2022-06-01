@@ -536,8 +536,6 @@ const StatsColumn = ({
     ? Math.abs(updatedSupplyAPY - supplyAPY) > 0.1
     : Math.abs(updatedBorrowAPR - borrowAPR) > 0.1;
 
-  const parsedUpdatedDebtBalance = updatedAsset?.borrowBalanceNative ?? 0.0;
-
   const supplyBalanceFrom = utils.commify(
     utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)
   );
@@ -627,7 +625,7 @@ const StatsColumn = ({
               {!isSupplyingOrWithdrawing ? (
                 <>
                   {' → '}
-                  {smallUsdFormatter(parsedUpdatedDebtBalance)}
+                  {smallUsdFormatter(updatedBorrowLimit)}
                 </>
               ) : null}
             </Text>
