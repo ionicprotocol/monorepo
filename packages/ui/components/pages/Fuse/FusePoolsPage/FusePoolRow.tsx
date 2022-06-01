@@ -25,6 +25,7 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
@@ -56,28 +57,24 @@ const PoolRow = ({
   const toggleDetails = useCallback(() => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
-
   const router = useRouter();
 
-  const { scanUrl, setLoading, currentChain } = useRari();
+  const { scanUrl, setLoading, currentChain, coingeckoId } = useRari();
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <VStack
       borderWidth={4}
       borderRadius={12}
-      borderColor={
-        (isMostSupplied && showDetails) || rewardTokens.length ? 'transparent' : cCard.borderColor
-      }
+      borderColor={rewardTokens.length ? 'transparent' : cCard.borderColor}
       background={
-        showDetails || rewardTokens
+        rewardTokens.length > 0
           ? `linear-gradient(${cCard.bgColor}, ${cCard.bgColor}) padding-box, conic-gradient(red, orange, yellow, lime, aqua, blue, magenta, red) border-box`
-          : isMostSupplied
-          ? cCard.hoverBgColor
           : cCard.bgColor
       }
       width="100%"
       _hover={
         !showDetails
-          ? rewardTokens.length
+          ? rewardTokens.length > 0
             ? {
                 background: `linear-gradient(${cCard.hoverBgColor}, ${cCard.hoverBgColor}) padding-box, conic-gradient(red, orange, yellow, lime, aqua, blue, magenta, red) border-box`,
               }
@@ -139,13 +136,13 @@ const PoolRow = ({
 
         <VStack flex={2}>
           <Text fontWeight="bold" textAlign="center">
-            {smallUsdFormatter(pool.totalSuppliedNative)}
+            {usdPrice && smallUsdFormatter(pool.totalSuppliedNative * usdPrice)}
           </Text>
         </VStack>
 
         <VStack flex={2}>
           <Text fontWeight="bold" textAlign="center">
-            {smallUsdFormatter(pool.totalBorrowedNative)}
+            {usdPrice && smallUsdFormatter(pool.totalBorrowedNative * usdPrice)}
           </Text>
         </VStack>
 
@@ -215,7 +212,7 @@ const PoolRow = ({
               </Column>
             </Row>
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={8}>
-              {rewardTokens.length ? (
+              {rewardTokens.length > 0 && (
                 <>
                   <Text fontWeight="bold" textAlign="center" mr={4}>
                     Rewards:
@@ -226,10 +223,6 @@ const PoolRow = ({
                     ))}
                   </AvatarGroup>
                 </>
-              ) : (
-                <Text fontWeight="bold" textAlign="center">
-                  Rewards ( Not available )
-                </Text>
               )}
             </Row>
           </Column>

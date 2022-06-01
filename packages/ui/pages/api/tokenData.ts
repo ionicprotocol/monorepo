@@ -1,4 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { SupportedChainsArray } from '@midas-capital/sdk';
 import axios from 'axios';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -9,10 +10,10 @@ import * as yup from 'yup';
 import { CoinGeckoResponse, TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
 
-const supportedNetworks = new RegExp([1, 56, 97, 1337].join('|'));
+const supportedNetworksRegex = new RegExp(SupportedChainsArray.join('|'));
 
 const querySchema = yup.object().shape({
-  chain: yup.string().matches(supportedNetworks, 'Not a support Network').required(),
+  chain: yup.string().matches(supportedNetworksRegex, 'Not a support Network').required(),
   address: yup
     .string()
     .matches(/^0x[a-fA-F0-9]{40}$/, 'Not a valid Wallet address')
@@ -22,6 +23,7 @@ const querySchema = yup.object().shape({
 const handler = async (request: NextApiRequest, response: NextApiResponse<TokenDataResponse>) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Cache-Control', 'max-age=3600, s-maxage=3600');
+
   const { chain, address: rawAddress } = request.body;
   await querySchema.validate(request.body);
   const address = utils.getAddress(rawAddress);
@@ -63,7 +65,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   }
 
   if (!basicTokenInfo.logoURL) {
-    basicTokenInfo.logoURL = `/images/tokens/${basicTokenInfo.symbol?.toLowerCase()}.svg`;
+    basicTokenInfo.logoURL = `https://d1912tcoux65lj.cloudfront.net/token/${basicTokenInfo.symbol?.toLowerCase()}.png`;
     basicTokenInfo.color = '#FFFFFF';
     basicTokenInfo.overlayTextColor = '#000000';
   } else {

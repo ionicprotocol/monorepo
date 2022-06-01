@@ -10,6 +10,7 @@ import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradien
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
 
@@ -28,7 +29,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
   const { cCard } = useColors();
 
   const router = useRouter();
-  const { setLoading, currentChain } = useRari();
+  const { setLoading, currentChain, coingeckoId } = useRari();
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   return (
     <motion.div whileHover={{ scale: 1.05 }}>
@@ -82,8 +84,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Total Supply
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
-              {smallUsdFormatter(pool.totalSuppliedNative)}
+            <Text mt="1.5" fontWeight="bold">
+              {usdPrice && smallUsdFormatter(pool.totalSuppliedNative * usdPrice)}
             </Text>
           </Column>
           <chakra.div h="16" w="1px" bgColor={cCard.dividerColor} />
@@ -91,8 +93,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Total borrowed
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
-              {smallUsdFormatter(pool.totalBorrowedNative)}
+            <Text mt="1.5" fontWeight="bold">
+              {usdPrice && smallUsdFormatter(pool.totalBorrowedNative * usdPrice)}
             </Text>
           </Column>
         </Row>
@@ -102,7 +104,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Your Supply <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
+            <Text mt="1.5" fontWeight="bold">
               {fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceNative)}
             </Text>
           </Column>
@@ -111,7 +113,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Your borrowed <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
+            <Text mt="1.5" fontWeight="bold">
               {fusePoolData && smallUsdFormatter(fusePoolData.totalBorrowBalanceNative)}
             </Text>
           </Column>
