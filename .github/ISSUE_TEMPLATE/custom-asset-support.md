@@ -6,6 +6,7 @@ labels: 'Custom Asset Support'
 assignees: ''
 
 ---
+<h4> Link To Matching Chain Deployment Ticket: # <h4>
 
 <h3> Custom Asset Information: </h3> <br>
 
@@ -16,7 +17,8 @@ assignees: ''
 **Block Explorer URL**:  *https://etherscan.io/address/0x0000000000000000000000000000000000000000* <br>
 **Chain**: *_Ethereum_*
 
-*Please mark the tasks below, as appropriate.  Then link supporting Github items together using:* ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png)
+*Please mark the tasks below, as appropriate.  Then link supporting Github items together in the Comments section either using # or the button in the screenshot below:* <br>
+   ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png)
 
 - [ ] **ChainLink / DIA / Flux Supported** _*OR*_
 - [ ] **Requires Custom Oracle** <br>

@@ -16,16 +16,16 @@ import { useColors } from '@ui/hooks/useColors';
 const FuseNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { cPage } = useColors();
-  const logoPrefix = useBreakpointValue({ base: '/images/midas-', md: '/images/midas-' });
+  const logoPrefix = useBreakpointValue({ base: '/images/midas-mobile-', md: '/images/midas-' });
 
   return (
     <HStack w={'100%'} alignItems="flex-start" mb={8}>
-      <Link href={`/`} pt={{ md: 4, base: 2 }} pr={{ md: 4, base: 1 }}>
+      <Link href={`/`} pt={{ md: 4, base: 3 }} pr={{ md: 0, base: 1 }}>
         <Image
           src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
           alt="Midas Capital"
           height={'auto'}
-          width={{ base: '100px', md: '150px' }}
+          width={{ base: '80px', md: '400px' }}
         />
       </Link>
       <VStack w={'100%'}>
