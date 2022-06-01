@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { BigNumber, constants, Contract, ContractFactory, ethers, providers, utils } from "ethers";
+import { BigNumber, constants, Contract, ethers, providers, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
@@ -107,96 +107,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
               : null;
           break;
       }
-      return conf.underlying !== undefined &&
-        conf.underlying !== null &&
-        conf.underlying.length > 0 &&
-        !BigNumber.from(conf.underlying).isZero()
-        ? await this.deployCErc20(conf, options, implementationAddress)
-        : await this.deployCEther(conf, options, implementationAddress);
-    }
-
-    async deployCEther(
-      conf: cERC20Conf,
-      options: any,
-      implementationAddress: string | null
-    ): Promise<[string, string, TransactionReceipt]> {
-      const reserveFactorBN = utils.parseUnits((conf.reserveFactor / 100).toString());
-      const adminFeeBN = utils.parseUnits((conf.adminFee / 100).toString());
-      const collateralFactorBN = utils.parseUnits((conf.collateralFactor / 100).toString());
-
-      // Deploy CEtherDelegate implementation contract if necessary
-      if (!implementationAddress) {
-        const cEtherDelegateFactory = new ContractFactory(
-          this.artifacts.CEtherDelegate.abi,
-          this.artifacts.CEtherDelegate.bytecode.object,
-          this.provider.getSigner(options.from)
-        );
-
-        const cEtherDelegateDeployed = await cEtherDelegateFactory.deploy();
-        implementationAddress = cEtherDelegateDeployed.address;
-      }
-
-      const deployArgs = [
-        conf.comptroller,
-        conf.fuseFeeDistributor,
-        conf.interestRateModel,
-        conf.name,
-        conf.symbol,
-        implementationAddress,
-        "0x00",
-        reserveFactorBN,
-        adminFeeBN,
-      ];
-      const abiCoder = new utils.AbiCoder();
-      const constructorData = abiCoder.encode(
-        ["address", "address", "address", "string", "string", "address", "bytes", "uint256", "uint256"],
-        deployArgs
-      );
-      const comptroller = new Contract(
-        conf.comptroller,
-        this.artifacts.Comptroller.abi,
-        this.provider.getSigner(options.from)
-      );
-
-      const comptrollerWithSigner = comptroller.connect(this.provider.getSigner(options.from));
-      const errorCode = await comptroller.callStatic._deployMarket(
-        ethers.constants.AddressZero,
-        constructorData,
-        collateralFactorBN
-      );
-      if (errorCode.toNumber() !== 0) {
-        throw `Failed to _deployMarket: ${this.COMPTROLLER_ERROR_CODES[errorCode.toNumber()]}`;
-      }
-
-      const tx = await comptrollerWithSigner._deployMarket(
-        ethers.constants.AddressZero,
-        constructorData,
-        collateralFactorBN
-      );
-
-      const receipt: TransactionReceipt = await tx.wait();
-
-      if (receipt.status != constants.One.toNumber()) {
-        throw "Failed to deploy market ";
-      }
-
-      const saltsHash = utils.solidityKeccak256(
-        ["address", "address", "uint"],
-        [conf.comptroller, ethers.constants.AddressZero, receipt.blockNumber]
-      );
-
-      const byteCodeHash = utils.keccak256(
-        this.artifacts.CEtherDelegator.bytecode.object + constructorData.substring(2)
-      );
-
-      const cEtherDelegatorAddress = utils.getCreate2Address(
-        this.chainDeployment.FuseFeeDistributor.address,
-        saltsHash,
-        byteCodeHash
-      );
-
-      // Return cToken proxy and implementation contract addresses
-      return [cEtherDelegatorAddress, implementationAddress, receipt];
+      return await this.deployCErc20(conf, implementationAddress, options);
     }
 
     async upgradeCErc20(conf: cERC20Conf, cErc20DelegatorAddress: string, implementationData: string): Promise<string> {
@@ -245,8 +156,8 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
     async approveRewardsDistributors(
       cToken: string,
-      options: any,
-      rewardsDistributorConfig: RewardsDistributorConfig[]
+      rewardsDistributorConfig: RewardsDistributorConfig[],
+      options: any
     ): Promise<void> {
       console.log(`Approving rewards distributors`);
       const cTokenWithSigner = new Contract(
@@ -256,17 +167,18 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       ) as CErc20PluginRewardsDelegate;
 
       for (const rewardsDistributor of rewardsDistributorConfig) {
-        await cTokenWithSigner["approve(address,address)"](
+        await cTokenWithSigner.functions["approve(address,address)"](
           rewardsDistributor.rewardToken,
-          rewardsDistributor.rewardsDistributor
+          rewardsDistributor.rewardsDistributor,
+          options
         );
       }
     }
 
     async deployCErc20(
       conf: cERC20Conf,
-      options: any,
-      implementationAddress: string | null // cERC20Delegate implementation
+      implementationAddress: string | null, // cERC20Delegate implementation
+      options: any
     ): Promise<[string, string, TransactionReceipt]> {
       const abiCoder = new utils.AbiCoder();
 
@@ -342,7 +254,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
           if (!conf.rewardsDistributorConfig) {
             throw `${DelegateContractName.CErc20PluginRewardsDelegate} must have a 'rewardsDistributorConfig' defined`;
           }
-          await this.approveRewardsDistributors(implementationAddress, options, conf.rewardsDistributorConfig);
+          await this.approveRewardsDistributors(implementationAddress, conf.rewardsDistributorConfig, options);
         }
       }
       // Return cToken proxy and implementation contract addresses
