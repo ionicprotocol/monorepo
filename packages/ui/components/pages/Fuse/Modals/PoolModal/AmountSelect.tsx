@@ -26,9 +26,9 @@ import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
-import { HashLoader } from 'react-spinners';
 
 import DashboardBox from '@ui/components/shared/DashboardBox';
+import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
@@ -238,7 +238,7 @@ const AmountSelect = ({
     >
       {userAction === UserAction.WAITING_FOR_TRANSACTIONS ? (
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
-          <HashLoader size={70} color={cCard.txtColor} loading />
+          <Loader />
           <Heading mt="30px" textAlign="center" size="md">
             Check your wallet to submit the transactions
           </Heading>
