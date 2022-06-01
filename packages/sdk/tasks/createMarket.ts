@@ -6,7 +6,7 @@ export default task("market:create", "Create Market")
   .addParam("poolName", "Name of pool", undefined, types.string)
   .addParam("creator", "Signer name", undefined, types.string)
   .addParam("symbol", "Asset symbol", undefined, types.string)
-  .addParam("delegateContractName", "Delegate contract name", undefined, types.string)
+  .addOptionalParam("delegateContractName", "Delegate contract name", "CErc20Delegate", types.string)
   .addOptionalParam("plugins", "comma separated string or plugins (`param1,param2...`)", undefined, types.string)
   .addOptionalParam(
     "rewardsDistributors",
@@ -38,6 +38,7 @@ export default task("market:create", "Create Market")
       hre.ethers,
       poolName
     );
+
     const assetConfig = assets.find((a) => a.symbol === symbol);
 
     console.log(
