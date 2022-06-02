@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "allowJs": true,
     "target": "ES2015",
-    "rootDirs": ["./src", "./tests"]
+    "rootDirs": ["./src", "./tests"],
+    "outDir": "./dist/cjs"
   }
 }
