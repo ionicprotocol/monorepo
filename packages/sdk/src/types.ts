@@ -1,4 +1,4 @@
-import { BigNumber, BigNumberish, providers } from "ethers";
+import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
 import { DelegateContractName, LiquidationStrategy, RedemptionStrategy, SupportedChains } from "./enums";
 import { FuseBase } from "./Fuse";
@@ -8,6 +8,8 @@ import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel"
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
+
+export type TxOptions = Overrides & { from?: string | Promise<string> };
 
 export type MinifiedContracts = {
   [key: string]: {
@@ -81,23 +83,65 @@ export type ChainDeployment = {
 
 export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
 
+// Deprecated
 export type cERC20Conf = {
-  delegateContractName?: DelegateContractName;
-  underlying: string; // underlying ERC20
-  comptroller: string; // Address of the comptroller
-  fuseFeeDistributor: string;
-  interestRateModel: string; // Address of the IRM
-  initialExchangeRateMantissa?: BigNumber; // Initial exchange rate scaled by 1e18
-  name: string; // ERC20 name of this token
-  symbol: string; // ERC20 Symbol
   admin: string; // Address of the admin
-  collateralFactor: number;
-  reserveFactor: number;
   adminFee: number;
   bypassPriceFeedCheck: boolean;
+  collateralFactor: number;
+  comptroller: string; // Address of the comptroller
+  delegateContractName?: DelegateContractName;
+  fuseFeeDistributor: string;
+  initialExchangeRateMantissa?: BigNumber; // Initial exchange rate scaled by 1e18
+  interestRateModel: string; // Address of the IRM
+  name: string; // ERC20 name of this token
   plugin?: string;
+  reserveFactor: number;
   rewardsDistributorConfig?: RewardsDistributorConfig[];
+  symbol: string; // ERC20 Symbol
+  underlying: string; // underlying ERC20
 };
+
+export interface MarketConfig {
+  underlying: string;
+  comptroller: string;
+  admin?: string; // What is this used for, why can this be changed? Default to sender? How does he collect the fee?
+  adminFee: number;
+  collateralFactor: number;
+  interestRateModel: string; // TODO: Use an Enum here, similar to Contract, resolve address inside the function
+  reserveFactor: number;
+  plugin?: MarketPluginConfig;
+
+  // REFACTOR below:
+  bypassPriceFeedCheck: boolean;
+  initialExchangeRateMantissa?: BigNumber; // TODO, why do we need this?
+  fuseFeeDistributor: string; // TODO: Remove this? We should always use our Fee Distributor!
+  symbol: string; // TODO: Same as name
+  name: string; // TODO: Make optional, should be set inside SDK for default value mToken or so
+}
+
+interface AbstractPluginConfig {
+  cTokenContract: DelegateContractName;
+  strategyName: string;
+  strategyCode: string;
+  strategyAddress: string;
+}
+
+export interface StandardPluginConfig extends AbstractPluginConfig {
+  cTokenContract: DelegateContractName.CErc20PluginDelegate;
+}
+
+type RewardFlywheel = {
+  address: string;
+  rewardToken: string;
+};
+
+export interface RewardsPluginConfig extends AbstractPluginConfig {
+  cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate;
+  flywheels: RewardFlywheel[];
+}
+
+export type MarketPluginConfig = StandardPluginConfig | RewardsPluginConfig;
 
 export type RewardsDistributorConfig = {
   rewardsDistributor: string;
@@ -210,18 +254,6 @@ export interface FusePool {
   timestampPosted: number;
 }
 
-type DynamicFlywheelConfig = {
-  address: string;
-  rewardToken: string;
-};
-
-export type PluginConfig = {
-  strategyName: string;
-  strategyCode: string;
-  strategyAddress: string;
-  dynamicFlywheels?: DynamicFlywheelConfig[];
-};
-
 export type SupportedAsset = {
   symbol: string;
   underlying: string;
@@ -231,7 +263,7 @@ export type SupportedAsset = {
 };
 
 export type AssetPluginConfig = {
-  [asset: string]: PluginConfig[];
+  [asset: string]: MarketPluginConfig[];
 };
 
 export type ChainPlugins = {
