@@ -23,7 +23,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.DAI,
-    underlying: "0xEC5dCb5Dbf4B114C9d0F65BcCAb49EC54F6A0867",
+    underlying: "0x8a9424745056Eb399FD19a0EC26A14316684e274",
     name: "Binance DAI",
     decimals: 18,
   },

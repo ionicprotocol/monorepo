@@ -10,9 +10,10 @@ import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.bsc];
+const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
+  wtoken: wbnb,
   nativeTokenUsdChainlinkFeed: "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
   nativeTokenName: "Binance Network Token",
   nativeTokenSymbol: "BNB",
@@ -82,14 +83,14 @@ export const deployConfig: ChainDeployConfig = {
       flywheelIndices: [0, 1],
       name: "dai3EPS",
     },
-    // {
-    //   // 0x
-    //   strategy: "DotDotLpERC4626",
-    //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba", // ust3EPS
-    //   otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
-    //   flywheelIndices: [0, 1],
-    //   name: "ust3EPS",
-    // },
+    {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying, // 2BRL
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "2brl",
+    },
     // All of these vaults are depricated
     /*{
       // 0x
@@ -122,50 +123,71 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "AlpacaERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying, // WBNB
-      otherParams: ["0xd7D069493685A581d27824Fc46EdA46B7EfC0063"], // ibWBNB
+      underlying: wbnb, // WBNB
+      otherParams: [
+        "0xd7D069493685A581d27824Fc46EdA46B7EfC0063", // ibWBNB
+        wbnb,
+      ],
       name: "WBNB",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.ETH)!.underlying, // ETH
-      otherParams: ["0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE"], // ibETH
+      otherParams: [
+        "0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE", // ibETH
+        wbnb,
+      ],
       name: "ETH",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying, // BUSD
-      otherParams: ["0x7C9e73d4C71dae564d41F78d56439bB4ba87592f"], // ibBUSD
+      otherParams: [
+        "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f", // ibBUSD
+        wbnb,
+      ],
       name: "BUSD",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying, // USDT
-      otherParams: ["0x158Da805682BdC8ee32d52833aD41E74bb951E59"], // ibUSDT
+      otherParams: [
+        "0x158Da805682BdC8ee32d52833aD41E74bb951E59", // ibUSDT
+        wbnb,
+      ],
       name: "USDT",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying, // USDC
-      otherParams: ["0x800933D685E7Dc753758cEb77C8bd34aBF1E26d7"], // ibUSDC
+      otherParams: [
+        "0x800933D685E7Dc753758cEb77C8bd34aBF1E26d7", // ibUSDC
+        wbnb,
+      ],
       name: "USDC",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.TUSD)!.underlying, // TUSD
-      otherParams: ["0x3282d2a151ca00BfE7ed17Aa16E42880248CD3Cd"], // ibTUSD
+      otherParams: [
+        "0x3282d2a151ca00BfE7ed17Aa16E42880248CD3Cd", // ibTUSD
+        wbnb,
+      ],
       name: "TUSD",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying, // TUSD
-      otherParams: ["0x08FC9Ba2cAc74742177e0afC3dC8Aed6961c24e7"], // ibBTCB
+      underlying: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying, // BTCB
+      otherParams: [
+        "0x08FC9Ba2cAc74742177e0afC3dC8Aed6961c24e7", // ibBTCB
+        wbnb,
+      ],
       name: "BTCB",
     },
   ],
@@ -191,66 +213,71 @@ export const deployConfig: ChainDeployConfig = {
 const chainlinkAssets: ChainlinkAsset[] = [
   //
   {
-    symbol: "BUSD",
+    symbol: assetSymbols.BUSD,
     aggregator: "0xcBb98864Ef56E9042e7d2efef76141f15731B82f",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "BTCB",
+    symbol: assetSymbols.BTCB,
     aggregator: "0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "DAI",
+    symbol: assetSymbols.DAI,
     aggregator: "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "ETH",
+    symbol: assetSymbols.ETH,
     aggregator: "0x63D407F32Aa72E63C7209ce1c2F5dA40b3AaE726",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // CZ
   {
-    symbol: "BETH",
+    symbol: assetSymbols.BETH,
     aggregator: "0x2A3796273d47c4eD363b361D3AEFb7F7E2A13782",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "CAKE",
+    symbol: assetSymbols.CAKE,
     aggregator: "0xB6064eD41d4f67e353768aA239cA86f4F73665a1",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   //
   {
-    symbol: "AUTO",
+    symbol: assetSymbols.AUTO,
     aggregator: "0x88E71E6520E5aC75f5338F5F0c9DeD9d4f692cDA",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "BIFI",
+    symbol: assetSymbols.BIFI,
     aggregator: "0xaB827b69daCd586A37E80A7d552a4395d576e645",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // stables
   {
-    symbol: "USDC",
+    symbol: assetSymbols.USDC,
     aggregator: "0x51597f405303C4377E36123cBc172b13269EA163",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "USDT",
+    symbol: assetSymbols.USDT,
     aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // Jarvis
   {
-    symbol: "jBRL",
+    symbol: assetSymbols.jBRL,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "ALPACA",
+    symbol: assetSymbols.BRZ,
+    aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.ALPACA,
     aggregator: "0xe0073b60833249ffd1bb2af809112c2fbf221df6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
@@ -277,15 +304,15 @@ const curvePools: CurvePoolConfig[] = [
       assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
     ],
   },
-  // {
-  //   // UST metapool
-  //   lpToken: assets.find((a) => a.symbol === assetSymbols.ust3EPS)!.underlying,
-  //   pool: "0x780de1A0E4613da6b65ceF7F5FB63d14CbDcfB72",
-  //   underlyings: [
-  //     assets.find((a) => a.symbol === assetSymbols.UST)!.underlying,
-  //     assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
-  //   ],
-  // },
+  {
+    // 2BRL pool
+    lpToken: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying,
+    pool: "0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.jBRL)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.BRZ)!.underlying,
+    ],
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
