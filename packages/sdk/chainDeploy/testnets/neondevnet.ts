@@ -1,7 +1,7 @@
 import { ethers, utils } from "ethers";
 
 import { SupportedChains } from "../../src";
-import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 
@@ -14,7 +14,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "NEON",
   stableToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC).underlying,
   wBTCToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBTC).underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: chainSpecificParams[SupportedChains.neon_devnet].blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [],
