@@ -23,7 +23,7 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.chapel]: {
     [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying]:
-    RedemptionStrategy.UniswapLpTokenLiquidator,
+      RedemptionStrategy.UniswapLpTokenLiquidator,
   },
   [SupportedChains.aurora]: {},
   [SupportedChains.moonbeam]: {
