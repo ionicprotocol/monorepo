@@ -45,6 +45,7 @@ import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import MaxBorrowSlider from './MaxBorrowSlider';
 
 const AmountSelect = ({
   assets,
@@ -318,6 +319,8 @@ const AmountSelect = ({
                   />
                 </Row>
               </DashboardBox>
+              <MaxBorrowSlider/>
+
             </Column>
 
             <StatsColumn
