@@ -29,12 +29,12 @@ import { ChainMetadata } from '@ui/types/ChainMetaData';
 //   },
 // };
 
-const testnet: ChainMetadata = {
+const devnet: ChainMetadata = {
   chainId: SupportedChains.neon_devnet,
   chainIdHex: '0xE9AC0CE',
   name: 'Neon Devnet',
   shortName: 'Neon Devnet',
-  img: '/images/neon.svg',
+  img: '/images/neon.jpg',
   rpcUrls: { default: 'https://proxy.devnet.neonlabs.org/solana' },
   enabled: true,
   supported:
@@ -52,12 +52,12 @@ const testnet: ChainMetadata = {
     decimals: 18,
     color: '#627EEA',
     overlayTextColor: '#fff',
-    logoURL: '/images/neon.svg',
+    logoURL: '/images/neon.jpg',
     coingeckoId: '',
   },
   testnet: true,
 };
 
-const chain = { testnet };
+const chain = { devnet };
 
 export default chain;
