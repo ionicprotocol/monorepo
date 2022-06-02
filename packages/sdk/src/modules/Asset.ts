@@ -167,13 +167,14 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
           // Add Flywheels as RewardsDistributors to Pool
           const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
-          const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(implementationAddress);
+          // TODO https://github.com/Midas-Protocol/monorepo/issues/166
+          // const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(implementationAddress);
           for (const flywheelConfig of config.plugin.flywheels) {
             if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
 
             await comptroller._addRewardsDistributor(flywheelConfig.address);
-            // TODO Fails
-            await cToken["approve(address,address)"](flywheelConfig.rewardToken, flywheelConfig.address);
+            // TODO https://github.com/Midas-Protocol/monorepo/issues/166
+            // await cToken["approve(address,address)"](flywheelConfig.rewardToken, flywheelConfig.address);
           }
         }
       }
