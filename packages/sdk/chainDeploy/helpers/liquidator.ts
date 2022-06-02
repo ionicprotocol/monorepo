@@ -1,8 +1,9 @@
 import { constants } from "ethers";
 
-import { LiquidatorDeployFnParams } from "./types";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain";
 import { chainRedemptionStrategies } from "../../src/chainConfig";
+
+import { LiquidatorDeployFnParams } from "./types";
 
 export const deployFuseSafeLiquidator = async ({
   ethers,
@@ -39,8 +40,8 @@ export const deployFuseSafeLiquidator = async ({
   const arrayOfTrue: boolean[] = [];
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
-  for(const address in chainRedemptionStrategies[chainId]) {
-    let whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(address);
+  for (const address in chainRedemptionStrategies[chainId]) {
+    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(address);
     if (!whitelistedAlready) {
       strategies.push(address);
       arrayOfTrue.push(true);

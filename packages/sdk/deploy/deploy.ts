@@ -320,7 +320,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// Liquidator
-  await deployFuseSafeLiquidator({ run, ethers, getNamedAccounts, chainId, deployments, deployConfig: chainDeployParams });
+  await deployFuseSafeLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    chainId,
+    deployments,
+    deployConfig: chainDeployParams,
+  });
   ///
 
   ////
