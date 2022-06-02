@@ -105,28 +105,36 @@ const chainPluginConfig: ChainPlugins = {
         ],
       },
     ],
-    // // ust3EPS
-    // "0x151F1611b2E304DEd36661f65506f9D7D172beba": [
-    //   {
-    //     cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
-    //     strategyName: "ust3EPS LP Staker with EPX Rewards",
-    //     strategyCode: "TBD",
-    //     strategyAddress: "",
-    //     flywheels: [
-    //       {
-    //         address: "0x968086e25851D465127Bb536516c2162Cd79B360",
-    //         rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
-    //       },
-    //     ],
-    //   },
-    // ],
+    // 2brl
+    [bscAssets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying]: [
+      {
+        cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
+        strategyName: "2brl LP Staker with EPX Rewards",
+        strategyCode: "DotDotLpERC4626_2brl",
+        strategyAddress: "0x939EF184853C751abD4463363a36c316EC0dBaD4",
+        flywheels: [
+          {
+            // FuseFlywheelDynamicRewards_EPX.json
+            address: "0x594a1fdE7D263D2FCE80411f9F0d880a2fb56B2E",
+            // EPX rewards
+            rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
+          },
+          {
+            // FuseFlywheelDynamicRewards_DDD.json
+            address: "0x202EA66c4253bD7DBd59D6836610EC4D6E528DB4",
+            // DDD rewards
+            rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
+          },
+        ],
+      },
+    ],
     // WBNB
     [bscAssets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying]: [
       {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibWBNB Vault",
         strategyCode: "AlpacaERC4626_WBNB",
-        strategyAddress: "0xc08269f79D1C7b3d7ca8F3D0DCA898Fc6CB513Cb",
+        strategyAddress: "0xc24C0FC5314F4D866C7c37bacC87085C72A3CEca",
       },
     ],
     // ETH
@@ -135,7 +143,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibETH Vault",
         strategyCode: "AlpacaERC4626_ETH",
-        strategyAddress: "0xAe93A10190393c90593db3E931295d6D27e51383",
+        strategyAddress: "0x54d4116eDb9c77b8C501a17342fcfE80990e2064",
       },
     ],
     // BUSD
@@ -144,7 +152,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibBUSD Vault",
         strategyCode: "AlpacaERC4626_BUSD",
-        strategyAddress: "0x9Aa54169210190d7769C9a88F6E428C83C4741B7",
+        strategyAddress: "0xBd4b66CF58207F88e0Ab56D40B591514Bb190923",
       },
     ],
     // USDT
@@ -153,7 +161,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibUSDT Vault",
         strategyCode: "AlpacaERC4626_USDT",
-        strategyAddress: "0xEe058Fb90d7DcaA817F113a7A319aD825509b07c",
+        strategyAddress: "0x7d0e43e64656e149841a44E8145b329C9BbcBf4e",
       },
     ],
     // USDC
@@ -162,7 +170,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibUSDC Vault",
         strategyCode: "AlpacaERC4626_USDC",
-        strategyAddress: "0x7797337c32b0c8E25c91B291431e506DECd13a26",
+        strategyAddress: "0x91f893820B1Ab8d0003c552980741b541C2A02e2",
       },
     ],
     // TUSD
@@ -171,7 +179,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibTUSD Vault",
         strategyCode: "AlpacaERC4626_TUSD",
-        strategyAddress: "0xC04138A2B1f6D3F87c95e9535076eB6C2bC43774",
+        strategyAddress: "0x40785A3BADd0491844ABaA98eB979245c156eF33",
       },
     ],
     // BTCB
@@ -180,7 +188,16 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibBTCB Vault",
         strategyCode: "AlpacaERC4626_BTCB",
-        strategyAddress: "0xaab63A911a0bc5aac6B7Dd9dd3bF2cf97485387e",
+        strategyAddress: "0x5382C4E344dA039323288ec3dc0294ba92625534",
+      },
+    ],
+    // BETH
+    [bscAssets.find((a) => a.symbol === assetSymbols.BETH)!.underlying]: [
+      {
+        cTokenContract: DelegateContractName.CErc20PluginDelegate,
+        strategyName: "Alpaca Finance ibBETH Vault",
+        strategyCode: "AlpacaERC4626_BETH",
+        strategyAddress: "0xCBE401B8874A1C30163740f5f45156088Eb21481",
       },
     ],
   },
@@ -190,6 +207,7 @@ const chainPluginConfig: ChainPlugins = {
   [SupportedChains.moonbeam]: {},
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.aurora]: {},
+  [SupportedChains.neon_devnet]: {},
 };
 
 export default chainPluginConfig;
