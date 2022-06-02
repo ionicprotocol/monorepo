@@ -2,10 +2,11 @@
 name: Custom Asset Support
 about: Add support for specific asset in a specific chain
 title: Support Asset $XXX
-labels: 'Custom Asset Support'
+labels: ''
 assignees: ''
 
 ---
+
 <h4> Link To Matching Chain Deployment Ticket: # <h4>
 
 <h3> Custom Asset Information: </h3> <br>
