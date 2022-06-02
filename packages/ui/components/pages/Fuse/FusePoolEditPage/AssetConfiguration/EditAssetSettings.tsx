@@ -29,8 +29,6 @@ const EditAssetSettings = ({
     );
   }
 
-  console.log({ plugin, cTokenAddress, tokenData: tokenData?.name });
-
   if (tokenData) {
     return (
       <AssetSettings
