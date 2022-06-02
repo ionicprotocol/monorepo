@@ -27,8 +27,6 @@ dotEnvConfig();
 const urlOverride = process.env.ETH_PROVIDER_URL;
 
 console.log("FORK_URL_BSC: ", process.env.FORK_URL_BSC);
-console.log("BSC_PROVIDER_URL: ", process.env.BSC_PROVIDER_URL);
-console.log("urlOverride: ", urlOverride);
 
 const mnemonic =
   process.env.SUGAR_DADDY ||
