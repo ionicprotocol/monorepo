@@ -1,7 +1,7 @@
 import { ethers, providers } from "ethers";
 
 import { SupportedChains } from "../../src";
-import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams } from "../helpers/types";
@@ -12,7 +12,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
   nativeTokenName: "Dev (Testnet)",
   nativeTokenSymbol: "DEV",
-  blocksPerYear: 5 * 24 * 365 * 60, // 12 second blocks, 5 blocks per minute
+  blocksPerYear: chainSpecificParams[SupportedChains.moonbase_alpha].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute
   uniswap: {
     hardcoded: [],
     uniswapData: [],

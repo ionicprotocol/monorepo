@@ -10,6 +10,7 @@ import {
   ganacheAssets,
   moonbaseAlphaAssets,
   moonbeamAssets,
+  neonDevnetAssets,
 } from "./assets";
 
 const chainSupportedAssets: ChainSupportedAssets = {
@@ -21,6 +22,7 @@ const chainSupportedAssets: ChainSupportedAssets = {
   [SupportedChains.moonbase_alpha]: moonbaseAlphaAssets,
   [SupportedChains.moonbeam]: moonbeamAssets,
   [SupportedChains.aurora]: auroraAssets,
+  [SupportedChains.neon_devnet]: neonDevnetAssets,
 };
 
 export default chainSupportedAssets;
