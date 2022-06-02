@@ -15,7 +15,7 @@ export {
   FuseAsset,
   InterestRateModelType,
   AssetPluginConfig,
-  PluginConfig,
+  MarketPluginConfig,
 } from "./types";
 export {
   SupportedChains,
