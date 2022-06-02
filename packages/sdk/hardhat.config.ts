@@ -144,6 +144,11 @@ const config: HardhatUserConfig = {
       chainId: 1284,
       saveDeployments: true,
     },
+    neondevnet: {
+      url: `https://proxy.devnet.neonlabs.org/solana`,
+      accounts: { mnemonic },
+      chainId: 245022926,
+    },
   },
 };
 
