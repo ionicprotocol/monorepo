@@ -15,6 +15,7 @@ export {
   FuseAsset,
   InterestRateModelType,
   AssetPluginConfig,
+  MarketConfig,
   MarketPluginConfig,
 } from "./types";
 export {
