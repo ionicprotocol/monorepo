@@ -34,6 +34,7 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
     "0x -- Kinesis": RedemptionStrategy.CurveLpTokenLiquidatorNoRegistry,
   },
   [SupportedChains.ganache]: {},
+  [SupportedChains.neon_devnet]: {},
 };
 
 export default chainRedemptionStrategies;

@@ -7,6 +7,7 @@ export enum SupportedChains {
   evmos_testnet = 9000,
   moonbeam = 1284,
   moonbase_alpha = 1287,
+  neon_devnet = 245022926,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
