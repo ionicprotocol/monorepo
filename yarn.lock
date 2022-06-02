@@ -1120,8 +1120,8 @@ __metadata:
   linkType: hard
 
 "@coinbase/wallet-sdk@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "@coinbase/wallet-sdk@npm:3.1.0"
+  version: 3.2.0
+  resolution: "@coinbase/wallet-sdk@npm:3.2.0"
   dependencies:
     "@metamask/safe-event-emitter": 2.0.0
     bind-decorator: ^1.0.11
@@ -1137,7 +1137,7 @@ __metadata:
     qs: ^6.10.3
     rxjs: ^6.6.3
     stream-browserify: ^3.0.0
-  checksum: 73931336131c274fa792c867116b6617559a5f1a30d4fe1ee9045b19007e23060408d32feac16d052cd78bef53e62b1fb3ff857955fd10446596787199278822
+  checksum: e286b137182c222eac5b75b13fcaedcf9d015f991c50d4a3385fabdc0044851af75e42993d76f10c895b804c0cbc035c4f99fa840cdaa73d8fda84bf0e008058
   languageName: node
   linkType: hard
 
@@ -2297,13 +2297,13 @@ __metadata:
     "@ethersproject/providers": ^5.6.8
     "@midas-capital/sdk": "workspace:*"
     "@netlify/plugin-nextjs": latest
-    "@testing-library/react": ^13.2.0
-    "@types/node": 17.0.35
-    "@types/react": ^18.0.9
+    "@testing-library/react": ^13.3.0
+    "@types/node": 17.0.38
+    "@types/react": ^18.0.10
     "@types/react-datepicker": ^4.4.1
     "@types/react-dom": ^18.0.5
-    "@typescript-eslint/eslint-plugin": ^5.26.0
-    "@typescript-eslint/parser": ^5.26.0
+    "@typescript-eslint/eslint-plugin": ^5.27.0
+    "@typescript-eslint/parser": ^5.27.0
     apexcharts: ^3.35.3
     axios: ^0.27.2
     eslint: 8.16.0
@@ -2314,10 +2314,10 @@ __metadata:
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-react: ^7.30.0
     ethers: ^5.6.8
-    framer-motion: ^6.3.4
+    framer-motion: ^6.3.6
     fuse.js: ^6.6.2
     logrocket: ^3.0.0
-    mathjs: ^10.6.0
+    mathjs: ^10.6.1
     next: ^12.1.6
     next-i18next: ^11.0.0
     node-vibrant: ^3.1.6
@@ -2328,11 +2328,11 @@ __metadata:
     react-dom: ^18.1.0
     react-error-boundary: ^3.1.4
     react-i18next: ^11.16.9
-    react-icons: ^4.3.1
+    react-icons: ^4.4.0
     react-jazzicon: ^1.0.3
-    react-query: ^3.39.0
+    react-query: ^3.39.1
     typescript: 4.7.2
-    wagmi: ^0.4.3
+    wagmi: ^0.4.6
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -2904,7 +2904,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.2.0":
+"@testing-library/react@npm:^13.3.0":
   version: 13.3.0
   resolution: "@testing-library/react@npm:13.3.0"
   dependencies:
@@ -3186,7 +3186,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^17.0.23, @types/node@npm:^17.0.31":
+"@types/node@npm:*, @types/node@npm:17.0.38, @types/node@npm:^17.0.23, @types/node@npm:^17.0.31":
   version: 17.0.38
   resolution: "@types/node@npm:17.0.38"
   checksum: 9db1c39d603850ced665ab60b8f8ebce674ff9d762dfff0f776d520e71e4d73fdcd4c7f69213b804d878cf3e726911b09cae4ee66e35ae2724538de9f4838681
@@ -3197,13 +3197,6 @@ __metadata:
   version: 16.9.1
   resolution: "@types/node@npm:16.9.1"
   checksum: 41afcf183a22d59323a0199dd7e0f46591247f45fc08a4434edb26d56dc279ae4fdb80f37989ddd7a0f45e3857c4933e6e82057ede09c5a829f77e373e680375
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:17.0.35":
-  version: 17.0.35
-  resolution: "@types/node@npm:17.0.35"
-  checksum: 7a24946ae7fd20267ed92466384f594e448bfb151081158d565cc635d406ecb29ea8fb85fcd2a1f71efccf26fb5bd3c6f509bde56077eb8b832b847a6664bc62
   languageName: node
   linkType: hard
 
@@ -3384,7 +3377,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.26.0":
+"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.27.0":
   version: 5.27.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.27.0"
   dependencies:
@@ -3407,7 +3400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.26.0":
+"@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.27.0":
   version: 5.27.0
   resolution: "@typescript-eslint/parser@npm:5.27.0"
   dependencies:
@@ -3515,9 +3508,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:^0.3.4":
-  version: 0.3.4
-  resolution: "@wagmi/core@npm:0.3.4"
+"@wagmi/core@npm:^0.3.5":
+  version: 0.3.5
+  resolution: "@wagmi/core@npm:0.3.5"
   dependencies:
     eventemitter3: ^4.0.7
     zustand: ^4.0.0-rc.1
@@ -3530,7 +3523,7 @@ __metadata:
       optional: true
     "@walletconnect/ethereum-provider":
       optional: true
-  checksum: 4836a9a72ab8e579b65c5a91a463a84cf6598c5018ce47a7476664684ea1d2a8b7a37e847ab7bdc7ea6919ca8b1f9e0da57bbcdf6f73b0cacfb7d592bddf1e8e
+  checksum: 11d4603acbe93d67e855ab085861342191e2c5e5dca7bec4e8917f0bd1782f8d6d30d18142a7f1206dcd2604b48899b6eb3294012fce8f871fb690151dcf094a
   languageName: node
   linkType: hard
 
@@ -5771,9 +5764,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001332":
-  version: 1.0.30001344
-  resolution: "caniuse-lite@npm:1.0.30001344"
-  checksum: 9dba66f796dc98632dced4c5d487d0fad219e137a27c634eec68520f2e598a613e3371b9207e15a078689a629128eca898793e37fc98841821ab481bddad51b9
+  version: 1.0.30001346
+  resolution: "caniuse-lite@npm:1.0.30001346"
+  checksum: 951590454ffa4e2e7b772558dc593cd08604b44c83741e1188166298f54c34387f4bf34f5141a35de4a43028c012484240ad15c896e48bf4eac70dd7076a4449
   languageName: node
   linkType: hard
 
@@ -6414,19 +6407,19 @@ __metadata:
   linkType: hard
 
 "core-js-compat@npm:^3.21.0":
-  version: 3.22.7
-  resolution: "core-js-compat@npm:3.22.7"
+  version: 3.22.8
+  resolution: "core-js-compat@npm:3.22.8"
   dependencies:
     browserslist: ^4.20.3
     semver: 7.0.0
-  checksum: 036148c150ae6dec864cf175100d56ba0fa2ee9e43b94e6e3d9605d39d53c367aa2409aa1affc485a3135fd73bcab7a4f5f3ab2707420923f7f144ac1997eccf
+  checksum: 0c82d9110dcb267c2f5547c61b62f8043793d203523048169176b8badf0b73f3792624342b85d9c923df8eb8971b4aa468b160abb81a023d183c5951e4f05a66
   languageName: node
   linkType: hard
 
 "core-js-pure@npm:^3.0.1, core-js-pure@npm:^3.20.2":
-  version: 3.22.7
-  resolution: "core-js-pure@npm:3.22.7"
-  checksum: 6358882377e1f0433efc1c492cc5d764d664f7651a72e534b1c9d989fe82b9986b7602b735fee03f368187fb17c3829047a949c41078c710c92b3557d889042b
+  version: 3.22.8
+  resolution: "core-js-pure@npm:3.22.8"
+  checksum: 007d2374b6dca116cc2d57da44605be9bd84906022e385da25008a010e8a8d33bfbfde1b3f9dbb999aa270ff0dec57dbac62b080fd2a60dea39ea3b9cfdf763f
   languageName: node
   linkType: hard
 
@@ -6438,9 +6431,9 @@ __metadata:
   linkType: hard
 
 "core-js@npm:^3":
-  version: 3.22.7
-  resolution: "core-js@npm:3.22.7"
-  checksum: c5f1d8a96b6d1828d02583603d9df1fcbf45f95454585ff9d49ba7ea1470bf1422d00561044939bf4952465ae4ae2bf30a39b4874da8ed2741a3f3996bd175ab
+  version: 3.22.8
+  resolution: "core-js@npm:3.22.8"
+  checksum: c79bcfea37920a5da880ad1fc8336355e833c83998bb28cd45cc59eef4d9824dd8d59ccd24d6b18ff88f284d53d9eef021ddbd2b5ab1c6305b01e98c1402e510
   languageName: node
   linkType: hard
 
@@ -7141,9 +7134,9 @@ __metadata:
   linkType: hard
 
 "electron-to-chromium@npm:^1.3.47, electron-to-chromium@npm:^1.4.118":
-  version: 1.4.143
-  resolution: "electron-to-chromium@npm:1.4.143"
-  checksum: ce7f140b23ddee0127440c24357edfdd4683948cbf25d5f91ca9069a673b12c0da61cd05c3ae5b7f4b22e5a390a2f24e02d79d2011e6cc2fd5f05ba75870d920
+  version: 1.4.144
+  resolution: "electron-to-chromium@npm:1.4.144"
+  checksum: a321bfc92485d37a16c1db84647dc9c376b47ff53136a32102d8599086118f5805ab3713f86f85936b627544b653d7d8c3f1acf9638c5bf0c3f8e6ae1ab4c395
   languageName: node
   linkType: hard
 
@@ -8933,7 +8926,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^6.2.8, framer-motion@npm:^6.3.4":
+"framer-motion@npm:^6.2.8, framer-motion@npm:^6.3.6":
   version: 6.3.6
   resolution: "framer-motion@npm:6.3.6"
   dependencies:
@@ -11851,7 +11844,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mathjs@npm:^10.6.0":
+"mathjs@npm:^10.6.1":
   version: 10.6.1
   resolution: "mathjs@npm:10.6.1"
   dependencies:
@@ -12393,8 +12386,8 @@ __metadata:
   dependencies:
     "@resolver-engine/core": ^0.3.3
     "@tsconfig/recommended": ^1.0.1
-    "@typescript-eslint/eslint-plugin": ^5.26.0
-    "@typescript-eslint/parser": ^5.26.0
+    "@typescript-eslint/eslint-plugin": ^5.27.0
+    "@typescript-eslint/parser": ^5.27.0
     ts-node: ^10.8.0
     typescript: ^4.7.2
   languageName: unknown
@@ -14249,7 +14242,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icons@npm:^4.3.1":
+"react-icons@npm:^4.4.0":
   version: 4.4.0
   resolution: "react-icons@npm:4.4.0"
   peerDependencies:
@@ -14307,7 +14300,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-query@npm:^3.39.0":
+"react-query@npm:^3.39.1":
   version: 3.39.1
   resolution: "react-query@npm:3.39.1"
   dependencies:
@@ -17130,19 +17123,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.4.3":
-  version: 0.4.5
-  resolution: "wagmi@npm:0.4.5"
+"wagmi@npm:^0.4.6":
+  version: 0.4.6
+  resolution: "wagmi@npm:0.4.6"
   dependencies:
     "@coinbase/wallet-sdk": ^3.1.0
-    "@wagmi/core": ^0.3.4
+    "@wagmi/core": ^0.3.5
     "@walletconnect/ethereum-provider": ^1.7.8
     react-query: ^4.0.0-beta.19
     use-sync-external-store: ^1.1.0
   peerDependencies:
     ethers: ">=5.5.1"
     react: ">=17.0.0"
-  checksum: 67cc89c453ae8460e7c8a7597ef0cc23e5f56486dda68a05f9e9f1558aa8f6b11f243b29ff53a5fa33d06490921929e13f144ab559b539e5fbf47eadd657c017
+  checksum: b6ab84f916fe3490e4a06414ea28fb59f3770f0fea09cd95fa61c1bbba300a19e53530c0956ab0629a9de766d76c6806f06f381d2280c246b56f6de0b5bed8b9
   languageName: node
   linkType: hard
 
