@@ -194,6 +194,7 @@ const chainPluginConfig: ChainPlugins = {
     // BETH
     [bscAssets.find((a) => a.symbol === assetSymbols.BETH)!.underlying]: [
       {
+        cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibBETH Vault",
         strategyCode: "AlpacaERC4626_BETH",
         strategyAddress: "0xCBE401B8874A1C30163740f5f45156088Eb21481",
