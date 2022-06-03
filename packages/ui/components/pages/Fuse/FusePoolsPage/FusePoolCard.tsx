@@ -105,7 +105,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
               Your Supply <br></br> Balance
             </Text>
             <Text mt="1.5" fontWeight="bold">
-              {fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceNative)}
+              {fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceFiat)}
             </Text>
           </Column>
           <chakra.div h="16" w="1px" bgColor={cCard.dividerColor} />
