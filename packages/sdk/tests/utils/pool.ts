@@ -3,7 +3,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
-import { cERC20Conf, Fuse, FusePoolData, NativePricedFuseAsset } from "../../src";
+import { cERC20Conf, Fuse, FusePoolData, MarketConfig, NativePricedFuseAsset } from "../../src";
 
 import { getOrCreateFuse } from "./fuseSdk";
 
@@ -66,7 +66,7 @@ export type DeployedAsset = {
   receipt: providers.TransactionReceipt;
 };
 
-export async function deployAssets(assets: cERC20Conf[], signer?: SignerWithAddress): Promise<DeployedAsset[]> {
+export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAddress): Promise<DeployedAsset[]> {
   if (!signer) {
     const { bob } = await ethers.getNamedSigners();
     signer = bob;
