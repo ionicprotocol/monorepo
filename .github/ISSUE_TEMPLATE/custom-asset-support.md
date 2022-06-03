@@ -11,16 +11,16 @@ assignees: ''
 <h3> Custom Asset Information: </h3> <br>
 
 *Use the reference below for Asset Information.  If not found in the table, please notify Nik via Discord* <br>
-[Link to Notion Custom Asset Table](https://www.notion.so/4627d911ce3c4589aef9f7592650e7b2?v=4b3abb4ebfd44018bcf47496d512b778)
+[Link to Notion Custom Asset Table](https://www.notion.so/4627d911ce3c4589aef9f7592650e7b2?v=4b3abb4ebfd44018bcf47496d512b778) <br>
 
-**Symbol**: *_ETH_* <br>
+**Symbol**: *<ins> ETH </ins>* <br>
 **Block Explorer URL**:  *https://etherscan.io/address/0x0000000000000000000000000000000000000000* <br>
-**Chain**: *_Ethereum_*
+**Chain**: *<ins> Ethereum </ins>*
 
 *Please mark the tasks below, as appropriate.  Then link supporting Github items together in the Comments section either using # or the button in the screenshot below:* <br>
-   ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png) 
+   ![Screenshot of Github Link Button](https://user-images.githubusercontent.com/103433798/169572470-b7e31053-afab-4225-9816-6403193b86b3.png) <br>
 
-**Link To Matching Chain Deployment Ticket:** #*Insert Link Here*
+ **<ins>Link To Matching Chain Deployment Ticket</ins>:** #*Insert Link Here* <br>
 
 - [ ] **ChainLink / DIA / Flux Supported** _*OR*_
 - [ ] **Requires Custom Oracle** <br>
