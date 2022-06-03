@@ -18,24 +18,6 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       //1. Validate configuration
       this.#validateConfiguration(config);
 
-      //2. Deploy new interest rate model via SDK if requested // TODO can this be removed?
-      if (
-        ["WhitePaperInterestRateModel", "JumpRateModel", "DAIInterestRateModelV2"].indexOf(
-          irmConf.interestRateModel!
-        ) >= 0
-      ) {
-        try {
-          irmConf.interestRateModel = await this.deployInterestRateModel(
-            options,
-            irmConf.interestRateModel,
-            irmConf.interestRateModelParams
-          ); // TODO: anchorMantissa
-        } catch (error: any) {
-          console.error("Raw Error", error);
-          throw Error("Deployment of interest rate model failed: " + (error.message ? error.message : error));
-        }
-      }
-
       //2. Deploy new asset to existing pool via SDK
       try {
         const [assetAddress, implementationAddress, receipt] = await this.#deployMarket(config, options);
@@ -168,13 +150,32 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
           // Add Flywheels as RewardsDistributors to Pool
           const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
           // TODO https://github.com/Midas-Protocol/monorepo/issues/166
-          // const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(implementationAddress);
+          const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(cErc20DelegatorAddress);
           for (const flywheelConfig of config.plugin.flywheels) {
             if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
 
-            await comptroller._addRewardsDistributor(flywheelConfig.address);
-            // TODO https://github.com/Midas-Protocol/monorepo/issues/166
-            // await cToken["approve(address,address)"](flywheelConfig.rewardToken, flywheelConfig.address);
+            const addRdTx = await comptroller._addRewardsDistributor(flywheelConfig.address, {
+              from: options.from,
+            });
+            const addRdTxReceipt: TransactionReceipt = await addRdTx.wait();
+
+            if (addRdTxReceipt.status != constants.One.toNumber()) {
+              throw `Failed set add RD to pool ${flywheelConfig.address}`;
+            }
+            const approveTx = await cToken["approve(address,address)"](
+              flywheelConfig.rewardToken,
+              flywheelConfig.address,
+              {
+                from: options.from,
+              }
+            );
+            const approveTxReceipt = await approveTx.wait();
+            if (approveTxReceipt.status != constants.One.toNumber()) {
+              throw `Failed to approve to pool ${flywheelConfig.address}`;
+            }
+
+            console.log(approveTxReceipt.status);
+            console.log("Approval succeeded");
           }
         }
       }
