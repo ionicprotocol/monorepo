@@ -83,29 +83,9 @@ export type ChainDeployment = {
 
 export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
 
-// Deprecated
-export type cERC20Conf = {
-  admin: string; // Address of the admin
-  adminFee: number;
-  bypassPriceFeedCheck: boolean;
-  collateralFactor: number;
-  comptroller: string; // Address of the comptroller
-  delegateContractName?: DelegateContractName;
-  fuseFeeDistributor: string;
-  initialExchangeRateMantissa?: BigNumber; // Initial exchange rate scaled by 1e18
-  interestRateModel: string; // Address of the IRM
-  name: string; // ERC20 name of this token
-  plugin?: string;
-  reserveFactor: number;
-  rewardsDistributorConfig?: RewardsDistributorConfig[];
-  symbol: string; // ERC20 Symbol
-  underlying: string; // underlying ERC20
-};
-
 export interface MarketConfig {
   underlying: string;
   comptroller: string;
-  admin?: string; // What is this used for, why can this be changed? Default to sender? How does he collect the fee?
   adminFee: number;
   collateralFactor: number;
   interestRateModel: string; // TODO: Use an Enum here, similar to Contract, resolve address inside the function
@@ -114,7 +94,6 @@ export interface MarketConfig {
 
   // REFACTOR below:
   bypassPriceFeedCheck: boolean;
-  initialExchangeRateMantissa?: BigNumber; // TODO, why do we need this?
   fuseFeeDistributor: string; // TODO: Remove this? We should always use our Fee Distributor!
   symbol: string; // TODO: Same as name
   name: string; // TODO: Make optional, should be set inside SDK for default value mToken or so
