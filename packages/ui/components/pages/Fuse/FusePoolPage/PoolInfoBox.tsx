@@ -225,7 +225,7 @@ const OracleAndInterestRates = ({
             />
             <StatRow
               statATitle={'Oracle'}
-              statA={data ? data.oracle ?? 'Unrecognized Oracle' : '?'}
+              statA={data ? data.oracle ?? 'MasterPriceOracle' : '?'}
               statBTitle={'Whitelist'}
               statB={data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
             />
