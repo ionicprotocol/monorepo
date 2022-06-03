@@ -41,8 +41,6 @@ const FusePoolPage = memo(() => {
   const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller);
   const rewardTokens = useRewardTokensOfPool(data?.comptroller);
 
-  console.log({ data });
-
   const { cPage } = useColors();
 
   return (
