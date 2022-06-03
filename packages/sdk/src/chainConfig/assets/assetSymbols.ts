@@ -11,6 +11,8 @@ enum assetSymbols {
   TUSD = "TUSD",
   FRAX = "FRAX",
   FTM = "FTM",
+  WBTC = "WBTC",
+  BAL = "BAL",
 
   // bsc
   WBNB = "WBNB",
@@ -57,6 +59,9 @@ enum assetSymbols {
 
   // aurora
   WNEAR = "WNEAR",
+
+  // neon
+  WNEON = "WNEON",
 }
 
 export default assetSymbols;

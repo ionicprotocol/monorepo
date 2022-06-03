@@ -4,6 +4,7 @@ import BSC from '@ui/networkData/networks/BSC';
 import Evmos from '@ui/networkData/networks/Evmos';
 import Ganache from '@ui/networkData/networks/Ganache';
 import Moonbeam from '@ui/networkData/networks/Moonbeam';
+import NeonDevnet from '@ui/networkData/networks/NeonDevnet';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 export const NETWORK_DATA: Record<string, ChainMetadata> = {
@@ -13,6 +14,7 @@ export const NETWORK_DATA: Record<string, ChainMetadata> = {
   [SupportedChains.evmos_testnet]: Evmos.testnet,
   [SupportedChains.moonbeam]: Moonbeam.mainnet,
   [SupportedChains.moonbase_alpha]: Moonbeam.testnet,
+  [SupportedChains.neon_devnet]: NeonDevnet.devnet,
 };
 
 export const WRAPPED_NATIVE_TOKEN_DATA: Record<number, ChainMetadata['wrappedNativeCurrency']> = {
@@ -22,6 +24,7 @@ export const WRAPPED_NATIVE_TOKEN_DATA: Record<number, ChainMetadata['wrappedNat
   [SupportedChains.evmos_testnet]: Evmos.testnet.wrappedNativeCurrency,
   [SupportedChains.moonbeam]: Moonbeam.mainnet.wrappedNativeCurrency,
   [SupportedChains.moonbase_alpha]: Moonbeam.testnet.wrappedNativeCurrency,
+  [SupportedChains.neon_devnet]: NeonDevnet.devnet.wrappedNativeCurrency,
 };
 
 export const isSupportedChainId = (chainId: number) => {
