@@ -119,13 +119,13 @@ export const getAlpacaPoolAssets = async (
   const assetConfigs = [{ plugin: ethPlugin }, { plugin: usdcPlugin }, { plugin: busdPlugin }, { plugin: wbnbPlugin }];
   return assets.map((a, i) => {
     return {
+      ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
       adminFee: 0,
       collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
       reserveFactor: 15,
-      plugin: sdk.chainPlugins[assets[i].underlying][0],
       bypassPriceFeedCheck: true,
       fuseFeeDistributor,
       name: a.name,
@@ -145,15 +145,18 @@ export const getJarvisPoolAssets = async (
   const twoBRL = bscAssets.find((b) => b.symbol === assetSymbols["2brl"]);
   const assets = [jBRL, twoBRL];
 
+  const twoBRLplugin = sdk.chainPlugins[twoBRL.underlying][0];
+  const assetConfigs = [{}, { plugin: twoBRLplugin }];
+
   return assets.map((a, i) => {
     return {
+      ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
       adminFee: 0,
       collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
       reserveFactor: 15,
-      plugin: sdk.chainPlugins[assets[i].underlying][0],
       bypassPriceFeedCheck: true,
       fuseFeeDistributor,
       name: a.name,
@@ -180,13 +183,13 @@ export const getBombPoolAssets = async (
   const assetConfigs = [{}, { plugin: bombPlugin }, { plugin: bombbtcbPlugin }];
   return assets.map((a, i) => {
     return {
+      ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
       adminFee: 0,
       collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
       reserveFactor: 15,
-      plugin: sdk.chainPlugins[assets[i].underlying][0],
       bypassPriceFeedCheck: true,
       fuseFeeDistributor,
       name: a.name,
@@ -219,13 +222,13 @@ export const getEllipsisPoolAssets = async (
   ];
   return assets.map((a, i) => {
     return {
+      ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
       adminFee: 0,
       collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
       reserveFactor: 15,
-      plugin: sdk.chainPlugins[assets[i].underlying][0],
       bypassPriceFeedCheck: true,
       fuseFeeDistributor,
       name: a.name,
