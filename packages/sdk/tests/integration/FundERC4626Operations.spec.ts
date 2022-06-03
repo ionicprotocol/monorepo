@@ -68,10 +68,6 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
     for (const a of assets) {
       await simpleOracle.setDirectPrice(a.underlying, BigNumber.from(1));
     }
-    const alpacaPlugin = await ethers.getContract("AlpacaERC4626_WBNB", deployer);
-    const WBNB = alpacaAssets.find((a) => a.symbol === "WBNB");
-    WBNB.plugin = alpacaPlugin.address;
-
     console.log("deploying assets: \n", assets);
     await poolHelpers.deployAssets(assets, deployer);
 
