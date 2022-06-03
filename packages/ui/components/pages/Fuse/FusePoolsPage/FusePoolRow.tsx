@@ -205,7 +205,7 @@ const PoolRow = ({
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
                   <Text fontWeight="bold" textAlign="center">
                     {isMostSupplied
-                      ? fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceNative)
+                      ? fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceFiat)
                       : '$0.00'}
                   </Text>
                 </Row>
