@@ -81,7 +81,7 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
   const assets = [btc, busd, eth, wbnb];
 
-  return assets.map((a, i) => {
+  return assets.map((a) => {
     return {
       underlying: a.underlying,
       comptroller,
@@ -109,9 +109,14 @@ export const getAlpacaPoolAssets = async (
   const usdc = bscAssets.find((b) => b.symbol === assetSymbols.USDC);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
   const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
+  const ethPlugin = sdk.chainPlugins[eth.underlying][0];
+  const usdcPlugin = sdk.chainPlugins[usdc.underlying][0];
+  const busdPlugin = sdk.chainPlugins[busd.underlying][0];
+  const wbnbPlugin = sdk.chainPlugins[wbnb.underlying][0];
 
   const assets = [eth, usdc, busd, wbnb];
 
+  const assetConfigs = [{ plugin: ethPlugin }, { plugin: usdcPlugin }, { plugin: busdPlugin }, { plugin: wbnbPlugin }];
   return assets.map((a, i) => {
     return {
       underlying: a.underlying,
@@ -167,9 +172,12 @@ export const getBombPoolAssets = async (
   const btcb = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
   const bomb = bscAssets.find((b) => b.symbol === assetSymbols.BOMB);
   const bombbtcb = bscAssets.find((b) => b.symbol === assetSymbols["BTCB-BOMB"]);
+  const bombPlugin = sdk.chainPlugins[bomb.underlying][0];
+  const bombbtcbPlugin = sdk.chainPlugins[bombbtcb.underlying][0];
 
   const assets = [btcb, bomb, bombbtcb];
 
+  const assetConfigs = [{}, { plugin: bombPlugin }, { plugin: bombbtcbPlugin }];
   return assets.map((a, i) => {
     return {
       underlying: a.underlying,
@@ -198,7 +206,17 @@ export const getEllipsisPoolAssets = async (
   const threeEPS = bscAssets.find((b) => b.symbol === assetSymbols["3EPS"]);
 
   const assets = [dai3EPS, threeEPS];
+  const dai3EPSPlugin = sdk.chainPlugins[dai3EPS.underlying][0];
+  const threeEPSPlugin = sdk.chainPlugins[threeEPS.underlying][0];
 
+  const assetConfigs = [
+    {
+      plugin: dai3EPSPlugin,
+    },
+    {
+      plugin: threeEPSPlugin,
+    },
+  ];
   return assets.map((a, i) => {
     return {
       underlying: a.underlying,
