@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 
-import { cERC20Conf, DelegateContractName } from "../../src";
+import { cERC20Conf, MarketConfig } from "../../src";
 import { assetSymbols } from "../../src/chainConfig";
 import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
 
@@ -28,10 +28,10 @@ export const getAssetsConf = async (
   interestRateModelAddress,
   ethers,
   poolName?: BSC_POOLS | string
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const { chainId } = await ethers.provider.getNetwork();
 
-  let assets: cERC20Conf[];
+  let assets: MarketConfig[];
 
   if (chainId === 31337 || chainId === 1337) {
     assets = await getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
@@ -80,7 +80,7 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
   const assets = [btc, busd, eth, wbnb];
 
-  return assets.map((a, i) => {
+  return assets.map((a) => {
     return {
       underlying: a.underlying,
       comptroller,
@@ -101,7 +101,7 @@ export const getAlpacaPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
@@ -115,12 +115,7 @@ export const getAlpacaPoolAssets = async (
 
   const assets = [eth, usdc, busd, wbnb];
 
-  const assetConfigs = [
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: ethPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: usdcPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: busdPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: wbnbPlugin.strategyAddress },
-  ];
+  const assetConfigs = [{ plugin: ethPlugin }, { plugin: usdcPlugin }, { plugin: busdPlugin }, { plugin: wbnbPlugin }];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
@@ -146,7 +141,7 @@ export const getJarvisPoolAssets = async (
 ): Promise<cERC20Conf[]> => {
   const jBRL = bscAssets.find((b) => b.symbol === assetSymbols.jBRL);
   const assets = [jBRL];
-  const assetConfigs = [{ delegateContractName: DelegateContractName.CErc20Delegate }];
+  const assetConfigs = [{}];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
@@ -169,7 +164,7 @@ export const getBombPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
   const btcb = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
@@ -180,11 +175,7 @@ export const getBombPoolAssets = async (
 
   const assets = [btcb, bomb, bombbtcb];
 
-  const assetConfigs = [
-    { delegateContractName: DelegateContractName.CErc20Delegate },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombbtcbPlugin.strategyAddress },
-  ];
+  const assetConfigs = [{}, { plugin: bombPlugin }, { plugin: bombbtcbPlugin }];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
@@ -207,7 +198,7 @@ export const getEllipsisPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
   const dai3EPS = bscAssets.find((b) => b.symbol === assetSymbols.dai3EPS);
@@ -219,24 +210,10 @@ export const getEllipsisPoolAssets = async (
 
   const assetConfigs = [
     {
-      delegateContractName: DelegateContractName.CErc20PluginDelegate,
-      plugin: dai3EPSPlugin.strategyAddress,
-      rewardsDistributorConfig: dai3EPSPlugin.dynamicFlywheels.map((rd) => {
-        return {
-          rewardsDistributor: rd.address,
-          rewardToken: rd.rewardToken,
-        };
-      }),
+      plugin: dai3EPSPlugin,
     },
     {
-      delegateContractName: DelegateContractName.CErc20PluginDelegate,
-      plugin: threeEPSPlugin.strategyAddress,
-      rewardsDistributorConfig: threeEPSPlugin.dynamicFlywheels.map((rd) => {
-        return {
-          rewardsDistributor: rd.address,
-          rewardToken: rd.rewardToken,
-        };
-      }),
+      plugin: threeEPSPlugin,
     },
   ];
   return assets.map((a, i) => {
