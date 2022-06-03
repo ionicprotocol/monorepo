@@ -1,7 +1,5 @@
 import { task, types } from "hardhat/config";
 
-// npx hardhat market:create --asset-config Test,deployer,CErc20Delegate,0x90e68fdb102c850D852126Af8fd1419A07636cd7,0x6c7De8de3d8c92246328488aC6AF8f8E46A1628f,0.1,0.9,1,0,true,"","","" --network localhost
-
 export default task("market:create", "Create Market")
   .addParam("poolName", "Name of pool", undefined, types.string)
   .addParam("creator", "Signer name", undefined, types.string)
@@ -40,7 +38,6 @@ export default task("market:create", "Create Market")
 
     if (taskArgs.strategyCode) {
       const plugin = sdk.chainPlugins[assetConfig.underlying].find((p) => p.strategyCode === taskArgs.strategyCode);
-      console.log(plugin);
       assetConfig.plugin = plugin;
       assetConfig.plugin.cTokenContract = enumsModule.DelegateContractName.CErc20PluginDelegate;
 
