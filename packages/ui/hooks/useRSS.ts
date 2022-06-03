@@ -20,6 +20,11 @@ export const letterScore = (totalScore: number) => {
   return 'UNSAFE';
 };
 
+// TODO REWORK
+// duplicated code from useFusePoolData and it's not even needed!!
+// RSS should be able to be calculated completely in the backend.
+// Quite ridiculous to fetch usd prices and pool data in frontend to just pass it to the backend...
+
 export const usePoolRSS = (poolId: string | number) => {
   const { fuse, currentChain, address, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
