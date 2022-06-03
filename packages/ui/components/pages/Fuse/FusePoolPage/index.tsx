@@ -147,7 +147,7 @@ const FusePoolPage = memo(() => {
                 <SupplyList
                   assets={data.assets}
                   comptrollerAddress={data.comptroller}
-                  supplyBalanceNative={data.totalSupplyBalanceNative}
+                  supplyBalanceFiat={data.totalSupplyBalanceFiat}
                   rewards={marketRewards}
                 />
               ) : (

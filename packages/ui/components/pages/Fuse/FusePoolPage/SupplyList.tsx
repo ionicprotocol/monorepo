@@ -40,17 +40,19 @@ import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUt
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { URL_MIDAS_DOCS } from '@ui/utils/constants';
 
-export const SupplyList = ({
-  assets,
-  supplyBalanceNative,
-  comptrollerAddress,
-  rewards = [],
-}: {
+interface SupplyListProps {
   assets: NativePricedFuseAsset[];
-  supplyBalanceNative: number;
+  supplyBalanceFiat: number;
   comptrollerAddress: string;
   rewards?: FlywheelMarketRewardsInfo[];
-}) => {
+}
+
+export const SupplyList = ({
+  assets,
+  supplyBalanceFiat,
+  comptrollerAddress,
+  rewards = [],
+}: SupplyListProps) => {
   const suppliedAssets = assets.filter((asset) => asset.supplyBalanceNative > 1);
   const nonSuppliedAssets = assets.filter(
     (asset) => asset.supplyBalanceNative < 1 && !asset.isSupplyPaused
@@ -68,7 +70,7 @@ export const SupplyList = ({
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
         >
-          Your Supply Balance: {smallUsdFormatter(supplyBalanceNative)}
+          Your Supply Balance: {smallUsdFormatter(supplyBalanceFiat)}
         </TableCaption>
         <Thead>
           {assets.length > 0 ? (

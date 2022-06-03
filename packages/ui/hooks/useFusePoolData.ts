@@ -1,10 +1,10 @@
-import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/sdk';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
-export interface AdaptedFuseAsset extends NativePricedFuseAsset {
+export interface Market extends NativePricedFuseAsset {
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
   totalSupplyFiat: number;
@@ -12,8 +12,8 @@ export interface AdaptedFuseAsset extends NativePricedFuseAsset {
   liquidityFiat: number;
 }
 
-export interface AdaptedFusePoolData extends FusePoolData {
-  assets: AdaptedFuseAsset[];
+export interface Pool extends SDKFusePoolData {
+  assets: Market[];
   totalLiquidityFiat: number;
   totalSuppliedFiat: number;
   totalBorrowedFiat: number;
@@ -25,13 +25,13 @@ export const useFusePoolData = (poolId: string) => {
   const { fuse, currentChain, address, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
-  return useQuery<AdaptedFusePoolData | null>(
+  return useQuery<Pool | null>(
     ['useFusePoolData', currentChain.id, poolId, address, usdPrice],
     async () => {
       if (!usdPrice) return null;
 
       const res = await fuse.fetchFusePoolData(poolId, address);
-      const assetsWithPrice: AdaptedFuseAsset[] = [];
+      const assetsWithPrice: Market[] = [];
       if (res.assets && res.assets.length !== 0) {
         res.assets.map((asset) => {
           assetsWithPrice.push({
@@ -44,7 +44,7 @@ export const useFusePoolData = (poolId: string) => {
           });
         });
       }
-      const adaptedFusePoolData: AdaptedFusePoolData = {
+      const adaptedFusePoolData: FusePoolData = {
         ...res,
         assets: assetsWithPrice,
         totalLiquidityFiat: res.totalLiquidityNative * usdPrice,
