@@ -12,7 +12,7 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../lib/contracts/typechain";
-import { cERC20Conf, Fuse } from "../src";
+import { Fuse, MarketConfig } from "../src";
 
 import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
 import { setupAndLiquidatePool, setupLiquidatablePool } from "./utils/collateral";
@@ -22,9 +22,9 @@ import { DeployedAsset } from "./utils/pool";
 import { resetPriceOracle } from "./utils/setup";
 
 (process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("Protocol Liquidation Seizing", () => {
-  let eth: cERC20Conf;
-  let erc20One: cERC20Conf;
-  let erc20Two: cERC20Conf;
+  let eth: MarketConfig;
+  let erc20One: MarketConfig;
+  let erc20Two: MarketConfig;
 
   let deployedEth: DeployedAsset;
   let deployedErc20One: DeployedAsset;
