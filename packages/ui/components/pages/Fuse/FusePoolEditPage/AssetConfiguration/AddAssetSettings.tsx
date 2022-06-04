@@ -96,19 +96,17 @@ export const AddAssetSettings = ({
     };
 
     const marketConfig: MarketConfig = {
-      admin: address,
-      adminFee: adminFee,
-      bypassPriceFeedCheck: true,
-      collateralFactor: collateralFactor,
-      comptroller: comptrollerAddress,
-      fuseFeeDistributor: fuse.chainDeployment.FuseFeeDistributor.address,
-      initialExchangeRateMantissa: constants.WeiPerEther,
-      interestRateModel: interestRateModel,
-      name: poolName + ' ' + tokenData.name,
-      reserveFactor: reserveFactor,
-      symbol: 'f' + tokenData.symbol + '-' + poolID,
       underlying: tokenData.address,
+      comptroller: comptrollerAddress,
+      adminFee: adminFee,
+      collateralFactor: collateralFactor,
+      interestRateModel: interestRateModel,
+      reserveFactor: reserveFactor,
       plugin: plugin,
+      bypassPriceFeedCheck: true,
+      fuseFeeDistributor: fuse.chainDeployment.FuseFeeDistributor.address,
+      symbol: 'f' + tokenData.symbol + '-' + poolID,
+      name: poolName + ' ' + tokenData.name,
     };
 
     try {
