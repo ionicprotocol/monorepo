@@ -15,13 +15,11 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("FundOperationsERC4626Module", function () {
   let poolAddress: string;
   let sdk: Fuse;
-  let chainId: number;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
   const poolName = BSC_POOLS.BOMB;
 
   this.beforeEach(async () => {
-    ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
 
     const { deployer } = await ethers.getNamedSigners();
@@ -68,6 +66,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
     for (const a of assets) {
       await simpleOracle.setDirectPrice(a.underlying, BigNumber.from(1));
     }
+
     console.log("deploying assets: \n", assets);
     await poolHelpers.deployAssets(assets, deployer);
 
@@ -77,9 +76,8 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
     // acquire some test tokens
     await tradeNativeForAsset({ account: "bob", token: BTCB.underlying, amount: "500" });
     await tradeAssetForAsset({ account: "bob", token1: BTCB.underlying, token2: BOMB.underlying, amount: "0.2" });
-    await wrapNativeToken({ account: "bob", amount: "100" });
+    await wrapNativeToken({ account: "bob", amount: "100", weth: undefined });
   });
-
   it("user can supply any asset", async function () {
     const { bob } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
