@@ -50,26 +50,26 @@ export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, intere
   const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
   const tribe = ganacheAssets.find((b) => b.symbol === assetSymbols.TRIBE);
   const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
-  // const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
 
-  const assets = [weth, tribe, touch]; // , weth];
+  const assets = [weth, tribe, touch];
   const tribeUnderlying = await ethers.getContract("TRIBEToken");
   const touchUnderlying = await ethers.getContract("TOUCHToken");
-  const underlyings = [weth.underlying, tribeUnderlying.address, touchUnderlying.address]; // , weth.underlying]
+  const wethUnderlying = await ethers.getContract("WETH");
+
+  const underlyings = [wethUnderlying.address, tribeUnderlying.address, touchUnderlying.address];
 
   return assets.map((a, i) => {
     return {
       underlying: underlyings[i],
-      comptroller,
       fuseFeeDistributor,
+      comptroller,
+      adminFee: 0,
+      collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
+      reserveFactor: 15,
+      bypassPriceFeedCheck: true,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
-      collateralFactor: 75,
-      reserveFactor: 15,
-      adminFee: 0,
-      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -89,7 +89,6 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
       interestRateModel: interestRateModelAddress,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
