@@ -26,7 +26,7 @@ export const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.TRIBE,
     underlying: "0xeD4764ad14Bb60DC698372B92e51CEC62688DC52",
-    name: "Tribe Token ",
+    name: "Tribe Token",
     decimals: 18,
   },
 ];
