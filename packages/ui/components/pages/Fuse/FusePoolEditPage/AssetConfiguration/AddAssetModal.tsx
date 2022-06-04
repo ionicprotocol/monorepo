@@ -157,11 +157,11 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                 height="400px"
                 overflow="scroll"
               >
-                {supportedAssets.map((asset) => {
+                {supportedAssets.map((asset, index) => {
                   return (
                     <Button
                       variant="listed"
-                      key={asset.name}
+                      key={index}
                       width="100%"
                       justifyContent="flex-start"
                       height="60px"
