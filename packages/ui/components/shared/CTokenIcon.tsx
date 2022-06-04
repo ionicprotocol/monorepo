@@ -1,9 +1,10 @@
 import { Avatar, AvatarGroup, AvatarGroupProps, AvatarProps } from '@chakra-ui/avatar';
 import { HStack, Skeleton, Text, useColorMode } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useRari } from '@ui/context/RariContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 export const CTokenIcon = ({
@@ -16,6 +17,14 @@ export const CTokenIcon = ({
   withTooltip?: boolean;
   withMotion?: boolean;
 } & Partial<AvatarProps>) => {
+  const { fuse } = useRari();
+  const addressIcons = useMemo(() => {
+    const result: { [key: string]: string } = {};
+    fuse.supportedAssets.map((asset) => {
+      result[asset.underlying.toLowerCase()] = asset.symbol;
+    });
+    return result;
+  }, [fuse.supportedAssets]);
   const { data: tokenData } = useTokenData(address);
   const { colorMode } = useColorMode();
   return (
@@ -26,6 +35,9 @@ export const CTokenIcon = ({
           name={tokenData?.symbol ?? 'Loading...'}
           src={
             tokenData?.logoURL ||
+            `https://d1912tcoux65lj.cloudfront.net/token/${addressIcons[
+              address.toLocaleLowerCase()
+            ]?.toLowerCase()}.png` ||
             (colorMode === 'light'
               ? '/images/help-circle-dark.svg'
               : '/images/help-circle-light.svg')

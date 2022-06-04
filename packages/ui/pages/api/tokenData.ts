@@ -65,7 +65,6 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   }
 
   if (!basicTokenInfo.logoURL) {
-    basicTokenInfo.logoURL = `https://d1912tcoux65lj.cloudfront.net/token/${basicTokenInfo.symbol?.toLowerCase()}.png`;
     basicTokenInfo.color = '#FFFFFF';
     basicTokenInfo.overlayTextColor = '#000000';
   } else {
