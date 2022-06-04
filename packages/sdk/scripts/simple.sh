@@ -1,23 +1,33 @@
-POOL_NAME="Test Pool"
+#!/usr/bin/env bash
+POOL_NAME="Test Pool 7"
 
 # get these from the console
-export TOUCH=0xcfeD223fAb2A41b5a5a5F9AaAe2D1e882cb6Fe2D
-export TRIBE=0xdE5491f774F0Cb009ABcEA7326342E105dbb1B2E
-export MPO=0x2a504B5e7eC284ACa5b6f49716611237239F0b97
-export IRM=0x8ACEe021a27779d8E98B9650722676B850b25E11
-export STRATEGY=0x913bbCFea2f347a24cfCA441d483E7CBAc8De3Db
+TOUCH=0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C
+TRIBE=0xeD4764ad14Bb60DC698372B92e51CEC62688DC52
+MPO=0xb9e1c2B011f252B9931BBA7fcee418b95b6Bdc31
+IRM=0x193E8ffD909c919E406776906F3De68CA202BE61
+STRATEGY=0x0152B5D6531fb9D58274caA61C5a3070bE0DA12F
+
+
+REWARD=$TOUCH
 
 
 #STRATEGY=0xcfeD223fAb2A41b5a5a5F9AaAe2D1e882cb6Fe2D
-#FLYWHEEL=0x1411CB266FCEd1587b0AA29E9d5a9Ef3Db64A9C5
+FLYWHEEL=0xcB8A516b152a2c510d0860b551f157A9a3fc0f24
 
-ywmh pool:create --name "$POOL_NAME" --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
-ywmh oracle:set-price --address $TOUCH --price "0.01" --network localhost
-ywmh oracle:set-price --address $TRIBE --price "0.001" --network localhost
+yarn workspace @midas-capital/sdk hardhat pool:create --name "$POOL_NAME" --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
+yarn workspace @midas-capital/sdk hardhat oracle:set-price --address $TOUCH --price "0.01" --network localhost
+yarn workspace @midas-capital/sdk hardhat oracle:set-price --address $TRIBE --price "0.001" --network localhost
 
-# no dynamic rewards
-ywmh market:create --asset-config "$POOL_NAME,deployer,CErc20PluginDelegate,$TRIBE,$IRM,0.01,0.9,1,0,true,$STRATEGY,'',''" --network localhost
+# dynamic rewards -> TRIBE underlying, TOUCH dynamic rewards 
+yarn workspace @midas-capital/sdk hardhat market:create --pool-name "$POOL_NAME" \
+    --creator deployer \
+    --symbol TRIBE \
+    --strategy-code "Mock_TRIBE" \
+    --strategy-address "$STRATEGY" \
+    --flywheels "$FLYWHEEL" \
+    --reward-tokens "$REWARD" \
+    --network localhost
 
-# dynamic rewards
-npx hardhat market:create --asset-config "$POOL_NAME,deployer,CErc20PluginRewardsDelegate,$TOUCH,$IRM,0.01,0.9,1,0,true,$STRATEGY,$FLYWHEEL,$REWARD" --network localhost
+# npx hardhat market:create --asset-config "$POOL_NAME,deployer,CErc20PluginRewardsDelegate,$TOUCH,$IRM,0.01,0.9,1,0,true,$STRATEGY,$FLYWHEEL,$REWARD" --network localhost
 
