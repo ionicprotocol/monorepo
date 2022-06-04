@@ -8,7 +8,7 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../../lib/contracts/typechain";
-import { cERC20Conf, ChainLiquidationConfig } from "../../src";
+import { ChainLiquidationConfig, MarketConfig } from "../../src";
 import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
 import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import { addCollateral, borrowCollateral } from "../utils/collateral";
@@ -19,9 +19,9 @@ import { liquidateAndVerify, resetPriceOracle } from "../utils/setup";
 (process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
 
-  let eth: cERC20Conf;
-  let erc20One: cERC20Conf;
-  let erc20Two: cERC20Conf;
+  let eth: MarketConfig;
+  let erc20One: MarketConfig;
+  let erc20Two: MarketConfig;
   let oracle: MasterPriceOracle;
   let deployedErc20One: DeployedAsset;
 
