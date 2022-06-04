@@ -1,7 +1,7 @@
 // Chakra and UI
 import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, Flex, HStack, Link, Select, Switch, Text, useToast } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, CTokenErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/sdk';
 import { BigNumber, ContractFunction, utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import LogRocket from 'logrocket';
