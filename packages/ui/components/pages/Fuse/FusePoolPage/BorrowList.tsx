@@ -1,6 +1,5 @@
 import { QuestionIcon } from '@chakra-ui/icons';
 import {
-  Avatar,
   Box,
   Button,
   HStack,
@@ -11,7 +10,6 @@ import {
   Text,
   Thead,
   Tr,
-  useColorMode,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -20,6 +18,7 @@ import { utils } from 'ethers';
 import { useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { FundOperationMode } from '@ui/constants/index';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
@@ -185,7 +184,6 @@ const AssetBorrowRow = ({
   const isMobile = useIsMobile();
 
   const { cCard } = useColors();
-  const { colorMode } = useColorMode();
 
   return (
     <>
@@ -217,17 +215,7 @@ const AssetBorrowRow = ({
       >
         <Td verticalAlign={'middle'}>
           <HStack width={isMobile ? '8%' : '6%'}>
-            <Avatar
-              bg={'transparent'}
-              size="sm"
-              name={asset.underlyingSymbol}
-              src={
-                tokenData?.logoURL ||
-                (colorMode === 'light'
-                  ? '/images/help-circle-dark.svg'
-                  : '/images/help-circle-light.svg')
-              }
-            />
+            <CTokenIcon size="sm" address={asset.underlyingToken} />
             <Text fontWeight="bold" fontSize={{ base: '2.8vw', sm: '0.9rem' }} ml={2}>
               {tokenData?.symbol ?? asset.underlyingSymbol}
             </Text>
