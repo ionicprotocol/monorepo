@@ -6,7 +6,6 @@ import {
   CircularProgress,
   Flex,
   Heading,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -69,9 +68,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
     <VStack py={4}>
       <VStack px={4} width="100%">
         <VStack>
-          {tokenData?.logoURL ? (
-            <Image alt="" mt={4} src={tokenData.logoURL} boxSize="50px" borderRadius="50%" />
-          ) : null}
+          {tokenData && <CTokenIcon size="lg" address={tokenData.address} my={4}></CTokenIcon>}
           <Heading as="h1" size="lg">
             {error && 'Invalid Address!'}
             {tokenData && tokenData.symbol}
