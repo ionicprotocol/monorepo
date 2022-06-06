@@ -27,6 +27,8 @@ import LogRocket from 'logrocket';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 
+import MaxBorrowSlider from './MaxBorrowSlider';
+
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -45,7 +47,6 @@ import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import MaxBorrowSlider from './MaxBorrowSlider';
 
 const AmountSelect = ({
   assets,
@@ -74,6 +75,18 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
 
   const { cCard, cSwitch } = useColors();
+
+  const getBorrowLimit = async () => {
+    const borrowLimitBN = (await fetchMaxAmount(
+      mode,
+      fuse,
+      address,
+      asset,
+      currentChain.id
+    )) as BigNumber;
+
+    return Number(utils.formatUnits(borrowLimitBN));
+  };
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -232,7 +245,6 @@ const AmountSelect = ({
     <Column
       mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
-      height={showEnableAsCollateral ? '605px' : '525px'}
       bg={cCard.bgColor}
       color={cCard.txtColor}
       borderRadius={16}
@@ -288,6 +300,7 @@ const AmountSelect = ({
             px={4}
             py={4}
             height="100%"
+            width="100%"
           >
             <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%">
               <TabBar
@@ -299,7 +312,13 @@ const AmountSelect = ({
               />
 
               <DashboardBox width="100%" height="70px" mt={3}>
-                <Row p={4} mainAxisAlignment="space-between" crossAxisAlignment="center" expand>
+                <Row
+                  width="100%"
+                  p={4}
+                  mainAxisAlignment="space-between"
+                  crossAxisAlignment="center"
+                  expand
+                >
                   <AmountInput
                     displayAmount={userEnteredAmount}
                     updateAmount={updateAmount}
@@ -319,8 +338,9 @@ const AmountSelect = ({
                   />
                 </Row>
               </DashboardBox>
-              <MaxBorrowSlider/>
-
+              {mode === FundOperationMode.BORROW && (
+                <MaxBorrowSlider getBorrowLimit={getBorrowLimit} updateAmount={updateAmount} />
+              )}
             </Column>
 
             <StatsColumn
@@ -698,9 +718,11 @@ const TokenNameAndMaxButton = ({
         </Heading>
       </Row>
 
-      <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
-        MAX
-      </Button>
+      {mode !== FundOperationMode.BORROW && (
+        <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
+          MAX
+        </Button>
+      )}
     </Row>
   );
 };
@@ -808,7 +830,7 @@ async function fetchMaxAmount(
     )) as BigNumber;
 
     if (maxBorrow) {
-      return utils.parseUnits((Number(utils.formatUnits(maxBorrow)) * 0.75).toString());
+      return maxBorrow;
     } else {
       throw new Error('Could not fetch your max borrow amount! Code: ');
     }
