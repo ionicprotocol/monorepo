@@ -69,8 +69,8 @@ export const tradeAssetForAsset = async ({ token1, token2, amount, account }) =>
   await run("swap-token-for-token", { token1, token2, amount, account });
 };
 
-export const wrapNativeToken = async ({ amount, account }) => {
-  await run("wrap-native-token", { amount, account });
+export const wrapNativeToken = async ({ amount, account, weth }) => {
+  await run("wrap-native-token", { amount, account, weth });
 };
 
 export const setUpPools = async (poolNames: BSC_POOLS[]) => {
