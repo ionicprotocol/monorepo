@@ -7,8 +7,6 @@ import { Center } from '@ui/utils/chakraUtils';
 
 const EditAssetSettings = ({
   tokenAddress,
-  poolName,
-  poolID,
   comptrollerAddress,
   cTokenAddress,
   isPaused,
@@ -35,12 +33,10 @@ const EditAssetSettings = ({
     return (
       <AssetSettings
         comptrollerAddress={comptrollerAddress}
-        poolName={poolName}
-        poolID={poolID}
         tokenData={tokenData}
         cTokenAddress={cTokenAddress}
         isPaused={isPaused}
-        deployedPlugin={plugin}
+        pluginAddress={plugin}
       />
     );
   }
