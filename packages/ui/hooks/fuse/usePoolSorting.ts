@@ -1,7 +1,13 @@
 import { useMemo } from 'react';
 
-const usePoolSorting = <T>(
-  pools: Array<T & { totalSuppliedNative: number; totalBorrowedNative: number; id: number }>,
+interface SortablePool {
+  id: number;
+  totalBorrowedNative: number;
+  totalSuppliedNative: number;
+}
+
+const usePoolSorting = <T extends SortablePool>(
+  pools: Array<T>,
   sortBy: string | null
 ): Array<T> => {
   return useMemo(() => {
