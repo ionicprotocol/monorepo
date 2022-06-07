@@ -47,7 +47,6 @@ describe("FundOperationsModule", function () {
       asset.cToken,
       asset.underlyingToken,
       assetsInPool.comptroller,
-      false,
       true,
       utils.parseUnits("3", 18),
       { from: deployer.address }
@@ -69,7 +68,6 @@ describe("FundOperationsModule", function () {
       asset.cToken,
       asset.underlyingToken,
       assetsInPool.comptroller,
-      false,
       true,
       utils.parseUnits("3", 18),
       { from: deployer.address }
@@ -94,7 +92,6 @@ describe("FundOperationsModule", function () {
       asset.cToken,
       asset.underlyingToken,
       assetsInPool.comptroller,
-      false,
       true,
       utils.parseUnits("3", 18),
       { from: deployer.address }
@@ -119,7 +116,6 @@ describe("FundOperationsModule", function () {
       asset.cToken,
       asset.underlyingToken,
       assetsInPool.comptroller,
-      false,
       true,
       utils.parseUnits("5", 18),
       { from: deployer.address }
@@ -135,7 +131,7 @@ describe("FundOperationsModule", function () {
 
     const assetBeforeRepay = await poolHelpers.assetInPool(poolId, sdk, "WETH", deployer.address);
 
-    res = await sdk.repay(asset.cToken, asset.underlyingToken, false, false, utils.parseUnits("2", 18), {
+    res = await sdk.repay(asset.cToken, asset.underlyingToken, false, utils.parseUnits("2", 18), {
       from: deployer.address,
     });
     tx = res.tx;

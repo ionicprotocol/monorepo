@@ -41,6 +41,7 @@ export interface RariContextData {
   address: string;
   disconnect: () => void;
   coingeckoId: string;
+  addressIcons: { [key: string]: string };
 }
 
 export const RariContext = createContext<RariContextData | undefined>(undefined);
@@ -71,6 +72,14 @@ export const RariProvider = ({
   const [pendingTxHashes, setPendingTxHashes] = useState<string[]>([]);
   const [pendingTxHash, setPendingTxHash] = useState<string>('');
   const [finishedTxHash, setFinishedTxHash] = useState<string>('');
+
+  const addressIcons = useMemo(() => {
+    const result: { [key: string]: string } = {};
+    fuse.supportedAssets.map((asset) => {
+      result[asset.underlying.toLowerCase()] = asset.symbol;
+    });
+    return result;
+  }, [fuse.supportedAssets]);
 
   const accountBtnElement = useRef<HTMLButtonElement>();
   const networkBtnElement = useRef<HTMLButtonElement>();
@@ -189,6 +198,7 @@ export const RariProvider = ({
       address,
       disconnect,
       coingeckoId,
+      addressIcons,
     };
   }, [
     fuse,
@@ -208,6 +218,7 @@ export const RariProvider = ({
     address,
     disconnect,
     coingeckoId,
+    addressIcons,
   ]);
 
   return <RariContext.Provider value={value}>{children}</RariContext.Provider>;

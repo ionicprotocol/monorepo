@@ -68,14 +68,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x606f111755bb94C5DfF507A76aF4801F959895A0",
         flywheels: [
           {
-            // FuseFlywheelDynamicRewards_EPX.json
-            address: "0x594a1fdE7D263D2FCE80411f9F0d880a2fb56B2E",
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
-            // FuseFlywheelDynamicRewards_DDD.json
-            address: "0x202EA66c4253bD7DBd59D6836610EC4D6E528DB4",
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -91,14 +91,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x574f934075D9b9392A8B0d1e0a4ADAD79B4cd16b",
         flywheels: [
           {
-            // FuseFlywheelDynamicRewards_EPX.json
-            address: "0x594a1fdE7D263D2FCE80411f9F0d880a2fb56B2E",
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
-            // FuseFlywheelDynamicRewards_DDD.json
-            address: "0x202EA66c4253bD7DBd59D6836610EC4D6E528DB4",
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -114,14 +114,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x939EF184853C751abD4463363a36c316EC0dBaD4",
         flywheels: [
           {
-            // FuseFlywheelDynamicRewards_EPX.json
-            address: "0x594a1fdE7D263D2FCE80411f9F0d880a2fb56B2E",
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
-            // FuseFlywheelDynamicRewards_DDD.json
-            address: "0x202EA66c4253bD7DBd59D6836610EC4D6E528DB4",
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
