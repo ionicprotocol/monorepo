@@ -23,7 +23,6 @@ import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
@@ -31,33 +30,30 @@ import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolRow = ({
-  data: pool,
-  isMostSupplied,
-}: {
+interface PoolRowProps {
   data: FusePoolData;
   isMostSupplied?: boolean;
-}) => {
-  const { data: fusePoolData } = useFusePoolData(pool.id.toString());
-  const { data: rss, error: rssError } = usePoolRSS(pool.id);
+}
+
+const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
+  const router = useRouter();
+  const { data: rss, error: rssError } = usePoolRSS(data.id);
   const rssScore = !rssError && rss ? letterScore(rss.totalScore) : '?';
-  const tokens = useMemo(
-    () =>
-      pool.underlyingTokens.map((address, index) => ({
-        address,
-        symbol: pool.underlyingSymbols[index],
-      })),
-    [pool.underlyingSymbols, pool.underlyingTokens]
-  );
+  const tokens = useMemo(() => {
+    return data.underlyingTokens.map((address, index) => ({
+      address,
+      symbol: data.underlyingSymbols[index],
+    }));
+  }, [data.underlyingSymbols, data.underlyingTokens]);
+
   const scoreGradient = usePoolRiskScoreGradient(rssScore);
-  const poolDetails = usePoolDetails(fusePoolData?.assets);
-  const rewardTokens = useRewardTokensOfPool(fusePoolData?.comptroller);
+  const poolDetails = usePoolDetails(data.assets);
+  const rewardTokens = useRewardTokensOfPool(data.comptroller);
   const { cCard, cOutlineBtn } = useColors();
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const toggleDetails = useCallback(() => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
-  const router = useRouter();
 
   const { scanUrl, setLoading, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
@@ -92,7 +88,7 @@ const PoolRow = ({
         cursor="pointer"
         onClick={() => {
           setLoading(true);
-          router.push(`/${currentChain.id}/pool/` + pool.id);
+          router.push(`/${currentChain.id}/pool/` + data.id);
         }}
         py={4}
         px={6}
@@ -100,7 +96,7 @@ const PoolRow = ({
       >
         <VStack flex={6} alignItems={'flex-start'} spacing={1}>
           <Heading mt={rewardTokens.length ? 2 : 0} fontWeight="bold" fontSize={'xl'}>
-            {pool.name}
+            {data.name}
           </Heading>
           {rewardTokens.length && (
             <HStack m={0}>
@@ -125,7 +121,7 @@ const PoolRow = ({
         </VStack>
 
         <VStack flex={4} alignItems="flex-start">
-          {pool.underlyingTokens.length === 0 ? null : (
+          {data.underlyingTokens.length === 0 ? null : (
             <AvatarGroup size="sm" max={30}>
               {tokens.slice(0, 10).map((token, i) => (
                 <CTokenIcon key={i} address={token.address} />
@@ -136,13 +132,13 @@ const PoolRow = ({
 
         <VStack flex={2}>
           <Text fontWeight="bold" textAlign="center">
-            {usdPrice && smallUsdFormatter(pool.totalSuppliedNative * usdPrice)}
+            {usdPrice && smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
           </Text>
         </VStack>
 
         <VStack flex={2}>
           <Text fontWeight="bold" textAlign="center">
-            {usdPrice && smallUsdFormatter(pool.totalBorrowedNative * usdPrice)}
+            {usdPrice && smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
           </Text>
         </VStack>
 
@@ -190,8 +186,8 @@ const PoolRow = ({
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
                   <Text fontWeight="bold" textAlign="center">
-                    {isMostSupplied
-                      ? fusePoolData && smallUsdFormatter(fusePoolData.totalBorrowBalanceNative)
+                    {isMostSupplied && usdPrice
+                      ? data && smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)
                       : '$0.00'}
                   </Text>
                 </Row>
@@ -204,8 +200,8 @@ const PoolRow = ({
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
                   <Text fontWeight="bold" textAlign="center">
-                    {isMostSupplied
-                      ? fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceFiat)
+                    {isMostSupplied && usdPrice
+                      ? data && smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)
                       : '$0.00'}
                   </Text>
                 </Row>
@@ -307,24 +303,24 @@ const PoolRow = ({
                   Pool Address
                 </Text>
               </Column>
-              {fusePoolData?.comptroller && (
+              {data.comptroller && (
                 <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                   <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
                     <ClipboardValue
                       fontWeight="bold"
                       textAlign="center"
                       component={Text}
-                      value={fusePoolData?.comptroller}
-                      label={shortAddress(fusePoolData?.comptroller, 4, 4)}
+                      value={data.comptroller}
+                      label={shortAddress(data.comptroller, 4, 4)}
                     />
                     <SimpleTooltip
                       placement="top-start"
-                      label={`${scanUrl}/address/${fusePoolData?.comptroller}`}
+                      label={`${scanUrl}/address/${data.comptroller}`}
                     >
                       <Button
                         variant={'link'}
                         as={ChakraLink}
-                        href={`${scanUrl}/address/${fusePoolData?.comptroller}`}
+                        href={`${scanUrl}/address/${data.comptroller}`}
                         isExternal
                       >
                         <LinkIcon h={{ base: 3, sm: 6 }} />
