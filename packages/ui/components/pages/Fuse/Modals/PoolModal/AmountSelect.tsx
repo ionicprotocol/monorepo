@@ -39,7 +39,6 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import { AmountProps } from '@ui/types/ComponentPropsType';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -57,7 +56,7 @@ const AmountSelect = ({
 }: AmountProps) => {
   const asset = assets[index];
 
-  const { fuse, setPendingTxHash, currentChain, address } = useRari();
+  const { fuse, setPendingTxHash, address } = useRari();
 
   const toast = useToast();
 
@@ -100,7 +99,7 @@ const AmountSelect = ({
     }
 
     try {
-      const max = (await fetchMaxAmount(mode, fuse, address, asset, currentChain.id)) as BigNumber;
+      const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
       return amount.lte(max);
     } catch (e) {
       handleGenericError(e, toast);
@@ -152,11 +151,7 @@ const AmountSelect = ({
   const onConfirm = async () => {
     try {
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
-
-      const isNativeToken =
-        asset.underlyingToken === WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].address;
-      const isRepayingMax =
-        amount.eq(asset.borrowBalance) && !isNativeToken && mode === FundOperationMode.REPAY;
+      const isRepayingMax = amount.eq(asset.borrowBalance) && mode === FundOperationMode.REPAY;
       let tx: ContractTransaction;
 
       if (mode === FundOperationMode.SUPPLY) {
@@ -164,7 +159,6 @@ const AmountSelect = ({
           asset.cToken,
           asset.underlyingToken,
           comptrollerAddress,
-          isNativeToken,
           enableAsCollateral,
           amount,
           { from: address }
@@ -177,16 +171,9 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.REPAY) {
-        const resp = await fuse.repay(
-          asset.cToken,
-          asset.underlyingToken,
-          isNativeToken,
-          isRepayingMax,
-          amount,
-          {
-            from: address,
-          }
-        );
+        const resp = await fuse.repay(asset.cToken, asset.underlyingToken, isRepayingMax, amount, {
+          from: address,
+        });
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode);
@@ -651,7 +638,7 @@ const TokenNameAndMaxButton = ({
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
 }) => {
-  const { fuse, currentChain, address } = useRari();
+  const { fuse, address } = useRari();
 
   const toast = useToast();
 
@@ -661,13 +648,7 @@ const TokenNameAndMaxButton = ({
     setIsMaxLoading(true);
 
     try {
-      const maxBN = (await fetchMaxAmount(
-        mode,
-        fuse,
-        address,
-        asset,
-        currentChain.id
-      )) as BigNumber;
+      const maxBN = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
@@ -780,15 +761,14 @@ async function fetchMaxAmount(
   mode: FundOperationMode,
   fuse: Fuse,
   address: string,
-  asset: NativePricedFuseAsset,
-  chainId: number | undefined
+  asset: NativePricedFuseAsset
 ) {
   if (mode === FundOperationMode.SUPPLY) {
-    return await fetchTokenBalance(asset.underlyingToken, fuse, address, chainId);
+    return await fetchTokenBalance(asset.underlyingToken, fuse, address);
   }
 
   if (mode === FundOperationMode.REPAY) {
-    const balance = await fetchTokenBalance(asset.underlyingToken, fuse, address, chainId);
+    const balance = await fetchTokenBalance(asset.underlyingToken, fuse, address);
     const debt = asset.borrowBalance;
 
     if (balance.gt(debt)) {
