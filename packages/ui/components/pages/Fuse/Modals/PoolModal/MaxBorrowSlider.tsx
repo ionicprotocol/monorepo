@@ -14,11 +14,6 @@ import {
 } from '@chakra-ui/react';
 import { useCallback, useEffect, useState } from 'react';
 
-enum Color {
-  default = 'teal',
-  warning = 'pink',
-}
-
 const colorLimit = 75;
 
 function MaxBorrowSlider({
@@ -30,7 +25,6 @@ function MaxBorrowSlider({
 }) {
   const [sliderValue, setSliderValue] = useState(5);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [sliderColor, setSliderColor] = useState('teal');
   const [borrowLimit, setBorrowLimit] = useState<number>(0);
 
   const fetchBorrowLimit = useCallback(async () => {
@@ -43,21 +37,20 @@ function MaxBorrowSlider({
     fetchBorrowLimit();
   }, [fetchBorrowLimit]);
 
+  const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: false });
+
   const handleSliderValueChange = (v: number) => {
-    if (v >= colorLimit && sliderColor === Color.default) {
-      setSliderColor(Color.warning);
+    if (v >= colorLimit && !isVisible) {
       onOpen();
-    } else if (v < colorLimit && sliderColor === Color.warning) {
-      setSliderColor(Color.default);
+    } else if (v < colorLimit && isVisible) {
+      onClose();
     }
 
     setSliderValue(v);
 
-    const borrowAmount = ((borrowLimit * sliderValue) / 100).toString();
+    const borrowAmount = ((borrowLimit * v) / 100).toString();
     updateAmount(borrowAmount);
   };
-
-  const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: false });
 
   return (
     <Box width="100%">
@@ -66,7 +59,15 @@ function MaxBorrowSlider({
         defaultValue={50}
         min={0}
         max={100}
-        colorScheme={sliderColor}
+        colorScheme={
+          sliderValue <= 25
+            ? 'whatsapp'
+            : sliderValue <= 50
+            ? 'yellow'
+            : sliderValue <= 75
+            ? 'orange'
+            : 'red'
+        }
         mt={4}
         onChange={handleSliderValueChange}
         onMouseEnter={() => setShowTooltip(true)}
@@ -96,10 +97,10 @@ function MaxBorrowSlider({
         </Tooltip>
       </Slider>
       {isVisible && (
-        <Alert mt={4} status="error">
+        <Alert mt={4} status="warning">
           <AlertIcon />
           <Box>
-            <AlertDescription>Max borrow rate is not recommended to go over 75%</AlertDescription>
+            <AlertDescription>It isn’t recommended to use borrow rates above 75%</AlertDescription>
           </Box>
           <CloseButton
             alignSelf="flex-start"
