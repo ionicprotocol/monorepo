@@ -76,13 +76,7 @@ const AmountSelect = ({
   const { cCard, cSwitch } = useColors();
 
   const getBorrowLimit = async () => {
-    const borrowLimitBN = (await fetchMaxAmount(
-      mode,
-      fuse,
-      address,
-      asset,
-      currentChain.id
-    )) as BigNumber;
+    const borrowLimitBN = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
 
     return Number(utils.formatUnits(borrowLimitBN));
   };
