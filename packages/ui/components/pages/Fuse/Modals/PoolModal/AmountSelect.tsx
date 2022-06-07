@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Heading,
-  Image,
   Input,
   InputProps,
   Spinner,
@@ -12,7 +11,6 @@ import {
   TabList,
   Tabs,
   Text,
-  useColorMode,
   useToast,
 } from '@chakra-ui/react';
 import {
@@ -27,8 +25,8 @@ import LogRocket from 'logrocket';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 
-import MaxBorrowSlider from './MaxBorrowSlider';
-
+import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -239,7 +237,6 @@ const AmountSelect = ({
       setUserAction(UserAction.NO_ACTION);
     }
   };
-  const { colorMode } = useColorMode();
 
   return (
     <Column
@@ -270,21 +267,8 @@ const AmountSelect = ({
             flexShrink={0}
           >
             <Box height="35px" width="35px">
-              <Image
-                background={'transparent'}
-                width="100%"
-                height="100%"
-                borderRadius="50%"
-                src={
-                  tokenData?.logoURL ||
-                  (colorMode === 'light'
-                    ? '/images/help-circle-dark.svg'
-                    : '/images/help-circle-light.svg')
-                }
-                alt=""
-              />
+              <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
             </Box>
-
             <Heading fontSize="27px" ml={3}>
               {!isMobile && asset.underlyingName.length < 25
                 ? asset.underlyingName
@@ -325,17 +309,7 @@ const AmountSelect = ({
                     disabled={isBorrowPaused}
                     autoFocus
                   />
-                  <TokenNameAndMaxButton
-                    mode={mode}
-                    logoURL={
-                      tokenData?.logoURL ||
-                      (colorMode === 'light'
-                        ? '/images/help-circle-dark.svg'
-                        : '/images/help-circle-light.svg')
-                    }
-                    asset={asset}
-                    updateAmount={updateAmount}
-                  />
+                  <TokenNameAndMaxButton mode={mode} asset={asset} updateAmount={updateAmount} />
                 </Row>
               </DashboardBox>
               {mode === FundOperationMode.BORROW && (
@@ -665,11 +639,9 @@ const StatsColumn = ({
 
 const TokenNameAndMaxButton = ({
   updateAmount,
-  logoURL,
   asset,
   mode,
 }: {
-  logoURL: string;
   asset: NativePricedFuseAsset;
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
@@ -711,7 +683,7 @@ const TokenNameAndMaxButton = ({
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
         <Box height="25px" width="25px" mb="2px" mr={2}>
-          <Image width="100%" height="100%" borderRadius="50%" src={logoURL} alt="" />
+          <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
         <Heading fontSize="24px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
           {asset.underlyingSymbol}
