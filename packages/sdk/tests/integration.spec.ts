@@ -2,7 +2,7 @@ import { BigNumber, providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { EIP20Interface, FuseSafeLiquidator, SimplePriceOracle } from "../lib/contracts/typechain";
-import { cERC20Conf, ChainLiquidationConfig } from "../src";
+import { ChainLiquidationConfig, MarketConfig } from "../src";
 import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
 
 import { deployAssets, tradeNativeForAsset } from "./utils";
@@ -14,14 +14,14 @@ import { liquidateAndVerify, setUpPools } from "./utils/setup";
 
 describe.skip("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
-  let alpacaAssets: cERC20Conf[];
-  let bombAssets: cERC20Conf[];
+  let alpacaAssets: MarketConfig[];
+  let bombAssets: MarketConfig[];
   let alpacaDeployedAssets: DeployedAsset[];
   let bombDeployedAssets: DeployedAsset[];
 
-  let eth: cERC20Conf;
-  let erc20One: cERC20Conf;
-  let erc20Two: cERC20Conf;
+  let eth: MarketConfig;
+  let erc20One: MarketConfig;
+  let erc20Two: MarketConfig;
 
   let deployedErc20One: DeployedAsset;
 
