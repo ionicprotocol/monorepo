@@ -398,8 +398,9 @@ export class FuseBase {
     return interestRateModel;
   }
 
-  async getPriceOracle(oracleAddress: string): Promise<string> {
+  getPriceOracle(oracleAddress: string): string {
     const oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+
     return oracle;
   }
 
