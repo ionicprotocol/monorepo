@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Heading,
-  Image,
   Input,
   InputProps,
   Spinner,
@@ -12,7 +11,6 @@ import {
   TabList,
   Tabs,
   Text,
-  useColorMode,
   useToast,
 } from '@chakra-ui/react';
 import {
@@ -27,6 +25,8 @@ import LogRocket from 'logrocket';
 import { ReactNode, useState } from 'react';
 import { useQuery } from 'react-query';
 
+import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -39,7 +39,6 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import { AmountProps } from '@ui/types/ComponentPropsType';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -57,7 +56,7 @@ const AmountSelect = ({
 }: AmountProps) => {
   const asset = assets[index];
 
-  const { fuse, setPendingTxHash, currentChain, address } = useRari();
+  const { fuse, setPendingTxHash, address } = useRari();
 
   const toast = useToast();
 
@@ -73,6 +72,12 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
 
   const { cCard, cSwitch } = useColors();
+
+  const getBorrowLimit = async () => {
+    const borrowLimitBN = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
+
+    return Number(utils.formatUnits(borrowLimitBN));
+  };
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -100,7 +105,7 @@ const AmountSelect = ({
     }
 
     try {
-      const max = (await fetchMaxAmount(mode, fuse, address, asset, currentChain.id)) as BigNumber;
+      const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
       return amount.lte(max);
     } catch (e) {
       handleGenericError(e, toast);
@@ -152,11 +157,7 @@ const AmountSelect = ({
   const onConfirm = async () => {
     try {
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
-
-      const isNativeToken =
-        asset.underlyingToken === WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].address;
-      const isRepayingMax =
-        amount.eq(asset.borrowBalance) && !isNativeToken && mode === FundOperationMode.REPAY;
+      const isRepayingMax = amount.eq(asset.borrowBalance) && mode === FundOperationMode.REPAY;
       let tx: ContractTransaction;
 
       if (mode === FundOperationMode.SUPPLY) {
@@ -164,7 +165,6 @@ const AmountSelect = ({
           asset.cToken,
           asset.underlyingToken,
           comptrollerAddress,
-          isNativeToken,
           enableAsCollateral,
           amount,
           { from: address }
@@ -177,16 +177,9 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.REPAY) {
-        const resp = await fuse.repay(
-          asset.cToken,
-          asset.underlyingToken,
-          isNativeToken,
-          isRepayingMax,
-          amount,
-          {
-            from: address,
-          }
-        );
+        const resp = await fuse.repay(asset.cToken, asset.underlyingToken, isRepayingMax, amount, {
+          from: address,
+        });
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode);
@@ -225,13 +218,11 @@ const AmountSelect = ({
       setUserAction(UserAction.NO_ACTION);
     }
   };
-  const { colorMode } = useColorMode();
 
   return (
     <Column
       mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
-      height={showEnableAsCollateral ? '605px' : '525px'}
       bg={cCard.bgColor}
       color={cCard.txtColor}
       borderRadius={16}
@@ -257,21 +248,8 @@ const AmountSelect = ({
             flexShrink={0}
           >
             <Box height="35px" width="35px">
-              <Image
-                background={'transparent'}
-                width="100%"
-                height="100%"
-                borderRadius="50%"
-                src={
-                  tokenData?.logoURL ||
-                  (colorMode === 'light'
-                    ? '/images/help-circle-dark.svg'
-                    : '/images/help-circle-light.svg')
-                }
-                alt=""
-              />
+              <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
             </Box>
-
             <Heading fontSize="27px" ml={3}>
               {!isMobile && asset.underlyingName.length < 25
                 ? asset.underlyingName
@@ -287,6 +265,7 @@ const AmountSelect = ({
             px={4}
             py={4}
             height="100%"
+            width="100%"
           >
             <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%">
               <TabBar
@@ -298,26 +277,25 @@ const AmountSelect = ({
               />
 
               <DashboardBox width="100%" height="70px" mt={3}>
-                <Row p={4} mainAxisAlignment="space-between" crossAxisAlignment="center" expand>
+                <Row
+                  width="100%"
+                  p={4}
+                  mainAxisAlignment="space-between"
+                  crossAxisAlignment="center"
+                  expand
+                >
                   <AmountInput
                     displayAmount={userEnteredAmount}
                     updateAmount={updateAmount}
                     disabled={isBorrowPaused}
                     autoFocus
                   />
-                  <TokenNameAndMaxButton
-                    mode={mode}
-                    logoURL={
-                      tokenData?.logoURL ||
-                      (colorMode === 'light'
-                        ? '/images/help-circle-dark.svg'
-                        : '/images/help-circle-light.svg')
-                    }
-                    asset={asset}
-                    updateAmount={updateAmount}
-                  />
+                  <TokenNameAndMaxButton mode={mode} asset={asset} updateAmount={updateAmount} />
                 </Row>
               </DashboardBox>
+              {mode === FundOperationMode.BORROW && (
+                <MaxBorrowSlider getBorrowLimit={getBorrowLimit} updateAmount={updateAmount} />
+              )}
             </Column>
 
             <StatsColumn
@@ -642,16 +620,14 @@ const StatsColumn = ({
 
 const TokenNameAndMaxButton = ({
   updateAmount,
-  logoURL,
   asset,
   mode,
 }: {
-  logoURL: string;
   asset: NativePricedFuseAsset;
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
 }) => {
-  const { fuse, currentChain, address } = useRari();
+  const { fuse, address } = useRari();
 
   const toast = useToast();
 
@@ -661,13 +637,7 @@ const TokenNameAndMaxButton = ({
     setIsMaxLoading(true);
 
     try {
-      const maxBN = (await fetchMaxAmount(
-        mode,
-        fuse,
-        address,
-        asset,
-        currentChain.id
-      )) as BigNumber;
+      const maxBN = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
@@ -688,16 +658,18 @@ const TokenNameAndMaxButton = ({
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
         <Box height="25px" width="25px" mb="2px" mr={2}>
-          <Image width="100%" height="100%" borderRadius="50%" src={logoURL} alt="" />
+          <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
         <Heading fontSize="24px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
           {asset.underlyingSymbol}
         </Heading>
       </Row>
 
-      <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
-        MAX
-      </Button>
+      {mode !== FundOperationMode.BORROW && (
+        <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
+          MAX
+        </Button>
+      )}
     </Row>
   );
 };
@@ -780,15 +752,14 @@ async function fetchMaxAmount(
   mode: FundOperationMode,
   fuse: Fuse,
   address: string,
-  asset: NativePricedFuseAsset,
-  chainId: number | undefined
+  asset: NativePricedFuseAsset
 ) {
   if (mode === FundOperationMode.SUPPLY) {
-    return await fetchTokenBalance(asset.underlyingToken, fuse, address, chainId);
+    return await fetchTokenBalance(asset.underlyingToken, fuse, address);
   }
 
   if (mode === FundOperationMode.REPAY) {
-    const balance = await fetchTokenBalance(asset.underlyingToken, fuse, address, chainId);
+    const balance = await fetchTokenBalance(asset.underlyingToken, fuse, address);
     const debt = asset.borrowBalance;
 
     if (balance.gt(debt)) {
@@ -805,7 +776,7 @@ async function fetchMaxAmount(
     )) as BigNumber;
 
     if (maxBorrow) {
-      return utils.parseUnits((Number(utils.formatUnits(maxBorrow)) * 0.75).toString());
+      return maxBorrow;
     } else {
       throw new Error('Could not fetch your max borrow amount! Code: ');
     }

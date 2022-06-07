@@ -21,7 +21,6 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -32,6 +31,7 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
+import { MarketData, PoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
@@ -67,7 +67,7 @@ const EditFlywheelModal = ({
   onClose,
 }: {
   flywheel: Flywheel;
-  pool: FusePoolData;
+  pool: PoolData;
   isOpen: boolean;
   onClose: () => void;
 }) => {
@@ -88,9 +88,7 @@ const EditFlywheelModal = ({
   const [fundingAmount, setTransactionPendingAmount] = useState<number>(0);
   const [supplySpeed, setSupplySpeed] = useState<string>('0.0');
   const [isTransactionPending, setTransactionPending] = useState(false);
-  const [selectedMarket, selectMarket] = useState<NativePricedFuseAsset | undefined>(
-    pool?.assets[0]
-  );
+  const [selectedMarket, selectMarket] = useState<MarketData | undefined>(pool?.assets[0]);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [isDateEditable, setDateEditable] = useState<boolean>(false);
   const [isSpeedEditable, setSpeedEditable] = useState<boolean>(false);
@@ -283,7 +281,7 @@ const EditFlywheelModal = ({
               </Heading>
 
               <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
-                {pool.assets.map((asset: NativePricedFuseAsset, index: number) => (
+                {pool.assets.map((asset, index) => (
                   <FilterButton
                     key={index}
                     isSelected={asset.cToken === selectedMarket?.cToken}
