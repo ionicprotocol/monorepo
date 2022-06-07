@@ -1,9 +1,11 @@
-import { FusePoolData } from '@midas-capital/sdk';
 import { useMemo } from 'react';
 
-const usePoolSorting = (pools: FusePoolData[], sortBy: string | null): FusePoolData[] => {
+const usePoolSorting = <T>(
+  pools: Array<T & { totalSuppliedNative: number; totalBorrowedNative: number; id: number }>,
+  sortBy: string | null
+): Array<T> => {
   return useMemo(() => {
-    pools?.sort((a: FusePoolData, b: FusePoolData) => {
+    pools?.sort((a, b) => {
       if (!sortBy || sortBy.toLowerCase() === 'supply') {
         if (b.totalSuppliedNative > a.totalSuppliedNative) {
           return 1;
@@ -24,7 +26,7 @@ const usePoolSorting = (pools: FusePoolData[], sortBy: string | null): FusePoolD
       return b.id > a.id ? 1 : -1;
     });
 
-    return pools.map((pool: FusePoolData) => pool);
+    return pools.map((pool) => pool);
   }, [pools, sortBy]);
 };
 

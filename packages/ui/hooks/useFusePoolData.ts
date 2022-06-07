@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
-export interface Market extends NativePricedFuseAsset {
+export interface MarketData extends NativePricedFuseAsset {
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
   totalSupplyFiat: number;
@@ -12,8 +12,8 @@ export interface Market extends NativePricedFuseAsset {
   liquidityFiat: number;
 }
 
-export interface Pool extends SDKFusePoolData {
-  assets: Market[];
+export interface PoolData extends SDKFusePoolData {
+  assets: MarketData[];
   totalLiquidityFiat: number;
   totalSuppliedFiat: number;
   totalBorrowedFiat: number;
@@ -25,13 +25,13 @@ export const useFusePoolData = (poolId: string) => {
   const { fuse, currentChain, address, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
-  return useQuery<Pool | null>(
+  return useQuery<PoolData | null>(
     ['useFusePoolData', currentChain.id, poolId, address, usdPrice],
     async () => {
       if (!usdPrice) return null;
 
       const res = await fuse.fetchFusePoolData(poolId, address);
-      const assetsWithPrice: Market[] = [];
+      const assetsWithPrice: MarketData[] = [];
       if (res.assets && res.assets.length !== 0) {
         res.assets.map((asset) => {
           assetsWithPrice.push({
@@ -44,7 +44,7 @@ export const useFusePoolData = (poolId: string) => {
           });
         });
       }
-      const adaptedFusePoolData: FusePoolData = {
+      const adaptedFusePoolData: PoolData = {
         ...res,
         assets: assetsWithPrice,
         totalLiquidityFiat: res.totalLiquidityNative * usdPrice,
