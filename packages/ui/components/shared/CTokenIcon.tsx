@@ -29,7 +29,7 @@ export const CTokenIcon = ({
           name={tokenData?.symbol ?? 'Loading...'}
           src={
             tokenData?.logoURL ||
-            `https://d1912tcoux65lj.cloudfront.net/token/${addressIcons[
+            `${process.env.ICON_SERVER}/token/${addressIcons[
               address.toLowerCase()
             ].toLowerCase()}.png` ||
             (colorMode === 'light'
