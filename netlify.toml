@@ -11,9 +11,9 @@ YARN_CHECKSUM_BEHAVIOR = "update"
 
 [context.branch-deploy.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
-EVMOS = "false"
-BSC = "false"
-MOONBEAM = "false"
+EVMOS = "true"
+BSC = "true"
+MOONBEAM = "true"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
