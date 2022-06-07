@@ -398,14 +398,14 @@ export class FuseBase {
     return interestRateModel;
   }
 
-  async getPriceOracle(oracleAddress: string): Promise<string | null> {
-    // Get price oracle contract name from runtime bytecode hash
-    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(oracleAddress));
-    for (const [name, oracle] of Object.entries(this.oracles)) {
-      const value = utils.keccak256(oracle.artifact.deployedBytecode.object);
-      if (runtimeBytecodeHash === value) return name;
+  getPriceOracle(oracleAddress: string): string {
+    let oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+
+    if (!oracle) {
+      oracle = "Unrecognized Oracle";
     }
-    return null;
+
+    return oracle;
   }
 
   async checkCardinality(uniswapV3Pool: string) {
