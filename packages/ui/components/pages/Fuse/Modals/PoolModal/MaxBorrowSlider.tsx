@@ -23,7 +23,7 @@ function MaxBorrowSlider({
   updateAmount: (amount: string) => void;
   getBorrowLimit: () => Promise<number>;
 }) {
-  const [sliderValue, setSliderValue] = useState(5);
+  const [sliderValue, setSliderValue] = useState(50);
   const [showTooltip, setShowTooltip] = useState(false);
   const [borrowLimit, setBorrowLimit] = useState<number>(0);
 
