@@ -14,9 +14,11 @@ NEXT_PUBLIC_SHOW_TESTNETS = "true"
 EVMOS = "true"
 BSC = "true"
 MOONBEAM = "true"
+ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
 EVMOS = "false"
 BSC = "true"
 MOONBEAM = "false"
+ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
