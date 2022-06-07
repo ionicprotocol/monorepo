@@ -399,7 +399,11 @@ export class FuseBase {
   }
 
   getPriceOracle(oracleAddress: string): string {
-    const oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+    let oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+
+    if (!oracle) {
+      oracle = "Unrecognized Oracle";
+    }
 
     return oracle;
   }
