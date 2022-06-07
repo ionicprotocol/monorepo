@@ -399,9 +399,8 @@ export class FuseBase {
   }
 
   async getPriceOracle(oracleAddress: string): Promise<string> {
-    const oracle = this.availableOracles.filter((o) => this.chainDeployment[o].address === oracleAddress);
-
-    return oracle[0];
+    const oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+    return oracle;
   }
 
   async checkCardinality(uniswapV3Pool: string) {
