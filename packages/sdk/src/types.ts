@@ -5,6 +5,7 @@ import { FuseBase } from "./Fuse";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
+export { Artifacts, Artifact } from "./Artifacts";
 
 export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
@@ -56,23 +57,6 @@ export interface InterestRateModel {
 
   getSupplyRate(utilizationRate: BigNumber): BigNumber;
 }
-export type Artifact = {
-  abi: any;
-  bytecode: {
-    object: string;
-    sourceMap: string;
-    linkReferences: any;
-  };
-  deployedBytecode: {
-    object: string;
-    sourceMap: string;
-    linkReferences: any;
-  };
-};
-
-export type Artifacts = {
-  [contractName: string]: Artifact;
-};
 
 export type ChainDeployment = {
   [contractName: string]: {
