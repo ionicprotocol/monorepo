@@ -12,6 +12,7 @@ import CTokenInterfacesArtifact from "../lib/contracts/out/CTokenInterfaces.sol/
 import DAIInterestRateModelV2Artifact from "../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
 import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
+import FlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FlywheelDynamicRewards.sol/FlywheelDynamicRewards.json";
 import FlywheelStaticRewardsArtifact from "../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
 import FuseFlywheelCoreArtifact from "../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
@@ -23,11 +24,6 @@ import SimplePriceOracleArtifact from "../lib/contracts/out/SimplePriceOracle.so
 import UniswapTwapPriceOracleV2Artifact from "../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import UnitrollerArtifact from "../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
-import { CErc20Delegate } from "../lib/contracts/typechain/CErc20Delegate";
-import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { FlywheelStaticRewards } from "../lib/contracts/typechain/FlywheelStaticRewards";
-import { FuseFlywheelCore } from "../lib/contracts/typechain/FuseFlywheelCore";
 
 export type Artifact = {
   abi: Array<object>;
@@ -42,9 +38,9 @@ export type Artifact = {
 };
 
 const CErc20Delegate: Artifact = CErc20DelegateArtifact;
+const CErc20Delegator: Artifact = CErc20DelegatorArtifact;
 const CErc20PluginDelegate: Artifact = CErc20PluginDelegateArtifact;
 const CErc20PluginRewardsDelegate: Artifact = CErc20PluginRewardsDelegateArtifact;
-const CErc20Delegator: Artifact = CErc20DelegatorArtifact;
 const CEtherDelegate: Artifact = CEtherDelegateArtifact;
 const CEtherDelegator: Artifact = CEtherDelegatorArtifact;
 const ChainlinkPriceOracleV2: Artifact = ChainlinkPriceOracleV2Artifact;
@@ -53,23 +49,24 @@ const CTokenInterfaces: Artifact = CTokenInterfacesArtifact;
 const DAIInterestRateModelV2: Artifact = DAIInterestRateModelV2Artifact;
 const EIP20Interface: Artifact = EIP20InterfaceArtifact;
 const ERC20: Artifact = ERC20Artifact;
+const FlywheelDynamicRewards: Artifact = FlywheelDynamicRewardsArtifacts;
+const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
+const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
-const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const PreferredPriceOracle: Artifact = PreferredPriceOracleArtifact;
-const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
+const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
+const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
 const WhitePaperInterestRateModel: Artifact = WhitePaperInterestRateModelArtifact;
-const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
-const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 
 const ARTIFACTS = {
   CErc20Delegate,
+  CErc20Delegator,
   CErc20PluginDelegate,
   CErc20PluginRewardsDelegate,
-  CErc20Delegator,
   CEtherDelegate,
   CEtherDelegator,
   ChainlinkPriceOracleV2,
@@ -78,17 +75,18 @@ const ARTIFACTS = {
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
+  FlywheelDynamicRewards,
+  FlywheelStaticRewards,
+  FuseFlywheelCore,
   JumpRateModel,
   MasterPriceOracle,
-  UniswapTwapPriceOracleV2,
   PreferredPriceOracle,
-  RewardsDistributorDelegator,
   RewardsDistributorDelegate,
+  RewardsDistributorDelegator,
   SimplePriceOracle,
+  UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
-  FuseFlywheelCore,
-  FlywheelStaticRewards,
 };
 
 export type Artifacts = typeof ARTIFACTS;
@@ -96,9 +94,9 @@ export type Artifacts = typeof ARTIFACTS;
 export {
   ARTIFACTS,
   CErc20Delegate,
+  CErc20Delegator,
   CErc20PluginDelegate,
   CErc20PluginRewardsDelegate,
-  CErc20Delegator,
   CEtherDelegate,
   CEtherDelegator,
   ChainlinkPriceOracleV2,
@@ -107,17 +105,18 @@ export {
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
+  FlywheelDynamicRewards,
+  FlywheelStaticRewards,
+  FuseFlywheelCore,
   JumpRateModel,
   MasterPriceOracle,
-  UniswapTwapPriceOracleV2,
   PreferredPriceOracle,
-  RewardsDistributorDelegator,
   RewardsDistributorDelegate,
+  RewardsDistributorDelegator,
   SimplePriceOracle,
+  UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
-  FuseFlywheelCore,
-  FlywheelStaticRewards,
 };
 
 export default ARTIFACTS;
