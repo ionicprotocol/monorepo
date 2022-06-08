@@ -89,40 +89,6 @@ task("pools:create", "Create pool if does not exist")
       const marketOne = await hre.ethers.getContractAt("CErc20", deployedErc20One.assetAddress);
       const marketTwo = await hre.ethers.getContractAt("CErc20", deployedErc20Two.assetAddress);
 
-      if (taskArgs.rewardsDistributorToken) {
-        const rdTokenInstance =
-          taskArgs.rewardsDistributorToken === erc20OneUnderlying.address ? erc20OneUnderlying : erc20TwoUnderlying;
-        const deployedRdTokenInstance =
-          taskArgs.rewardsDistributorToken === erc20OneUnderlying.address ? deployedErc20One : deployedErc20Two;
-        const rdInstance = await sdk.deployRewardsDistributor(rdTokenInstance.address, {
-          from: signer.address,
-        });
-        await sdk.addRewardsDistributorToPool(rdInstance.address, poolAddress, {
-          from: signer.address,
-        });
-        await sdk.fundRewardsDistributor(rdInstance.address, hre.ethers.utils.parseUnits("10000"), {
-          from: signer.address,
-        });
-
-        if (rdTokenInstance) {
-          await sdk.updateRewardsDistributorSupplySpeed(
-            rdInstance.address,
-            deployedRdTokenInstance.assetAddress,
-            hre.ethers.utils.parseUnits("2"),
-            {
-              from: signer.address,
-            }
-          );
-          await sdk.updateRewardsDistributorBorrowSpeed(
-            rdInstance.address,
-            deployedRdTokenInstance.assetAddress,
-            hre.ethers.utils.parseUnits("1"),
-            {
-              from: signer.address,
-            }
-          );
-        }
-      }
       if (taskArgs.flywheelToken) {
         let flywheelMarket;
         const fwTokenInstance =
