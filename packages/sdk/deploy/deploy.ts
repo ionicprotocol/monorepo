@@ -324,7 +324,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     run,
     ethers,
     getNamedAccounts,
-    chainId,
     deployments,
     deployConfig: chainDeployParams,
   });
@@ -346,8 +345,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   ///
 
-  /// EXTERNAL ADDRESSES
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+
+  /// EXTERNAL ADDRESSES
   tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
   await tx.wait();
   console.log("setAddress: ", tx.hash);
