@@ -193,14 +193,15 @@ task("get-token-pair", "Get token pair address")
 task("wrap-native-token", "Get token pair address")
   .addOptionalParam("amount", "Amount to trade", "100", types.string)
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
-  .setAction(async ({ account: _account, amount: _amount }, { ethers }) => {
+  .addOptionalParam("weth", "weth address override", undefined, types.string)
+  .setAction(async ({ account: _account, amount: _amount, weth: _weth }, { ethers }) => {
     // @ts-ignore
     const fuseModule = await import("../tests/utils/fuseSdk");
     const sdk = await fuseModule.getOrCreateFuse();
     const account = await ethers.getNamedSigner(_account);
 
     const wnative = new ethers.Contract(
-      sdk.chainSpecificAddresses.W_TOKEN,
+      _weth ? _weth : sdk.chainSpecificAddresses.W_TOKEN,
       [
         "function deposit() public payable",
         "function approve(address guy, uint wad) public returns (bool)",

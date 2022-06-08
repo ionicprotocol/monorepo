@@ -1,11 +1,6 @@
 import { QuestionIcon } from '@chakra-ui/icons';
 import { Button, HStack, Link, Select, Text, useToast, VStack } from '@chakra-ui/react';
-import {
-  cERC20Conf,
-  DelegateContractName,
-  InterestRateModelConf,
-  PluginConfig,
-} from '@midas-capital/sdk';
+import { InterestRateModelConf, MarketConfig, MarketPluginConfig } from '@midas-capital/sdk';
 import { constants } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
@@ -61,7 +56,7 @@ export const AddAssetSettings = ({
     () => fuse.chainPlugins[tokenData.address] || [],
     [fuse.chainPlugins, tokenData.address]
   );
-  const [plugin, setPlugin] = useState<PluginConfig | undefined>(undefined);
+  const [plugin, setPlugin] = useState<MarketPluginConfig | undefined>(undefined);
 
   useEffect(() => {
     const func = async () => {
@@ -95,49 +90,27 @@ export const AddAssetSettings = ({
   const deploy = async () => {
     setIsDeploying(true);
 
-    const irmConf: InterestRateModelConf = {
+    // TODO do we need this?!  IRM is defined in MarketConfig, does every market needs it's own IRM?
+    const irmConfig: InterestRateModelConf = {
       interestRateModel: interestRateModel,
     };
 
-    const rdConfig = plugin?.dynamicFlywheels
-      ? plugin.dynamicFlywheels.map((rd) => {
-          return {
-            rewardsDistributor: rd.address,
-            rewardToken: rd.rewardToken,
-          };
-        })
-      : undefined;
-    const tokenConf: cERC20Conf = {
-      admin: address,
-      adminFee: adminFee,
-      bypassPriceFeedCheck: true,
-      collateralFactor: collateralFactor,
-      comptroller: comptrollerAddress,
-      fuseFeeDistributor: fuse.chainDeployment.FuseFeeDistributor.address,
-      initialExchangeRateMantissa: constants.WeiPerEther,
-      interestRateModel: interestRateModel,
-      name: poolName + ' ' + tokenData.name,
-      reserveFactor: reserveFactor,
-      symbol: 'f' + tokenData.symbol + '-' + poolID,
+    const marketConfig: MarketConfig = {
       underlying: tokenData.address,
-      plugin: plugin?.strategyAddress,
-      delegateContractName: !plugin
-        ? DelegateContractName.CErc20Delegate
-        : plugin.dynamicFlywheels
-        ? DelegateContractName.CErc20PluginRewardsDelegate
-        : DelegateContractName.CErc20PluginDelegate,
-      rewardsDistributorConfig: rdConfig,
+      comptroller: comptrollerAddress,
+      adminFee: adminFee,
+      collateralFactor: collateralFactor,
+      interestRateModel: interestRateModel,
+      reserveFactor: reserveFactor,
+      plugin: plugin,
+      bypassPriceFeedCheck: true,
+      fuseFeeDistributor: fuse.chainDeployment.FuseFeeDistributor.address,
+      symbol: 'f' + tokenData.symbol + '-' + poolID,
+      name: poolName + ' ' + tokenData.name,
     };
-    try {
-      await fuse.deployAsset(irmConf, tokenConf, { from: address });
 
-      if (tokenConf.rewardsDistributorConfig) {
-        for (const rd of tokenConf.rewardsDistributorConfig) {
-          await fuse.addRewardsDistributorToPool(rd.rewardsDistributor, comptrollerAddress, {
-            from: address,
-          });
-        }
-      }
+    try {
+      await fuse.deployAsset(irmConfig, marketConfig, { from: address });
 
       LogRocket.track('Fuse-DeployAsset');
 
