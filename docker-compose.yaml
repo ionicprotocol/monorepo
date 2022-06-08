@@ -23,7 +23,7 @@ services:
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
-      - WEB3_HTTP_PROVIDER_URL=http://hardhat:8545
+      - WEB3_HTTP_PROVIDER_URL
     entrypoint: "/bin/sh -c './wait-for-hh.sh && pm2-runtime ecosystem.config.js --env production'"
     restart: always
 
