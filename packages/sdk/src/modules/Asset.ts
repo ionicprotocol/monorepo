@@ -4,9 +4,14 @@ import { BigNumber, constants, ethers, utils } from "ethers";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { DelegateContractName } from "../enums";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
-import { FuseBaseConstructor, InterestRateModelConf, MarketConfig } from "../types";
+import { InterestRateModelConf, MarketConfig } from "../types";
 
-export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
+import { withCreateContracts } from "./CreateContracts";
+import { withFlywheel } from "./Flywheel";
+
+type FuseBaseConstructorWithModules = ReturnType<typeof withCreateContracts> & ReturnType<typeof withFlywheel>;
+
+export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TBase) {
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 
@@ -127,8 +132,9 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         byteCodeHash
       );
 
-      // Change implementation if needed
+      // Plugin related code
       if (config.plugin) {
+        // Change implementation
         const newImplementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
         console.log(`Setting implementation to ${newImplementationAddress}`);
 
@@ -145,16 +151,22 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         implementationAddress = newImplementationAddress;
         console.log(`Implementation successfully set to ${config.plugin.cTokenContract}`);
 
-        // Further actions for `CErc20PluginRewardsDelegate`
+        // Further actions required for `CErc20PluginRewardsDelegate`
         if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
-          // Add Flywheels as RewardsDistributors to Pool
-          const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
-          // TODO https://github.com/Midas-Protocol/monorepo/issues/166
           const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(cErc20DelegatorAddress);
-          for (const flywheelConfig of config.plugin.flywheels) {
-            if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
 
-            const addRdTx = await comptroller._addRewardsDistributor(flywheelConfig.address, {
+          // Add Flywheels as RewardsDistributors to Pool
+          for (const flywheelConfig of config.plugin.flywheels) {
+            const fwc = await this.deployFlywheelCore(flywheelConfig.rewardToken, options);
+            console.log({ fwc });
+            const dynamicRewards = await this.deployFlywheelDynamicRewards(fwc.address, 100000);
+            console.log({ dynamicRewards });
+            await fwc.setFlywheelRewards(dynamicRewards.address);
+            console.log("rewards set");
+            await fwc.addStrategyForRewards(cToken.address);
+            console.log("added strategy");
+
+            const addRdTx = await comptroller._addRewardsDistributor(fwc.address, {
               from: options.from,
             });
             const addRdTxReceipt: TransactionReceipt = await addRdTx.wait();

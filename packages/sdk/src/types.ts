@@ -7,21 +7,22 @@ import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
 export { Artifacts, Artifact } from "./Artifacts";
 
-export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GConstructor<T> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
 
 export type TxOptions = Overrides & { from?: string | Promise<string> };
 
 export type MinifiedContracts = {
   [key: string]: {
-    abi?: any;
+    abi?: Array<object>;
     bin?: any;
   };
 };
 
 export type MinifiedCompoundContracts = {
   [key: string]: {
-    abi?: any;
+    abi?: Array<object>;
     bytecode?: any;
   };
 };
