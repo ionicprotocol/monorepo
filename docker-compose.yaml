@@ -15,16 +15,17 @@ services:
 #    volumes:
 #      - ./packages/sdk/deployments/localhost:/tmp/build/packages/sdk/deployments/localhost
   liquidator-bot:
-    build:
-      dockerfile: docker/liquidator/Dockerfile
-      context: .
+    image: ghcr.io/midas-protocol/liquidator:sha-bfbe573452a2c1bd6c6d35f2d08c619f8c16b671
+    # build:
+      # dockerfile: docker/liquidator/Dockerfile
+      # context: .
     env_file:
       - docker/liquidator/liquidator.env
     environment:
       - ETHEREUM_ADMIN_ACCOUNT
       - ETHEREUM_ADMIN_PRIVATE_KEY
-      - WEB3_HTTP_PROVIDER_URL=http://hardhat:8545
-    entrypoint: "/bin/sh -c './wait-for-hh.sh && pm2-runtime ecosystem.config.js --env production'"
+      - WEB3_HTTP_PROVIDER_URL
+    entrypoint: "pm2-runtime ecosystem.config.js --env production"
     restart: always
 
   twap-bot:

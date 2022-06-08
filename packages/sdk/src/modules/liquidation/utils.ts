@@ -37,7 +37,7 @@ export type LiquidatablePool = {
 
 export type PublicPoolUserWithData = {
   comptroller: string;
-  users: FusePoolLens.FusePoolUserStructOutput[];
+  users: FusePoolLens.FusePoolUserStruct[];
   closeFactor: BigNumber;
   liquidationIncentive: BigNumber;
 };
