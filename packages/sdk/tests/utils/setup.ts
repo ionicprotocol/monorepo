@@ -1,6 +1,7 @@
 import { expect } from "chai";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
+import { SimplePriceOracle } from "../../lib/contracts/typechain";
 
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
@@ -9,7 +10,7 @@ import { ChainLiquidationConfig, Fuse } from "../../src";
 
 import { BSC_POOLS, getAssetsConf } from "./assets";
 import { getOrCreateFuse } from "./fuseSdk";
-import { createPool } from "./pool";
+import { createPool, deployAssets } from "./pool";
 
 export const resetPriceOracle = async (erc20One, erc20Two) => {
   const chainId = parseInt(await getChainId());
@@ -89,6 +90,12 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
 
   const sdk = await getOrCreateFuse();
 
+  const simplePriceOracle: SimplePriceOracle = (await ethers.getContractAt(
+    "SimplePriceOracle",
+    sdk.oracles.SimplePriceOracle.address,
+    deployer
+  )) as SimplePriceOracle;
+
   const oracle: MasterPriceOracle = (await ethers.getContractAt(
     "MasterPriceOracle",
     sdk.oracles.MasterPriceOracle.address,
@@ -115,17 +122,25 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
     ethers,
     poolName
   );
-
+  let tx;
   for (const asset of assets) {
     const assetPrice = await oracle.callStatic.price(asset.underlying);
     console.log("Setting up liquis with prices: ");
-    console.log(`erc20Two: ${asset.symbol}, price: ${ethers.utils.formatEther(assetPrice)}`);
+    console.log(`erc: ${asset.symbol}, price: ${ethers.utils.formatEther(assetPrice)}`);
+    tx = await oracle.add([asset.underlying], [simplePriceOracle.address]);
+    await tx.wait();
+    tx = await simplePriceOracle.setDirectPrice(asset.underlying, assetPrice);
+    await tx.wait();
   }
+  const deployedAssets = await deployAssets(assets, deployer);
   return {
     poolAddress,
     liquidator,
     oracle,
     fuseFeeDistributor,
+    deployedAssets,
+    simplePriceOracle,
+    assets,
   };
 };
 
