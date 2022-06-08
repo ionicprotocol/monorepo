@@ -94,7 +94,7 @@ const FusePoolList = () => {
               gridGap="8"
               gridRowGap="8"
             >
-              {currentPools.map((pool: FusePoolData, index: number) => {
+              {currentPools.map((pool, index: number) => {
                 return <PoolCard data={pool} key={index} />;
               })}
             </Grid>
