@@ -76,7 +76,6 @@ export type ChainDeployFnParams = {
 
 export type LiquidatorDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
-  chainId: string;
 };
 
 export type LiquidatorConfigFnParams = {
