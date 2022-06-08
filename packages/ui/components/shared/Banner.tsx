@@ -6,22 +6,24 @@ export const Banner = ({
   text,
   linkText,
   linkUrl,
-  status,
+  status = 'warning',
   ...alertProps
 }: {
   text: string;
-  linkText: string;
-  linkUrl: string;
-  status: string;
+  linkText?: string;
+  linkUrl?: string;
+  status?: string;
 } & AlertProps) => {
   return (
     <Alert status={status} justifyContent="center" {...alertProps}>
       <AlertIcon />
       <AlertDescription fontSize={18}>
         {text}
-        <Link fontWeight="bold" href={linkUrl} isExternal>
-          {linkText}
-        </Link>
+        {linkText && linkUrl && (
+          <Link fontWeight="bold" href={linkUrl} isExternal>
+            {linkText}
+          </Link>
+        )}
       </AlertDescription>
     </Alert>
   );
