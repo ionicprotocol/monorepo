@@ -69,7 +69,7 @@ export default async function getAllFusePoolUsers(
   maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData[]> {
   const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
-  const fusePoolUsers = [];
+  const fusePoolUsers: PublicPoolUserWithData[] = [];
   for (const pool of allPools) {
     const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth);
     fusePoolUsers.push(poolUserParms);
