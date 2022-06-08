@@ -3,7 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
-import { deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
+import { deployFuseSafeLiquidator, configureFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -337,6 +337,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await deployFunc({ run, ethers, getNamedAccounts, deployments });
   }
   ////
+
+  //// Configure Liquidator
+  await configureFuseSafeLiquidator({
+    ethers,
+    getNamedAccounts,
+    chainId
+  });
+  ///
 
   /// EXTERNAL ADDRESSES
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
