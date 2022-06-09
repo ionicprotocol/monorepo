@@ -12,7 +12,7 @@ import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
 import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
 
-(process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("FundOperationsERC4626Module", function () {
+(process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("FundOperationsERC4626Module", function () {
   let poolAddress: string;
   let sdk: Fuse;
   let tx: providers.TransactionResponse;

@@ -14,7 +14,7 @@ function getUserTotals(assets: FusePoolLensType.FusePoolAssetStructOutput[]): {
   let totalCollateral = BigNumber.from(0);
 
   for (const a of assets) {
-    totalBorrow = totalBorrow.add(a.borrowBalance.mul(a.underlyingPrice)).div(ethers.utils.parseEther("1"));
+    totalBorrow = totalBorrow.add(a.borrowBalance.mul(a.underlyingPrice).div(ethers.utils.parseEther("1")));
     if (a.membership) {
       totalCollateral = totalCollateral.add(
         a.supplyBalance
@@ -52,6 +52,7 @@ async function getFusePoolUsers(
 
     const { totalBorrow, totalCollateral } = getUserTotals(assets);
     const health = getPositionHealth(totalBorrow, totalCollateral);
+
     if (maxHealth.gt(health)) {
       poolUsers.push({ account: user, totalBorrow, totalCollateral, health });
     }

@@ -2,6 +2,7 @@ import { TransactionRequest } from "@ethersproject/providers";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
+import { LiquidationKind } from "../../enums";
 import { FuseBase } from "../../Fuse";
 import { FuseAsset } from "../../types";
 
@@ -54,10 +55,11 @@ export const logLiquidation = (
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
-  liquidationTokenSymbol: string
+  liquidationTokenSymbol: string,
+  liquidationKind: LiquidationKind
 ) => {
   console.log(
-    `Gathered transaction data for safeLiquidate a ${liquidationTokenSymbol} borrow:
+    `Gathered transaction data for safeLiquidate a ${liquidationTokenSymbol} borrow of kind ${liquidationKind}:
          - Liquidation Amount: ${utils.formatEther(liquidationAmount)}
          - Underlying Collateral Token: ${borrower.collateral[0].underlyingSymbol}
          - Underlying Debt Token: ${borrower.debt[0].underlyingSymbol}
