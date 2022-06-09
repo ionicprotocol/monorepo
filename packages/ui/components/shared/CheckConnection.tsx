@@ -138,10 +138,9 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
               );
             }
           }
+        } else {
+          router.push('/', undefined, { shallow: true });
         }
-        // else {
-        //   router.push('/', undefined, { shallow: true });
-        // }
       }
     };
 
