@@ -82,13 +82,9 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       let fwStaticRewards: FlywheelStaticRewards;
       try {
         setActiveStep(2);
-        fwStaticRewards = await fuse.deployFlywheelStaticRewards(
-          rewardTokenData.address,
-          fwCore.address,
-          {
-            from: accountData.address,
-          }
-        );
+        fwStaticRewards = await fuse.deployFlywheelStaticRewards(fwCore.address, {
+          from: accountData.address,
+        });
         await fwStaticRewards.deployTransaction.wait();
         successToast({
           description: 'Flywheel Rewards Deployed',

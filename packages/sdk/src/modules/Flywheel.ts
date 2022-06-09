@@ -61,7 +61,6 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async deployFlywheelStaticRewards(
-      rewardTokenAddress: string,
       flywheelCoreAddress: string,
       options: {
         from: string;

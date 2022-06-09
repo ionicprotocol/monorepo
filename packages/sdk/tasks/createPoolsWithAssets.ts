@@ -101,13 +101,9 @@ task("pools:create", "Create pool if does not exist")
         const flywheelCoreInstance = await sdk.deployFlywheelCore(fwTokenInstance.address, {
           from: signer.address,
         });
-        const fwStaticRewards = await sdk.deployFlywheelStaticRewards(
-          fwTokenInstance.address,
-          flywheelCoreInstance.address,
-          {
-            from: signer.address,
-          }
-        );
+        const fwStaticRewards = await sdk.deployFlywheelStaticRewards(flywheelCoreInstance.address, {
+          from: signer.address,
+        });
         console.log("Deployed static rewards for: ", await fwTokenInstance.symbol());
         await sdk.setFlywheelRewards(flywheelCoreInstance.address, fwStaticRewards.address, { from: signer.address });
         await sdk.addFlywheelCoreToComptroller(flywheelCoreInstance.address, poolAddress, { from: signer.address });

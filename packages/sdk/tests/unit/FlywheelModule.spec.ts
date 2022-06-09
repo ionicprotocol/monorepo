@@ -75,7 +75,7 @@ describe("FlywheelModule", function () {
     const fwCore = await sdk.deployFlywheelCore(rewardToken.address, {
       from: deployer.address,
     });
-    const fwStaticRewards = await sdk.deployFlywheelStaticRewards(rewardToken.address, fwCore.address, {
+    const fwStaticRewards = await sdk.deployFlywheelStaticRewards(fwCore.address, {
       from: deployer.address,
     });
 
@@ -149,7 +149,7 @@ describe("FlywheelModule", function () {
     const fwCore = await sdk.deployFlywheelCore(rewardToken.address, {
       from: deployer.address,
     });
-    const fwStaticRewards = await sdk.deployFlywheelStaticRewards(rewardToken.address, fwCore.address, {
+    const fwStaticRewards = await sdk.deployFlywheelStaticRewards(fwCore.address, {
       from: deployer.address,
     });
 
