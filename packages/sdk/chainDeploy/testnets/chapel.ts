@@ -104,7 +104,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployConfig,
   });
 
-
   //// Liquidator Redemption Strategies
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,

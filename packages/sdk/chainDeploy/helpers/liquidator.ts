@@ -37,10 +37,10 @@ export const deployFuseSafeLiquidator = async ({
 };
 
 export const configureFuseSafeLiquidator = async ({
-                                                 ethers,
-                                                 getNamedAccounts,
-                                                 chainId,
-                                               }: LiquidatorConfigFnParams): Promise<void> => {
+  ethers,
+  getNamedAccounts,
+  chainId,
+}: LiquidatorConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
   const strategies: string[] = [];
