@@ -157,37 +157,39 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
 
           // Add Flywheels as RewardsDistributors to Pool
           for (const flywheelConfig of config.plugin.flywheels) {
+            //1. Deploy new Flywheel
             const fwc = await this.deployFlywheelCore(flywheelConfig.rewardToken, options);
-            console.log({ fwc });
-            const dynamicRewards = await this.deployFlywheelDynamicRewards(fwc.address, 100000);
-            console.log({ dynamicRewards });
-            await fwc.setFlywheelRewards(dynamicRewards.address);
-            console.log("rewards set");
-            await fwc.addStrategyForRewards(cToken.address);
-            console.log("added strategy");
 
+            //2. Deploy new DynamicRewards
+            const dynamicRewards = await this.deployFuseFlywheelDynamicRewards(
+              fwc.address,
+              flywheelConfig.rewardsCycleLength
+            );
+
+            //3. Add DynamicRewards to Flywheel
+            await fwc.setFlywheelRewards(dynamicRewards.address);
+
+            //4. Enable cToken on Flywheel
+            await fwc.addStrategyForRewards(cToken.address);
+
+            //5. Add Flywheel to Pool
             const addRdTx = await comptroller._addRewardsDistributor(fwc.address, {
               from: options.from,
             });
             const addRdTxReceipt: TransactionReceipt = await addRdTx.wait();
 
             if (addRdTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed set add RD to pool ${flywheelConfig.address}`;
-            }
-            const approveTx = await cToken["approve(address,address)"](
-              flywheelConfig.rewardToken,
-              flywheelConfig.address,
-              {
-                from: options.from,
-              }
-            );
-            const approveTxReceipt = await approveTx.wait();
-            if (approveTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed to approve to pool ${flywheelConfig.address}`;
+              throw `Failed set add RD to pool ${fwc.address}`;
             }
 
-            console.log(approveTxReceipt.status);
-            console.log("Approval succeeded");
+            //6. Approve Flywheel to spend underlying
+            const approveTx = await cToken["approve(address,address)"](flywheelConfig.rewardToken, fwc.address, {
+              from: options.from,
+            });
+            const approveTxReceipt = await approveTx.wait();
+            if (approveTxReceipt.status != constants.One.toNumber()) {
+              throw `Failed to approve to pool ${fwc.address}`;
+            }
           }
         }
       }
