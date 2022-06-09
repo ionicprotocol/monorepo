@@ -12,9 +12,9 @@ import CTokenInterfacesArtifact from "../lib/contracts/out/CTokenInterfaces.sol/
 import DAIInterestRateModelV2Artifact from "../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
 import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
-import FlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FlywheelDynamicRewards.sol/FlywheelDynamicRewards.json";
 import FlywheelStaticRewardsArtifact from "../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
 import FuseFlywheelCoreArtifact from "../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
+import FuseFlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FuseFlywheelDynamicRewards.sol/FuseFlywheelDynamicRewards.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
 import PreferredPriceOracleArtifact from "../lib/contracts/out/PreferredPriceOracle.sol/PreferredPriceOracle.json";
@@ -49,7 +49,7 @@ const CTokenInterfaces: Artifact = CTokenInterfacesArtifact;
 const DAIInterestRateModelV2: Artifact = DAIInterestRateModelV2Artifact;
 const EIP20Interface: Artifact = EIP20InterfaceArtifact;
 const ERC20: Artifact = ERC20Artifact;
-const FlywheelDynamicRewards: Artifact = FlywheelDynamicRewardsArtifacts;
+const FuseFlywheelDynamicRewards: Artifact = FuseFlywheelDynamicRewardsArtifacts;
 const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
@@ -75,7 +75,7 @@ const ARTIFACTS = {
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
-  FlywheelDynamicRewards,
+  FuseFlywheelDynamicRewards,
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
@@ -105,7 +105,7 @@ export {
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
-  FlywheelDynamicRewards,
+  FuseFlywheelDynamicRewards,
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,

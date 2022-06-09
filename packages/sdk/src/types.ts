@@ -96,8 +96,8 @@ export interface StandardPluginConfig extends AbstractPluginConfig {
 }
 
 type RewardFlywheel = {
-  address: string;
   rewardToken: string;
+  rewardsCycleLength: number;
 };
 
 export interface RewardsPluginConfig extends AbstractPluginConfig {
