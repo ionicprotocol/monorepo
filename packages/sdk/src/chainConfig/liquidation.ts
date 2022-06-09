@@ -21,9 +21,6 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
       bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,

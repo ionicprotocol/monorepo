@@ -7,32 +7,32 @@ assignees: ''
 
 ---
 
-**Describe the bug**
+<ins>**Describe the bug**</ins>
 A clear and concise description of what the bug is.
 
-**To Reproduce**
+<ins>**To Reproduce**</ins>
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
+<ins>**Expected behavior**</ins>
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
+<ins>**Screenshots**</ins>
 If applicable, add screenshots to help explain your problem.
 
-**Desktop (please complete the following information):**
+<ins>**Desktop (please complete the following information):**</ins>
  - OS: [e.g. iOS]
  - Browser [e.g. chrome, safari]
  - Version [e.g. 22]
 
-**Smartphone (please complete the following information):**
+<ins>**Smartphone (please complete the following information):**</ins>
  - Device: [e.g. iPhone6]
  - OS: [e.g. iOS8.1]
  - Browser [e.g. stock browser, safari]
  - Version [e.g. 22]
 
-**Additional context**
+<ins>**Additional context**</ins>
 Add any other context about the problem here.
