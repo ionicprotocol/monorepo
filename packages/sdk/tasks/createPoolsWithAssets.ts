@@ -215,7 +215,8 @@ task("pools:create-unhealthy-token-borrow-eth-collateral", "Borrow TOUCH against
   .addParam("supplyAccount", "Account from which to supply", "deployer", types.string)
   .addParam("borrowAccount", "Account from which to borrow", "alice", types.string)
   .setAction(async (taskArgs, hre) => {
-    await hre.run("oracle:set-price", { token: "ETH", price: "1" });
+    await hre.run("wrap-native-token", { account: "deployer", price: "1" });
+    await hre.run("oracle:set-price", { token: "WETH", price: "1" });
     await hre.run("oracle:set-price", { token: "TOUCH", price: "0.1" });
     await hre.run("oracle:set-price", { token: "TRIBE", price: "0.01" });
 
@@ -225,11 +226,11 @@ task("pools:create-unhealthy-token-borrow-eth-collateral", "Borrow TOUCH against
     await hre.run("pools:deposit", {
       account: taskArgs.supplyAccount,
       amount: 5,
-      symbol: "ETH",
+      symbol: "WETH",
       poolAddress,
       enableCollateral: true,
     });
-    console.log("ETH deposited");
+    console.log("WETH deposited");
 
     // Supply TOUCH collateral from alice
     await hre.run("pools:deposit", {
