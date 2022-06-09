@@ -36,9 +36,16 @@ export type LiquidatablePool = {
   liquidations: EncodedLiquidationTx[];
 };
 
+export type FusePoolUserStruct = {
+  account: string;
+  totalBorrow: BigNumberish;
+  totalCollateral: BigNumberish;
+  health: BigNumberish;
+};
+
 export type PublicPoolUserWithData = {
   comptroller: string;
-  users: FusePoolLens.FusePoolUserStruct[];
+  users: FusePoolUserStruct[];
   closeFactor: BigNumber;
   liquidationIncentive: BigNumber;
 };

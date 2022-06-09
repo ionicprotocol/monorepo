@@ -4,7 +4,7 @@ import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
 import { FuseBase } from "../../Fuse";
 
-import { PublicPoolUserWithData } from "./utils";
+import { FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
 
 function getUserTotals(assets: FusePoolLensType.FusePoolAssetStructOutput[]): {
   totalBorrow: BigNumber;
@@ -39,7 +39,7 @@ async function getFusePoolUsers(
   comptroller: string,
   maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData> {
-  const poolUsers: FusePoolLensType.FusePoolUserStruct[] = [];
+  const poolUsers: FusePoolUserStruct[] = [];
   const signer = fuse.provider.getSigner();
   const comptrollerInstance: Comptroller = fuse.getComptrollerInstance(comptroller, {
     from: await signer.getAddress(),

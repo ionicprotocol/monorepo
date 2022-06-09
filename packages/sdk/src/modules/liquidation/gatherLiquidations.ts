@@ -1,16 +1,21 @@
 import { BigNumber } from "ethers";
 
-import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
 import { FuseBase } from "../../Fuse";
 
 import { ChainLiquidationConfig } from "./config";
-import { EncodedLiquidationTx, FusePoolUserWithAssets, LiquidatablePool, PublicPoolUserWithData } from "./utils";
+import {
+  EncodedLiquidationTx,
+  FusePoolUserStruct,
+  FusePoolUserWithAssets,
+  LiquidatablePool,
+  PublicPoolUserWithData,
+} from "./utils";
 
 import { getPotentialLiquidation } from "./index";
 
 async function getLiquidatableUsers(
   fuse: FuseBase,
-  poolUsers: FusePoolLens.FusePoolUserStruct[],
+  poolUsers: FusePoolUserStruct[],
   pool: PublicPoolUserWithData,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<Array<EncodedLiquidationTx>> {
