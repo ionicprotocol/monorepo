@@ -26,7 +26,7 @@ export const connectors = () => {
   return [
     new InjectedConnector({
       chains,
-      options: { shimDisconnect: true },
+      options: { shimChainChangedDisconnect: true, shimDisconnect: true },
     }),
     new WalletConnectConnector({
       chains,

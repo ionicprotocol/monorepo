@@ -38,7 +38,7 @@
     "react-icons": "^4.4.0",
     "react-jazzicon": "^1.0.3",
     "react-query": "^3.39.1",
-    "wagmi": "^0.4.6",
+    "wagmi": "^0.4.10",
     "yup": "^0.32.11"
   },
   "devDependencies": {

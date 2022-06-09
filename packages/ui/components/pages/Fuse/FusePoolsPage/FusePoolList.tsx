@@ -31,6 +31,11 @@ import { useFilter } from '@ui/hooks/useFilter';
 import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
 import { useSort } from '@ui/hooks/useSort';
 
+class ErrType extends Error {
+  code = '';
+  reason = '';
+}
+
 const FusePoolList = () => {
   const filter = useFilter();
   const sortBy = useSort();
@@ -65,12 +70,12 @@ const FusePoolList = () => {
     setCurrentPage(nextPage);
   };
 
-  if (error) {
+  if (error instanceof ErrType && error.code !== 'NETWORK_ERROR') {
     return (
       <AlertHero
         status="warning"
         variant="subtle"
-        title="Unexpected Error"
+        title={error.reason ? error.reason : 'Unexpected Error'}
         description="Unable to retrieve Pools. Please try again later."
       />
     );
