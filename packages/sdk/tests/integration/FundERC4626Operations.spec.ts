@@ -94,7 +94,6 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
         asset.cToken,
         asset.underlyingToken,
         poolAddress,
-        asset.underlyingToken === constants.AddressZero,
         true,
         utils.parseUnits(amounts[idx], 18),
         { from: bob.address }

@@ -100,25 +100,24 @@ const FusePoolPage = memo(() => {
               <SimpleGrid columns={{ base: 2, md: 4 }} spacing="4">
                 <PoolStat
                   label="Total Supply"
-                  value={data ? midUsdFormatter(data.totalSuppliedNative) : undefined}
+                  value={data ? midUsdFormatter(data.totalSuppliedFiat) : undefined}
                 />
                 <PoolStat
                   label="Total Borrow"
-                  value={data ? midUsdFormatter(data?.totalBorrowedNative) : undefined}
+                  value={data ? midUsdFormatter(data?.totalBorrowedFiat) : undefined}
                 />
                 <PoolStat
                   label="Liquidity"
-                  value={data ? midUsdFormatter(data?.totalLiquidityNative) : undefined}
+                  value={data ? midUsdFormatter(data?.totalLiquidityFiat) : undefined}
                 />
                 <PoolStat
                   label="Utilization"
                   value={
                     data
-                      ? data.totalSuppliedNative.toString() === '0'
+                      ? data.totalSuppliedFiat.toString() === '0'
                         ? '0%'
-                        : ((data?.totalBorrowedNative / data?.totalSuppliedNative) * 100).toFixed(
-                            2
-                          ) + '%'
+                        : ((data?.totalBorrowedFiat / data?.totalSuppliedFiat) * 100).toFixed(2) +
+                          '%'
                       : undefined
                   }
                 />
@@ -128,7 +127,7 @@ const FusePoolPage = memo(() => {
           {
             /* If they have some asset enabled as collateral, show the collateral ratio bar */
             data && data.assets.some((asset) => asset.membership) ? (
-              <CollateralRatioBar assets={data.assets} borrowUSD={data.totalBorrowBalanceNative} />
+              <CollateralRatioBar assets={data.assets} borrowFiat={data.totalBorrowBalanceFiat} />
             ) : null
           }
           <RowOrColumn
@@ -148,7 +147,7 @@ const FusePoolPage = memo(() => {
                 <SupplyList
                   assets={data.assets}
                   comptrollerAddress={data.comptroller}
-                  supplyBalanceNative={data.totalSupplyBalanceNative}
+                  supplyBalanceFiat={data.totalSupplyBalanceFiat}
                   rewards={marketRewards}
                 />
               ) : (
@@ -167,7 +166,7 @@ const FusePoolPage = memo(() => {
                 <BorrowList
                   comptrollerAddress={data.comptroller}
                   assets={data.assets}
-                  borrowBalanceNative={data.totalBorrowBalanceNative}
+                  borrowBalanceFiat={data.totalBorrowBalanceFiat}
                 />
               ) : (
                 <TableSkeleton tableHeading="Your Borrow Balance" />
