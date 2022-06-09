@@ -3,7 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
-import { deployFuseSafeLiquidator, configureFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
+import { configureFuseSafeLiquidator, deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -341,7 +341,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   await configureFuseSafeLiquidator({
     ethers,
     getNamedAccounts,
-    chainId
+    chainId,
   });
   ///
 
