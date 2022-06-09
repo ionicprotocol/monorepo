@@ -1119,7 +1119,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinbase/wallet-sdk@npm:^3.1.0":
+"@coinbase/wallet-sdk@npm:^3.2.0":
   version: 3.2.0
   resolution: "@coinbase/wallet-sdk@npm:3.2.0"
   dependencies:
@@ -2332,7 +2332,7 @@ __metadata:
     react-jazzicon: ^1.0.3
     react-query: ^3.39.1
     typescript: 4.7.2
-    wagmi: ^0.4.6
+    wagmi: ^0.4.10
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -3508,14 +3508,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:^0.3.5":
-  version: 0.3.5
-  resolution: "@wagmi/core@npm:0.3.5"
+"@wagmi/core@npm:^0.3.7":
+  version: 0.3.7
+  resolution: "@wagmi/core@npm:0.3.7"
   dependencies:
     eventemitter3: ^4.0.7
     zustand: ^4.0.0-rc.1
   peerDependencies:
-    "@coinbase/wallet-sdk": ">=3.0.6"
+    "@coinbase/wallet-sdk": ">=3.2.0"
     "@walletconnect/ethereum-provider": ">=1.7.5"
     ethers: ">=5.5.1"
   peerDependenciesMeta:
@@ -3523,7 +3523,7 @@ __metadata:
       optional: true
     "@walletconnect/ethereum-provider":
       optional: true
-  checksum: 11d4603acbe93d67e855ab085861342191e2c5e5dca7bec4e8917f0bd1782f8d6d30d18142a7f1206dcd2604b48899b6eb3294012fce8f871fb690151dcf094a
+  checksum: c8c833785302f9932b7947d9049ebe094a1778d5ecf2f5e2687b2a25937b063ba9829e99c6ee916bca5ded87474c5259c7dbb74ce7a926d21d150209b94e708e
   languageName: node
   linkType: hard
 
@@ -3651,12 +3651,12 @@ __metadata:
   linkType: hard
 
 "@walletconnect/jsonrpc-utils@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@walletconnect/jsonrpc-utils@npm:1.0.0"
+  version: 1.0.1
+  resolution: "@walletconnect/jsonrpc-utils@npm:1.0.1"
   dependencies:
     "@walletconnect/environment": ^1.0.0
     "@walletconnect/jsonrpc-types": ^1.0.0
-  checksum: d760736a3802ba312ced0ba6ffa9763e76319329132904692531d6907a9560d88c81f7e8647ba42d606b610ea81ad669f7aa927d6a615a321acb36f0f08532a9
+  checksum: 59ccff04f1decbaf4d9e888083dea7b5315f3fceb6177a3ca6ef0ff7dd043da4f284894e90cba6b7f330f22d41aac00b90819fd461c742a9d23e037d7a664a5b
   languageName: node
   linkType: hard
 
@@ -5507,17 +5507,17 @@ __metadata:
   linkType: hard
 
 "browserslist@npm:^4.20.2, browserslist@npm:^4.20.3":
-  version: 4.20.3
-  resolution: "browserslist@npm:4.20.3"
+  version: 4.20.4
+  resolution: "browserslist@npm:4.20.4"
   dependencies:
-    caniuse-lite: ^1.0.30001332
-    electron-to-chromium: ^1.4.118
+    caniuse-lite: ^1.0.30001349
+    electron-to-chromium: ^1.4.147
     escalade: ^3.1.1
-    node-releases: ^2.0.3
+    node-releases: ^2.0.5
     picocolors: ^1.0.0
   bin:
     browserslist: cli.js
-  checksum: 1e4b719ac2ca0fe235218a606e8b8ef16b8809e0973b924158c39fbc435a0b0fe43437ea52dd6ef5ad2efcb83fcb07431244e472270177814217f7c563651f7d
+  checksum: 0e56c42da765524e5c31bc9a1f08afaa8d5dba085071137cf21e56dc78d0cf0283764143df4c7d1c0cd18c3187fc9494e1d93fa0255004f0be493251a28635f9
   languageName: node
   linkType: hard
 
@@ -5767,6 +5767,13 @@ __metadata:
   version: 1.0.30001346
   resolution: "caniuse-lite@npm:1.0.30001346"
   checksum: 951590454ffa4e2e7b772558dc593cd08604b44c83741e1188166298f54c34387f4bf34f5141a35de4a43028c012484240ad15c896e48bf4eac70dd7076a4449
+  languageName: node
+  linkType: hard
+
+"caniuse-lite@npm:^1.0.30001349":
+  version: 1.0.30001350
+  resolution: "caniuse-lite@npm:1.0.30001350"
+  checksum: dfdb9eca8ea7b72ea7a581b3036e21c40c5fbd7dc4fc84efaeec166963e68c0e353ef5b9a1af78bd9f63473549b9487a06d2f84fc452fcd43e200209073e2838
   languageName: node
   linkType: hard
 
@@ -7133,10 +7140,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.3.47, electron-to-chromium@npm:^1.4.118":
+"electron-to-chromium@npm:^1.3.47":
   version: 1.4.144
   resolution: "electron-to-chromium@npm:1.4.144"
   checksum: a321bfc92485d37a16c1db84647dc9c376b47ff53136a32102d8599086118f5805ab3713f86f85936b627544b653d7d8c3f1acf9638c5bf0c3f8e6ae1ab4c395
+  languageName: node
+  linkType: hard
+
+"electron-to-chromium@npm:^1.4.147":
+  version: 1.4.148
+  resolution: "electron-to-chromium@npm:1.4.148"
+  checksum: 3730c2eb46c7d0602b418a5a80e8d37e673c61d7cdc6a431a0d23bf08b6db6375c5f842d9e4285549ef2c5bad9189da34f05f28993fdb43920df5befc72db87a
   languageName: node
   linkType: hard
 
@@ -12762,7 +12776,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-releases@npm:^2.0.3":
+"node-releases@npm:^2.0.5":
   version: 2.0.5
   resolution: "node-releases@npm:2.0.5"
   checksum: e85d949addd19f8827f32569d2be5751e7812ccf6cc47879d49f79b5234ff4982225e39a3929315f96370823b070640fb04d79fc0ddec8b515a969a03493a42f
@@ -14029,12 +14043,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:6.10.3, qs@npm:^6.10.3, qs@npm:^6.7.0, qs@npm:^6.9.4":
+"qs@npm:6.10.3, qs@npm:^6.7.0, qs@npm:^6.9.4":
   version: 6.10.3
   resolution: "qs@npm:6.10.3"
   dependencies:
     side-channel: ^1.0.4
   checksum: 0fac5e6c7191d0295a96d0e83c851aeb015df7e990e4d3b093897d3ac6c94e555dbd0a599739c84d7fa46d7fee282d94ba76943983935cf33bba6769539b8019
+  languageName: node
+  linkType: hard
+
+"qs@npm:^6.10.3":
+  version: 6.10.5
+  resolution: "qs@npm:6.10.5"
+  dependencies:
+    side-channel: ^1.0.4
+  checksum: b3873189a11bcf48445864b3ba66f7a76db0d9d874955d197779f561addfa604884f7b107971526ce1eca02c99bf7d1e47f28a3e7e6e29204d798fb279164226
   languageName: node
   linkType: hard
 
@@ -14318,9 +14341,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-query@npm:^4.0.0-beta.19":
-  version: 4.0.0-beta.19
-  resolution: "react-query@npm:4.0.0-beta.19"
+"react-query@npm:^4.0.0-beta.23":
+  version: 4.0.0-beta.23
+  resolution: "react-query@npm:4.0.0-beta.23"
   dependencies:
     "@babel/runtime": ^7.17.9
     "@types/use-sync-external-store": ^0.0.3
@@ -14334,7 +14357,7 @@ __metadata:
       optional: true
     react-native:
       optional: true
-  checksum: a518715e547139922034629e3c85e2ce24c5c73d8203b6992e86cab0f953d6b2fc3704fbc4b700b27b2b8cab291575a5cb8aa0d7a27b234c435fe86ca2ac8f88
+  checksum: 8641dae996167ec5bd2a020310b1b1540650a2323673722d9ffd882bb28fbd40f09d1ca3e6990f9e27d5878e152c9544a35d4fdb7014fc25a86937e07949aede
   languageName: node
   linkType: hard
 
@@ -17123,19 +17146,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.4.6":
-  version: 0.4.6
-  resolution: "wagmi@npm:0.4.6"
+"wagmi@npm:^0.4.10":
+  version: 0.4.10
+  resolution: "wagmi@npm:0.4.10"
   dependencies:
-    "@coinbase/wallet-sdk": ^3.1.0
-    "@wagmi/core": ^0.3.5
+    "@coinbase/wallet-sdk": ^3.2.0
+    "@wagmi/core": ^0.3.7
     "@walletconnect/ethereum-provider": ^1.7.8
-    react-query: ^4.0.0-beta.19
+    react-query: ^4.0.0-beta.23
     use-sync-external-store: ^1.1.0
   peerDependencies:
     ethers: ">=5.5.1"
     react: ">=17.0.0"
-  checksum: b6ab84f916fe3490e4a06414ea28fb59f3770f0fea09cd95fa61c1bbba300a19e53530c0956ab0629a9de766d76c6806f06f381d2280c246b56f6de0b5bed8b9
+  checksum: 573c0a8ffa5af6a8092391ef311da46859edc8ff8ae3aaffb87da35afd7614306935416a07b9313f66c18bd083ef5b0779dc82282defd1cc3bf1c1c9670473f3
   languageName: node
   linkType: hard
 

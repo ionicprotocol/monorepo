@@ -28,6 +28,17 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   const toastIdRef = useRef<ToastId | undefined>();
   const toast = useToast();
   const [switchedChain, setSwitchedChain] = useState<Chain | undefined>();
+
+  const [signerChainId, setSignerChainId] = useState<number | undefined>();
+  useEffect(() => {
+    const func = async () => {
+      const _signerChainId = await signerData?.getChainId();
+      setSignerChainId(_signerChainId);
+    };
+
+    func();
+  }, [signerData]);
+
   useEffect(() => {
     if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
       onOpen();
@@ -127,9 +138,10 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
               );
             }
           }
-        } else {
-          router.push('/', undefined, { shallow: true });
         }
+        // else {
+        //   router.push('/', undefined, { shallow: true });
+        // }
       }
     };
 
@@ -146,7 +158,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     switchedChain,
   ]);
 
-  if (isConnecting || isReconnecting || isNetworkLoading) {
+  if (isConnecting || isReconnecting || isNetworkLoading || signerChainId !== activeChain?.id) {
     return <LoadingOverlay isLoading={true} />;
   }
   // Not Connected
@@ -156,8 +168,14 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   else if (!activeChain || activeChain.unsupported) {
     return <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />;
   }
+
   // Everything Fine
-  else if (activeChain && accountData?.address && signerData?.provider) {
+  else if (
+    activeChain &&
+    accountData?.address &&
+    signerData?.provider &&
+    signerChainId === activeChain.id
+  ) {
     return (
       <RariProvider
         currentChain={activeChain}
