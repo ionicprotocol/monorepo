@@ -7,6 +7,7 @@ import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistrib
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
+import { Fuse } from "../../src";
 
 import { BSC_POOLS, getAssetsConf } from "./assets";
 import { getOrCreateFuse } from "./fuseSdk";
