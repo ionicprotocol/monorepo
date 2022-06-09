@@ -1,12 +1,12 @@
 import { expect } from "chai";
-import { BigNumber, constants, providers, utils } from "ethers";
+import { constants, providers, utils } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
-import { SimplePriceOracle } from "../../lib/contracts/typechain";
 
+import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { ChainLiquidationConfig, Fuse } from "../../src";
+import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
 
 import { BSC_POOLS, getAssetsConf } from "./assets";
 import { getOrCreateFuse } from "./fuseSdk";
@@ -145,12 +145,11 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
 };
 
 export const liquidateAndVerify = async (
+  assetToLiquidate: EIP20Interface,
   poolName: string,
   poolAddress: string,
   liquidatedUserName: string,
-  liquidator: FuseSafeLiquidator,
-  liquidationConfigOverrides: ChainLiquidationConfig,
-  liquidatorBalanceCalculator: (address: string) => Promise<BigNumber>
+  liquidator: FuseSafeLiquidator
 ) => {
   const { rando } = await ethers.getNamedSigners();
   const sdk = await getOrCreateFuse();
@@ -167,12 +166,12 @@ export const liquidateAndVerify = async (
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];
-
-  const liquidatorBalanceBeforeLiquidation = await liquidatorBalanceCalculator(rando.address);
+  const liquidatorBalanceBeforeLiquidation = await ethers.provider.getBalance(rando.address);
 
   const tx: providers.TransactionResponse = await liquidator[desiredLiquidation.method](...desiredLiquidation.args, {
     value: desiredLiquidation.value,
   });
+
   await tx.wait();
 
   const receipt = await tx.wait();
@@ -183,14 +182,15 @@ export const liquidateAndVerify = async (
     userAddress: undefined,
     namedUser: liquidatedUserName,
   });
+
   console.log(`Ratio After: ${ratioAfter}`);
   expect(ratioBefore).to.be.gte(ratioAfter);
 
   // Assert balance after liquidation > balance before liquidation
-  const liquidatorBalanceAfterLiquidation = await liquidatorBalanceCalculator(rando.address);
+  const liquidatorBalanceAfterLiquidation = await ethers.provider.getBalance(rando.address);
 
-  console.log("Liquidator balance before liquidation: ", utils.formatEther(liquidatorBalanceBeforeLiquidation));
-  console.log("Liquidator balance after liquidation: ", utils.formatEther(liquidatorBalanceAfterLiquidation));
+  console.log(`Liquidator balance before liquidation: ${ethers.utils.formatEther(liquidatorBalanceBeforeLiquidation)}`);
+  console.log(`Liquidator balance after liquidation: ${ethers.utils.formatEther(liquidatorBalanceAfterLiquidation)}`);
 
   expect(liquidatorBalanceAfterLiquidation).gt(liquidatorBalanceBeforeLiquidation);
   expect(ratioBefore).to.be.gte(ratioAfter);
