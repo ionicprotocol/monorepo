@@ -21,6 +21,7 @@ import "./tasks/createMarket";
 import "./tasks/createPool";
 import "./tasks/createStrategy";
 import "./tasks/fluxFeed";
+import "./tasks/pauseMarketMinting";
 
 dotEnvConfig();
 

@@ -1,6 +1,5 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
-  Avatar,
   Box,
   Button,
   Link as ChakraLink,
@@ -13,11 +12,10 @@ import {
   Text,
   Thead,
   Tr,
-  useColorMode,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -25,7 +23,7 @@ import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
-import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
@@ -33,6 +31,7 @@ import { FundOperationMode } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { convertMantissaToAPY } from '@ui/utils/apyUtils';
@@ -40,17 +39,19 @@ import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUt
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { URL_MIDAS_DOCS } from '@ui/utils/constants';
 
-export const SupplyList = ({
-  assets,
-  supplyBalanceNative,
-  comptrollerAddress,
-  rewards = [],
-}: {
-  assets: NativePricedFuseAsset[];
-  supplyBalanceNative: number;
+interface SupplyListProps {
+  assets: MarketData[];
+  supplyBalanceFiat: number;
   comptrollerAddress: string;
   rewards?: FlywheelMarketRewardsInfo[];
-}) => {
+}
+
+export const SupplyList = ({
+  assets,
+  supplyBalanceFiat,
+  comptrollerAddress,
+  rewards = [],
+}: SupplyListProps) => {
   const suppliedAssets = assets.filter((asset) => asset.supplyBalanceNative > 1);
   const nonSuppliedAssets = assets.filter(
     (asset) => asset.supplyBalanceNative < 1 && !asset.isSupplyPaused
@@ -68,7 +69,7 @@ export const SupplyList = ({
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
         >
-          Your Supply Balance: {smallUsdFormatter(supplyBalanceNative)}
+          Your Supply Balance: {smallUsdFormatter(supplyBalanceFiat)}
         </TableCaption>
         <Thead>
           {assets.length > 0 ? (
@@ -146,17 +147,18 @@ export const SupplyList = ({
   );
 };
 
+interface AssetSupplyRowProps {
+  assets: MarketData[];
+  index: number;
+  comptrollerAddress: string;
+  rewards: FlywheelMarketRewardsInfo[];
+}
 const AssetSupplyRow = ({
   assets,
   index,
   comptrollerAddress,
   rewards = [],
-}: {
-  assets: NativePricedFuseAsset[];
-  index: number;
-  comptrollerAddress: string;
-  rewards: FlywheelMarketRewardsInfo[];
-}) => {
+}: AssetSupplyRowProps) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const authedOpenModal = useAuthedCallback(openModal);
@@ -170,8 +172,6 @@ const AssetSupplyRow = ({
 
   const { cCard, cSwitch } = useColors();
   const isMobile = useIsMobile();
-
-  const { colorMode } = useColorMode();
 
   const rewardsOfThisMarket = useMemo(
     () => rewards.find((r) => r.market === asset.cToken),
@@ -242,17 +242,7 @@ const AssetSupplyRow = ({
       >
         <Td cursor={'pointer'} onClick={authedOpenModal} pr={0}>
           <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-            <Avatar
-              bg={'transparent'}
-              size="sm"
-              name={asset.underlyingSymbol}
-              src={
-                tokenData?.logoURL ||
-                (colorMode === 'light'
-                  ? '/images/help-circle-dark.svg'
-                  : '/images/help-circle-light.svg')
-              }
-            />
+            <CTokenIcon size="sm" address={asset.underlyingToken} />
             <VStack alignItems={'flex-start'} ml={2}>
               <Text fontWeight="bold" textAlign={'left'} fontSize={{ base: '2.8vw', sm: '0.9rem' }}>
                 {tokenData?.symbol ?? asset.underlyingSymbol}
@@ -370,7 +360,7 @@ const AssetSupplyRow = ({
         >
           <VStack alignItems="flex-end">
             <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
-              {smallUsdFormatter(asset.supplyBalanceNative)}
+              {smallUsdFormatter(asset.supplyBalanceFiat)}
             </Text>
             <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
               {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}{' '}

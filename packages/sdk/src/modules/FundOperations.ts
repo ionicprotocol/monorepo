@@ -32,26 +32,21 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
       cTokenAddress: string,
       underlyingTokenAddress: string,
       comptrollerAddress: string,
-      isNativeToken: boolean,
       enableAsCollateral: boolean,
       amount: BigNumber,
       options: { from: string }
     ) {
-      let tx: ContractTransaction;
+      const token = new Contract(
+        underlyingTokenAddress,
+        this.artifacts.EIP20Interface.abi,
+        this.provider.getSigner(options.from)
+      );
 
-      if (!isNativeToken) {
-        const token = new Contract(
-          underlyingTokenAddress,
-          this.artifacts.EIP20Interface.abi,
-          this.provider.getSigner(options.from)
-        );
-
-        const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
-        if (!hasApprovedEnough) {
-          const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-          const approveTx = await token.approve(cTokenAddress, max);
-          await approveTx.wait();
-        }
+      const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
+      if (!hasApprovedEnough) {
+        const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
+        const approveTx = await token.approve(cTokenAddress, max);
+        await approveTx.wait();
       }
       if (enableAsCollateral) {
         const comptrollerInstance = new Contract(
@@ -62,109 +57,57 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
 
         await comptrollerInstance.enterMarkets([cTokenAddress]);
       }
+      const cToken = new Contract(
+        cTokenAddress,
+        this.artifacts.CErc20Delegate.abi,
+        this.provider.getSigner(options.from)
+      ) as CErc20Delegate;
 
-      if (isNativeToken) {
-        const cToken = new Contract(
-          cTokenAddress,
-          this.artifacts.CEtherDelegate.abi,
-          this.provider.getSigner(options.from)
-        ) as CEtherDelegate;
-        const call = cToken.mint;
+      const response = (await cToken.callStatic.mint(amount)) as BigNumber;
 
-        if (amount.eq(await this.provider.getBalance(options.from))) {
-          const { gasWEI, gasPrice, estimatedGas } = await this.fetchGasForCall(amount, options.from);
-
-          tx = await call({
-            from: options.from,
-            value: amount.sub(gasWEI),
-            gasPrice,
-            gasLimit: estimatedGas,
-          });
-        } else {
-          tx = await call({ from: options.from, value: amount });
-        }
-      } else {
-        const cToken = new Contract(
-          cTokenAddress,
-          this.artifacts.CErc20Delegate.abi,
-          this.provider.getSigner(options.from)
-        ) as CErc20Delegate;
-
-        const response = (await cToken.callStatic.mint(amount)) as BigNumber;
-
-        if (response.toString() !== "0") {
-          const errorCode = parseInt(response.toString());
-          return { errorCode };
-        }
-
-        tx = await cToken.mint(amount);
+      if (response.toString() !== "0") {
+        const errorCode = parseInt(response.toString());
+        return { errorCode };
       }
 
+      const tx: ContractTransaction = await cToken.mint(amount);
       return { tx, errorCode: null };
     }
 
     async repay(
       cTokenAddress: string,
       underlyingTokenAddress: string,
-      isNativeToken: boolean,
       isRepayingMax: boolean,
       amount: BigNumber,
       options: { from: string }
     ) {
-      let tx: ContractTransaction;
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
 
-      if (!isNativeToken) {
-        const token = new Contract(
-          underlyingTokenAddress,
-          this.artifacts.EIP20Interface.abi,
-          this.provider.getSigner(options.from)
-        );
+      const token = new Contract(
+        underlyingTokenAddress,
+        this.artifacts.EIP20Interface.abi,
+        this.provider.getSigner(options.from)
+      );
 
-        const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
-        if (!hasApprovedEnough) {
-          const approveTx = await token.approve(cTokenAddress, max);
-          await approveTx.wait();
-        }
+      const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
+      if (!hasApprovedEnough) {
+        const approveTx = await token.approve(cTokenAddress, max);
+        await approveTx.wait();
+      }
+      const cToken = new Contract(
+        cTokenAddress,
+        this.artifacts.CErc20Delegate.abi,
+        this.provider.getSigner(options.from)
+      ) as CErc20Delegate;
+
+      const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
+
+      if (response.toString() !== "0") {
+        const errorCode = parseInt(response.toString());
+        return { errorCode };
       }
 
-      if (isNativeToken) {
-        const cToken = new Contract(
-          cTokenAddress,
-          this.artifacts.CEtherDelegate.abi,
-          this.provider.getSigner(options.from)
-        ) as CEtherDelegate;
-
-        const call = cToken.repayBorrow;
-
-        if (amount.eq(await this.provider.getBalance(options.from))) {
-          const { gasWEI, gasPrice, estimatedGas } = await this.fetchGasForCall(amount, options.from);
-
-          tx = await call({
-            from: options.from,
-            value: amount.sub(gasWEI),
-            gasPrice,
-            gasLimit: estimatedGas,
-          });
-        } else {
-          tx = await call({ from: options.from, value: amount });
-        }
-      } else {
-        const cToken = new Contract(
-          cTokenAddress,
-          this.artifacts.CErc20Delegate.abi,
-          this.provider.getSigner(options.from)
-        ) as CErc20Delegate;
-
-        const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
-
-        if (response.toString() !== "0") {
-          const errorCode = parseInt(response.toString());
-          return { errorCode };
-        }
-
-        tx = await cToken.repayBorrow(isRepayingMax ? max : amount);
-      }
+      const tx: ContractTransaction = await cToken.repayBorrow(isRepayingMax ? max : amount);
 
       return { tx, errorCode: null };
     }
