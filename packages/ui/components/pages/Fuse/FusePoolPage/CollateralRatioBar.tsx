@@ -8,16 +8,15 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Row } from '@ui/utils/chakraUtils';
 
-export const CollateralRatioBar = ({
-  assets,
-  borrowUSD,
-}: {
+interface CollateralRatioBarProps {
   assets: NativePricedFuseAsset[];
-  borrowUSD: number;
-}) => {
+  borrowFiat: number;
+}
+
+export const CollateralRatioBar = ({ assets, borrowFiat }: CollateralRatioBarProps) => {
   const maxBorrow = useBorrowLimit(assets);
 
-  const ratio = (borrowUSD / maxBorrow) * 100;
+  const ratio = (borrowFiat / maxBorrow) * 100;
 
   useEffect(() => {
     if (ratio > 95) {
@@ -36,7 +35,7 @@ export const CollateralRatioBar = ({
 
         <Tooltip label={'This is how much you have borrowed.'}>
           <Text flexShrink={0} mt="2px" mr={3} fontSize="10px">
-            {smallUsdFormatter(borrowUSD)}
+            {smallUsdFormatter(borrowFiat)}
           </Text>
         </Tooltip>
 

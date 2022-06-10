@@ -15,7 +15,6 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/sdk';
 import React, { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 
@@ -29,13 +28,14 @@ import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/usePoolIncentives';
 import { useColors } from '@ui/hooks/useColors';
+import { PoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 import { Center, Column } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const FlywheelEdit = ({ pool }: { pool: FusePoolData }) => {
+const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
   const { isOpen: isAddOpen, onOpen: openAdd, onClose: closeAdd } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: openEdit, onClose: closeEdit } = useDisclosure();
   const { isOpen: isCreateOpen, onOpen: openCreate, onClose: closeCreate } = useDisclosure();
@@ -147,7 +147,7 @@ const FlywheelRow = ({
   onClick,
 }: {
   flywheel: Flywheel;
-  pool: FusePoolData;
+  pool: PoolData;
   onClick: (fw: Flywheel) => void;
 }) => {
   const { data: accountData } = useAccount();
