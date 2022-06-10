@@ -7,23 +7,24 @@ import { FundOperationMode } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
-const useUpdatedUserAssets = ({
+interface UseUpdatedUserAssetsResult<T> {
+  mode: FundOperationMode;
+  assets: Array<T> | undefined;
+  index: number;
+  amount: BigNumber;
+}
+const useUpdatedUserAssets = <T extends NativePricedFuseAsset>({
   mode,
   index,
   assets,
   amount,
-}: {
-  mode: FundOperationMode;
-  assets: NativePricedFuseAsset[] | undefined;
-  index: number;
-  amount: BigNumber;
-}) => {
+}: UseUpdatedUserAssetsResult<T>) => {
   const { fuse, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const { data: updatedAssets }: UseQueryResult<NativePricedFuseAsset[]> = useQuery(
     [
-      'UpdatedUserAssets',
+      'useUpdatedUserAssets',
       currentChain.id,
       mode,
       index,
@@ -51,8 +52,7 @@ const useUpdatedUserAssets = ({
 
           supplyBalanceNative:
             Number(utils.formatUnits(supplyBalance, 18)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)) *
-            usdPrice,
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
 
           totalSupply,
           supplyRatePerBlock: interestRateModel.getSupplyRate(

@@ -37,14 +37,23 @@ import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { AmountProps } from '@ui/types/ComponentPropsType';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
+interface AmountSelectProps {
+  assets: MarketData[];
+  comptrollerAddress: string;
+  index: number;
+  isBorrowPaused?: boolean;
+  mode: FundOperationMode;
+  onClose: () => void;
+  setMode: (mode: FundOperationMode) => void;
+}
 const AmountSelect = ({
   assets,
   comptrollerAddress,
@@ -53,7 +62,7 @@ const AmountSelect = ({
   mode,
   onClose,
   setMode,
-}: AmountProps) => {
+}: AmountSelectProps) => {
   const asset = assets[index];
 
   const { fuse, setPendingTxHash, address } = useRari();
@@ -465,19 +474,14 @@ const TabBar = ({
   );
 };
 
-const StatsColumn = ({
-  mode,
-  assets,
-  index,
-  amount,
-  enableAsCollateral,
-}: {
+interface StatsColumnProps {
   mode: FundOperationMode;
-  assets: NativePricedFuseAsset[];
+  assets: MarketData[];
   index: number;
   amount: BigNumber;
   enableAsCollateral: boolean;
-}) => {
+}
+const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsColumnProps) => {
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
   const updatedAssets: NativePricedFuseAsset[] | undefined = useUpdatedUserAssets({
     mode,
