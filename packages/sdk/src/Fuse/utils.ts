@@ -1,10 +1,10 @@
 import Filter from "bad-words";
 import { Contract, ContractFactory, Signer, utils } from "ethers";
 
-import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import ComptrollerArtifact from "../../lib/contracts/out/Comptroller.sol/Comptroller.json";
 import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 
 export function filterOnlyObjectProperties(obj: any) {
   return Object.fromEntries(Object.entries(obj).filter(([k]) => isNaN(k as any))) as any;

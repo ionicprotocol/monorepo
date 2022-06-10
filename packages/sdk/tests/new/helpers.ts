@@ -14,6 +14,6 @@ export const mkAddress = (prefix = "0x0"): string => {
  * @param prefix - (optional) Prefix of the hex string to pad
  * @returns 32-byte hex string
  */
- export const mkBytes32 = (prefix = "0xa"): string => {
+export const mkBytes32 = (prefix = "0xa"): string => {
   return prefix.padEnd(66, "0");
 };
