@@ -45,8 +45,9 @@ jobs:
         run: yarn workspace @midas-capital/ui lint
 
   deploy:
-    needs: [build]
     runs-on: ubuntu-latest
+    needs: [build]
+    if: github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
     steps:
