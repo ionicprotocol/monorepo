@@ -36,19 +36,14 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Build `typechain`
-        run: yarn build:typechain
-
-      - name: Build `sdk`
-        run: yarn build:sdk
+      - name: Build `ui`
+        run: yarn build:deploy:ui
 
       - name: Lint `ui`
         run: yarn workspace @midas-capital/ui lint
 
-      - name: Build `ui`
-        run: yarn build:ui
-
   deploy:
+    needs: [build]
     runs-on: ubuntu-latest
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
@@ -78,8 +73,7 @@ jobs:
         run: npm intall -g netlify-cli
 
       - name: Link with project
-        run: |
-          netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
+        run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
 
       - name: Deploy with Netlify
         if: github.ref == 'refs/heads/development'
