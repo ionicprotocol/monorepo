@@ -8,9 +8,9 @@ export const useExtraPoolInfo = (comptrollerAddress: string) => {
   const { data } = useQuery(['ExtraPoolInfo', currentChain.id, comptrollerAddress], async () => {
     if (comptrollerAddress) {
       const comptroller = fuse.createComptroller(comptrollerAddress);
+      const oracle = fuse.getPriceOracle(await comptroller.callStatic.oracle());
       const [
         { 0: admin, 1: upgradeable },
-        oracle,
         closeFactor,
         liquidationIncentive,
         enforceWhitelist,
@@ -18,7 +18,6 @@ export const useExtraPoolInfo = (comptrollerAddress: string) => {
         pendingAdmin,
       ] = await Promise.all([
         fuse.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
-        fuse.getPriceOracle(await comptroller.callStatic.oracle()),
 
         comptroller.callStatic.closeFactorMantissa(),
 
@@ -41,6 +40,7 @@ export const useExtraPoolInfo = (comptrollerAddress: string) => {
 
         comptroller.callStatic.pendingAdmin(),
       ]);
+
       return {
         admin,
         upgradeable,

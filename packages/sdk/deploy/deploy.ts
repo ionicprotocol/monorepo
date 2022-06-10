@@ -3,7 +3,7 @@ import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
-import { deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
+import { configureFuseSafeLiquidator, deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -324,7 +324,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     run,
     ethers,
     getNamedAccounts,
-    chainId,
     deployments,
     deployConfig: chainDeployParams,
   });
@@ -338,8 +337,17 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
   ////
 
-  /// EXTERNAL ADDRESSES
+  //// Configure Liquidator
+  await configureFuseSafeLiquidator({
+    ethers,
+    getNamedAccounts,
+    chainId,
+  });
+  ///
+
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+
+  /// EXTERNAL ADDRESSES
   tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
   await tx.wait();
   console.log("setAddress: ", tx.hash);

@@ -59,7 +59,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols["BUSD-USDT"],
-    underlying: "0xAE4C99935B1AA0e76900e86cD155BFA63aB77A2a",
+    underlying: "0x5126C1B8b4368c6F07292932451230Ba53a6eB7A",
     name: "WBNB-DAI PCS LP",
     decimals: 18,
   },

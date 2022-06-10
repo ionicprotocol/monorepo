@@ -3,12 +3,11 @@ import { constants } from "ethers";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain";
 import { chainRedemptionStrategies } from "../../src/chainConfig";
 
-import { LiquidatorDeployFnParams } from "./types";
+import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "./types";
 
 export const deployFuseSafeLiquidator = async ({
   ethers,
   getNamedAccounts,
-  chainId,
   deployments,
   deployConfig,
 }: LiquidatorDeployFnParams): Promise<void> => {
@@ -35,15 +34,26 @@ export const deployFuseSafeLiquidator = async ({
   });
   if (fsl.transactionHash) await ethers.provider.waitForTransaction(fsl.transactionHash);
   console.log("FuseSafeLiquidator: ", fsl.address);
+};
+
+export const configureFuseSafeLiquidator = async ({
+  ethers,
+  getNamedAccounts,
+  chainId,
+}: LiquidatorConfigFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
 
   const strategies: string[] = [];
   const arrayOfTrue: boolean[] = [];
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
   for (const address in chainRedemptionStrategies[chainId]) {
-    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(address);
+    const redemptionStrategyType = chainRedemptionStrategies[chainId][address];
+    const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
+
+    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);
     if (!whitelistedAlready) {
-      strategies.push(address);
+      strategies.push(redemptionStrategy.address);
       arrayOfTrue.push(true);
     }
   }
