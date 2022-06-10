@@ -1,4 +1,4 @@
-name: UI/PR - build, lint and test
+name: UI/PR - build, lint, test & deploy UI
 
 on:
   pull_request:
@@ -47,3 +47,44 @@ jobs:
 
       - name: Build `ui`
         run: yarn build:ui
+
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: '${{ secrets.ACCESS_TOKEN }}'
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install `foundry`
+        uses: onbjerg/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Install Netlify CLI
+        run: npm intall -g netlify-cli
+
+      - name: Link with project
+        run: |
+          netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Deploy with Netlify
+        if: github.ref == 'refs/heads/development'
+        run: netlify deploy --branch development --prod --build
+
+      - name: Deploy with Netlify
+        if: github.ref == 'refs/heads/main'
+        run: netlify deploy --prod --build
