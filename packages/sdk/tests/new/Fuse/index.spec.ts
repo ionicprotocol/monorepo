@@ -1,15 +1,14 @@
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
-import { createStubInstance, stub, SinonStubbedInstance, SinonStub } from "sinon";
+import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
+import { Comptroller, FusePoolDirectory, Unitroller } from "../../../lib/contracts/typechain";
 import { SupportedChains } from "../../../src/enums";
 import { FuseBase } from "../../../src/Fuse/index";
 import * as utilsFns from "../../../src/Fuse/utils";
-import { Comptroller, FusePoolDirectory, Unitroller } from "../../../lib/contracts/typechain";
-
-import { mkAddress } from "../helpers";
 import { expect } from "../globalTestHook";
+import { mkAddress } from "../helpers";
 
-let mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [constants.Two] }] as any, blockNumber: 1 };
+const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [constants.Two] }] as any, blockNumber: 1 };
 
 describe("Fuse Index", () => {
   let fuseBase: FuseBase;
