@@ -2420,13 +2420,13 @@ __metadata:
     "@ethersproject/providers": ^5.6.8
     "@midas-capital/sdk": "workspace:*"
     "@netlify/plugin-nextjs": latest
-    "@testing-library/react": ^13.2.0
-    "@types/node": 17.0.35
-    "@types/react": ^18.0.9
+    "@testing-library/react": ^13.3.0
+    "@types/node": 17.0.38
+    "@types/react": ^18.0.10
     "@types/react-datepicker": ^4.4.1
     "@types/react-dom": ^18.0.5
-    "@typescript-eslint/eslint-plugin": ^5.26.0
-    "@typescript-eslint/parser": ^5.26.0
+    "@typescript-eslint/eslint-plugin": ^5.27.0
+    "@typescript-eslint/parser": ^5.27.0
     apexcharts: ^3.35.3
     axios: ^0.27.2
     eslint: 8.16.0
@@ -2437,10 +2437,10 @@ __metadata:
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-react: ^7.30.0
     ethers: ^5.6.8
-    framer-motion: ^6.3.4
+    framer-motion: ^6.3.6
     fuse.js: ^6.6.2
     logrocket: ^3.0.0
-    mathjs: ^10.6.0
+    mathjs: ^10.6.1
     next: ^12.1.6
     next-i18next: ^11.0.0
     node-vibrant: ^3.1.6
@@ -2451,11 +2451,11 @@ __metadata:
     react-dom: ^18.1.0
     react-error-boundary: ^3.1.4
     react-i18next: ^11.16.9
-    react-icons: ^4.3.1
+    react-icons: ^4.4.0
     react-jazzicon: ^1.0.3
-    react-query: ^3.39.0
+    react-query: ^3.39.1
     typescript: 4.7.2
-    wagmi: ^0.4.3
+    wagmi: ^0.4.6
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -3064,7 +3064,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@testing-library/react@npm:^13.2.0":
+"@testing-library/react@npm:^13.3.0":
   version: 13.3.0
   resolution: "@testing-library/react@npm:13.3.0"
   dependencies:
@@ -3378,10 +3378,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:17.0.35":
-  version: 17.0.35
-  resolution: "@types/node@npm:17.0.35"
-  checksum: 7a24946ae7fd20267ed92466384f594e448bfb151081158d565cc635d406ecb29ea8fb85fcd2a1f71efccf26fb5bd3c6f509bde56077eb8b832b847a6664bc62
+"@types/node@npm:17.0.38":
+  version: 17.0.38
+  resolution: "@types/node@npm:17.0.38"
+  checksum: 9db1c39d603850ced665ab60b8f8ebce674ff9d762dfff0f776d520e71e4d73fdcd4c7f69213b804d878cf3e726911b09cae4ee66e35ae2724538de9f4838681
   languageName: node
   linkType: hard
 
@@ -3562,7 +3562,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.26.0":
+"@typescript-eslint/eslint-plugin@npm:^5.10.1, @typescript-eslint/eslint-plugin@npm:^5.27.0":
   version: 5.27.1
   resolution: "@typescript-eslint/eslint-plugin@npm:5.27.1"
   dependencies:
@@ -3585,7 +3585,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.26.0":
+"@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.22.0, @typescript-eslint/parser@npm:^5.27.0":
   version: 5.27.1
   resolution: "@typescript-eslint/parser@npm:5.27.1"
   dependencies:
@@ -9333,7 +9333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^6.3.11, framer-motion@npm:^6.3.4":
+"framer-motion@npm:^6.3.11, framer-motion@npm:^6.3.6":
   version: 6.3.11
   resolution: "framer-motion@npm:6.3.11"
   dependencies:
@@ -12456,7 +12456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mathjs@npm:^10.6.0":
+"mathjs@npm:^10.6.1":
   version: 10.6.1
   resolution: "mathjs@npm:10.6.1"
   dependencies:
@@ -13041,8 +13041,8 @@ __metadata:
     "@istanbuljs/nyc-config-typescript": ^1.0.2
     "@resolver-engine/core": ^0.3.3
     "@tsconfig/recommended": ^1.0.1
-    "@typescript-eslint/eslint-plugin": ^5.26.0
-    "@typescript-eslint/parser": ^5.26.0
+    "@typescript-eslint/eslint-plugin": ^5.27.0
+    "@typescript-eslint/parser": ^5.27.0
     ts-node: ^10.8.0
     typescript: ^4.7.2
   languageName: unknown
@@ -15027,7 +15027,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-icons@npm:^4.3.1":
+"react-icons@npm:^4.4.0":
   version: 4.4.0
   resolution: "react-icons@npm:4.4.0"
   peerDependencies:
@@ -15085,7 +15085,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-query@npm:^3.39.0":
+"react-query@npm:^3.39.1":
   version: 3.39.1
   resolution: "react-query@npm:3.39.1"
   dependencies:
@@ -18117,7 +18117,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.4.3":
+"wagmi@npm:^0.4.6":
   version: 0.4.11
   resolution: "wagmi@npm:0.4.11"
   dependencies:

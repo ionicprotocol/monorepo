@@ -1,5 +1,5 @@
 import { SupportedChains } from "../../src";
-import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
@@ -11,7 +11,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
   nativeTokenName: "EMVOS",
   nativeTokenSymbol: "PHO",
-  blocksPerYear: 8.6 * 24 * 365 * 60,
+  blocksPerYear: chainSpecificParams[SupportedChains.evmos].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute,
   stableToken: "",
   wBTCToken: "",
   uniswap: {

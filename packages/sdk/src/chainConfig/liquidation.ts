@@ -13,6 +13,7 @@ import {
   ganacheAssets,
   moonbaseAlphaAssets,
   moonbeamAssets,
+  neonDevnetAssets,
 } from "./assets";
 
 const liquidationDefaults: ChainLiquidationDefaults = {
@@ -20,9 +21,6 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
       bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
@@ -112,6 +110,18 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
       ganacheAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!.underlying,
+    ],
+    LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
+    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+  },
+  [SupportedChains.neon_devnet]: {
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),

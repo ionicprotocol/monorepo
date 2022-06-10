@@ -10,9 +10,10 @@ import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.bsc];
+const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
+  wtoken: wbnb,
   nativeTokenUsdChainlinkFeed: "0x0567F2323251f0Aab15c8dFb1967E4e8A7D42aeE",
   nativeTokenName: "Binance Network Token",
   nativeTokenSymbol: "BNB",
@@ -122,50 +123,71 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "AlpacaERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying, // WBNB
-      otherParams: ["0xd7D069493685A581d27824Fc46EdA46B7EfC0063"], // ibWBNB
+      underlying: wbnb, // WBNB
+      otherParams: [
+        "0xd7D069493685A581d27824Fc46EdA46B7EfC0063", // ibWBNB
+        wbnb,
+      ],
       name: "WBNB",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.ETH)!.underlying, // ETH
-      otherParams: ["0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE"], // ibETH
+      otherParams: [
+        "0xbfF4a34A4644a113E8200D7F1D79b3555f723AfE", // ibETH
+        wbnb,
+      ],
       name: "ETH",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying, // BUSD
-      otherParams: ["0x7C9e73d4C71dae564d41F78d56439bB4ba87592f"], // ibBUSD
+      otherParams: [
+        "0x7C9e73d4C71dae564d41F78d56439bB4ba87592f", // ibBUSD
+        wbnb,
+      ],
       name: "BUSD",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying, // USDT
-      otherParams: ["0x158Da805682BdC8ee32d52833aD41E74bb951E59"], // ibUSDT
+      otherParams: [
+        "0x158Da805682BdC8ee32d52833aD41E74bb951E59", // ibUSDT
+        wbnb,
+      ],
       name: "USDT",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying, // USDC
-      otherParams: ["0x800933D685E7Dc753758cEb77C8bd34aBF1E26d7"], // ibUSDC
+      otherParams: [
+        "0x800933D685E7Dc753758cEb77C8bd34aBF1E26d7", // ibUSDC
+        wbnb,
+      ],
       name: "USDC",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.TUSD)!.underlying, // TUSD
-      otherParams: ["0x3282d2a151ca00BfE7ed17Aa16E42880248CD3Cd"], // ibTUSD
+      otherParams: [
+        "0x3282d2a151ca00BfE7ed17Aa16E42880248CD3Cd", // ibTUSD
+        wbnb,
+      ],
       name: "TUSD",
     },
     {
       // 0x
       strategy: "AlpacaERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying, // TUSD
-      otherParams: ["0x08FC9Ba2cAc74742177e0afC3dC8Aed6961c24e7"], // ibBTCB
+      underlying: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying, // BTCB
+      otherParams: [
+        "0x08FC9Ba2cAc74742177e0afC3dC8Aed6961c24e7", // ibBTCB
+        wbnb,
+      ],
       name: "BTCB",
     },
   ],

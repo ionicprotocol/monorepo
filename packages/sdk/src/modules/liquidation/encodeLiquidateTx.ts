@@ -15,7 +15,13 @@ export default async function encodeLiquidateTx(
   liquidationAmount: BigNumber,
   minProfitAmountScaled: BigNumber
 ): Promise<EncodedLiquidationTx> {
-  logLiquidation(borrower, exchangeToTokenAddress, liquidationAmount, borrower.debt[0].underlyingSymbol);
+  logLiquidation(
+    borrower,
+    exchangeToTokenAddress,
+    liquidationAmount,
+    borrower.debt[0].underlyingSymbol,
+    liquidationKind
+  );
 
   switch (liquidationKind) {
     case LiquidationKind.DEFAULT_NATIVE_BORROW:
