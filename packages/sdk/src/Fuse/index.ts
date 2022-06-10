@@ -271,7 +271,7 @@ export class FuseBase {
       // Whitelist
       console.log("enforceWhitelist: ", enforceWhitelist);
       if (enforceWhitelist) {
-        let comptroller = getPoolComptroller(poolAddress, this.provider.getSigner(options.from));
+        const comptroller = getPoolComptroller(poolAddress, this.provider.getSigner(options.from));
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
