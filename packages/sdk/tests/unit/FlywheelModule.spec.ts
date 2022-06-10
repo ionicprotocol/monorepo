@@ -26,7 +26,7 @@ describe("FlywheelModule", function () {
 
   let chainId: number;
 
-  this.beforeEach(async () => {
+  beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
     weth = (await ethers.getContract("WETH")) as WETH;
@@ -66,7 +66,7 @@ describe("FlywheelModule", function () {
     await wrapNativeToken({ account: "deployer", amount: "500", weth: weth.address });
   });
 
-  it("1 Pool, 1 Flywheel, FlywheelStaticRewards", async function () {
+  it.only("1 Pool, 1 Flywheel, FlywheelStaticRewards", async function () {
     const { deployer, alice } = await ethers.getNamedSigners();
     const rewardToken = erc20OneUnderlying;
     const market = erc20OneCToken;
