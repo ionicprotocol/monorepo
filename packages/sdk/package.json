@@ -16,8 +16,8 @@
     "deployments.json"
   ],
   "scripts": {
-    "build": "npm run build:forge; npm run typechain && npm run build:sdk",
-    "build:forge": "cd lib/contracts && forge build",
+    "build": "npm run build:forge && npm run typechain && npm run build:sdk",
+    "build:forge": "cd lib/contracts && forge install && forge build",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
     "build:cjs": "tsc -p tsconfig-cjs.json",
