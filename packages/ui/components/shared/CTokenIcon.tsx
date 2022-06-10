@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import React from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useRari } from '@ui/context/RariContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 export const CTokenIcon = ({
@@ -16,6 +17,8 @@ export const CTokenIcon = ({
   withTooltip?: boolean;
   withMotion?: boolean;
 } & Partial<AvatarProps>) => {
+  const { addressIcons } = useRari();
+
   const { data: tokenData } = useTokenData(address);
   const { colorMode } = useColorMode();
   return (
@@ -26,6 +29,9 @@ export const CTokenIcon = ({
           name={tokenData?.symbol ?? 'Loading...'}
           src={
             tokenData?.logoURL ||
+            `${process.env.ICON_SERVER}/token/${addressIcons[
+              address.toLowerCase()
+            ].toLowerCase()}.png` ||
             (colorMode === 'light'
               ? '/images/help-circle-dark.svg'
               : '/images/help-circle-light.svg')

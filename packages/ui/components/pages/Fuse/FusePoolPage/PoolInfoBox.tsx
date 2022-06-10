@@ -111,9 +111,9 @@ const OracleAndInterestRates = ({
   poolData: ReturnType<typeof useFusePoolData>['data'];
 }) => {
   const assets = poolData?.assets ?? [];
-  const totalSuppliedNative = poolData?.totalSuppliedNative ?? 0;
-  const totalBorrowedNative = poolData?.totalBorrowedNative ?? 0;
-  const totalLiquidityNative = poolData?.totalLiquidityNative ?? 0;
+  const totalSuppliedFiat = poolData?.totalSuppliedFiat ?? 0;
+  const totalBorrowedFiat = poolData?.totalBorrowedFiat ?? 0;
+  const totalLiquidityFiat = poolData?.totalLiquidityFiat ?? 0;
   const comptrollerAddress = poolData?.comptroller ?? '';
 
   const { cCard } = useColors();
@@ -171,18 +171,18 @@ const OracleAndInterestRates = ({
           <Tbody>
             <StatRow
               statATitle={'Total Supplied'}
-              statA={shortUsdFormatter(totalSuppliedNative)}
+              statA={shortUsdFormatter(totalSuppliedFiat)}
               statBTitle={'Total Borrowed'}
-              statB={shortUsdFormatter(totalBorrowedNative)}
+              statB={shortUsdFormatter(totalBorrowedFiat)}
             />
             <StatRow
               statATitle={'Available Liquidity'}
-              statA={shortUsdFormatter(totalLiquidityNative)}
+              statA={shortUsdFormatter(totalLiquidityFiat)}
               statBTitle={'Pool Utilization'}
               statB={
-                totalSuppliedNative.toString() === '0'
+                totalSuppliedFiat.toString() === '0'
                   ? '0%'
-                  : (totalBorrowedNative / totalSuppliedNative / 100).toFixed(2) + '%'
+                  : (totalBorrowedFiat / totalSuppliedFiat / 100).toFixed(2) + '%'
               }
             />
             <StatRow
@@ -225,7 +225,7 @@ const OracleAndInterestRates = ({
             />
             <StatRow
               statATitle={'Oracle'}
-              statA={data ? data.oracle ?? 'Unrecognized Oracle' : '?'}
+              statA={data ? data.oracle : '?'}
               statBTitle={'Whitelist'}
               statB={data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
             />

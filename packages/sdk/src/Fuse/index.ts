@@ -25,6 +25,9 @@ import SimplePriceOracleArtifact from "../../lib/contracts/out/SimplePriceOracle
 import UniswapTwapPriceOracleV2Artifact from "../../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
+import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
@@ -42,7 +45,7 @@ import {
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
-import { RedemptionStrategy, SupportedChains } from "../enums";
+import { DelegateContractName, RedemptionStrategy, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
 import { withCreateContracts } from "../modules/CreateContracts";
 import { withFlywheel } from "../modules/Flywheel";
@@ -377,14 +380,14 @@ export class FuseBase {
     return interestRateModel;
   }
 
-  async getPriceOracle(oracleAddress: string): Promise<string | null> {
-    // Get price oracle contract name from runtime bytecode hash
-    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(oracleAddress));
-    for (const [name, oracle] of Object.entries(this.oracles)) {
-      const value = utils.keccak256(oracle.artifact.deployedBytecode.object);
-      if (runtimeBytecodeHash === value) return name;
+  getPriceOracle(oracleAddress: string): string {
+    let oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+
+    if (!oracle) {
+      oracle = "Unrecognized Oracle";
     }
-    return null;
+
+    return oracle;
   }
 
   async checkCardinality(uniswapV3Pool: string) {
@@ -408,12 +411,24 @@ export class FuseBase {
     return irmName;
   };
 
-  getComptrollerInstance(comptrollerAddress: string, options: { from: string }) {
+  getComptrollerInstance(address: string, options: { from: string }) {
+    return new Contract(address, this.artifacts.Comptroller.abi, this.provider.getSigner(options.from)) as Comptroller;
+  }
+
+  getCTokenInstance(address: string) {
     return new Contract(
-      comptrollerAddress,
-      this.artifacts.Comptroller.abi,
-      this.provider.getSigner(options.from)
-    ) as Comptroller;
+      address,
+      this.chainDeployment[DelegateContractName.CErc20Delegate].abi,
+      this.provider.getSigner()
+    ) as CErc20Delegate;
+  }
+
+  getCErc20PluginRewardsInstance(address: string) {
+    return new Contract(
+      address,
+      this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
+      this.provider.getSigner()
+    ) as CErc20PluginRewardsDelegate;
   }
 }
 
