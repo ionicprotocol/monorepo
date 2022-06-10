@@ -17,3 +17,11 @@ export enum FundOperationMode {
   BORROW,
   REPAY,
 }
+export const URL_MIDAS_DOCS = 'https://docs.midascapital.xyz/';
+
+export default {
+  UserAction,
+  FusePoolMetric,
+  FundOperationMode,
+  URL_MIDAS_DOCS,
+};
