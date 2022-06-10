@@ -5,11 +5,13 @@ on:
     branches: [main, staging, development]
     paths:
       - 'packages/ui/**'
+      - 'packages/sdk/**'
       - 'yarn.lock'
   push:
     branches: [main, staging, development]
     paths:
       - 'packages/ui/**'
+      - 'packages/sdk/**'
       - 'yarn.lock'
 jobs:
   build:
