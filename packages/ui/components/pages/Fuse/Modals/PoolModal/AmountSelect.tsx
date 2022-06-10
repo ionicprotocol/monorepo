@@ -603,11 +603,11 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
             <Text fontWeight="bold">Debt Balance:</Text>
             <Text fontWeight="bold" fontSize={!isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
-              {smallUsdFormatter(asset.borrowBalanceNative)}
+              {smallUsdFormatter(asset.borrowBalanceFiat)}
               {!isSupplyingOrWithdrawing ? (
                 <>
                   {' → '}
-                  {smallUsdFormatter(updatedBorrowLimit)}
+                  {smallUsdFormatter(updatedAsset.borrowBalanceNative)}
                 </>
               ) : null}
             </Text>
