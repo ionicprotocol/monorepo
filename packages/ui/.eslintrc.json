@@ -4,6 +4,7 @@
     "es2021": true
   },
   "extends": [
+    "../../.eslintrc.json",
     "plugin:@typescript-eslint/recommended",
     "next",
     "next/core-web-vitals",
@@ -31,17 +32,20 @@
   "rules": {
     "prettier/prettier": ["error", {}, { "usePrettierrc": true }],
     "import/order": [
-      "warn",
+      "error",
       {
         "alphabetize": { "order": "asc", "caseInsensitive": true },
         "newlines-between": "always"
       }
     ],
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "error",
+    "@typescript-eslint/no-unused-vars": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/display-name": "off",
     "react/prop-types": "off",
-    "@typescript-eslint/ban-ts-comment": "off",
     "sort-imports": [
-      "warn",
+      "error",
       {
         "ignoreCase": true,
         "ignoreDeclarationSort": true,

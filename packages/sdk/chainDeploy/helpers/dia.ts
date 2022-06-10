@@ -1,5 +1,7 @@
 import { constants, providers } from "ethers";
+
 import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol";
+
 import { DiaDeployFnParams } from "./types";
 
 export const deployDiaOracle = async ({

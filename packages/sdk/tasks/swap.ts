@@ -1,6 +1,6 @@
-import { task, types } from "hardhat/config";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
+import { task, types } from "hardhat/config";
 
 export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
   .addParam("token", "token address", undefined, types.string)
@@ -16,7 +16,7 @@ export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
     if (_account === "whale") {
       const signers = await ethers.getSigners();
       let max = BigNumber.from(0);
-      for (let signer of signers) {
+      for (const signer of signers) {
         const bal = await signer.getBalance();
         if (bal.gt(max)) {
           account = signer;
@@ -74,7 +74,7 @@ task("swap-token-for-wtoken", "Swap token for WNATIVE")
     if (_account === "whale") {
       const signers = await ethers.getSigners();
       let max = BigNumber.from(0);
-      for (let signer of signers) {
+      for (const signer of signers) {
         const bal = await token.balanceOf(signer.address);
         if (bal.gt(max)) {
           account = signer;
@@ -127,7 +127,7 @@ task("swap-token-for-token", "Swap token for token")
     if (_account === "whale") {
       const signers = await ethers.getSigners();
       let max = BigNumber.from(0);
-      for (let signer of signers) {
+      for (const signer of signers) {
         const bal = await token1.balanceOf(signer.address);
         if (bal.gt(max)) {
           account = signer;
@@ -208,8 +208,7 @@ task("wrap-native-token", "Get token pair address")
       ],
       account
     );
-    let tx;
-    tx = await wnative.approve(account.address, ethers.constants.MaxInt256);
+    const tx = await wnative.approve(account.address, ethers.constants.MaxInt256);
     await tx.wait();
     await wnative.deposit({ value: ethers.utils.parseEther(_amount) });
     await tx.wait();

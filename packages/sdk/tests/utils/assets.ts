@@ -1,8 +1,10 @@
-import { cERC20Conf, DelegateContractName } from "../../src";
-import { getOrCreateFuse } from "./fuseSdk";
-import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
-import { assetSymbols } from "../../src/chainConfig";
 import { ethers } from "hardhat";
+
+import { cERC20Conf, DelegateContractName } from "../../src";
+import { assetSymbols } from "../../src/chainConfig";
+import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
+
+import { getOrCreateFuse } from "./fuseSdk";
 
 export enum BSC_POOLS {
   JARVIS = "JARVIS",

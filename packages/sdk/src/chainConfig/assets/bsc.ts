@@ -1,4 +1,5 @@
 import { SupportedAsset } from "../../types";
+
 import { assetSymbols } from "./index";
 
 export const assets: SupportedAsset[] = [
@@ -127,12 +128,12 @@ export const assets: SupportedAsset[] = [
     name: "Ellipsis.finance DAI/3EPS",
     decimals: 18,
   },
-  // {
-  //   symbol: assetSymbols.ust3EPS,
-  //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba",
-  //   name: "Ellipsis.finance UST/3EPS",
-  //   decimals: 18,
-  // },
+  {
+    symbol: assetSymbols["2brl"],
+    underlying: "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9",
+    name: "Ellipsis.finance 2BRL",
+    decimals: 18,
+  },
   // Bomb
   {
     symbol: assetSymbols.BOMB,
@@ -157,6 +158,12 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.jBRL,
     underlying: "0x316622977073BBC3dF32E7d2A9B3c77596a0a603",
     name: "Jarvis Synthetic Brazilian Real",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols.BRZ,
+    underlying: "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb",
+    name: "BRZ Token",
     decimals: 18,
   },
   {

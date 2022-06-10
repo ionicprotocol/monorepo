@@ -1,4 +1,5 @@
 import { BigNumber, constants, Contract, ContractFactory } from "ethers";
+
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
 import { FuseFlywheelCore__factory } from "../../lib/contracts/typechain/factories/FuseFlywheelCore__factory";
 import { FlywheelCore } from "../../lib/contracts/typechain/FlywheelCore";

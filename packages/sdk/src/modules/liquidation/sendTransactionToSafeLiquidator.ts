@@ -1,7 +1,9 @@
-import { BigNumber, Wallet } from "ethers";
-import { fetchGasLimitForTransaction } from "./utils";
 import { TransactionRequest } from "@ethersproject/providers";
+import { BigNumber, Wallet } from "ethers";
+
 import { FuseBase } from "../../Fuse";
+
+import { fetchGasLimitForTransaction } from "./utils";
 
 export default async function sendTransactionToSafeLiquidator(
   fuse: FuseBase,
@@ -10,7 +12,7 @@ export default async function sendTransactionToSafeLiquidator(
   value: number | BigNumber
 ) {
   // Build data
-  let data = fuse.contracts.FuseSafeLiquidator.interface.encodeFunctionData(method, params);
+  const data = fuse.contracts.FuseSafeLiquidator.interface.encodeFunctionData(method, params);
   const txCount = await fuse.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
 
