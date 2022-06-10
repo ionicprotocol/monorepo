@@ -70,6 +70,7 @@ import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF }
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
+import { getComptrollerFactory, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 type OracleConfig = {
   [contractName: string]: {
