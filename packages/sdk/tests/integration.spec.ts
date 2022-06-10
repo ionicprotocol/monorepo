@@ -127,14 +127,7 @@ describe.skip("#safeLiquidateWithFlashLoan", () => {
     tx = await simpleOracle.setDirectPrice(erc20One.underlying, erc20OneOriginalUnderlyingPrice.mul(6).div(10));
     await tx.wait();
 
-    await liquidateAndVerify(
-      poolName,
-      poolAddress,
-      "alice",
-      liquidator,
-      liquidationConfigOverrides,
-      erc20OneUnderlying.balanceOf
-    );
+    await liquidateAndVerify(erc20OneUnderlying, poolName, poolAddress, "alice", liquidator);
 
     // Set price of tokenOne collateral back to what it was
     tx = await simpleOracle.setDirectPrice(erc20One.underlying, erc20OneOriginalUnderlyingPrice);
@@ -162,14 +155,7 @@ describe.skip("#safeLiquidateWithFlashLoan", () => {
     // tx = await simpleOracle.setDirectPrice(deployedErc20One.underlying, BigNumber.from(originalPrice).mul(10).div(6));
     await tx.wait();
 
-    await liquidateAndVerify(
-      poolName,
-      poolAddress,
-      "bob",
-      liquidator,
-      liquidationConfigOverrides,
-      ethers.provider.getBalance
-    );
+    await liquidateAndVerify(erc20OneUnderlying, poolName, poolAddress, "bob", liquidator);
 
     // Set price of tokenOne collateral back to what it was
     tx = await simpleOracle.setDirectPrice(erc20One.underlying, erc20OneOriginalUnderlyingPrice);
@@ -206,14 +192,7 @@ describe.skip("#safeLiquidateWithFlashLoan", () => {
     );
     await tx.wait();
 
-    await liquidateAndVerify(
-      poolName,
-      poolAddress,
-      "bob",
-      liquidator,
-      liquidationConfigOverrides,
-      erc20TwoUnderlying.balanceOf
-    );
+    await liquidateAndVerify(erc20TwoUnderlying, poolName, poolAddress, "bob", liquidator);
 
     tx = await simpleOracle.setDirectPrice(deployedErc20One.underlying, erc20OneOriginalUnderlyingPrice);
   });

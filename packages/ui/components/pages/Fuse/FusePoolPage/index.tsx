@@ -166,7 +166,7 @@ const FusePoolPage = memo(() => {
                 <BorrowList
                   comptrollerAddress={data.comptroller}
                   assets={data.assets}
-                  borrowBalanceNative={data.totalBorrowBalanceNative}
+                  borrowBalanceFiat={data.totalBorrowBalanceFiat}
                 />
               ) : (
                 <TableSkeleton tableHeading="Your Borrow Balance" />
