@@ -15,7 +15,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -31,6 +31,7 @@ import { FundOperationMode } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { convertMantissaToAPY } from '@ui/utils/apyUtils';
@@ -39,7 +40,7 @@ import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { URL_MIDAS_DOCS } from '@ui/utils/constants';
 
 interface SupplyListProps {
-  assets: NativePricedFuseAsset[];
+  assets: MarketData[];
   supplyBalanceFiat: number;
   comptrollerAddress: string;
   rewards?: FlywheelMarketRewardsInfo[];
@@ -146,17 +147,18 @@ export const SupplyList = ({
   );
 };
 
+interface AssetSupplyRowProps {
+  assets: MarketData[];
+  index: number;
+  comptrollerAddress: string;
+  rewards: FlywheelMarketRewardsInfo[];
+}
 const AssetSupplyRow = ({
   assets,
   index,
   comptrollerAddress,
   rewards = [],
-}: {
-  assets: NativePricedFuseAsset[];
-  index: number;
-  comptrollerAddress: string;
-  rewards: FlywheelMarketRewardsInfo[];
-}) => {
+}: AssetSupplyRowProps) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const authedOpenModal = useAuthedCallback(openModal);
@@ -358,7 +360,7 @@ const AssetSupplyRow = ({
         >
           <VStack alignItems="flex-end">
             <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
-              {smallUsdFormatter(asset.supplyBalanceNative)}
+              {smallUsdFormatter(asset.supplyBalanceFiat)}
             </Text>
             <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
               {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}{' '}
