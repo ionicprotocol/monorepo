@@ -72,7 +72,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Install Netlify CLI
-        run: npm intall -g netlify-cli
+        run: npm install -g netlify-cli
 
       - name: Link with project
         run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
