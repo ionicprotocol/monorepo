@@ -6,6 +6,7 @@ export async function advanceDays(days: number) {
 }
 
 export async function advanceBlocks(blocks: number) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   for (const _ in Array(blocks).fill(true)) {
     await ethers.provider.send("evm_mine", []);
   }

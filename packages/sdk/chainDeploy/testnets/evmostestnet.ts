@@ -1,8 +1,9 @@
 import { constants, ethers, providers, utils } from "ethers";
+
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams, CurvePoolConfig } from "../helpers/types";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.evmos_testnet];
 
@@ -69,11 +70,13 @@ export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDep
     log: true,
     proxy: {
       execute: {
-        methodName: "initialize",
-        args: [[], [], []],
+        init: {
+          methodName: "initialize",
+          args: [[], [], []],
+        },
       },
-      proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy",
     },
   });
   console.log("CurveLpTokenPriceOracleNoRegistry: ", cpo.address);

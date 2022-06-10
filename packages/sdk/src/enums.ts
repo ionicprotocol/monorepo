@@ -9,6 +9,10 @@ export enum SupportedChains {
   moonbase_alpha = 1287,
 }
 
+export const SupportedChainsArray = Object.entries(SupportedChains)
+  .map(([, value]) => value)
+  .filter((value) => typeof value === "number");
+
 export enum RedemptionStrategy {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
   XBombLiquidator = "XBombLiquidator",

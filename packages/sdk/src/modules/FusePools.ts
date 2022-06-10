@@ -1,12 +1,12 @@
 import { BigNumber, BigNumberish, Contract, utils } from "ethers";
-import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { FuseBaseConstructor } from "../types";
-import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
-import { FusePoolData, NativePricedFuseAsset } from "../types";
+
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
+import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
+import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
+import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
+import { FuseBaseConstructor, FusePoolData, NativePricedFuseAsset } from "../types";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
@@ -139,7 +139,10 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
           from: options.from,
         }
       );
-      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+      let poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+
+      // TODO: fix this shit later
+      poolIds = poolIds.filter((id) => this.chainId !== 97 || (this.chainId === 97 && id !== "3"));
 
       if (!poolIds.length) {
         return undefined;

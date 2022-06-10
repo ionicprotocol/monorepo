@@ -153,6 +153,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const fplDeployment = await deployments.deploy("FusePoolLens", {
     from: deployer,
     log: true,
+    waitConfirmations: 1,
   });
 
   if (fplDeployment.transactionHash) await ethers.provider.waitForTransaction(fplDeployment.transactionHash);
@@ -181,6 +182,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (fpls.transactionHash) await ethers.provider.waitForTransaction(fpls.transactionHash);
   console.log("FusePoolLensSecondary: ", fpls.address);
@@ -199,6 +201,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (fflrReceipt.transactionHash) await ethers.provider.waitForTransaction(fflrReceipt.transactionHash);
   console.log("FuseFlywheelLensRouter: ", fflrReceipt.address);
@@ -300,8 +303,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     log: true,
     proxy: {
       execute: {
-        methodName: "initialize",
-        args: [deployer],
+        init: {
+          methodName: "initialize",
+          args: [deployer],
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
@@ -330,13 +335,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
 
   tx = await addressesProvider.setAddress("wtoken", chainDeployParams.wtoken);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
 
   /// SYSTEM ADDRESSES
   tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
 };
 
 func.tags = ["prod"];

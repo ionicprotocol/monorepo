@@ -19,6 +19,7 @@ export {
 } from "./types";
 export {
   SupportedChains,
+  SupportedChainsArray,
   DelegateContractName,
   OracleTypes,
   RedemptionStrategy,

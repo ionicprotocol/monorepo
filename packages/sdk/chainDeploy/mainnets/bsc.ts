@@ -1,12 +1,13 @@
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
+
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
-import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.bsc];
 
@@ -81,14 +82,14 @@ export const deployConfig: ChainDeployConfig = {
       flywheelIndices: [0, 1],
       name: "dai3EPS",
     },
-    // {
-    //   // 0x
-    //   strategy: "DotDotLpERC4626",
-    //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba", // ust3EPS
-    //   otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
-    //   flywheelIndices: [0, 1],
-    //   name: "ust3EPS",
-    // },
+    {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying, // 2BRL
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "2brl",
+    },
     // All of these vaults are depricated
     /*{
       // 0x
@@ -190,66 +191,71 @@ export const deployConfig: ChainDeployConfig = {
 const chainlinkAssets: ChainlinkAsset[] = [
   //
   {
-    symbol: "BUSD",
+    symbol: assetSymbols.BUSD,
     aggregator: "0xcBb98864Ef56E9042e7d2efef76141f15731B82f",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "BTCB",
+    symbol: assetSymbols.BTCB,
     aggregator: "0x264990fbd0A4796A3E3d8E37C4d5F87a3aCa5Ebf",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "DAI",
+    symbol: assetSymbols.DAI,
     aggregator: "0x132d3C0B1D2cEa0BC552588063bdBb210FDeecfA",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "ETH",
+    symbol: assetSymbols.ETH,
     aggregator: "0x63D407F32Aa72E63C7209ce1c2F5dA40b3AaE726",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // CZ
   {
-    symbol: "BETH",
+    symbol: assetSymbols.BETH,
     aggregator: "0x2A3796273d47c4eD363b361D3AEFb7F7E2A13782",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "CAKE",
+    symbol: assetSymbols.CAKE,
     aggregator: "0xB6064eD41d4f67e353768aA239cA86f4F73665a1",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   //
   {
-    symbol: "AUTO",
+    symbol: assetSymbols.AUTO,
     aggregator: "0x88E71E6520E5aC75f5338F5F0c9DeD9d4f692cDA",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "BIFI",
+    symbol: assetSymbols.BIFI,
     aggregator: "0xaB827b69daCd586A37E80A7d552a4395d576e645",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // stables
   {
-    symbol: "USDC",
+    symbol: assetSymbols.USDC,
     aggregator: "0x51597f405303C4377E36123cBc172b13269EA163",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "USDT",
+    symbol: assetSymbols.USDT,
     aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // Jarvis
   {
-    symbol: "jBRL",
+    symbol: assetSymbols.jBRL,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: "ALPACA",
+    symbol: assetSymbols.BRZ,
+    aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.ALPACA,
     aggregator: "0xe0073b60833249ffd1bb2af809112c2fbf221df6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
@@ -276,15 +282,15 @@ const curvePools: CurvePoolConfig[] = [
       assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
     ],
   },
-  // {
-  //   // UST metapool
-  //   lpToken: assets.find((a) => a.symbol === assetSymbols.ust3EPS)!.underlying,
-  //   pool: "0x780de1A0E4613da6b65ceF7F5FB63d14CbDcfB72",
-  //   underlyings: [
-  //     assets.find((a) => a.symbol === assetSymbols.UST)!.underlying,
-  //     assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
-  //   ],
-  // },
+  {
+    // 2BRL pool
+    lpToken: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying,
+    pool: "0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.jBRL)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.BRZ)!.underlying,
+    ],
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -335,6 +341,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
   console.log("SimplePriceOracle: ", simplePO.address);
@@ -344,6 +351,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (uniswapLpTokenLiquidator.transactionHash) {
     await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);
@@ -356,18 +364,20 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
+    waitConfirmations: 1,
   });
   if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
   console.log("XBombLiquidator: ", xbombLiquidator.address);
 
   /// jBRL->BUSD
   // TODO in the addresses provider?
-  let synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
-  let expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
+  const synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
+  const expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
   const jarvisSynthereumLiquidator = await deployments.deploy("JarvisSynthereumLiquidator", {
     from: deployer,
     args: [synthereumLiquidityPoolAddress, expirationTime],
     log: true,
+    waitConfirmations: 1,
   });
   if (jarvisSynthereumLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(jarvisSynthereumLiquidator.transactionHash);
@@ -379,6 +389,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [deployConfig.wtoken, curveOracle.address],
     log: true,
+    waitConfirmations: 1,
   });
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
@@ -406,7 +417,10 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  let tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
+  const tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
   await tx.wait();
+  console.log("setAddress: ", tx.hash);
   ////
+
+  console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };

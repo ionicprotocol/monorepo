@@ -26,13 +26,16 @@ enum assetSymbols {
   "3EPS" = "3EPS",
   dai3EPS = "dai3EPS",
   ust3EPS = "ust3EPS",
+  "2brl" = "2brl",
   jBRL = "jBRL",
+  BRZ = "BRZ",
   BOMB = "BOMB",
   xBOMB = "xBOMB",
   SAFEMOON = "SAFEMOON",
   "BTCB-BOMB" = "BTCB-BOMB",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
+  "BUSD-USDT" = "BUSD-USDT",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",

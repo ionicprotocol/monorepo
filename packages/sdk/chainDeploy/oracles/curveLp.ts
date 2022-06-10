@@ -1,4 +1,5 @@
 import { constants, providers } from "ethers";
+
 import { CurveLpFnParams } from "../helpers/types";
 
 export const deployCurveLpOracle = async ({
@@ -18,8 +19,10 @@ export const deployCurveLpOracle = async ({
     log: true,
     proxy: {
       execute: {
-        methodName: "initialize",
-        args: [[], [], []],
+        init: {
+          methodName: "initialize",
+          args: [[], [], []],
+        },
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",
