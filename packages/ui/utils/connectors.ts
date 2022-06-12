@@ -1,12 +1,12 @@
-import { Chain } from 'wagmi';
+import { Chain, configureChains } from 'wagmi';
 import { InjectedConnector } from 'wagmi/connectors/injected';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
+import { publicProvider } from 'wagmi/providers/public';
 
 import { getSupportedChains } from '@ui/networkData/index';
 
-const infuraId = process.env.INFURA_ID;
-
-const chains: Chain[] = Object.values(getSupportedChains()).map((data) => {
+const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) => {
   return {
     id: data.chainId,
     name: data.name,
@@ -22,16 +22,24 @@ const chains: Chain[] = Object.values(getSupportedChains()).map((data) => {
   };
 });
 
+export const { chains, provider } = configureChains(supportedChains, [
+  publicProvider(),
+  jsonRpcProvider({
+    rpc: (chain) => {
+      return { http: chain.rpcUrls.default };
+    },
+  }),
+]);
+
 export const connectors = () => {
   return [
     new InjectedConnector({
       chains,
-      options: { shimChainChangedDisconnect: true, shimDisconnect: true },
+      options: { shimChainChangedDisconnect: true, shimDisconnect: false },
     }),
     new WalletConnectConnector({
       chains,
       options: {
-        infuraId,
         qrcode: true,
       },
     }),
