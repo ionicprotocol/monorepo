@@ -24,7 +24,7 @@
     "compile": "hardhat compile",
     "setup": "cd lib/contracts && forge build",
     "test:mocha": "nyc ts-mocha --require 'tests/new/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests/new/**/*.spec.ts'",
-    "test": "hardhat test",
+    "test": "hardhat test --parallel",
     "test:bsc": "FORK_URL=${FORK_URL_BSC} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat test",
     "test:forge": "cd lib/contracts && forge test",
     "test:forge:moonbeam": "cd lib/contracts && forge test --fork-url https://rpc.api.moonbeam.network --fork-block-number 1058520",
