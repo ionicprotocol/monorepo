@@ -25,7 +25,7 @@ describe("RewardsDistributorModule", function () {
 
   this.beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
-    await deployments.fixture("local");
+    await deployments.fixture("prod");
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
