@@ -12,3 +12,6 @@ export { default as gatherLiquidations } from "./gatherLiquidations";
 
 // * estimateGas.ts
 export { default as estimateGas } from "./estimateGas";
+
+// * getPoolUsers.ts
+export { default as getAllFusePoolUsers } from "./getFusePoolUsers";
