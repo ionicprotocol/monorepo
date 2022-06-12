@@ -11,7 +11,7 @@ import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
 import * as timeHelpers from "../utils/time";
 
-describe.skip("RewardsDistributorModule", function () {
+describe("RewardsDistributorModule", function () {
   let poolAAddress: string;
   let poolBAddress: string;
   let sdk: Fuse;
