@@ -3,7 +3,6 @@ import { deployments, ethers } from "hardhat";
 
 import { CErc20 } from "../../lib/contracts/typechain/CErc20.sol";
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
-import { WETH } from "../../lib/contracts/typechain/WETH";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as assetHelpers from "../utils/assets";
@@ -17,7 +16,6 @@ describe("FlywheelModule", function () {
   let poolAAddress: string;
   let poolBAddress: string;
   let sdk: Fuse;
-  let weth: WETH;
   let erc20OneCToken: CErc20;
   let erc20TwoCToken: CErc20;
 
@@ -29,12 +27,10 @@ describe("FlywheelModule", function () {
   beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
-    weth = (await ethers.getContract("WETH")) as WETH;
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
     sdk = await getOrCreateFuse();
-    sdk.chainSpecificAddresses.W_TOKEN = weth.address;
 
     [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-RewardsDistributor-Test" });
     [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-RewardsDistributor-Test" });
@@ -63,10 +59,10 @@ describe("FlywheelModule", function () {
       await tradeNativeForAsset({ account: "alice", token: erc20Two.underlying, amount: "500" });
       await tradeNativeForAsset({ account: "deployer", token: erc20Two.underlying, amount: "500" });
     }
-    await wrapNativeToken({ account: "deployer", amount: "500", weth: weth.address });
+    await wrapNativeToken({ account: "deployer", amount: "500", weth: undefined });
   });
 
-  it.only("1 Pool, 1 Flywheel, FlywheelStaticRewards", async function () {
+  it("1 Pool, 1 Flywheel, FlywheelStaticRewards", async function () {
     const { deployer, alice } = await ethers.getNamedSigners();
     const rewardToken = erc20OneUnderlying;
     const market = erc20OneCToken;
