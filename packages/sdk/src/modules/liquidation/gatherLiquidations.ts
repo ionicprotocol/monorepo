@@ -1,14 +1,21 @@
-import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
+import { BigNumber } from "ethers";
+
 import { FuseBase } from "../../Fuse";
 
 import { ChainLiquidationConfig } from "./config";
-import { EncodedLiquidationTx, FusePoolUserWithAssets, LiquidatablePool, PublicPoolUserWithData } from "./utils";
+import {
+  EncodedLiquidationTx,
+  FusePoolUserStruct,
+  FusePoolUserWithAssets,
+  LiquidatablePool,
+  PublicPoolUserWithData,
+} from "./utils";
 
 import { getPotentialLiquidation } from "./index";
 
 async function getLiquidatableUsers(
   fuse: FuseBase,
-  poolUsers: FusePoolLens.FusePoolUserStructOutput[],
+  poolUsers: FusePoolUserStruct[],
   pool: PublicPoolUserWithData,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<Array<EncodedLiquidationTx>> {
@@ -41,7 +48,9 @@ export default async function gatherLiquidations(
 ): Promise<Array<LiquidatablePool>> {
   const liquidations: Array<LiquidatablePool> = [];
   for (const pool of pools) {
-    const poolUsers = pool.users.slice().sort((a, b) => b.totalBorrow.toNumber() - a.totalBorrow.toNumber());
+    const poolUsers = pool.users
+      .slice()
+      .sort((a, b) => BigNumber.from(b.totalBorrow).sub(BigNumber.from(a.totalBorrow)).toNumber());
     const liquidatableUsers = await getLiquidatableUsers(fuse, poolUsers, pool, chainLiquidationConfig);
     if (liquidatableUsers.length > 0) {
       liquidations.push({
