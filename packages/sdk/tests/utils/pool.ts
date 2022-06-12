@@ -133,4 +133,5 @@ export const logPoolData = async (poolAddress, sdk) => {
   const fusePoolData = await sdk.fetchFusePoolData(poolIndex.toString());
   const poolAssets = fusePoolData.assets.map((a) => a.underlyingSymbol).join(", ");
   console.log(`Operating on pool with address ${poolAddress}, name: ${fusePoolData.name}, assets ${poolAssets}`);
+  return fusePoolData;
 };
