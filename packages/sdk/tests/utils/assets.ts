@@ -52,9 +52,10 @@ export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, intere
   const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
 
   const assets = [weth, tribe, touch];
+
+  const wethUnderlying = await ethers.getContract("WETH");
   const tribeUnderlying = await ethers.getContract("TRIBEToken");
   const touchUnderlying = await ethers.getContract("TOUCHToken");
-  const wethUnderlying = await ethers.getContract("WETH");
 
   const underlyings = [wethUnderlying.address, tribeUnderlying.address, touchUnderlying.address];
 

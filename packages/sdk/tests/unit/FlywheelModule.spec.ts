@@ -20,7 +20,6 @@ describe("FlywheelModule", function () {
   let erc20TwoCToken: CErc20;
 
   let erc20OneUnderlying: EIP20Interface;
-  let erc20TwoUnderlying: EIP20Interface;
 
   let chainId: number;
 
@@ -44,20 +43,19 @@ describe("FlywheelModule", function () {
 
     const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
 
-    const [erc20One, erc20Two] = assetsA.slice(1);
-
-    const deployedErc20One = deployedAssetsA.find((a) => a.underlying === erc20One.underlying);
-    const deployedErc20Two = deployedAssetsA.find((a) => a.underlying === erc20Two.underlying);
+    const deployedErc20One = deployedAssetsA.find((a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN);
+    const deployedErc20Two = deployedAssetsA.find(
+      (a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN && a.underlying !== deployedErc20One.underlying
+    );
 
     erc20OneCToken = (await ethers.getContractAt("CErc20", deployedErc20One.assetAddress)) as CErc20;
     erc20TwoCToken = (await ethers.getContractAt("CErc20", deployedErc20Two.assetAddress)) as CErc20;
 
-    erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", erc20One.underlying)) as EIP20Interface;
-    erc20TwoUnderlying = (await ethers.getContractAt("EIP20Interface", erc20Two.underlying)) as EIP20Interface;
+    erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", deployedErc20One.underlying)) as EIP20Interface;
 
     if (chainId !== 1337) {
-      await tradeNativeForAsset({ account: "alice", token: erc20Two.underlying, amount: "500" });
-      await tradeNativeForAsset({ account: "deployer", token: erc20Two.underlying, amount: "500" });
+      await tradeNativeForAsset({ account: "alice", token: deployedErc20One.underlying, amount: "500" });
+      await tradeNativeForAsset({ account: "deployer", token: deployedErc20Two.underlying, amount: "500" });
     }
     await wrapNativeToken({ account: "deployer", amount: "500", weth: undefined });
   });
