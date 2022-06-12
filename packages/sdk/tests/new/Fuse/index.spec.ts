@@ -1,5 +1,5 @@
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
-import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
+import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../../lib/contracts/typechain";
 import { SupportedChains } from "../../../src/enums";
@@ -34,7 +34,9 @@ describe("Fuse Index", () => {
     });
     fuseBase.contracts.FusePoolDirectory = mockContract as unknown as FusePoolDirectory;
   });
-
+  afterEach(function () {
+    restore();
+  });
   describe("#deployPool", () => {
     let getComptrollerFactoryStub: SinonStub<[signer?: Signer], ContractFactory>;
     let getPoolAddressStub: SinonStub<
@@ -65,7 +67,9 @@ describe("Fuse Index", () => {
       mockComptroller._setWhitelistStatuses = stub().resolves({ wait: () => Promise.resolve(mockReceipt) });
       getPoolComptrollerStub = stub(utilsFns, "getPoolComptroller").returns(mockComptroller as unknown as Comptroller);
     });
-
+    afterEach(function () {
+      restore();
+    });
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
       const result = await fuseBase.deployPool(
