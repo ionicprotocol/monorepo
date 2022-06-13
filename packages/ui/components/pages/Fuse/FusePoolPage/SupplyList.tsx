@@ -27,7 +27,7 @@ import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { FundOperationMode } from '@ui/constants/index';
+import { FundOperationMode, URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
@@ -37,7 +37,6 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
-import { URL_MIDAS_DOCS } from '@ui/utils/constants';
 
 interface SupplyListProps {
   assets: MarketData[];

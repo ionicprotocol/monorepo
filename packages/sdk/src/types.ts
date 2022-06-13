@@ -205,6 +205,7 @@ export interface NativePricedFuseAsset extends FuseAsset {
   totalBorrowNative: number;
 
   liquidityNative: number;
+  utilization: number;
 }
 
 export interface FusePoolData {
@@ -223,6 +224,7 @@ export interface FusePoolData {
   underlyingTokens: string[];
   underlyingSymbols: string[];
   whitelistedAdmin: boolean;
+  utilization: number;
 }
 
 export interface FusePool {
