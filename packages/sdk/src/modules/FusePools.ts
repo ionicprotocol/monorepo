@@ -113,8 +113,10 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
         totalLiquidityNative += asset.liquidityNative;
 
-        if (!asset.isSupplyPaused) suppliedForUtilization += asset.totalSupplyNative;
-        if (!asset.isBorrowPaused) borrowedForUtilization += asset.totalBorrowNative;
+        if (!asset.isBorrowPaused) {
+          suppliedForUtilization += asset.totalSupplyNative;
+          borrowedForUtilization += asset.totalBorrowNative;
+        }
       }
 
       if (suppliedForUtilization !== 0) {
