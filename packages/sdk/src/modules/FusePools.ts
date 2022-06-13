@@ -115,9 +115,10 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
         if (!asset.isSupplyPaused) suppliedForUtilization += asset.totalSupplyNative;
         if (!asset.isBorrowPaused) borrowedForUtilization += asset.totalBorrowNative;
-        if (suppliedForUtilization !== 0) {
-          utilization = (borrowedForUtilization / suppliedForUtilization) * 100;
-        }
+      }
+
+      if (suppliedForUtilization !== 0) {
+        utilization = (borrowedForUtilization / suppliedForUtilization) * 100;
       }
 
       await Promise.all(promises);
