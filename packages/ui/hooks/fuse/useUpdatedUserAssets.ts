@@ -7,23 +7,25 @@ import { FundOperationMode } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
-const useUpdatedUserAssets = ({
+// TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
+interface UseUpdatedUserAssetsResult<T> {
+  mode: FundOperationMode;
+  assets: Array<T> | undefined;
+  index: number;
+  amount: BigNumber;
+}
+const useUpdatedUserAssets = <T extends NativePricedFuseAsset>({
   mode,
   index,
   assets,
   amount,
-}: {
-  mode: FundOperationMode;
-  assets: NativePricedFuseAsset[] | undefined;
-  index: number;
-  amount: BigNumber;
-}) => {
+}: UseUpdatedUserAssetsResult<T>) => {
   const { fuse, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const { data: updatedAssets }: UseQueryResult<NativePricedFuseAsset[]> = useQuery(
     [
-      'UpdatedUserAssets',
+      'useUpdatedUserAssets',
       currentChain.id,
       mode,
       index,
@@ -39,6 +41,7 @@ const useUpdatedUserAssets = ({
       const interestRateModel = await fuse.getInterestRateModel(assetToBeUpdated.cToken);
 
       let updatedAsset: NativePricedFuseAsset;
+
       if (mode === FundOperationMode.SUPPLY) {
         const supplyBalance = assetToBeUpdated.supplyBalance.add(amount);
 
@@ -48,13 +51,11 @@ const useUpdatedUserAssets = ({
           ...assetToBeUpdated,
 
           supplyBalance,
-
+          totalSupply,
           supplyBalanceNative:
             Number(utils.formatUnits(supplyBalance, 18)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)) *
-            usdPrice,
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
 
-          totalSupply,
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
@@ -70,12 +71,11 @@ const useUpdatedUserAssets = ({
           ...assetToBeUpdated,
 
           supplyBalance,
-          supplyBalanceNative:
-            (Number(utils.formatUnits(supplyBalance, 18)) /
-              Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18))) *
-            usdPrice,
-
           totalSupply,
+          supplyBalanceNative:
+            Number(utils.formatUnits(supplyBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
@@ -89,13 +89,15 @@ const useUpdatedUserAssets = ({
 
         updatedAsset = {
           ...assetToBeUpdated,
+
           borrowBalance,
+          totalBorrow,
+
           borrowBalanceNative:
-            (Number(utils.formatUnits(borrowBalance)) /
-              Number(utils.formatUnits(assetToBeUpdated.underlyingPrice))) *
+            Number(utils.formatUnits(borrowBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)) *
             usdPrice,
 
-          totalBorrow,
           borrowRatePerBlock: interestRateModel.getBorrowRate(
             assetToBeUpdated.totalSupply.gt(constants.Zero)
               ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
@@ -117,12 +119,13 @@ const useUpdatedUserAssets = ({
           ...assetToBeUpdated,
 
           borrowBalance,
+          totalBorrow,
+
           borrowBalanceNative:
-            (Number(utils.formatUnits(borrowBalance)) /
-              Number(utils.formatUnits(assetToBeUpdated.underlyingPrice))) *
+            Number(utils.formatUnits(borrowBalance)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)) *
             usdPrice,
 
-          totalBorrow,
           borrowRatePerBlock,
         };
       }
