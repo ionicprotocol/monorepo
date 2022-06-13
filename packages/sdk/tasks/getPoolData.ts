@@ -64,7 +64,7 @@ task("get-position-ratio", "Get unhealthy po data")
     undefined,
     types.string
   )
-  .addOptionalParam("logData", "Verbose logging", false, types.boolean)
+  .addOptionalParam("logData", "Verbose logging", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
     // @ts-ignore
     const sdkModule = await import("../src");

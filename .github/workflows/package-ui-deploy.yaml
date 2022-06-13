@@ -1,16 +1,18 @@
-name: UI - build, lint & test
+name: UI - deploy UI
 
 on:
-  pull_request:
-    branches: [main, staging, development]
+  push:
+    branches: [main, development]
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
       - 'yarn.lock'
 
 jobs:
-  test:
+  deploy:
     runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -33,8 +35,16 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Build `ui`
-        run: yarn build:deploy:ui
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
 
-      - name: Lint `ui`
-        run: yarn workspace @midas-capital/ui lint
+      - name: Link with Netlify Project
+        run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Deploy `Development``
+        if: github.ref == 'refs/heads/development'
+        run: netlify deploy --branch development --prod --build --context branch-deploy
+
+      - name: Deploy `Production``
+        if: github.ref == 'refs/heads/main'
+        run: netlify deploy --prod --build --context production
