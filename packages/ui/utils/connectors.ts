@@ -17,7 +17,7 @@ const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) 
       decimals: 18,
     },
     rpcUrls: data.rpcUrls,
-    // blockExplorers: data.blockExplorerUrls,
+    blockExplorers: data.blockExplorerUrls,
     testnet: data.testnet,
   };
 });
