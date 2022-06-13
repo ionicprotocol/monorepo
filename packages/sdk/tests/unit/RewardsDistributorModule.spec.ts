@@ -11,7 +11,7 @@ import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
 import * as timeHelpers from "../utils/time";
 
-describe.skip("RewardsDistributorModule", function () {
+describe("RewardsDistributorModule", function () {
   let poolAAddress: string;
   let poolBAddress: string;
   let sdk: Fuse;
@@ -25,7 +25,7 @@ describe.skip("RewardsDistributorModule", function () {
 
   this.beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
-    await deployments.fixture("local");
+    await deployments.fixture("prod");
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
