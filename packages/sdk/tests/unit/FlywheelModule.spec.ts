@@ -3,7 +3,6 @@ import { deployments, ethers } from "hardhat";
 
 import { CErc20 } from "../../lib/contracts/typechain/CErc20.sol";
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
-import { WETH } from "../../lib/contracts/typechain/WETH";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as assetHelpers from "../utils/assets";
@@ -17,27 +16,23 @@ describe("FlywheelModule", function () {
   let poolAAddress: string;
   let poolBAddress: string;
   let sdk: Fuse;
-  let weth: WETH;
   let erc20OneCToken: CErc20;
   let erc20TwoCToken: CErc20;
 
   let erc20OneUnderlying: EIP20Interface;
-  let erc20TwoUnderlying: EIP20Interface;
 
   let chainId: number;
 
-  this.beforeEach(async () => {
+  beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
-    weth = (await ethers.getContract("WETH")) as WETH;
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
     sdk = await getOrCreateFuse();
-    sdk.chainSpecificAddresses.W_TOKEN = weth.address;
 
-    [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-RewardsDistributor-Test" });
-    [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-RewardsDistributor-Test" });
+    [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-FlyWheel-Test" });
+    [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-FlyWheel-Test" });
 
     const assetsA = await assetHelpers.getAssetsConf(
       poolAAddress,
@@ -48,22 +43,21 @@ describe("FlywheelModule", function () {
 
     const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
 
-    const [erc20One, erc20Two] = assetsA.slice(1);
-
-    const deployedErc20One = deployedAssetsA.find((a) => a.underlying === erc20One.underlying);
-    const deployedErc20Two = deployedAssetsA.find((a) => a.underlying === erc20Two.underlying);
+    const deployedErc20One = deployedAssetsA.find((a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN);
+    const deployedErc20Two = deployedAssetsA.find(
+      (a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN && a.underlying !== deployedErc20One.underlying
+    );
 
     erc20OneCToken = (await ethers.getContractAt("CErc20", deployedErc20One.assetAddress)) as CErc20;
     erc20TwoCToken = (await ethers.getContractAt("CErc20", deployedErc20Two.assetAddress)) as CErc20;
 
-    erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", erc20One.underlying)) as EIP20Interface;
-    erc20TwoUnderlying = (await ethers.getContractAt("EIP20Interface", erc20Two.underlying)) as EIP20Interface;
+    erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", deployedErc20One.underlying)) as EIP20Interface;
 
     if (chainId !== 1337) {
-      await tradeNativeForAsset({ account: "alice", token: erc20Two.underlying, amount: "500" });
-      await tradeNativeForAsset({ account: "deployer", token: erc20Two.underlying, amount: "500" });
+      await tradeNativeForAsset({ account: "alice", token: deployedErc20One.underlying, amount: "500" });
+      await tradeNativeForAsset({ account: "deployer", token: deployedErc20Two.underlying, amount: "500" });
     }
-    await wrapNativeToken({ account: "deployer", amount: "500", weth: weth.address });
+    await wrapNativeToken({ account: "deployer", amount: "500", weth: undefined });
   });
 
   it("1 Pool, 1 Flywheel, FlywheelStaticRewards", async function () {
