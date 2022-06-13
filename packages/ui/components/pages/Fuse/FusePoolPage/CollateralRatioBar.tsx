@@ -1,15 +1,15 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 
 import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Row } from '@ui/utils/chakraUtils';
 
 interface CollateralRatioBarProps {
-  assets: NativePricedFuseAsset[];
+  assets: MarketData[];
   borrowFiat: number;
 }
 
