@@ -112,14 +112,7 @@ const FusePoolPage = memo(() => {
                 />
                 <PoolStat
                   label="Utilization"
-                  value={
-                    data
-                      ? data.totalSuppliedFiat.toString() === '0'
-                        ? '0%'
-                        : ((data?.totalBorrowedFiat / data?.totalSuppliedFiat) * 100).toFixed(2) +
-                          '%'
-                      : undefined
-                  }
+                  value={data ? data.utilization.toFixed(2) + '%' : undefined}
                 />
               </SimpleGrid>
             </Box>
