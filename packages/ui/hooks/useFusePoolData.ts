@@ -32,7 +32,6 @@ export const useFusePoolData = (poolId: string) => {
 
       const res = await fuse.fetchFusePoolData(poolId, address);
       const assetsWithPrice: MarketData[] = [];
-      console.log(res.assets);
       if (res.assets && res.assets.length !== 0) {
         res.assets.map((asset) => {
           assetsWithPrice.push({
