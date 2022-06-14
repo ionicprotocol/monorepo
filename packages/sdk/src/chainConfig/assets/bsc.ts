@@ -178,6 +178,12 @@ export const assets: SupportedAsset[] = [
     name: "WBNB-DAI PCS LP",
     decimals: 18,
   },
+  {
+    symbol: assetSymbols["WBNB-USDC"],
+    underlying: "0xd99c7F6C65857AC913a8f880A4cb84032AB2FC5b",
+    name: "WBNB-USDC PCS LP",
+    decimals: 18,
+  },
 ];
 
 export default assets;
