@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, ethers, Wallet } from "ethers";
 
 import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
@@ -37,12 +37,12 @@ function getPositionHealth(totalBorrow: BigNumber, totalCollateral: BigNumber): 
 async function getFusePoolUsers(
   fuse: FuseBase,
   comptroller: string,
-  maxHealth: BigNumber
+  maxHealth: BigNumber,
+  signer: Wallet
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: FusePoolUserStruct[] = [];
-  const signer = fuse.provider.getSigner();
   const comptrollerInstance: Comptroller = fuse.getComptrollerInstance(comptroller, {
-    from: await signer.getAddress(),
+    from: signer.address,
   });
   const users = await comptrollerInstance.getAllBorrowers();
   for (const user of users) {
@@ -67,12 +67,13 @@ async function getFusePoolUsers(
 
 export default async function getAllFusePoolUsers(
   fuse: FuseBase,
-  maxHealth: BigNumber
+  maxHealth: BigNumber,
+  signer: Wallet
 ): Promise<PublicPoolUserWithData[]> {
   const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   for (const pool of allPools) {
-    const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth);
+    const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth, signer);
     fusePoolUsers.push(poolUserParms);
   }
   return fusePoolUsers;
