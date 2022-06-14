@@ -10,10 +10,11 @@ import { createClient, WagmiConfig } from 'wagmi';
 import CheckConnection from '@ui/components/shared/CheckConnection';
 import Layout from '@ui/components/shared/Layout';
 import { theme } from '@ui/theme/index';
-import { connectors } from '@ui/utils/connectors';
+import { connectors, provider } from '@ui/utils/connectors';
 
 const queryClient = new QueryClient();
 const isDevelopment = process.env.NODE_ENV === 'development';
+
 if (!isDevelopment) {
   LogRocket.init('ylr02p/midas-ui');
 }
@@ -21,6 +22,7 @@ if (!isDevelopment) {
 const client = createClient({
   autoConnect: true,
   connectors,
+  provider,
 });
 
 function MidasDapp({ Component, pageProps }: AppProps) {

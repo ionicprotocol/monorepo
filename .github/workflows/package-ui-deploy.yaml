@@ -41,10 +41,10 @@ jobs:
       - name: Link with Netlify Project
         run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
 
-      - name: Deploy `Development``
+      - name: Deploy `Development`
         if: github.ref == 'refs/heads/development'
         run: netlify deploy --branch development --prod --build --context branch-deploy
 
-      - name: Deploy `Production``
+      - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
         run: netlify deploy --prod --build --context production
