@@ -4,6 +4,8 @@ import {
   Box,
   Divider,
   Flex,
+  Grid,
+  GridItem,
   Heading,
   HStack,
   SimpleGrid,
@@ -13,15 +15,17 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
 
+import { AssetDetails } from './AssetDetails';
+import PoolDetails from './PoolDetails';
+
 import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
 import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
-import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
-import { PoolInfoBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolInfoBox';
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStat';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { MidasBox } from '@ui/components/shared/MidasBox';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useRari } from '@ui/context/RariContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
@@ -58,6 +62,7 @@ const FusePoolPage = memo(() => {
           alignItems="flex-start"
           bgColor={cPage.primary.bgColor}
           justifyContent="flex-start"
+          mb={20}
         >
           <FuseNavbar />
           <HStack width={'100%'} mx="auto" spacing={6}>
@@ -117,25 +122,31 @@ const FusePoolPage = memo(() => {
               </SimpleGrid>
             </Box>
           </Box>
+
           {
             /* If they have some asset enabled as collateral, show the collateral ratio bar */
             data && data.assets.some((asset) => asset.membership) ? (
-              <CollateralRatioBar assets={data.assets} borrowFiat={data.totalBorrowBalanceFiat} />
+              <CollateralRatioBar
+                assets={data.assets}
+                borrowFiat={data.totalBorrowBalanceFiat}
+                my={4}
+              />
             ) : null
           }
-          <RowOrColumn
-            width={'100%'}
-            mainAxisAlignment="flex-start"
-            crossAxisAlignment="flex-start"
-            bgColor={cPage.primary.bgColor}
-            color={cPage.primary.txtColor}
-            mx="auto"
-            mt={4}
-            pb={4}
-            isRow={!isMobile}
-            alignItems="stretch"
+
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              lg: 'repeat(2, 1fr)',
+            }}
+            templateRows={{
+              base: 'repeat(4, auto)',
+              lg: 'repeat(2, auto)',
+            }}
+            w="100%"
+            gap={4}
           >
-            <PoolDashboardBox pb={2} width={isMobile ? '100%' : '50%'} borderRadius={12}>
+            <MidasBox pb={3}>
               {data ? (
                 <SupplyList
                   assets={data.assets}
@@ -146,15 +157,9 @@ const FusePoolPage = memo(() => {
               ) : (
                 <TableSkeleton tableHeading="Your Supply Balance" />
               )}
-            </PoolDashboardBox>
+            </MidasBox>
 
-            <PoolDashboardBox
-              ml={isMobile ? 0 : 4}
-              mt={isMobile ? 4 : 0}
-              pb={2}
-              borderRadius={12}
-              width={isMobile ? '100%' : '50%'}
-            >
+            <MidasBox pb={3}>
               {data ? (
                 <BorrowList
                   comptrollerAddress={data.comptroller}
@@ -164,11 +169,12 @@ const FusePoolPage = memo(() => {
               ) : (
                 <TableSkeleton tableHeading="Your Borrow Balance" />
               )}
-            </PoolDashboardBox>
-          </RowOrColumn>
+            </MidasBox>
 
-          <PoolInfoBox data={data} />
-          <Box h={'20'} />
+            <PoolDetails data={data} />
+
+            <AssetDetails data={data} />
+          </Grid>
         </Flex>
       </PageTransitionLayout>
     </>
