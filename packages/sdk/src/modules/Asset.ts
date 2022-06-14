@@ -16,7 +16,7 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       options: any
     ): Promise<[string, string, string, TransactionReceipt]> {
       //1. Validate configuration
-      this.#validateConfiguration(config);
+      await this.#validateConfiguration(config);
 
       //2. Deploy new asset to existing pool via SDK
       try {

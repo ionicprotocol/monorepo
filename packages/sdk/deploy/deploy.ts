@@ -46,6 +46,17 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("FuseFeeDistributor: ", ffd.address);
   const fuseFeeDistributor = await ethers.getContract("FuseFeeDistributor", deployer);
 
+  const ffdFee = await fuseFeeDistributor.defaultInterestFeeRate();
+  console.log(`ffd fee ${ffdFee}`);
+  if (ffdFee == 0) {
+    tx = await fuseFeeDistributor._setDefaultInterestFeeRate(ethers.utils.parseEther("0.1"));
+    await tx.wait();
+    console.log(`updated the FFD fee with tx ${tx.hash}`);
+
+    const feeAfter = await fuseFeeDistributor.defaultInterestFeeRate();
+    console.log(`ffd fee updated to ${feeAfter}`);
+  }
+
   tx = await fuseFeeDistributor._setPoolLimits(10, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
   await tx.wait();
   console.log("FuseFeeDistributor pool limits set", tx.hash);
