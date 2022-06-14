@@ -39,7 +39,7 @@ export const AssetDetails = ({ data }: { data: ReturnType<typeof useFusePoolData
             width="100%"
             justifyContent="space-between"
           >
-            <Text>{`Asset stats`}</Text>
+            <Text>{`Asset Details`}</Text>
             <Skeleton display="inline" w="100px"></Skeleton>
           </Heading>
           <Stack width="100%" height="100%" mx="auto">
@@ -110,7 +110,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
         flexShrink={0}
       >
         <Heading size="sm" py={3}>
-          {`${selectedTokenData?.symbol ?? selectedAsset.underlyingSymbol} Stats`}
+          {`${selectedTokenData?.symbol ?? selectedAsset.underlyingSymbol} Details`}
         </Heading>
 
         <Select
@@ -136,7 +136,8 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
         width="100%"
         color="#000000"
         overflow="hidden"
-        px={3}
+        pb={4}
+        px={2}
         className="hide-bottom-tooltip"
         flexShrink={0}
       >
@@ -254,7 +255,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
           stat={shortUsdFormatter(selectedAsset.totalSupplyFiat)}
           statSize="lg"
           captionSize="xs"
-          caption={'Total Supplied'}
+          caption={'Asset Supplied'}
           crossAxisAlignment="center"
           captionFirst={true}
         />
@@ -264,7 +265,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
             stat={selectedAsset.utilization.toFixed(0) + '%'}
             statSize="lg"
             captionSize="xs"
-            caption={'Utilization'}
+            caption={'Asset Utilization'}
             crossAxisAlignment="center"
             captionFirst={true}
           />
@@ -274,7 +275,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
           stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
           statSize="lg"
           captionSize="xs"
-          caption={'Total Borrowed'}
+          caption={'Asset Borrowed'}
           crossAxisAlignment="center"
           captionFirst={true}
         />
