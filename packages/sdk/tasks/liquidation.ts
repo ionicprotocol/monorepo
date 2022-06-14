@@ -12,7 +12,12 @@ export default task("get-liquidations", "Get potential liquidations")
     // @ts-ignore
     const fuseModule = await import("../tests/utils/fuseSdk");
     const sdk = await fuseModule.getOrCreateFuse();
-    const liquidations = await sdk.getPotentialLiquidations([], hre.ethers.utils.parseEther(taskArgs.maxHealth));
+    const wallet = hre.ethers.Wallet.fromMnemonic(process.env.MNEMONIC);
+    const liquidations = await sdk.getPotentialLiquidations(
+      wallet,
+      [],
+      hre.ethers.utils.parseEther(taskArgs.maxHealth)
+    );
     liquidations.map((l) => {
       console.log(`Found ${l.liquidations.length} liquidations for pool: ${l.comptroller}}`);
       l.liquidations.map((tx, i) => {
