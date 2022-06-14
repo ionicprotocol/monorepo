@@ -38,13 +38,13 @@ jobs:
       - name: Install Netlify CLI
         run: npm install -g netlify-cli
 
-      - name: Link with project
+      - name: Link with Netlify Project
         run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
 
-      - name: Deploy with Netlify
+      - name: Deploy `Development`
         if: github.ref == 'refs/heads/development'
-        run: netlify deploy --branch development --prod --build
+        run: netlify deploy --branch development --prod --build --context branch-deploy
 
-      - name: Deploy with Netlify
+      - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
-        run: netlify deploy --prod --build
+        run: netlify deploy --prod --build --context production

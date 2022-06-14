@@ -509,14 +509,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: NativePricedFuseAsset[] }) => {
 
         {isMobile ? null : (
           <CaptionedStat
-            stat={
-              selectedAsset.totalSupplyNative.toString() === '0'
-                ? '0%'
-                : (
-                    (selectedAsset.totalBorrowNative / selectedAsset.totalSupplyNative) *
-                    100
-                  ).toFixed(0) + '%'
-            }
+            stat={selectedAsset.utilization.toFixed(0) + '%'}
             statSize="lg"
             captionSize="xs"
             caption={'Utilization'}
