@@ -184,6 +184,24 @@ export const assets: SupportedAsset[] = [
     name: "WBNB-USDC PCS LP",
     decimals: 18,
   },
+  {
+    symbol: assetSymbols["WBNB-USDT"],
+    underlying: "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE",
+    name: "WBNB-USDT PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["USDC-ETH"],
+    underlying: "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0",
+    name: "USDC-ETH PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["BUSD-BTCB"],
+    underlying: "0xF45cd219aEF8618A92BAa7aD848364a158a24F33",
+    name: "USDC-ETH PCS LP",
+    decimals: 18,
+  },
 ];
 
 export default assets;
