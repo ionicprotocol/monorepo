@@ -51,9 +51,14 @@ export const SupplyList = ({
   comptrollerAddress,
   rewards = [],
 }: SupplyListProps) => {
-  const suppliedAssets = assets.filter((asset) => asset.supplyBalanceNative > 1);
-  const nonSuppliedAssets = assets.filter(
-    (asset) => asset.supplyBalanceNative < 1 && !asset.isSupplyPaused
+  const suppliedAssets = useMemo(
+    () => assets.filter((asset) => asset.supplyBalance.gt(0)),
+
+    [assets]
+  );
+  const nonSuppliedAssets = useMemo(
+    () => assets.filter((asset) => asset.supplyBalance.eq(0)),
+    [assets]
   );
 
   const isMobile = useIsMobile();

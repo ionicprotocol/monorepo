@@ -251,7 +251,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
                   color={cCard.txtColor}
                   fontSize={{ base: '2.8vw', sm: '0.8rem' }}
                 >
-                  {shortUsdFormatter(asset.totalSupplyNative)} TVL
+                  {shortUsdFormatter(asset.totalSupplyFiat)} TVL
                 </Text>
               </SimpleTooltip>
             </VStack>
