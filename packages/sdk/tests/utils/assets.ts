@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 
 import { MarketConfig } from "../../src";
 import { assetSymbols } from "../../src/chainConfig";
-import { bscAssets, ganacheAssets, chapelAssets } from "../../src/chainConfig/assets";
+import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
 
 import { getOrCreateFuse } from "./fuseSdk";
 
