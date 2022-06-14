@@ -89,7 +89,7 @@ const FusePoolPage = memo(() => {
             templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
             gap={4}
             w="100%"
-            mt={4}
+            my={4}
           >
             <PoolStat
               label="Total Supply"
@@ -115,7 +115,7 @@ const FusePoolPage = memo(() => {
               <CollateralRatioBar
                 assets={data.assets}
                 borrowFiat={data.totalBorrowBalanceFiat}
-                my={4}
+                mb={4}
               />
             ) : null
           }
