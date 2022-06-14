@@ -6,6 +6,6 @@ output "ecs_cluster_name" {
   value = aws_ecs_cluster.infrastructure.name
 }
 
-output "iam_instance_profile" {
-  value = aws_iam_instance_profile.ecs-instance-profile.arn
+output "ecs_cluster_arn" {
+  value = aws_ecs_cluster.infrastructure.arn
 }
