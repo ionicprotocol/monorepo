@@ -1,16 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import {
-  AvatarGroup,
-  Box,
-  Divider,
-  Flex,
-  Grid,
-  GridItem,
-  Heading,
-  HStack,
-  SimpleGrid,
-  Skeleton,
-} from '@chakra-ui/react';
+import { AvatarGroup, Divider, Flex, Grid, Heading, HStack, Skeleton } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -32,13 +21,12 @@ import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsF
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useIsSemiSmallScreen } from '@ui/hooks/useIsSemiSmallScreen';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
-import { Column, RowOrColumn } from '@ui/utils/chakraUtils';
+import { Column } from '@ui/utils/chakraUtils';
 
 const FusePoolPage = memo(() => {
   const { setLoading } = useRari();
-  const isMobile = useIsSemiSmallScreen();
+
   const router = useRouter();
   const poolId = router.query.poolId as string;
   const { data } = useFusePoolData(poolId);
@@ -97,31 +85,29 @@ const FusePoolPage = memo(() => {
 
           {rewardTokens.length > 0 && <RewardsBanner tokens={rewardTokens} />}
 
-          <Box as="section" bg={cPage.primary.bgColor} py="4" width={'100%'} alignSelf={'center'}>
-            <Box mx="auto">
-              <Heading marginBottom={'4'} fontWeight="semibold" fontSize={'2xl'}>
-                Pool Statistics
-              </Heading>
-              <SimpleGrid columns={{ base: 2, md: 4 }} spacing="4">
-                <PoolStat
-                  label="Total Supply"
-                  value={data ? midUsdFormatter(data.totalSuppliedFiat) : undefined}
-                />
-                <PoolStat
-                  label="Total Borrow"
-                  value={data ? midUsdFormatter(data?.totalBorrowedFiat) : undefined}
-                />
-                <PoolStat
-                  label="Liquidity"
-                  value={data ? midUsdFormatter(data?.totalLiquidityFiat) : undefined}
-                />
-                <PoolStat
-                  label="Utilization"
-                  value={data ? data.utilization.toFixed(2) + '%' : undefined}
-                />
-              </SimpleGrid>
-            </Box>
-          </Box>
+          <Grid
+            templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+            gap={4}
+            w="100%"
+            mt={4}
+          >
+            <PoolStat
+              label="Total Supply"
+              value={data ? midUsdFormatter(data.totalSuppliedFiat) : undefined}
+            />
+            <PoolStat
+              label="Total Borrow"
+              value={data ? midUsdFormatter(data?.totalBorrowedFiat) : undefined}
+            />
+            <PoolStat
+              label="Liquidity"
+              value={data ? midUsdFormatter(data?.totalLiquidityFiat) : undefined}
+            />
+            <PoolStat
+              label="Utilization"
+              value={data ? data.utilization.toFixed(2) + '%' : undefined}
+            />
+          </Grid>
 
           {
             /* If they have some asset enabled as collateral, show the collateral ratio bar */
