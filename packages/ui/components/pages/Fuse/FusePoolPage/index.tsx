@@ -119,16 +119,13 @@ const FusePoolPage = memo(() => {
             />
           </Grid>
 
-          {
-            /* If they have some asset enabled as collateral, show the collateral ratio bar */
-            data && data.assets.some((asset) => asset.membership) ? (
-              <CollateralRatioBar
-                assets={data.assets}
-                borrowFiat={data.totalBorrowBalanceFiat}
-                mb={4}
-              />
-            ) : null
-          }
+          {data && data.assets.some((asset) => asset.membership) && (
+            <CollateralRatioBar
+              assets={data.assets}
+              borrowFiat={data.totalBorrowBalanceFiat}
+              mb={4}
+            />
+          )}
 
           <Grid
             templateColumns={{
