@@ -2,7 +2,7 @@ import { ethers } from "hardhat";
 
 import { MarketConfig } from "../../src";
 import { assetSymbols } from "../../src/chainConfig";
-import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
+import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
 
 import { getOrCreateFuse } from "./fuseSdk";
 
@@ -42,8 +42,33 @@ export const getAssetsConf = async (
     } else {
       assets = getBaseBscAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
     }
+  } else if (chainId == 97) {
+    assets = await getChapelAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
   }
   return assets;
+};
+
+export const getChapelAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
+  const btc = chapelAssets.find((b) => b.symbol === assetSymbols.BTCB);
+  const busd = chapelAssets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = chapelAssets.find((b) => b.symbol === assetSymbols.WBNB);
+  const safemoon = chapelAssets.find((b) => b.symbol === assetSymbols.SAFEMOON);
+  const assets = [btc, busd, safemoon, wbnb];
+
+  return assets.map((a) => {
+    return {
+      underlying: a.underlying,
+      comptroller,
+      fuseFeeDistributor,
+      interestRateModel: interestRateModelAddress,
+      name: a.name,
+      symbol: a.symbol,
+      collateralFactor: 75,
+      reserveFactor: 15,
+      adminFee: 0,
+      bypassPriceFeedCheck: true,
+    };
+  });
 };
 
 export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
@@ -52,9 +77,10 @@ export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, intere
   const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
 
   const assets = [weth, tribe, touch];
+
+  const wethUnderlying = await ethers.getContract("WETH");
   const tribeUnderlying = await ethers.getContract("TRIBEToken");
   const touchUnderlying = await ethers.getContract("TOUCHToken");
-  const wethUnderlying = await ethers.getContract("WETH");
 
   const underlyings = [wethUnderlying.address, tribeUnderlying.address, touchUnderlying.address];
 

@@ -1,4 +1,4 @@
-import { BigNumber, utils } from "ethers";
+import { BigNumber, Signer, utils, Wallet } from "ethers";
 
 import { FuseBaseConstructor } from "../../types";
 
@@ -13,13 +13,13 @@ export function withSafeLiquidator<TBase extends FuseBaseConstructor>(Base: TBas
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 
     async getPotentialLiquidations(
+      signer: Wallet,
       supportedComptrollers: Array<string> = [],
       maxHealthFactor: BigNumber = utils.parseEther("1"),
       configOverrides?: ChainLiquidationConfig
     ): Promise<Array<LiquidatablePool>> {
       // Get potential liquidations from public pools
-
-      const fusePoolWithUsers = await getAllFusePoolUsers(this, maxHealthFactor);
+      const fusePoolWithUsers = await getAllFusePoolUsers(this, maxHealthFactor, signer);
       const comptrollers = fusePoolWithUsers.map((f) => f.comptroller);
       if (supportedComptrollers.length === 0) supportedComptrollers = comptrollers;
 
