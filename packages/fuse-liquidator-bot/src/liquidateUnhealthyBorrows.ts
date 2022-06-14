@@ -1,8 +1,10 @@
 import { sendTransactionToSafeLiquidator } from './index';
 import { Fuse } from '@midas-capital/sdk';
+import { Wallet } from 'ethers';
 
 export default async function liquidateUnhealthyBorrows(fuse: Fuse) {
-  const potentialLiquidations = await fuse.getPotentialLiquidations();
+  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
+  const potentialLiquidations = await fuse.getPotentialLiquidations(signer);
   if (potentialLiquidations.length == 0) {
     console.log('No liquidatable pools found. Timing out and re-staring...');
   }
