@@ -34,10 +34,15 @@ enum assetSymbols {
   BOMB = "BOMB",
   xBOMB = "xBOMB",
   SAFEMOON = "SAFEMOON",
-  "BTCB-BOMB" = "BTCB-BOMB",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
+  "WBNB-USDT" = "WBNB-USDT",
+  "WBNB-USDC" = "WBNB-USDC",
+
   "BUSD-USDT" = "BUSD-USDT",
+  "BUSD-BTCB" = "BUSD-BTCB",
+  "BTCB-BOMB" = "BTCB-BOMB",
+  "USDC-ETH" = "USDC-ETH",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",

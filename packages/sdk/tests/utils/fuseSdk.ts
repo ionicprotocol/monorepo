@@ -1,5 +1,6 @@
 import { deployments, ethers } from "hardhat";
 
+import { WETH } from "../../lib/contracts/typechain/WETH";
 import { Fuse } from "../../src";
 import { ChainDeployment } from "../../src/types";
 
@@ -168,6 +169,11 @@ export const getOrCreateFuse = async (): Promise<Fuse> => {
       chainDeployment = await getBscForkDeployments();
     }
     fuseSdk = new Fuse(ethers.provider, chainId, chainDeployment);
+    if (chainId === 31337 || chainId === 1337) {
+      const weth = (await ethers.getContract("WETH")) as WETH;
+      fuseSdk.chainSpecificAddresses.W_TOKEN = weth.address;
+    }
   }
+
   return fuseSdk;
 };
