@@ -1,5 +1,4 @@
 import { Box, Heading, Select, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
@@ -10,7 +9,7 @@ import { MidasBox } from '@ui/components/shared/MidasBox';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { MarketData, useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
@@ -53,7 +52,7 @@ export const AssetDetails = ({ data }: { data: ReturnType<typeof useFusePoolData
   );
 };
 
-const AssetOption = ({ asset }: { asset: NativePricedFuseAsset }) => {
+const AssetOption = ({ asset }: { asset: MarketData }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const { cPage } = useColors();
 
@@ -64,7 +63,7 @@ const AssetOption = ({ asset }: { asset: NativePricedFuseAsset }) => {
   );
 };
 
-const AssetAndOtherInfo = ({ assets }: { assets: NativePricedFuseAsset[] }) => {
+const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
   const { fuse, currentChain } = useRari();
 
   const [selectedAsset, setSelectedAsset] = useState(assets.length > 3 ? assets[2] : assets[0]);
@@ -252,7 +251,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: NativePricedFuseAsset[] }) => {
         mt={3}
       >
         <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalSupplyNative)}
+          stat={shortUsdFormatter(selectedAsset.totalSupplyFiat)}
           statSize="lg"
           captionSize="xs"
           caption={'Total Supplied'}
@@ -272,7 +271,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: NativePricedFuseAsset[] }) => {
         )}
 
         <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalBorrowNative)}
+          stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
           statSize="lg"
           captionSize="xs"
           caption={'Total Borrowed'}
