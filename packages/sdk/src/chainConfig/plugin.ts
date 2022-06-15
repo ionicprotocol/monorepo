@@ -11,11 +11,11 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
         strategyName: "Mock Tribe Strategy With TOUCH Rewards",
         strategyCode: "Mock_TRIBE",
-        strategyAddress: "0x0152B5D6531fb9D58274caA61C5a3070bE0DA12F",
+        strategyAddress: "0xD91096346CB39c5dCCEd4F32D6D0F8DEAE2020EF",
         flywheels: [
           {
-            address: "0xcB8A516b152a2c510d0860b551f157A9a3fc0f24",
-            rewardToken: "0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C", // TOUCH
+            address: "0x56385f347e18452C00801c9E5029E7658B017EB5",
+            rewardToken: "0x02Ec29Fd9f0bB212eD2C4926ACe1aeab732ed620", // TOUCH
           },
         ],
       },
@@ -26,7 +26,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Mock Touch Strategy",
         strategyCode: "Mock_TOUCH",
-        strategyAddress: "0x0565f350D74c532fBDb73C41D82Cd3Cbfa118422",
+        strategyAddress: "0x64f11C365B68Dd689a54997360B0a580ECdaB0F2",
       },
     ],
   },
