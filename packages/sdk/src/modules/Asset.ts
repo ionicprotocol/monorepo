@@ -78,7 +78,6 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       if (config.plugin) {
         implementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
         implementationData = abiCoder.encode(["address"], [config.plugin.strategyAddress]);
-        console.log("updated implementation address:", { implementationAddress, implementationData });
       }
 
       // Prepare Transaction Data
@@ -136,7 +135,6 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       if (config.plugin) {
         // Change implementation
         const newImplementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
-        console.log(`Setting implementation to ${newImplementationAddress}`);
 
         const setImplementationTx = await this.getCTokenInstance(cErc20DelegatorAddress)._setImplementationSafe(
           newImplementationAddress,
@@ -148,8 +146,8 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
         if (receipt.status != constants.One.toNumber()) {
           throw `Failed set implementation to ${config.plugin.cTokenContract}`;
         }
+        // updates value here, as it's used as return value
         implementationAddress = newImplementationAddress;
-        console.log(`Implementation successfully set to ${config.plugin.cTokenContract}`);
 
         // Further actions required for `CErc20PluginRewardsDelegate`
         if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
@@ -183,12 +181,14 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
               throw `Failed to approve to pool ${flywheelConfig.address}`;
             }
 
-            //3. Enable cToken on Flywheel
             const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
               cToken.address
             );
             const enableTxReceipt = await enableTx.wait();
-            console.log({ enableTxReceipt, enableTx });
+
+            if (enableTxReceipt.status != constants.One.toNumber()) {
+              throw `Failed "addStrategyForRewards()" on Flywheel, are you authorized? ${flywheelConfig.address}`;
+            }
           }
         }
       }
