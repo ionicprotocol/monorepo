@@ -1,5 +1,5 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import { BigNumber, constants, Contract, ContractFactory, utils } from "ethers";
+import { BigNumber, constants, Contract, utils } from "ethers";
 
 import Deployments from "../../deployments.json";
 import CErc20DelegateArtifact from "../../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
@@ -26,7 +26,6 @@ import UniswapTwapPriceOracleV2Artifact from "../../lib/contracts/out/UniswapTwa
 import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
@@ -73,7 +72,14 @@ import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF }
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import { getComptrollerFactory, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import {
+  getAssetContract,
+  getComptrollerFactory,
+  getInterestRateModelContract,
+  getPoolAddress,
+  getPoolComptroller,
+  getPoolUnitroller,
+} from "./utils";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -322,7 +328,7 @@ export class FuseBase {
     }
 
     // Deploy InterestRateModel
-    const interestRateModelContract = new ContractFactory(
+    const interestRateModelContract = getInterestRateModelContract(
       modelArtifact.abi,
       modelArtifact.bytecode.object,
       this.provider.getSigner(options.from)
@@ -369,7 +375,7 @@ export class FuseBase {
 
   async getInterestRateModel(assetAddress: string): Promise<any | undefined | null> {
     // Get interest rate model address from asset address
-    const assetContract = new Contract(assetAddress, this.artifacts.CTokenInterfaces.abi, this.provider);
+    const assetContract = getAssetContract(assetAddress, this.artifacts.CTokenInterfaces.abi, this.provider);
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);

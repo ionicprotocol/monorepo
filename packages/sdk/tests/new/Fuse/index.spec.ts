@@ -1,6 +1,8 @@
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
+import JumpRateModelArtifact from "../../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
+import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../../lib/contracts/typechain";
 import { SupportedChains } from "../../../src/enums";
 import { FuseBase } from "../../../src/Fuse/index";
@@ -13,6 +15,7 @@ const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [con
 describe("Fuse Index", () => {
   let fuseBase: FuseBase;
   let mockContract: SinonStubbedInstance<Contract>;
+  let mockFactory: SinonStubbedInstance<ContractFactory>;
   beforeEach(() => {
     mockContract = createStubInstance(Contract);
     mockContract.connect.returns(mockContract);
@@ -20,9 +23,15 @@ describe("Fuse Index", () => {
       wait: () => Promise.resolve(mockReceipt),
     });
 
+    mockFactory = createStubInstance(ContractFactory, {
+      deploy: stub().resolves({ address: mkAddress("0x123") }),
+    });
+
     const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
     (mockProvider as any)._isSigner = true;
+    (mockProvider as any).getSigner = (address: string) => address;
+    (mockProvider as any).getCode = (address: string) => address;
     fuseBase = new FuseBase(mockProvider, SupportedChains.ganache, {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
@@ -54,7 +63,6 @@ describe("Fuse Index", () => {
     let mockUnitroller: SinonStubbedInstance<Contract>;
     let mockComptroller: SinonStubbedInstance<Contract>;
     beforeEach(() => {
-      const mockFactory = createStubInstance(ContractFactory, { deploy: stub().resolves(mockContract) });
       getComptrollerFactoryStub = stub(utilsFns, "getComptrollerFactory");
       getComptrollerFactoryStub.returns(mockFactory);
       getPoolAddressStub = stub(utilsFns, "getPoolAddress").returns(mkAddress("0xbeef"));
@@ -72,7 +80,7 @@ describe("Fuse Index", () => {
     });
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      const result = await fuseBase.deployPool(
+      await fuseBase.deployPool(
         "Test",
         false,
         constants.One,
@@ -82,8 +90,6 @@ describe("Fuse Index", () => {
         { from: mkAddress("0xabc") },
         [mkAddress("0xbbb")]
       );
-      console.log("RESULT", result);
-
       expect(getComptrollerFactoryStub).callCount(0);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
@@ -107,9 +113,151 @@ describe("Fuse Index", () => {
 
       expect(getPoolComptrollerStub).callCount(0);
     });
+
+    it("should deploy a pool when comptroller is already deployed and enforce whitelist is true", async () => {
+      fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
+      await fuseBase.deployPool(
+        "Test",
+        true,
+        constants.One,
+        constants.One,
+        mkAddress("0xa"),
+        {},
+        { from: mkAddress("0xabc") },
+        [mkAddress("0xbbb")]
+      );
+
+      expect(mockContract.deployPool).to.be.calledOnceWithExactly(
+        "Test",
+        mkAddress("0xccc"),
+        new utils.AbiCoder().encode(["address"], [mkAddress("0xfcc")]),
+        true,
+        constants.One,
+        constants.One,
+        mkAddress("0xa")
+      );
+      expect(getPoolUnitrollerStub).be.calledOnce;
+      expect(getPoolComptrollerStub).be.calledOnce;
+    });
+
+    it("should deploy a pool when comptroller is not deployed", async () => {
+      fuseBase.chainDeployment.Comptroller = { abi: [], address: undefined };
+      await fuseBase.deployPool(
+        "Test",
+        false,
+        constants.One,
+        constants.One,
+        mkAddress("0xa"),
+        {},
+        { from: mkAddress("0xabc") },
+        [mkAddress("0xbbb")]
+      );
+      expect(getComptrollerFactoryStub).have.been.calledOnce;
+      expect(mockContract.deployPool).to.be.calledOnceWithExactly(
+        "Test",
+        mkAddress("0x123"),
+        new utils.AbiCoder().encode(["address"], [mkAddress("0xfcc")]),
+        false,
+        constants.One,
+        constants.One,
+        mkAddress("0xa")
+      );
+    });
   });
 
-  it("should deploy a pool when comptroller is already deployed and enforce whitelist is true", async () => {});
+  describe("#deployInterestRateModel", () => {
+    let getInterestRateModelContractStub: SinonStub;
 
-  it("should deploy a pool when comptroller is not deployed", async () => {});
+    beforeEach(() => {
+      getInterestRateModelContractStub = stub(utilsFns, "getInterestRateModelContract").returns(mockFactory);
+    });
+
+    it("deploy JumpRateModel", () => {
+      fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "JumpRateModel");
+      expect(getInterestRateModelContractStub).to.be.calledWithExactly(
+        JumpRateModelArtifact.abi,
+        JumpRateModelArtifact.bytecode.object,
+        mkAddress("0xabc")
+      );
+    });
+
+    it("deploy WhitePaperInterestRateModel", () => {
+      fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "WhitePaperInterestRateModel");
+      expect(getInterestRateModelContractStub).to.be.calledWithExactly(
+        WhitePaperInterestRateModelArtifact.abi,
+        WhitePaperInterestRateModelArtifact.bytecode.object,
+        mkAddress("0xabc")
+      );
+    });
+  });
+
+  describe("#identifyPriceOracle", () => {
+    let name: string;
+
+    it("should return null when oracle is not found", async () => {
+      name = await fuseBase.identifyPriceOracle(mkAddress("0xabc"));
+      expect(name).to.be.null;
+    });
+  });
+
+  describe("#identifyInterestRateModel", () => {
+    let model;
+    let interestRateModelAddress;
+
+    it("should return null when model address hash mismatches", async () => {
+      interestRateModelAddress = mkAddress("0xabc");
+      model = await fuseBase.identifyInterestRateModel(interestRateModelAddress);
+      expect(model).to.be.null;
+    });
+
+    it("should return new IRM when model address hash matches", async () => {
+      interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
+      model = await fuseBase.identifyInterestRateModel(interestRateModelAddress);
+      expect(model).not.to.be.null;
+    });
+  });
+
+  describe("#getInterestRateModel", () => {
+    let model;
+    let getAssetContractStub: SinonStub;
+    let mockAssetContract: SinonStubbedInstance<Contract>;
+
+    beforeEach(() => {
+      mockAssetContract = createStubInstance(Contract);
+    });
+
+    it("should return null when interestRateModel is null", async () => {
+      Object.defineProperty(mockAssetContract, "callStatic", {
+        value: {
+          interestRateModel: () => Promise.resolve(mkAddress("0xabc")),
+        },
+      });
+      getAssetContractStub = stub(utilsFns, "getAssetContract").returns(mockAssetContract);
+      model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
+      expect(getAssetContractStub).to.be.calledOnce;
+      expect(model).to.be.null;
+    });
+
+    // it("should init interest Rate Model when model is not null ", async () => {
+    //   const interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
+    //   Object.defineProperty(mockAssetContract, "callStatic", {
+    //     value: {
+    //       interestRateModel: () => Promise.resolve(interestRateModelAddress),
+    //     },
+    //   });
+    //   getAssetContractStub = stub(utilsFns, "getAssetContract").returns(mockAssetContract);
+    //   model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
+    //   expect(getAssetContractStub).to.be.calledOnce;
+    //   expect(model).to.be.null;
+    // });
+  });
+
+  describe("#getPriceOracle", () => {
+    let name: string;
+
+    it("should return text when oracle is not found", async () => {
+      name = await fuseBase.getPriceOracle(mkAddress("0xabc"));
+      expect(name).to.equal("Unrecognized Oracle");
+    });
+  });
 });
