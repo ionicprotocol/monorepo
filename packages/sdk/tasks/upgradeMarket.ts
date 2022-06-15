@@ -1,23 +1,18 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { constants, Contract } from "ethers";
+import { constants } from "ethers";
 import { task, types } from "hardhat/config";
-
-import { CErc20Delegate } from "../lib/contracts/typechain";
-import { DelegateContractName } from "../src";
-
-// npx hardhat market:upgrade --network chapel
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("poolName", "Name of pool", undefined, types.string)
   .addParam("symbol", "Asset symbol", undefined, types.string)
-  .addParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
+  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .addOptionalParam("newImplementationAddress", "The address of the new implementation", undefined, types.string)
   .addOptionalParam("strategyCode", "If using strategy, pass its code", undefined, types.string)
-  .setAction(async (taskArgs, { ethers, getChainId, deployments }) => {
+  .setAction(async (taskArgs, { ethers }) => {
     const poolName = taskArgs.poolName;
     const symbol = taskArgs.symbol;
     const strategyCode = taskArgs.strategyCode;
-    const signer = await ethers.getNamedSigner(taskArgs.admin);
+    const newImplementationAddress = taskArgs.newImplementationAddress;
 
     // @ts-ignore
     const assetModule = await import("../tests/utils/assets");
@@ -38,25 +33,23 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     const assetConfig = assets.find((a) => a.symbol === symbol);
 
-    const newImplementationAddress = taskArgs.newImplementationAddress
-      ? taskArgs.newImplementationAddress
-      : sdk.chainDeployment[assetConfig.plugin.cTokenContract].address;
-
     if (strategyCode) {
-      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying].find((p) => p.strategyCode === strategyCode);
+      if (!newImplementationAddress) {
+        throw "Must pass newImplementationAddress if using strategyCode";
+      }
+      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying].find(
+        (p) => p.strategyCode === taskArgs.strategyCode
+      );
 
-      const market = pool.assets.find((a) => a.underlyingSymbol == symbol);
-      const cTokenInstance = new Contract(
-        market.cToken,
-        sdk.chainDeployment[DelegateContractName.CErc20Delegate].abi,
-        signer
-      ) as CErc20Delegate;
+      const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlying);
 
+      const cTokenInstance = sdk.getCTokenInstance(market.cToken);
       const abiCoder = new ethers.utils.AbiCoder();
       const implementationData = abiCoder.encode(["address"], [assetConfig.plugin.strategyAddress]);
-      console.log(`Setting implementation to ${newImplementationAddress}`);
+
+      console.log(`Setting implementation to ${taskArgs.newImplementationAddress}`);
       const setImplementationTx = await cTokenInstance._setImplementationSafe(
-        newImplementationAddress,
+        taskArgs.newImplementationAddress,
         false,
         implementationData
       );
