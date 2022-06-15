@@ -6,7 +6,7 @@ import { assetSymbols, bscAssets } from "./assets";
 const chainPluginConfig: ChainPlugins = {
   [SupportedChains.ganache]: {
     // TRIBE
-    "0xeD4764ad14Bb60DC698372B92e51CEC62688DC52": [
+    "0xf9a089C918ad9c484201E7d328C0d29019997117": [
       {
         cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
         strategyName: "Mock Tribe Strategy With TOUCH Rewards",
@@ -14,14 +14,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x0152B5D6531fb9D58274caA61C5a3070bE0DA12F",
         flywheels: [
           {
-            rewardsCycleLength: 100000, // TODO is this correct? Was the value used in local.ts
+            address: "0xcB8A516b152a2c510d0860b551f157A9a3fc0f24",
             rewardToken: "0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C", // TOUCH
           },
         ],
       },
     ],
     // TOUCH
-    "0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C": [
+    "0x02Ec29Fd9f0bB212eD2C4926ACe1aeab732ed620": [
       {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Mock Touch Strategy",
@@ -68,12 +68,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x606f111755bb94C5DfF507A76aF4801F959895A0",
         flywheels: [
           {
-            rewardsCycleLength: 1, // TODO is this correct?
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
-            rewardsCycleLength: 1, // TODO is this correct?
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -89,12 +91,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x574f934075D9b9392A8B0d1e0a4ADAD79B4cd16b",
         flywheels: [
           {
-            rewardsCycleLength: 1, // TODO is this correct?
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
-            rewardsCycleLength: 1, // TODO is this correct?
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -110,12 +114,14 @@ const chainPluginConfig: ChainPlugins = {
         strategyAddress: "0x939EF184853C751abD4463363a36c316EC0dBaD4",
         flywheels: [
           {
-            rewardsCycleLength: 1, // TODO is this correct?
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
-            rewardsCycleLength: 1, // TODO is this correct?
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
