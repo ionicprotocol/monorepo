@@ -57,5 +57,5 @@ RUN chmod +x /home/node/packages/fuse-liquidator-bot/wait-for-hh.sh
 
 WORKDIR /home/node/packages/fuse-liquidator-bot
 
-CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development"]
+CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development", "--json"]
 
