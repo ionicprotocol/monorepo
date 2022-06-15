@@ -1,7 +1,7 @@
 import { DelegateContractName, SupportedChains } from "../enums";
 import { ChainPlugins } from "../types";
 
-import {assetSymbols, bscAssets, chapelAssets} from "./assets";
+import { assetSymbols, bscAssets, chapelAssets } from "./assets";
 
 const chainPluginConfig: ChainPlugins = {
   [SupportedChains.ganache]: {
@@ -38,7 +38,7 @@ const chainPluginConfig: ChainPlugins = {
         strategyCode: "MockERC4626_BUSD",
         strategyAddress: "0x865058A4aF2f70671C10333f21e2B3A8Ce9fB032",
       },
-    ]
+    ],
   },
   [SupportedChains.bsc]: {
     // BOMB-BTC LP
