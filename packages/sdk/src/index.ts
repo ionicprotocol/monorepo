@@ -27,6 +27,7 @@ export {
   LiquidationKind,
   ComptrollerErrorCodes,
   CTokenErrorCodes,
+  FundOperationMode,
 } from "./enums";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
