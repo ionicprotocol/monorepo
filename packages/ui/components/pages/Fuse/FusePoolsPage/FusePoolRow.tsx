@@ -242,7 +242,8 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.mostSuppliedAsset &&
-                    smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative)}
+                    usdPrice &&
+                    smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative * usdPrice)}
                 </Text>
               </Column>
             </Row>

@@ -1,5 +1,5 @@
 import { expect } from "chai";
-import { constants, providers, utils } from "ethers";
+import { constants, providers, Wallet } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
 
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
@@ -162,8 +162,9 @@ export const liquidateAndVerify = async (
     namedUser: liquidatedUserName,
   });
   console.log(`Ratio Before: ${ratioBefore}`);
+  const wallet = Wallet.fromMnemonic(process.env.MNEMONIC);
 
-  const liquidations = await sdk.getPotentialLiquidations([poolAddress]);
+  const liquidations = await sdk.getPotentialLiquidations(wallet, [poolAddress]);
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];
