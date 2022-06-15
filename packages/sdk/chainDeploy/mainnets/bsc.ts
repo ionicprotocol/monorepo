@@ -42,6 +42,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying, // BOMB-BTC PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying, // WBNB-DAI PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying, // WBNB-BUSD PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-USDC"])!.underlying, // WBNB-USDC PCS LP
     ],
   },
   plugins: [
