@@ -110,9 +110,7 @@ describe("FlywheelModule", function () {
     );
 
     // Check if Rewards are correctly set
-    const infoForMarket = await sdk.getFlywheelRewardsInfoForMarket(fwCore.address, market.address, {
-      from: alice.address,
-    });
+    const infoForMarket = await sdk.getFlywheelRewardsInfoForMarket(fwCore.address, market.address);
     expect(infoForMarket.rewardsPerSecond).to.eq(rewardsPerSecond);
     expect(infoForMarket.rewardsEndTimestamp).to.eq(rewardsEndTimestamp);
 

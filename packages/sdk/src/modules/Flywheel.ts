@@ -251,13 +251,13 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       return rewardsInfos;
     }
 
-    async getFlywheelRewardsInfoForMarket(flywheelAddress: string, marketAddress: string, options: { from: string }) {
+    async getFlywheelRewardsInfoForMarket(flywheelAddress: string, marketAddress: string) {
       const fwCoreInstance = this.createFuseFlywheelCore(flywheelAddress);
-      const fwRewardsAddress = await fwCoreInstance.callStatic.flywheelRewards(options);
+      const fwRewardsAddress = await fwCoreInstance.callStatic.flywheelRewards();
       const fwRewardsInstance = this.createFlywheelStaticRewards(fwRewardsAddress);
       const [marketState, rewardsInfo] = await Promise.all([
-        await fwCoreInstance.callStatic.marketState(marketAddress, options),
-        fwRewardsInstance.callStatic.rewardsInfo(marketAddress, options),
+        await fwCoreInstance.callStatic.marketState(marketAddress),
+        fwRewardsInstance.callStatic.rewardsInfo(marketAddress),
       ]);
       return {
         enabled: marketState.lastUpdatedTimestamp > 0,
@@ -267,7 +267,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
 
     async getFlywheelsByPool(poolAddress: string, options: { from: string }): Promise<FlywheelCore[]> {
       const comptrollerInstance = this.getComptrollerInstance(poolAddress, options);
-      const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors(options);
+      const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
         return new Contract(
           address,
@@ -279,7 +279,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       const filterList = await Promise.all(
         instances.map(async (instance) => {
           try {
-            return await instance.callStatic.isFlywheel(options);
+            return await instance.callStatic.isFlywheel();
           } catch (error) {
             return false;
           }
