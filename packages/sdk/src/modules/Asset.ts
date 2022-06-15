@@ -153,43 +153,42 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
 
         // Further actions required for `CErc20PluginRewardsDelegate`
         if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
+          const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
           const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(cErc20DelegatorAddress);
 
           // Add Flywheels as RewardsDistributors to Pool
           for (const flywheelConfig of config.plugin.flywheels) {
-            //1. Deploy new Flywheel
-            const fwc = await this.deployFlywheelCore(flywheelConfig.rewardToken, options);
+            if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
 
-            //2. Deploy new DynamicRewards
-            const dynamicRewards = await this.deployFuseFlywheelDynamicRewards(
-              fwc.address,
-              flywheelConfig.rewardsCycleLength
-            );
-
-            //3. Add DynamicRewards to Flywheel
-            await fwc.setFlywheelRewards(dynamicRewards.address);
-
-            //4. Enable cToken on Flywheel
-            await fwc.addStrategyForRewards(cToken.address);
-
-            //5. Add Flywheel to Pool
-            const addRdTx = await comptroller._addRewardsDistributor(fwc.address, {
+            //1. Add Flywheel to Pool
+            const addRdTx = await comptroller._addRewardsDistributor(flywheelConfig.address, {
               from: options.from,
             });
             const addRdTxReceipt: TransactionReceipt = await addRdTx.wait();
 
             if (addRdTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed set add RD to pool ${fwc.address}`;
+              throw `Failed set add RD to pool ${flywheelConfig.address}`;
             }
 
-            //6. Approve Flywheel to spend underlying
-            const approveTx = await cToken["approve(address,address)"](flywheelConfig.rewardToken, fwc.address, {
-              from: options.from,
-            });
+            //2. Approve Flywheel to spend underlying
+            const approveTx = await cToken["approve(address,address)"](
+              flywheelConfig.rewardToken,
+              flywheelConfig.address,
+              {
+                from: options.from,
+              }
+            );
             const approveTxReceipt = await approveTx.wait();
             if (approveTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed to approve to pool ${fwc.address}`;
+              throw `Failed to approve to pool ${flywheelConfig.address}`;
             }
+
+            //3. Enable cToken on Flywheel
+            const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
+              cToken.address
+            );
+            const enableTxReceipt = await enableTx.wait();
+            console.log({ enableTxReceipt, enableTx });
           }
         }
       }
