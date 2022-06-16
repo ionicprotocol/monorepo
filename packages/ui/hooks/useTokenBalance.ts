@@ -3,22 +3,17 @@ import { BigNumber, Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
   fuse: Fuse,
-  address?: string,
-  chainId?: number
+  address?: string
 ): Promise<BigNumber> => {
   let balance;
 
-  if (!address || address === WRAPPED_NATIVE_TOKEN_DATA[chainId as number].address) {
+  if (!address) {
     balance = '0';
-  } else if (
-    tokenAddress === WRAPPED_NATIVE_TOKEN_DATA[chainId as number].address ||
-    tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS'
-  ) {
+  } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
     balance = await fuse.provider.getBalance(address);
   } else {
     const contract = new Contract(tokenAddress, ERC20Abi, fuse.provider.getSigner());
@@ -35,7 +30,7 @@ export function useTokenBalance(tokenAddress: string, customAddress?: string) {
 
   return useQuery(
     ['TokenBalance', currentChain.id, tokenAddress, addressToCheck],
-    () => fetchTokenBalance(tokenAddress, fuse, addressToCheck, currentChain.id),
+    () => fetchTokenBalance(tokenAddress, fuse, addressToCheck),
     { enabled: !!currentChain.id && !!tokenAddress && !!addressToCheck }
   );
 }

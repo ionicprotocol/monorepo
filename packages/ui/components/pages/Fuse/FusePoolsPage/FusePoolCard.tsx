@@ -8,33 +8,37 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { useRari } from '@ui/context/RariContext';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
 
-const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
-  const { data: fusePoolData } = useFusePoolData(pool.id.toString());
-  const { data: rss, error: rssError } = usePoolRSS(pool.id);
+interface PoolCardProps {
+  data: FusePoolData;
+  isMostSupplied?: boolean;
+}
+const PoolCard = ({ data }: PoolCardProps) => {
+  const { data: rss, error: rssError } = usePoolRSS(data.id);
   const rssScore = !rssError && rss ? letterScore(rss.totalScore) : '?';
   const tokens = useMemo(() => {
-    return pool.underlyingTokens.map((address, index) => ({
+    return data.underlyingTokens.map((address, index) => ({
       address,
-      symbol: pool.underlyingSymbols[index],
+      symbol: data.underlyingSymbols[index],
     }));
-  }, [pool.underlyingSymbols, pool.underlyingTokens]);
+  }, [data.underlyingSymbols, data.underlyingTokens]);
   const scoreGradient = usePoolRiskScoreGradient(rssScore);
 
   const { cCard } = useColors();
 
   const router = useRouter();
-  const { setLoading, currentChain } = useRari();
+  const { setLoading, currentChain, coingeckoId } = useRari();
 
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <motion.div whileHover={{ scale: 1.05 }}>
       <Flex
         w="100%"
-        key={pool.id}
+        key={data.id}
         pt={6}
         bgColor={cCard.bgColor}
         borderColor={cCard.borderColor}
@@ -51,11 +55,11 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
           justifyContent="center"
         >
           <Heading fontWeight="bold" fontSize={'xl'} ml="2" color={cCard.txtColor}>
-            {pool.name}
+            {data.name}
           </Heading>
         </Row>
         <Row crossAxisAlignment="center" mainAxisAlignment="space-between" mx="6">
-          {pool.underlyingTokens.length === 0 ? null : (
+          {data.underlyingTokens.length === 0 ? null : (
             <AvatarGroup size="sm" max={30}>
               {tokens.slice(0, 10).map(({ address }) => {
                 return <CTokenIcon key={address} address={address} />;
@@ -82,8 +86,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Total Supply
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
-              {smallUsdFormatter(pool.totalSuppliedNative)}
+            <Text mt="1.5" fontWeight="bold">
+              {usdPrice && smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
             </Text>
           </Column>
           <chakra.div h="16" w="1px" bgColor={cCard.dividerColor} />
@@ -91,8 +95,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Total borrowed
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
-              {smallUsdFormatter(pool.totalBorrowedNative)}
+            <Text mt="1.5" fontWeight="bold">
+              {usdPrice && smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
             </Text>
           </Column>
         </Row>
@@ -102,8 +106,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Your Supply <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
-              {fusePoolData && smallUsdFormatter(fusePoolData.totalSupplyBalanceNative)}
+            <Text mt="1.5" fontWeight="bold">
+              {usdPrice && smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)}
             </Text>
           </Column>
           <chakra.div h="16" w="1px" bgColor={cCard.dividerColor} />
@@ -111,8 +115,8 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
             <Text fontWeight="normal" textAlign="center">
               Your borrowed <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold" fontFamily="Manrope">
-              {fusePoolData && smallUsdFormatter(fusePoolData.totalBorrowBalanceNative)}
+            <Text mt="1.5" fontWeight="bold">
+              {usdPrice && smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)}
             </Text>
           </Column>
         </Row>
@@ -120,7 +124,7 @@ const PoolCard = ({ data: pool }: { data: FusePoolData }) => {
           <Button
             onClick={() => {
               setLoading(true);
-              router.push(`/${currentChain.id}/pool/` + pool.id);
+              router.push(`/${currentChain.id}/pool/` + data.id);
             }}
           >
             View Details

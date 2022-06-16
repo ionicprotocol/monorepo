@@ -2,7 +2,6 @@ export { default as Fuse } from "./Fuse";
 export { default as ERC20Abi } from "./Fuse/abi/ERC20.json";
 
 export {
-  cERC20Conf,
   InterestRateModelConf,
   InterestRateModelParams,
   MinifiedCompoundContracts,
@@ -15,10 +14,12 @@ export {
   FuseAsset,
   InterestRateModelType,
   AssetPluginConfig,
-  PluginConfig,
+  MarketConfig,
+  MarketPluginConfig,
 } from "./types";
 export {
   SupportedChains,
+  SupportedChainsArray,
   DelegateContractName,
   OracleTypes,
   RedemptionStrategy,
@@ -26,6 +27,7 @@ export {
   LiquidationKind,
   ComptrollerErrorCodes,
   CTokenErrorCodes,
+  FundOperationMode,
 } from "./enums";
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 

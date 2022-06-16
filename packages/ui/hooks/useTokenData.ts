@@ -16,19 +16,15 @@ export const fetchTokenData = async (
 
   if (chainId) {
     if (address !== WRAPPED_NATIVE_TOKEN_DATA[chainId].address) {
-      try {
-        const tokenData = await axios.post('/api/tokenData', {
-          address: address,
-          chain: chainId,
-        });
+      const tokenData = await axios.post('/api/tokenData', {
+        address: address,
+        chain: chainId,
+      });
 
-        data = {
-          ...tokenData.data,
-          address: address,
-        };
-      } catch {
-        throw 'Not a valid token address';
-      }
+      data = {
+        ...tokenData.data,
+        address: address,
+      };
     } else {
       data = WRAPPED_NATIVE_TOKEN_DATA[chainId];
     }

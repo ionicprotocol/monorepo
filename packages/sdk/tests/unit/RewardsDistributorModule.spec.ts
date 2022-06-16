@@ -1,16 +1,17 @@
 import { expect } from "chai";
+import { constants } from "ethers";
 import { deployments, ethers } from "hardhat";
-import Fuse from "../../src/Fuse";
+
 import { CErc20, EIP20Interface } from "../../lib/contracts/typechain";
+import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
+import * as assetHelpers from "../utils/assets";
 import * as collateralHelpers from "../utils/collateral";
+import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
 import * as timeHelpers from "../utils/time";
-import { constants } from "ethers";
-import { getOrCreateFuse } from "../utils/fuseSdk";
-import * as assetHelpers from "../utils/assets";
 
-describe.skip("RewardsDistributorModule", function () {
+describe("RewardsDistributorModule", function () {
   let poolAAddress: string;
   let poolBAddress: string;
   let sdk: Fuse;
@@ -24,7 +25,7 @@ describe.skip("RewardsDistributorModule", function () {
 
   this.beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
-    await deployments.fixture("local");
+    await deployments.fixture("prod");
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 

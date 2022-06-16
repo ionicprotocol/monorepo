@@ -3,7 +3,8 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
-import { cERC20Conf, Fuse, FusePoolData, NativePricedFuseAsset } from "../../src";
+import { Fuse, FusePoolData, MarketConfig, NativePricedFuseAsset } from "../../src";
+
 import { getOrCreateFuse } from "./fuseSdk";
 
 interface PoolCreationParams {
@@ -65,7 +66,7 @@ export type DeployedAsset = {
   receipt: providers.TransactionReceipt;
 };
 
-export async function deployAssets(assets: cERC20Conf[], signer?: SignerWithAddress): Promise<DeployedAsset[]> {
+export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAddress): Promise<DeployedAsset[]> {
   if (!signer) {
     const { bob } = await ethers.getNamedSigners();
     signer = bob;
@@ -132,4 +133,5 @@ export const logPoolData = async (poolAddress, sdk) => {
   const fusePoolData = await sdk.fetchFusePoolData(poolIndex.toString());
   const poolAssets = fusePoolData.assets.map((a) => a.underlyingSymbol).join(", ");
   console.log(`Operating on pool with address ${poolAddress}, name: ${fusePoolData.name}, assets ${poolAssets}`);
+  return fusePoolData;
 };

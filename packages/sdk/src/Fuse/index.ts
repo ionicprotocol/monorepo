@@ -25,6 +25,9 @@ import SimplePriceOracleArtifact from "../../lib/contracts/out/SimplePriceOracle
 import UniswapTwapPriceOracleV2Artifact from "../../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import UnitrollerArtifact from "../../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
+import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
@@ -42,7 +45,7 @@ import {
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
-import { RedemptionStrategy, SupportedChains } from "../enums";
+import { DelegateContractName, RedemptionStrategy, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
 import { withCreateContracts } from "../modules/CreateContracts";
 import { withFlywheel } from "../modules/Flywheel";
@@ -70,6 +73,7 @@ import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF }
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
+import { getComptrollerFactory, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -218,12 +222,8 @@ export class FuseBase {
       let implementationAddress = this.chainDeployment.Comptroller.address;
 
       if (!implementationAddress) {
-        const comptrollerContract = new ContractFactory(
-          this.artifacts.Comptroller.abi,
-          this.artifacts.Comptroller.bytecode.object,
-          this.provider.getSigner(options.from)
-        );
-        const deployedComptroller = await comptrollerContract.deploy();
+        const comptrollerFactory = getComptrollerFactory(this.provider.getSigner(options.from));
+        const deployedComptroller = await comptrollerFactory.deploy();
         implementationAddress = deployedComptroller.address;
       }
 
@@ -254,27 +254,16 @@ export class FuseBase {
       }
 
       // Compute Unitroller address
-      const saltsHash = utils.solidityKeccak256(
-        ["address", "string", "uint"],
-        [options.from, poolName, deployReceipt.blockNumber]
-      );
-      const byteCodeHash = utils.keccak256(
-        this.artifacts.Unitroller.bytecode.object +
-          new utils.AbiCoder().encode(["address"], [this.chainDeployment.FuseFeeDistributor.address]).slice(2)
-      );
-
-      const poolAddress = utils.getCreate2Address(
-        this.chainDeployment.FusePoolDirectory.address,
-        saltsHash,
-        byteCodeHash
+      const poolAddress = getPoolAddress(
+        options.from,
+        poolName,
+        deployReceipt.blockNumber,
+        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FusePoolDirectory.address
       );
 
       // Accept admin status via Unitroller
-      const unitroller = new Contract(
-        poolAddress,
-        this.artifacts.Unitroller.abi,
-        this.provider.getSigner(options.from)
-      );
+      const unitroller = getPoolUnitroller(poolAddress, this.provider.getSigner(options.from));
       const acceptTx = await unitroller._acceptAdmin();
       const acceptReceipt = await acceptTx.wait();
       console.log("Accepted admin status for admin:", acceptReceipt.status);
@@ -282,11 +271,7 @@ export class FuseBase {
       // Whitelist
       console.log("enforceWhitelist: ", enforceWhitelist);
       if (enforceWhitelist) {
-        const comptroller = new Contract(
-          poolAddress,
-          this.artifacts.Comptroller.abi,
-          this.provider.getSigner(options.from)
-        );
+        const comptroller = getPoolComptroller(poolAddress, this.provider.getSigner(options.from));
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
@@ -395,14 +380,14 @@ export class FuseBase {
     return interestRateModel;
   }
 
-  async getPriceOracle(oracleAddress: string): Promise<string | null> {
-    // Get price oracle contract name from runtime bytecode hash
-    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(oracleAddress));
-    for (const [name, oracle] of Object.entries(this.oracles)) {
-      const value = utils.keccak256(oracle.artifact.deployedBytecode.object);
-      if (runtimeBytecodeHash === value) return name;
+  getPriceOracle(oracleAddress: string): string {
+    let oracle = this.availableOracles.find((o) => this.chainDeployment[o].address === oracleAddress);
+
+    if (!oracle) {
+      oracle = "Unrecognized Oracle";
     }
-    return null;
+
+    return oracle;
   }
 
   async checkCardinality(uniswapV3Pool: string) {
@@ -426,12 +411,24 @@ export class FuseBase {
     return irmName;
   };
 
-  getComptrollerInstance(comptrollerAddress: string, options: { from: string }) {
+  getComptrollerInstance(address: string, options: { from: string }) {
+    return new Contract(address, this.artifacts.Comptroller.abi, this.provider.getSigner(options.from)) as Comptroller;
+  }
+
+  getCTokenInstance(address: string) {
     return new Contract(
-      comptrollerAddress,
-      this.artifacts.Comptroller.abi,
-      this.provider.getSigner(options.from)
-    ) as Comptroller;
+      address,
+      this.chainDeployment[DelegateContractName.CErc20Delegate].abi,
+      this.provider.getSigner()
+    ) as CErc20Delegate;
+  }
+
+  getCErc20PluginRewardsInstance(address: string) {
+    return new Contract(
+      address,
+      this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
+      this.provider.getSigner()
+    ) as CErc20PluginRewardsDelegate;
   }
 }
 

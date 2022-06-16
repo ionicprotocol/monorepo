@@ -1,11 +1,12 @@
-import { ChainDeployConfig, deployUniswapOracle } from "../helpers";
 import { ethers } from "ethers";
+
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+import { ChainDeployConfig, deployUniswapOracle } from "../helpers";
+import { deployDiaOracle } from "../helpers/dia";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
-import { deployDiaOracle } from "../helpers/dia";
-import { SupportedChains } from "../../src";
-import { SupportedAsset } from "../../src/types";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.moonbeam];
 
@@ -13,7 +14,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
-  blocksPerYear: 5 * 24 * 365 * 60, // 12 second blocks, 5 blocks per minute
+  blocksPerYear: chainSpecificParams[SupportedChains.moonbeam].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
     hardcoded: [],
     uniswapData: [],

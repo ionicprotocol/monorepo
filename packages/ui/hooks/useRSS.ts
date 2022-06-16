@@ -1,8 +1,8 @@
-import { FusePoolData, NativePricedFuseAsset } from '@midas-capital/sdk';
 import axios from 'axios';
 import { Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
+import { useFusePoolData } from './useFusePoolData';
 import { useUSDPrice } from './useUSDPrice';
 
 import { useRari } from '@ui/context/RariContext';
@@ -20,40 +20,20 @@ export const letterScore = (totalScore: number) => {
   return 'UNSAFE';
 };
 
+// TODO REWORK
+// duplicated code from useFusePoolData and it's not even needed!!
+// RSS should be able to be calculated completely in the backend.
+// Quite ridiculous to fetch usd prices and pool data in frontend to just pass it to the backend...
+
 export const usePoolRSS = (poolId: string | number) => {
-  const { fuse, currentChain, address, coingeckoId } = useRari();
+  const { fuse, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: poolData } = useFusePoolData(poolId.toString());
 
   return useQuery(
-    [`usePoolRSS`, currentChain.id, poolId, usdPrice],
+    [`usePoolRSS`, currentChain.id, poolId, usdPrice, poolData],
     async () => {
-      if (!usdPrice) return undefined;
-
-      const resp = (await fuse.fetchFusePoolData(String(poolId), address)) as FusePoolData;
-
-      const assetsWithPrice: NativePricedFuseAsset[] = [];
-      if (resp.assets && resp.assets.length !== 0) {
-        resp.assets.map((asset) => {
-          assetsWithPrice.push({
-            ...asset,
-            supplyBalanceNative: asset.supplyBalanceNative * usdPrice,
-            borrowBalanceNative: asset.borrowBalanceNative * usdPrice,
-            totalSupplyNative: asset.totalSupplyNative * usdPrice,
-            totalBorrowNative: asset.totalBorrowNative * usdPrice,
-            liquidityNative: asset.liquidityNative * usdPrice,
-          });
-        });
-      }
-
-      const poolData: FusePoolData = {
-        ...resp,
-        assets: assetsWithPrice,
-        totalLiquidityNative: resp.totalLiquidityNative * usdPrice,
-        totalSuppliedNative: resp.totalSuppliedNative * usdPrice,
-        totalBorrowedNative: resp.totalBorrowedNative * usdPrice,
-        totalSupplyBalanceNative: resp.totalSupplyBalanceNative * usdPrice,
-        totalBorrowBalanceNative: resp.totalBorrowBalanceNative * usdPrice,
-      };
+      if (!usdPrice || !poolData) return undefined;
 
       const { 0: admin, 1: upgradeable } =
         await fuse.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(
@@ -73,12 +53,7 @@ export const usePoolRSS = (poolId: string | number) => {
         upgradeable,
         liquidationIncentiveMantissa,
       });
-      // const res = await axios.post('/api/rss', {
-      //   poolId: poolId.toString(),
-      //   chainId,
-      //   userAddress: address,
-      //   poolData,
-      // });
+
       return res.data as {
         liquidity: number;
         collateralFactor: number;

@@ -1,10 +1,20 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react';
+import { FundOperationMode } from '@midas-capital/sdk';
 import { useEffect, useState } from 'react';
 
 import AmountSelect from '@ui/components/pages/Fuse/Modals/PoolModal/AmountSelect';
-import { DepositModalProps } from '@ui/types/ComponentPropsType';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 
-const DepositModal = (props: DepositModalProps) => {
+interface PoolModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  defaultMode: FundOperationMode;
+  index: number;
+  assets: MarketData[];
+  comptrollerAddress: string;
+}
+
+const PoolModal = (props: PoolModalProps) => {
   const [mode, setMode] = useState(props.defaultMode);
   useEffect(() => {
     setMode(props.defaultMode);
@@ -29,4 +39,4 @@ const DepositModal = (props: DepositModalProps) => {
   );
 };
 
-export default DepositModal;
+export default PoolModal;

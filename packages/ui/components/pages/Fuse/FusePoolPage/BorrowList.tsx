@@ -1,6 +1,5 @@
 import { QuestionIcon } from '@chakra-ui/icons';
 import {
-  Avatar,
   Box,
   Button,
   HStack,
@@ -11,33 +10,30 @@ import {
   Text,
   Thead,
   Tr,
-  useColorMode,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { FundOperationMode } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { FundOperationMode } from '@ui/constants/index';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { convertMantissaToAPR } from '@ui/utils/apyUtils';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { useIsMobile } from '@ui/utils/chakraUtils';
 
-export const BorrowList = ({
-  assets,
-  borrowBalanceNative,
-  comptrollerAddress,
-}: {
-  assets: NativePricedFuseAsset[];
-  borrowBalanceNative: number;
+interface BorrowListProps {
+  assets: MarketData[];
+  borrowBalanceFiat: number;
   comptrollerAddress: string;
-}) => {
+}
+export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: BorrowListProps) => {
   const [isShow, setIsShow] = useState(false);
   const borrowedAssets = assets.filter(
     (asset) => asset.borrowBalanceNative > 1 && !asset.isBorrowPaused
@@ -58,9 +54,8 @@ export const BorrowList = ({
           placement="top"
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
-          fontFamily="Manrope"
         >
-          Your Borrow Balance: {smallUsdFormatter(borrowBalanceNative)}
+          Your Borrow Balance: {smallUsdFormatter(borrowBalanceFiat)}
         </TableCaption>
         <Thead>
           {assets.length > 0 ? (
@@ -144,8 +139,8 @@ export const BorrowList = ({
               {unBorrowableAssets.length !== 0 && (
                 <Tr>
                   <Td colSpan={5}>
-                    <Button variant="ghost" width="100%" onClick={() => setIsShow(!isShow)}>
-                      {!isShow ? "Show unborrowable assets')" : 'Hide unborrowable assets'}
+                    <Button variant="solid" width="100%" onClick={() => setIsShow(!isShow)}>
+                      {!isShow ? 'Show unborrowable assets' : 'Hide unborrowable assets'}
                     </Button>
                   </Td>
                 </Tr>
@@ -163,16 +158,13 @@ export const BorrowList = ({
     </Box>
   );
 };
-
-const AssetBorrowRow = ({
-  assets,
-  index,
-  comptrollerAddress,
-}: {
-  assets: NativePricedFuseAsset[];
+interface AssetBorrowRowProps {
+  assets: MarketData[];
   index: number;
   comptrollerAddress: string;
-}) => {
+}
+
+const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
   const asset = assets[index];
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
@@ -186,7 +178,6 @@ const AssetBorrowRow = ({
   const isMobile = useIsMobile();
 
   const { cCard } = useColors();
-  const { colorMode } = useColorMode();
 
   return (
     <>
@@ -218,17 +209,7 @@ const AssetBorrowRow = ({
       >
         <Td verticalAlign={'middle'}>
           <HStack width={isMobile ? '8%' : '6%'}>
-            <Avatar
-              bg={'transparent'}
-              size="sm"
-              name={asset.underlyingSymbol}
-              src={
-                tokenData?.logoURL ||
-                (colorMode === 'light'
-                  ? '/images/help-circle-dark.svg'
-                  : '/images/help-circle-light.svg')
-              }
-            />
+            <CTokenIcon size="sm" address={asset.underlyingToken} />
             <Text fontWeight="bold" fontSize={{ base: '2.8vw', sm: '0.9rem' }} ml={2}>
               {tokenData?.symbol ?? asset.underlyingSymbol}
             </Text>
@@ -270,7 +251,7 @@ const AssetBorrowRow = ({
                   color={cCard.txtColor}
                   fontSize={{ base: '2.8vw', sm: '0.8rem' }}
                 >
-                  {shortUsdFormatter(asset.totalSupplyNative)} TVL
+                  {shortUsdFormatter(asset.totalSupplyFiat)} TVL
                 </Text>
               </SimpleTooltip>
             </VStack>
@@ -280,7 +261,7 @@ const AssetBorrowRow = ({
         <Td isNumeric verticalAlign={'top'}>
           <VStack alignItems={'flex-end'}>
             <Text color={cCard.txtColor} fontWeight={'bold'} fontSize={{ base: '2.8vw', sm: 'md' }}>
-              {smallUsdFormatter(asset.borrowBalanceNative)}
+              {smallUsdFormatter(asset.borrowBalanceFiat)}
             </Text>
 
             <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
@@ -305,7 +286,7 @@ const AssetBorrowRow = ({
                 fontWeight={'bold'}
                 fontSize={{ base: '2.8vw', sm: 'md' }}
               >
-                {shortUsdFormatter(asset.liquidityNative)}
+                {shortUsdFormatter(asset.liquidityFiat)}
               </Text>
 
               <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>

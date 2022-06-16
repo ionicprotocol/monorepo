@@ -1,4 +1,4 @@
-import { extendTheme, ThemeConfig } from '@chakra-ui/react';
+import { extendTheme } from '@chakra-ui/react';
 
 import { LinkStyleConfig } from './components/Link';
 
@@ -12,21 +12,16 @@ import { SelectConfigStyle } from '@ui/theme/components/Select';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
 import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
-const config: ThemeConfig = {
-  initialColorMode: 'light',
-  useSystemColorMode: false,
-};
-
 export const COLOR_PALETTE = {
   success: '#48BB78',
   fail: '#F56565',
   warn: '#ECC94B',
   grullo: '#B29E84',
   grullo30: '#B29E844d',
-  ecru: '#C2B487',
-  ecru30: '#575245', // alpha 0.3
-  ecru80: '#c2b487cc', // alpha 0.8
-  bone: '#D3D4C7',
+  ecru: '#BCAC83',
+  ecru30: '#4E4A45',
+  ecru80: '#BCAC83cc', // alpha 0.8
+  bone: '#EBE6E0',
   white: '#FFFFFF',
   white50: '#FFFFFF80',
   whiteBg: '#F6F4F1',
@@ -40,10 +35,22 @@ export const COLOR_PALETTE = {
 };
 
 export const theme = extendTheme({
-  config,
+  styles: {
+    global: {
+      body: {
+        // bg: COLOR_PALETTE.bone,
+        // color: COLOR_PALETTE.raisinBlack,
+      },
+    },
+  },
+  config: {
+    initialColorMode: 'light',
+    useSystemColorMode: false,
+  },
   fonts: {
-    body: 'Avenir Next',
-    heading: 'Avenir Next',
+    heading: 'Poppins, sans-serif',
+    body: 'Poppins, sans-serif',
+    mono: 'monospace',
   },
   colors: {
     nav: {

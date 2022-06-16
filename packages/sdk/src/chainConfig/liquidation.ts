@@ -13,6 +13,7 @@ import {
   ganacheAssets,
   moonbaseAlphaAssets,
   moonbeamAssets,
+  neonDevnetAssets,
 } from "./assets";
 
 const liquidationDefaults: ChainLiquidationDefaults = {
@@ -20,9 +21,6 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
       bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.ETH)!.underlying,
-      bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
     ],
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
@@ -30,6 +28,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 5,
   },
   [SupportedChains.chapel]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -42,6 +41,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 25,
   },
   [SupportedChains.evmos_testnet]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -54,6 +54,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 5,
   },
   [SupportedChains.aurora]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -66,6 +67,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 5,
   },
   [SupportedChains.evmos]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -78,6 +80,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 5,
   },
   // TODO: fix these
   [SupportedChains.moonbase_alpha]: {
@@ -91,6 +94,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 15,
   },
   [SupportedChains.moonbeam]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -103,6 +107,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 5,
   },
   [SupportedChains.ganache]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -115,6 +120,20 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 2,
+  },
+  [SupportedChains.neon_devnet]: {
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
+    ],
+    LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
+    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 5,
   },
 };
 

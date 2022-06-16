@@ -19,6 +19,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/sdk';
+import { useEffect, useState } from 'react';
 
 import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolCard';
 import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolRow';
@@ -31,11 +32,14 @@ import { useFilter } from '@ui/hooks/useFilter';
 import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
 import { useSort } from '@ui/hooks/useSort';
 
+export type Err = Error & { code?: string; reason?: string };
+
 const FusePoolList = () => {
   const filter = useFilter();
   const sortBy = useSort();
   const isMobile = useIsSmallScreen();
   const { isLoading, filteredPools: filteredPoolsList, error } = useFusePools(filter);
+  const [err, setErr] = useState<Err | undefined>(error as Err);
   const filteredPools = usePoolSorting(filteredPoolsList, sortBy);
   const sortedBySupplyPools = usePoolSorting(filteredPoolsList, 'supply');
   const mostSuppliedPool = sortedBySupplyPools && sortedBySupplyPools[0];
@@ -65,12 +69,16 @@ const FusePoolList = () => {
     setCurrentPage(nextPage);
   };
 
-  if (error) {
+  useEffect(() => {
+    setErr(error as Err);
+  }, [error]);
+
+  if (err && err.code !== 'NETWORK_ERROR') {
     return (
       <AlertHero
         status="warning"
         variant="subtle"
-        title="Unexpected Error"
+        title={err.reason ? err.reason : 'Unexpected Error'}
         description="Unable to retrieve Pools. Please try again later."
       />
     );
@@ -94,7 +102,7 @@ const FusePoolList = () => {
               gridGap="8"
               gridRowGap="8"
             >
-              {currentPools.map((pool: FusePoolData, index: number) => {
+              {currentPools.map((pool, index: number) => {
                 return <PoolCard data={pool} key={index} />;
               })}
             </Grid>

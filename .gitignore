@@ -36,3 +36,5 @@ ops/**/tfvars.json
 .netlify
 cypress
 monorepo.iml
+
+.vscode

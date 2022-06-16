@@ -17,34 +17,7 @@ on:
       - 'yarn.lock'
 
 jobs:
-  lint-sdk:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: '${{ secrets.ACCESS_TOKEN }}'
-
-      - uses: actions/setup-node@v2
-        with:
-          node-version: 16
-          cache: 'yarn'
-
-      - name: Install NPM packages
-        run: yarn install
-        env:
-          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
-          YARN_CHECKSUM_BEHAVIOR: update
-
-      # Produces required code for linter
-      - name: Build `typechain`
-        run: yarn workspace @midas-capital/sdk typechain
-
-      - name: Lint `sdk`
-        run: yarn workspace @midas-capital/sdk lint
-
-  build-and-test-local:
-    needs: [lint-sdk]
+  build-lint-and-test-local:
     env:
       MNEMONIC: '${{ secrets.MNEMONIC }}'
     runs-on: ubuntu-latest
@@ -73,18 +46,20 @@ jobs:
       - name: Update forge deps
         run: yarn workspace @midas-capital/sdk forge update
 
-      - name: Run build
-        run: yarn workspace @midas-capital/sdk build
+      - name: Build SDK
+        run: yarn build:sdk
+
+      - name: Run lint
+        run: yarn workspace @midas-capital/sdk lint
 
       - name: Run hardhat tests
         run: yarn workspace @midas-capital/sdk test
 
   build-and-test-bsc:
-    needs: [lint-sdk]
     env:
       MNEMONIC: '${{ secrets.MNEMONIC }}'
       FORK_URL_BSC: '${{ secrets.FORK_URL_BSC }}'
-      FORK_BLOCK_NUMBER: 18129306
+      FORK_BLOCK_NUMBER: 18369122
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -102,11 +77,6 @@ jobs:
         with:
           version: nightly
 
-      # Not needed as we checkout recursively
-      # Does not work yet, no access to `contracts` repo
-      # - name: forge module install
-      #   run: yarn workspace @midas-capital/sdk forge install
-
       - name: Install `packages`
         run: yarn install
         env:
@@ -116,8 +86,11 @@ jobs:
       - name: Update forge deps
         run: yarn workspace @midas-capital/sdk forge update
 
-      - name: Run build
-        run: yarn workspace @midas-capital/sdk build
+      - name: Build SDK
+        run: yarn build:sdk
+
+      - name: Run lint
+        run: yarn workspace @midas-capital/sdk lint
 
       - name: Run hardhat tests on BSC
         run: yarn workspace @midas-capital/sdk test:bsc

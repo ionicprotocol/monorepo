@@ -1,20 +1,17 @@
-import { ethers, getChainId, run } from "hardhat";
-import { BigNumber, constants, providers, utils } from "ethers";
-import {
-  CErc20,
-  CEther,
-  EIP20Interface,
-  FuseFeeDistributor,
-  FuseSafeLiquidator,
-  MasterPriceOracle,
-  SimplePriceOracle,
-} from "../../lib/contracts/typechain";
-import { createPool, DeployedAsset } from "./pool";
 import { expect } from "chai";
-import { cERC20Conf, ChainLiquidationConfig, Fuse } from "../../";
-import { getOrCreateFuse } from "./fuseSdk";
-import { assetSymbols } from "../../src/chainConfig";
+import { constants, providers, Wallet } from "ethers";
+import { ethers, getChainId, run } from "hardhat";
+
+import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
+import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
+import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
+import { Fuse } from "../../src";
+
 import { BSC_POOLS, getAssetsConf } from "./assets";
+import { getOrCreateFuse } from "./fuseSdk";
+import { createPool, deployAssets } from "./pool";
 
 export const resetPriceOracle = async (erc20One, erc20Two) => {
   const chainId = parseInt(await getChainId());
@@ -74,8 +71,8 @@ export const tradeAssetForAsset = async ({ token1, token2, amount, account }) =>
   await run("swap-token-for-token", { token1, token2, amount, account });
 };
 
-export const wrapNativeToken = async ({ amount, account }) => {
-  await run("wrap-native-token", { amount, account });
+export const wrapNativeToken = async ({ amount, account, weth }) => {
+  await run("wrap-native-token", { amount, account, weth });
 };
 
 export const setUpPools = async (poolNames: BSC_POOLS[]) => {
@@ -90,33 +87,34 @@ export const setUpPools = async (poolNames: BSC_POOLS[]) => {
 };
 
 export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
-  let poolAddress: string;
-  let oracle: MasterPriceOracle;
-  let liquidator: FuseSafeLiquidator;
-  let fuseFeeDistributor: FuseFeeDistributor;
-
   const { deployer, rando } = await ethers.getNamedSigners();
 
   const sdk = await getOrCreateFuse();
 
-  oracle = (await ethers.getContractAt(
+  const simplePriceOracle: SimplePriceOracle = (await ethers.getContractAt(
+    "SimplePriceOracle",
+    sdk.oracles.SimplePriceOracle.address,
+    deployer
+  )) as SimplePriceOracle;
+
+  const oracle: MasterPriceOracle = (await ethers.getContractAt(
     "MasterPriceOracle",
     sdk.oracles.MasterPriceOracle.address,
     deployer
   )) as MasterPriceOracle;
-  fuseFeeDistributor = (await ethers.getContractAt(
+  const fuseFeeDistributor: FuseFeeDistributor = (await ethers.getContractAt(
     "FuseFeeDistributor",
     sdk.contracts.FuseFeeDistributor.address,
     deployer
   )) as FuseFeeDistributor;
 
-  liquidator = (await ethers.getContractAt(
+  const liquidator = (await ethers.getContractAt(
     "FuseSafeLiquidator",
     sdk.contracts.FuseSafeLiquidator.address,
     rando
   )) as FuseSafeLiquidator;
 
-  [poolAddress] = await createPool({ poolName, signer: deployer });
+  const [poolAddress] = await createPool({ poolName, signer: deployer });
 
   const assets = await getAssetsConf(
     poolAddress,
@@ -125,30 +123,35 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
     ethers,
     poolName
   );
-
+  let tx;
   for (const asset of assets) {
     const assetPrice = await oracle.callStatic.price(asset.underlying);
     console.log("Setting up liquis with prices: ");
-    console.log(`erc20Two: ${asset.symbol}, price: ${ethers.utils.formatEther(assetPrice)}`);
+    console.log(`erc: ${asset.symbol}, price: ${ethers.utils.formatEther(assetPrice)}`);
+    tx = await oracle.add([asset.underlying], [simplePriceOracle.address]);
+    await tx.wait();
+    tx = await simplePriceOracle.setDirectPrice(asset.underlying, assetPrice);
+    await tx.wait();
   }
+  const deployedAssets = await deployAssets(assets, deployer);
   return {
     poolAddress,
     liquidator,
     oracle,
     fuseFeeDistributor,
+    deployedAssets,
+    simplePriceOracle,
+    assets,
   };
 };
 
 export const liquidateAndVerify = async (
+  assetToLiquidate: EIP20Interface,
   poolName: string,
   poolAddress: string,
   liquidatedUserName: string,
-  liquidator: FuseSafeLiquidator,
-  liquidationConfigOverrides: ChainLiquidationConfig,
-  liquidatorBalanceCalculator: (address: string) => Promise<BigNumber>
+  liquidator: FuseSafeLiquidator
 ) => {
-  let tx: providers.TransactionResponse;
-
   const { rando } = await ethers.getNamedSigners();
   const sdk = await getOrCreateFuse();
 
@@ -159,17 +162,18 @@ export const liquidateAndVerify = async (
     namedUser: liquidatedUserName,
   });
   console.log(`Ratio Before: ${ratioBefore}`);
+  const wallet = Wallet.fromMnemonic(process.env.MNEMONIC);
 
-  const liquidations = await sdk.getPotentialLiquidations([poolAddress]);
+  const liquidations = await sdk.getPotentialLiquidations(wallet, [poolAddress]);
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];
+  const liquidatorBalanceBeforeLiquidation = await ethers.provider.getBalance(rando.address);
 
-  const liquidatorBalanceBeforeLiquidation = await liquidatorBalanceCalculator(rando.address);
-
-  tx = await liquidator[desiredLiquidation.method](...desiredLiquidation.args, {
+  const tx: providers.TransactionResponse = await liquidator[desiredLiquidation.method](...desiredLiquidation.args, {
     value: desiredLiquidation.value,
   });
+
   await tx.wait();
 
   const receipt = await tx.wait();
@@ -180,14 +184,15 @@ export const liquidateAndVerify = async (
     userAddress: undefined,
     namedUser: liquidatedUserName,
   });
+
   console.log(`Ratio After: ${ratioAfter}`);
   expect(ratioBefore).to.be.gte(ratioAfter);
 
   // Assert balance after liquidation > balance before liquidation
-  const liquidatorBalanceAfterLiquidation = await liquidatorBalanceCalculator(rando.address);
+  const liquidatorBalanceAfterLiquidation = await ethers.provider.getBalance(rando.address);
 
-  console.log("Liquidator balance before liquidation: ", utils.formatEther(liquidatorBalanceBeforeLiquidation));
-  console.log("Liquidator balance after liquidation: ", utils.formatEther(liquidatorBalanceAfterLiquidation));
+  console.log(`Liquidator balance before liquidation: ${ethers.utils.formatEther(liquidatorBalanceBeforeLiquidation)}`);
+  console.log(`Liquidator balance after liquidation: ${ethers.utils.formatEther(liquidatorBalanceAfterLiquidation)}`);
 
   expect(liquidatorBalanceAfterLiquidation).gt(liquidatorBalanceBeforeLiquidation);
   expect(ratioBefore).to.be.gte(ratioAfter);
