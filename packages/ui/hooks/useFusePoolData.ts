@@ -15,6 +15,7 @@ export interface MarketData extends NativePricedFuseAsset {
 export interface PoolData extends SDKFusePoolData {
   assets: MarketData[];
   totalLiquidityFiat: number;
+  totalAvailableLiquidityFiat: number;
   totalSuppliedFiat: number;
   totalBorrowedFiat: number;
   totalSupplyBalanceFiat: number;
@@ -48,6 +49,7 @@ export const useFusePoolData = (poolId: string) => {
         ...res,
         assets: assetsWithPrice,
         totalLiquidityFiat: res.totalLiquidityNative * usdPrice,
+        totalAvailableLiquidityFiat: res.totaAvailablelLiquidityNative * usdPrice,
         totalSuppliedFiat: res.totalSuppliedNative * usdPrice,
         totalBorrowedFiat: res.totalBorrowedNative * usdPrice,
         totalSupplyBalanceFiat: res.totalSupplyBalanceNative * usdPrice,
