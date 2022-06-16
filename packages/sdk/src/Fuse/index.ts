@@ -73,8 +73,8 @@ import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import {
-  getAssetContract,
   getComptrollerFactory,
+  getContract,
   getInterestRateModelContract,
   getPoolAddress,
   getPoolComptroller,
@@ -375,7 +375,7 @@ export class FuseBase {
 
   async getInterestRateModel(assetAddress: string): Promise<any | undefined | null> {
     // Get interest rate model address from asset address
-    const assetContract = getAssetContract(assetAddress, this.artifacts.CTokenInterfaces.abi, this.provider);
+    const assetContract = getContract(assetAddress, this.artifacts.CTokenInterfaces.abi, this.provider);
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
