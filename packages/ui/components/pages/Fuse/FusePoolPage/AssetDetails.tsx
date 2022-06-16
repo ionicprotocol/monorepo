@@ -12,17 +12,15 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData, useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
+import { Center, Column, Row } from '@ui/utils/chakraUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export const AssetDetails = ({ data }: { data: ReturnType<typeof useFusePoolData>['data'] }) => {
-  const isMobile = useIsMobile();
-
   return (
-    <MidasBox height={isMobile ? 'auto' : '450px'}>
+    <MidasBox height={{ base: 'auto', md: '450px' }}>
       {data ? (
         data.assets.length > 0 ? (
           <AssetAndOtherInfo assets={data.assets} />
@@ -89,8 +87,6 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
 
     return convertIRMtoCurve(interestRateModel, currentChain.id);
   });
-
-  const isMobile = useIsMobile();
 
   const { cChart } = useColors();
 
