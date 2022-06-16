@@ -2,9 +2,9 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { DelegateContractName } from "../enums";
+import { DelegateContractName, FundOperationMode } from "../enums";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
-import { FuseBaseConstructor, InterestRateModelConf, MarketConfig } from "../types";
+import { FuseBaseConstructor, InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
 
 export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class PoolAsset extends Base {
@@ -182,6 +182,88 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       // Return cToken proxy and implementation contract addresses
       return [cErc20DelegatorAddress, implementationAddress, receipt];
+    }
+
+    async getUpdatedAssets(mode: FundOperationMode, index: number, assets: NativePricedFuseAsset[], amount: BigNumber) {
+      const assetToBeUpdated = assets[index];
+      const interestRateModel = await this.getInterestRateModel(assetToBeUpdated.cToken);
+
+      let updatedAsset: NativePricedFuseAsset;
+
+      if (mode === FundOperationMode.SUPPLY) {
+        const supplyBalance = assetToBeUpdated.supplyBalance.add(amount);
+        const totalSupply = assetToBeUpdated.totalSupply.add(amount);
+        updatedAsset = {
+          ...assetToBeUpdated,
+          supplyBalance,
+          totalSupply,
+          supplyBalanceNative:
+            Number(utils.formatUnits(supplyBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+          supplyRatePerBlock: interestRateModel.getSupplyRate(
+            totalSupply.gt(constants.Zero)
+              ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
+              : constants.Zero
+          ),
+        };
+      } else if (mode === FundOperationMode.WITHDRAW) {
+        const supplyBalance = assetToBeUpdated.supplyBalance.sub(amount);
+        const totalSupply = assetToBeUpdated.totalSupply.sub(amount);
+        updatedAsset = {
+          ...assetToBeUpdated,
+          supplyBalance,
+          totalSupply,
+          supplyBalanceNative:
+            Number(utils.formatUnits(supplyBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+          supplyRatePerBlock: interestRateModel.getSupplyRate(
+            totalSupply.gt(constants.Zero)
+              ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
+              : constants.Zero
+          ),
+        };
+      } else if (mode === FundOperationMode.BORROW) {
+        const borrowBalance = assetToBeUpdated.borrowBalance.add(amount);
+        const totalBorrow = assetToBeUpdated.totalBorrow.add(amount);
+        updatedAsset = {
+          ...assetToBeUpdated,
+          borrowBalance,
+          totalBorrow,
+          borrowBalanceNative:
+            Number(utils.formatUnits(borrowBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+          borrowRatePerBlock: interestRateModel.getBorrowRate(
+            assetToBeUpdated.totalSupply.gt(constants.Zero)
+              ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
+              : constants.Zero
+          ),
+        };
+      } else if (mode === FundOperationMode.REPAY) {
+        const borrowBalance = assetToBeUpdated.borrowBalance.sub(amount);
+        const totalBorrow = assetToBeUpdated.totalBorrow.sub(amount);
+        const borrowRatePerBlock = interestRateModel.getBorrowRate(
+          assetToBeUpdated.totalSupply.gt(constants.Zero)
+            ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
+            : constants.Zero
+        );
+
+        updatedAsset = {
+          ...assetToBeUpdated,
+          borrowBalance,
+          totalBorrow,
+          borrowBalanceNative:
+            Number(utils.formatUnits(borrowBalance)) * Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+          borrowRatePerBlock,
+        };
+      }
+
+      return assets.map((value, _index) => {
+        if (_index === index) {
+          return updatedAsset;
+        } else {
+          return value;
+        }
+      });
     }
   };
 }
