@@ -230,19 +230,18 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
         />
 
         <CaptionedStat
-          stat={selectedAsset.utilization.toFixed(0) + '%'}
-          statSize="lg"
-          captionSize="xs"
-          caption={'Asset Utilization'}
-          crossAxisAlignment="center"
-          captionFirst={true}
-        />
-
-        <CaptionedStat
           stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
           statSize="lg"
           captionSize="xs"
           caption={'Asset Borrowed'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+        <CaptionedStat
+          stat={selectedAsset.utilization.toFixed(0) + '%'}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Utilization'}
           crossAxisAlignment="center"
           captionFirst={true}
         />
