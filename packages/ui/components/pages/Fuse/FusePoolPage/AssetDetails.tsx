@@ -258,14 +258,6 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
         p={4}
       >
         <CaptionedStat
-          stat={Number(utils.formatUnits(selectedAsset.adminFee, 16)).toFixed(1) + '%'}
-          statSize="lg"
-          captionSize="xs"
-          caption={'Admin Fee'}
-          crossAxisAlignment="center"
-          captionFirst={true}
-        />
-        <CaptionedStat
           stat={Number(utils.formatUnits(selectedAsset.collateralFactor, 16)).toFixed(0) + '%'}
           statSize="lg"
           captionSize="xs"
@@ -279,6 +271,14 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
           statSize="lg"
           captionSize="xs"
           caption={'Reserve Factor'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+        <CaptionedStat
+          stat={Number(utils.formatUnits(selectedAsset.adminFee, 16)).toFixed(1) + '%'}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Admin Fee'}
           crossAxisAlignment="center"
           captionFirst={true}
         />
