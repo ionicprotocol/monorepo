@@ -2,7 +2,6 @@ import { BoxProps, FlexProps } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { ReactNode } from 'react';
 
-import { FundOperationMode } from '@ui/constants/index';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
 
 export type FusePageLayoutProps = {
@@ -137,25 +136,6 @@ export interface CaptionedStatProps {
 
 export interface CTokensDataForRewardsMap {
   [cTokenAddr: string]: CTokenDataForRewards;
-}
-
-export interface AmountProps {
-  assets: NativePricedFuseAsset[];
-  comptrollerAddress: string;
-  index: number;
-  isBorrowPaused?: boolean;
-  mode: FundOperationMode;
-  onClose: () => void;
-  setMode: (mode: FundOperationMode) => void;
-}
-
-export interface DepositModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  defaultMode: FundOperationMode;
-  index: number;
-  assets: NativePricedFuseAsset[];
-  comptrollerAddress: string;
 }
 
 export interface AddFlywheelProps {

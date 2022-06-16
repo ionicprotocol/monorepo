@@ -1,26 +1,25 @@
 import { expect } from "chai";
+import { BigNumber, constants, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
+
+import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
+import { assetSymbols } from "../../src/chainConfig";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
-import * as poolHelpers from "../utils/pool";
 import * as assetHelpers from "../utils/assets";
 import { BSC_POOLS } from "../utils/assets";
-import { BigNumber, constants, providers, utils } from "ethers";
 import { getOrCreateFuse } from "../utils/fuseSdk";
-import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
+import * as poolHelpers from "../utils/pool";
 import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
-import { assetSymbols } from "../../src/chainConfig";
 
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("FundOperationsERC4626Module", function () {
   let poolAddress: string;
   let sdk: Fuse;
-  let chainId: number;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
   const poolName = BSC_POOLS.BOMB;
 
   this.beforeEach(async () => {
-    ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
 
     const { deployer } = await ethers.getNamedSigners();
@@ -67,9 +66,6 @@ import { assetSymbols } from "../../src/chainConfig";
     for (const a of assets) {
       await simpleOracle.setDirectPrice(a.underlying, BigNumber.from(1));
     }
-    const alpacaPlugin = await ethers.getContract("AlpacaERC4626_WBNB", deployer);
-    const WBNB = alpacaAssets.find((a) => a.symbol === "WBNB");
-    WBNB.plugin = alpacaPlugin.address;
 
     console.log("deploying assets: \n", assets);
     await poolHelpers.deployAssets(assets, deployer);
@@ -80,9 +76,8 @@ import { assetSymbols } from "../../src/chainConfig";
     // acquire some test tokens
     await tradeNativeForAsset({ account: "bob", token: BTCB.underlying, amount: "500" });
     await tradeAssetForAsset({ account: "bob", token1: BTCB.underlying, token2: BOMB.underlying, amount: "0.2" });
-    await wrapNativeToken({ account: "bob", amount: "100" });
+    await wrapNativeToken({ account: "bob", amount: "100", weth: undefined });
   });
-
   it("user can supply any asset", async function () {
     const { bob } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
@@ -99,7 +94,6 @@ import { assetSymbols } from "../../src/chainConfig";
         asset.cToken,
         asset.underlyingToken,
         poolAddress,
-        asset.underlyingToken === constants.AddressZero,
         true,
         utils.parseUnits(amounts[idx], 18),
         { from: bob.address }

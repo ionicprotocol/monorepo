@@ -1,6 +1,7 @@
 import { Container } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
+import { Banner } from '@ui/components/shared/Banner';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -21,6 +22,16 @@ const Layout = ({ children }: { children: ReactNode }) => {
         crossAxisAlignment="center"
         bgColor={cPage.primary.bgColor}
       >
+        <Banner
+          text="Midas just launched, use at your own risk. "
+          linkText="Read about our Audit with Zellic here."
+          linkUrl="https://medium.com/midas-capital/audit-with-zellic-29b63f1be25a"
+          status="warning"
+        ></Banner>
+        <Banner
+          text="All BOMB pool deposits are temporarily paused as we are checking into an issue.  Apologies for the inconvenience this might cause."
+          status="warning"
+        ></Banner>
         <Container maxWidth="8xl">
           <Column
             width={isMobile ? '100%' : '96%'}

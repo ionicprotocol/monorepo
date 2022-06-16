@@ -7,7 +7,12 @@ export enum SupportedChains {
   evmos_testnet = 9000,
   moonbeam = 1284,
   moonbase_alpha = 1287,
+  neon_devnet = 245022926,
 }
+
+export const SupportedChainsArray = Object.entries(SupportedChains)
+  .map(([, value]) => value)
+  .filter((value) => typeof value === "number");
 
 export enum RedemptionStrategy {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
@@ -86,4 +91,11 @@ export enum CTokenErrorCodes {
   TOKEN_TRANSFER_IN_FAILED,
   TOKEN_TRANSFER_OUT_FAILED,
   UTILIZATION_ABOVE_MAX,
+}
+
+export enum FundOperationMode {
+  SUPPLY,
+  WITHDRAW,
+  BORROW,
+  REPAY,
 }

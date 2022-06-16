@@ -1,8 +1,10 @@
-import { cERC20Conf, DelegateContractName } from "../../src";
-import { getOrCreateFuse } from "./fuseSdk";
-import { bscAssets, ganacheAssets } from "../../src/chainConfig/assets";
-import { assetSymbols } from "../../src/chainConfig";
 import { ethers } from "hardhat";
+
+import { MarketConfig } from "../../src";
+import { assetSymbols } from "../../src/chainConfig";
+import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
+
+import { getOrCreateFuse } from "./fuseSdk";
 
 export enum BSC_POOLS {
   JARVIS = "JARVIS",
@@ -26,10 +28,10 @@ export const getAssetsConf = async (
   interestRateModelAddress,
   ethers,
   poolName?: BSC_POOLS | string
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const { chainId } = await ethers.provider.getNetwork();
 
-  let assets: cERC20Conf[];
+  let assets: MarketConfig[];
 
   if (chainId === 31337 || chainId === 1337) {
     assets = await getLocalAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
@@ -40,29 +42,27 @@ export const getAssetsConf = async (
     } else {
       assets = getBaseBscAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
     }
+  } else if (chainId == 97) {
+    assets = await getChapelAssetsConf(comptroller, fuseFeeDistributor, interestRateModelAddress);
   }
   return assets;
 };
 
-export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
-  const eth = ganacheAssets.find((b) => b.symbol === assetSymbols.ETH);
-  const tribe = ganacheAssets.find((b) => b.symbol === assetSymbols.TRIBE);
-  const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
-  // const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
+export const getChapelAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
+  const btc = chapelAssets.find((b) => b.symbol === assetSymbols.BTCB);
+  const busd = chapelAssets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = chapelAssets.find((b) => b.symbol === assetSymbols.WBNB);
+  const safemoon = chapelAssets.find((b) => b.symbol === assetSymbols.SAFEMOON);
+  const assets = [btc, busd, safemoon, wbnb];
 
-  const assets = [eth, tribe, touch]; // , weth];
-  const tribeUnderlying = await ethers.getContract("TRIBEToken");
-  const touchUnderlying = await ethers.getContract("TOUCHToken");
-  const underlyings = [eth.underlying, tribeUnderlying.address, touchUnderlying.address]; // , weth.underlying]
-  return assets.map((a, i) => {
+  return assets.map((a) => {
     return {
-      underlying: underlyings[i],
+      underlying: a.underlying,
       comptroller,
       fuseFeeDistributor,
       interestRateModel: interestRateModelAddress,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
@@ -71,14 +71,43 @@ export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, intere
   });
 };
 
-export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
+export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
+  const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
+  const tribe = ganacheAssets.find((b) => b.symbol === assetSymbols.TRIBE);
+  const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
+
+  const assets = [weth, tribe, touch];
+
+  const wethUnderlying = await ethers.getContract("WETH");
+  const tribeUnderlying = await ethers.getContract("TRIBEToken");
+  const touchUnderlying = await ethers.getContract("TOUCHToken");
+
+  const underlyings = [wethUnderlying.address, tribeUnderlying.address, touchUnderlying.address];
+
+  return assets.map((a, i) => {
+    return {
+      underlying: underlyings[i],
+      fuseFeeDistributor,
+      comptroller,
+      adminFee: 0,
+      collateralFactor: 75,
+      interestRateModel: interestRateModelAddress,
+      reserveFactor: 15,
+      bypassPriceFeedCheck: true,
+      name: a.name,
+      symbol: a.symbol,
+    };
+  });
+};
+
+export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRateModelAddress): MarketConfig[] => {
   const btc = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
   const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
   const assets = [btc, busd, eth, wbnb];
 
-  return assets.map((a, i) => {
+  return assets.map((a) => {
     return {
       underlying: a.underlying,
       comptroller,
@@ -86,7 +115,6 @@ export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRa
       interestRateModel: interestRateModelAddress,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
       collateralFactor: 75,
       reserveFactor: 15,
       adminFee: 0,
@@ -99,7 +127,7 @@ export const getAlpacaPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
@@ -113,26 +141,20 @@ export const getAlpacaPoolAssets = async (
 
   const assets = [eth, usdc, busd, wbnb];
 
-  const assetConfigs = [
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: ethPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: usdcPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: busdPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: wbnbPlugin.strategyAddress },
-  ];
+  const assetConfigs = [{ plugin: ethPlugin }, { plugin: usdcPlugin }, { plugin: busdPlugin }, { plugin: wbnbPlugin }];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
-      fuseFeeDistributor,
+      adminFee: 0,
+      collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
+      reserveFactor: 15,
+      bypassPriceFeedCheck: true,
+      fuseFeeDistributor,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
-      collateralFactor: 75,
-      reserveFactor: 15,
-      adminFee: 0,
-      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -141,24 +163,29 @@ export const getJarvisPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
+  const sdk = await getOrCreateFuse();
+
   const jBRL = bscAssets.find((b) => b.symbol === assetSymbols.jBRL);
-  const assets = [jBRL];
-  const assetConfigs = [{ delegateContractName: DelegateContractName.CErc20Delegate }];
+  const twoBRL = bscAssets.find((b) => b.symbol === assetSymbols["2brl"]);
+  const assets = [jBRL, twoBRL];
+
+  const twoBRLplugin = sdk.chainPlugins[twoBRL.underlying][0];
+  const assetConfigs = [{}, { plugin: twoBRLplugin }];
+
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
-      fuseFeeDistributor,
+      adminFee: 0,
+      collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
+      reserveFactor: 15,
+      bypassPriceFeedCheck: true,
+      fuseFeeDistributor,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
-      collateralFactor: 75,
-      reserveFactor: 15,
-      adminFee: 0,
-      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -167,7 +194,7 @@ export const getBombPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
   const btcb = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
@@ -178,25 +205,20 @@ export const getBombPoolAssets = async (
 
   const assets = [btcb, bomb, bombbtcb];
 
-  const assetConfigs = [
-    { delegateContractName: DelegateContractName.CErc20Delegate },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombPlugin.strategyAddress },
-    { delegateContractName: DelegateContractName.CErc20PluginDelegate, plugin: bombbtcbPlugin.strategyAddress },
-  ];
+  const assetConfigs = [{}, { plugin: bombPlugin }, { plugin: bombbtcbPlugin }];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
-      fuseFeeDistributor,
+      adminFee: 0,
+      collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
+      reserveFactor: 15,
+      bypassPriceFeedCheck: true,
+      fuseFeeDistributor,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
-      collateralFactor: 75,
-      reserveFactor: 15,
-      adminFee: 0,
-      bypassPriceFeedCheck: true,
     };
   });
 };
@@ -205,36 +227,22 @@ export const getEllipsisPoolAssets = async (
   comptroller,
   fuseFeeDistributor,
   interestRateModelAddress
-): Promise<cERC20Conf[]> => {
+): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
   const dai3EPS = bscAssets.find((b) => b.symbol === assetSymbols.dai3EPS);
   const threeEPS = bscAssets.find((b) => b.symbol === assetSymbols["3EPS"]);
+
+  const assets = [dai3EPS, threeEPS];
   const dai3EPSPlugin = sdk.chainPlugins[dai3EPS.underlying][0];
   const threeEPSPlugin = sdk.chainPlugins[threeEPS.underlying][0];
 
-  const assets = [dai3EPS, threeEPS];
-
   const assetConfigs = [
     {
-      delegateContractName: DelegateContractName.CErc20PluginDelegate,
-      plugin: dai3EPSPlugin.strategyAddress,
-      rewardsDistributorConfig: dai3EPSPlugin.dynamicFlywheels.map((rd) => {
-        return {
-          rewardsDistributor: rd.address,
-          rewardToken: rd.rewardToken,
-        };
-      }),
+      plugin: dai3EPSPlugin,
     },
     {
-      delegateContractName: DelegateContractName.CErc20PluginDelegate,
-      plugin: threeEPSPlugin.strategyAddress,
-      rewardsDistributorConfig: threeEPSPlugin.dynamicFlywheels.map((rd) => {
-        return {
-          rewardsDistributor: rd.address,
-          rewardToken: rd.rewardToken,
-        };
-      }),
+      plugin: threeEPSPlugin,
     },
   ];
   return assets.map((a, i) => {
@@ -242,15 +250,14 @@ export const getEllipsisPoolAssets = async (
       ...assetConfigs[i],
       underlying: a.underlying,
       comptroller,
-      fuseFeeDistributor,
+      adminFee: 0,
+      collateralFactor: 75,
       interestRateModel: interestRateModelAddress,
+      reserveFactor: 15,
+      bypassPriceFeedCheck: true,
+      fuseFeeDistributor,
       name: a.name,
       symbol: a.symbol,
-      admin: "true",
-      collateralFactor: 75,
-      reserveFactor: 15,
-      adminFee: 0,
-      bypassPriceFeedCheck: true,
     };
   });
 };

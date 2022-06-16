@@ -11,6 +11,8 @@ enum assetSymbols {
   TUSD = "TUSD",
   FRAX = "FRAX",
   FTM = "FTM",
+  WBTC = "WBTC",
+  BAL = "BAL",
 
   // bsc
   WBNB = "WBNB",
@@ -26,13 +28,21 @@ enum assetSymbols {
   "3EPS" = "3EPS",
   dai3EPS = "dai3EPS",
   ust3EPS = "ust3EPS",
+  "2brl" = "2brl",
   jBRL = "jBRL",
+  BRZ = "BRZ",
   BOMB = "BOMB",
   xBOMB = "xBOMB",
   SAFEMOON = "SAFEMOON",
-  "BTCB-BOMB" = "BTCB-BOMB",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
+  "WBNB-USDT" = "WBNB-USDT",
+  "WBNB-USDC" = "WBNB-USDC",
+
+  "BUSD-USDT" = "BUSD-USDT",
+  "BUSD-BTCB" = "BUSD-BTCB",
+  "BTCB-BOMB" = "BTCB-BOMB",
+  "USDC-ETH" = "USDC-ETH",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
@@ -54,6 +64,9 @@ enum assetSymbols {
 
   // aurora
   WNEAR = "WNEAR",
+
+  // neon
+  WNEON = "WNEON",
 }
 
 export default assetSymbols;

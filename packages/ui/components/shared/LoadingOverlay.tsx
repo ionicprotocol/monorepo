@@ -1,11 +1,9 @@
 import { Box, Center } from '@chakra-ui/react';
 import { ReactNode } from 'react';
-import { ScaleLoader } from 'react-spinners';
 
-import { useColors } from '@ui/hooks/useColors';
+import Loader from '@ui/components/shared/Loader';
 
 function LoadingOverlay({ children, isLoading }: { children?: ReactNode; isLoading: boolean }) {
-  const { cPage } = useColors();
   return (
     <Box position="relative">
       {children}
@@ -20,14 +18,7 @@ function LoadingOverlay({ children, isLoading }: { children?: ReactNode; isLoadi
           background="#000000cc"
           zIndex="9999"
         >
-          <ScaleLoader
-            height={60}
-            width={12}
-            radius={4}
-            margin={4}
-            color={cPage.primary.borderColor}
-            loading
-          />
+          <Loader />
         </Center>
       )}
     </Box>

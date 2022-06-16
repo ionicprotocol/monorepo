@@ -1,5 +1,6 @@
 import { deployments, ethers } from "hardhat";
 
+import { WETH } from "../../lib/contracts/typechain/WETH";
 import { Fuse } from "../../src";
 import { ChainDeployment } from "../../src/types";
 
@@ -90,7 +91,7 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
 };
 
 export const getLocalDeployments = async (): Promise<ChainDeployment> => {
-  let chainDeployment: ChainDeployment = {};
+  const chainDeployment: ChainDeployment = {};
 
   const TOUCHToken = await ethers.getContract("TOUCHToken");
   const TOUCHTokenArtifact = await deployments.getArtifact("TOUCHToken");
@@ -102,7 +103,7 @@ export const getLocalDeployments = async (): Promise<ChainDeployment> => {
 };
 
 export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
-  let chainDeployment: ChainDeployment = {};
+  const chainDeployment: ChainDeployment = {};
   const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
   const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
   chainDeployment.WhitePaperInterestRateModel = {
@@ -168,6 +169,11 @@ export const getOrCreateFuse = async (): Promise<Fuse> => {
       chainDeployment = await getBscForkDeployments();
     }
     fuseSdk = new Fuse(ethers.provider, chainId, chainDeployment);
+    if (chainId === 31337 || chainId === 1337) {
+      const weth = (await ethers.getContract("WETH")) as WETH;
+      fuseSdk.chainSpecificAddresses.W_TOKEN = weth.address;
+    }
   }
+
   return fuseSdk;
 };

@@ -1,8 +1,9 @@
 import { constants, ethers, providers, utils } from "ethers";
+
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams, CurvePoolConfig } from "../helpers/types";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
 
 const assets = chainSupportedAssets[SupportedChains.evmos_testnet];
 
@@ -10,7 +11,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a) => a.symbol === assetSymbols.WEVMOS)!.underlying,
   nativeTokenName: "Evmos (Testnet)",
   nativeTokenSymbol: "TEVMOS",
-  blocksPerYear: 12 * 24 * 365 * 60, // 5 second blocks, 12 blocks per minute
+  blocksPerYear: chainSpecificParams[SupportedChains.evmos_testnet].blocksPerYear.toNumber(), // 5 second blocks, 12 blocks per minute
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -72,7 +73,7 @@ export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDep
         init: {
           methodName: "initialize",
           args: [[], [], []],
-        }
+        },
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",

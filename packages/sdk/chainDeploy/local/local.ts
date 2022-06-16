@@ -1,12 +1,14 @@
-import { ChainDeployConfig } from "../helpers";
 import { ethers } from "ethers";
+
+import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { FixedNativePriceOracle } from "../../lib/contracts/typechain/FixedNativePriceOracle";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
+import { SupportedChains } from "../../src";
+import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { SupportedAsset } from "../../src/types";
+import { ChainDeployConfig } from "../helpers";
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams } from "../helpers/types";
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
-import { chainSupportedAssets, assetSymbols } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 
 const assets = chainSupportedAssets[SupportedChains.ganache];
 
@@ -57,12 +59,21 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
 
   ////
   //// TOKENS
+  const weth = await deployments.deploy("WETH", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+
+  console.log("WETH", weth.address);
   const tribe = await deployments.deploy("TRIBEToken", {
     from: deployer,
     args: [ethers.utils.parseEther("1250000000"), deployer],
     log: true,
     waitConfirmations: 1,
   });
+  console.log("TRIBEToken: ", tribe.address);
   const tribeToken = await ethers.getContractAt("TRIBEToken", tribe.address, deployer);
   let tx = await tribeToken.transfer(alice, ethers.utils.parseEther("100000"), { from: deployer });
   await tx.wait();
@@ -77,6 +88,9 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   });
   console.log("TOUCHToken: ", touch.address);
   const touchToken = await ethers.getContractAt("TOUCHToken", touch.address, deployer);
+  tx = await touchToken.transfer(alice, ethers.utils.parseEther("100000"), { from: deployer });
+  await tx.wait();
+
   tx = await touchToken.transfer(alice, ethers.utils.parseEther("100000"), { from: deployer });
   await tx.wait();
 
@@ -100,11 +114,17 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   console.log("SimplePriceOracle: ", simplePO.address);
 
   const masterPriceOracle = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
+
+  const fixedNativePriceOracle = (await ethers.getContract(
+    "FixedNativePriceOracle",
+    deployer
+  )) as FixedNativePriceOracle;
   const simplePriceOracle = await ethers.getContract("SimplePriceOracle", deployer);
 
   // get the ERC20 address of deployed cERC20
-  const underlyings = [tribe.address, touch.address];
-  const oracles = Array(underlyings.length).fill(simplePriceOracle.address);
+  const underlyings = [tribe.address, touch.address, weth.address];
+  const oracles = [simplePriceOracle.address, simplePriceOracle.address, fixedNativePriceOracle.address];
+
   tx = await masterPriceOracle.add(underlyings, oracles);
   await tx.wait();
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);

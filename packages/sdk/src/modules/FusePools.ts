@@ -45,6 +45,9 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       let totalBorrowBalanceNative = 0;
       let totalSuppliedNative = 0;
       let totalBorrowedNative = 0;
+      let suppliedForUtilization = 0;
+      let borrowedForUtilization = 0;
+      let utilization = 0;
 
       const promises: Promise<any>[] = [];
 
@@ -96,6 +99,12 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         asset.totalBorrowNative =
           Number(utils.formatUnits(asset.totalBorrow)) * Number(utils.formatUnits(asset.underlyingPrice));
 
+        if (asset.totalSupplyNative === 0) {
+          asset.utilization = 0;
+        } else {
+          asset.utilization = (asset.totalBorrowNative / asset.totalSupplyNative) * 100;
+        }
+
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
@@ -103,6 +112,15 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
           Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalLiquidityNative += asset.liquidityNative;
+
+        if (!asset.isBorrowPaused) {
+          suppliedForUtilization += asset.totalSupplyNative;
+          borrowedForUtilization += asset.totalBorrowNative;
+        }
+      }
+
+      if (suppliedForUtilization !== 0) {
+        utilization = (borrowedForUtilization / suppliedForUtilization) * 100;
       }
 
       await Promise.all(promises);
@@ -123,6 +141,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         underlyingTokens,
         underlyingSymbols,
         whitelistedAdmin,
+        utilization,
       };
     }
 
@@ -139,7 +158,10 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
           from: options.from,
         }
       );
-      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+      let poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+
+      // TODO: fix this shit later
+      poolIds = poolIds.filter((id) => this.chainId !== 97 || (this.chainId === 97 && id !== "3"));
 
       if (!poolIds.length) {
         return undefined;

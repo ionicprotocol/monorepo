@@ -128,12 +128,12 @@ export const assets: SupportedAsset[] = [
     name: "Ellipsis.finance DAI/3EPS",
     decimals: 18,
   },
-  // {
-  //   symbol: assetSymbols.ust3EPS,
-  //   underlying: "0x151F1611b2E304DEd36661f65506f9D7D172beba",
-  //   name: "Ellipsis.finance UST/3EPS",
-  //   decimals: 18,
-  // },
+  {
+    symbol: assetSymbols["2brl"],
+    underlying: "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9",
+    name: "Ellipsis.finance 2BRL",
+    decimals: 18,
+  },
   // Bomb
   {
     symbol: assetSymbols.BOMB,
@@ -161,6 +161,12 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
   },
   {
+    symbol: assetSymbols.BRZ,
+    underlying: "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb",
+    name: "BRZ Token",
+    decimals: 18,
+  },
+  {
     symbol: assetSymbols["WBNB-BUSD"],
     underlying: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
     name: "WBNB-BUSD PCS LP",
@@ -170,6 +176,30 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols["WBNB-DAI"],
     underlying: "0xc7c3cCCE4FA25700fD5574DA7E200ae28BBd36A3",
     name: "WBNB-DAI PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["WBNB-USDC"],
+    underlying: "0xd99c7F6C65857AC913a8f880A4cb84032AB2FC5b",
+    name: "WBNB-USDC PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["WBNB-USDT"],
+    underlying: "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE",
+    name: "WBNB-USDT PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["USDC-ETH"],
+    underlying: "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0",
+    name: "USDC-ETH PCS LP",
+    decimals: 18,
+  },
+  {
+    symbol: assetSymbols["BUSD-BTCB"],
+    underlying: "0xF45cd219aEF8618A92BAa7aD848364a158a24F33",
+    name: "BUSD-BTCB PCS LP",
     decimals: 18,
   },
 ];

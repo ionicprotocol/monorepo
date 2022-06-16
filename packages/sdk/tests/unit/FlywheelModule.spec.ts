@@ -1,14 +1,16 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
+
+import { CErc20 } from "../../lib/contracts/typechain/CErc20.sol";
+import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import Fuse from "../../src/Fuse";
-import { CErc20, EIP20Interface } from "../../lib/contracts/typechain";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
-import * as collateralHelpers from "../utils/collateral";
-import * as poolHelpers from "../utils/pool";
 import * as assetHelpers from "../utils/assets";
-import * as timeHelpers from "../utils/time";
-import { constants } from "ethers";
+import * as collateralHelpers from "../utils/collateral";
 import { getOrCreateFuse } from "../utils/fuseSdk";
+import * as poolHelpers from "../utils/pool";
+import { wrapNativeToken } from "../utils/setup";
+import * as timeHelpers from "../utils/time";
 
 describe("FlywheelModule", function () {
   let poolAAddress: string;
@@ -18,11 +20,10 @@ describe("FlywheelModule", function () {
   let erc20TwoCToken: CErc20;
 
   let erc20OneUnderlying: EIP20Interface;
-  let erc20TwoUnderlying: EIP20Interface;
 
   let chainId: number;
 
-  this.beforeEach(async () => {
+  beforeEach(async () => {
     ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
     await setUpPriceOraclePrices();
@@ -30,8 +31,8 @@ describe("FlywheelModule", function () {
 
     sdk = await getOrCreateFuse();
 
-    [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-RewardsDistributor-Test" });
-    [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-RewardsDistributor-Test" });
+    [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-FlyWheel-Test" });
+    [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-FlyWheel-Test" });
 
     const assetsA = await assetHelpers.getAssetsConf(
       poolAAddress,
@@ -39,24 +40,24 @@ describe("FlywheelModule", function () {
       sdk.irms.JumpRateModel.address,
       ethers
     );
+
     const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
 
-    const [erc20One, erc20Two] = assetsA.filter((a) => a.underlying !== constants.AddressZero);
-
-    const deployedErc20One = deployedAssetsA.find((a) => a.underlying === erc20One.underlying);
-    const deployedErc20Two = deployedAssetsA.find((a) => a.underlying === erc20Two.underlying);
-    console.log("this is before getting crec20");
+    const deployedErc20One = deployedAssetsA.find((a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN);
+    const deployedErc20Two = deployedAssetsA.find(
+      (a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN && a.underlying !== deployedErc20One.underlying
+    );
 
     erc20OneCToken = (await ethers.getContractAt("CErc20", deployedErc20One.assetAddress)) as CErc20;
     erc20TwoCToken = (await ethers.getContractAt("CErc20", deployedErc20Two.assetAddress)) as CErc20;
 
-    erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", erc20One.underlying)) as EIP20Interface;
-    erc20TwoUnderlying = (await ethers.getContractAt("EIP20Interface", erc20Two.underlying)) as EIP20Interface;
+    erc20OneUnderlying = (await ethers.getContractAt("EIP20Interface", deployedErc20One.underlying)) as EIP20Interface;
 
     if (chainId !== 1337) {
-      await tradeNativeForAsset({ account: "alice", token: erc20Two.underlying, amount: "500" });
-      await tradeNativeForAsset({ account: "deployer", token: erc20Two.underlying, amount: "500" });
+      await tradeNativeForAsset({ account: "alice", token: deployedErc20One.underlying, amount: "500" });
+      await tradeNativeForAsset({ account: "deployer", token: deployedErc20Two.underlying, amount: "500" });
     }
+    await wrapNativeToken({ account: "deployer", amount: "500", weth: undefined });
   });
 
   it("1 Pool, 1 Flywheel, FlywheelStaticRewards", async function () {
@@ -127,7 +128,7 @@ describe("FlywheelModule", function () {
     // TODO test claimable functions
   });
 
-  it.skip("1 Pool, 1 Flywheel, 1 Reward Distributor", async function () {
+  it("1 Pool, 1 Flywheel, 1 Reward Distributor", async function () {
     const { deployer, alice } = await ethers.getNamedSigners();
 
     const rewardToken = erc20OneUnderlying;

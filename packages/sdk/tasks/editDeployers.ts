@@ -21,7 +21,7 @@ export default task("edit-deployers", "Edit deployers")
 task("edit-deployer-whitelist-enforcement", "Edit deployer whitelist enforcement")
   .addParam("enforce", "Enforce whitelist?")
   .setAction(async ({ enforce: _enforce }, { getNamedAccounts, ethers }) => {
-    let enforce = _enforce === "true";
+    const enforce = _enforce === "true";
     const { deployer } = await getNamedAccounts();
 
     const fpd = await ethers.getContract("FusePoolDirectory", deployer);

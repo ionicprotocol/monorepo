@@ -1,6 +1,6 @@
-import { task, types } from "hardhat/config";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
+import { task, types } from "hardhat/config";
 
 export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
   .addParam("token", "token address", undefined, types.string)
@@ -16,7 +16,7 @@ export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
     if (_account === "whale") {
       const signers = await ethers.getSigners();
       let max = BigNumber.from(0);
-      for (let signer of signers) {
+      for (const signer of signers) {
         const bal = await signer.getBalance();
         if (bal.gt(max)) {
           account = signer;
@@ -74,7 +74,7 @@ task("swap-token-for-wtoken", "Swap token for WNATIVE")
     if (_account === "whale") {
       const signers = await ethers.getSigners();
       let max = BigNumber.from(0);
-      for (let signer of signers) {
+      for (const signer of signers) {
         const bal = await token.balanceOf(signer.address);
         if (bal.gt(max)) {
           account = signer;
@@ -127,7 +127,7 @@ task("swap-token-for-token", "Swap token for token")
     if (_account === "whale") {
       const signers = await ethers.getSigners();
       let max = BigNumber.from(0);
-      for (let signer of signers) {
+      for (const signer of signers) {
         const bal = await token1.balanceOf(signer.address);
         if (bal.gt(max)) {
           account = signer;
@@ -193,14 +193,15 @@ task("get-token-pair", "Get token pair address")
 task("wrap-native-token", "Get token pair address")
   .addOptionalParam("amount", "Amount to trade", "100", types.string)
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
-  .setAction(async ({ account: _account, amount: _amount }, { ethers }) => {
+  .addOptionalParam("weth", "weth address override", undefined, types.string)
+  .setAction(async ({ account: _account, amount: _amount, weth: _weth }, { ethers }) => {
     // @ts-ignore
     const fuseModule = await import("../tests/utils/fuseSdk");
     const sdk = await fuseModule.getOrCreateFuse();
     const account = await ethers.getNamedSigner(_account);
 
     const wnative = new ethers.Contract(
-      sdk.chainSpecificAddresses.W_TOKEN,
+      _weth ? _weth : sdk.chainSpecificAddresses.W_TOKEN,
       [
         "function deposit() public payable",
         "function approve(address guy, uint wad) public returns (bool)",
@@ -208,8 +209,7 @@ task("wrap-native-token", "Get token pair address")
       ],
       account
     );
-    let tx;
-    tx = await wnative.approve(account.address, ethers.constants.MaxInt256);
+    const tx = await wnative.approve(account.address, ethers.constants.MaxInt256);
     await tx.wait();
     await wnative.deposit({ value: ethers.utils.parseEther(_amount) });
     await tx.wait();

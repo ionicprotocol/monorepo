@@ -1,23 +1,26 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 
-import { PoolDashboardBox } from '@ui/components/pages/Fuse/FusePoolPage/PoolDashboardBox';
+import { MidasBox, MidasBoxProps } from '@ui/components/shared/MidasBox';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { MarketData } from '@ui/hooks/useFusePoolData';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Row } from '@ui/utils/chakraUtils';
 
+interface CollateralRatioBarProps {
+  assets: MarketData[];
+  borrowFiat: number;
+}
+
 export const CollateralRatioBar = ({
   assets,
-  borrowUSD,
-}: {
-  assets: NativePricedFuseAsset[];
-  borrowUSD: number;
-}) => {
+  borrowFiat,
+  ...midasBoxProps
+}: CollateralRatioBarProps & MidasBoxProps) => {
   const maxBorrow = useBorrowLimit(assets);
 
-  const ratio = (borrowUSD / maxBorrow) * 100;
+  const ratio = (borrowFiat / maxBorrow) * 100;
 
   useEffect(() => {
     if (ratio > 95) {
@@ -26,7 +29,7 @@ export const CollateralRatioBar = ({
   }, [ratio]);
 
   return (
-    <PoolDashboardBox width={'100%'} height="65px" mt={4} p={4} mx="auto">
+    <MidasBox width={'100%'} height="65px" p={4} mx="auto" {...midasBoxProps}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" expand>
         <Tooltip label={'Keep this bar from filling up to avoid being liquidated!'}>
           <Text flexShrink={0} mr={4}>
@@ -36,7 +39,7 @@ export const CollateralRatioBar = ({
 
         <Tooltip label={'This is how much you have borrowed.'}>
           <Text flexShrink={0} mt="2px" mr={3} fontSize="10px">
-            {smallUsdFormatter(borrowUSD)}
+            {smallUsdFormatter(borrowFiat)}
           </Text>
         </Tooltip>
 
@@ -64,6 +67,6 @@ export const CollateralRatioBar = ({
           </Text>
         </Tooltip>
       </Row>
-    </PoolDashboardBox>
+    </MidasBox>
   );
 };
