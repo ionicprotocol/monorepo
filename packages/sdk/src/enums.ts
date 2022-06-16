@@ -92,3 +92,10 @@ export enum CTokenErrorCodes {
   TOKEN_TRANSFER_OUT_FAILED,
   UTILIZATION_ABOVE_MAX,
 }
+
+export enum FundOperationMode {
+  SUPPLY,
+  WITHDRAW,
+  BORROW,
+  REPAY,
+}
