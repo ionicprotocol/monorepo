@@ -8,6 +8,8 @@ on:
       - 'packages/fuse-liquidator-bot/**'
       - 'packages/fuse-twap-bot/**'
       - 'packages/sdk/**'
+      - 'docker/liquidator/**'
+      - 'docker/twap/**'
       - 'ops/**'
   pull_request:
     branches: [main, development]
@@ -16,6 +18,8 @@ on:
       - 'packages/fuse-liquidator-bot/**'
       - 'packages/fuse-twap-bot/**'
       - 'packages/sdk/**'
+      - 'docker/liquidator/**'
+      - 'docker/twap/**'
       - 'ops/**'
 
 jobs:
