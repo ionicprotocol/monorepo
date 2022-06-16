@@ -1,7 +1,8 @@
-import dotenv from "dotenv";
-import { liquidateAndRepeat, logger, approveTokensToSafeLiquidator } from "./src";
-import { SupportedChains } from "@midas-capital/sdk";
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { SupportedChains } from "@midas-capital/sdk";
+import dotenv from "dotenv";
+
+import { approveTokensToSafeLiquidator, liquidateAndRepeat, logger } from "./src";
 
 dotenv.config();
 

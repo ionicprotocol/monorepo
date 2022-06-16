@@ -1,15 +1,17 @@
-import { logger, updateCumulativePrices } from './index';
-import { BigNumber, utils } from 'ethers';
-import { Fuse } from '@midas-capital/sdk';
-import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { getPriceOracle } from './utils';
+import { TransactionResponse } from "@ethersproject/abstract-provider";
+import { Fuse } from "@midas-capital/sdk";
+import { BigNumber, utils } from "ethers";
+
+import { getPriceOracle } from "./utils";
+
+import { logger, updateCumulativePrices } from "./index";
 
 export default async function tryUpdateCumulativePrices(
   fuse: Fuse,
   lastTransaction: TransactionResponse | null,
   lastTransactionSent: number | null
 ): Promise<[TransactionResponse | null, number]> {
-  const supportedPairs = process.env.SUPPORTED_PAIRS!.split(',');
+  const supportedPairs = process.env.SUPPORTED_PAIRS!.split(",");
   // Check if last TX sent is still pending; if so, wait until it has been 5 minutes since sending, after which we will overwrite it (i.e., same nonce)
 
   const rootPriceOracleContract = await getPriceOracle(fuse);
@@ -36,19 +38,16 @@ export default async function tryUpdateCumulativePrices(
     }
   }
   // Get pairs, min periods, and deviation thresholds
-  let pairs = [];
-  let baseTokens = [];
-  let minPeriods = [];
-  let deviationThresholds = [];
+  const pairs = [];
+  const baseTokens = [];
+  const minPeriods = [];
+  const deviationThresholds = [];
 
   for (let i = 0; i < supportedPairs.length; i++) {
-    const parts = supportedPairs[i].split('|');
+    const parts = supportedPairs[i].split("|");
     pairs[i] = parts[0];
     baseTokens[i] = parts[1];
-    minPeriods[i] =
-      parts[2] !== undefined
-        ? BigNumber.from(parts[2])
-        : BigNumber.from(process.env.DEFAULT_MIN_PERIOD);
+    minPeriods[i] = parts[2] !== undefined ? BigNumber.from(parts[2]) : BigNumber.from(process.env.DEFAULT_MIN_PERIOD);
 
     deviationThresholds[i] = utils.parseEther(
       parts[3] !== undefined ? parts[3] : process.env.DEFAULT_DEVIATION_THRESHOLD!
@@ -63,8 +62,8 @@ export default async function tryUpdateCumulativePrices(
     deviationThresholds
   );
 
-  logger.info(workable, 'workable');
-  let workableSince: {
+  logger.info(workable, "workable");
+  const workableSince: {
     [key: string]: number | undefined;
   } = {};
   if (parseInt(process.env.REDUNDANCY_DELAY_SECONDS!) > 0) {
@@ -72,7 +71,7 @@ export default async function tryUpdateCumulativePrices(
 
     for (let i = 0; i < workable.length; i++) {
       if (workable[i]) {
-        let epochNow = new Date().getTime() / 1000;
+        const epochNow = new Date().getTime() / 1000;
         if (workableSince[pairs[i]]! < epochNow - parseInt(process.env.REDUNDANCY_DELAY_SECONDS!))
           redundancyDelayPassed = true;
         else if (workableSince[pairs[i]] === undefined) workableSince[pairs[i]] = epochNow;
@@ -84,7 +83,7 @@ export default async function tryUpdateCumulativePrices(
     if (!redundancyDelayPassed) return [null, 0];
   }
 
-  let workablePairs = [];
+  const workablePairs = [];
   for (let i = 0; i < workable.length; i++) {
     if (workable[i]) {
       workablePairs.push(pairs[i]);
@@ -96,6 +95,6 @@ export default async function tryUpdateCumulativePrices(
   const tx = await updateCumulativePrices(workablePairs, useNonce, fuse);
 
   lastTransactionSent = new Date().getTime() / 1000;
-  logger.info('Pending TX hash:', lastTransaction?.hash);
+  logger.info("Pending TX hash:", lastTransaction?.hash);
   return [tx, lastTransactionSent];
 }

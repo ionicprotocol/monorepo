@@ -1,6 +1,7 @@
-import { logger, sendTransactionToSafeLiquidator } from "./index";
 import { Fuse } from "@midas-capital/sdk";
 import { Wallet } from "ethers";
+
+import { logger, sendTransactionToSafeLiquidator } from "./index";
 
 export default async function liquidateUnhealthyBorrows(fuse: Fuse) {
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);

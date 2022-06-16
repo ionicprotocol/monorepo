@@ -1,5 +1,6 @@
-import { liquidateUnhealthyBorrows, logger, setUpSdk } from "./index";
 import { JsonRpcProvider } from "@ethersproject/providers";
+
+import { liquidateUnhealthyBorrows, logger, setUpSdk } from "./index";
 
 // Liquidate unhealthy borrows and repeat every LIQUIDATION_INTERVAL_SECONDS
 export default async function liquidateAndRepeat(chainId: number, provider: JsonRpcProvider) {
