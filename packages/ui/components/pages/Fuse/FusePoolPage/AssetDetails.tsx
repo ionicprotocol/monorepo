@@ -1,4 +1,4 @@
-import { Box, Heading, Select, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Box, Grid, Heading, Select, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
@@ -213,20 +213,64 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
 
       <ModalDivider />
 
-      <Row
-        mainAxisAlignment="space-around"
-        crossAxisAlignment="center"
+      <Grid
+        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
         height="100%"
+        gap={2}
         width="100%"
-        pt={4}
-        px={4}
-        pb={2}
+        p={4}
+      >
+        <CaptionedStat
+          stat={shortUsdFormatter(selectedAsset.totalSupplyFiat)}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Supplied'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+
+        <CaptionedStat
+          stat={selectedAsset.utilization.toFixed(0) + '%'}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Utilization'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+
+        <CaptionedStat
+          stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Borrowed'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+      </Grid>
+
+      <ModalDivider />
+
+      <Grid
+        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
+        height="100%"
+        gap={2}
+        width="100%"
+        p={4}
       >
         <CaptionedStat
           stat={Number(utils.formatUnits(selectedAsset.collateralFactor, 16)).toFixed(0) + '%'}
           statSize="lg"
           captionSize="xs"
           caption={'Collateral Factor'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+
+        <CaptionedStat
+          stat={Number(utils.formatUnits(selectedAsset.adminFee, 16)).toFixed(1) + '%'}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Admin Fee'}
           crossAxisAlignment="center"
           captionFirst={true}
         />
@@ -239,47 +283,7 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
           crossAxisAlignment="center"
           captionFirst={true}
         />
-      </Row>
-
-      <ModalDivider />
-
-      <Row
-        mainAxisAlignment="space-around"
-        crossAxisAlignment="center"
-        height="100%"
-        width="100%"
-        p={4}
-        mt={3}
-      >
-        <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalSupplyFiat)}
-          statSize="lg"
-          captionSize="xs"
-          caption={'Asset Supplied'}
-          crossAxisAlignment="center"
-          captionFirst={true}
-        />
-
-        {isMobile ? null : (
-          <CaptionedStat
-            stat={selectedAsset.utilization.toFixed(0) + '%'}
-            statSize="lg"
-            captionSize="xs"
-            caption={'Asset Utilization'}
-            crossAxisAlignment="center"
-            captionFirst={true}
-          />
-        )}
-
-        <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
-          statSize="lg"
-          captionSize="xs"
-          caption={'Asset Borrowed'}
-          crossAxisAlignment="center"
-          captionFirst={true}
-        />
-      </Row>
+      </Grid>
     </Column>
   );
 };
