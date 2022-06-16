@@ -16,6 +16,7 @@ import {
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
+  FundOperationMode,
   Fuse,
   NativePricedFuseAsset,
 } from '@midas-capital/sdk';
@@ -32,7 +33,7 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { FundOperationMode, UserAction } from '@ui/constants/index';
+import { UserAction } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -483,7 +484,7 @@ interface StatsColumnProps {
 }
 const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsColumnProps) => {
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
-  const updatedAssets: NativePricedFuseAsset[] | undefined = useUpdatedUserAssets({
+  const updatedAssets: MarketData[] | undefined = useUpdatedUserAssets({
     mode,
     assets,
     index,
@@ -607,7 +608,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
               {!isSupplyingOrWithdrawing ? (
                 <>
                   {' → '}
-                  {smallUsdFormatter(updatedAsset.borrowBalanceNative)}
+                  {smallUsdFormatter(updatedAsset.borrowBalanceFiat)}
                 </>
               ) : null}
             </Text>

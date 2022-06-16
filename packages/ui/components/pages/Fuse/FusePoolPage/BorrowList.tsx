@@ -13,13 +13,13 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { FundOperationMode } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { FundOperationMode } from '@ui/constants/index';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
