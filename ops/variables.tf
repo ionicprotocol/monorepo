@@ -22,6 +22,10 @@ variable "moralis_api_key" {
   type = string
 }
 
+variable "pokt_api_key" {
+  type = string
+}
+
 variable "twap_bot_image" {
   type    = string
   default = "ghcr.io/midas-protocol/fuse-twap-bot:sha-94058271f1bedd35432866ef1e01030ffd519577"
