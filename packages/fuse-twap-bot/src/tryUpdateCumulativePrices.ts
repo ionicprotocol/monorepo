@@ -1,4 +1,4 @@
-import { updateCumulativePrices } from './index';
+import { logger, updateCumulativePrices } from './index';
 import { BigNumber, utils } from 'ethers';
 import { Fuse } from '@midas-capital/sdk';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
@@ -63,7 +63,7 @@ export default async function tryUpdateCumulativePrices(
     deviationThresholds
   );
 
-  console.log(workable, 'workable');
+  logger.info(workable, 'workable');
   let workableSince: {
     [key: string]: number | undefined;
   } = {};
@@ -96,6 +96,6 @@ export default async function tryUpdateCumulativePrices(
   const tx = await updateCumulativePrices(workablePairs, useNonce, fuse);
 
   lastTransactionSent = new Date().getTime() / 1000;
-  console.log('Pending TX hash:', lastTransaction?.hash);
+  logger.info('Pending TX hash:', lastTransaction?.hash);
   return [tx, lastTransactionSent];
 }

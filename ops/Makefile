@@ -54,6 +54,7 @@ plan:
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_moralis_api_key=${MORALIS_API_KEY} && \
+	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	terraform init && \
@@ -64,6 +65,7 @@ deploy:
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_moralis_api_key=${MORALIS_API_KEY} && \
+	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	terraform init && \
