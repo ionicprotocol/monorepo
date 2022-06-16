@@ -28,7 +28,7 @@ export default async function tryUpdateCumulativePrices(
       // Transaction found and block not yet mined
       if (
         lastTransactionSent! <
-        new Date().getTime() / 1000 - parseInt(process.env.SPEED_UP_TRANSACTION_AFTER_SECONDS!)
+        new Date().getTime() / 1000 - parseInt(process.env.SPEED_UP_TRANSACTION_AFTER_SECONDS || "120")
       )
         useNonce = lastTransaction.nonce;
       else return [null, 0];
@@ -47,10 +47,11 @@ export default async function tryUpdateCumulativePrices(
     const parts = supportedPairs[i].split("|");
     pairs[i] = parts[0];
     baseTokens[i] = parts[1];
-    minPeriods[i] = parts[2] !== undefined ? BigNumber.from(parts[2]) : BigNumber.from(process.env.DEFAULT_MIN_PERIOD);
+    minPeriods[i] =
+      parts[2] !== undefined ? BigNumber.from(parts[2]) : BigNumber.from(process.env.DEFAULT_MIN_PERIOD || "1800");
 
     deviationThresholds[i] = utils.parseEther(
-      parts[3] !== undefined ? parts[3] : process.env.DEFAULT_DEVIATION_THRESHOLD!
+      parts[3] !== undefined ? parts[3] : process.env.DEFAULT_DEVIATION_THRESHOLD || "0.05"
     );
   }
 
@@ -66,13 +67,13 @@ export default async function tryUpdateCumulativePrices(
   const workableSince: {
     [key: string]: number | undefined;
   } = {};
-  if (parseInt(process.env.REDUNDANCY_DELAY_SECONDS!) > 0) {
+  if (parseInt(process.env.REDUNDANCY_DELAY_SECONDS || "0") > 0) {
     let redundancyDelayPassed = false;
 
     for (let i = 0; i < workable.length; i++) {
       if (workable[i]) {
         const epochNow = new Date().getTime() / 1000;
-        if (workableSince[pairs[i]]! < epochNow - parseInt(process.env.REDUNDANCY_DELAY_SECONDS!))
+        if (workableSince[pairs[i]]! < epochNow - parseInt(process.env.REDUNDANCY_DELAY_SECONDS || "0"))
           redundancyDelayPassed = true;
         else if (workableSince[pairs[i]] === undefined) workableSince[pairs[i]] = epochNow;
       } else {
