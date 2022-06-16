@@ -242,6 +242,7 @@ export type ChainLiquidationDefaults = {
     SUPPORTED_INPUT_CURRENCIES: Array<string>;
     LIQUIDATION_STRATEGY: LiquidationStrategy;
     MINIMUM_PROFIT_NATIVE: BigNumber;
+    LIQUIDATION_INTERVAL_SECONDS: number;
   };
 };
 

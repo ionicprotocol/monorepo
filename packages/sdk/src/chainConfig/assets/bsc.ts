@@ -199,7 +199,7 @@ export const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols["BUSD-BTCB"],
     underlying: "0xF45cd219aEF8618A92BAa7aD848364a158a24F33",
-    name: "USDC-ETH PCS LP",
+    name: "BUSD-BTCB PCS LP",
     decimals: 18,
   },
 ];
