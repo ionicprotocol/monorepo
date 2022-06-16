@@ -20,10 +20,12 @@ import { useState } from 'react';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { convertMantissaToAPR } from '@ui/utils/apyUtils';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { useIsMobile } from '@ui/utils/chakraUtils';
@@ -166,14 +168,16 @@ interface AssetBorrowRowProps {
 
 const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
   const asset = assets[index];
+  const { currentChain } = useRari();
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const authedOpenModal = useAuthedCallback(openModal);
 
   const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const blocksPerMin = getBlockTimePerMinuteByChainId(currentChain.id);
 
-  const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock);
+  const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock, blocksPerMin);
 
   const isMobile = useIsMobile();
 
