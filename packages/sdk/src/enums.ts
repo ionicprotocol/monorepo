@@ -24,7 +24,6 @@ export enum RedemptionStrategy {
 
 export enum DelegateContractName {
   CErc20Delegate = "CErc20Delegate",
-  CEtherDelegate = "CEtherDelegate",
   CErc20PluginDelegate = "CErc20PluginDelegate",
   CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
 }
