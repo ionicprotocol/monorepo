@@ -1,7 +1,10 @@
-import { BigNumber, Wallet } from 'ethers';
-import { fetchGasLimitForTransaction } from './utils';
-import { TransactionRequest } from '@ethersproject/providers';
-import { Fuse } from '@midas-capital/sdk';
+import { TransactionRequest } from "@ethersproject/providers";
+import { Fuse } from "@midas-capital/sdk";
+import { BigNumber, Wallet } from "ethers";
+
+import { fetchGasLimitForTransaction } from "./utils";
+
+import { logger } from "./index";
 
 export default async function sendTransactionToSafeLiquidator(
   fuse: Fuse,
@@ -10,7 +13,7 @@ export default async function sendTransactionToSafeLiquidator(
   value: number | BigNumber
 ) {
   // Build data
-  let data = fuse.contracts.FuseSafeLiquidator.interface.encodeFunctionData(method, params);
+  const data = fuse.contracts.FuseSafeLiquidator.interface.encodeFunctionData(method, params);
   const txCount = await fuse.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
 
@@ -29,8 +32,7 @@ export default async function sendTransactionToSafeLiquidator(
     gasLimit: gasLimit,
   };
 
-  if (process.env.NODE_ENV !== 'production')
-    console.log('Signing and sending', method, 'transaction:', tx);
+  if (process.env.NODE_ENV !== "production") logger.info("Signing and sending", method, "transaction:", tx);
 
   let sentTx;
   // Sign transaction
@@ -38,8 +40,10 @@ export default async function sendTransactionToSafeLiquidator(
   try {
     sentTx = await signer.sendTransaction(txRequest);
   } catch (error) {
-    throw `Error sending ${method}, transaction: ${error}`;
+    const msg = `Error sending ${method}, transaction: ${error}`;
+    logger.error(msg);
+    throw msg;
   }
-  console.log('Successfully sent', method, 'transaction hash:', sentTx.hash);
+  logger.info("Successfully sent", method, "transaction hash:", sentTx.hash);
   return sentTx;
 }
