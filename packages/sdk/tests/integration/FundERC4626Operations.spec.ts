@@ -78,7 +78,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
     await tradeAssetForAsset({ account: "bob", token1: BTCB.underlying, token2: BOMB.underlying, amount: "0.2" });
     await wrapNativeToken({ account: "bob", amount: "100", weth: undefined });
   });
-  it.only("user can supply any asset", async function () {
+  it("user can supply any asset", async function () {
     const { bob } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
 
