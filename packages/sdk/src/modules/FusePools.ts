@@ -60,12 +60,9 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
+        const isBorrowPaused: boolean = await comptrollerContract.callStatic.borrowGuardianPaused(asset.cToken);
+        asset.isBorrowPaused = isBorrowPaused;
         // @todo aggregate the borrow/supply guardian paused into 1
-        promises.push(
-          comptrollerContract.callStatic
-            .borrowGuardianPaused(asset.cToken)
-            .then((isPaused: boolean) => (asset.isBorrowPaused = isPaused))
-        );
         promises.push(
           comptrollerContract.callStatic
             .mintGuardianPaused(asset.cToken)
