@@ -41,6 +41,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
+      let totalAvailableLiquidityNative = 0;
       let totalSupplyBalanceNative = 0;
       let totalBorrowBalanceNative = 0;
       let totalSuppliedNative = 0;
@@ -59,12 +60,9 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
+        const isBorrowPaused: boolean = await comptrollerContract.callStatic.borrowGuardianPaused(asset.cToken);
+        asset.isBorrowPaused = isBorrowPaused;
         // @todo aggregate the borrow/supply guardian paused into 1
-        promises.push(
-          comptrollerContract.callStatic
-            .borrowGuardianPaused(asset.cToken)
-            .then((isPaused: boolean) => (asset.isBorrowPaused = isPaused))
-        );
         promises.push(
           comptrollerContract.callStatic
             .mintGuardianPaused(asset.cToken)
@@ -104,13 +102,15 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         } else {
           asset.utilization = (asset.totalBorrowNative / asset.totalSupplyNative) * 100;
         }
+        const assetLiquidity =
+          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
-        asset.liquidityNative =
-          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
+        asset.liquidityNative = assetLiquidity;
 
+        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
         totalLiquidityNative += asset.liquidityNative;
 
         if (!asset.isBorrowPaused) {
@@ -132,6 +132,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         comptroller,
         name,
         totalLiquidityNative,
+        totalAvailableLiquidityNative,
         totalSuppliedNative,
         totalBorrowedNative,
         totalSupplyBalanceNative,
