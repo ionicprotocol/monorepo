@@ -10,7 +10,6 @@ import * as collateralHelpers from "../utils/collateral";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
 import { wrapNativeToken } from "../utils/setup";
-import * as timeHelpers from "../utils/time";
 
 describe("FlywheelModule", function () {
   let poolAAddress: string;
