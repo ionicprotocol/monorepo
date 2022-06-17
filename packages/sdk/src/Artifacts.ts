@@ -8,7 +8,7 @@ import CEtherDelegateArtifact from "../lib/contracts/out/CEtherDelegate.sol/CEth
 import CEtherDelegatorArtifact from "../lib/contracts/out/CEtherDelegator.sol/CEtherDelegator.json";
 import ChainlinkPriceOracleV2Artifact from "../lib/contracts/out/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
 import ComptrollerArtifact from "../lib/contracts/out/Comptroller.sol/Comptroller.json";
-import CTokenInterfacesArtifact from "../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
+import CTokenInterfaceArtifact from "../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import DAIInterestRateModelV2Artifact from "../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
 import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
@@ -45,7 +45,7 @@ const CEtherDelegate: Artifact = CEtherDelegateArtifact;
 const CEtherDelegator: Artifact = CEtherDelegatorArtifact;
 const ChainlinkPriceOracleV2: Artifact = ChainlinkPriceOracleV2Artifact;
 const Comptroller: Artifact = ComptrollerArtifact;
-const CTokenInterfaces: Artifact = CTokenInterfacesArtifact;
+const CTokenInterface: Artifact = CTokenInterfaceArtifact;
 const DAIInterestRateModelV2: Artifact = DAIInterestRateModelV2Artifact;
 const EIP20Interface: Artifact = EIP20InterfaceArtifact;
 const ERC20: Artifact = ERC20Artifact;
@@ -71,7 +71,7 @@ const ARTIFACTS = {
   CEtherDelegator,
   ChainlinkPriceOracleV2,
   Comptroller,
-  CTokenInterfaces,
+  CTokenInterface,
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
@@ -101,7 +101,7 @@ export {
   CEtherDelegator,
   ChainlinkPriceOracleV2,
   Comptroller,
-  CTokenInterfaces,
+  CTokenInterface,
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
