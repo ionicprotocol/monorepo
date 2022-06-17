@@ -17,7 +17,7 @@ interface IRMChartProps {
 }
 const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChartProps) => {
   const { cChart } = useColors();
-  const { fuse } = useRari();
+  const { fuse, currentChain } = useRari();
   const { data, isLoading, error } = useQuery(
     ['irmCurve', interestRateModelAddress, adminFee, reserveFactor],
     async () => {
@@ -41,7 +41,7 @@ const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChar
         fuse.provider
       );
 
-      return convertIRMtoCurve(IRM);
+      return convertIRMtoCurve(IRM, currentChain.id);
     }
   );
 

@@ -1,7 +1,15 @@
-export const convertMantissaToAPY = (mantissa: any, dayRange: number) => {
-  return (Math.pow((mantissa / 1e18) * 6500 + 1, dayRange) - 1) * 100;
+import { BigNumber, utils } from 'ethers';
+
+export const convertMantissaToAPY = (
+  mantissa: BigNumber,
+  blocksPerMin: number,
+  dayRange: number
+) => {
+  return (
+    (Math.pow(Number(utils.formatUnits(mantissa)) * blocksPerMin * 60 * 24 + 1, dayRange) - 1) * 100
+  );
 };
 
-export const convertMantissaToAPR = (mantissa: any) => {
-  return (mantissa * 2372500) / 1e16;
+export const convertMantissaToAPR = (mantissa: BigNumber, blocksPerMin: number) => {
+  return Number(utils.formatUnits(mantissa)) * blocksPerMin * 60 * 24 * 365 * 100;
 };
