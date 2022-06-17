@@ -200,7 +200,7 @@ export interface FusePoolData {
   comptroller: string;
   name: string;
   totalLiquidityNative: number;
-  totaAvailablelLiquidityNative: number;
+  totalAvailableLiquidityNative: number;
   totalSuppliedNative: number;
   totalBorrowedNative: number;
   totalSupplyBalanceNative: number;
