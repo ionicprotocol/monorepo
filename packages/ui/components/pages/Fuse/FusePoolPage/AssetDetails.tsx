@@ -1,4 +1,4 @@
-import { Box, Heading, Select, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Box, Grid, Heading, Select, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
@@ -12,17 +12,15 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData, useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
+import { Center, Column, Row } from '@ui/utils/chakraUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export const AssetDetails = ({ data }: { data: ReturnType<typeof useFusePoolData>['data'] }) => {
-  const isMobile = useIsMobile();
-
   return (
-    <MidasBox height={isMobile ? 'auto' : '450px'}>
+    <MidasBox height={{ base: 'auto', md: '450px' }}>
       {data ? (
         data.assets.length > 0 ? (
           <AssetAndOtherInfo assets={data.assets} />
@@ -89,8 +87,6 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
 
     return convertIRMtoCurve(interestRateModel, currentChain.id);
   });
-
-  const isMobile = useIsMobile();
 
   const { cChart } = useColors();
 
@@ -213,14 +209,48 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
 
       <ModalDivider />
 
-      <Row
-        mainAxisAlignment="space-around"
-        crossAxisAlignment="center"
+      <Grid
+        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
         height="100%"
+        gap={2}
         width="100%"
-        pt={4}
-        px={4}
-        pb={2}
+        p={4}
+      >
+        <CaptionedStat
+          stat={shortUsdFormatter(selectedAsset.totalSupplyFiat)}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Supplied'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+
+        <CaptionedStat
+          stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Borrowed'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+        <CaptionedStat
+          stat={selectedAsset.utilization.toFixed(0) + '%'}
+          statSize="lg"
+          captionSize="xs"
+          caption={'Asset Utilization'}
+          crossAxisAlignment="center"
+          captionFirst={true}
+        />
+      </Grid>
+
+      <ModalDivider />
+
+      <Grid
+        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
+        height="100%"
+        gap={2}
+        width="100%"
+        p={4}
       >
         <CaptionedStat
           stat={Number(utils.formatUnits(selectedAsset.collateralFactor, 16)).toFixed(0) + '%'}
@@ -239,47 +269,15 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
           crossAxisAlignment="center"
           captionFirst={true}
         />
-      </Row>
-
-      <ModalDivider />
-
-      <Row
-        mainAxisAlignment="space-around"
-        crossAxisAlignment="center"
-        height="100%"
-        width="100%"
-        p={4}
-        mt={3}
-      >
         <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalSupplyFiat)}
+          stat={Number(utils.formatUnits(selectedAsset.adminFee, 16)).toFixed(1) + '%'}
           statSize="lg"
           captionSize="xs"
-          caption={'Asset Supplied'}
+          caption={'Admin Fee'}
           crossAxisAlignment="center"
           captionFirst={true}
         />
-
-        {isMobile ? null : (
-          <CaptionedStat
-            stat={selectedAsset.utilization.toFixed(0) + '%'}
-            statSize="lg"
-            captionSize="xs"
-            caption={'Asset Utilization'}
-            crossAxisAlignment="center"
-            captionFirst={true}
-          />
-        )}
-
-        <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
-          statSize="lg"
-          captionSize="xs"
-          caption={'Asset Borrowed'}
-          crossAxisAlignment="center"
-          captionFirst={true}
-        />
-      </Row>
+      </Grid>
     </Column>
   );
 };

@@ -1,7 +1,15 @@
 {
-  "printWidth": 100,
-  "semi": true,
-  "singleQuote": true,
-  "tabWidth": 2,
-  "useTabs": false
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "options": {
+        "printWidth": 120,
+        "tabWidth": 2,
+        "useTabs": false,
+        "singleQuote": false,
+        "bracketSpacing": true,
+        "explicitTypes": "always"
+      }
+    }
+  ]
 }

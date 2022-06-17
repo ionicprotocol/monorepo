@@ -1,14 +1,19 @@
-// * approveTokensToSafeLiquidator.ts
-export { default as approveTokensToSafeLiquidator } from './approveTokensToSafeLiquidator';
+export { default as approveTokensToSafeLiquidator } from "./approveTokensToSafeLiquidator";
 
-// * sendTransactionToSafeLiquidator.ts
-export { default as sendTransactionToSafeLiquidator } from './sendTransactionToSafeLiquidator';
+export { default as sendTransactionToSafeLiquidator } from "./sendTransactionToSafeLiquidator";
 
-// * liquidateUnhealthyBorrows.ts
-export { default as liquidateUnhealthyBorrows } from './liquidateUnhealthyBorrows';
+export { default as liquidateUnhealthyBorrows } from "./liquidateUnhealthyBorrows";
 
-// * liquidateAndRepeat.ts
-export { default as liquidateAndRepeat } from './liquidateAndRepeat';
+export { default as liquidateAndRepeat } from "./liquidateAndRepeat";
 
-// * setUpSdk.ts
-export { default as setUpSdk } from './setUpSdk';
+export { default as setUpSdk } from "./setUpSdk";
+
+import pino from "pino";
+
+export const logger = pino({
+  formatters: {
+    level: (label) => {
+      return { level: label.toUpperCase() };
+    },
+  },
+});

@@ -92,7 +92,7 @@ export const deployConfig: ChainDeployConfig = {
       flywheelIndices: [0, 1],
       name: "2brl",
     },
-    // All of these vaults are depricated
+    // All of these vaults are deprecated
     /*{
       // 0x
       strategy: "AutofarmERC4626",
