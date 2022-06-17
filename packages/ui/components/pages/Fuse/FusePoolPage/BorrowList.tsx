@@ -43,6 +43,7 @@ export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: Bo
   );
   const unBorrowableAssets = assets.filter((asset) => asset.isBorrowPaused);
 
+  // eslint-disable-next-line no-console
   const isMobile = useIsMobile();
   const { cCard } = useColors();
 
