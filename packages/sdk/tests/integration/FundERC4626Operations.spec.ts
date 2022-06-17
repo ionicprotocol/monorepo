@@ -17,7 +17,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
   let sdk: Fuse;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
-  const poolName = BSC_POOLS.BOMB;
+  const poolName = "Fund ERC4626 Pool";
 
   this.beforeEach(async () => {
     await deployments.fixture("prod");
@@ -35,7 +35,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
       sdk.contracts.FuseFeeDistributor.address,
       sdk.irms.JumpRateModel.address,
       ethers,
-      poolName
+      BSC_POOLS.BOMB
     );
     const alpacaAssets = (
       await assetHelpers.getAssetsConf(
@@ -78,7 +78,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
     await tradeAssetForAsset({ account: "bob", token1: BTCB.underlying, token2: BOMB.underlying, amount: "0.2" });
     await wrapNativeToken({ account: "bob", amount: "100", weth: undefined });
   });
-  it("user can supply any asset", async function () {
+  it.only("user can supply any asset", async function () {
     const { bob } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
 
