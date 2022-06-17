@@ -9,8 +9,10 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   .addOptionalParam("newImplementationAddress", "The address of the new implementation", undefined, types.string)
   .addOptionalParam("strategyCode", "If using strategy, pass its code", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
-    const poolName = "BOMB";
-    const symbol = "BTCB-BOMB";
+    const poolName = taskArgs.poolName;
+    const symbol = taskArgs.symbol;
+    const newImplementationAddress = taskArgs.newImplementationAddress;
+    const strategyCode = taskArgs.strategyCode;
 
     const signer = await ethers.getNamedSigner(taskArgs.admin);
     console.log(signer.address);
@@ -35,13 +37,11 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const assetConfig = assets.find((a) => a.symbol === symbol);
     console.log(assetConfig);
 
-    if (taskArgs.strategyCode) {
-      if (!taskArgs.newImplementationAddress) {
+    if (strategyCode) {
+      if (!newImplementationAddress) {
         throw "Must pass newImplementationAddress if using strategyCode";
       }
-      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying].find(
-        (p) => p.strategyCode === taskArgs.strategyCode
-      );
+      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying].find((p) => p.strategyCode === strategyCode);
 
       const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlying);
       console.log(market);
@@ -51,9 +51,9 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
       const abiCoder = new ethers.utils.AbiCoder();
       const implementationData = abiCoder.encode(["address"], [assetConfig.plugin.strategyAddress]);
-      console.log(`Setting implementation to ${taskArgs.newImplementationAddress}`);
+      console.log(`Setting implementation to ${newImplementationAddress}`);
       const setImplementationTx = await cTokenInstance._setImplementationSafe(
-        taskArgs.newImplementationAddress,
+        newImplementationAddress,
         false,
         implementationData
       );
@@ -67,7 +67,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   });
 
 task("market:updatewhitelist", "Upgrades a market's implementation")
-  .addParam("oldImplementationAddress", "The address of the new implementation", undefined, types.string)
+  .addParam("oldImplementationAddress", "The address of the old implementation", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
@@ -131,6 +131,6 @@ task("market:unsupport", "Unsupport a market")
 
     const comptroller = await sdk.getComptrollerInstance(pool.comptroller, { from: signer.address });
     const tx = await comptroller._unsupportMarket(taskArgs.ctoken);
-    const receipt = await tx.wait();
+    const receipt: TransactionReceipt = await tx.wait();
     console.log("Unsupported market with status:", receipt.status);
   });
