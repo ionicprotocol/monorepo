@@ -41,7 +41,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
-      let totaAvailablelLiquidityNative = 0;
+      let totalAvailableLiquidityNative = 0;
       let totalSupplyBalanceNative = 0;
       let totalBorrowBalanceNative = 0;
       let totalSuppliedNative = 0;
@@ -110,7 +110,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
         asset.liquidityNative = assetLiquidity;
 
-        totaAvailablelLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
+        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
         totalLiquidityNative += asset.liquidityNative;
 
         if (!asset.isBorrowPaused) {
@@ -132,7 +132,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         comptroller,
         name,
         totalLiquidityNative,
-        totaAvailablelLiquidityNative,
+        totalAvailableLiquidityNative,
         totalSuppliedNative,
         totalBorrowedNative,
         totalSupplyBalanceNative,
