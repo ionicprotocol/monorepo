@@ -31,7 +31,7 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
   const assets = poolData?.assets ?? [];
   const totalSuppliedFiat = poolData?.totalSuppliedFiat ?? 0;
   const totalBorrowedFiat = poolData?.totalBorrowedFiat ?? 0;
-  const totalLiquidityFiat = poolData?.totalLiquidityFiat ?? 0;
+  const totalAvailableLiquidityFiat = poolData?.totalAvailableLiquidityFiat ?? 0;
   const comptrollerAddress = poolData?.comptroller ?? '';
 
   const { cCard } = useColors();
@@ -96,7 +96,7 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
               />
               <StatRow
                 statATitle={'Available Liquidity'}
-                statA={shortUsdFormatter(totalLiquidityFiat)}
+                statA={shortUsdFormatter(totalAvailableLiquidityFiat)}
                 statBTitle={'Pool Utilization'}
                 statB={
                   totalSuppliedFiat.toString() === '0'
