@@ -218,7 +218,7 @@ describe("Fuse Index", () => {
     });
   });
 
-  describe.only("#getInterestRateModel", () => {
+  describe("#getInterestRateModel", () => {
     let model;
     let getAssetContractStub: SinonStub;
     let mockAssetContract: SinonStubbedInstance<Contract>;
