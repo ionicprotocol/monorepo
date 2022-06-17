@@ -6,6 +6,7 @@ import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/Whit
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../../lib/contracts/typechain";
 import { SupportedChains } from "../../../src/enums";
 import { FuseBase } from "../../../src/Fuse/index";
+import JumpRateModel from "../../../src/Fuse/irm/JumpRateModel";
 import * as utilsFns from "../../../src/Fuse/utils";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
@@ -217,7 +218,7 @@ describe("Fuse Index", () => {
     });
   });
 
-  describe("#getInterestRateModel", () => {
+  describe.only("#getInterestRateModel", () => {
     let model;
     let getAssetContractStub: SinonStub;
     let mockAssetContract: SinonStubbedInstance<Contract>;
@@ -232,24 +233,26 @@ describe("Fuse Index", () => {
           interestRateModel: () => Promise.resolve(mkAddress("0xabc")),
         },
       });
-      getAssetContractStub = stub(utilsFns, "getAssetContract").returns(mockAssetContract);
+      getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
       model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
       expect(getAssetContractStub).to.be.calledOnce;
       expect(model).to.be.null;
     });
 
-    // it("should init interest Rate Model when model is not null ", async () => {
-    //   const interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
-    //   Object.defineProperty(mockAssetContract, "callStatic", {
-    //     value: {
-    //       interestRateModel: () => Promise.resolve(interestRateModelAddress),
-    //     },
-    //   });
-    //   getAssetContractStub = stub(utilsFns, "getAssetContract").returns(mockAssetContract);
-    //   model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
-    //   expect(getAssetContractStub).to.be.calledOnce;
-    //   expect(model).to.be.null;
-    // });
+    it("should init interest Rate Model when model is not null ", async () => {
+      const initStub = stub(JumpRateModel.prototype, "init");
+      const interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
+      Object.defineProperty(mockAssetContract, "callStatic", {
+        value: {
+          interestRateModel: () => Promise.resolve(interestRateModelAddress),
+        },
+      });
+      getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
+      model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
+      expect(initStub).to.be.calledOnce;
+      expect(getAssetContractStub).to.be.calledOnce;
+      expect(model).not.to.be.null;
+    });
   });
 
   describe("#getPriceOracle", () => {
