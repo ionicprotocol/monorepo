@@ -1,7 +1,8 @@
 import { parseEther, parseUnits } from "ethers/lib/utils";
 import { task, types } from "hardhat/config";
 
-// npx hardhat pool:create --name Test --creator deployer --price-oracle 0x2D293ef3309557cD645a0D0f480ab2f3C4411846 --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
+// update the MPO=0x429041250873643235cb3788871447c6fF3205aA
+// npx hardhat pool:create --name Test --creator deployer --price-oracle $MPO --close-factor 50 --liquidation-incentive 8 --enforce-whitelist false --network localhost
 
 task("pool:create", "Create pool if does not exist")
   .addParam("name", "Name of the pool to be created", undefined, types.string)
