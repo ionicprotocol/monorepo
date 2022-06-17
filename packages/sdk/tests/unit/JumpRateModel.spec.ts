@@ -1,0 +1,53 @@
+import { expect } from "chai";
+import { deployments, ethers } from "hardhat";
+
+import { CErc20 } from "../../lib/contracts/typechain/CErc20.sol";
+import Fuse from "../../src/Fuse";
+import { setUpPriceOraclePrices } from "../utils";
+import * as assetHelpers from "../utils/assets";
+import { getOrCreateFuse } from "../utils/fuseSdk";
+import * as poolHelpers from "../utils/pool";
+
+describe.only("JumpRateModel", function () {
+  let poolAddress: string;
+  let sdk: Fuse;
+  let cTokenA: CErc20;
+
+  beforeEach(async () => {
+    await deployments.fixture("prod");
+    await setUpPriceOraclePrices();
+    const { deployer } = await ethers.getNamedSigners();
+
+    sdk = await getOrCreateFuse();
+
+    [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Pool-JumpRateModel-Test" });
+
+    const assetsA = await assetHelpers.getAssetsConf(
+      poolAddress,
+      sdk.contracts.FuseFeeDistributor.address,
+      sdk.irms.JumpRateModel.address,
+      ethers
+    );
+
+    const deployedAssetsA = await poolHelpers.deployAssets(assetsA, deployer);
+
+    const deployedErc20One = deployedAssetsA.find((a) => a.underlying !== sdk.chainSpecificAddresses.W_TOKEN);
+
+    cTokenA = (await ethers.getContractAt("CErc20", deployedErc20One.assetAddress)) as CErc20;
+  });
+
+  it("Class and Contract values are aligned", async function () {
+    const irmClass = await sdk.getInterestRateModel(cTokenA.address);
+    const irmContract = sdk.createJumpRateModel(sdk.irms.JumpRateModel.address);
+
+    const borrows = ethers.utils.parseEther("1");
+    const cash = borrows.mul(1);
+    const reserves = ethers.utils.parseEther("0");
+
+    const utilization = await irmContract.callStatic.utilizationRate(cash, borrows, reserves);
+    const contractRate = await irmContract.callStatic.getBorrowRate(cash, borrows, reserves);
+    const classRate = irmClass.getBorrowRate(utilization);
+
+    expect(classRate).eq(contractRate);
+  });
+});
