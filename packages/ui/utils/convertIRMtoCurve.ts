@@ -3,10 +3,10 @@ import { utils } from 'ethers';
 
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
-export const convertIRMtoCurve = (interestRateModel: InterestRateModel, chainId?: number) => {
+export const convertIRMtoCurve = (interestRateModel: InterestRateModel, chainId: number) => {
   const borrowerRates = [];
   const supplierRates = [];
-  const blocksPerMin = chainId ? getBlockTimePerMinuteByChainId(chainId) : 4;
+  const blocksPerMin = getBlockTimePerMinuteByChainId(chainId);
 
   for (let i = 0; i <= 100; i++) {
     const asEther = utils.parseUnits((i / 100).toString());
