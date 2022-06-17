@@ -1,7 +1,7 @@
 import { DelegateContractName, SupportedChains } from "../enums";
 import { ChainPlugins } from "../types";
 
-import { assetSymbols, bscAssets } from "./assets";
+import { assetSymbols, bscAssets, chapelAssets } from "./assets";
 
 const chainPluginConfig: ChainPlugins = {
   [SupportedChains.ganache]: {
@@ -30,7 +30,16 @@ const chainPluginConfig: ChainPlugins = {
       },
     ],
   },
-  [SupportedChains.chapel]: {},
+  [SupportedChains.chapel]: {
+    [chapelAssets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying]: [
+      {
+        cTokenContract: DelegateContractName.CErc20PluginDelegate,
+        strategyName: "Mock_BUSD",
+        strategyCode: "MockERC4626_BUSD",
+        strategyAddress: "0x865058A4aF2f70671C10333f21e2B3A8Ce9fB032",
+      },
+    ],
+  },
   [SupportedChains.bsc]: {
     // BOMB-BTC LP
     [bscAssets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying]: [
@@ -38,7 +47,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "BOMB-BTC LP Autocompounding (beefy)",
         strategyCode: "BeefyERC4626_BOMBBTCLP",
-        strategyAddress: "0x0b96dccbAA03447Fd5f5Fd733e0ebD10680E84c1",
+        strategyAddress: "0xa65349e0bCAfd3b11E0698fB95e922249747cE80",
       },
     ],
     // BOMB
