@@ -42,15 +42,13 @@ import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
-  const { fuse, address } = useRari();
+  const { fuse } = useRari();
 
   return useQuery(
     ['useRewardsInfo', flywheelAddress, marketAddress],
     async () => {
       if (flywheelAddress && marketAddress) {
-        return fuse.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress, {
-          from: address,
-        });
+        return fuse.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
       }
       return undefined;
     },

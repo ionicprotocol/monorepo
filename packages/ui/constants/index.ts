@@ -11,17 +11,10 @@ export enum UserAction {
   WAITING_FOR_TRANSACTIONS,
 }
 
-export enum FundOperationMode {
-  SUPPLY,
-  WITHDRAW,
-  BORROW,
-  REPAY,
-}
 export const URL_MIDAS_DOCS = 'https://docs.midascapital.xyz/';
 
 export default {
   UserAction,
   FusePoolMetric,
-  FundOperationMode,
   URL_MIDAS_DOCS,
 };

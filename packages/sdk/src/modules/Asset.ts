@@ -2,11 +2,16 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { DelegateContractName } from "../enums";
+import { DelegateContractName, FundOperationMode } from "../enums";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
-import { FuseBaseConstructor, InterestRateModelConf, MarketConfig } from "../types";
+import { InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
 
-export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
+import { withCreateContracts } from "./CreateContracts";
+import { withFlywheel } from "./Flywheel";
+
+type FuseBaseConstructorWithModules = ReturnType<typeof withCreateContracts> & ReturnType<typeof withFlywheel>;
+
+export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TBase) {
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 
@@ -73,7 +78,6 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       if (config.plugin) {
         implementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
         implementationData = abiCoder.encode(["address"], [config.plugin.strategyAddress]);
-        console.log("updated implementation address:", { implementationAddress, implementationData });
       }
 
       // Prepare Transaction Data
@@ -127,10 +131,10 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         byteCodeHash
       );
 
-      // Change implementation if needed
+      // Plugin related code
       if (config.plugin) {
+        // Change implementation
         const newImplementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
-        console.log(`Setting implementation to ${newImplementationAddress}`);
 
         const setImplementationTx = await this.getCTokenInstance(cErc20DelegatorAddress)._setImplementationSafe(
           newImplementationAddress,
@@ -142,18 +146,19 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         if (receipt.status != constants.One.toNumber()) {
           throw `Failed set implementation to ${config.plugin.cTokenContract}`;
         }
+        // updates value here, as it's used as return value
         implementationAddress = newImplementationAddress;
-        console.log(`Implementation successfully set to ${config.plugin.cTokenContract}`);
 
-        // Further actions for `CErc20PluginRewardsDelegate`
+        // Further actions required for `CErc20PluginRewardsDelegate`
         if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
-          // Add Flywheels as RewardsDistributors to Pool
           const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
-          // TODO https://github.com/Midas-Protocol/monorepo/issues/166
           const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(cErc20DelegatorAddress);
+
+          // Add Flywheels as RewardsDistributors to Pool
           for (const flywheelConfig of config.plugin.flywheels) {
             if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
 
+            //1. Add Flywheel to Pool
             const addRdTx = await comptroller._addRewardsDistributor(flywheelConfig.address, {
               from: options.from,
             });
@@ -162,6 +167,8 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
             if (addRdTxReceipt.status != constants.One.toNumber()) {
               throw `Failed set add RD to pool ${flywheelConfig.address}`;
             }
+
+            //2. Approve Flywheel to spend underlying
             const approveTx = await cToken["approve(address,address)"](
               flywheelConfig.rewardToken,
               flywheelConfig.address,
@@ -174,14 +181,102 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
               throw `Failed to approve to pool ${flywheelConfig.address}`;
             }
 
-            console.log(approveTxReceipt.status);
-            console.log("Approval succeeded");
+            const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
+              cToken.address
+            );
+            const enableTxReceipt = await enableTx.wait();
+
+            if (enableTxReceipt.status != constants.One.toNumber()) {
+              throw `Failed "addStrategyForRewards()" on Flywheel, are you authorized? ${flywheelConfig.address}`;
+            }
           }
         }
       }
 
       // Return cToken proxy and implementation contract addresses
       return [cErc20DelegatorAddress, implementationAddress, receipt];
+    }
+
+    async getUpdatedAssets(mode: FundOperationMode, index: number, assets: NativePricedFuseAsset[], amount: BigNumber) {
+      const assetToBeUpdated = assets[index];
+      const interestRateModel = await this.getInterestRateModel(assetToBeUpdated.cToken);
+
+      let updatedAsset: NativePricedFuseAsset;
+
+      if (mode === FundOperationMode.SUPPLY) {
+        const supplyBalance = assetToBeUpdated.supplyBalance.add(amount);
+        const totalSupply = assetToBeUpdated.totalSupply.add(amount);
+        updatedAsset = {
+          ...assetToBeUpdated,
+          supplyBalance,
+          totalSupply,
+          supplyBalanceNative:
+            Number(utils.formatUnits(supplyBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+          supplyRatePerBlock: interestRateModel.getSupplyRate(
+            totalSupply.gt(constants.Zero)
+              ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
+              : constants.Zero
+          ),
+        };
+      } else if (mode === FundOperationMode.WITHDRAW) {
+        const supplyBalance = assetToBeUpdated.supplyBalance.sub(amount);
+        const totalSupply = assetToBeUpdated.totalSupply.sub(amount);
+        updatedAsset = {
+          ...assetToBeUpdated,
+          supplyBalance,
+          totalSupply,
+          supplyBalanceNative:
+            Number(utils.formatUnits(supplyBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+          supplyRatePerBlock: interestRateModel.getSupplyRate(
+            totalSupply.gt(constants.Zero)
+              ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
+              : constants.Zero
+          ),
+        };
+      } else if (mode === FundOperationMode.BORROW) {
+        const borrowBalance = assetToBeUpdated.borrowBalance.add(amount);
+        const totalBorrow = assetToBeUpdated.totalBorrow.add(amount);
+        updatedAsset = {
+          ...assetToBeUpdated,
+          borrowBalance,
+          totalBorrow,
+          borrowBalanceNative:
+            Number(utils.formatUnits(borrowBalance, 18)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+          borrowRatePerBlock: interestRateModel.getBorrowRate(
+            assetToBeUpdated.totalSupply.gt(constants.Zero)
+              ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
+              : constants.Zero
+          ),
+        };
+      } else if (mode === FundOperationMode.REPAY) {
+        const borrowBalance = assetToBeUpdated.borrowBalance.sub(amount);
+        const totalBorrow = assetToBeUpdated.totalBorrow.sub(amount);
+        const borrowRatePerBlock = interestRateModel.getBorrowRate(
+          assetToBeUpdated.totalSupply.gt(constants.Zero)
+            ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
+            : constants.Zero
+        );
+
+        updatedAsset = {
+          ...assetToBeUpdated,
+          borrowBalance,
+          totalBorrow,
+          borrowBalanceNative:
+            Number(utils.formatUnits(borrowBalance)) * Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+          borrowRatePerBlock,
+        };
+      }
+
+      return assets.map((value, _index) => {
+        if (_index === index) {
+          return updatedAsset;
+        } else {
+          return value;
+        }
+      });
     }
   };
 }

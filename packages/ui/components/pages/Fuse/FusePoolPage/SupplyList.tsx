@@ -15,7 +15,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -27,7 +27,7 @@ import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { FundOperationMode, URL_MIDAS_DOCS } from '@ui/constants/index';
+import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
