@@ -19,13 +19,13 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.TOUCH,
-    underlying: "0xD54Ae101D6980dB5a8Aa60124b2e5D4B7f02f12C",
+    underlying: "0x02Ec29Fd9f0bB212eD2C4926ACe1aeab732ed620",
     name: "Touch Token",
     decimals: 18,
   },
   {
     symbol: assetSymbols.TRIBE,
-    underlying: "0xeD4764ad14Bb60DC698372B92e51CEC62688DC52",
+    underlying: "0xf9a089C918ad9c484201E7d328C0d29019997117",
     name: "Tribe Token",
     decimals: 18,
   },

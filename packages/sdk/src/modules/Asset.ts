@@ -4,9 +4,14 @@ import { BigNumber, constants, ethers, utils } from "ethers";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { DelegateContractName, FundOperationMode } from "../enums";
 import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
-import { FuseBaseConstructor, InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
+import { InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
 
-export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
+import { withCreateContracts } from "./CreateContracts";
+import { withFlywheel } from "./Flywheel";
+
+type FuseBaseConstructorWithModules = ReturnType<typeof withCreateContracts> & ReturnType<typeof withFlywheel>;
+
+export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TBase) {
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 
@@ -73,7 +78,6 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
       if (config.plugin) {
         implementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
         implementationData = abiCoder.encode(["address"], [config.plugin.strategyAddress]);
-        console.log("updated implementation address:", { implementationAddress, implementationData });
       }
 
       // Prepare Transaction Data
@@ -127,10 +131,10 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         byteCodeHash
       );
 
-      // Change implementation if needed
+      // Plugin related code
       if (config.plugin) {
+        // Change implementation
         const newImplementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
-        console.log(`Setting implementation to ${newImplementationAddress}`);
 
         const setImplementationTx = await this.getCTokenInstance(cErc20DelegatorAddress)._setImplementationSafe(
           newImplementationAddress,
@@ -142,18 +146,19 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
         if (receipt.status != constants.One.toNumber()) {
           throw `Failed set implementation to ${config.plugin.cTokenContract}`;
         }
+        // updates value here, as it's used as return value
         implementationAddress = newImplementationAddress;
-        console.log(`Implementation successfully set to ${config.plugin.cTokenContract}`);
 
-        // Further actions for `CErc20PluginRewardsDelegate`
+        // Further actions required for `CErc20PluginRewardsDelegate`
         if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
-          // Add Flywheels as RewardsDistributors to Pool
           const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
-          // TODO https://github.com/Midas-Protocol/monorepo/issues/166
           const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(cErc20DelegatorAddress);
+
+          // Add Flywheels as RewardsDistributors to Pool
           for (const flywheelConfig of config.plugin.flywheels) {
             if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
 
+            //1. Add Flywheel to Pool
             const addRdTx = await comptroller._addRewardsDistributor(flywheelConfig.address, {
               from: options.from,
             });
@@ -162,6 +167,8 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
             if (addRdTxReceipt.status != constants.One.toNumber()) {
               throw `Failed set add RD to pool ${flywheelConfig.address}`;
             }
+
+            //2. Approve Flywheel to spend underlying
             const approveTx = await cToken["approve(address,address)"](
               flywheelConfig.rewardToken,
               flywheelConfig.address,
@@ -174,8 +181,14 @@ export function withAsset<TBase extends FuseBaseConstructor>(Base: TBase) {
               throw `Failed to approve to pool ${flywheelConfig.address}`;
             }
 
-            console.log(approveTxReceipt.status);
-            console.log("Approval succeeded");
+            const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
+              cToken.address
+            );
+            const enableTxReceipt = await enableTx.wait();
+
+            if (enableTxReceipt.status != constants.One.toNumber()) {
+              throw `Failed "addStrategyForRewards()" on Flywheel, are you authorized? ${flywheelConfig.address}`;
+            }
           }
         }
       }

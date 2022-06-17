@@ -58,5 +58,5 @@ RUN chmod +x /home/node/packages/fuse-twap-bot/wait-for-hh.sh
 WORKDIR /home/node/packages/fuse-twap-bot
 
 
-CMD ["pm2-runtime", "ecosystem.config.js", "--env", "development", "--json"]
+CMD ["node", "build/index.js"]
 
