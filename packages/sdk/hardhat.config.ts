@@ -120,12 +120,14 @@ const config: HardhatUserConfig = {
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      // url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      url: "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/testnet",
     },
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      // url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
     },
     evmostestnet: {
       accounts: { mnemonic },
