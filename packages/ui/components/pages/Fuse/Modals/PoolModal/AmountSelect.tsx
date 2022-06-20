@@ -23,7 +23,7 @@ import {
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
@@ -42,7 +42,7 @@ import { MarketData } from '@ui/hooks/useFusePoolData';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -492,7 +492,10 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
     amount,
   });
 
-  const { currentChain } = useRari();
+  const {
+    currentChain: { id: chainId },
+  } = useRari();
+  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
 
   // Define the old and new asset (same asset different numerical values)
   const asset = assets[index];
@@ -507,25 +510,17 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = convertMantissaToAPY(
-    asset.supplyRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id),
-    365
-  );
-  const borrowAPR = convertMantissaToAPR(
-    asset.borrowRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id)
-  );
+  const supplyAPY = ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
+  const borrowAPR = ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
 
-  const updatedSupplyAPY = convertMantissaToAPY(
+  const updatedSupplyAPY = ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
-    getBlockTimePerMinuteByChainId(currentChain.id),
-    365
+    blocksPerMinute
   );
 
-  const updatedBorrowAPR = convertMantissaToAPR(
+  const updatedBorrowAPR = ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
-    getBlockTimePerMinuteByChainId(currentChain.id)
+    blocksPerMinute
   );
 
   // If the difference is greater than a 0.1 percentage point change, alert the user
