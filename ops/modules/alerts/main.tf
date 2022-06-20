@@ -40,7 +40,7 @@ resource "aws_cloudwatch_event_target" "this" {
   for_each = local.event_rules
 
   target_id = "${var.name}-${each.key}"
-  arn       = module.slack_notifications.lambda_function_arn
+  arn       = module.discord_notifications.lambda_function_arn
   rule      = aws_cloudwatch_event_rule.this[each.key].name
 }
 
@@ -66,9 +66,9 @@ module "discord_notifications" {
   }
 
   environment_variables = {
-    SLACK_WEBHOOK_URL = var.discord_webhook_url
-    LOG_EVENTS        = true
-    LOG_LEVEL         = "INFO"
+    DISCORD_WEBHOOK_URL = var.discord_webhook_url
+    LOG_EVENTS          = true
+    LOG_LEVEL           = "DEBUG"
   }
 
   cloudwatch_logs_retention_in_days = 14
