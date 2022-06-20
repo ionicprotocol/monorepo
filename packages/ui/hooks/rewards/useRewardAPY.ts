@@ -17,7 +17,6 @@ import {
   RewardsDataForMantissa,
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -32,7 +31,7 @@ export const useIncentivesWithRates = (
   rewardTokenAddrs: string[],
   comptroller: string
 ) => {
-  const { currentChain } = useRari();
+  const { currentChain, fuse } = useRari();
   // this is what we return
   const incentivesWithRates: CTokenRewardsDistributorIncentivesWithRatesMap = {};
 
@@ -95,21 +94,19 @@ export const useIncentivesWithRates = (
               borrowMantissaData.underlyingEthPrice
             );
 
-            const supplyAPY = convertMantissaToAPY(
-              supplyMantissa,
-              getBlockTimePerMinuteByChainId(currentChain.id),
-              365
-            );
-            const supplyAPR = convertMantissaToAPR(
+            const supplyAPY = fuse.convertMantissaToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPY = convertMantissaToAPY(
-              borrowMantissa,
-              getBlockTimePerMinuteByChainId(currentChain.id),
-              365
+            const supplyAPR = fuse.convertMantissaToAPR(
+              supplyMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPR = convertMantissaToAPR(
+            const borrowAPY = fuse.convertMantissaToAPY(
+              borrowMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
+            );
+            const borrowAPR = fuse.convertMantissaToAPR(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );

@@ -26,7 +26,6 @@ import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
@@ -56,7 +55,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
 
-  const { scanUrl, setLoading, currentChain, coingeckoId } = useRari();
+  const { fuse, scanUrl, setLoading, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <VStack
@@ -267,11 +266,12 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topLendingAPYAsset &&
-                    convertMantissaToAPY(
-                      poolDetails.topLendingAPYAsset.supplyRatePerBlock,
-                      getBlockTimePerMinuteByChainId(currentChain.id),
-                      365
-                    ).toFixed(2)}
+                    fuse
+                      .convertMantissaToAPY(
+                        poolDetails.topLendingAPYAsset.supplyRatePerBlock,
+                        getBlockTimePerMinuteByChainId(currentChain.id)
+                      )
+                      .toFixed(2)}
                   % APY
                 </Text>
               </Column>
@@ -293,10 +293,12 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topBorrowAPRAsset &&
-                    convertMantissaToAPR(
-                      poolDetails.topBorrowAPRAsset.borrowRatePerBlock,
-                      getBlockTimePerMinuteByChainId(currentChain.id)
-                    ).toFixed(2)}
+                    fuse
+                      .convertMantissaToAPR(
+                        poolDetails.topBorrowAPRAsset.borrowRatePerBlock,
+                        getBlockTimePerMinuteByChainId(currentChain.id)
+                      )
+                      .toFixed(2)}
                   % APR
                 </Text>
               </Column>

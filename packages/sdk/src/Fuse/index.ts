@@ -24,6 +24,7 @@ import {
 } from "../chainConfig";
 import { DelegateContractName, RedemptionStrategy, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
+import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
 import { withFlywheel } from "../modules/Flywheel";
 import { withFundOperations } from "../modules/FundOperations";
@@ -383,6 +384,8 @@ export class FuseBase {
 }
 
 const FuseBaseWithModules = withFusePoolLens(
-  withFundOperations(withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(FuseBase))))))
+  withFundOperations(
+    withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(FuseBase))))))
+  )
 );
 export default class Fuse extends FuseBaseWithModules {}

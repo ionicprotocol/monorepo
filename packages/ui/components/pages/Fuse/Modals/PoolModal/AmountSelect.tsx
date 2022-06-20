@@ -42,7 +42,6 @@ import { MarketData } from '@ui/hooks/useFusePoolData';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -492,7 +491,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
     amount,
   });
 
-  const { currentChain } = useRari();
+  const { currentChain, fuse } = useRari();
 
   // Define the old and new asset (same asset different numerical values)
   const asset = assets[index];
@@ -507,23 +506,21 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = convertMantissaToAPY(
+  const supplyAPY = fuse.convertMantissaToAPY(
     asset.supplyRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id),
-    365
+    getBlockTimePerMinuteByChainId(currentChain.id)
   );
-  const borrowAPR = convertMantissaToAPR(
+  const borrowAPR = fuse.convertMantissaToAPR(
     asset.borrowRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
 
-  const updatedSupplyAPY = convertMantissaToAPY(
+  const updatedSupplyAPY = fuse.convertMantissaToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
-    getBlockTimePerMinuteByChainId(currentChain.id),
-    365
+    getBlockTimePerMinuteByChainId(currentChain.id)
   );
 
-  const updatedBorrowAPR = convertMantissaToAPR(
+  const updatedBorrowAPR = fuse.convertMantissaToAPR(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
