@@ -42,7 +42,7 @@ import { MarketData } from '@ui/hooks/useFusePoolData';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -507,23 +507,23 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = convertMantissaToAPY(
+  const supplyAPY = ratePerBlockToAPY(
     asset.supplyRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id),
     365
   );
-  const borrowAPR = convertMantissaToAPR(
+  const borrowAPR = ratePerBlockToAPY(
     asset.borrowRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
 
-  const updatedSupplyAPY = convertMantissaToAPY(
+  const updatedSupplyAPY = ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
     getBlockTimePerMinuteByChainId(currentChain.id),
     365
   );
 
-  const updatedBorrowAPR = convertMantissaToAPR(
+  const updatedBorrowAPR = ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
