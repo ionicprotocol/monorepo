@@ -34,7 +34,8 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 
@@ -168,9 +169,12 @@ const AssetSupplyRow = ({
   const authedOpenModal = useAuthedCallback(openModal);
 
   const asset = assets[index];
-  const { fuse, scanUrl } = useRari();
+  const { fuse, scanUrl, currentChain } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const supplyAPY = convertMantissaToAPY(asset.supplyRatePerBlock, 365);
+  const supplyAPY = ratePerBlockToAPY(
+    asset.supplyRatePerBlock,
+    getBlockTimePerMinuteByChainId(currentChain.id)
+  );
   const queryClient = useQueryClient();
   const toast = useErrorToast();
 
