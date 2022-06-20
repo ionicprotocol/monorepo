@@ -1,9 +1,8 @@
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import JumpRateModelArtifact from "../../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
-import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../../lib/contracts/typechain";
+import { ARTIFACTS } from "../../../src/Artifacts";
 import { SupportedChains } from "../../../src/enums";
 import { FuseBase } from "../../../src/Fuse/index";
 import JumpRateModel from "../../../src/Fuse/irm/JumpRateModel";
@@ -176,8 +175,8 @@ describe("Fuse Index", () => {
     it("deploy JumpRateModel", () => {
       fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "JumpRateModel");
       expect(getInterestRateModelContractStub).to.be.calledWithExactly(
-        JumpRateModelArtifact.abi,
-        JumpRateModelArtifact.bytecode.object,
+        ARTIFACTS.JumpRateModel.abi,
+        ARTIFACTS.JumpRateModel.bytecode.object,
         mkAddress("0xabc")
       );
     });
@@ -185,8 +184,8 @@ describe("Fuse Index", () => {
     it("deploy WhitePaperInterestRateModel", () => {
       fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "WhitePaperInterestRateModel");
       expect(getInterestRateModelContractStub).to.be.calledWithExactly(
-        WhitePaperInterestRateModelArtifact.abi,
-        WhitePaperInterestRateModelArtifact.bytecode.object,
+        ARTIFACTS.WhitePaperInterestRateModel.abi,
+        ARTIFACTS.WhitePaperInterestRateModel.bytecode.object,
         mkAddress("0xabc")
       );
     });
@@ -212,7 +211,7 @@ describe("Fuse Index", () => {
     });
 
     it("should return new IRM when model address hash matches", async () => {
-      interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
+      interestRateModelAddress = ARTIFACTS.JumpRateModel.deployedBytecode.object;
       model = await fuseBase.identifyInterestRateModel(interestRateModelAddress);
       expect(model).not.to.be.null;
     });
@@ -241,7 +240,7 @@ describe("Fuse Index", () => {
 
     it("should init interest Rate Model when model is not null ", async () => {
       const initStub = stub(JumpRateModel.prototype, "init");
-      const interestRateModelAddress = JumpRateModelArtifact.deployedBytecode.object;
+      const interestRateModelAddress = ARTIFACTS.JumpRateModel.deployedBytecode.object;
       Object.defineProperty(mockAssetContract, "callStatic", {
         value: {
           interestRateModel: () => Promise.resolve(interestRateModelAddress),
