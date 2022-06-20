@@ -2,19 +2,18 @@ import { Box, Grid, Heading, Select, Skeleton, Spinner, Stack, Text } from '@cha
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
-import { useQuery } from 'react-query';
+
+import { useChartData } from '../../../../hooks/useChartData';
 
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { MidasBox } from '@ui/components/shared/MidasBox';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row } from '@ui/utils/chakraUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
-import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -62,8 +61,6 @@ const AssetOption = ({ asset }: { asset: MarketData }) => {
 };
 
 const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
-  const { fuse, currentChain } = useRari();
-
   const [selectedAsset, setSelectedAsset] = useState(assets.length > 3 ? assets[2] : assets[0]);
   const { data: selectedTokenData } = useTokenData(selectedAsset.underlyingToken);
   const selectedAssetUtilization =
@@ -78,15 +75,8 @@ const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
             100
           ).toFixed(0)
         );
-  const { data } = useQuery(['ChartData', selectedAsset.cToken], async () => {
-    const interestRateModel = await fuse.getInterestRateModel(selectedAsset.cToken);
 
-    if (interestRateModel === null) {
-      return { borrowerRates: null, supplierRates: null };
-    }
-
-    return convertIRMtoCurve(interestRateModel, currentChain.id);
-  });
+  const { data } = useChartData(selectedAsset.cToken);
 
   const { cChart } = useColors();
 

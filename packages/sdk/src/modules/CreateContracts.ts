@@ -4,6 +4,7 @@ import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
+import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
@@ -18,6 +19,7 @@ export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBa
     createUnitroller = this.createContractInstance<Unitroller>("Unitroller");
     createFuseFlywheelCore = this.createContractInstance<FuseFlywheelCore>("FuseFlywheelCore");
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
+    createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
 
     createRewardsDistributor(distributorAddress: string) {
       return new Contract(
