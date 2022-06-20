@@ -3,10 +3,9 @@ import { useMemo } from 'react';
 
 import { useRari } from '@ui/context/RariContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
-  const { currentChain } = useRari();
+  const { currentChain, fuse } = useRari();
   return useMemo(() => {
     if (assets && assets.length) {
       let mostSuppliedAsset = assets[0];
@@ -17,12 +16,12 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          convertMantissaToAPY(
+          fuse.convertMantissaToAPY(
             asset.supplyRatePerBlock,
             getBlockTimePerMinuteByChainId(currentChain.id),
             365
           ) >
-          convertMantissaToAPY(
+          fuse.convertMantissaToAPY(
             topLendingAPYAsset.supplyRatePerBlock,
             getBlockTimePerMinuteByChainId(currentChain.id),
             365
@@ -31,11 +30,11 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           topLendingAPYAsset = asset;
         }
         if (
-          convertMantissaToAPR(
+          fuse.convertMantissaToAPR(
             asset.borrowRatePerBlock,
             getBlockTimePerMinuteByChainId(currentChain.id)
           ) >
-          convertMantissaToAPR(
+          fuse.convertMantissaToAPR(
             topBorrowAPRAsset.borrowRatePerBlock,
             getBlockTimePerMinuteByChainId(currentChain.id)
           )
@@ -52,5 +51,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets]);
+  }, [assets, fuse, currentChain.id]);
 };
