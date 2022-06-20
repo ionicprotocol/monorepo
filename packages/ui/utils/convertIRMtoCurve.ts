@@ -2,6 +2,7 @@ import { InterestRateModel } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 export const convertIRMtoCurve = (interestRateModel: InterestRateModel, chainId: number) => {
   const borrowerRates = [];
@@ -11,14 +12,11 @@ export const convertIRMtoCurve = (interestRateModel: InterestRateModel, chainId:
   for (let i = 0; i <= 100; i++) {
     const asEther = utils.parseUnits((i / 100).toString());
 
-    const supplyRate = Number(utils.formatUnits(interestRateModel.getSupplyRate(asEther)));
-    const borrowRate = Number(utils.formatUnits(interestRateModel.getBorrowRate(asEther)));
+    const supplyAPY = ratePerBlockToAPY(interestRateModel.getSupplyRate(asEther), blocksPerMin);
+    const borrowAPY = ratePerBlockToAPY(interestRateModel.getBorrowRate(asEther), blocksPerMin);
 
-    const supplyLevel = (Math.pow(supplyRate * (blocksPerMin * 60 * 24) + 1, 365) - 1) * 100;
-    const borrowLevel = (Math.pow(borrowRate * (blocksPerMin * 60 * 24) + 1, 365) - 1) * 100;
-
-    supplierRates.push({ x: i, y: supplyLevel });
-    borrowerRates.push({ x: i, y: borrowLevel });
+    supplierRates.push({ x: i, y: supplyAPY });
+    borrowerRates.push({ x: i, y: borrowAPY });
   }
 
   return { borrowerRates, supplierRates };
