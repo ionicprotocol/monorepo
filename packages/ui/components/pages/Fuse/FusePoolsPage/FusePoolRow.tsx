@@ -25,6 +25,7 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
@@ -242,7 +243,8 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.mostSuppliedAsset &&
-                    smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative)}
+                    usdPrice &&
+                    smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative * usdPrice)}
                 </Text>
               </Column>
             </Row>
@@ -267,6 +269,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   {poolDetails?.topLendingAPYAsset &&
                     convertMantissaToAPY(
                       poolDetails.topLendingAPYAsset.supplyRatePerBlock,
+                      getBlockTimePerMinuteByChainId(currentChain.id),
                       365
                     ).toFixed(2)}
                   % APY
@@ -290,9 +293,10 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topBorrowAPRAsset &&
-                    convertMantissaToAPR(poolDetails.topBorrowAPRAsset.borrowRatePerBlock).toFixed(
-                      2
-                    )}
+                    convertMantissaToAPR(
+                      poolDetails.topBorrowAPRAsset.borrowRatePerBlock,
+                      getBlockTimePerMinuteByChainId(currentChain.id)
+                    ).toFixed(2)}
                   % APR
                 </Text>
               </Column>
