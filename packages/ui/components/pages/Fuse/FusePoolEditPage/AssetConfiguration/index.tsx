@@ -1,4 +1,4 @@
-import { Box, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import React, { useEffect, useState } from 'react';
 
@@ -49,28 +49,29 @@ const AssetConfiguration = ({
       <ModalDivider />
 
       <ConfigRow>
-        <Text fontWeight="bold" mr={2}>
+        <Text fontWeight="bold" mr={4}>
           Assets:
         </Text>
-
-        {assets.map((asset, index, array) => {
-          return (
-            <Box pr={index === array.length - 1 ? 4 : 2} key={asset.cToken} flexShrink={0}>
-              <FilterButton
-                variant="filter"
-                isSelected={asset.cToken === selectedAsset.cToken}
-                onClick={() => {
-                  setSelectedAsset(asset);
-                  setSelectedIndex(index);
-                }}
-              >
-                <Center px={4} py={1} fontWeight="bold">
-                  {asset.underlyingSymbol}
-                </Center>
-              </FilterButton>
-            </Box>
-          );
-        })}
+        <Flex wrap="wrap">
+          {assets.map((asset, index) => {
+            return (
+              <Box mr={2} key={asset.cToken} mb={2}>
+                <FilterButton
+                  variant="filter"
+                  isSelected={asset.cToken === selectedAsset.cToken}
+                  onClick={() => {
+                    setSelectedAsset(asset);
+                    setSelectedIndex(index);
+                  }}
+                >
+                  <Center px={4} py={1} fontWeight="bold">
+                    {asset.underlyingSymbol}
+                  </Center>
+                </FilterButton>
+              </Box>
+            );
+          })}
+        </Flex>
       </ConfigRow>
 
       <ModalDivider />

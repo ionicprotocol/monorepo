@@ -17,7 +17,7 @@ export const initFuseWithProviders = (
 ): Fuse => {
   const fuse = new Fuse(provider, chainId);
   fuse.contracts.FusePoolLens = fuse.contracts.FusePoolLens.connect(
-    new JsonRpcProvider(providerURLForChain(chainId))
+    new JsonRpcProvider(providerURLForChain(chainId), 'any')
   );
 
   return fuse;

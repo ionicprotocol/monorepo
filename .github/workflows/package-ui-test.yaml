@@ -1,18 +1,15 @@
-name: UI/PR - build, lint and test
+name: UI - build, lint & test
 
 on:
   pull_request:
     branches: [main, staging, development]
     paths:
       - 'packages/ui/**'
+      - 'packages/sdk/**'
       - 'yarn.lock'
-  push:
-    branches: [main, staging, development]
-    paths:
-      - 'packages/ui/**'
-      - 'yarn.lock'
+
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -36,14 +33,8 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Build `typechain`
-        run: yarn build:typechain
-
-      - name: Build `sdk`
-        run: yarn build:sdk
+      - name: Build `ui`
+        run: yarn build:deploy:ui
 
       - name: Lint `ui`
         run: yarn workspace @midas-capital/ui lint
-
-      - name: Build `ui`
-        run: yarn build:ui

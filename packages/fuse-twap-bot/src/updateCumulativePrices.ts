@@ -1,25 +1,24 @@
-import { Fuse } from '@midas-capital/sdk';
-import { TransactionRequest, TransactionResponse } from '@ethersproject/providers';
-import { fetchGasLimitForTransaction, getPriceOracle } from './utils';
-import { Wallet } from 'ethers';
+import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
+import { Fuse } from "@midas-capital/sdk";
+import { Wallet } from "ethers";
 
-export default async function updateCumulativePrices(
-  pairs: Array<Object>,
-  useNonce: false | number,
-  fuse: Fuse
-) {
+import { fetchGasLimitForTransaction, getPriceOracle } from "./utils";
+
+import { logger } from "./index";
+
+export default async function updateCumulativePrices(pairs: Array<string>, useNonce: false | number, fuse: Fuse) {
   const rootPriceOracleContract = await getPriceOracle(fuse);
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
 
   // Create update transaction
   let method: string;
   let args: Array<any>;
-  console.log(pairs);
+
   if (pairs.length > 1) {
-    method = 'update(address[])';
+    method = "update(address[])";
     args = [pairs];
   } else {
-    method = 'update(address)';
+    method = "update(address)";
     args = [pairs[0]];
   }
   // @ts-ignore
@@ -31,9 +30,7 @@ export default async function updateCumulativePrices(
     to: rootPriceOracleContract.address,
     value: 0,
     data: data,
-    nonce: useNonce
-      ? useNonce
-      : await fuse.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!),
+    nonce: useNonce ? useNonce : await fuse.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!),
   };
 
   let txRequest: TransactionRequest = {
@@ -45,16 +42,15 @@ export default async function updateCumulativePrices(
     txRequest = { ...txRequest, gasPrice: gasPrice };
   }
 
-  if (process.env.NODE_ENV !== 'production')
-    console.log('Signing and sending update transaction:', tx);
+  logger.info("Signing and sending update transaction:", tx);
 
   // Estimate gas for transaction
   try {
-    const gasLimit = await fetchGasLimitForTransaction(fuse, 'update', txRequest);
+    const gasLimit = await fetchGasLimitForTransaction(fuse, "update", txRequest);
     txRequest = { ...txRequest, gasLimit: gasLimit };
-    console.log(gasLimit, 'GASLIMITTT');
+    logger.info(`Gas limit estimation: ${gasLimit}`);
   } catch (error) {
-    console.log('Failed to estimate gas before signing and sending update transaction: ' + error);
+    logger.error("Failed to estimate gas before signing and sending update transaction: " + error);
   }
 
   // send transaction
@@ -63,8 +59,8 @@ export default async function updateCumulativePrices(
     sentTx = await signer.sendTransaction(txRequest);
     await sentTx.wait();
   } catch (error) {
-    throw 'Error sending transaction: ' + error;
+    throw "Error sending transaction: " + error;
   }
-  console.log('Successfully sent update transaction:', sentTx);
+  logger.info("Successfully sent update transaction:", sentTx);
   return sentTx;
 }

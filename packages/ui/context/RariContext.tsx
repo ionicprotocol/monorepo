@@ -65,14 +65,15 @@ export const RariProvider = ({
   disconnect: () => void;
 }) => {
   // Rari and Fuse get initially set already
-  const fuse = initFuseWithProviders(signerProvider as Web3Provider, currentChain.id);
+  const fuse = useMemo(() => {
+    return initFuseWithProviders(signerProvider as Web3Provider, currentChain.id);
+  }, [signerProvider, currentChain.id]);
   const scanUrl = getScanUrlByChainId(currentChain.id);
   const [viewMode, setViewMode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [pendingTxHashes, setPendingTxHashes] = useState<string[]>([]);
   const [pendingTxHash, setPendingTxHash] = useState<string>('');
   const [finishedTxHash, setFinishedTxHash] = useState<string>('');
-
   const addressIcons = useMemo(() => {
     const result: { [key: string]: string } = {};
     fuse.supportedAssets.map((asset) => {

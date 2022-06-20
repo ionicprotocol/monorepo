@@ -13,18 +13,20 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { FundOperationMode } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { FundOperationMode } from '@ui/constants/index';
+import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { convertMantissaToAPR } from '@ui/utils/apyUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { useIsMobile } from '@ui/utils/chakraUtils';
 
@@ -43,6 +45,7 @@ export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: Bo
   );
   const unBorrowableAssets = assets.filter((asset) => asset.isBorrowPaused);
 
+  // eslint-disable-next-line no-console
   const isMobile = useIsMobile();
   const { cCard } = useColors();
 
@@ -166,14 +169,16 @@ interface AssetBorrowRowProps {
 
 const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
   const asset = assets[index];
+  const { currentChain } = useRari();
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const authedOpenModal = useAuthedCallback(openModal);
 
   const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const blocksPerMin = getBlockTimePerMinuteByChainId(currentChain.id);
 
-  const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock);
+  const borrowAPR = ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
 
   const isMobile = useIsMobile();
 
@@ -251,7 +256,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
                   color={cCard.txtColor}
                   fontSize={{ base: '2.8vw', sm: '0.8rem' }}
                 >
-                  {shortUsdFormatter(asset.totalSupplyNative)} TVL
+                  {shortUsdFormatter(asset.totalSupplyFiat)} TVL
                 </Text>
               </SimpleTooltip>
             </VStack>

@@ -41,10 +41,14 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
+      let totalAvailableLiquidityNative = 0;
       let totalSupplyBalanceNative = 0;
       let totalBorrowBalanceNative = 0;
       let totalSuppliedNative = 0;
       let totalBorrowedNative = 0;
+      let suppliedForUtilization = 0;
+      let borrowedForUtilization = 0;
+      let utilization = 0;
 
       const promises: Promise<any>[] = [];
 
@@ -56,12 +60,9 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
+        const isBorrowPaused: boolean = await comptrollerContract.callStatic.borrowGuardianPaused(asset.cToken);
+        asset.isBorrowPaused = isBorrowPaused;
         // @todo aggregate the borrow/supply guardian paused into 1
-        promises.push(
-          comptrollerContract.callStatic
-            .borrowGuardianPaused(asset.cToken)
-            .then((isPaused: boolean) => (asset.isBorrowPaused = isPaused))
-        );
         promises.push(
           comptrollerContract.callStatic
             .mintGuardianPaused(asset.cToken)
@@ -96,13 +97,30 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         asset.totalBorrowNative =
           Number(utils.formatUnits(asset.totalBorrow)) * Number(utils.formatUnits(asset.underlyingPrice));
 
+        if (asset.totalSupplyNative === 0) {
+          asset.utilization = 0;
+        } else {
+          asset.utilization = (asset.totalBorrowNative / asset.totalSupplyNative) * 100;
+        }
+        const assetLiquidity =
+          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
+
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
-        asset.liquidityNative =
-          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
+        asset.liquidityNative = assetLiquidity;
 
+        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
         totalLiquidityNative += asset.liquidityNative;
+
+        if (!asset.isBorrowPaused) {
+          suppliedForUtilization += asset.totalSupplyNative;
+          borrowedForUtilization += asset.totalBorrowNative;
+        }
+      }
+
+      if (suppliedForUtilization !== 0) {
+        utilization = (borrowedForUtilization / suppliedForUtilization) * 100;
       }
 
       await Promise.all(promises);
@@ -114,6 +132,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         comptroller,
         name,
         totalLiquidityNative,
+        totalAvailableLiquidityNative,
         totalSuppliedNative,
         totalBorrowedNative,
         totalSupplyBalanceNative,
@@ -123,6 +142,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         underlyingTokens,
         underlyingSymbols,
         whitelistedAdmin,
+        utilization,
       };
     }
 

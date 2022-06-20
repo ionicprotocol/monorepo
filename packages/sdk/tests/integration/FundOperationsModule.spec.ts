@@ -2,7 +2,6 @@ import { expect } from "chai";
 import { providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { WETH } from "../../lib/contracts/typechain/WETH";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices } from "../utils";
 import * as assetHelpers from "../utils/assets";
@@ -15,16 +14,13 @@ describe("FundOperationsModule", function () {
   let sdk: Fuse;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
-  let weth: WETH;
 
   this.beforeEach(async () => {
     await deployments.fixture("prod");
-    weth = (await ethers.getContract("WETH")) as WETH;
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
     sdk = await getOrCreateFuse();
-    sdk.chainSpecificAddresses.W_TOKEN = weth.address;
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Pool-Fund-Operations-Test" });
 
@@ -35,14 +31,14 @@ describe("FundOperationsModule", function () {
       ethers
     );
     await poolHelpers.deployAssets(assets, deployer);
-    await wrapNativeToken({ account: "deployer", amount: "500", weth: weth.address });
+    await wrapNativeToken({ account: "deployer", amount: "500", weth: sdk.chainSpecificAddresses.W_TOKEN });
   });
 
   it("user can supply", async function () {
     const { deployer } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
-    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === weth.address);
+    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
     const res = await sdk.supply(
       asset.cToken,
       asset.underlyingToken,
@@ -54,7 +50,7 @@ describe("FundOperationsModule", function () {
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const assetAfterSupply = await poolHelpers.assetInPool(poolId, sdk, await weth.symbol(), deployer.address);
+    const assetAfterSupply = await poolHelpers.assetInPool(poolId, sdk, "WETH", deployer.address);
     expect(utils.formatUnits(assetAfterSupply.supplyBalance, 18)).to.eq("3.0");
   });
 
@@ -62,7 +58,7 @@ describe("FundOperationsModule", function () {
     const { deployer } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
-    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === weth.address);
+    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
 
     const res = await sdk.supply(
       asset.cToken,
@@ -79,7 +75,7 @@ describe("FundOperationsModule", function () {
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const assetAfterBorrow = await poolHelpers.assetInPool(poolId, sdk, await weth.symbol(), deployer.address);
+    const assetAfterBorrow = await poolHelpers.assetInPool(poolId, sdk, await "WETH", deployer.address);
     expect(utils.formatUnits(assetAfterBorrow.borrowBalance, 18)).to.eq("2.0");
   });
 
@@ -87,7 +83,7 @@ describe("FundOperationsModule", function () {
     const { deployer } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
-    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === weth.address);
+    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
     const res = await sdk.supply(
       asset.cToken,
       asset.underlyingToken,
@@ -103,7 +99,7 @@ describe("FundOperationsModule", function () {
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const assetAfterWithdraw = await poolHelpers.assetInPool(poolId, sdk, await weth.symbol(), deployer.address);
+    const assetAfterWithdraw = await poolHelpers.assetInPool(poolId, sdk, await "WETH", deployer.address);
     expect(utils.formatUnits(assetAfterWithdraw.supplyBalance, 18)).to.eq("1.0");
   });
 
@@ -111,7 +107,7 @@ describe("FundOperationsModule", function () {
     const { deployer } = await ethers.getNamedSigners();
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
-    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === weth.address);
+    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
     let res = await sdk.supply(
       asset.cToken,
       asset.underlyingToken,

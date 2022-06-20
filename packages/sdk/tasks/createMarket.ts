@@ -1,5 +1,8 @@
 import { task, types } from "hardhat/config";
 
+// example
+// hardhat market:create --pool-name BOMB --creator deployer --symbol BTCB-BOMB --strategy-code BeefyERC4626_BOMBBTCLP --strategy-address 0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854 --network bsc
+
 export default task("market:create", "Create Market")
   .addParam("poolName", "Name of pool", undefined, types.string)
   .addParam("creator", "Signer name", undefined, types.string)
