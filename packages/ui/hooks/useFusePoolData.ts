@@ -49,7 +49,7 @@ export const useFusePoolData = (poolId: string) => {
         ...res,
         assets: assetsWithPrice,
         totalLiquidityFiat: res.totalLiquidityNative * usdPrice,
-        totalAvailableLiquidityFiat: res.totaAvailablelLiquidityNative * usdPrice,
+        totalAvailableLiquidityFiat: res.totalAvailableLiquidityNative * usdPrice,
         totalSuppliedFiat: res.totalSuppliedNative * usdPrice,
         totalBorrowedFiat: res.totalBorrowedNative * usdPrice,
         totalSupplyBalanceFiat: res.totalSupplyBalanceNative * usdPrice,
