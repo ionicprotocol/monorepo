@@ -8,7 +8,7 @@ import * as assetHelpers from "../utils/assets";
 import { getOrCreateFuse } from "../utils/fuseSdk";
 import * as poolHelpers from "../utils/pool";
 
-describe.only("JumpRateModel", function () {
+describe("JumpRateModel", function () {
   let poolAddress: string;
   let sdk: Fuse;
   let cTokenA: CErc20;
@@ -36,7 +36,7 @@ describe.only("JumpRateModel", function () {
     cTokenA = (await ethers.getContractAt("CErc20", deployedErc20One.assetAddress)) as CErc20;
   });
 
-  it("Class and Contract values are aligned", async function () {
+  it("Class and Contract rate calculations are in sync", async function () {
     const irmClass = await sdk.getInterestRateModel(cTokenA.address);
     const irmContract = sdk.createJumpRateModel(sdk.irms.JumpRateModel.address);
 
