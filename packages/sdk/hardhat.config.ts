@@ -107,7 +107,7 @@ const config: HardhatUserConfig = {
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
-      url: urlOverride || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
+      url: urlOverride || process.env.BSC_PROVIDER_URL || "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
     },
     bscfork: {
       accounts: { mnemonic },

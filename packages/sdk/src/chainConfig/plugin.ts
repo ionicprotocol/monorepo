@@ -47,7 +47,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "BOMB-BTC LP Autocompounding (beefy)",
         strategyCode: "BeefyERC4626_BOMBBTCLP",
-        strategyAddress: "0xa65349e0bCAfd3b11E0698fB95e922249747cE80",
+        strategyAddress: "0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854",
       },
     ],
     // BOMB
