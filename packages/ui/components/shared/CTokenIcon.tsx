@@ -29,7 +29,7 @@ export const CTokenIcon = ({
     if (address && addressIcons[address.toLowerCase()]) {
       return (
         process.env.ICON_SERVER +
-        '/token/' +
+        '/token/96x96/' +
         addressIcons[address.toLowerCase()].toLowerCase() +
         '.png'
       );
