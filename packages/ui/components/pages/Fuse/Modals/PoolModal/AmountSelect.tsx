@@ -23,7 +23,7 @@ import {
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
@@ -492,7 +492,10 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
     amount,
   });
 
-  const { currentChain } = useRari();
+  const {
+    currentChain: { id: chainId },
+  } = useRari();
+  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
 
   // Define the old and new asset (same asset different numerical values)
   const asset = assets[index];
@@ -507,25 +510,17 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = ratePerBlockToAPY(
-    asset.supplyRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id),
-    365
-  );
-  const borrowAPR = ratePerBlockToAPY(
-    asset.borrowRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id)
-  );
+  const supplyAPY = ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
+  const borrowAPR = ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
 
   const updatedSupplyAPY = ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
-    getBlockTimePerMinuteByChainId(currentChain.id),
-    365
+    blocksPerMinute
   );
 
   const updatedBorrowAPR = ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
-    getBlockTimePerMinuteByChainId(currentChain.id)
+    blocksPerMinute
   );
 
   // If the difference is greater than a 0.1 percentage point change, alert the user
