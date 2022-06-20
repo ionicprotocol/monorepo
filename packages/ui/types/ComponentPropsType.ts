@@ -1,8 +1,8 @@
 import { BoxProps, FlexProps } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 
-import { FundOperationMode } from '@ui/constants/index';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
 
 export type FusePageLayoutProps = {
@@ -139,25 +139,6 @@ export interface CTokensDataForRewardsMap {
   [cTokenAddr: string]: CTokenDataForRewards;
 }
 
-export interface AmountProps {
-  assets: NativePricedFuseAsset[];
-  comptrollerAddress: string;
-  index: number;
-  isBorrowPaused?: boolean;
-  mode: FundOperationMode;
-  onClose: () => void;
-  setMode: (mode: FundOperationMode) => void;
-}
-
-export interface DepositModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  defaultMode: FundOperationMode;
-  index: number;
-  assets: NativePricedFuseAsset[];
-  comptrollerAddress: string;
-}
-
 export interface AddFlywheelProps {
   comptrollerAddress: string;
   onSuccess?: () => void;
@@ -230,7 +211,7 @@ export interface RewardsDataForMantissa {
   cTokenAddress: string;
   rewardSpeed: number;
   rewardEthPrice: number;
-  underlyingTotalSupply: number;
+  underlyingTotalSupply: BigNumber;
   underlyingEthPrice: number;
 }
 

@@ -1,9 +1,16 @@
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { useMemo } from 'react';
 
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { useRari } from '@ui/context/RariContext';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
+  const {
+    currentChain: { id: chainId },
+  } = useRari();
+  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
+
   return useMemo(() => {
     if (assets && assets.length) {
       let mostSuppliedAsset = assets[0];
@@ -14,14 +21,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          convertMantissaToAPY(asset.supplyRatePerBlock, 365) >
-          convertMantissaToAPY(topLendingAPYAsset.supplyRatePerBlock, 365)
+          ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          convertMantissaToAPR(asset.borrowRatePerBlock) >
-          convertMantissaToAPR(topBorrowAPRAsset.borrowRatePerBlock)
+          ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -35,5 +42,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets]);
+  }, [assets, blocksPerMinute]);
 };

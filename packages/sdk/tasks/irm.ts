@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 export default task("irm:set", "Set new IRM to ctoken")
   .addOptionalParam("ctoken", "cToken for which to set the price", undefined, types.string)
   .addParam("irm", "IRM to use", "JumpRateModel", types.string)
-  .setAction(async ({ ctoken: _ctoken, irm: _irm }, { getNamedAccounts, ethers }) => {
+  .setAction(async ({ ctoken: _ctoken, irm: _irm }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
     // @ts-ignore

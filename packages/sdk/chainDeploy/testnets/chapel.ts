@@ -50,6 +50,14 @@ export const deployConfig: ChainDeployConfig = {
       },
     ],
   },
+  plugins: [
+    {
+      strategy: "MockERC4626",
+      name: "Mock_BUSD",
+      underlying: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
+      otherParams: [],
+    },
+  ],
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {

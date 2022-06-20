@@ -4,24 +4,22 @@ import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
+import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { FuseBaseConstructor } from "../types";
+import { Artifacts, FuseBaseConstructor } from "../types";
 
 export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
-    createComptroller(comptrollerAddress: string) {
-      return new Contract(
-        comptrollerAddress,
-        this.chainDeployment.Comptroller.abi,
-        this.provider.getSigner()
-      ) as Comptroller;
+    createContractInstance<T extends Contract>(contract: keyof Artifacts) {
+      return (address: string) => new Contract(address, this.artifacts[contract].abi, this.provider.getSigner()) as T;
     }
 
-    createUnitroller(comptrollerAddress: string) {
-      return new Contract(comptrollerAddress, this.artifacts.Unitroller.abi, this.provider.getSigner()) as Unitroller;
-    }
+    createUnitroller = this.createContractInstance<Unitroller>("Unitroller");
+    createFuseFlywheelCore = this.createContractInstance<FuseFlywheelCore>("FuseFlywheelCore");
+    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
+    createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
 
     createRewardsDistributor(distributorAddress: string) {
       return new Contract(
@@ -30,20 +28,12 @@ export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBa
         this.provider.getSigner()
       ) as RewardsDistributorDelegate;
     }
-
-    createFuseFlywheelCore(flywheelCoreAddress: string) {
+    createComptroller(comptrollerAddress: string) {
       return new Contract(
-        flywheelCoreAddress,
-        this.artifacts.FuseFlywheelCore.abi,
+        comptrollerAddress,
+        this.chainDeployment.Comptroller.abi,
         this.provider.getSigner()
-      ) as FuseFlywheelCore;
-    }
-    createFlywheelStaticRewards(staticRewardsAddress: string) {
-      return new Contract(
-        staticRewardsAddress,
-        this.artifacts.FlywheelStaticRewards.abi,
-        this.provider.getSigner()
-      ) as FlywheelStaticRewards;
+      ) as Comptroller;
     }
 
     createOracle(oracleAddress: string, type: string) {
