@@ -25,7 +25,8 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
@@ -266,9 +267,9 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topLendingAPYAsset &&
-                    convertMantissaToAPY(
+                    ratePerBlockToAPY(
                       poolDetails.topLendingAPYAsset.supplyRatePerBlock,
-                      365
+                      getBlockTimePerMinuteByChainId(currentChain.id)
                     ).toFixed(2)}
                   % APY
                 </Text>
@@ -291,9 +292,10 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topBorrowAPRAsset &&
-                    convertMantissaToAPR(poolDetails.topBorrowAPRAsset.borrowRatePerBlock).toFixed(
-                      2
-                    )}
+                    ratePerBlockToAPY(
+                      poolDetails.topBorrowAPRAsset.borrowRatePerBlock,
+                      getBlockTimePerMinuteByChainId(currentChain.id)
+                    ).toFixed(2)}
                   % APR
                 </Text>
               </Column>
