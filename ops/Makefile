@@ -57,6 +57,7 @@ plan:
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
+	export TF_VAR_discord_webhook_url=${DISCORD_WEBHOOK_URL} && \
 	terraform init && \
 	terraform plan
 
@@ -68,9 +69,9 @@ deploy:
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
+	export TF_VAR_discord_webhook_url=${DISCORD_WEBHOOK_URL} && \
 	terraform init && \
 	terraform apply -auto-approve
-
 
 
 # -------------------------------------------------------------------
