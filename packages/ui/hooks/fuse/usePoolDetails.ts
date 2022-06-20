@@ -3,10 +3,14 @@ import { useMemo } from 'react';
 
 import { useRari } from '@ui/context/RariContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
-  const { currentChain } = useRari();
+  const {
+    currentChain: { id: chainId },
+  } = useRari();
+  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
+
   return useMemo(() => {
     if (assets && assets.length) {
       let mostSuppliedAsset = assets[0];
@@ -17,28 +21,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          convertMantissaToAPY(
-            asset.supplyRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id),
-            365
-          ) >
-          convertMantissaToAPY(
-            topLendingAPYAsset.supplyRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id),
-            365
-          )
+          ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          convertMantissaToAPR(
-            asset.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id)
-          ) >
-          convertMantissaToAPR(
-            topBorrowAPRAsset.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id)
-          )
+          ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -52,5 +42,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets]);
+  }, [assets, blocksPerMinute]);
 };
