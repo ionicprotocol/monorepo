@@ -17,7 +17,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
   let sdk: Fuse;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
-  const poolName = BSC_POOLS.BOMB;
+  const poolName = "Fund ERC4626 Pool";
 
   this.beforeEach(async () => {
     await deployments.fixture("prod");
@@ -35,7 +35,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
       sdk.contracts.FuseFeeDistributor.address,
       sdk.irms.JumpRateModel.address,
       ethers,
-      poolName
+      BSC_POOLS.BOMB
     );
     const alpacaAssets = (
       await assetHelpers.getAssetsConf(
