@@ -21,7 +21,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       options: any
     ): Promise<[string, string, string, TransactionReceipt]> {
       //1. Validate configuration
-      this.#validateConfiguration(config);
+      await this.#validateConfiguration(config);
 
       //2. Deploy new asset to existing pool via SDK
       try {
@@ -115,7 +115,6 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       // Recreate Address of Deployed Market
       const receipt: TransactionReceipt = await tx.wait();
       if (receipt.status != constants.One.toNumber()) {
-        console.log("failed to deploy market");
         throw "Failed to deploy market ";
       }
       const saltsHash = utils.solidityKeccak256(
@@ -181,6 +180,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
               throw `Failed to approve to pool ${flywheelConfig.address}`;
             }
 
+            //3. Enable cToken as strategy on FuseFlywheelCore
             const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
               cToken.address
             );
