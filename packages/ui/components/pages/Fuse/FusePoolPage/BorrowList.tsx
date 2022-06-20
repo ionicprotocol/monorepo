@@ -26,7 +26,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { convertMantissaToAPR } from '@ui/utils/apyUtils';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { useIsMobile } from '@ui/utils/chakraUtils';
 
@@ -178,7 +178,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const blocksPerMin = getBlockTimePerMinuteByChainId(currentChain.id);
 
-  const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock, blocksPerMin);
+  const borrowAPR = ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
 
   const isMobile = useIsMobile();
 

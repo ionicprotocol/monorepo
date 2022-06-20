@@ -17,7 +17,7 @@ import {
   RewardsDataForMantissa,
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -95,21 +95,19 @@ export const useIncentivesWithRates = (
               borrowMantissaData.underlyingEthPrice
             );
 
-            const supplyAPY = convertMantissaToAPY(
-              supplyMantissa,
-              getBlockTimePerMinuteByChainId(currentChain.id),
-              365
-            );
-            const supplyAPR = convertMantissaToAPR(
+            const supplyAPY = ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPY = convertMantissaToAPY(
-              borrowMantissa,
-              getBlockTimePerMinuteByChainId(currentChain.id),
-              365
+            const supplyAPR = ratePerBlockToAPY(
+              supplyMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPR = convertMantissaToAPR(
+            const borrowAPY = ratePerBlockToAPY(
+              borrowMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
+            );
+            const borrowAPR = ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );

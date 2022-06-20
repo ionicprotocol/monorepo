@@ -1,7 +1,7 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
+import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import JumpRateModelArtifact from "../../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
 import { InterestRateModel } from "../../types";
 import { getContract } from "../utils";
@@ -22,7 +22,7 @@ export default class JumpRateModel implements InterestRateModel {
     this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.multiplierPerBlock());
     this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
     this.kink = BigNumber.from(await jumpRateModelContract.callStatic.kink());
-    const cTokenContract = getContract(assetAddress, CTokenInterfacesArtifact.abi, provider);
+    const cTokenContract = getContract(assetAddress, CTokenInterfaceArtifact.abi, provider);
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())
