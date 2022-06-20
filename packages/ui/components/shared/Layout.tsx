@@ -28,10 +28,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
           linkUrl="https://medium.com/midas-capital/audit-with-zellic-29b63f1be25a"
           status="warning"
         ></Banner>
-        <Banner
-          text="All BOMB pool deposits are temporarily paused as we are checking into an issue.  Apologies for the inconvenience this might cause."
-          status="warning"
-        ></Banner>
         <Container maxWidth="8xl">
           <Column
             width={isMobile ? '100%' : '96%'}
