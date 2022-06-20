@@ -5,22 +5,24 @@ import { FuseBase } from "./Fuse";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
+export { Artifacts, Artifact } from "./Artifacts";
 
-export type GConstructor<T = { sayHello(msg: string): void }> = new (...args: any[]) => T;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type GConstructor<T> = new (...args: any[]) => T;
 export type FuseBaseConstructor = GConstructor<FuseBase>;
 
 export type TxOptions = Overrides & { from?: string | Promise<string> };
 
 export type MinifiedContracts = {
   [key: string]: {
-    abi?: any;
+    abi?: Array<object>;
     bin?: any;
   };
 };
 
 export type MinifiedCompoundContracts = {
   [key: string]: {
-    abi?: any;
+    abi?: Array<object>;
     bytecode?: any;
   };
 };
@@ -56,23 +58,6 @@ export interface InterestRateModel {
 
   getSupplyRate(utilizationRate: BigNumber): BigNumber;
 }
-export type Artifact = {
-  abi: any;
-  bytecode: {
-    object: string;
-    sourceMap: string;
-    linkReferences: any;
-  };
-  deployedBytecode: {
-    object: string;
-    sourceMap: string;
-    linkReferences: any;
-  };
-};
-
-export type Artifacts = {
-  [contractName: string]: Artifact;
-};
 
 export type ChainDeployment = {
   [contractName: string]: {
@@ -215,6 +200,7 @@ export interface FusePoolData {
   comptroller: string;
   name: string;
   totalLiquidityNative: number;
+  totalAvailableLiquidityNative: number;
   totalSuppliedNative: number;
   totalBorrowedNative: number;
   totalSupplyBalanceNative: number;
@@ -257,6 +243,7 @@ export type ChainLiquidationDefaults = {
     SUPPORTED_INPUT_CURRENCIES: Array<string>;
     LIQUIDATION_STRATEGY: LiquidationStrategy;
     MINIMUM_PROFIT_NATIVE: BigNumber;
+    LIQUIDATION_INTERVAL_SECONDS: number;
   };
 };
 

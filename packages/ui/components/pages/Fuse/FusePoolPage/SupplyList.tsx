@@ -15,7 +15,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -27,13 +27,14 @@ import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { FundOperationMode, URL_MIDAS_DOCS } from '@ui/constants/index';
+import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { Row, useIsMobile } from '@ui/utils/chakraUtils';
@@ -51,9 +52,14 @@ export const SupplyList = ({
   comptrollerAddress,
   rewards = [],
 }: SupplyListProps) => {
-  const suppliedAssets = assets.filter((asset) => asset.supplyBalanceNative > 1);
-  const nonSuppliedAssets = assets.filter(
-    (asset) => asset.supplyBalanceNative < 1 && !asset.isSupplyPaused
+  const suppliedAssets = useMemo(
+    () => assets.filter((asset) => asset.supplyBalance.gt(0)),
+
+    [assets]
+  );
+  const nonSuppliedAssets = useMemo(
+    () => assets.filter((asset) => asset.supplyBalance.eq(0)),
+    [assets]
   );
 
   const isMobile = useIsMobile();
@@ -163,9 +169,13 @@ const AssetSupplyRow = ({
   const authedOpenModal = useAuthedCallback(openModal);
 
   const asset = assets[index];
-  const { fuse, scanUrl } = useRari();
+  const { fuse, scanUrl, currentChain } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const supplyAPY = convertMantissaToAPY(asset.supplyRatePerBlock, 365);
+  const supplyAPY = convertMantissaToAPY(
+    asset.supplyRatePerBlock,
+    getBlockTimePerMinuteByChainId(currentChain.id),
+    365
+  );
   const queryClient = useQueryClient();
   const toast = useErrorToast();
 

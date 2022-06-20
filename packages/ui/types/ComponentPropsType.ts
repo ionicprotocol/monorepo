@@ -1,5 +1,6 @@
 import { BoxProps, FlexProps } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 
 import { TokensDataMap } from '@ui/types/TokensDataMap';
@@ -210,7 +211,7 @@ export interface RewardsDataForMantissa {
   cTokenAddress: string;
   rewardSpeed: number;
   rewardEthPrice: number;
-  underlyingTotalSupply: number;
+  underlyingTotalSupply: BigNumber;
   underlyingEthPrice: number;
 }
 

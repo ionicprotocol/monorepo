@@ -24,7 +24,6 @@ export enum RedemptionStrategy {
 
 export enum DelegateContractName {
   CErc20Delegate = "CErc20Delegate",
-  CEtherDelegate = "CEtherDelegate",
   CErc20PluginDelegate = "CErc20PluginDelegate",
   CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
 }
@@ -91,4 +90,11 @@ export enum CTokenErrorCodes {
   TOKEN_TRANSFER_IN_FAILED,
   TOKEN_TRANSFER_OUT_FAILED,
   UTILIZATION_ABOVE_MAX,
+}
+
+export enum FundOperationMode {
+  SUPPLY,
+  WITHDRAW,
+  BORROW,
+  REPAY,
 }

@@ -1,4 +1,5 @@
 variable "execution_role_arn" {}
+
 variable "cluster_id" {}
 
 
@@ -19,30 +20,26 @@ variable "memory" {
 }
 
 
-variable "timeout" {
-  default = 60
+variable "service_security_groups" {
 }
 
-
-variable "ecs_cluster_sg" {
+variable "subnets" {
 }
 
-variable "allow_all_sg" {
-}
 
 variable "chain_id" {
   type = string
 }
 
-variable "ethereum_admin_account" {
+variable "environment" {
   type = string
 }
-variable "ethereum_admin_private_key" {
-  type = string
+
+variable "runtime_env_vars" {
+  type = list(object({ name=string, value=string }))
 }
-variable "web3_provider_url" {
-  type = string
-}
-variable "supported_pairs" {
-  type = string
+
+
+variable "region" {
+
 }

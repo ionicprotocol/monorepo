@@ -16,6 +16,7 @@ import {
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
+  FundOperationMode,
   Fuse,
   NativePricedFuseAsset,
 } from '@midas-capital/sdk';
@@ -32,7 +33,7 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { FundOperationMode, UserAction } from '@ui/constants/index';
+import { UserAction } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -40,6 +41,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
@@ -483,12 +485,14 @@ interface StatsColumnProps {
 }
 const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsColumnProps) => {
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
-  const updatedAssets: NativePricedFuseAsset[] | undefined = useUpdatedUserAssets({
+  const updatedAssets: MarketData[] | undefined = useUpdatedUserAssets({
     mode,
     assets,
     index,
     amount,
   });
+
+  const { currentChain } = useRari();
 
   // Define the old and new asset (same asset different numerical values)
   const asset = assets[index];
@@ -503,15 +507,26 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = convertMantissaToAPY(asset.supplyRatePerBlock, 365);
-  const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock);
+  const supplyAPY = convertMantissaToAPY(
+    asset.supplyRatePerBlock,
+    getBlockTimePerMinuteByChainId(currentChain.id),
+    365
+  );
+  const borrowAPR = convertMantissaToAPR(
+    asset.borrowRatePerBlock,
+    getBlockTimePerMinuteByChainId(currentChain.id)
+  );
 
   const updatedSupplyAPY = convertMantissaToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
+    getBlockTimePerMinuteByChainId(currentChain.id),
     365
   );
 
-  const updatedBorrowAPR = convertMantissaToAPR(updatedAsset?.borrowRatePerBlock ?? constants.Zero);
+  const updatedBorrowAPR = convertMantissaToAPR(
+    updatedAsset?.borrowRatePerBlock ?? constants.Zero,
+    getBlockTimePerMinuteByChainId(currentChain.id)
+  );
 
   // If the difference is greater than a 0.1 percentage point change, alert the user
   const updatedAPYDiffIsLarge = isSupplyingOrWithdrawing
@@ -607,7 +622,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
               {!isSupplyingOrWithdrawing ? (
                 <>
                   {' → '}
-                  {smallUsdFormatter(updatedAsset.borrowBalanceNative)}
+                  {smallUsdFormatter(updatedAsset.borrowBalanceFiat)}
                 </>
               ) : null}
             </Text>
