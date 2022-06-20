@@ -8,6 +8,7 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import {
   CTokenDataForRewards,
   CTokenIncentivesMap,
@@ -16,7 +17,7 @@ import {
   RewardsDataForMantissa,
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -31,6 +32,7 @@ export const useIncentivesWithRates = (
   rewardTokenAddrs: string[],
   comptroller: string
 ) => {
+  const { currentChain } = useRari();
   // this is what we return
   const incentivesWithRates: CTokenRewardsDistributorIncentivesWithRatesMap = {};
 
@@ -67,7 +69,7 @@ export const useIncentivesWithRates = (
               cTokenAddress,
               rewardSpeed: supplySpeed,
               rewardEthPrice: tokenPrices.tokenPrices[rewardToken].ethPrice,
-              underlyingTotalSupply: Number(utils.formatEther(cTokenData.totalSupply)),
+              underlyingTotalSupply: cTokenData.totalSupply,
               underlyingEthPrice: tokenPrices.tokenPrices[cTokenData.underlyingToken].ethPrice,
             };
 
@@ -75,7 +77,7 @@ export const useIncentivesWithRates = (
               cTokenAddress,
               rewardSpeed: borrowSpeed,
               rewardEthPrice: tokenPrices.tokenPrices[rewardToken].ethPrice,
-              underlyingTotalSupply: Number(utils.formatEther(cTokenData.totalSupply)),
+              underlyingTotalSupply: cTokenData.totalSupply,
               underlyingEthPrice: tokenPrices.tokenPrices[cTokenData.underlyingToken].ethPrice,
             };
 
@@ -93,10 +95,22 @@ export const useIncentivesWithRates = (
               borrowMantissaData.underlyingEthPrice
             );
 
-            const supplyAPY = convertMantissaToAPY(supplyMantissa, 365);
-            const supplyAPR = convertMantissaToAPR(supplyMantissa);
-            const borrowAPY = convertMantissaToAPY(borrowMantissa, 365);
-            const borrowAPR = convertMantissaToAPR(borrowMantissa);
+            const supplyAPY = ratePerBlockToAPY(
+              supplyMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
+            );
+            const supplyAPR = ratePerBlockToAPY(
+              supplyMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
+            );
+            const borrowAPY = ratePerBlockToAPY(
+              borrowMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
+            );
+            const borrowAPR = ratePerBlockToAPY(
+              borrowMantissa,
+              getBlockTimePerMinuteByChainId(currentChain.id)
+            );
 
             return {
               ...incentiveForCToken,
@@ -115,10 +129,15 @@ export const useIncentivesWithRates = (
 const constructMantissa = (
   rewardSpeed: number,
   rewardEthPrice: number,
-  underlyingTotalSupply: number,
+  underlyingTotalSupply: BigNumber,
   underlyingEthPrice: number
 ) => {
-  return (rewardSpeed * rewardEthPrice) / (underlyingTotalSupply * underlyingEthPrice);
+  return utils.parseEther(
+    (
+      (rewardSpeed * rewardEthPrice) /
+      (Number(utils.formatEther(underlyingTotalSupply)) * underlyingEthPrice)
+    ).toString()
+  );
 };
 
 export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForRewardsMap => {
