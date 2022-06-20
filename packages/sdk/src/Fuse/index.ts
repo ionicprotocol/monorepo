@@ -297,7 +297,7 @@ export class FuseBase {
     return null;
   }
 
-  async identifyInterestRateModel(interestRateModelAddress: string): Promise<InterestRateModel | null> {
+  async identifyInterestRateModel(interestRateModelAddress: string): Promise<InterestRateModel> {
     // Get interest rate model type from runtime bytecode hash and init class
     const interestRateModels: { [key: string]: any } = {
       JumpRateModel: JumpRateModel,
@@ -314,17 +314,20 @@ export class FuseBase {
         break;
       }
     }
+    if (irmModel === null) {
+      throw Error("InterestRateModel not found");
+    }
     return irmModel;
   }
 
-  async getInterestRateModel(assetAddress: string): Promise<any | undefined | null> {
+  async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = new Contract(assetAddress, this.artifacts.CTokenInterfaces.abi, this.provider);
+    const assetContract = new Contract(assetAddress, this.artifacts.CTokenInterface.abi, this.provider);
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
-    if (interestRateModel === null) {
-      return null;
+    if (!interestRateModel) {
+      throw Error(`No Interest Rate Model found for asset: ${assetAddress}`);
     }
     await interestRateModel.init(interestRateModelAddress, assetAddress, this.provider);
     return interestRateModel;
