@@ -40,7 +40,7 @@ export const deployFuseSafeLiquidator = async ({
   console.log("FuseSafeLiquidator: ", fsl.address);
 
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
-  const newOwner = fuseSafeLiquidator.callStatic.owner();
+  const newOwner = await fuseSafeLiquidator.callStatic.owner();
   console.log(`FuseSafeLiquidator owner is ${newOwner}`);
 };
 
