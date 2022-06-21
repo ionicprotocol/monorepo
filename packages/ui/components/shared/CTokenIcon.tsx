@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import React, { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
@@ -28,8 +29,8 @@ export const CTokenIcon = ({
 
     if (address && addressIcons[address.toLowerCase()]) {
       return (
-        process.env.ICON_SERVER +
-        '/token/' +
+        config.iconServerURL +
+        '/token/96x96/' +
         addressIcons[address.toLowerCase()].toLowerCase() +
         '.png'
       );
