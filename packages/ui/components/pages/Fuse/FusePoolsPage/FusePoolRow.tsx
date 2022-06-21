@@ -18,6 +18,7 @@ import { useCallback, useMemo, useState } from 'react';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
@@ -111,17 +112,21 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
           )}
         </VStack>
 
-        <VStack flex={2}>
-          <SimpleTooltip label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}>
-            <Box background={scoreGradient} px="4" py="2" borderRadius="5px">
-              <Text fontSize="lg" textColor="white" fontWeight="semibold">
-                {rssScore}
-              </Text>
-            </Box>
-          </SimpleTooltip>
-        </VStack>
+        {config.isRssScoreEnabled && (
+          <VStack flex={2}>
+            <SimpleTooltip
+              label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
+            >
+              <Box background={scoreGradient} px="4" py="2" borderRadius="5px">
+                <Text fontSize="lg" textColor="white" fontWeight="semibold">
+                  {rssScore}
+                </Text>
+              </Box>
+            </SimpleTooltip>
+          </VStack>
+        )}
 
-        <VStack flex={4} alignItems="flex-start">
+        <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
           {data.underlyingTokens.length === 0 ? null : (
             <AvatarGroup size="sm" max={30}>
               {tokens.slice(0, 10).map((token, i) => (
