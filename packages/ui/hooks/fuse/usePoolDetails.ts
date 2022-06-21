@@ -5,7 +5,12 @@ import { useRari } from '@ui/context/RariContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
-  const { currentChain, fuse } = useRari();
+  const {
+    fuse,
+    currentChain: { id: chainId },
+  } = useRari();
+  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
+
   return useMemo(() => {
     if (assets && assets.length) {
       let mostSuppliedAsset = assets[0];
@@ -16,28 +21,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          fuse.convertMantissaToAPY(
-            asset.supplyRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id),
-            365
-          ) >
-          fuse.convertMantissaToAPY(
-            topLendingAPYAsset.supplyRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id),
-            365
-          )
+          fuse.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          fuse.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          fuse.convertMantissaToAPR(
-            asset.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id)
-          ) >
-          fuse.convertMantissaToAPR(
-            topBorrowAPRAsset.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id)
-          )
+          fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          fuse.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -51,5 +42,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets, fuse, currentChain.id]);
+  }, [assets, fuse, blocksPerMinute]);
 };

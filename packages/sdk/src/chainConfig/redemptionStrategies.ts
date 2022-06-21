@@ -18,10 +18,13 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
       RedemptionStrategy.XBombLiquidator,
     // jBRL
     [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.jBRL)!.underlying]:
-      RedemptionStrategy.jBRLLiquidator,
+      RedemptionStrategy.JarvisSynthereumLiquidator,
   },
   [SupportedChains.moonbase_alpha]: {},
-  [SupportedChains.chapel]: {},
+  [SupportedChains.chapel]: {
+    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying]:
+      RedemptionStrategy.UniswapLpTokenLiquidator,
+  },
   [SupportedChains.aurora]: {},
   [SupportedChains.moonbeam]: {
     [moonbeamAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying]:

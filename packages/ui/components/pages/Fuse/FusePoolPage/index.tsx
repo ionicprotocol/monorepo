@@ -111,7 +111,7 @@ const FusePoolPage = memo(() => {
             />
             <PoolStat
               label="Liquidity"
-              value={data ? midUsdFormatter(data?.totalLiquidityFiat) : undefined}
+              value={data ? midUsdFormatter(data?.totalAvailableLiquidityFiat) : undefined}
             />
             <PoolStat
               label="Utilization"

@@ -170,7 +170,7 @@ const AssetSupplyRow = ({
   const asset = assets[index];
   const { fuse, scanUrl, currentChain } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const supplyAPY = fuse.convertMantissaToAPY(
+  const supplyAPY = fuse.ratePerBlockToAPY(
     asset.supplyRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );

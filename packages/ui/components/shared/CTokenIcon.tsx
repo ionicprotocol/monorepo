@@ -1,9 +1,10 @@
 import { Avatar, AvatarGroup, AvatarGroupProps, AvatarProps } from '@chakra-ui/avatar';
 import { HStack, Skeleton, Text, useColorMode } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
@@ -18,24 +19,37 @@ export const CTokenIcon = ({
   withMotion?: boolean;
 } & Partial<AvatarProps>) => {
   const { addressIcons } = useRari();
-
   const { data: tokenData } = useTokenData(address);
   const { colorMode } = useColorMode();
+
+  const iconUrl = useMemo(() => {
+    if (tokenData && tokenData.logoURL) {
+      return tokenData?.logoURL;
+    }
+
+    if (address && addressIcons[address.toLowerCase()]) {
+      return (
+        config.iconServerURL +
+        '/token/96x96/' +
+        addressIcons[address.toLowerCase()].toLowerCase() +
+        '.png'
+      );
+    }
+
+    if (colorMode === 'light') {
+      return '/images/help-circle-dark.svg';
+    }
+
+    return '/images/help-circle-light.svg';
+  }, [address, addressIcons, colorMode, tokenData]);
+
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>
       <SimpleTooltip label={tokenData?.symbol ?? 'Loading...'} isDisabled={!withTooltip}>
         <Avatar
           key={address}
           name={tokenData?.symbol ?? 'Loading...'}
-          src={
-            tokenData?.logoURL ||
-            `${process.env.ICON_SERVER}/token/${addressIcons[
-              address.toLowerCase()
-            ].toLowerCase()}.png` ||
-            (colorMode === 'light'
-              ? '/images/help-circle-dark.svg'
-              : '/images/help-circle-light.svg')
-          }
+          src={iconUrl}
           {...avatarProps}
         />
       </SimpleTooltip>
