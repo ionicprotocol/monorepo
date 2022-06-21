@@ -2374,13 +2374,13 @@ __metadata:
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": ^2.0.3
     "@tenderly/hardhat-tenderly": ^1.0.13
-    "@typechain/ethers-v5": ^10.0.0
-    "@typechain/hardhat": ^6.0.0
+    "@typechain/ethers-v5": ^10.1.0
+    "@typechain/hardhat": ^6.1.2
     "@types/bad-words": ^3.0.1
     "@types/chai": ^4.3.1
     "@types/chai-as-promised": ^7
     "@types/chai-subset": ^1
-    "@types/eslint": ^8
+    "@types/eslint": ^8.4.3
     "@types/mocha": ^9.1.1
     "@types/node": ^17.0.23
     "@types/sinon-chai": ^3
@@ -2390,19 +2390,19 @@ __metadata:
     chai-as-promised: ^7.1.1
     chai-subset: ^1.6.0
     dotenv: ^16.0.1
-    eslint: ^8.16.0
+    eslint: ^8.18.0
     eslint-plugin-import: ^2.26.0
     eslint-plugin-prettier: ^4.0.0
     ethereum-waffle: ^3.4.4
-    ethers: ^5.6.6
-    hardhat: ^2.9.5
+    ethers: ^5.6.9
+    hardhat: ^2.9.9
     hardhat-abi-exporter: ^2.9.0
     hardhat-deploy: ^0.11.5
     hardhat-tracer: ^1.0.0-alpha.6
     lint-staged: 12.4.1
     mocha: ^10.0.0
     nyc: ^15.1.0
-    prettier: 2.6.2
+    prettier: 2.7.1
     prettier-plugin-solidity: 1.0.0-beta.19
     sinon: ^14.0.0
     sinon-chai: ^3.7.0
@@ -3057,8 +3057,8 @@ __metadata:
   linkType: hard
 
 "@testing-library/dom@npm:^8.5.0":
-  version: 8.13.0
-  resolution: "@testing-library/dom@npm:8.13.0"
+  version: 8.14.0
+  resolution: "@testing-library/dom@npm:8.14.0"
   dependencies:
     "@babel/code-frame": ^7.10.4
     "@babel/runtime": ^7.12.5
@@ -3068,7 +3068,7 @@ __metadata:
     dom-accessibility-api: ^0.5.9
     lz-string: ^1.4.4
     pretty-format: ^27.0.2
-  checksum: 880f1872b9949800d4444e3bdbd03df86d6f41ec7c27136dff1da29e87d2df2d7ee904afcdf895ffce351c25bd12119117eae023354d50e707ad56d43b2ed3ed
+  checksum: a916ea5167bc02b4666a519814c2b9563be91e912038816e3bd2a4e295122a3aab68b102fc8f0205219e5c4201e6994894bc7d24a8b4aae0e2e8f88cbeb65971
   languageName: node
   linkType: hard
 
@@ -3128,7 +3128,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typechain/ethers-v5@npm:^10.0.0":
+"@typechain/ethers-v5@npm:^10.1.0":
   version: 10.1.0
   resolution: "@typechain/ethers-v5@npm:10.1.0"
   dependencies:
@@ -3157,7 +3157,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typechain/hardhat@npm:^6.0.0":
+"@typechain/hardhat@npm:^6.1.2":
   version: 6.1.2
   resolution: "@typechain/hardhat@npm:6.1.2"
   dependencies:
@@ -3238,7 +3238,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:^8":
+"@types/eslint@npm:^8, @types/eslint@npm:^8.4.3":
   version: 8.4.3
   resolution: "@types/eslint@npm:8.4.3"
   dependencies:
@@ -6046,9 +6046,9 @@ __metadata:
   linkType: hard
 
 "caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001332, caniuse-lite@npm:^1.0.30001349":
-  version: 1.0.30001356
-  resolution: "caniuse-lite@npm:1.0.30001356"
-  checksum: 2b1f377f503de8c3d585b85b648422d1a202528d04321aaff5e37054cf413e927db1cc37a3408b44646c6eab7b9e38cae4b44b3a81fbf2e2f8f676cf559518b5
+  version: 1.0.30001357
+  resolution: "caniuse-lite@npm:1.0.30001357"
+  checksum: aae79796f95b562fc597d01e2bbc042bc1671567790fab4cae02040414be72d4d6df7bd457930f30a68bbad310514e0ea58a4fc5a686d49662894bd721dfb3c6
   languageName: node
   linkType: hard
 
@@ -8025,7 +8025,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:8.18.0, eslint@npm:^8.16.0":
+"eslint@npm:8.18.0, eslint@npm:^8.18.0":
   version: 8.18.0
   resolution: "eslint@npm:8.18.0"
   dependencies:
@@ -8470,7 +8470,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
+  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
   languageName: node
   linkType: hard
 
@@ -8709,7 +8709,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.6, ethers@npm:^5.6.9":
+"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.9":
   version: 5.6.9
   resolution: "ethers@npm:5.6.9"
   dependencies:
@@ -10044,7 +10044,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat@npm:^2.9.5":
+"hardhat@npm:^2.9.9":
   version: 2.9.9
   resolution: "hardhat@npm:2.9.9"
   dependencies:
@@ -14694,15 +14694,6 @@ __metadata:
   bin:
     prettier: bin-prettier.js
   checksum: 21b9408476ea1c544b0e45d51ceb94a84789ff92095abb710942d780c862d0daebdb29972d47f6b4d0f7ebbfb0ffbf56cc2cfa3e3e9d1cca54864af185b15b66
-  languageName: node
-  linkType: hard
-
-"prettier@npm:2.6.2":
-  version: 2.6.2
-  resolution: "prettier@npm:2.6.2"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 48d08dde8e9fb1f5bccdd205baa7f192e9fc8bc98f86e1b97d919de804e28c806b0e6cc685e4a88211aa7987fa9668f30baae19580d87ced3ed0f2ec6572106f
   languageName: node
   linkType: hard
 

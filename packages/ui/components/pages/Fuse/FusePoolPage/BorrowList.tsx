@@ -177,7 +177,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const blocksPerMin = getBlockTimePerMinuteByChainId(currentChain.id);
 
-  const borrowAPR = fuse.convertMantissaToAPR(asset.borrowRatePerBlock, blocksPerMin);
+  const borrowAPR = fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
 
   const isMobile = useIsMobile();
 

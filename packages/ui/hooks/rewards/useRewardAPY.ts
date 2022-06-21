@@ -94,19 +94,19 @@ export const useIncentivesWithRates = (
               borrowMantissaData.underlyingEthPrice
             );
 
-            const supplyAPY = fuse.convertMantissaToAPY(
+            const supplyAPY = fuse.ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const supplyAPR = fuse.convertMantissaToAPR(
+            const supplyAPR = fuse.ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPY = fuse.convertMantissaToAPY(
+            const borrowAPY = fuse.ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPR = fuse.convertMantissaToAPR(
+            const borrowAPR = fuse.ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
