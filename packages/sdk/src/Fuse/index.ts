@@ -179,7 +179,7 @@ export class FuseBase {
 
       // Register new pool with FusePoolDirectory
       const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
-      const existingPools = await this.contracts.FusePoolDirectory.callStatic.getAllPools();
+      const existingPools = await contract.callStatic.getAllPools();
 
       const deployTx = await contract.deployPool(
         poolName,
