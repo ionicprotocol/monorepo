@@ -61,6 +61,7 @@ export const deployConfig: ChainDeployConfig = {
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
   const chainlinkAssets: ChainlinkAsset[] = [
@@ -110,4 +111,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Pr
     deployments,
     deployConfig,
   });
+
+  //// Liquidator Redemption Strategies
+  const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (uniswapLpTokenLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);
+  }
+  console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 };

@@ -1,5 +1,6 @@
 import { SupportedChains } from '@midas-capital/sdk';
 
+import { config } from '@ui/config/index';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 const mainnet: ChainMetadata = {
@@ -10,8 +11,8 @@ const mainnet: ChainMetadata = {
   img: '/images/evmos.png',
   rpcUrls: { default: 'https://eth.bd.evmos.org' },
   blockExplorerUrls: { default: { name: 'Evmos', url: 'https://evm.evmos.org' } },
-  enabled: process.env.EVMOS === 'ture',
-  supported: process.env.EVMOS === 'true',
+  enabled: config.isEvmosEnabled,
+  supported: config.isEvmosEnabled,
   blocksPerMin: 20,
   nativeCurrency: {
     symbol: 'EVMOS',
@@ -37,8 +38,7 @@ const testnet: ChainMetadata = {
   img: '/images/evmos.png',
   rpcUrls: { default: 'https://eth.bd.evmos.dev:8545' },
   enabled: true,
-  supported:
-    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
+  supported: config.isDevelopment || config.isTestnetEnabled,
   blocksPerMin: 20,
   blockExplorerUrls: { default: { name: 'Evmos', url: 'https://evm.evmos.dev' } },
   nativeCurrency: {
