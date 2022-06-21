@@ -8,6 +8,7 @@ nextConfig = {
     MOONBEAM: process.env.MOONBEAM,
     NEXT_PUBLIC_SHOW_TESTNETS: process.env.NEXT_PUBLIC_SHOW_TESTNETS,
     ICON_SERVER: process.env.ICON_SERVER,
+    FEATURE_RSS: process.env.FEATURE_RSS,
   },
 };
 
