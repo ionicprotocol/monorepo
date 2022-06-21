@@ -3,10 +3,10 @@ import { useMemo } from 'react';
 
 import { useRari } from '@ui/context/RariContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
   const {
+    fuse,
     currentChain: { id: chainId },
   } = useRari();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
@@ -21,14 +21,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
-          ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
+          fuse.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          fuse.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
-          ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
+          fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          fuse.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -42,5 +42,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets, blocksPerMinute]);
+  }, [assets, fuse, blocksPerMinute]);
 };
