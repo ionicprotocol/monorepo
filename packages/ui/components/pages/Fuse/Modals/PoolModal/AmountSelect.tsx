@@ -41,7 +41,6 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -487,6 +486,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   });
 
   const {
+    fuse,
     currentChain: { id: chainId },
   } = useRari();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
@@ -504,15 +504,15 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
-  const borrowAPR = ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
+  const supplyAPY = fuse.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
+  const borrowAPR = fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
 
-  const updatedSupplyAPY = ratePerBlockToAPY(
+  const updatedSupplyAPY = fuse.ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
 
-  const updatedBorrowAPR = ratePerBlockToAPY(
+  const updatedBorrowAPR = fuse.ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );

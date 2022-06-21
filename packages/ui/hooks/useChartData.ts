@@ -17,7 +17,7 @@ export function useChartData(market: string) {
         return { borrowerRates: null, supplierRates: null };
       }
 
-      return convertIRMtoCurve(interestRateModel, currentChainId);
+      return convertIRMtoCurve(fuse, interestRateModel, currentChainId);
     },
     {
       enabled: !!fuse && !!currentChainId && !!market,
