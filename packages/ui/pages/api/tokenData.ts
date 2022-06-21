@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';
 import * as yup from 'yup';
 
+import { config } from '@ui/config/index';
 import { CoinGeckoResponse, TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
 
@@ -67,7 +68,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
     // TODO switch stuff for LP tokens which are supported here.
     if (basicTokenInfo.symbol) {
       basicTokenInfo.logoURL =
-        process.env.ICON_SERVER + '/token/96x96/' + basicTokenInfo.symbol.toLowerCase() + '.png';
+        config.iconServerURL + '/token/96x96/' + basicTokenInfo.symbol.toLowerCase() + '.png';
     }
   }
 
