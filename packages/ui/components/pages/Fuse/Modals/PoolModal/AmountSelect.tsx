@@ -42,7 +42,6 @@ import { MarketData } from '@ui/hooks/useFusePoolData';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
