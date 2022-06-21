@@ -1,5 +1,6 @@
 import { SupportedChains } from '@midas-capital/sdk';
 
+import { config } from '@ui/config/index';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 // const mainnet: ChainMetadata = {
@@ -37,8 +38,7 @@ const devnet: ChainMetadata = {
   img: '/images/neon.jpg',
   rpcUrls: { default: 'https://proxy.devnet.neonlabs.org/solana' },
   enabled: true,
-  supported:
-    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
+  supported: config.isDevelopment || config.isTestnetEnabled,
   blocksPerMin: 50,
   blockExplorerUrls: { default: { name: 'NeonScan', url: 'https://neonscan.org/' } },
   nativeCurrency: {
