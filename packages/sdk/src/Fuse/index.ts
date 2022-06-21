@@ -180,6 +180,8 @@ export class FuseBase {
 
       // Register new pool with FusePoolDirectory
       const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
+      const existingPools = await contract.callStatic.getAllPools();
+
       const deployTx = await contract.deployPool(
         poolName,
         implementationAddress,
@@ -208,7 +210,7 @@ export class FuseBase {
       const poolAddress = getPoolAddress(
         options.from,
         poolName,
-        deployReceipt.blockNumber,
+        existingPools.length,
         this.chainDeployment.FuseFeeDistributor.address,
         this.chainDeployment.FusePoolDirectory.address
       );
