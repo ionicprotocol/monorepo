@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useColors } from '@ui/hooks/useColors';
@@ -66,19 +67,21 @@ const PoolCard = ({ data }: PoolCardProps) => {
               })}
             </AvatarGroup>
           )}
-          <Row mainAxisAlignment="center" crossAxisAlignment="center">
-            <Tooltip
-              label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
-              placement="top"
-              hasArrow
-            >
-              <Box ml="4" background={scoreGradient} px="4" py="2" borderRadius="5px">
-                <Text fontSize="lg" textColor="white" fontWeight="semibold">
-                  {rssScore}
-                </Text>
-              </Box>
-            </Tooltip>
-          </Row>
+          {config.isRssScoreEnabled && (
+            <Row mainAxisAlignment="center" crossAxisAlignment="center">
+              <Tooltip
+                label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
+                placement="top"
+                hasArrow
+              >
+                <Box ml="4" background={scoreGradient} px="4" py="2" borderRadius="5px">
+                  <Text fontSize="lg" textColor="white" fontWeight="semibold">
+                    {rssScore}
+                  </Text>
+                </Box>
+              </Tooltip>
+            </Row>
+          )}
         </Row>
         <chakra.div w="100%" h="1px" bgColor={cCard.dividerColor} />
         <Row mx="6" mainAxisAlignment="center" crossAxisAlignment="center" gridGap="6">
