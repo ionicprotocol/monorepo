@@ -279,7 +279,7 @@ export const CreatePoolConfiguration = () => {
               formatValue={formatPercentage}
               min={0}
               max={50}
-              ml="auto"
+              ml={{ base: 'auto', md: 4 }}
               mt={{ base: 4, md: 0 }}
             />
           </Flex>

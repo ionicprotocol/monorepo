@@ -25,10 +25,8 @@ export const SliderWithLabel = ({
 }) => {
   const { cSlider } = useColors();
   return (
-    <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
-      <Text fontWeight="bold" mr={2}>
-        {formatValue ? formatValue(value) : value}
-      </Text>
+    <Row mainAxisAlignment="space-between" crossAxisAlignment="center" {...others} width="235px">
+      <Text fontWeight="bold">{formatValue ? formatValue(value) : value}</Text>
       <Slider
         width="190px"
         onChange={setValue}

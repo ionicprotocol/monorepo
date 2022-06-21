@@ -5,6 +5,7 @@
     "baseUrl": "./packages",
     "paths": {
       "@ui/components/*": ["ui/components/*"],
+      "@ui/config/*": ["ui/config/*"],
       "@ui/constants/*": ["ui/constants/*"],
       "@ui/context/*": ["ui/context/*"],
       "@ui/hooks/*": ["ui/hooks/*"],
