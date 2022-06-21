@@ -3,39 +3,59 @@ import {
   AlertDescription,
   AlertIcon,
   Box,
-  CloseButton,
   Slider,
   SliderFilledTrack,
   SliderMark,
   SliderThumb,
   SliderTrack,
-  Tooltip,
   useDisclosure,
 } from '@chakra-ui/react';
+import { FundOperationMode } from '@midas-capital/sdk';
+import { BigNumber, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
+
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useRari } from '@ui/context/RariContext';
+import { MarketData } from '@ui/hooks/useFusePoolData';
+import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
 const colorLimit = 75;
 
 function MaxBorrowSlider({
   updateAmount,
-  getBorrowLimit,
+  asset,
 }: {
   updateAmount: (amount: string) => void;
-  getBorrowLimit: () => Promise<number>;
+  asset: MarketData;
 }) {
+  const { fuse, address } = useRari();
   const [sliderValue, setSliderValue] = useState(50);
-  const [showTooltip, setShowTooltip] = useState(false);
   const [borrowLimit, setBorrowLimit] = useState<number>(0);
 
   const fetchBorrowLimit = useCallback(async () => {
-    const borrowLimit = await getBorrowLimit();
-    setBorrowLimit(borrowLimit);
-    updateAmount(((borrowLimit * sliderValue) / 100).toString());
-  }, []);
+    const borrowLimitBN = (await fetchMaxAmount(
+      FundOperationMode.BORROW,
+      fuse,
+      address,
+      asset
+    )) as BigNumber;
+
+    return Number(utils.formatUnits(borrowLimitBN));
+  }, [address, asset, fuse]);
 
   useEffect(() => {
-    fetchBorrowLimit();
+    const func = async () => {
+      const borrowLimit = await fetchBorrowLimit();
+      setBorrowLimit(borrowLimit);
+    };
+
+    func();
   }, [fetchBorrowLimit]);
+
+  useEffect(() => {
+    updateAmount(((borrowLimit * sliderValue) / 100).toString());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sliderValue, borrowLimit]);
 
   const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: false });
 
@@ -68,10 +88,9 @@ function MaxBorrowSlider({
             ? 'orange'
             : 'red'
         }
-        mt={4}
+        mt={10}
+        mb={isVisible ? 0 : 4}
         onChange={handleSliderValueChange}
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
       >
         <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
           25%
@@ -85,30 +104,16 @@ function MaxBorrowSlider({
         <SliderTrack>
           <SliderFilledTrack />
         </SliderTrack>
-        <Tooltip
-          hasArrow
-          bg="teal.500"
-          color="white"
-          placement="top"
-          isOpen={showTooltip}
-          label={`${sliderValue}%`}
-        >
+        <SimpleTooltip label={`${sliderValue}%`}>
           <SliderThumb />
-        </Tooltip>
+        </SimpleTooltip>
       </Slider>
       {isVisible && (
-        <Alert mt={4} status="warning">
+        <Alert mt={4} status="warning" mb={4}>
           <AlertIcon />
           <Box>
             <AlertDescription>It isn’t recommended to use borrow rates above 75%</AlertDescription>
           </Box>
-          <CloseButton
-            alignSelf="flex-start"
-            position="relative"
-            right={-1}
-            top={-1}
-            onClick={onClose}
-          />
         </Alert>
       )}
     </Box>
