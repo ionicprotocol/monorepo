@@ -17,7 +17,6 @@ import {
   RewardsDataForMantissa,
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
-import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -32,7 +31,7 @@ export const useIncentivesWithRates = (
   rewardTokenAddrs: string[],
   comptroller: string
 ) => {
-  const { currentChain } = useRari();
+  const { currentChain, fuse } = useRari();
   // this is what we return
   const incentivesWithRates: CTokenRewardsDistributorIncentivesWithRatesMap = {};
 
@@ -95,19 +94,19 @@ export const useIncentivesWithRates = (
               borrowMantissaData.underlyingEthPrice
             );
 
-            const supplyAPY = ratePerBlockToAPY(
+            const supplyAPY = fuse.ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const supplyAPR = ratePerBlockToAPY(
+            const supplyAPR = fuse.ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPY = ratePerBlockToAPY(
+            const borrowAPY = fuse.ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPR = ratePerBlockToAPY(
+            const borrowAPR = fuse.ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
