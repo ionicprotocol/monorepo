@@ -23,8 +23,9 @@ import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/Colla
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStat';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
+import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
-import { MidasBox } from '@ui/components/shared/MidasBox';
+import { Column } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useRari } from '@ui/context/RariContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
@@ -32,7 +33,6 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
-import { Column } from '@ui/utils/chakraUtils';
 
 const FusePoolPage = memo(() => {
   const { setLoading } = useRari();

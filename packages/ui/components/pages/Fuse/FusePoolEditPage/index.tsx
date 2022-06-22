@@ -10,17 +10,16 @@ import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConf
 import AddAssetModal from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal';
 import FlywheelEdit from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit';
 import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
-import { AdminAlert } from '@ui/components/shared/AdminAlert';
+import { AdminAlert } from '@ui/components/shared/Alert';
 import DashboardBox from '@ui/components/shared/DashboardBox';
+import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useRari } from '@ui/context/RariContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
-import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { useIsSemiSmallScreen } from '@ui/hooks/useIsSemiSmallScreen';
+import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { Center, Column, RowOrColumn } from '@ui/utils/chakraUtils';
 
 const FusePoolEditPage = memo(() => {
   const isMobile = useIsSemiSmallScreen();
@@ -30,7 +29,6 @@ const FusePoolEditPage = memo(() => {
     onOpen: openAddAssetModal,
     onClose: closeAddAssetModal,
   } = useDisclosure();
-  const authedOpenModal = useAuthedCallback(openAddAssetModal);
 
   const { setLoading, coingeckoId } = useRari();
   const router = useRouter();
@@ -120,7 +118,7 @@ const FusePoolEditPage = memo(() => {
               <DashboardBox width={isMobile ? '100%' : '50%'} mt={4} ml={isMobile ? 0 : 4}>
                 {data.assets.length > 0 ? (
                   <AssetConfiguration
-                    openAddAssetModal={authedOpenModal}
+                    openAddAssetModal={openAddAssetModal}
                     assets={data.assets}
                     comptrollerAddress={data.comptroller}
                     poolID={poolId}
@@ -132,7 +130,7 @@ const FusePoolEditPage = memo(() => {
 
                     <AddAssetButton
                       comptrollerAddress={data.comptroller}
-                      openAddAssetModal={authedOpenModal}
+                      openAddAssetModal={openAddAssetModal}
                     />
                   </Column>
                 )}
