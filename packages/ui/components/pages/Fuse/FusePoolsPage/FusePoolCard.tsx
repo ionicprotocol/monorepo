@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { Column, Row } from '@ui/components/shared/Flex';
 import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
@@ -12,7 +13,6 @@ import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { Column, Row } from '@ui/utils/chakraUtils';
 
 interface PoolCardProps {
   data: FusePoolData;
