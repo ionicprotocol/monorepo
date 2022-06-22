@@ -57,37 +57,6 @@ export const useTokenData = (address: string | undefined) => {
   );
 };
 
-export const useTokensData = (addresses: string[]): TokenData[] | null => {
-  const { currentChain } = useRari();
-
-  const tokensData = useQueries(
-    addresses.map((address: string) => {
-      return {
-        queryKey: ['useTokensData', currentChain, address],
-        queryFn: async () => await fetchTokenData(address, currentChain.id),
-        cacheTime: Infinity,
-        staleTime: Infinity,
-      };
-    })
-  );
-
-  return useMemo(() => {
-    const ret: any[] = [];
-
-    if (!tokensData.length) return null;
-
-    // Return null altogether
-    tokensData.forEach(({ data }) => {
-      if (!data) return null;
-      ret.push(data);
-    });
-
-    if (!ret.length) return null;
-
-    return ret;
-  }, [tokensData]);
-};
-
 export const useTokensDataAsMap = (addresses: string[] = []): TokensDataMap => {
   const { currentChain } = useRari();
 
