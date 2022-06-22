@@ -1,4 +1,16 @@
-import { Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text } from '@chakra-ui/react';
+import {
+  InputGroup,
+  InputRightAddon,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+} from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
@@ -7,9 +19,8 @@ import { useColors } from '@ui/hooks/useColors';
 export const SliderWithLabel = ({
   value,
   setValue,
-  formatValue,
-  min,
-  max,
+  min = 0,
+  max = 100,
   step,
   isDisabled,
   ...others
@@ -20,15 +31,26 @@ export const SliderWithLabel = ({
   value: number;
   isDisabled?: boolean;
   setValue: (value: number) => void;
-  formatValue?: (value: number) => string;
   [key: string]: ReactNode;
 }) => {
   const { cSlider } = useColors();
+  const handleChange = (valueString: string) => setValue(Number(valueString));
+
   return (
-    <Row mainAxisAlignment="space-between" crossAxisAlignment="center" {...others} width="235px">
-      <Text fontWeight="bold">{formatValue ? formatValue(value) : value}</Text>
+    <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
+      <InputGroup width="110px">
+        <NumberInput maxW="70px" value={value} onChange={handleChange} min={min} max={max}>
+          <NumberInputField paddingInline={3} borderRightRadius={0} />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <InputRightAddon px={2}>%</InputRightAddon>
+      </InputGroup>
+
       <Slider
-        width="190px"
+        width="150px"
         onChange={setValue}
         value={value}
         min={min ?? 0}

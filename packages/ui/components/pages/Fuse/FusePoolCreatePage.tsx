@@ -30,7 +30,6 @@ import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const FusePoolCreatePage = memo(() => {
   return (
@@ -252,7 +251,6 @@ export const CreatePoolConfiguration = () => {
             <SliderWithLabel
               value={closeFactor}
               setValue={setCloseFactor}
-              formatValue={formatPercentage}
               min={5}
               max={90}
               ml="auto"
@@ -276,7 +274,6 @@ export const CreatePoolConfiguration = () => {
             <SliderWithLabel
               value={liquidationIncentive}
               setValue={setLiquidationIncentive}
-              formatValue={formatPercentage}
               min={0}
               max={50}
               ml={{ base: 'auto', md: 4 }}

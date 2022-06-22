@@ -16,7 +16,6 @@ import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const IRMChart = dynamic(
   () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
@@ -161,7 +160,6 @@ export const AddAssetSettings = ({
           ml="auto"
           value={collateralFactor}
           setValue={setCollateralFactor}
-          formatValue={formatPercentage}
           max={90}
           mt={{ base: 2, md: 0 }}
         />
@@ -190,7 +188,6 @@ export const AddAssetSettings = ({
           ml="auto"
           value={reserveFactor}
           setValue={setReserveFactor}
-          formatValue={formatPercentage}
           max={50}
           mt={{ base: 2, md: 0 }}
         />
@@ -219,7 +216,6 @@ export const AddAssetSettings = ({
           ml="auto"
           value={adminFee}
           setValue={setAdminFee}
-          formatValue={formatPercentage}
           max={30}
           mt={{ base: 2, md: 0 }}
         />
