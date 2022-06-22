@@ -1,5 +1,5 @@
 import { SupportedChains } from "../enums";
-import { ChainSupportedAssets } from "../types";
+import { ChainSupportedAssets as ChainSupportedAssetsType, SupportedAsset } from "../types";
 
 import {
   auroraAssets,
@@ -13,7 +13,13 @@ import {
   neonDevnetAssets,
 } from "./assets";
 
-const chainSupportedAssets: ChainSupportedAssets = {
+const assetArrayToMap = (assets: SupportedAsset[]): { [key: string]: SupportedAsset } =>
+  assets.reduce((acc, curr) => {
+    acc[curr.underlying] = curr;
+    return acc;
+  }, {});
+
+export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ganache]: ganacheAssets,
   [SupportedChains.evmos]: evmosAssets,
   [SupportedChains.evmos_testnet]: evmosTestnetAssets,
@@ -25,4 +31,10 @@ const chainSupportedAssets: ChainSupportedAssets = {
   [SupportedChains.neon_devnet]: neonDevnetAssets,
 };
 
-export default chainSupportedAssets;
+export const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<typeof assetArrayToMap> } =
+  Object.entries(ChainSupportedAssets).reduce((acc, [key, value]) => {
+    acc[key] = assetArrayToMap(value);
+    return acc;
+  }, {});
+
+export default ChainSupportedAssets;
