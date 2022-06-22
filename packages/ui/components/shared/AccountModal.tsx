@@ -14,10 +14,10 @@ import { TransactionResponse } from '@ethersproject/providers';
 import { useEffect, useState } from 'react';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
+import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
-import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {

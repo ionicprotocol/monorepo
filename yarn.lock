@@ -5611,17 +5611,16 @@ __metadata:
   linkType: hard
 
 "browserslist@npm:^4.20.2, browserslist@npm:^4.20.4":
-  version: 4.20.4
-  resolution: "browserslist@npm:4.20.4"
+  version: 4.21.0
+  resolution: "browserslist@npm:4.21.0"
   dependencies:
-    caniuse-lite: ^1.0.30001349
-    electron-to-chromium: ^1.4.147
-    escalade: ^3.1.1
+    caniuse-lite: ^1.0.30001358
+    electron-to-chromium: ^1.4.164
     node-releases: ^2.0.5
-    picocolors: ^1.0.0
+    update-browserslist-db: ^1.0.0
   bin:
     browserslist: cli.js
-  checksum: 0e56c42da765524e5c31bc9a1f08afaa8d5dba085071137cf21e56dc78d0cf0283764143df4c7d1c0cd18c3187fc9494e1d93fa0255004f0be493251a28635f9
+  checksum: dfad21090d0a4745f55c4c126172bc4d5743a500440791c731773f215a16f201a0b8a114c040fa5788ce2d1a13076601f751e54ee6c5f9de59f0cee3ce9875e3
   languageName: node
   linkType: hard
 
@@ -5889,7 +5888,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001332, caniuse-lite@npm:^1.0.30001349":
+"caniuse-lite@npm:^1.0.30000844, caniuse-lite@npm:^1.0.30001332, caniuse-lite@npm:^1.0.30001358":
   version: 1.0.30001358
   resolution: "caniuse-lite@npm:1.0.30001358"
   checksum: dd8d8e6b1f5e24b97d38bb110c35b96f701f8a303e7066e9d0dc4d0ae99d741e89d56688d4e811e260c5fe573835f2bedd49a6f35f3f43e9fa7e5d154b1fad0e
@@ -7364,10 +7363,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron-to-chromium@npm:^1.3.47, electron-to-chromium@npm:^1.4.147":
-  version: 1.4.164
-  resolution: "electron-to-chromium@npm:1.4.164"
-  checksum: c26b674ddf7703c41d9bfe301aff62706ed6e33b02ddc7330cd3d6b272a534636f6117e7bce0f6a090f773e9157169f99aaa564adfeadc6cff3c98f2fcbc003f
+"electron-to-chromium@npm:^1.3.47, electron-to-chromium@npm:^1.4.164":
+  version: 1.4.165
+  resolution: "electron-to-chromium@npm:1.4.165"
+  checksum: dbbb2e825df41cd012401e36b3c0ff934607c5ddee59402763b19093ead6ca20a87656474189de01dafb088e8e73792685bd01f50a62e9b86687d717179dca65
   languageName: node
   linkType: hard
 
@@ -9196,8 +9195,8 @@ __metadata:
   linkType: hard
 
 "framer-motion@npm:^6.3.11, framer-motion@npm:^6.3.12":
-  version: 6.3.12
-  resolution: "framer-motion@npm:6.3.12"
+  version: 6.3.13
+  resolution: "framer-motion@npm:6.3.13"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     framesync: 6.0.1
@@ -9211,7 +9210,7 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  checksum: 98d731c4eff21b7b9c442b29be361e27ccc067361047c24f9533be36d6116ff1994cab7b637d4659391fd0db9af3bf6f92fd1144bb4473257a5dc59d55a46a91
+  checksum: 0b25ac006220754aeb0abb9d3d5d8a305860c26f7e5164385bd0745073e550d69a15481bceeb129494aca40555642786c9ee554b6e9af9a7ef0c5aeb0c1ebd5f
   languageName: node
   linkType: hard
 
@@ -17743,6 +17742,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"update-browserslist-db@npm:^1.0.0":
+  version: 1.0.3
+  resolution: "update-browserslist-db@npm:1.0.3"
+  dependencies:
+    escalade: ^3.1.1
+    picocolors: ^1.0.0
+  peerDependencies:
+    browserslist: ">= 4.21.0"
+  bin:
+    browserslist-lint: cli.js
+  checksum: 7ffbb87405efddd34d69f7d5929b44a3c4c7d72751542eb9e494536cafb0d57290d261af25986584dabc5b76ddd719061b5efb4ddf26af092bf35b095f20ce90
+  languageName: node
+  linkType: hard
+
 "update-notifier@npm:^5.0.1":
   version: 5.1.0
   resolution: "update-notifier@npm:5.1.0"
@@ -18349,17 +18362,17 @@ __metadata:
   linkType: hard
 
 "web3-utils@npm:^1.0.0-beta.31":
-  version: 1.7.3
-  resolution: "web3-utils@npm:1.7.3"
+  version: 1.7.4
+  resolution: "web3-utils@npm:1.7.4"
   dependencies:
-    bn.js: ^4.11.9
+    bn.js: ^5.2.1
     ethereum-bloom-filters: ^1.0.6
     ethereumjs-util: ^7.1.0
     ethjs-unit: 0.1.6
     number-to-bn: 1.7.0
     randombytes: ^2.1.0
     utf8: 3.0.0
-  checksum: 96fd1d7310f4674ddccbd1f2f8e1ff1817b8869a67a1562ef3ce1130ae50dfec8e64fc4ce9f80855d87fa63fb6dd71b4561e5e1925be5b26f3787b0d4e5f89e7
+  checksum: 5d9256366904e5c24c7198a8791aa76217100aa068650ccc18264ff670d1e8d42d40fcc5ddc66e3c05fac3b480753ccf7e519709e60aefd73d71dd4c4d2adcbb
   languageName: node
   linkType: hard
 

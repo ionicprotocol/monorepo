@@ -2,8 +2,8 @@ import { Spinner, Text } from '@chakra-ui/react';
 import React from 'react';
 
 import { AssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AssetSettings';
+import { Center } from '@ui/components/shared/Flex';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { Center } from '@ui/utils/chakraUtils';
 
 const EditAssetSettings = ({
   tokenAddress,

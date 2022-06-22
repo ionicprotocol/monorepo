@@ -2,10 +2,9 @@ import axios from 'axios';
 import { Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useFusePoolData } from './useFusePoolData';
-import { useUSDPrice } from './useUSDPrice';
-
 import { useRari } from '@ui/context/RariContext';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 export const letterScore = (totalScore: number) => {
   // if (totalScore >= 95) return 'A++';

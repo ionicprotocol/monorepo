@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
+import { Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -18,7 +19,6 @@ import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
 import { TokenData } from '@ui/types/ComponentPropsType';
-import { Column } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { formatPercentage } from '@ui/utils/formatPercentage';
 

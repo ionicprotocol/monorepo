@@ -3,7 +3,7 @@ import React, { LegacyRef, useEffect, useState } from 'react';
 
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { useRari } from '@ui/context/RariContext';
-import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { getChainMetadata } from '@ui/networkData/index';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
