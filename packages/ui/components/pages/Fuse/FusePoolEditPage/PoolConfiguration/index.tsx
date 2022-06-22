@@ -25,13 +25,13 @@ import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage';
 import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
-import { Center, Column } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { formatPercentage } from '@ui/utils/formatPercentage';
 

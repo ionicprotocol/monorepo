@@ -1,8 +1,8 @@
 import { Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
+import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
-import { Row } from '@ui/utils/chakraUtils';
 
 export const SliderWithLabel = ({
   value,
@@ -25,10 +25,8 @@ export const SliderWithLabel = ({
 }) => {
   const { cSlider } = useColors();
   return (
-    <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
-      <Text fontWeight="bold" mr={2}>
-        {formatValue ? formatValue(value) : value}
-      </Text>
+    <Row mainAxisAlignment="space-between" crossAxisAlignment="center" {...others} width="235px">
+      <Text fontWeight="bold">{formatValue ? formatValue(value) : value}</Text>
       <Slider
         width="190px"
         onChange={setValue}

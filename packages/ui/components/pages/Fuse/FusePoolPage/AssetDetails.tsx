@@ -3,16 +3,15 @@ import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
-import { useChartData } from '../../../../hooks/useChartData';
-
+import { MidasBox } from '@ui/components/shared/Box';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
-import { MidasBox } from '@ui/components/shared/MidasBox';
+import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row } from '@ui/utils/chakraUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });

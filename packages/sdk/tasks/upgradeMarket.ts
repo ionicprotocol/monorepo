@@ -2,6 +2,9 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
+// example
+// hardhat market:upgrade --pool-name BOMB --symbol BTCB-BOMB --admin deployer --strategy-code BeefyERC4626_BOMBBTCLP --new-implementation-address 0x260e103B83443336ecdF37f1288D81FD6A165667 --network bsc
+
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("poolName", "Name of pool", undefined, types.string)
   .addParam("symbol", "Asset symbol", undefined, types.string)

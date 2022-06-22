@@ -35,3 +35,7 @@ variable "liquidator_bot_image" {
   type    = string
   default = "ghcr.io/midas-protocol/fuse-liquidator-bot:sha-f8b43ac253f3475e44118018a9a5f581a90e119e"
 }
+
+variable "discord_webhook_url" {
+  type = string
+}

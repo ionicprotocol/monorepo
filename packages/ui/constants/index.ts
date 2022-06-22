@@ -1,5 +1,9 @@
 export const ABILLY = 1e9;
 
+export const URL_MIDAS_DOCS = 'https://docs.midascapital.xyz/';
+
+// enums
+
 export enum FusePoolMetric {
   totalLiquidityNative,
   totalSuppliedNative,
@@ -10,11 +14,3 @@ export enum UserAction {
   NO_ACTION,
   WAITING_FOR_TRANSACTIONS,
 }
-
-export const URL_MIDAS_DOCS = 'https://docs.midascapital.xyz/';
-
-export default {
-  UserAction,
-  FusePoolMetric,
-  URL_MIDAS_DOCS,
-};

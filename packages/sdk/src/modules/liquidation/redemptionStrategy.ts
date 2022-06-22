@@ -38,7 +38,18 @@ export const getStrategyAndData = async (fuse: FuseBase, token: string): Promise
     case RedemptionStrategy.XBombLiquidator: {
       return { ...strategyAndData, strategyData: [] };
     }
-    case RedemptionStrategy.jBRLLiquidator: {
+    case RedemptionStrategy.UniswapLpTokenLiquidator: {
+      return {
+        ...strategyAndData,
+        strategyData: [
+          new ethers.utils.AbiCoder().encode(
+            ["address", "address[]", "address[]"],
+            [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, [], []]
+          ),
+        ],
+      };
+    }
+    case RedemptionStrategy.JarvisSynthereumLiquidator: {
       return { ...strategyAndData, strategyData: [] };
     }
     default: {

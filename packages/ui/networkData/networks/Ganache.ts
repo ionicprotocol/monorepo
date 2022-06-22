@@ -1,5 +1,6 @@
 import { SupportedChains } from '@midas-capital/sdk';
 
+import { config } from '@ui/config/index';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 const mainnet: ChainMetadata = {
@@ -8,8 +9,8 @@ const mainnet: ChainMetadata = {
   name: 'Ganache',
   shortName: 'Ganache',
   img: '/images/hardhat.svg',
-  enabled: true,
-  supported: process.env.NODE_ENV === 'development',
+  enabled: config.isDevelopment,
+  supported: config.isDevelopment,
   blocksPerMin: 4,
   rpcUrls: { default: 'http://localhost:8545' },
   blockExplorerUrls: { default: { name: 'Etherscan', url: 'http://localhost:3000' } },

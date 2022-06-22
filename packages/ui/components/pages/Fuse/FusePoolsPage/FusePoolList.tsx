@@ -23,13 +23,14 @@ import { useEffect, useState } from 'react';
 
 import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolCard';
 import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolRow';
-import { AlertHero } from '@ui/components/shared/AlertHero';
+import { AlertHero } from '@ui/components/shared/Alert';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useFusePools } from '@ui/hooks/fuse/useFusePools';
 import usePoolSorting from '@ui/hooks/fuse/usePoolSorting';
 import { useColors } from '@ui/hooks/useColors';
 import { useFilter } from '@ui/hooks/useFilter';
-import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useSort } from '@ui/hooks/useSort';
 
 export type Err = Error & { code?: string; reason?: string };
@@ -126,12 +127,14 @@ const FusePoolList = () => {
                 Pool Name
               </Text>
             </VStack>
-            <VStack flex={2}>
-              <Text fontWeight="bold" textAlign="center">
-                Risk Score
-              </Text>
-            </VStack>
-            <VStack flex={4} alignItems="flex-start">
+            {config.isRssScoreEnabled && (
+              <VStack flex={2}>
+                <Text fontWeight="bold" textAlign="center">
+                  Risk Score
+                </Text>
+              </VStack>
+            )}
+            <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
               <Text fontWeight="bold" textAlign="center">
                 Assets
               </Text>
