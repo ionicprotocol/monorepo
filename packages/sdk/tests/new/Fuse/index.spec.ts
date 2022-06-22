@@ -19,6 +19,11 @@ describe("Fuse Index", () => {
   beforeEach(() => {
     mockContract = createStubInstance(Contract);
     mockContract.connect.returns(mockContract);
+    Object.defineProperty(mockContract, "callStatic", {
+      value: {
+        getAllPools: stub().resolves({ length: 2 }),
+      },
+    });
     mockContract.deployPool = stub().resolves({
       wait: () => Promise.resolve(mockReceipt),
     });
@@ -104,7 +109,7 @@ describe("Fuse Index", () => {
       expect(getPoolAddressStub).to.be.calledOnceWithExactly(
         mkAddress("0xabc"),
         "Test",
-        1,
+        2,
         mkAddress("0xfcc"),
         mkAddress("0xacc")
       );
@@ -204,10 +209,9 @@ describe("Fuse Index", () => {
     let model;
     let interestRateModelAddress;
 
-    it("should return null when model address hash mismatches", async () => {
+    it("should throw error when model address hash mismatches", async () => {
       interestRateModelAddress = mkAddress("0xabc");
-      model = await fuseBase.identifyInterestRateModel(interestRateModelAddress);
-      expect(model).to.be.null;
+      await expect(fuseBase.identifyInterestRateModel(interestRateModelAddress)).to.be.rejectedWith(Error);
     });
 
     it("should return new IRM when model address hash matches", async () => {
@@ -226,16 +230,16 @@ describe("Fuse Index", () => {
       mockAssetContract = createStubInstance(Contract);
     });
 
-    it("should return null when interestRateModel is null", async () => {
+    it("should be rejected with Error when interestRateModel is null", async () => {
       Object.defineProperty(mockAssetContract, "callStatic", {
         value: {
           interestRateModel: () => Promise.resolve(mkAddress("0xabc")),
         },
       });
       getAssetContractStub = stub(utilsFns, "getContract").returns(mockAssetContract);
-      model = await fuseBase.getInterestRateModel(mkAddress("0xabc"));
+      model = fuseBase.getInterestRateModel(mkAddress("0xabc"));
+      await expect(model).to.be.rejectedWith(Error);
       expect(getAssetContractStub).to.be.calledOnce;
-      expect(model).to.be.null;
     });
 
     it("should init interest Rate Model when model is not null ", async () => {
