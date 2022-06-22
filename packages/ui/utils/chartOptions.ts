@@ -84,7 +84,7 @@ export const InterestRateChartOptions: ApexOptions = {
   tooltip: {
     x: {
       formatter: function (value: number) {
-        return parseFloat(value as any).toFixed(2) + '% Utilization';
+        return parseFloat(value.toString()).toFixed(2) + '% Utilization';
       },
     },
   },

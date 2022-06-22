@@ -1,7 +1,7 @@
 import { Box, BoxProps, CloseButton, Heading } from '@chakra-ui/react';
 
+import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
-import { Row } from '@ui/utils/chakraUtils';
 
 export const ModalTitleWithCloseButton = ({
   text,

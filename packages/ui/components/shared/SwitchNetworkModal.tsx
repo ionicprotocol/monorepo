@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useNetwork } from 'wagmi';
 
-import { FilterButton } from '@ui/components/shared/Buttons';
+import { FilterButton } from '@ui/components/shared/Button';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { getChainMetadata } from '@ui/networkData/index';
 

@@ -4,8 +4,8 @@ import { Box } from '@chakra-ui/layout';
 import { Accordion, AccordionButton, AccordionItem, Icon, Text } from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
 
+import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
-import { Row } from '@ui/utils/chakraUtils';
 
 const TransactionStepper = ({
   activeStep,
