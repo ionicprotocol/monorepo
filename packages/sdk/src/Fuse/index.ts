@@ -180,7 +180,6 @@ export class FuseBase {
 
       // Register new pool with FusePoolDirectory
       const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
-      const existingPools = await contract.callStatic.getAllPools();
 
       const deployTx = await contract.deployPool(
         poolName,
@@ -205,7 +204,7 @@ export class FuseBase {
       } catch (e) {
         console.warn("Unable to retrieve pool ID from receipt events", e);
       }
-
+      const existingPools = await contract.callStatic.getAllPools();
       // Compute Unitroller address
       const poolAddress = getPoolAddress(
         options.from,
