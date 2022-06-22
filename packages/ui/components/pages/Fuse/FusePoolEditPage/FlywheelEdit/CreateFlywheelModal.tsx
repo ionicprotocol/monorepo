@@ -20,6 +20,7 @@ import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/type
 import React, { useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 
+import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useRari } from '@ui/context/RariContext';
@@ -27,7 +28,6 @@ import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
-import { Center } from '@ui/utils/chakraUtils';
 
 const steps = [
   'Deploying Flywheel Core',

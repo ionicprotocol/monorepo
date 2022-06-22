@@ -1,6 +1,6 @@
 import { useToast, UseToastOptions } from '@chakra-ui/react';
 
-export const useSuccessToast = (options: UseToastOptions = {}) =>
+const useSuccessToast = (options: UseToastOptions = {}) =>
   useToast({
     title: 'Success',
     status: 'success',
@@ -10,7 +10,7 @@ export const useSuccessToast = (options: UseToastOptions = {}) =>
     ...options,
   });
 
-export const useErrorToast = (options: UseToastOptions = {}) =>
+const useErrorToast = (options: UseToastOptions = {}) =>
   useToast({
     title: 'Error',
     status: 'error',
@@ -19,3 +19,5 @@ export const useErrorToast = (options: UseToastOptions = {}) =>
     position: 'top-right',
     ...options,
   });
+
+export { useSuccessToast, useErrorToast };
