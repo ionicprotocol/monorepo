@@ -33,7 +33,6 @@ import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const PoolConfiguration = ({
   assets,
@@ -394,7 +393,6 @@ const PoolConfiguration = ({
               ml="auto"
               value={closeFactor}
               setValue={setCloseFactor}
-              formatValue={formatPercentage}
               min={5}
               max={90}
               mt={{ base: 2, md: 0 }}
@@ -416,7 +414,6 @@ const PoolConfiguration = ({
               ml="auto"
               value={liquidationIncentive}
               setValue={setLiquidationIncentive}
-              formatValue={formatPercentage}
               min={0}
               max={50}
               mt={{ base: 2, md: 0 }}
