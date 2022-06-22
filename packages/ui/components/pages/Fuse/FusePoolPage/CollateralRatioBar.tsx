@@ -2,11 +2,11 @@ import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
 import LogRocket from 'logrocket';
 import { useEffect } from 'react';
 
-import { MidasBox, MidasBoxProps } from '@ui/components/shared/MidasBox';
+import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
+import { Row } from '@ui/components/shared/Flex';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { Row } from '@ui/utils/chakraUtils';
 
 interface CollateralRatioBarProps {
   assets: MarketData[];
