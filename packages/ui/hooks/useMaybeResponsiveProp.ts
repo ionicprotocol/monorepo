@@ -1,4 +1,4 @@
-import { useIsMobile } from '@ui/utils/chakraUtils';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 export function useMaybeResponsiveProp<T, A>(data: { md: T; base: A } | string) {
   const mobile = useIsMobile();

@@ -1,8 +1,8 @@
 import { Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
+import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
-import { Row } from '@ui/utils/chakraUtils';
 
 export const SliderWithLabel = ({
   value,

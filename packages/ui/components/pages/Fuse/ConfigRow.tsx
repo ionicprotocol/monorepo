@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { Row } from '@ui/utils/chakraUtils';
+import { Row } from '@ui/components/shared/Flex';
 
 export const ConfigRow = ({
   children,

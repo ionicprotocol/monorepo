@@ -24,6 +24,7 @@ import EditFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/Flywhe
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
+import { Center, Column } from '@ui/components/shared/Flex';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/usePoolIncentives';
@@ -32,7 +33,6 @@ import { PoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { Flywheel } from '@ui/types/ComponentPropsType';
-import { Center, Column } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const FlywheelEdit = ({ pool }: { pool: PoolData }) => {

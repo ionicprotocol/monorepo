@@ -19,12 +19,12 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useAccount } from 'wagmi';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
+import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { AddFlywheelModalProps, AddFlywheelProps } from '@ui/types/ComponentPropsType';
-import { Center } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {

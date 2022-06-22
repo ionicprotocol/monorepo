@@ -17,6 +17,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
@@ -28,7 +29,6 @@ import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 interface PoolRowProps {
