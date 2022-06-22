@@ -1,15 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import {
-  AvatarGroup,
-  Divider,
-  Flex,
-  Grid,
-  Heading,
-  HStack,
-  Skeleton,
-  Table,
-  TableCaption,
-} from '@chakra-ui/react';
+import { AvatarGroup, Divider, Flex, Grid, Heading, HStack, Skeleton } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -178,19 +168,12 @@ export default FusePoolPage;
 
 const TableSkeleton = ({ tableHeading }: { tableHeading: string }) => (
   <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%" pb={1}>
-    <Table variant={'unstyled'} size={'sm'}>
-      <TableCaption
-        mt="0"
-        placement="top"
-        textAlign={'left'}
-        fontSize={{ base: '3.8vw', sm: 'lg' }}
-      >
-        {tableHeading}: <Skeleton display="inline">Loading</Skeleton>
-      </TableCaption>
+    <Heading size="md" fontWeight="normal" fontSize="18px" px={4} py={3}>
+      {tableHeading}: <Skeleton display="inline">Loading</Skeleton>
+    </Heading>
 
-      <Divider color="#F4F6F9" />
+    <Divider color="#F4F6F9" />
 
-      <Skeleton w="100%" h="40" />
-    </Table>
+    <Skeleton w="100%" h="40" />
   </Column>
 );
