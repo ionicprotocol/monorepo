@@ -24,20 +24,19 @@ import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
-import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
-import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 
 interface SupplyListProps {
   assets: MarketData[];
@@ -166,12 +165,10 @@ const AssetSupplyRow = ({
 }: AssetSupplyRowProps) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
-  const authedOpenModal = useAuthedCallback(openModal);
-
   const asset = assets[index];
   const { fuse, scanUrl, currentChain } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const supplyAPY = ratePerBlockToAPY(
+  const supplyAPY = fuse.ratePerBlockToAPY(
     asset.supplyRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
@@ -248,7 +245,7 @@ const AssetSupplyRow = ({
           bgColor: cCard.hoverBgColor,
         }}
       >
-        <Td cursor={'pointer'} onClick={authedOpenModal} pr={0}>
+        <Td cursor={'pointer'} onClick={openModal} pr={0}>
           <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
             <CTokenIcon size="sm" address={asset.underlyingToken} />
             <VStack alignItems={'flex-start'} ml={2}>
@@ -329,7 +326,7 @@ const AssetSupplyRow = ({
         {!isMobile && (
           <Td
             cursor={'pointer'}
-            onClick={authedOpenModal}
+            onClick={openModal}
             isNumeric
             verticalAlign={'top'}
             textAlign={'right'}
@@ -361,7 +358,7 @@ const AssetSupplyRow = ({
 
         <Td
           cursor={'pointer'}
-          onClick={authedOpenModal}
+          onClick={openModal}
           isNumeric
           textAlign={'right'}
           verticalAlign={'top'}

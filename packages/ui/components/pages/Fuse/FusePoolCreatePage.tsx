@@ -21,14 +21,14 @@ import { memo, ReactNode, useState } from 'react';
 
 import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
 import DashboardBox from '@ui/components/shared/DashboardBox';
+import { Center, Column, Row } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
-import { Center, Column, Row } from '@ui/utils/chakraUtils';
+import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { formatPercentage } from '@ui/utils/formatPercentage';
 
@@ -279,7 +279,7 @@ export const CreatePoolConfiguration = () => {
               formatValue={formatPercentage}
               min={0}
               max={50}
-              ml={{ base: 'auto', md: 8 }}
+              ml={{ base: 'auto', md: 4 }}
               mt={{ base: 4, md: 0 }}
             />
           </Flex>

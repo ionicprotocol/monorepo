@@ -19,11 +19,11 @@ import { useRouter } from 'next/router';
 import { Dispatch, useEffect, useState } from 'react';
 import { MdViewList, MdViewModule } from 'react-icons/md';
 
-import { FilterButton, FilterIconButton } from '@ui/components/shared/Buttons';
+import { FilterButton, FilterIconButton } from '@ui/components/shared/Button';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
-import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
+import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
 const joinIfArray = (value: string | string[] | undefined, separator = ''): string => {
   if (!value) return '';

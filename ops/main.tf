@@ -114,6 +114,12 @@ module "evmos_testnet_liquidation_bot" {
 }
 
 
+module "ecs_alerting" {
+  source              = "./modules/alerts"
+  name                = "ecs-bots-service-status-monitor"
+  discord_webhook_url = var.discord_webhook_url
+}
+
 module "network" {
   source     = "./modules/networking"
   cidr_block = var.cidr_block

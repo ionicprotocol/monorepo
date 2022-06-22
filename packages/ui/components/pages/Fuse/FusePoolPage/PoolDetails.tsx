@@ -16,13 +16,14 @@ import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
-import { MidasBox } from '@ui/components/shared/MidasBox';
+import { MidasBox } from '@ui/components/shared/Box';
+import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolData>['data'] }) => {

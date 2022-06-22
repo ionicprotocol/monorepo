@@ -29,6 +29,7 @@ import { useQuery } from 'react-query';
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
+import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -39,13 +40,12 @@ import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
-import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
-import { ratePerBlockToAPY } from '@ui/utils/apyUtils';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
 interface AmountSelectProps {
   assets: MarketData[];
@@ -83,12 +83,6 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
 
   const { cCard, cSwitch } = useColors();
-
-  const getBorrowLimit = async () => {
-    const borrowLimitBN = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
-
-    return Number(utils.formatUnits(borrowLimitBN));
-  };
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -305,7 +299,7 @@ const AmountSelect = ({
                 </Row>
               </DashboardBox>
               {mode === FundOperationMode.BORROW && (
-                <MaxBorrowSlider getBorrowLimit={getBorrowLimit} updateAmount={updateAmount} />
+                <MaxBorrowSlider updateAmount={updateAmount} asset={asset} />
               )}
             </Column>
 
@@ -493,6 +487,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   });
 
   const {
+    fuse,
     currentChain: { id: chainId },
   } = useRari();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
@@ -510,15 +505,15 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
-  const borrowAPR = ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
+  const supplyAPY = fuse.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
+  const borrowAPR = fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
 
-  const updatedSupplyAPY = ratePerBlockToAPY(
+  const updatedSupplyAPY = fuse.ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
 
-  const updatedBorrowAPR = ratePerBlockToAPY(
+  const updatedBorrowAPR = fuse.ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
@@ -761,51 +756,3 @@ export const fetchGasForCall = async (amountBN: BigNumber, fuse: Fuse, address: 
 
   return { gasWEI, gasPrice, estimatedGas };
 };
-
-async function fetchMaxAmount(
-  mode: FundOperationMode,
-  fuse: Fuse,
-  address: string,
-  asset: NativePricedFuseAsset
-) {
-  if (mode === FundOperationMode.SUPPLY) {
-    return await fetchTokenBalance(asset.underlyingToken, fuse, address);
-  }
-
-  if (mode === FundOperationMode.REPAY) {
-    const balance = await fetchTokenBalance(asset.underlyingToken, fuse, address);
-    const debt = asset.borrowBalance;
-
-    if (balance.gt(debt)) {
-      return debt;
-    } else {
-      return balance;
-    }
-  }
-
-  if (mode === FundOperationMode.BORROW) {
-    const maxBorrow = (await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
-      address,
-      asset.cToken
-    )) as BigNumber;
-
-    if (maxBorrow) {
-      return maxBorrow;
-    } else {
-      throw new Error('Could not fetch your max borrow amount! Code: ');
-    }
-  }
-
-  if (mode === FundOperationMode.WITHDRAW) {
-    const maxRedeem = await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
-      address,
-      asset.cToken
-    );
-
-    if (maxRedeem) {
-      return BigNumber.from(maxRedeem);
-    } else {
-      throw new Error('Could not fetch your max withdraw amount! Code: ');
-    }
-  }
-}

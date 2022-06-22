@@ -3,17 +3,17 @@ import { SupportedChainsArray } from '@midas-capital/sdk';
 import axios from 'axios';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
-import Vibrant from 'node-vibrant';
 import { erc20ABI } from 'wagmi';
 import * as yup from 'yup';
 
+import { config } from '@ui/config/index';
 import { CoinGeckoResponse, TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
 
 const supportedNetworksRegex = new RegExp(SupportedChainsArray.join('|'));
 
 const querySchema = yup.object().shape({
-  chain: yup.string().matches(supportedNetworksRegex, 'Not a support Network').required(),
+  chain: yup.string().matches(supportedNetworksRegex, 'Not a supported Network').required(),
   address: yup
     .string()
     .matches(/^0x[a-fA-F0-9]{40}$/, 'Not a valid Wallet address')
@@ -22,7 +22,7 @@ const querySchema = yup.object().shape({
 
 const handler = async (request: NextApiRequest, response: NextApiResponse<TokenDataResponse>) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Cache-Control', 'max-age=3600, s-maxage=3600');
+  response.setHeader('Cache-Control', 'max-age=86400, s-maxage=86400');
 
   const { chain, address: rawAddress } = request.body;
   await querySchema.validate(request.body);
@@ -65,13 +65,10 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   }
 
   if (!basicTokenInfo.logoURL) {
-    basicTokenInfo.color = '#FFFFFF';
-    basicTokenInfo.overlayTextColor = '#000000';
-  } else {
-    const color = await Vibrant.from(basicTokenInfo.logoURL).getPalette();
-    if (color.Vibrant) {
-      basicTokenInfo.color = color.Vibrant.getHex();
-      basicTokenInfo.overlayTextColor = color.Vibrant.getTitleTextColor();
+    // TODO switch stuff for LP tokens which are supported here.
+    if (basicTokenInfo.symbol) {
+      basicTokenInfo.logoURL =
+        config.iconServerURL + '/token/96x96/' + basicTokenInfo.symbol.toLowerCase() + '.png';
     }
   }
 

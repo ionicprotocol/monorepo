@@ -11,10 +11,10 @@ import {
 import { utils } from 'ethers';
 import { useState } from 'react';
 
+import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useSuccessToast } from '@ui/hooks/useToast';
-import { Center } from '@ui/utils/chakraUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const TransferOwnershipModal = ({
