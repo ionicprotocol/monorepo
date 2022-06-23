@@ -20,11 +20,11 @@ import { Dispatch, useEffect, useState } from 'react';
 import { MdViewList, MdViewModule } from 'react-icons/md';
 
 import { FilterButton, FilterIconButton } from '@ui/components/shared/Button';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
-import { config } from '@ui/config/index';
 
 const joinIfArray = (value: string | string[] | undefined, separator = ''): string => {
   if (!value) return '';
@@ -164,7 +164,7 @@ const PoolButtons = ({
   const router = useRouter();
   const isMobile = useIsSmallScreen();
   const { setLoading, currentChain, address } = useRari();
-  
+
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
       {!isMobile && (
