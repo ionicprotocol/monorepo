@@ -16,6 +16,7 @@ BSC = "true"
 MOONBEAM = "true"
 ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
+FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -24,3 +25,4 @@ BSC = "true"
 MOONBEAM = "false"
 ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
+FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"

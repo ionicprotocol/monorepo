@@ -20,6 +20,7 @@ import { Dispatch, useEffect, useState } from 'react';
 import { MdViewList, MdViewModule } from 'react-icons/md';
 
 import { FilterButton, FilterIconButton } from '@ui/components/shared/Button';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -162,7 +163,7 @@ const PoolButtons = ({
   const isUnverifiedPoolSelected = searchText === 'unverified-pools';
   const router = useRouter();
   const isMobile = useIsSmallScreen();
-  const { setLoading, currentChain } = useRari();
+  const { setLoading, currentChain, address } = useRari();
 
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
@@ -273,6 +274,7 @@ const PoolButtons = ({
           setLoading(true);
           router.push(`${currentChain.id}/create-pool`);
         }}
+        hidden={!config.allowedAddresses.includes(address.toLowerCase())}
       >
         + Create Pool
       </Button>
