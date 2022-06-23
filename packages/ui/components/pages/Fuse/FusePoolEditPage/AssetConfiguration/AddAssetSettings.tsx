@@ -1,22 +1,34 @@
 import { QuestionIcon } from '@chakra-ui/icons';
-import { Button, HStack, Link, Select, Text, useToast, VStack } from '@chakra-ui/react';
-import { InterestRateModelConf, MarketConfig, MarketPluginConfig } from '@midas-capital/sdk';
+import {
+  Button,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
+  HStack,
+  Link,
+  Select,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
+import { InterestRateModelConf, MarketConfig } from '@midas-capital/sdk';
 import { constants } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
-import { Center } from '@ui/components/shared/Flex';
+import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
+import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
 
 const IRMChart = dynamic(
   () => import('@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/IRMChart'),
@@ -24,6 +36,14 @@ const IRMChart = dynamic(
     ssr: false,
   }
 );
+
+type AddAssetFormData = {
+  collateralFactor: number;
+  reserveFactor: number;
+  adminFee: number;
+  pluginIndex: number;
+  interestRateModel: string;
+};
 
 export const AddAssetSettings = ({
   comptrollerAddress,
@@ -44,11 +64,28 @@ export const AddAssetSettings = ({
   const { cCard, cSelect } = useColors();
 
   const [isDeploying, setIsDeploying] = useState(false);
-  const [collateralFactor, setCollateralFactor] = useState(50);
-  const [reserveFactor, setReserveFactor] = useState(10);
-  const [adminFee, setAdminFee] = useState(5);
   const [isPossible, setIsPossible] = useState<boolean>(true);
-  const [interestRateModel, setInterestRateModel] = useState(
+
+  const {
+    control,
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      collateralFactor: 50,
+      reserveFactor: 10,
+      adminFee: 5,
+      pluginIndex: -1,
+      interestRateModel: fuse.chainDeployment.JumpRateModel.address,
+    },
+  });
+
+  const watchAdminFee = watch('adminFee', 5);
+  const watchReserveFactor = watch('reserveFactor', 10);
+  const watchInterestRateModel = watch(
+    'interestRateModel',
     fuse.chainDeployment.JumpRateModel.address
   );
 
@@ -56,7 +93,6 @@ export const AddAssetSettings = ({
     () => fuse.chainPlugins[tokenData.address] || [],
     [fuse.chainPlugins, tokenData.address]
   );
-  const [plugin, setPlugin] = useState<MarketPluginConfig | undefined>(undefined);
 
   useEffect(() => {
     const func = async () => {
@@ -87,7 +123,10 @@ export const AddAssetSettings = ({
     func();
   }, [tokenData.address, toast, fuse]);
 
-  const deploy = async () => {
+  const deploy = async (data: AddAssetFormData) => {
+    const { collateralFactor, reserveFactor, adminFee, pluginIndex, interestRateModel } = data;
+    const plugin = pluginIndex === -1 ? undefined : availablePlugins[pluginIndex];
+
     setIsDeploying(true);
 
     // TODO do we need this?!  IRM is defined in MarketConfig, does every market needs it's own IRM?
@@ -137,99 +176,170 @@ export const AddAssetSettings = ({
   };
 
   return (
-    <VStack width="100%" height="100%">
-      {/* Collateral Factor */}
+    <VStack as="form" width="100%" height="100%" onSubmit={handleSubmit(deploy)}>
       <ModalDivider />
-      <HStack p={4} w="100%" justifyContent={'space-between'}>
-        <SimpleTooltip
-          label={
-            'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
-          }
-        >
-          <Text fontWeight="bold">
-            Collateral Factor{' '}
-            <QuestionIcon
-              color={cCard.txtColor}
-              bg={cCard.bgColor}
-              borderRadius={'50%'}
-              ml={1}
-              mb="4px"
+      <FormControl isInvalid={!!errors.collateralFactor}>
+        <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
+          <FormLabel htmlFor="collateralFactor">
+            <SimpleTooltip
+              label={
+                'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
+              }
+            >
+              <Text fontWeight="bold">
+                Collateral Factor{' '}
+                <QuestionIcon
+                  color={cCard.txtColor}
+                  bg={cCard.bgColor}
+                  borderRadius={'50%'}
+                  ml={1}
+                  mb="4px"
+                />
+              </Text>
+            </SimpleTooltip>
+          </FormLabel>
+          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+            <Controller
+              control={control}
+              name="collateralFactor"
+              rules={{
+                required: 'Collateral factor is required',
+                min: {
+                  value: COLLATERAL_FACTOR.MIN,
+                  message: `Collateral Factor must be at least ${COLLATERAL_FACTOR.MIN}%`,
+                },
+                max: {
+                  value: COLLATERAL_FACTOR.MAX,
+                  message: `Collateral Factor must be no more than ${COLLATERAL_FACTOR.MAX}%`,
+                },
+              }}
+              render={({ field: { name, value, ref, onChange } }) => (
+                <SliderWithLabel
+                  min={COLLATERAL_FACTOR.MIN}
+                  max={COLLATERAL_FACTOR.MAX}
+                  name={name}
+                  value={value}
+                  reff={ref}
+                  onChange={onChange}
+                />
+              )}
             />
-          </Text>
-        </SimpleTooltip>
-        <SliderWithLabel
-          ml="auto"
-          value={collateralFactor}
-          setValue={setCollateralFactor}
-          formatValue={formatPercentage}
-          max={90}
-          mt={{ base: 2, md: 0 }}
-        />
-      </HStack>
-
-      {/* Reserve Factor */}
+            <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+              {errors.collateralFactor && errors.collateralFactor.message}
+            </FormErrorMessage>
+          </Column>
+        </HStack>
+      </FormControl>
       <ModalDivider />
-      <HStack p={4} w="100%" justifyContent={'space-between'}>
-        <SimpleTooltip
-          label={
-            "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
-          }
-        >
-          <Text fontWeight="bold">
-            Reserve Factor{' '}
-            <QuestionIcon
-              color={cCard.txtColor}
-              bg={cCard.bgColor}
-              borderRadius={'50%'}
-              ml={1}
-              mb="4px"
+      <FormControl isInvalid={!!errors.reserveFactor}>
+        <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
+          <FormLabel htmlFor="reserveFactor">
+            <SimpleTooltip
+              label={
+                "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
+              }
+            >
+              <Text fontWeight="bold">
+                Reserve Factor{' '}
+                <QuestionIcon
+                  color={cCard.txtColor}
+                  bg={cCard.bgColor}
+                  borderRadius={'50%'}
+                  ml={1}
+                  mb="4px"
+                />
+              </Text>
+            </SimpleTooltip>
+          </FormLabel>
+          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+            <Controller
+              control={control}
+              name="reserveFactor"
+              rules={{
+                required: 'Reserve factor is required',
+                min: {
+                  value: RESERVE_FACTOR.MIN,
+                  message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
+                },
+                max: {
+                  value: RESERVE_FACTOR.MAX,
+                  message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
+                },
+              }}
+              render={({ field: { name, value, ref, onChange } }) => (
+                <SliderWithLabel
+                  min={RESERVE_FACTOR.MIN}
+                  max={RESERVE_FACTOR.MAX}
+                  name={name}
+                  value={value}
+                  reff={ref}
+                  onChange={onChange}
+                />
+              )}
             />
-          </Text>
-        </SimpleTooltip>
-        <SliderWithLabel
-          ml="auto"
-          value={reserveFactor}
-          setValue={setReserveFactor}
-          formatValue={formatPercentage}
-          max={50}
-          mt={{ base: 2, md: 0 }}
-        />
-      </HStack>
-
-      {/* Admin Fee */}
+            <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+              {errors.reserveFactor && errors.reserveFactor.message}
+            </FormErrorMessage>
+          </Column>
+        </HStack>
+      </FormControl>
       <ModalDivider />
-      <HStack p={4} w="100%" justifyContent={'space-between'}>
-        <SimpleTooltip
-          label={
-            "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
-          }
-        >
-          <Text fontWeight="bold">
-            Admin Fee{' '}
-            <QuestionIcon
-              color={cCard.txtColor}
-              bg={cCard.bgColor}
-              borderRadius={'50%'}
-              ml={1}
-              mb="4px"
+      <FormControl isInvalid={!!errors.adminFee}>
+        <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
+          <FormLabel htmlFor="adminFee">
+            <SimpleTooltip
+              label={
+                "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
+              }
+            >
+              <Text fontWeight="bold">
+                Admin Fee{' '}
+                <QuestionIcon
+                  color={cCard.txtColor}
+                  bg={cCard.bgColor}
+                  borderRadius={'50%'}
+                  ml={1}
+                  mb="4px"
+                />
+              </Text>
+            </SimpleTooltip>
+          </FormLabel>
+          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+            <Controller
+              control={control}
+              name="adminFee"
+              rules={{
+                required: 'Admin fee is required',
+                min: {
+                  value: ADMIN_FEE.MIN,
+                  message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
+                },
+                max: {
+                  value: ADMIN_FEE.MAX,
+                  message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
+                },
+              }}
+              render={({ field: { name, value, ref, onChange } }) => (
+                <SliderWithLabel
+                  min={ADMIN_FEE.MIN}
+                  max={ADMIN_FEE.MAX}
+                  name={name}
+                  value={value}
+                  reff={ref}
+                  onChange={onChange}
+                />
+              )}
             />
-          </Text>
-        </SimpleTooltip>
-        <SliderWithLabel
-          ml="auto"
-          value={adminFee}
-          setValue={setAdminFee}
-          formatValue={formatPercentage}
-          max={30}
-          mt={{ base: 2, md: 0 }}
-        />
-      </HStack>
-
-      {/* Plugin */}
-      {availablePlugins.length > 0 && (
-        <>
-          <ModalDivider />
-          <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
+            <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+              {errors.adminFee && errors.adminFee.message}
+            </FormErrorMessage>
+          </Column>
+        </HStack>
+      </FormControl>
+      <ModalDivider />
+      <FormControl isInvalid={!!errors.pluginIndex}>
+        <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
+          <FormLabel htmlFor="oracle">
             <PopoverTooltip
               body={
                 <>
@@ -257,17 +367,16 @@ export const AddAssetSettings = ({
                 />
               </HStack>
             </PopoverTooltip>
-
+          </FormLabel>
+          <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
             <Select
-              ml="auto"
-              width="auto"
-              maxW="300px"
-              value={undefined}
-              onChange={(event) => setPlugin(availablePlugins[Number(event.target.value)])}
-              cursor="pointer"
+              id="pluginIndex"
+              {...register('pluginIndex', {
+                required: 'Plugin is required',
+              })}
             >
-              <option value={undefined} style={{ color: cSelect.txtColor }}>
-                No Plugin
+              <option value={-1} style={{ color: cSelect.txtColor }}>
+                No plugin
               </option>
               {availablePlugins.map((plugin, index) => (
                 <option
@@ -279,64 +388,73 @@ export const AddAssetSettings = ({
                 </option>
               ))}
             </Select>
-          </HStack>
-        </>
-      )}
-
-      {/* Interest Model */}
+            <FormErrorMessage marginBottom="-10px">
+              {errors.pluginIndex && errors.pluginIndex.message}
+            </FormErrorMessage>
+          </Column>
+        </HStack>
+      </FormControl>
       <ModalDivider />
-      <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
-        <SimpleTooltip
-          label={
-            'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
-          }
-        >
-          <Text fontWeight="bold">
-            Interest Model{' '}
-            <QuestionIcon
-              color={cCard.txtColor}
-              bg={cCard.bgColor}
-              borderRadius={'50%'}
-              ml={1}
-              mb="4px"
-            />
-          </Text>
-        </SimpleTooltip>
-        <Select
-          ml="auto"
-          width="auto"
-          value={interestRateModel}
-          onChange={(event) => setInterestRateModel(event.target.value)}
-          cursor="pointer"
-          mt={{ base: 2, md: 0 }}
-        >
-          <option
-            value={fuse.chainDeployment.JumpRateModel.address}
-            style={{ color: cSelect.txtColor }}
-          >
-            JumpRateModel
-          </option>
-          <option
-            value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
-            style={{ color: cSelect.txtColor }}
-          >
-            WhitePaperRateModel
-          </option>
-        </Select>
-      </HStack>
+      <FormControl isInvalid={!!errors.interestRateModel}>
+        <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
+          <FormLabel htmlFor="interestRateModel">
+            <SimpleTooltip
+              label={
+                'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
+              }
+            >
+              <Text fontWeight="bold">
+                Interest Model{' '}
+                <QuestionIcon
+                  color={cCard.txtColor}
+                  bg={cCard.bgColor}
+                  borderRadius={'50%'}
+                  ml={1}
+                  mb="4px"
+                />
+              </Text>
+            </SimpleTooltip>
+          </FormLabel>
+          <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+            <Select
+              id="interestRateModel"
+              {...register('interestRateModel', {
+                required: 'interestRateModel is required',
+              })}
+              ml="auto"
+              cursor="pointer"
+              mt={{ base: 2, md: 0 }}
+            >
+              <option
+                value={fuse.chainDeployment.JumpRateModel.address}
+                style={{ color: cSelect.txtColor }}
+              >
+                JumpRateModel
+              </option>
+              <option
+                value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
+                style={{ color: cSelect.txtColor }}
+              >
+                WhitePaperRateModel
+              </option>
+            </Select>
+            <FormErrorMessage marginBottom="-10px">
+              {errors.interestRateModel && errors.interestRateModel.message}
+            </FormErrorMessage>
+          </Column>
+        </HStack>
+      </FormControl>
       <IRMChart
-        adminFee={adminFee}
-        reserveFactor={reserveFactor}
-        interestRateModelAddress={interestRateModel}
+        adminFee={watchAdminFee}
+        reserveFactor={watchReserveFactor}
+        interestRateModelAddress={watchInterestRateModel}
       />
-
       <Center px={4} mt={4} width="100%">
         <Button
+          type="submit"
           width={'100%'}
-          isDisabled={isDeploying}
+          disabled={isDeploying || !isPossible}
           isLoading={isDeploying}
-          onClick={deploy}
-          disabled={!isPossible}
         >
           Add Asset
         </Button>
