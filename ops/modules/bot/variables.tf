@@ -39,6 +39,10 @@ variable "runtime_env_vars" {
   type = list(object({ name=string, value=string }))
 }
 
+variable "provider_urls" {
+  type = list(string)
+}
+
 
 variable "region" {
 

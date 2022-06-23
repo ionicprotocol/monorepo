@@ -24,8 +24,8 @@ module "bsc_mainnet_twap_bot" {
   memory                  = 512
   instance_count          = 1
   subnets                 = module.network.public_subnets
+  provider_urls           = [local.bsc_mainnet_rpc_1, local.bsc_mainnet_rpc_2]
   runtime_env_vars = concat(local.secret_env_vars, local.twap_bot_env_vars, [
-    { name = "WEB3_HTTP_PROVIDER_URL", value = local.bsc_mainnet_rpc },
     { name = "SUPPORTED_PAIRS", value = local.bsc_mainnet_supported_pais },
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
   ])
@@ -45,8 +45,8 @@ module "moonbeam_mainnet_twap_bot" {
   memory                  = 512
   instance_count          = 1
   subnets                 = module.network.public_subnets
+  provider_urls           = [local.moonbeam_mainnet_rpc_1]
   runtime_env_vars = concat(local.secret_env_vars, local.twap_bot_env_vars, [
-    { name = "WEB3_HTTP_PROVIDER_URL", value = local.moonbeam_mainnet_rpc },
     { name = "SUPPORTED_PAIRS", value = local.moonbeam_mainnet_supported_pais },
     { name = "TARGET_CHAIN_ID", value = local.moonbeam_mainnet_chain_id },
   ])
@@ -66,8 +66,8 @@ module "bsc_testnet_twap_bot" {
   memory                  = 512
   instance_count          = 1
   subnets                 = module.network.public_subnets
+  provider_urls           = [local.bsc_testnet_rpc]
   runtime_env_vars = concat(local.secret_env_vars, local.twap_bot_env_vars, [
-    { name = "WEB3_HTTP_PROVIDER_URL", value = local.bsc_testnet_rpc },
     { name = "SUPPORTED_PAIRS", value = local.bsc_testnet_supported_pais },
     { name = "TARGET_CHAIN_ID", value = local.bsc_testnet_chain_id },
   ])
@@ -87,8 +87,8 @@ module "bsc_mainnet_liquidation_bot" {
   memory                  = 512
   instance_count          = 1
   subnets                 = module.network.public_subnets
+  provider_urls           = [local.bsc_mainnet_rpc_1, local.bsc_mainnet_rpc_2]
   runtime_env_vars = concat(local.secret_env_vars, [
-    { name = "WEB3_HTTP_PROVIDER_URL", value = local.bsc_mainnet_rpc },
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
   ])
 }
@@ -107,8 +107,8 @@ module "evmos_testnet_liquidation_bot" {
   memory                  = 512
   instance_count          = 1
   subnets                 = module.network.public_subnets
+  provider_urls           = [local.evmos_testnet_rpc]
   runtime_env_vars = concat(local.secret_env_vars, [
-    { name = "WEB3_HTTP_PROVIDER_URL", value = local.evmos_testnet_rpc },
     { name = "TARGET_CHAIN_ID", value = local.evmos_testnet_chain_id },
   ])
 }
