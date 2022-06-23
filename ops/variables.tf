@@ -32,12 +32,12 @@ variable "getblock_api_key" {
 
 variable "twap_bot_image" {
   type    = string
-  default = "ghcr.io/midas-protocol/fuse-twap-bot:sha-94058271f1bedd35432866ef1e01030ffd519577"
+  default = "ghcr.io/midas-protocol/fuse-twap-bot:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
 }
 
 variable "liquidator_bot_image" {
   type    = string
-  default = "ghcr.io/midas-protocol/fuse-liquidator-bot:sha-f8b43ac253f3475e44118018a9a5f581a90e119e"
+  default = "ghcr.io/midas-protocol/fuse-liquidator-bot:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
 }
 
 variable "discord_webhook_url" {
