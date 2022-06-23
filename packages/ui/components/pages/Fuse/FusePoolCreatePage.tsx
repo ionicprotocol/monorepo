@@ -29,13 +29,13 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { shortAddress } from '@ui/utils/shortAddress';
-import { config } from '@ui/config/index';
 
 const FusePoolCreatePage = memo(() => {
   return (
