@@ -28,7 +28,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 5,
+    LIQUIDATION_INTERVAL_SECONDS: 20,
   },
   [SupportedChains.chapel]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
