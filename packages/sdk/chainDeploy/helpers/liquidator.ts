@@ -27,6 +27,10 @@ export const deployFuseSafeLiquidator = async ({
             deployConfig.uniswap.pairInitHashCode ?? "0x",
           ],
         },
+        onUpgrade: {
+          methodName: "_becomeImplementation",
+          args: [new ethers.utils.AbiCoder().encode(["address"], [deployer])],
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
@@ -34,6 +38,10 @@ export const deployFuseSafeLiquidator = async ({
   });
   if (fsl.transactionHash) await ethers.provider.waitForTransaction(fsl.transactionHash);
   console.log("FuseSafeLiquidator: ", fsl.address);
+
+  const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
+  const newOwner = await fuseSafeLiquidator.callStatic.owner();
+  console.log(`FuseSafeLiquidator owner is ${newOwner}`);
 };
 
 export const configureFuseSafeLiquidator = async ({

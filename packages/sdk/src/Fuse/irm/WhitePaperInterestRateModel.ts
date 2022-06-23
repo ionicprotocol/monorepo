@@ -1,9 +1,10 @@
 import { Web3Provider } from "@ethersproject/providers";
-import { BigNumber, BigNumberish, constants, Contract, utils } from "ethers";
+import { BigNumber, BigNumberish, constants, utils } from "ethers";
 
 import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 import { InterestRateModel } from "../../types";
+import { getContract } from "../utils";
 
 export default class WhitePaperInterestRateModel implements InterestRateModel {
   static RUNTIME_BYTECODE_HASH = utils.keccak256(WhitePaperInterestRateModelArtifact.deployedBytecode.object);
@@ -14,7 +15,7 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
   reserveFactorMantissa: BigNumber | undefined;
 
   async init(interestRateModelAddress: string, assetAddress: string, provider: any) {
-    const whitePaperModelContract = new Contract(
+    const whitePaperModelContract = getContract(
       interestRateModelAddress,
       WhitePaperInterestRateModelArtifact.abi,
       provider
@@ -23,7 +24,7 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
     this.baseRatePerBlock = BigNumber.from(await whitePaperModelContract.callStatic.baseRatePerBlock());
     this.multiplierPerBlock = BigNumber.from(await whitePaperModelContract.callStatic.multiplierPerBlock());
 
-    const cTokenContract = new Contract(assetAddress, CTokenInterfaceArtifact.abi, provider);
+    const cTokenContract = getContract(assetAddress, CTokenInterfaceArtifact.abi, provider);
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(
       BigNumber.from(await cTokenContract.callStatic.adminFeeMantissa())
@@ -41,15 +42,7 @@ export default class WhitePaperInterestRateModel implements InterestRateModel {
     fuseFeeMantissa: BigNumberish,
     provider: Web3Provider
   ) {
-    console.log(
-      interestRateModelAddress,
-      reserveFactorMantissa,
-      adminFeeMantissa,
-      fuseFeeMantissa,
-      provider,
-      "IRMMMMMM PARAMS WPIRM"
-    );
-    const whitePaperModelContract = new Contract(
+    const whitePaperModelContract = getContract(
       interestRateModelAddress,
       WhitePaperInterestRateModelArtifact.abi,
       provider

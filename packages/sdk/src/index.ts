@@ -29,6 +29,9 @@ export {
   CTokenErrorCodes,
   FundOperationMode,
 } from "./enums";
+
 export { filterOnlyObjectProperties } from "./Fuse/utils";
 
 export { ChainLiquidationConfig } from "./modules/liquidation/config";
+
+export { ChainSupportedAssetsMap } from "./chainConfig/supportedAssets";
