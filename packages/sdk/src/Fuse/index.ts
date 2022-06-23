@@ -1,5 +1,5 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
-import { BigNumber, constants, Contract, ContractFactory, utils } from "ethers";
+import { BigNumber, constants, Contract, utils } from "ethers";
 
 import Deployments from "../../deployments.json";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
@@ -48,7 +48,14 @@ import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF }
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import { getComptrollerFactory, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import {
+  getComptrollerFactory,
+  getContract,
+  getInterestRateModelContract,
+  getPoolAddress,
+  getPoolComptroller,
+  getPoolUnitroller,
+} from "./utils";
 
 type OracleConfig = {
   [contractName: string]: {
@@ -180,7 +187,6 @@ export class FuseBase {
 
       // Register new pool with FusePoolDirectory
       const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
-      const existingPools = await contract.callStatic.getAllPools();
 
       const deployTx = await contract.deployPool(
         poolName,
@@ -205,7 +211,7 @@ export class FuseBase {
       } catch (e) {
         console.warn("Unable to retrieve pool ID from receipt events", e);
       }
-
+      const existingPools = await contract.callStatic.getAllPools();
       // Compute Unitroller address
       const poolAddress = getPoolAddress(
         options.from,
@@ -275,7 +281,7 @@ export class FuseBase {
     }
 
     // Deploy InterestRateModel
-    const interestRateModelContract = new ContractFactory(
+    const interestRateModelContract = getInterestRateModelContract(
       modelArtifact.abi,
       modelArtifact.bytecode.object,
       this.provider.getSigner(options.from)
@@ -325,7 +331,7 @@ export class FuseBase {
 
   async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = new Contract(assetAddress, this.artifacts.CTokenInterface.abi, this.provider);
+    const assetContract = getContract(assetAddress, this.artifacts.CTokenInterface.abi, this.provider);
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);

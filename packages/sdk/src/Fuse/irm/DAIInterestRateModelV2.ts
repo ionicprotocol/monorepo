@@ -3,6 +3,7 @@ import { BigNumber, BigNumberish, Contract, utils } from "ethers";
 
 import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import DAIInterestRateModelV2Artifact from "../../../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
+import { getContract } from "../utils";
 
 import JumpRateModel from "./JumpRateModel";
 
@@ -19,11 +20,11 @@ export default class DAIInterestRateModelV2 extends JumpRateModel {
   async init(interestRateModelAddress: string, assetAddress: string, provider: any) {
     await super.init(interestRateModelAddress, assetAddress, provider);
 
-    const interestRateContract = new Contract(interestRateModelAddress, DAIInterestRateModelV2Artifact.abi, provider);
+    const interestRateContract = getContract(interestRateModelAddress, DAIInterestRateModelV2Artifact.abi, provider);
 
     this.dsrPerBlock = BigNumber.from(await interestRateContract.callStatic.dsrPerBlock());
 
-    const cTokenContract = new Contract(assetAddress, CTokenInterfacesArtifact.abi, provider);
+    const cTokenContract = getContract(assetAddress, CTokenInterfacesArtifact.abi, provider);
 
     this.cash = BigNumber.from(await cTokenContract.callStatic.getCash());
     this.borrows = BigNumber.from(await cTokenContract.callStatic.totalBorrowsCurrent());
@@ -39,7 +40,7 @@ export default class DAIInterestRateModelV2 extends JumpRateModel {
   ) {
     await super._init(interestRateModelAddress, reserveFactorMantissa, adminFeeMantissa, fuseFeeMantissa, provider);
 
-    const interestRateContract = new Contract(interestRateModelAddress, DAIInterestRateModelV2Artifact.abi, provider);
+    const interestRateContract = getContract(interestRateModelAddress, DAIInterestRateModelV2Artifact.abi, provider);
     this.dsrPerBlock = BigNumber.from(await interestRateContract.callStatic.dsrPerBlock());
     this.cash = BigNumber.from(0);
     this.borrows = BigNumber.from(0);
