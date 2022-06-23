@@ -24,6 +24,7 @@ import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
+import { config } from '@ui/config/index';
 
 const joinIfArray = (value: string | string[] | undefined, separator = ''): string => {
   if (!value) return '';
@@ -162,7 +163,9 @@ const PoolButtons = ({
   const isUnverifiedPoolSelected = searchText === 'unverified-pools';
   const router = useRouter();
   const isMobile = useIsSmallScreen();
-  const { setLoading, currentChain } = useRari();
+  const { setLoading, currentChain, address } = useRari();
+
+  console.log(config.allowedAddresses)
 
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
@@ -273,6 +276,7 @@ const PoolButtons = ({
           setLoading(true);
           router.push(`${currentChain.id}/create-pool`);
         }}
+        hidden={!config.allowedAddresses.includes(address.toLowerCase())}
       >
         + Create Pool
       </Button>
