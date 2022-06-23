@@ -164,9 +164,7 @@ const PoolButtons = ({
   const router = useRouter();
   const isMobile = useIsSmallScreen();
   const { setLoading, currentChain, address } = useRari();
-
-  console.log(config.allowedAddresses)
-
+  
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
       {!isMobile && (
