@@ -2,14 +2,14 @@ import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { FundOperationMode } from "../../../src/enums";
-import Fuse from "../../../src/Fuse";
-import { FusePoolData } from "../../../src/types";
-import { setUpPriceOraclePrices } from "../../utils";
-import * as assetHelpers from "../../utils/assets";
-import { getOrCreateFuse } from "../../utils/fuseSdk";
-import * as poolHelpers from "../../utils/pool";
-import { wrapNativeToken } from "../../utils/setup";
+import { FundOperationMode } from "../../src/enums";
+import Fuse from "../../src/Fuse";
+import { FusePoolData } from "../../src/types";
+import { setUpPriceOraclePrices } from "../utils";
+import * as assetHelpers from "../utils/assets";
+import { getOrCreateFuse } from "../utils/fuseSdk";
+import * as poolHelpers from "../utils/pool";
+import { wrapNativeToken } from "../utils/setup";
 
 describe("AssetModule", function () {
   let poolAddress: string;
