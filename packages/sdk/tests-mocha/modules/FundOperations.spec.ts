@@ -20,7 +20,6 @@ describe("FundOperation", () => {
     (mockProvider as any)._isProvider = true;
     (mockProvider as any)._isSigner = true;
     (mockProvider as any).getSigner = (address: string) => address;
-    // (mockProvider as any).getCode = (address: string) => address;
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
 
     FundOperations = FundOperationsModule.withFundOperations(FuseBase);
