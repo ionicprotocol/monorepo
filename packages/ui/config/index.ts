@@ -6,6 +6,7 @@ type CONFIG = {
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isTestnetEnabled: boolean;
+  allowedAddresses: string[];
 };
 
 const config: CONFIG = {
@@ -16,6 +17,7 @@ const config: CONFIG = {
   isEvmosEnabled: process.env.EVMOS === 'ture',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
+  allowedAddresses: process.env.FEATURE_CREATE_POOL ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(",") : []
 };
 
 export { config };

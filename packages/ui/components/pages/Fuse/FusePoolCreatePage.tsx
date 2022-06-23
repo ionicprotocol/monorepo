@@ -35,6 +35,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { shortAddress } from '@ui/utils/shortAddress';
+import { config } from '@ui/config/index';
 
 const FusePoolCreatePage = memo(() => {
   return (
@@ -369,6 +370,7 @@ export const CreatePoolConfiguration = () => {
             !!errors.closeFactor ||
             !!errors.liquidationIncentive
           }
+          hidden={!config.allowedAddresses.includes(address.toLowerCase())}
         >
           <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
             {isCreating ? <Spinner /> : 'Create'}
