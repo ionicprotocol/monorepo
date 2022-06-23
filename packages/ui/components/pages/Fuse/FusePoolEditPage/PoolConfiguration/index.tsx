@@ -105,7 +105,7 @@ const PoolConfiguration = ({
     }
   };
 
-  const addToWhitelist = async (newUser: string) => {
+  const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
@@ -128,12 +128,14 @@ const PoolConfiguration = ({
       LogRocket.track('Fuse-AddToWhitelist');
 
       await queryClient.refetchQueries();
+
+      onChange(newList);
     } catch (e) {
       handleGenericError(e, toast);
     }
   };
 
-  const removeFromWhitelist = async (removeUser: string) => {
+  const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
@@ -163,6 +165,8 @@ const PoolConfiguration = ({
       LogRocket.track('Fuse-RemoveFromWhitelist');
 
       await queryClient.refetchQueries();
+
+      onChange(whitelist.filter((v) => v !== removeUser));
     } catch (e) {
       handleGenericError(e, toast);
     }
@@ -384,19 +388,26 @@ const PoolConfiguration = ({
                   <Controller
                     control={control}
                     name="whitelist"
-                    render={({ field: { value } }) => <WhitelistInfo value={value} />}
+                    render={({ field: { value, onChange } }) => (
+                      <WhitelistInfo
+                        value={value}
+                        onChange={onChange}
+                        addToWhitelist={addToWhitelist}
+                        removeFromWhitelist={removeFromWhitelist}
+                      />
+                    )}
                   />
                 </Column>
               </FormControl>
             </Flex>
           )}
-          {data.enforceWhitelist ? (
+          {/* {data.enforceWhitelist ? (
             <WhitelistInfo
               whitelist={data.whitelist}
               addToWhitelist={addToWhitelist}
               removeFromWhitelist={removeFromWhitelist}
             />
-          ) : null}
+          ) : null} */}
 
           <ModalDivider />
 
