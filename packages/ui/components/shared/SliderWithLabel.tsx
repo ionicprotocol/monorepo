@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   InputGroup,
   InputRightAddon,
@@ -17,30 +18,44 @@ import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
 
 export const SliderWithLabel = ({
+  min,
+  max,
+  name,
   value,
-  setValue,
-  min = 0,
-  max = 100,
-  step,
-  isDisabled,
+  reff,
+  onChange,
   ...others
 }: {
-  min?: number;
-  max?: number;
-  step?: number;
+  min: number;
+  max: number;
+  name: string;
   value: number;
-  isDisabled?: boolean;
-  setValue: (value: number) => void;
+  reff: any;
+  onChange: (...event: any[]) => void;
   [key: string]: ReactNode;
 }) => {
   const { cSlider } = useColors();
-  const handleChange = (valueString: string) => setValue(Number(valueString));
 
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
-      <InputGroup width="110px">
-        <NumberInput maxW="70px" value={value} onChange={handleChange} min={min} max={max}>
-          <NumberInputField paddingInline={3} borderRightRadius={0} />
+      <InputGroup width="120px">
+        <NumberInput
+          maxW="70px"
+          clampValueOnBlur={false}
+          value={value}
+          onChange={onChange}
+          min={min}
+          max={max}
+          allowMouseWheel
+        >
+          <NumberInputField
+            paddingLeft={2}
+            paddingRight={7}
+            borderRightRadius={0}
+            ref={reff}
+            name={name}
+            textAlign="center"
+          />
           <NumberInputStepper>
             <NumberIncrementStepper />
             <NumberDecrementStepper />
@@ -48,15 +63,15 @@ export const SliderWithLabel = ({
         </NumberInput>
         <InputRightAddon px={2}>%</InputRightAddon>
       </InputGroup>
-
       <Slider
         width="150px"
-        onChange={setValue}
+        focusThumbOnChange={false}
+        onChange={onChange}
         value={value}
-        min={min ?? 0}
-        max={max ?? 100}
-        step={step ?? 1}
-        isDisabled={isDisabled}
+        name={name}
+        min={min}
+        max={max}
+        step={1}
       >
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
           <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />
