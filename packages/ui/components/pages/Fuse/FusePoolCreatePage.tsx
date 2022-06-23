@@ -19,7 +19,7 @@ import { isAddress } from '@ethersproject/address';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import { memo, ReactNode, useEffect, useState } from 'react';
+import { memo, ReactNode, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
@@ -88,8 +88,6 @@ export const CreatePoolConfiguration = () => {
   const watchIsWhitelisted = watch('isWhitelisted', false);
   const watchWhitelist = watch('whitelist', []);
 
-  console.log(watchWhitelist);
-
   const onDeploy = async (data: FormData) => {
     const { name, oracle, isWhitelisted, closeFactor, liquidationIncentive, whitelist } = data;
 
@@ -135,6 +133,14 @@ export const CreatePoolConfiguration = () => {
       handleGenericError(e, toast);
       setIsCreating(false);
     }
+  };
+
+  const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
+    onChange([...watchWhitelist, newUser]);
+  };
+
+  const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
+    onChange(watchWhitelist.filter((v) => v !== removeUser));
   };
 
   return (
@@ -242,7 +248,14 @@ export const CreatePoolConfiguration = () => {
               <Controller
                 control={control}
                 name="whitelist"
-                render={({ field: { value } }) => <WhitelistInfo value={value} />}
+                render={({ field: { value, onChange } }) => (
+                  <WhitelistInfo
+                    value={value}
+                    onChange={onChange}
+                    addToWhitelist={addToWhitelist}
+                    removeFromWhitelist={removeFromWhitelist}
+                  />
+                )}
               />
             </Column>
           </FormControl>
@@ -381,19 +394,27 @@ const OptionRow = ({ children, ...others }: { children: ReactNode; [key: string]
   );
 };
 
-export const WhitelistInfo = ({ value }: { value: string[] }) => {
+export const WhitelistInfo = ({
+  value,
+  onChange,
+  addToWhitelist,
+  removeFromWhitelist,
+}: {
+  value: string[];
+  onChange: (v: string[]) => void;
+  addToWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
+  removeFromWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
+}) => {
   const [_whitelistInput, _setWhitelistInput] = useState('');
 
   const toast = useToast();
   const { cSolidBtn } = useColors();
 
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
-
-  const addToWhitelist = () => {
+  const add = () => {
     if (isAddress(_whitelistInput) && !value.includes(_whitelistInput)) {
-      value.push(_whitelistInput);
+      addToWhitelist(_whitelistInput, onChange);
+      // value.push(_whitelistInput);
+      // onChange(value);
       _setWhitelistInput('');
     } else {
       toast({
@@ -408,8 +429,10 @@ export const WhitelistInfo = ({ value }: { value: string[] }) => {
     }
   };
 
-  const removeFromWhitelist = (user: string) => {
-    value.splice(value.indexOf(user), 1);
+  const remove = (user: string) => {
+    removeFromWhitelist(user, onChange);
+    // value.splice(value.indexOf(user), 1);
+    // onChange(value);
   };
 
   return (
@@ -429,7 +452,7 @@ export const WhitelistInfo = ({ value }: { value: string[] }) => {
           ml={2}
           bg={cSolidBtn.primary.bgColor}
           color={cSolidBtn.primary.txtColor}
-          onClick={addToWhitelist}
+          onClick={add}
           _hover={{ bg: cSolidBtn.primary.hoverBgColor, color: cSolidBtn.primary.hoverTxtColor }}
           _active={{}}
         />
@@ -441,7 +464,7 @@ export const WhitelistInfo = ({ value }: { value: string[] }) => {
             <SimpleTooltip key={user} label={'Click to remove it'} width="auto">
               <Text
                 className="underline-on-hover"
-                onClick={() => removeFromWhitelist(user)}
+                onClick={() => remove(user)}
                 width="fit-content"
                 cursor="pointer"
                 as="span"
