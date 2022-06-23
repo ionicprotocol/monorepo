@@ -11,8 +11,8 @@ locals {
     { name = "SPEED_UP_TRANSACTION_AFTER_SECONDS", value = "120" },
     { name = "REDUNDANCY_DELAY_SECONDS", value = "0" },
   ]
-  
-  bsc_mainnet_rpc            = "https://bsc-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
+
+  bsc_mainnet_rpc            = "https://bsc.getblock.io/mainnet/?api_key=${var.getblock_api_key}"
   bsc_mainnet_chain_id       = "56"
   bsc_mainnet_supported_pais = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6|0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c"
 
