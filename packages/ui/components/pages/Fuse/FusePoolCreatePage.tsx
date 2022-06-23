@@ -3,7 +3,9 @@ import {
   Box,
   Button,
   Divider,
-  Flex,
+  FormControl,
+  FormErrorMessage,
+  FormLabel,
   Heading,
   IconButton,
   Input,
@@ -18,6 +20,7 @@ import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { memo, ReactNode, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 
 import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
 import DashboardBox from '@ui/components/shared/DashboardBox';
@@ -26,11 +29,12 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { formatPercentage } from '@ui/utils/formatPercentage';
+import { shortAddress } from '@ui/utils/shortAddress';
 
 const FusePoolCreatePage = memo(() => {
   return (
@@ -44,48 +48,48 @@ const FusePoolCreatePage = memo(() => {
 
 export default FusePoolCreatePage;
 
+type FormData = {
+  name: string;
+  oracle: string;
+  isWhitelisted: boolean;
+  whitelist: string[];
+  closeFactor: number;
+  liquidationIncentive: number;
+};
+
 export const CreatePoolConfiguration = () => {
   const toast = useToast();
 
   const { fuse, currentChain, address } = useRari();
   const router = useRouter();
 
-  const [name, setName] = useState('');
-  const [oracle, setOracle] = useState('');
-  const [isWhitelisted, setIsWhitelisted] = useState(false);
-  const [whitelist, setWhitelist] = useState<string[]>([]);
-
-  const [closeFactor, setCloseFactor] = useState(50);
-  const [liquidationIncentive, setLiquidationIncentive] = useState(8);
-
   const [isCreating, setIsCreating] = useState(false);
 
-  const onDeploy = async () => {
-    if (name === '') {
-      toast({
-        title: 'Error!',
-        description: 'You must specify a name for your Fuse pool!',
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
-      });
+  const { cCard, cSolidBtn, cSwitch } = useColors();
+  const isMobile = useIsSmallScreen();
 
-      return;
-    }
+  const {
+    control,
+    register,
+    watch,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      name: '',
+      oracle: '',
+      isWhitelisted: false,
+      closeFactor: 50,
+      liquidationIncentive: 8,
+      whitelist: [],
+    },
+  });
 
-    if (oracle === '') {
-      toast({
-        title: 'Error!',
-        description: 'You must select an oracle.',
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
-      });
+  const watchIsWhitelisted = watch('isWhitelisted', false);
+  const watchWhitelist = watch('whitelist', []);
 
-      return;
-    }
+  const onDeploy = async (data: FormData) => {
+    const { name, oracle, isWhitelisted, closeFactor, liquidationIncentive, whitelist } = data;
 
     setIsCreating(true);
     // 50% -> 50 * (1e18 / 100)
@@ -105,7 +109,7 @@ export const CreatePoolConfiguration = () => {
         oracle,
         { reporter },
         { from: address },
-        isWhitelisted ? whitelist : []
+        whitelist
       );
       const poolId = deployResult.pop();
 
@@ -131,169 +135,240 @@ export const CreatePoolConfiguration = () => {
     }
   };
 
-  const { cCard, cSolidBtn, cSwitch } = useColors();
-  const isMobile = useIsSmallScreen();
+  const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
+    onChange([...watchWhitelist, newUser]);
+  };
+
+  const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
+    onChange(watchWhitelist.filter((v) => v !== removeUser));
+  };
+
   return (
-    <Box alignSelf={'center'} mx="auto">
+    <Box as="form" alignSelf={'center'} mx="auto" onSubmit={handleSubmit(onDeploy)}>
       <DashboardBox maxWidth="550px" mx={'auto'}>
         <Heading fontWeight="extrabold" size="md" px={4} py={4}>
           Create Pool
         </Heading>
-
+        <Divider bg={cCard.dividerColor} />
         <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+          <FormControl isInvalid={!!errors.name}>
+            <OptionRow>
+              <FormLabel htmlFor="name">Name</FormLabel>
+              <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Input
+                  id="name"
+                  placeholder="Type Pool name"
+                  {...register('name', {
+                    required: 'Pool name is required',
+                  })}
+                />
+                <FormErrorMessage marginBottom="-10px">
+                  {errors.name && errors.name.message}
+                </FormErrorMessage>
+              </Column>
+            </OptionRow>
+          </FormControl>
           <Divider bg={cCard.dividerColor} />
-
-          <OptionRow>
-            <Text fontWeight="normal" mr={4}>
-              Name
-            </Text>
-            <Input
-              width="60%"
-              placeholder="Type Pool name"
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-            />
-          </OptionRow>
-
-          <Divider bg={cCard.dividerColor} />
-
-          <OptionRow>
-            <Text fontWeight="normal" mr={4}>
-              Oracle
-            </Text>
-            <Select
-              width="60%"
-              value={oracle}
-              onChange={(event) => setOracle(event.target.value)}
-              placeholder="Select Oracle"
-            >
-              {currentChain.id === 1337 ? (
-                <option
-                  className="white-bg-option"
-                  value={fuse.chainDeployment.MasterPriceOracle.address}
+          <FormControl isInvalid={!!errors.oracle}>
+            <OptionRow>
+              <FormLabel htmlFor="oracle">Oracle</FormLabel>
+              <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                <Select
+                  id="oracle"
+                  placeholder="Select Oracle"
+                  {...register('oracle', {
+                    required: 'Oracle is required',
+                  })}
                 >
-                  MasterPriceOracle
-                </option>
-              ) : (
-                <>
-                  <option
-                    className="white-bg-option"
-                    value={fuse.chainDeployment.MasterPriceOracle.address}
-                  >
-                    MasterPriceOracle
-                  </option>
-                </>
-              )}
-            </Select>
-          </OptionRow>
-
+                  {currentChain.id === 1337 ? (
+                    <option
+                      className="white-bg-option"
+                      value={fuse.chainDeployment.MasterPriceOracle.address}
+                    >
+                      MasterPriceOracle
+                    </option>
+                  ) : (
+                    <>
+                      <option
+                        className="white-bg-option"
+                        value={fuse.chainDeployment.MasterPriceOracle.address}
+                      >
+                        MasterPriceOracle
+                      </option>
+                    </>
+                  )}
+                </Select>
+                <FormErrorMessage marginBottom="-10px">
+                  {errors.oracle && errors.oracle.message}
+                </FormErrorMessage>
+              </Column>
+            </OptionRow>
+          </FormControl>
           <Divider bg={cCard.dividerColor} />
-
-          <OptionRow>
-            <SimpleTooltip
-              label={
-                "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
-              }
-            >
-              <Text fontWeight="normal">
-                Whitelisted <QuestionIcon ml={1} mb="4px" />
-              </Text>
-            </SimpleTooltip>
-
-            <Row mainAxisAlignment={'center'} crossAxisAlignment="center">
-              <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
-              <Switch
-                className="whitelist-switch"
-                isChecked={isWhitelisted}
-                onChange={() => {
-                  setIsWhitelisted((past) => !past);
-                  // Add the user to the whitelist by default
-                  if (whitelist.length === 0) {
-                    setWhitelist([address]);
+          <FormControl>
+            <OptionRow>
+              <FormLabel htmlFor="isWhitelisted">
+                <SimpleTooltip
+                  label={
+                    "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
                   }
-                }}
-                size={isMobile ? 'sm' : 'md'}
-                cursor={'pointer'}
-                _focus={{ boxShadow: 'none' }}
-                _hover={{}}
+                >
+                  <Text fontWeight="normal">
+                    Whitelisted <QuestionIcon ml={1} mb="4px" />
+                  </Text>
+                </SimpleTooltip>
+              </FormLabel>
+              <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-end">
+                <Controller
+                  control={control}
+                  name="isWhitelisted"
+                  render={({ field: { ref, name, value, onChange } }) => (
+                    <>
+                      <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
+                      <Switch
+                        className="whitelist-switch"
+                        id="isWhitelisted"
+                        size={isMobile ? 'sm' : 'md'}
+                        cursor={'pointer'}
+                        _focus={{ boxShadow: 'none' }}
+                        _hover={{}}
+                        name={name}
+                        ref={ref}
+                        isChecked={value}
+                        onChange={onChange}
+                      />
+                    </>
+                  )}
+                />
+              </Column>
+            </OptionRow>
+          </FormControl>
+          <FormControl display={watchIsWhitelisted ? 'block' : 'none'}>
+            <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+              <Controller
+                control={control}
+                name="whitelist"
+                render={({ field: { value, onChange } }) => (
+                  <WhitelistInfo
+                    value={value}
+                    onChange={onChange}
+                    addToWhitelist={addToWhitelist}
+                    removeFromWhitelist={removeFromWhitelist}
+                  />
+                )}
               />
-            </Row>
-          </OptionRow>
-
-          {isWhitelisted ? (
-            <WhitelistInfo
-              whitelist={whitelist}
-              addToWhitelist={(user) => {
-                setWhitelist((past) => [...past, user]);
-              }}
-              removeFromWhitelist={(user) => {
-                setWhitelist((past) =>
-                  past.filter(function (item) {
-                    return item !== user;
-                  })
-                );
-              }}
-            />
-          ) : null}
-
+            </Column>
+          </FormControl>
           <Divider bg={cCard.dividerColor} />
-
-          <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <SimpleTooltip
-              label={
-                "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
-              }
-            >
-              <Text fontWeight="normal">
-                Close Factor <QuestionIcon ml={1} mb="4px" />
-              </Text>
-            </SimpleTooltip>
-
-            <SliderWithLabel
-              value={closeFactor}
-              setValue={setCloseFactor}
-              formatValue={formatPercentage}
-              min={5}
-              max={90}
-              ml="auto"
-              mt={{ base: 4, md: 0 }}
-            />
-          </Flex>
-
+          <FormControl isInvalid={!!errors.closeFactor}>
+            <OptionRow>
+              <FormLabel htmlFor="closeFactor">
+                <SimpleTooltip
+                  label={
+                    "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
+                  }
+                >
+                  <Text fontWeight="normal">
+                    Close Factor <QuestionIcon ml={1} mb="4px" />
+                  </Text>
+                </SimpleTooltip>
+              </FormLabel>
+              <Column width="60%" mainAxisAlignment="flex-end" crossAxisAlignment="flex-end">
+                <Controller
+                  control={control}
+                  name="closeFactor"
+                  rules={{
+                    required: 'Close factor is required',
+                    min: {
+                      value: CLOSE_FACTOR.MIN,
+                      message: `Close Factor must be at least ${CLOSE_FACTOR.MIN}%`,
+                    },
+                    max: {
+                      value: CLOSE_FACTOR.MAX,
+                      message: `Close Factor must be no more than ${CLOSE_FACTOR.MAX}%`,
+                    },
+                  }}
+                  render={({ field: { name, value, ref, onChange } }) => (
+                    <SliderWithLabel
+                      min={CLOSE_FACTOR.MIN}
+                      max={CLOSE_FACTOR.MAX}
+                      name={name}
+                      value={value}
+                      reff={ref}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                  {errors.closeFactor && errors.closeFactor.message}
+                </FormErrorMessage>
+              </Column>
+            </OptionRow>
+          </FormControl>
           <Divider bg={cCard.dividerColor} />
-
-          <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <SimpleTooltip
-              label={
-                "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
-              }
-            >
-              <Text fontWeight="normal">
-                Liquidation Incentive <QuestionIcon ml={1} mb="4px" />
-              </Text>
-            </SimpleTooltip>
-
-            <SliderWithLabel
-              value={liquidationIncentive}
-              setValue={setLiquidationIncentive}
-              formatValue={formatPercentage}
-              min={0}
-              max={50}
-              ml={{ base: 'auto', md: 4 }}
-              mt={{ base: 4, md: 0 }}
-            />
-          </Flex>
+          <FormControl isInvalid={!!errors.liquidationIncentive}>
+            <OptionRow>
+              <FormLabel htmlFor="liquidationIncentive">
+                <SimpleTooltip
+                  label={
+                    "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
+                  }
+                >
+                  <Text fontWeight="normal">
+                    Liquidation Incentive <QuestionIcon ml={1} mb="4px" />
+                  </Text>
+                </SimpleTooltip>
+              </FormLabel>
+              <Column mainAxisAlignment="flex-end" crossAxisAlignment="flex-start">
+                <Controller
+                  control={control}
+                  name="liquidationIncentive"
+                  rules={{
+                    required: 'Liquidation incentive is required',
+                    min: {
+                      value: LIQUIDATION_INCENTIVE.MIN,
+                      message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
+                    },
+                    max: {
+                      value: LIQUIDATION_INCENTIVE.MAX,
+                      message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
+                    },
+                  }}
+                  render={({ field: { name, value, ref, onChange } }) => (
+                    <SliderWithLabel
+                      min={LIQUIDATION_INCENTIVE.MIN}
+                      max={LIQUIDATION_INCENTIVE.MAX}
+                      name={name}
+                      value={value}
+                      reff={ref}
+                      onChange={onChange}
+                    />
+                  )}
+                />
+                <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                  {errors.liquidationIncentive && errors.liquidationIncentive.message}
+                </FormErrorMessage>
+              </Column>
+            </OptionRow>
+          </FormControl>
         </Column>
       </DashboardBox>
       <Center>
         <Button
+          type="submit"
+          isLoading={isCreating}
           width={'100%'}
           height="60px"
           mt={4}
           fontSize="xl"
-          onClick={onDeploy}
           maxWidth={'500px'}
-          disabled={isCreating}
+          disabled={
+            isCreating ||
+            !!errors.name ||
+            !!errors.oracle ||
+            !!errors.closeFactor ||
+            !!errors.liquidationIncentive
+          }
         >
           <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
             {isCreating ? <Spinner /> : 'Create'}
@@ -320,18 +395,45 @@ const OptionRow = ({ children, ...others }: { children: ReactNode; [key: string]
 };
 
 export const WhitelistInfo = ({
-  whitelist,
+  value,
+  onChange,
   addToWhitelist,
   removeFromWhitelist,
 }: {
-  whitelist: string[];
-  addToWhitelist: (user: string) => void;
-  removeFromWhitelist: (user: string) => void;
+  value: string[];
+  onChange: (v: string[]) => void;
+  addToWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
+  removeFromWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
 }) => {
   const [_whitelistInput, _setWhitelistInput] = useState('');
 
   const toast = useToast();
   const { cSolidBtn } = useColors();
+
+  const add = () => {
+    if (isAddress(_whitelistInput) && !value.includes(_whitelistInput)) {
+      addToWhitelist(_whitelistInput, onChange);
+      // value.push(_whitelistInput);
+      // onChange(value);
+      _setWhitelistInput('');
+    } else {
+      toast({
+        title: 'Error!',
+        description:
+          'This is not a valid ethereum address (or you have already entered this address)',
+        status: 'error',
+        duration: 2000,
+        isClosable: true,
+        position: 'top-right',
+      });
+    }
+  };
+
+  const remove = (user: string) => {
+    removeFromWhitelist(user, onChange);
+    // value.splice(value.indexOf(user), 1);
+    // onChange(value);
+  };
 
   return (
     <>
@@ -350,42 +452,30 @@ export const WhitelistInfo = ({
           ml={2}
           bg={cSolidBtn.primary.bgColor}
           color={cSolidBtn.primary.txtColor}
-          onClick={() => {
-            if (isAddress(_whitelistInput) && !whitelist.includes(_whitelistInput)) {
-              addToWhitelist(_whitelistInput);
-              _setWhitelistInput('');
-            } else {
-              toast({
-                title: 'Error!',
-                description:
-                  'This is not a valid ethereum address (or you have already entered this address)',
-                status: 'error',
-                duration: 2000,
-                isClosable: true,
-                position: 'top-right',
-              });
-            }
-          }}
+          onClick={add}
           _hover={{ bg: cSolidBtn.primary.hoverBgColor, color: cSolidBtn.primary.hoverTxtColor }}
           _active={{}}
         />
       </OptionRow>
-      {whitelist.length > 0 ? (
+      {value && value.length > 0 && (
         <Text mb={4} ml={4} width="100%">
           <b>Already added: </b>
-          {whitelist.map((user, index, array) => (
-            <Text
-              key={user}
-              className="underline-on-hover"
-              as="button"
-              onClick={() => removeFromWhitelist(user)}
-            >
-              {user}
-              {array.length - 1 === index ? null : <>,&nbsp;</>}
-            </Text>
+          {value.map((user, index, array) => (
+            <SimpleTooltip key={user} label={'Click to remove it'} width="auto">
+              <Text
+                className="underline-on-hover"
+                onClick={() => remove(user)}
+                width="fit-content"
+                cursor="pointer"
+                as="span"
+              >
+                {shortAddress(user, 8, 6)}
+                {array.length - 1 === index ? null : <>,&nbsp;</>}
+              </Text>
+            </SimpleTooltip>
           ))}
         </Text>
-      ) : null}
+      )}
     </>
   );
 };

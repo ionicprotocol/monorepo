@@ -33,6 +33,7 @@
     "react-datepicker": "^4.8.0",
     "react-dom": "^18.2.0",
     "react-error-boundary": "^3.1.4",
+    "react-hook-form": "^7.32.2",
     "react-i18next": "^11.17.2",
     "react-icons": "^4.4.0",
     "react-jazzicon": "^1.0.4",
