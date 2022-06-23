@@ -117,9 +117,11 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       if (receipt.status != constants.One.toNumber()) {
         throw "Failed to deploy market ";
       }
+      const marketCounter = await this.contracts.FuseFeeDistributor.callStatic.marketsCounter();
+
       const saltsHash = utils.solidityKeccak256(
         ["address", "address", "uint"],
-        [config.comptroller, config.underlying, receipt.blockNumber]
+        [config.comptroller, config.underlying, marketCounter]
       );
       const byteCodeHash = utils.keccak256(
         this.artifacts.CErc20Delegator.bytecode.object + constructorData.substring(2)
