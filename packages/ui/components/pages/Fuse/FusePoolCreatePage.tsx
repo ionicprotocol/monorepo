@@ -23,6 +23,7 @@ import { memo, ReactNode, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
+import { Banner } from '@ui/components/shared/Banner';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
@@ -90,6 +91,19 @@ export const CreatePoolConfiguration = () => {
   const watchWhitelist = watch('whitelist', []);
 
   const onDeploy = async (data: FormData) => {
+    if (!config.allowedAddresses.includes(address.toLowerCase())) {
+      toast({
+        title: 'Warning!',
+        description: 'Pool creation is limited!',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+        position: 'top-right',
+      });
+
+      return;
+    }
+
     const { name, oracle, isWhitelisted, closeFactor, liquidationIncentive, whitelist } = data;
 
     setIsCreating(true);
@@ -150,6 +164,14 @@ export const CreatePoolConfiguration = () => {
         <Heading fontWeight="extrabold" size="md" px={4} py={4}>
           Create Pool
         </Heading>
+        {!config.allowedAddresses.includes(address.toLowerCase()) && (
+          <Banner
+            text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
+            linkText="please contact us via Discord."
+            linkUrl="https://discord.gg/NYqKtJPYAB"
+            status="warning"
+          />
+        )}
         <Divider bg={cCard.dividerColor} />
         <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
           <FormControl isInvalid={!!errors.name}>
@@ -362,18 +384,24 @@ export const CreatePoolConfiguration = () => {
           height="60px"
           mt={4}
           fontSize="xl"
-          maxWidth={'500px'}
+          maxWidth={'550px'}
           disabled={
             isCreating ||
             !!errors.name ||
             !!errors.oracle ||
             !!errors.closeFactor ||
-            !!errors.liquidationIncentive
+            !!errors.liquidationIncentive ||
+            !config.allowedAddresses.includes(address.toLowerCase())
           }
-          hidden={!config.allowedAddresses.includes(address.toLowerCase())}
         >
           <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-            {isCreating ? <Spinner /> : 'Create'}
+            {!config.allowedAddresses.includes(address.toLowerCase()) ? (
+              'Creation limited!'
+            ) : isCreating ? (
+              <Spinner />
+            ) : (
+              'Create'
+            )}
           </Center>
         </Button>
       </Center>
