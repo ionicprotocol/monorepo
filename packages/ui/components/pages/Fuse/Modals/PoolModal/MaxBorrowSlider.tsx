@@ -68,35 +68,44 @@ function MaxBorrowSlider({
       <HStack width="100%" mt={8} spacing={4} mb={4}>
         <Text>$0</Text>
         <HStack width="100%" spacing={0}>
-          <Slider value={100} min={0} max={100} width={borrowedAmount / borrowLimit}>
-            <SliderMark value={100} mt={4} ml={-4} fontSize="sm">
-              ${(borrowedAmount * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
-            </SliderMark>
-            <SliderTrack>
-              <SliderFilledTrack bg={cPage.primary.borderColor} />
-            </SliderTrack>
-            <SimpleTooltip label={`${borrowedPercent}%`} isOpen>
-              <SliderThumb />
-            </SimpleTooltip>
-          </Slider>
-          <Slider
-            id="slider"
-            defaultValue={borrowedPercent}
-            min={borrowedPercent}
-            max={100}
-            onChange={handleSliderValueChange}
-            marginLeft={0}
-            width={borrowableAmount / borrowLimit}
-            value={sliderValue}
-            focusThumbOnChange={false}
-          >
-            <SliderTrack>
-              <SliderFilledTrack />
-            </SliderTrack>
-            <SimpleTooltip label={`${sliderValue}%`} isOpen>
-              <SliderThumb />
-            </SimpleTooltip>
-          </Slider>
+          {borrowedAmount !== 0 && (
+            <Slider
+              value={borrowedPercent}
+              min={0}
+              max={borrowedPercent}
+              width={`${(borrowedAmount / borrowLimit) * 100}%`}
+            >
+              <SliderMark value={borrowedPercent} mt={4} ml={-4} fontSize="sm">
+                ${(borrowedAmount * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
+              </SliderMark>
+              <SliderTrack>
+                <SliderFilledTrack bg={cPage.primary.borderColor} />
+              </SliderTrack>
+              <SimpleTooltip label={`${borrowedPercent}%`} isOpen>
+                <SliderThumb />
+              </SimpleTooltip>
+            </Slider>
+          )}
+          {borrowableAmount !== 0 && (
+            <Slider
+              id="slider"
+              defaultValue={borrowedPercent}
+              min={borrowedPercent}
+              max={100}
+              onChange={handleSliderValueChange}
+              marginLeft={0}
+              width={`${(borrowableAmount / borrowLimit) * 100}%`}
+              value={sliderValue}
+              focusThumbOnChange={false}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SimpleTooltip label={`${sliderValue}%`} isOpen>
+                <SliderThumb />
+              </SimpleTooltip>
+            </Slider>
+          )}
         </HStack>
         <Text>
           ${(borrowLimit * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
