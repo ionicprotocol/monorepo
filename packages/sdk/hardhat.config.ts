@@ -1,6 +1,5 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
-import "@tenderly/hardhat-tenderly";
 import "@typechain/hardhat";
 import "hardhat-deploy";
 import "hardhat-abi-exporter";
@@ -38,10 +37,6 @@ const mnemonic =
 const config: HardhatUserConfig = {
   mocha: {
     timeout: 200_000,
-  },
-  tenderly: {
-    username: "carlomazzaferro",
-    project: "midas-contracts",
   },
   solidity: {
     compilers: [
