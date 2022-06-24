@@ -2528,6 +2528,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nomiclabs/hardhat-ethers@npm:^2.0.6":
+  version: 2.0.6
+  resolution: "@nomiclabs/hardhat-ethers@npm:2.0.6"
+  peerDependencies:
+    ethers: ^5.0.0
+    hardhat: ^2.0.0
+  checksum: 82319a2615804abae2ca70834a20bfc2874c742094fadeaea55e5c788e589794836a3a2eaaf19d8aecdadf1fd0bd7a4f9eac2c32bbda9ed081c8e2e3d4fe55cc
+  languageName: node
+  linkType: hard
+
 "@nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers@^0.3.0-beta.13":
   version: 0.3.0-beta.13
   resolution: "hardhat-deploy-ethers@npm:0.3.0-beta.13"
@@ -2924,15 +2934,18 @@ __metadata:
   linkType: hard
 
 "@tenderly/hardhat-tenderly@npm:^1.0.13":
-  version: 1.0.15
-  resolution: "@tenderly/hardhat-tenderly@npm:1.0.15"
+  version: 1.1.0
+  resolution: "@tenderly/hardhat-tenderly@npm:1.1.0"
   dependencies:
+    "@nomiclabs/hardhat-ethers": ^2.0.6
     axios: ^0.21.1
+    ethers: ^5.6.8
     fs-extra: ^9.0.1
+    hardhat-deploy: ^0.11.10
     js-yaml: ^3.14.0
   peerDependencies:
-    hardhat: ^2.0.3
-  checksum: 83320a156de40da873bd7ad6d32b6fdae57f30d2e2bb7792e9062acf0f025d8c0b128c5d1ce43d33f685d9f0e4094ae5836c1e472b995d7bc5ba7810917fbc09
+    hardhat: ^2.9.9
+  checksum: ec03123b7f96b1de0dd7eb19912d51d9da3c427b64ea8aaf07962cc51cab99673869d189bf891fa42225e2ccb46c46240822b7930581e1910a8b1c1638d3aaea
   languageName: node
   linkType: hard
 
@@ -8276,7 +8289,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
+  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
   languageName: node
   linkType: hard
 
@@ -8515,7 +8528,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.9":
+"ethers@npm:^5.0.1, ethers@npm:^5.0.2, ethers@npm:^5.0.24, ethers@npm:^5.5.2, ethers@npm:^5.5.3, ethers@npm:^5.6.5, ethers@npm:^5.6.8, ethers@npm:^5.6.9":
   version: 5.6.9
   resolution: "ethers@npm:5.6.9"
   dependencies:
@@ -9165,8 +9178,8 @@ __metadata:
   linkType: hard
 
 "framer-motion@npm:^6.3.11, framer-motion@npm:^6.3.13":
-  version: 6.3.14
-  resolution: "framer-motion@npm:6.3.14"
+  version: 6.3.15
+  resolution: "framer-motion@npm:6.3.15"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     framesync: 6.0.1
@@ -9180,7 +9193,7 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  checksum: eb642312ba8a4889819b05534d245567ebb5529486a7064f89bbedcd8c5578a930c5cf5c4ed2c3dcdee5eab027ddde8402011e4647e5685eda2d0235b9af9813
+  checksum: d761745e25c7c81c96e15c73b311afb1b732c31f8deb6dc9f71edff32f4b0495af28580707288ae3827a8c1b2a71e093b7b97746ddf73dc7aaecf5d2a29ce71c
   languageName: node
   linkType: hard
 
@@ -9792,7 +9805,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hardhat-deploy@npm:^0.11.5":
+"hardhat-deploy@npm:^0.11.10, hardhat-deploy@npm:^0.11.5":
   version: 0.11.10
   resolution: "hardhat-deploy@npm:0.11.10"
   dependencies:
