@@ -29,25 +29,31 @@ function MaxBorrowSlider({
   borrowedAmount: number;
   underlyingPrice: BigNumber;
 }) {
-  const [sliderValue, setSliderValue] = useState(60);
-  const { coingeckoId } = useRari();
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
   const borrowLimit = useMemo(
     () => borrowableAmount + borrowedAmount,
     [borrowableAmount, borrowedAmount]
   );
 
   const borrowedPercent = useMemo(
-    () => parseInt(((borrowedAmount * 100) / borrowLimit).toString()),
+    () => Number(((borrowedAmount * 100) / borrowLimit).toFixed(0)),
     [borrowLimit, borrowedAmount]
   );
+
+  const borrowablePercent = useMemo(
+    () => Number(((borrowableAmount / borrowLimit) * 100).toFixed(0)),
+    [borrowableAmount, borrowLimit]
+  );
+
+  const [sliderValue, setSliderValue] = useState(borrowedPercent);
+  const { coingeckoId } = useRari();
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
   const { cPage } = useColors();
 
   useEffect(() => {
     setSliderValue(
-      parseInt((((Number(userEnteredAmount) + borrowedAmount) / borrowLimit) * 100).toString())
+      Number((((Number(userEnteredAmount) + borrowedAmount) / borrowLimit) * 100).toFixed(0))
     );
   }, [userEnteredAmount, borrowLimit, borrowedAmount]);
 
@@ -66,14 +72,14 @@ function MaxBorrowSlider({
     <Box width="100%" my={4}>
       <Text>Borrow Limit</Text>
       <HStack width="100%" mt={8} spacing={4} mb={4}>
-        <Text>$0</Text>
+        <Text>$0.00</Text>
         <HStack width="100%" spacing={0}>
-          {borrowedAmount !== 0 && (
+          {borrowedPercent !== 0 && (
             <Slider
               value={borrowedPercent}
               min={0}
               max={borrowedPercent}
-              width={`${(borrowedAmount / borrowLimit) * 100}%`}
+              width={`${borrowedPercent}%`}
             >
               <SliderMark value={borrowedPercent} mt={4} ml={-4} fontSize="sm">
                 ${(borrowedAmount * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
@@ -86,7 +92,7 @@ function MaxBorrowSlider({
               </SimpleTooltip>
             </Slider>
           )}
-          {borrowableAmount !== 0 && (
+          {borrowablePercent !== 0 && (
             <Slider
               id="slider"
               defaultValue={borrowedPercent}
@@ -94,7 +100,7 @@ function MaxBorrowSlider({
               max={100}
               onChange={handleSliderValueChange}
               marginLeft={0}
-              width={`${(borrowableAmount / borrowLimit) * 100}%`}
+              width={`${borrowablePercent}%`}
               value={sliderValue}
               focusThumbOnChange={false}
             >
