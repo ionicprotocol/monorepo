@@ -1,121 +1,122 @@
 import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
   Box,
+  HStack,
   Slider,
   SliderFilledTrack,
   SliderMark,
   SliderThumb,
   SliderTrack,
-  useDisclosure,
+  Text,
 } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRari } from '@ui/context/RariContext';
-import { MarketData } from '@ui/hooks/useFusePoolData';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
-
-const colorLimit = 75;
+import { useColors } from '@ui/hooks/useColors';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 function MaxBorrowSlider({
+  userEnteredAmount,
   updateAmount,
-  asset,
+  borrowableAmount,
+  borrowedAmount,
+  underlyingPrice,
 }: {
+  userEnteredAmount: string;
   updateAmount: (amount: string) => void;
-  asset: MarketData;
+  borrowableAmount: number;
+  borrowedAmount: number;
+  underlyingPrice: BigNumber;
 }) {
-  const { fuse, address } = useRari();
-  const [sliderValue, setSliderValue] = useState(50);
-  const [borrowLimit, setBorrowLimit] = useState<number>(0);
+  const borrowLimit = useMemo(
+    () => borrowableAmount + borrowedAmount,
+    [borrowableAmount, borrowedAmount]
+  );
 
-  const fetchBorrowLimit = useCallback(async () => {
-    const borrowLimitBN = (await fetchMaxAmount(
-      FundOperationMode.BORROW,
-      fuse,
-      address,
-      asset
-    )) as BigNumber;
+  const borrowedPercent = useMemo(
+    () => Number(((borrowedAmount * 100) / borrowLimit).toFixed(0)),
+    [borrowLimit, borrowedAmount]
+  );
 
-    return Number(utils.formatUnits(borrowLimitBN));
-  }, [address, asset, fuse]);
+  const borrowablePercent = useMemo(
+    () => Number(((borrowableAmount / borrowLimit) * 100).toFixed(0)),
+    [borrowableAmount, borrowLimit]
+  );
 
-  useEffect(() => {
-    const func = async () => {
-      const borrowLimit = await fetchBorrowLimit();
-      setBorrowLimit(borrowLimit);
-    };
+  const [sliderValue, setSliderValue] = useState(borrowedPercent);
+  const { coingeckoId } = useRari();
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
 
-    func();
-  }, [fetchBorrowLimit]);
+  const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
+  const { cPage } = useColors();
 
   useEffect(() => {
-    updateAmount(((borrowLimit * sliderValue) / 100).toString());
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sliderValue, borrowLimit]);
-
-  const { isOpen: isVisible, onClose, onOpen } = useDisclosure({ defaultIsOpen: false });
+    setSliderValue(
+      Number((((Number(userEnteredAmount) + borrowedAmount) / borrowLimit) * 100).toFixed(0))
+    );
+  }, [userEnteredAmount, borrowLimit, borrowedAmount]);
 
   const handleSliderValueChange = (v: number) => {
-    if (v >= colorLimit && !isVisible) {
-      onOpen();
-    } else if (v < colorLimit && isVisible) {
-      onClose();
-    }
-
     setSliderValue(v);
 
-    const borrowAmount = ((borrowLimit * v) / 100).toString();
+    const borrowAmount = (
+      (borrowableAmount * (v - borrowedPercent)) /
+      (100 - borrowedPercent)
+    ).toString();
+
     updateAmount(borrowAmount);
   };
 
   return (
-    <Box width="100%">
-      <Slider
-        id="slider"
-        defaultValue={50}
-        min={0}
-        max={100}
-        colorScheme={
-          sliderValue <= 25
-            ? 'whatsapp'
-            : sliderValue <= 50
-            ? 'yellow'
-            : sliderValue <= 75
-            ? 'orange'
-            : 'red'
-        }
-        mt={10}
-        mb={isVisible ? 0 : 4}
-        onChange={handleSliderValueChange}
-      >
-        <SliderMark value={25} mt="1" ml="-2.5" fontSize="sm">
-          25%
-        </SliderMark>
-        <SliderMark value={50} mt="1" ml="-2.5" fontSize="sm">
-          50%
-        </SliderMark>
-        <SliderMark value={75} mt="1" ml="-2.5" fontSize="sm">
-          75%
-        </SliderMark>
-        <SliderTrack>
-          <SliderFilledTrack />
-        </SliderTrack>
-        <SimpleTooltip label={`${sliderValue}%`}>
-          <SliderThumb />
-        </SimpleTooltip>
-      </Slider>
-      {isVisible && (
-        <Alert mt={4} status="warning" mb={4}>
-          <AlertIcon />
-          <Box>
-            <AlertDescription>It isn’t recommended to use borrow rates above 75%</AlertDescription>
-          </Box>
-        </Alert>
-      )}
+    <Box width="100%" my={4}>
+      <Text>Borrow Limit</Text>
+      <HStack width="100%" mt={8} spacing={4} mb={4}>
+        <Text>$0.00</Text>
+        <HStack width="100%" spacing={0}>
+          {borrowedPercent !== 0 && (
+            <Slider
+              value={borrowedPercent}
+              min={0}
+              max={borrowedPercent}
+              width={`${borrowedPercent}%`}
+            >
+              <SliderMark value={borrowedPercent} mt={4} ml={-4} fontSize="sm">
+                ${(borrowedAmount * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
+              </SliderMark>
+              <SliderTrack>
+                <SliderFilledTrack bg={cPage.primary.borderColor} />
+              </SliderTrack>
+              <SimpleTooltip label={`${borrowedPercent}%`} isOpen>
+                <SliderThumb />
+              </SimpleTooltip>
+            </Slider>
+          )}
+          {borrowablePercent !== 0 && (
+            <Slider
+              id="slider"
+              defaultValue={borrowedPercent}
+              min={borrowedPercent}
+              max={100}
+              onChange={handleSliderValueChange}
+              marginLeft={0}
+              width={`${borrowablePercent}%`}
+              value={sliderValue}
+              focusThumbOnChange={false}
+            >
+              <SliderTrack>
+                <SliderFilledTrack />
+              </SliderTrack>
+              <SimpleTooltip label={`${sliderValue}%`} isOpen>
+                <SliderThumb />
+              </SimpleTooltip>
+            </Slider>
+          )}
+        </HStack>
+        <Text>
+          ${(borrowLimit * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
+        </Text>
+      </HStack>
     </Box>
   );
 }
