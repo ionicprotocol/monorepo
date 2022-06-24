@@ -87,7 +87,7 @@ module "bsc_mainnet_liquidation_bot" {
   memory                  = 512
   instance_count          = 1
   subnets                 = module.network.public_subnets
-  provider_urls           = [local.bsc_mainnet_rpc_0, local.bsc_mainnet_rpc_1]
+  provider_urls           = [local.bsc_mainnet_rpc_0, local.bsc_mainnet_rpc_2]
   runtime_env_vars = concat(local.secret_env_vars, [
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
   ])
