@@ -68,19 +68,27 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
             .mintGuardianPaused(asset.cToken)
             .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
         );
+
         promises.push(
-          this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
-            .callStatic.plugin()
-            .then((plugin) => (asset.plugin = plugin))
-            .catch(() =>
+          (async () => {
+            if (!this.chainPlugins[asset.underlyingToken]) return;
+            let plugin: string | undefined = undefined;
+
+            plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
+              .callStatic.plugin()
+              .catch(() => undefined);
+            if (!plugin) {
               // @ts-ignore
-              this.getAssetInstance<CErc20PluginRewardsDelegate>(
+              plugin = await this.getAssetInstance<CErc20PluginRewardsDelegate>(
                 asset.cToken,
                 "CErc20PluginRewardsDelegate"
-              ).callStatic.plugin()
-            )
-            .then((plugin) => (asset.plugin = plugin))
-            .catch(() => {})
+              )
+                .callStatic.plugin()
+                .catch(() => undefined);
+            }
+            if (!plugin) return;
+            asset.plugin = this.chainPlugins[asset.underlyingToken].find((p) => p.strategyAddress === plugin);
+          })()
         );
 
         asset.supplyBalanceNative =
