@@ -199,7 +199,10 @@ const PoolConfiguration = ({
   useEffect(() => {
     if (data) {
       setValue('closeFactor', parseInt(utils.formatUnits(data.closeFactor, 16)));
-      setValue('liquidationIncentive', parseInt(utils.formatUnits(data.liquidationIncentive, 16)));
+      setValue(
+        'liquidationIncentive',
+        parseInt(utils.formatUnits(data.liquidationIncentive, 16)) - 100
+      );
     }
   }, [data, setValue]);
 
@@ -542,7 +545,7 @@ const PoolConfiguration = ({
             </FormControl>
             {data &&
               watchLiquidationIncentive !==
-                parseInt(utils.formatUnits(data.liquidationIncentive, 16)) && (
+                parseInt(utils.formatUnits(data.liquidationIncentive, 16)) - 100 && (
                 <Button
                   type="submit"
                   ml={{ base: 'auto', md: 4 }}
