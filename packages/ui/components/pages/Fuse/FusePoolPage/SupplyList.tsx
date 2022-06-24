@@ -299,7 +299,9 @@ const AssetSupplyRow = ({
                   placement="top-start"
                   body={
                     <>
-                      This token has a ERC4626 strategy enabled. Read more about it{' '}
+                      This market is using the <b>{asset.plugin.strategyName}</b> ERC4626 Strategy.
+                      <br />
+                      Read more about it{' '}
                       <ChakraLink
                         href={URL_MIDAS_DOCS}
                         isExternal
