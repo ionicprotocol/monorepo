@@ -295,31 +295,34 @@ const AssetSupplyRow = ({
               </SimpleTooltip>
 
               {asset.plugin && (
-                <PopoverTooltip
-                  placement="top-start"
-                  body={
-                    <>
-                      This market is using the <b>{asset.plugin.strategyName}</b> ERC4626 Strategy.
-                      <br />
-                      Read more about it{' '}
-                      <ChakraLink
-                        href={URL_MIDAS_DOCS}
-                        isExternal
-                        variant={'color'}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        in our Docs <ExternalLinkIcon mx="2px" />
-                      </ChakraLink>
-                      .
-                    </>
-                  }
-                >
-                  <span role="img" aria-label="plugin">
-                    🔌
-                  </span>
-                </PopoverTooltip>
+                <Box>
+                  <PopoverTooltip
+                    placement="top-start"
+                    body={
+                      <>
+                        This market is using the <b>{asset.plugin.strategyName}</b> ERC4626
+                        Strategy.
+                        <br />
+                        Read more about it{' '}
+                        <ChakraLink
+                          href={URL_MIDAS_DOCS}
+                          isExternal
+                          variant={'color'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          in our Docs <ExternalLinkIcon mx="2px" />
+                        </ChakraLink>
+                        .
+                      </>
+                    }
+                  >
+                    <span role="img" aria-label="plugin">
+                      🔌
+                    </span>
+                  </PopoverTooltip>
+                </Box>
               )}
             </HStack>
           </Row>
