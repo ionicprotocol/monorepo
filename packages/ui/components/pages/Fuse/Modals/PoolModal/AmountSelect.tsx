@@ -96,7 +96,7 @@ const AmountSelect = ({
 
       const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(utils.formatUnits(asset.totalBorrow));
+      const borrowedAmount = Number(utils.formatUnits(asset.borrowBalance));
       setBorrowedAmount(borrowedAmount);
     };
 
