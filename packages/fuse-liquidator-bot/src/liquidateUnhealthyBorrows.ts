@@ -15,7 +15,7 @@ export default async function liquidateUnhealthyBorrows(fuse: Fuse, retries = 0)
   } catch (e) {
     console.log(`Error fetching potential liquidations: ${e}, timing out and re-trying`);
     retries += 1;
-    await new Promise((resolve) => setTimeout(resolve, (retries + 1) * 1000));
+    await new Promise((resolve) => setTimeout(resolve, (retries + 1) * 5000));
     await liquidateUnhealthyBorrows(fuse, retries);
   }
 
