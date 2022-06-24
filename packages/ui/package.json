@@ -22,7 +22,7 @@
     "apexcharts": "^3.35.3",
     "axios": "^0.27.2",
     "ethers": "^5.6.9",
-    "framer-motion": "^6.3.12",
+    "framer-motion": "^6.3.13",
     "fuse.js": "^6.6.2",
     "logrocket": "^3.0.1",
     "mathjs": "^10.6.1",
@@ -57,7 +57,7 @@
     "eslint-import-resolver-typescript": "^2.7.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.0.0",
-    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react": "^7.30.1",
     "prettier": "2.7.1",
     "typescript": "4.7.4"
   }
