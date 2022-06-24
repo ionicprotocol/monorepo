@@ -23,7 +23,7 @@ import {
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
@@ -83,6 +83,25 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
 
   const { cCard, cSwitch } = useColors();
+  const [borrowableAmount, setBorrowableAmount] = useState<number>(0);
+  const [borrowedAmount, setBorrowedAmount] = useState<number>(0);
+  useEffect(() => {
+    const func = async () => {
+      const borrowableAmountBN = (await fetchMaxAmount(
+        FundOperationMode.BORROW,
+        fuse,
+        address,
+        asset
+      )) as BigNumber;
+
+      const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
+      setBorrowableAmount(borrowableAmount);
+      const borrowedAmount = Number(utils.formatUnits(asset.totalBorrow));
+      setBorrowedAmount(borrowedAmount);
+    };
+
+    func();
+  }, [address, asset, fuse]);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -298,8 +317,14 @@ const AmountSelect = ({
                   <TokenNameAndMaxButton mode={mode} asset={asset} updateAmount={updateAmount} />
                 </Row>
               </DashboardBox>
-              {mode === FundOperationMode.BORROW && (
-                <MaxBorrowSlider updateAmount={updateAmount} asset={asset} />
+              {mode === FundOperationMode.BORROW && borrowableAmount + borrowedAmount !== 0 && (
+                <MaxBorrowSlider
+                  userEnteredAmount={userEnteredAmount}
+                  updateAmount={updateAmount}
+                  borrowableAmount={borrowableAmount}
+                  borrowedAmount={borrowedAmount}
+                  underlyingPrice={asset.underlyingPrice}
+                />
               )}
             </Column>
 
