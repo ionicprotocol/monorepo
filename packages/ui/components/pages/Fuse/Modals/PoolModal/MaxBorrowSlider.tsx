@@ -107,7 +107,7 @@ function MaxBorrowSlider({
               <SliderTrack>
                 <SliderFilledTrack />
               </SliderTrack>
-              <SimpleTooltip label={`${sliderValue}%`} isOpen>
+              <SimpleTooltip label={`${sliderValue}%`} isOpen zIndex={999}>
                 <SliderThumb />
               </SimpleTooltip>
             </Slider>
