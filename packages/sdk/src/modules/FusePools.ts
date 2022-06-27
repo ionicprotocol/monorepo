@@ -1,11 +1,11 @@
-import { BigNumber, BigNumberish, Contract, utils } from "ethers";
+import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
+import { filterOnlyObjectProperties, filterPoolName, getContract } from "../Fuse/utils";
 import { FuseBaseConstructor, FusePoolData, NativePricedFuseAsset } from "../types";
 
 export type LensPoolsWithData = [
@@ -52,7 +52,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       const promises: Promise<any>[] = [];
 
-      const comptrollerContract = new Contract(
+      const comptrollerContract = getContract(
         comptroller,
         this.chainDeployment.Comptroller.abi,
         this.provider.getSigner()
@@ -224,11 +224,11 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
     ): T => {
       switch (implementation) {
         case "CErc20PluginDelegate":
-          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
+          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
         case "CErc20PluginRewardsDelegate":
-          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
+          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
         default:
-          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
+          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
       }
     };
   };

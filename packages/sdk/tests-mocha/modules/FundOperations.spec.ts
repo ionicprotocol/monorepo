@@ -1,5 +1,4 @@
 import axios from "axios";
-import { expect } from "chai";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
@@ -8,6 +7,7 @@ import { FuseBase } from "../../src/Fuse/index";
 import * as utilsFns from "../../src/Fuse/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
 import { FuseBaseConstructor } from "../../src/types";
+import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 describe("FundOperation", () => {
