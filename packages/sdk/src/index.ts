@@ -12,6 +12,7 @@ export {
   FusePoolData,
   NativePricedFuseAsset,
   FuseAsset,
+  SupportedAsset,
   InterestRateModelType,
   AssetPluginConfig,
   MarketConfig,
