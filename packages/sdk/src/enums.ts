@@ -28,9 +28,14 @@ export enum DelegateContractName {
 }
 
 export enum OracleTypes {
+  ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
+  CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
+  DiaPriceOracle = "DiaPriceOracle",
+  FixedNativePriceOracle = "FixedNativePriceOracle",
+  FluxPriceOracle = "FluxPriceOracle",
   MasterPriceOracle = "MasterPriceOracle",
   SimplePriceOracle = "SimplePriceOracle",
-  ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
+  UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
 }
 
