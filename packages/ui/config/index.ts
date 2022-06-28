@@ -7,6 +7,8 @@ type CONFIG = {
   isMoonbeamEnabled: boolean;
   isTestnetEnabled: boolean;
   allowedAddresses: string[];
+  productDomain: string | undefined;
+  productUrl: string | undefined;
 };
 
 const config: CONFIG = {
@@ -20,6 +22,8 @@ const config: CONFIG = {
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')
     : [],
+  productDomain: process.env.PRODUCT_DOMAIN,
+  productUrl: process.env.PRODUCT_URL,
 };
 
 export { config };
