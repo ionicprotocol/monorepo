@@ -24,6 +24,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
   },
+  minBorrow: utils.parseUnits("500000"),
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {

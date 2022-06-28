@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
@@ -32,6 +32,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying, // GLMR-GLINT
     ],
   },
+  minBorrow: utils.parseUnits("200"),
 };
 
 const diaAssets: DiaAsset[] = [

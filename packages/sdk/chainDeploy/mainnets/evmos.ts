@@ -1,3 +1,5 @@
+import { utils } from "ethers";
+
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
@@ -22,6 +24,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "",
     uniswapOracleInitialDeployTokens: [],
   },
+  minBorrow: utils.parseUnits("50"),
 };
 
 const diaAssets: DiaAsset[] = [

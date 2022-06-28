@@ -58,7 +58,11 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(`ffd fee updated to ${feeAfter}`);
   }
 
-  tx = await fuseFeeDistributor._setPoolLimits(10, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
+  tx = await fuseFeeDistributor._setPoolLimits(
+    chainDeployParams.minBorrow,
+    ethers.constants.MaxUint256,
+    ethers.constants.MaxUint256
+  );
   await tx.wait();
   console.log("FuseFeeDistributor pool limits set", tx.hash);
 
