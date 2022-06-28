@@ -16,7 +16,6 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import React, { useCallback, useMemo, useState } from 'react';
-import { useAccount } from 'wagmi';
 
 import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';
 import CreateFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/CreateFlywheelModal';
@@ -25,6 +24,7 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
+import { useRari } from '@ui/context/RariContext';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/usePoolIncentives';
@@ -150,10 +150,10 @@ const FlywheelRow = ({
   pool: PoolData;
   onClick: (fw: Flywheel) => void;
 }) => {
-  const { data: accountData } = useAccount();
+  const { address } = useRari();
 
   // TODO check authority here as well.
-  const isAdmin = accountData?.address === flywheel.owner;
+  const isAdmin = address === flywheel.owner;
   const { data: tokenData } = useTokenData(flywheel.rewardToken);
   // TODO filter out rewards of markets of other pools!
 
