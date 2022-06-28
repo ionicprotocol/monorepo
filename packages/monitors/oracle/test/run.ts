@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { SupportedChains } from "@midas-capital/sdk";
 
-import { logger, setUpSdk, fetchAssetPrices } from "../src";
+import { fetchAssetPrices, logger, setUpSdk } from "../src";
 
 (async function () {
   const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
