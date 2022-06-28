@@ -102,7 +102,7 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
                 statB={
                   totalSuppliedFiat.toString() === '0'
                     ? '0%'
-                    : (totalBorrowedFiat / totalSuppliedFiat / 100).toFixed(2) + '%'
+                    : poolData.utilization.toFixed(2) + '%'
                 }
               />
               <StatRow
