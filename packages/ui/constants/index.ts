@@ -27,6 +27,8 @@ export const ADMIN_FEE = {
   MAX: 30,
 };
 
+export const POOLS_PER_PAGE = 5;
+
 // enums
 
 export enum FusePoolMetric {
