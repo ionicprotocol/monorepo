@@ -133,7 +133,6 @@ export const assets: SupportedAsset[] = [
     underlying: "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b",
     name: "xBOMB",
     decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV2,
   },
   {
     symbol: assetSymbols["BTCB-BOMB"],
