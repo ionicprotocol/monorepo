@@ -115,7 +115,7 @@ const FusePoolList = () => {
       {(viewMode === 'card' || isMobile) &&
         (!isLoading ? (
           <>
-            {poolsUserSupplied && poolsUserSupplied.length && (
+            {poolsUserSupplied && poolsUserSupplied.length !== 0 && (
               <>
                 <Grid
                   templateRows={{
@@ -146,7 +146,7 @@ const FusePoolList = () => {
               </>
             )}
 
-            {currentPools && currentPools.length ? (
+            {currentPools && currentPools.length !== 0 && (
               <Grid
                 templateRows={{
                   base: 'repeat(1, minmax(0, 1fr))',
@@ -164,7 +164,8 @@ const FusePoolList = () => {
                   return <PoolCard data={pool} key={index} />;
                 })}
               </Grid>
-            ) : (
+            )}
+            {filteredPools.length === 0 && (
               <Text width="100%" textAlign="center" fontWeight="bold" fontSize={24} mt={12}>
                 No pools found
               </Text>
@@ -227,7 +228,7 @@ const FusePoolList = () => {
                   />
                 </>
               )}
-              {currentPools && currentPools.length !== 0 ? (
+              {currentPools && currentPools.length !== 0 && (
                 <>
                   {currentPools.map((pool: FusePoolData, index: number) => (
                     <PoolRow data={pool} key={index} />
@@ -284,7 +285,8 @@ const FusePoolList = () => {
                     </Pagination>
                   </Stack>
                 </>
-              ) : (
+              )}
+              {filteredPools.length === 0 && (
                 <Text width="100%" textAlign="center" fontWeight="bold" fontSize={24} my={24}>
                   No pools found
                 </Text>
