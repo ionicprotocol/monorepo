@@ -43,7 +43,7 @@ jobs:
 
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development'
-        run: netlify deploy --branch development --prod --build --context branch-deploy
+        run: netlify deploy --alias testnet --prod --build --context branch-deploy
 
       - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
