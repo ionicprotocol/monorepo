@@ -2347,7 +2347,7 @@ __metadata:
     apexcharts: ^3.35.3
     axios: ^0.27.2
     eslint: 8.18.0
-    eslint-config-next: 12.1.6
+    eslint-config-next: 12.2.0
     eslint-config-prettier: ^8.5.0
     eslint-import-resolver-typescript: ^3.1.1
     eslint-plugin-import: ^2.26.0
@@ -2357,7 +2357,7 @@ __metadata:
     framer-motion: ^6.3.16
     fuse.js: ^6.6.2
     logrocket: ^3.0.1
-    mathjs: ^10.6.3
+    mathjs: ^10.6.4
     next: ^12.2.0
     next-i18next: ^11.0.0
     prettier: 2.7.1
@@ -2372,7 +2372,7 @@ __metadata:
     react-jazzicon: ^1.0.4
     react-query: ^3.39.1
     typescript: 4.7.4
-    wagmi: ^0.5.2
+    wagmi: ^0.5.5
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -2405,8 +2405,8 @@ __metadata:
   linkType: hard
 
 "@netlify/plugin-nextjs@npm:latest":
-  version: 4.9.3
-  resolution: "@netlify/plugin-nextjs@npm:4.9.3"
+  version: 4.10.1
+  resolution: "@netlify/plugin-nextjs@npm:4.10.1"
   dependencies:
     "@netlify/functions": ^1.0.0
     "@netlify/ipx": ^1.1.2
@@ -2426,7 +2426,7 @@ __metadata:
     tiny-glob: ^0.2.9
   peerDependencies:
     next: "*"
-  checksum: 0b988b55dfb54717ed35e742e92e25685e24af8c12d613b37e5b9baeeda64096acc8828dcf93d4601dcb0da76327ca74301f0230f89c20cc1eb261ba366f7f88
+  checksum: 9a5c358e95e3bd6ff1bc71c88de8ee8577bc21f9ee79d12143c391fc37eb3a7eadc5e1e9f2cef26d5f86bb48cc1b3f983695bfc80c6391f9954f3de8c187b4bb
   languageName: node
   linkType: hard
 
@@ -2437,12 +2437,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@next/eslint-plugin-next@npm:12.1.6":
-  version: 12.1.6
-  resolution: "@next/eslint-plugin-next@npm:12.1.6"
+"@next/eslint-plugin-next@npm:12.2.0":
+  version: 12.2.0
+  resolution: "@next/eslint-plugin-next@npm:12.2.0"
   dependencies:
     glob: 7.1.7
-  checksum: 33dcaf71f299d3c8a0744cad512369f92d7a355f3c0d57f2496e888e4242080c49226ec2c59ba2efac04b3a1df51c36019b853b4177df082ca4621a1713a2229
+  checksum: 2e33b9af79af680fd873d74e91bed397930a91802c1d7a293db757227ebc431d3d856de69477dc178dec8b531635ea69d79b188293024f1371afe6c348dbe647
   languageName: node
   linkType: hard
 
@@ -7711,11 +7711,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint-config-next@npm:12.1.6":
-  version: 12.1.6
-  resolution: "eslint-config-next@npm:12.1.6"
+"eslint-config-next@npm:12.2.0":
+  version: 12.2.0
+  resolution: "eslint-config-next@npm:12.2.0"
   dependencies:
-    "@next/eslint-plugin-next": 12.1.6
+    "@next/eslint-plugin-next": 12.2.0
     "@rushstack/eslint-patch": ^1.1.3
     "@typescript-eslint/parser": ^5.21.0
     eslint-import-resolver-node: ^0.3.6
@@ -7726,12 +7726,11 @@ __metadata:
     eslint-plugin-react-hooks: ^4.5.0
   peerDependencies:
     eslint: ^7.23.0 || ^8.0.0
-    next: ">=10.2.0"
     typescript: ">=3.3.1"
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: b3ba9e8f598b4018002aaaa64dc0e8a8b5994be992839a8b1b0a7f7ab0e4cbe006a30fd787524baab7c1e979dc6b41d4cdcbe239be181635413d987be7f25b6f
+  checksum: 014d9a9166ed1d6facc8d67d25bb613d1ceaa0d407a83ee3a6b180fe134bf49ffc6e109b2d3c70b1afeda883ebc45bb0aa1ab079fd9e97344e257321ab4209f6
   languageName: node
   linkType: hard
 
@@ -8384,7 +8383,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
+  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
   languageName: node
   linkType: hard
 
@@ -9921,8 +9920,8 @@ __metadata:
   linkType: hard
 
 "hardhat-deploy@npm:^0.11.10, hardhat-deploy@npm:^0.11.5":
-  version: 0.11.10
-  resolution: "hardhat-deploy@npm:0.11.10"
+  version: 0.11.11
+  resolution: "hardhat-deploy@npm:0.11.11"
   dependencies:
     "@types/qs": ^6.9.7
     axios: ^0.21.1
@@ -9936,8 +9935,8 @@ __metadata:
     match-all: ^1.2.6
     murmur-128: ^0.2.1
     qs: ^6.9.4
-    zksync-web3: ^0.4.0
-  checksum: 10506cafb4af7ed0784f9bf0586e6eabe6285783350ffc7cb50f3805e696fdac0c6004b2ed0489b96a41814a32e12081051f75d51f47063439b5e89430194108
+    zksync-web3: ^0.7.8
+  checksum: 08b7ccadbfa0dc9f52691f2f4892ec3e89f0773cf795a9c7f604d783fe85e0bd8886b0b2c8f013c26e5a0007f7cbcb096ff246ad26f48d6e70ad3bd7f79a984d
   languageName: node
   linkType: hard
 
@@ -12276,9 +12275,9 @@ __metadata:
   linkType: hard
 
 "lru-cache@npm:^7.7.1":
-  version: 7.10.2
-  resolution: "lru-cache@npm:7.10.2"
-  checksum: b8f98064c981ce98e2a3b82903726dd28d842f54b7f53e1d6029c6836546243d4157b8495a405c062209715c612050150bdf30b5fa8200d5a3559fb0fd4072c1
+  version: 7.10.3
+  resolution: "lru-cache@npm:7.10.3"
+  checksum: 4c16db441ad8262591b0ef6cb9f0bf95576dd4588614af241665733719db09664f7eab16d5c71bdf7b830f25fa0b76017591e3c70d0510a7cb3bcdce97e34b6e
   languageName: node
   linkType: hard
 
@@ -12385,7 +12384,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mathjs@npm:^10.6.3":
+"mathjs@npm:^10.6.4":
   version: 10.6.4
   resolution: "mathjs@npm:10.6.4"
   dependencies:
@@ -18170,7 +18169,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.5.2":
+"wagmi@npm:^0.5.5":
   version: 0.5.5
   resolution: "wagmi@npm:0.5.5"
   dependencies:
@@ -19138,12 +19137,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zksync-web3@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "zksync-web3@npm:0.4.0"
+"zksync-web3@npm:^0.7.8":
+  version: 0.7.8
+  resolution: "zksync-web3@npm:0.7.8"
   peerDependencies:
     ethers: ~5.5.0
-  checksum: 76f2956ef09d2b3d6806b2990cf6aad4508f23ef8cdfc0089a64a16d178395dabc5fff30abad7997acb012567dc0565326af2a148ce40d45d747eed22439e812
+  checksum: d899c62afa48a65d5a873a26fb49cad06fe1042d929b85c207d2eae917b6d7137e2b09733c5a24bff692a37bc44f34e7683198b3cff6d128210bc3ef9deb1acb
   languageName: node
   linkType: hard
 
