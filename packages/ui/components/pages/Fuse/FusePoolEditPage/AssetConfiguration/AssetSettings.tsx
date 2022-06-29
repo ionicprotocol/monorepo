@@ -1,6 +1,7 @@
 // Chakra and UI
 import { QuestionIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
   Flex,
   FormControl,
@@ -537,33 +538,35 @@ export const AssetSettings = ({
       {/* Plugin */}
       <ModalDivider />
       <HStack px={8} py={4} w="100%" justifyContent={'space-between'}>
-        <PopoverTooltip
-          body={
-            <>
-              Token can have{' '}
-              <Link href="https://eips.ethereum.org/EIPS/eip-4626" variant={'color'} isExternal>
-                ERC4626 strategies
-              </Link>{' '}
-              , allowing users to utilize their deposits (e.g. to stake them for rewards) while
-              using them as collateral. To learn mode about it, check out our{' '}
-              <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
-                docs
-              </Link>
-              .
-            </>
-          }
-        >
-          <HStack>
-            <Text fontWeight="bold">Rewards Plugin </Text>
-            <QuestionIcon
-              color={cCard.txtColor}
-              bg={cCard.bgColor}
-              borderRadius={'50%'}
-              ml={1}
-              mb="4px"
-            />
-          </HStack>
-        </PopoverTooltip>
+        <Box>
+          <PopoverTooltip
+            body={
+              <>
+                Token can have{' '}
+                <Link href="https://eips.ethereum.org/EIPS/eip-4626" variant={'color'} isExternal>
+                  ERC4626 strategies
+                </Link>{' '}
+                , allowing users to utilize their deposits (e.g. to stake them for rewards) while
+                using them as collateral. To learn mode about it, check out our{' '}
+                <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
+                  docs
+                </Link>
+                .
+              </>
+            }
+          >
+            <HStack>
+              <Text fontWeight="bold">Rewards Plugin </Text>
+              <QuestionIcon
+                color={cCard.txtColor}
+                bg={cCard.bgColor}
+                borderRadius={'50%'}
+                ml={1}
+                mb="4px"
+              />
+            </HStack>
+          </PopoverTooltip>
+        </Box>
         <Text ml={{ base: 'auto' }} mt={{ base: 2 }}>
           {pluginName}
         </Text>

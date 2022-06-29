@@ -24,7 +24,6 @@ on:
 
 jobs:
   lint-bots:
-    #   - build-and-test-local
     runs-on: ubuntu-latest
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -59,6 +58,9 @@ jobs:
 
       - name: Lint `fuse-twap-bot`
         run: yarn workspace @midas-capital/fuse-twap-bot lint
+
+      - name: Lint `oracles-monitor`
+        run: yarn workspace @midas-capital/oracles-monitor lint
 
   build-and-push-liquidator-image:
     env:
@@ -145,37 +147,81 @@ jobs:
     outputs:
       json: ${{ steps.meta.outputs.json }}
 
+  build-and-push-oracles-monitor-image:
+    env:
+      REGISTRY: ghcr.io
+      IMAGE_NAME: midas-protocol/oracles-monitor
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: '${{ secrets.ACCESS_TOKEN }}'
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=long
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          file: docker/oracles-monitor/Dockerfile
+
+    outputs:
+      json: ${{ steps.meta.outputs.json }}
+
   smoke-tests:
     runs-on: ubuntu-latest
-    needs: [build-and-push-liquidator-image, build-and-push-twap-image, lint-bots]
+    needs:
+      [
+        build-and-push-liquidator-image,
+        build-and-push-twap-image,
+        build-and-push-oracles-monitor-image,
+        lint-bots,
+      ]
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
       POKT_API_KEY: '${{ secrets.POKT_API_KEY }}'
       TWAP_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-twap-image.outputs.json).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-liquidator-image.outputs.json).tags[0] }}
+      ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.build-and-push-oracles-monitor-image.outputs.json).tags[0] }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: run smoke tests for twap bot
-        run: |
-          docker run -t --entrypoint node \
-                         -e ETHEREUM_ADMIN_ACCOUNT=$ETHEREUM_ADMIN_ACCOUNT \
-                         -e ETHEREUM_ADMIN_PRIVATE_KEY=$ETHEREUM_ADMIN_PRIVATE_KEY \
-                         -e WEB3_HTTP_PROVIDER_URL="https://bsc-mainnet.gateway.pokt.network/v1/lb/${POKT_API_KEY}" \
-                         -e TARGET_CHAIN_ID=56 \
-                         -e SUPPORTED_PAIRS="0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6|0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c" \
-                         ${TWAP_BOT_IMAGE} build/test/run.js
-
       - name: run smoke tests for liquidator bot
-        run: |
-          docker run -t --entrypoint node \
-                         -e ETHEREUM_ADMIN_ACCOUNT=$ETHEREUM_ADMIN_ACCOUNT \
-                         -e ETHEREUM_ADMIN_PRIVATE_KEY=$ETHEREUM_ADMIN_PRIVATE_KEY \
-                         -e WEB3_HTTP_PROVIDER_URL="https://bsc-mainnet.gateway.pokt.network/v1/lb/${POKT_API_KEY}" \
-                         -e TARGET_CHAIN_ID=56 \
-                         ${LIQUIDATOR_BOT_IMAGE} build/test/run.js
+        working-directory: ./ops
+        run: make fuse-liquidator-bot-smoke-test
+
+      - name: run smoke tests for twap bot
+        working-directory: ./ops
+        run: make fuse-twap-bot-smoke-test
+
+      - name: run smoke tests for oracles montior
+        working-directory: ./ops
+        run: make oracles-monitor-smoke-test
+
     outputs:
       twap-tags: ${{ needs.build-and-push-twap-image.outputs.json }}
       liquidator-tags: ${{ needs.build-and-push-liquidator-image.outputs.json }}
