@@ -35,16 +35,14 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
-
-      - name: Link with Netlify Project
-        run: netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
-
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development'
-        run: netlify deploy --branch development --prod --build --context branch-deploy
+        run: |
+          netlify link --id ${{ secrets.NETLIFY_SITE_ID_DEVELOPMENT }}
+          netlify deploy --prod --build --context branch-deploy
 
       - name: Deploy `Production`
         if: github.ref == 'refs/heads/main'
-        run: netlify deploy --prod --build --context production
+        run: |
+          netlify link --id ${{ secrets.NETLIFY_SITE_ID }}
+          netlify deploy --prod --build --context production

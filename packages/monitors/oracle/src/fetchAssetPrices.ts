@@ -1,12 +1,11 @@
 import { Fuse } from "@midas-capital/sdk";
-import { BigNumber } from "ethers";
 
-import { verifyPriceFeed } from "./index";
+import { SupportedAssetPriceFeed, verifyPriceFeed } from "./index";
 
-export default async function fetchAssetPrices(fuse: Fuse): Promise<BigNumber[]> {
+export default async function fetchAssetPrices(fuse: Fuse): Promise<SupportedAssetPriceFeed[]> {
   const supportedAssets = fuse.supportedAssets;
-  const results: BigNumber[] = await Promise.all(
-    supportedAssets.map(async (a): Promise<BigNumber> => {
+  const results = await Promise.all(
+    supportedAssets.map(async (a): Promise<SupportedAssetPriceFeed> => {
       return await verifyPriceFeed(fuse, a);
     })
   );

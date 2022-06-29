@@ -26,7 +26,7 @@ COPY .yarnrc.yml /tmp/build/
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
-COPY packages/bots/fuse-twap-bot/package.json /tmp/build/packages/bots/fuse-twap-bot/
+COPY packages/monitors/oracle/package.json /tmp/build/packages/monitors/oracle/
 
 RUN touch /tmp/build/yarn.lock
 
@@ -36,10 +36,10 @@ RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
-COPY packages/bots/fuse-twap-bot /tmp/build/packages/bots/fuse-twap-bot
+COPY packages/monitors/oracle /tmp/build/packages/monitors/oracle
 
 # ----- build -----
-RUN yarn build:deploy:twap
+RUN yarn build:deploy:oracles-monitor
 
 # ----------------------------------------
 # Copy files to the deployment image.
@@ -47,16 +47,13 @@ RUN yarn build:deploy:twap
 
 FROM node as runtime
 
-RUN npm install pm2 -pg
-
 # ----- Copy files required at runtime by the app -----
 COPY --from=build --chown=node:node /tmp/build /home/node
-COPY docker/wait-for-hh.sh /home/node/packages/bots/fuse-twap-bot/wait-for-hh.sh
+COPY docker/wait-for-hh.sh /home/node/packages/monitors/oracle/wait-for-hh.sh
 
-RUN chmod +x /home/node/packages/bots/fuse-twap-bot/wait-for-hh.sh
+RUN chmod +x /home/node/packages/monitors/oracle/wait-for-hh.sh
 
-WORKDIR /home/node/packages/bots/fuse-twap-bot
-
+WORKDIR /home/node/packages/monitors/oracle
 
 CMD ["node", "build/index.js"]
 
