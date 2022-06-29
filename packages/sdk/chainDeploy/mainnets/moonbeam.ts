@@ -5,6 +5,7 @@ import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../s
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
+import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -162,4 +163,25 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
+
+  ////
+
+  // Plugins & Rewards
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
+
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+  await deployERC4626Plugin({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+    dynamicFlywheels,
+  });
 };
