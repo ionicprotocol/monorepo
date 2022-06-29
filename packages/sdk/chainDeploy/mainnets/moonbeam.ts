@@ -96,12 +96,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
 
 const diaAssets: DiaAsset[] = [
   {
-    symbol: assetSymbols.KSM,
-    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.KSM)!.underlying,
-    feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
-    key: "KSM/USD",
-  },
-  {
     symbol: assetSymbols.FTM,
     underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.FTM)!.underlying,
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
