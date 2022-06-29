@@ -348,17 +348,9 @@ const AssetSupplyRow = ({
                     <TokenWithLabel address={info.rewardToken} size="2xs" />
                   </HStack>
                   {info.formattedAPR && (
-                    <SimpleTooltip
-                      label={`The APR accrued by this auto-compounding asset and the value of each token grows in price. This is not controlled by the market.`}
-                    >
-                      <Text
-                        color={cCard.txtColor}
-                        fontSize={{ base: '2.8vw', sm: '0.8rem' }}
-                        ml={1}
-                      >
-                        {aprFormatter(info.formattedAPR)}%
-                      </Text>
-                    </SimpleTooltip>
+                    <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+                      {aprFormatter(info.formattedAPR)}%
+                    </Text>
                   )}
                 </HStack>
               ))}
