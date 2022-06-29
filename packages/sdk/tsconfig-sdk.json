@@ -10,7 +10,8 @@
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
     "outDir": "./dist/esm",
-    "declaration": true
+    "declaration": true,
+    "skipLibCheck": true
   },
   "include": ["./src"],
   "exclude": ["./lib/contracts/typechain"]

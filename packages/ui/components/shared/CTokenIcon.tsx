@@ -1,14 +1,6 @@
 import { Avatar, AvatarGroup, AvatarGroupProps, AvatarProps } from '@chakra-ui/avatar';
 import { SpinnerIcon } from '@chakra-ui/icons';
-import {
-  HStack,
-  Icon,
-  IconProps,
-  Skeleton,
-  Text,
-  useColorMode,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { HStack, Icon, IconProps, Skeleton, Text, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -76,20 +68,18 @@ export const TokenWithLabel = ({
   address: string;
 } & Partial<AvatarProps>) => {
   const { data: tokenData, isLoading } = useTokenData(address);
-  const { colorMode } = useColorMode();
+  const fallbackImage = useColorModeValue(
+    '/images/help-circle-dark.svg',
+    "'/images/help-circle-light.svg'"
+  );
 
   return (
-    <Skeleton isLoaded={!isLoading} width={'100%'}>
-      <HStack>
+    <Skeleton isLoaded={!isLoading} m={0}>
+      <HStack width={'100%'} alignItems="flex-start" justifyContent={'flex-start'}>
         <Avatar
-          key={address}
           name={tokenData?.symbol ?? 'Loading...'}
-          src={
-            tokenData?.logoURL ||
-            (colorMode === 'light'
-              ? '/images/help-circle-dark.svg'
-              : '/images/help-circle-light.svg')
-          }
+          src={tokenData?.logoURL || fallbackImage}
+          m={0}
           {...avatarProps}
         />
         {!tokenData && <Text>LOAD</Text>}

@@ -343,17 +343,14 @@ const AssetSupplyRow = ({
 
               {rewardsOfThisMarket?.rewardsInfo.map((info) => (
                 <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-                  <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                  <TokenWithLabel address={info.rewardToken} size="2xs" />
-
+                  <HStack mr={2}>
+                    <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+                    <TokenWithLabel address={info.rewardToken} size="2xs" />
+                  </HStack>
                   {info.formattedAPR && (
-                    <SimpleTooltip
-                      label={`The APR accrued by this auto-compounding asset and the value of each token grows in price. This is not controlled by Market!`}
-                    >
-                      <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
-                        {aprFormatter(info.formattedAPR)}% APR
-                      </Text>
-                    </SimpleTooltip>
+                    <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+                      {aprFormatter(info.formattedAPR)}%
+                    </Text>
                   )}
                 </HStack>
               ))}
