@@ -34,7 +34,7 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { UserAction } from '@ui/constants/index';
+import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -46,6 +46,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
+import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 interface AmountSelectProps {
   assets: MarketData[];
@@ -112,7 +113,10 @@ const AmountSelect = ({
 
     _setUserEnteredAmount(newAmount);
 
-    const bigAmount = utils.parseUnits(newAmount, tokenData?.decimals);
+    const bigAmount = utils.parseUnits(
+      toFixedNoRound(Number(newAmount), tokenData?.decimals || DEFAULT_DECIMALS),
+      tokenData?.decimals
+    );
     try {
       _setAmount(bigAmount);
     } catch (e) {
