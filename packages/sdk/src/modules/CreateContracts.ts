@@ -1,4 +1,4 @@
-import { Contract } from "ethers";
+import { Contract, Signer } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
@@ -12,8 +12,8 @@ import { Artifacts, FuseBaseConstructor } from "../types";
 
 export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
-    createContractInstance<T extends Contract>(contract: keyof Artifacts) {
-      return (address: string) => new Contract(address, this.artifacts[contract].abi, this.provider.getSigner()) as T;
+    createContractInstance<T extends Contract>(contract: keyof Artifacts, signer: Signer = this.provider.getSigner()) {
+      return (address: string) => new Contract(address, this.artifacts[contract].abi, signer) as T;
     }
 
     createUnitroller = this.createContractInstance<Unitroller>("Unitroller");
@@ -21,38 +21,30 @@ export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBa
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
 
-    createRewardsDistributor(distributorAddress: string) {
+    createRewardsDistributor(distributorAddress: string, signer: Signer = this.provider.getSigner()) {
       return new Contract(
         distributorAddress,
         this.chainDeployment.RewardsDistributorDelegate.abi,
-        this.provider.getSigner()
+        signer
       ) as RewardsDistributorDelegate;
     }
-    createComptroller(comptrollerAddress: string) {
-      return new Contract(
-        comptrollerAddress,
-        this.chainDeployment.Comptroller.abi,
-        this.provider.getSigner()
-      ) as Comptroller;
+    createComptroller(comptrollerAddress: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signer) as Comptroller;
     }
 
-    createOracle(oracleAddress: string, type: string) {
-      return new Contract(oracleAddress, this.chainDeployment[type].abi, this.provider.getSigner());
+    createOracle(oracleAddress: string, type: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(oracleAddress, this.chainDeployment[type].abi, signer);
     }
 
-    createCToken(cTokenAddress: string) {
-      return new Contract(
-        cTokenAddress,
-        this.chainDeployment.CErc20Delegate.abi,
-        this.provider.getSigner()
-      ) as CErc20Delegate;
+    createCToken(cTokenAddress: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signer) as CErc20Delegate;
     }
 
-    createMasterPriceOracle() {
+    createMasterPriceOracle(signer: Signer = this.provider.getSigner()) {
       return new Contract(
         this.chainDeployment.MasterPriceOracle.address!,
         this.chainDeployment.MasterPriceOracle.abi,
-        this.provider.getSigner()
+        signer
       ) as MasterPriceOracle;
     }
   };
