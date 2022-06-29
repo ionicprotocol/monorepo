@@ -1,7 +1,7 @@
 import { DelegateContractName, SupportedChains } from "../enums";
 import { ChainPlugins } from "../types";
 
-import { assetSymbols, bscAssets, chapelAssets } from "./assets";
+import { assetSymbols, bscAssets, chapelAssets, moonbeamAssets } from "./assets";
 
 const chainPluginConfig: ChainPlugins = {
   [SupportedChains.ganache]: {
@@ -213,7 +213,40 @@ const chainPluginConfig: ChainPlugins = {
 
   [SupportedChains.evmos_testnet]: {},
   [SupportedChains.evmos]: {},
-  [SupportedChains.moonbeam]: {},
+  [SupportedChains.moonbeam]: {
+    [moonbeamAssets.find((a) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying]: [
+      {
+        cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
+        strategyName: "GLMR-GLINT LP Staker with GLINT Rewards",
+        strategyCode: "BeamERC4626_GLMR-GLNT",
+        strategyAddress: "0x1b34c8A1a414a3642877Dc78C5E1eEfE5FF831bA",
+        flywheels: [
+          {
+            // FuseFlywheelCore_GLINT.json
+            address: "0xF57b2bD963F61C556F89e6dCb590A758eAd2F37B",
+            // GLINT rewards
+            rewardToken: moonbeamAssets.find((a) => a.symbol === assetSymbols.GLINT)!.underlying,
+          },
+        ],
+      },
+    ],
+    [moonbeamAssets.find((a) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying]: [
+      {
+        cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
+        strategyName: "GLMR-USDC LP Staker with GLINT Rewards",
+        strategyCode: "BeamERC4626_GLMR-USDC",
+        strategyAddress: "0xd17B82A8017a3C5c5c3Fa3eBc4AE12a164997CC1",
+        flywheels: [
+          {
+            // FuseFlywheelCore_GLINT.json
+            address: "0xF57b2bD963F61C556F89e6dCb590A758eAd2F37B",
+            // GLINT rewards
+            rewardToken: moonbeamAssets.find((a) => a.symbol === assetSymbols.GLINT)!.underlying,
+          },
+        ],
+      },
+    ],
+  },
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.aurora]: {},
   [SupportedChains.neon_devnet]: {},
