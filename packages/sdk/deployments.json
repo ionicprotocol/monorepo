@@ -72224,7 +72224,7 @@
           ]
         },
         "FusePoolLens": {
-          "address": "0x9337516A65F106df4d3DC8E2E2852C2B8D84B122",
+          "address": "0x089177a608191681dD0d7Ea7a30a718440a1fE3c",
           "abi": [
             {
               "anonymous": false,
@@ -73088,7 +73088,7 @@
           ]
         },
         "FusePoolLensSecondary": {
-          "address": "0x426ac08727Fe7A0cD656dd573400128E8745A596",
+          "address": "0x563F55f2Db3B7b683D4f51d9c250eD5dA87b6000",
           "abi": [
             {
               "anonymous": false,
