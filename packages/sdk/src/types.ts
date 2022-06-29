@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { DelegateContractName, LiquidationStrategy, RedemptionStrategy, SupportedChains } from "./enums";
+import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
 import { FuseBase } from "./Fuse";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./Fuse/irm/JumpRateModel";
@@ -226,6 +226,7 @@ export type SupportedAsset = {
   underlying: string;
   name: string;
   decimals: number;
+  oracle?: OracleTypes;
   simplePriceOracleAssetPrice?: BigNumber;
 };
 

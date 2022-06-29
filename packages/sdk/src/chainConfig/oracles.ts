@@ -1,26 +1,39 @@
 import { OracleTypes, SupportedChains } from "../enums";
 import { ChainOracles } from "../types";
 
+const baseOracles = [OracleTypes.FixedNativePriceOracle, OracleTypes.MasterPriceOracle, OracleTypes.SimplePriceOracle];
+
 const oracles: ChainOracles = {
-  [SupportedChains.ganache]: [OracleTypes.SimplePriceOracle, OracleTypes.MasterPriceOracle],
-  [SupportedChains.chapel]: [
-    OracleTypes.MasterPriceOracle,
-    OracleTypes.ChainlinkPriceOracleV2,
-    OracleTypes.UniswapTwapPriceOracleV2,
-  ],
+  [SupportedChains.ganache]: [...baseOracles],
+  [SupportedChains.chapel]: [...baseOracles, OracleTypes.ChainlinkPriceOracleV2, OracleTypes.UniswapTwapPriceOracleV2],
   [SupportedChains.bsc]: [
-    OracleTypes.MasterPriceOracle,
+    ...baseOracles,
     OracleTypes.ChainlinkPriceOracleV2,
+    OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    OracleTypes.UniswapLpTokenPriceOracle,
     OracleTypes.UniswapTwapPriceOracleV2,
-    OracleTypes.SimplePriceOracle,
   ],
-  // TODO: not sure if this is correct
-  [SupportedChains.evmos_testnet]: [OracleTypes.MasterPriceOracle],
-  [SupportedChains.evmos]: [OracleTypes.MasterPriceOracle],
-  [SupportedChains.aurora]: [OracleTypes.MasterPriceOracle],
-  [SupportedChains.moonbeam]: [OracleTypes.MasterPriceOracle],
-  [SupportedChains.moonbase_alpha]: [OracleTypes.MasterPriceOracle],
-  [SupportedChains.neon_devnet]: [OracleTypes.SimplePriceOracle, OracleTypes.MasterPriceOracle],
+  [SupportedChains.evmos_testnet]: [
+    ...baseOracles,
+    OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    OracleTypes.UniswapLpTokenPriceOracle,
+    OracleTypes.UniswapTwapPriceOracleV2,
+  ],
+  [SupportedChains.evmos]: [
+    ...baseOracles,
+    OracleTypes.UniswapLpTokenPriceOracle,
+    OracleTypes.UniswapTwapPriceOracleV2,
+  ],
+  [SupportedChains.aurora]: [...baseOracles],
+  [SupportedChains.moonbeam]: [
+    ...baseOracles,
+    OracleTypes.FluxPriceOracle,
+    OracleTypes.UniswapLpTokenPriceOracle,
+    OracleTypes.UniswapTwapPriceOracleV2,
+  ],
+
+  [SupportedChains.moonbase_alpha]: [...baseOracles],
+  [SupportedChains.neon_devnet]: [...baseOracles],
 };
 
 export default oracles;

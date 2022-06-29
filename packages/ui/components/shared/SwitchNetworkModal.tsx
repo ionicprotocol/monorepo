@@ -12,14 +12,15 @@ import {
 } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
-import { useNetwork } from 'wagmi';
+import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 import { FilterButton } from '@ui/components/shared/Button';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { getChainMetadata } from '@ui/networkData/index';
 
 const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { activeChain, chains, switchNetworkAsync } = useNetwork();
+  const { chain, chains } = useNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
 
   const supportedChains = useMemo(
@@ -36,7 +37,7 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
         <ModalDivider />
         <ModalBody mt={4} mb={6}>
           <Heading fontSize={'lg'} fontWeight={'medium'} lineHeight={'tall'}>
-            {activeChain ? (
+            {chain ? (
               <Text>
                 Currently using{' '}
                 <Text as="span" fontWeight={'extrabold'}>
@@ -44,7 +45,7 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 </Text>{' '}
                 on the{' '}
                 <Text as="span" fontWeight={'extrabold'}>
-                  {activeChain.name} {activeChain.unsupported && '(Unsupported)'}
+                  {chain.name} {chain.unsupported && '(Unsupported)'}
                 </Text>{' '}
                 network.
               </Text>
@@ -62,7 +63,7 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 (chainMetadata) =>
                   chainMetadata && (
                     <FilterButton
-                      isSelected={activeChain?.id === chainMetadata.chainId}
+                      isSelected={chain?.id === chainMetadata.chainId}
                       variant="filter"
                       key={chainMetadata.chainId}
                       h={'12'}
