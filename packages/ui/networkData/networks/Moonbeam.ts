@@ -13,7 +13,7 @@ const mainnet: ChainMetadata = {
   supported: config.isMoonbeamEnabled,
   blocksPerMin: 5,
   blockExplorerUrls: { default: { name: 'Moonbeam', url: 'https://moonscan.io/' } },
-  rpcUrls: { default: 'ttps://rpc.api.moonbeam.network' },
+  rpcUrls: { default: 'https://rpc.api.moonbeam.network' },
   nativeCurrency: {
     symbol: 'GLMR',
     name: 'Moonbeam',
