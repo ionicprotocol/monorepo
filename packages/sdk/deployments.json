@@ -70406,7 +70406,7 @@
           ]
         },
         "FusePoolDirectory": {
-          "address": "0x1c539dE11de3A99aA9d3FFB08a18095C34F49840",
+          "address": "0x64d9a81F1412c7691e7731C66A290aeE8FA21f10",
           "abi": [
             {
               "anonymous": false,
@@ -71306,7 +71306,7 @@
           ]
         },
         "FusePoolDirectory_Implementation": {
-          "address": "0xea72929B8A608BB6c5A423de67ac3B7BD5Be4F42",
+          "address": "0xc1656c9992cCff3D6F47CBc59837A433171f3921",
           "abi": [
             {
               "anonymous": false,
@@ -72075,7 +72075,7 @@
           ]
         },
         "FusePoolDirectory_Proxy": {
-          "address": "0x1c539dE11de3A99aA9d3FFB08a18095C34F49840",
+          "address": "0x64d9a81F1412c7691e7731C66A290aeE8FA21f10",
           "abi": [
             {
               "inputs": [
