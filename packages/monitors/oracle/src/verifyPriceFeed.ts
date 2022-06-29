@@ -1,62 +1,69 @@
 import { Fuse, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
-import { logger } from "./index";
+import { logger, SupportedAssetPriceFeed } from "./index";
 
-export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset) {
+export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset): Promise<SupportedAssetPriceFeed> {
+  const oracle = asset.oracle;
+  if (!oracle) {
+    return {
+      asset,
+      valid: true,
+      price: BigNumber.from(1),
+    };
+  }
   logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
   const mpo = fuse.createMasterPriceOracle();
-  const price = await mpo.callStatic.getUnderlyingPrice(asset.underlying);
+  const mpoPrice = await mpo.callStatic.getUnderlyingPrice(asset.underlying);
 
   const underlyingOracleAddress = await mpo.oracles(asset.underlying);
-  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, asset.oracle);
+  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, oracle);
   const underlyingOraclePrice = await underlyingOracle.callStatic.price();
-  if (price !== underlyingOraclePrice) {
+  if (mpoPrice !== underlyingOraclePrice) {
     throw "Oracle prices out of sync";
   }
-  switch (asset.oracle) {
+  let valid = true;
+  let price: BigNumber = BigNumber.from(0);
+
+  switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
     case OracleTypes.DiaPriceOracle:
     case OracleTypes.FluxPriceOracle:
-      await verifyOracleProviderPriceFeed(fuse, asset);
+      ({ price, valid } = await verifyOracleProviderPriceFeed(mpoPrice, underlyingOraclePrice));
       break;
     case OracleTypes.UniswapTwapPriceOracleV2:
-      await verifyTwapPriceFeed(fuse, asset);
+      ({ price, valid } = await verifyTwapPriceFeed(mpoPrice, underlyingOraclePrice));
       break;
     case OracleTypes.FixedNativePriceOracle:
-      if (!price.eq(ethers.utils.parseEther("1"))) {
-        throw "For fixed native PO, price must equal 1 NATIVE";
+      if (!underlyingOraclePrice.eq(ethers.utils.parseEther("1"))) {
+        price = underlyingOraclePrice;
+        valid = false;
       }
       break;
     default:
+      price = underlyingOraclePrice;
+      valid = true;
       break;
   }
+  return {
+    asset,
+    valid,
+    price,
+  };
 }
 
-async function verifyOracleProviderPriceFeed(fuse: Fuse, asset: SupportedAsset) {
-  logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
-  const mpo = fuse.createMasterPriceOracle();
-  const price = await mpo.callStatic.getUnderlyingPrice(asset.underlying);
-
-  const underlyingOracleAddress = await mpo.oracles(asset.underlying);
-  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, asset.oracle);
-  const underlyingOraclePrice = await underlyingOracle.callStatic.price();
-  if (price !== underlyingOraclePrice) {
-    throw "Oracle prices out of sync";
+async function verifyOracleProviderPriceFeed(mpoPrice: BigNumber, oraclePrice: BigNumber) {
+  // TODO
+  if (mpoPrice !== oraclePrice) {
+    return { price: oraclePrice, valid: false };
   }
-  return price;
+  return { price: oraclePrice, valid: true };
 }
 
-async function verifyTwapPriceFeed(fuse: Fuse, asset: SupportedAsset) {
-  logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
-  const mpo = fuse.createMasterPriceOracle();
-  const price = await mpo.callStatic.getUnderlyingPrice(asset.underlying);
-
-  const underlyingOracleAddress = await mpo.oracles(asset.underlying);
-  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, asset.oracle);
-  const underlyingOraclePrice = await underlyingOracle.callStatic.price();
-  if (price !== underlyingOraclePrice) {
-    throw "Oracle prices out of sync";
+async function verifyTwapPriceFeed(mpoPrice: BigNumber, oraclePrice: BigNumber) {
+  // TODO
+  if (mpoPrice !== oraclePrice) {
+    return { price: oraclePrice, valid: false };
   }
-  return price;
+  return { price: oraclePrice, valid: true };
 }
