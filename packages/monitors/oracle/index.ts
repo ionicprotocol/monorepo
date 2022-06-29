@@ -2,7 +2,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { SupportedChains } from "@midas-capital/sdk";
 import dotenv from "dotenv";
 
-import { logger, fetchPricesAndRepeat } from "./src";
+import { fetchPricesAndRepeat, logger } from "./src";
 
 dotenv.config();
 

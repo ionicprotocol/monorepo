@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import { setUpSdk, fetchAssetPrices } from "./index";
+import { fetchAssetPrices, setUpSdk } from "./index";
 
 export default async function fetchPricesAndRepeat(chainId: number, provider: JsonRpcProvider) {
   const fuse = setUpSdk(chainId, provider);
