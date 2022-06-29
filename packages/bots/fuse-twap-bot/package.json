@@ -14,18 +14,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Rari-Capital/fuse-twap-bot.git"
+    "url": "https://github.com/Midas-Capital/monorepo.git"
   },
   "author": {
-    "name": "David Lucid",
-    "email": "david@rari.capital",
-    "url": "https://github.com/davidlucid"
+    "name": "Midas Capital",
+    "email": "admin@midascapital.xyz",
+    "url": "https://github.com/Midas-Capital"
   },
-  "license": "SEE LICENSE IN LICENSE",
-  "bugs": {
-    "url": "https://github.com/Rari-Capital/fuse-twap-bot/issues"
-  },
-  "homepage": "https://github.com/Rari-Capital/fuse-twap-bot#readme",
   "dependencies": {
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.0",

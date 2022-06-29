@@ -26,7 +26,7 @@ COPY .yarnrc.yml /tmp/build/
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
-COPY packages/fuse-liquidator-bot/package.json /tmp/build/packages/fuse-liquidator-bot/
+COPY packages/bots/fuse-liquidator-bot/package.json /tmp/build/packages/bots/fuse-liquidator-bot/
 
 RUN touch /tmp/build/yarn.lock
 
@@ -36,7 +36,7 @@ RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
-COPY packages/fuse-liquidator-bot /tmp/build/packages/fuse-liquidator-bot
+COPY packages/bots/fuse-liquidator-bot /tmp/build/packages/bots/fuse-liquidator-bot
 
 # ----- build -----
 RUN yarn build:deploy:liquidator
@@ -49,11 +49,11 @@ FROM node as runtime
 
 # ----- Copy files required at runtime by the app -----
 COPY --from=build --chown=node:node /tmp/build /home/node
-COPY docker/wait-for-hh.sh /home/node/packages/fuse-liquidator-bot/wait-for-hh.sh
+COPY docker/wait-for-hh.sh /home/node/packages/bots/fuse-liquidator-bot/wait-for-hh.sh
 
-RUN chmod +x /home/node/packages/fuse-liquidator-bot/wait-for-hh.sh
+RUN chmod +x /home/node/packages/bots/fuse-liquidator-bot/wait-for-hh.sh
 
-WORKDIR /home/node/packages/fuse-liquidator-bot
+WORKDIR /home/node/packages/bots/fuse-liquidator-bot
 
 CMD ["node", "build/index.js"]
 
