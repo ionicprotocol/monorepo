@@ -51,7 +51,7 @@ export const deployConfig: ChainDeployConfig = {
       strategy: "BeefyERC4626",
       name: "BOMBBTCLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying,
-      otherParams: ["0x94e85b8e050f3f281cb9597cc0144f1f7af1fe9b"], // Beefy Vault Address
+      otherParams: ["0x94e85b8e050f3f281cb9597cc0144f1f7af1fe9b", "10"], // Beefy Vault Address, withdrawal fee
     },
     {
       // 0x
@@ -92,7 +92,7 @@ export const deployConfig: ChainDeployConfig = {
       flywheelIndices: [0, 1],
       name: "2brl",
     },
-    // All of these vaults are depricated
+    // All of these vaults are deprecated
     /*{
       // 0x
       strategy: "AutofarmERC4626",

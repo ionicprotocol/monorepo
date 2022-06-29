@@ -1,15 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import {
-  AvatarGroup,
-  Divider,
-  Flex,
-  Grid,
-  Heading,
-  HStack,
-  Skeleton,
-  Table,
-  TableCaption,
-} from '@chakra-ui/react';
+import { AvatarGroup, Divider, Flex, Grid, Heading, HStack, Skeleton } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -23,8 +13,9 @@ import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/Colla
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStat';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
+import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
-import { MidasBox } from '@ui/components/shared/MidasBox';
+import { Column } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useRari } from '@ui/context/RariContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
@@ -32,7 +23,6 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
-import { Column } from '@ui/utils/chakraUtils';
 
 const FusePoolPage = memo(() => {
   const { setLoading } = useRari();
@@ -111,7 +101,7 @@ const FusePoolPage = memo(() => {
             />
             <PoolStat
               label="Liquidity"
-              value={data ? midUsdFormatter(data?.totalLiquidityFiat) : undefined}
+              value={data ? midUsdFormatter(data?.totalAvailableLiquidityFiat) : undefined}
             />
             <PoolStat
               label="Utilization"
@@ -178,19 +168,12 @@ export default FusePoolPage;
 
 const TableSkeleton = ({ tableHeading }: { tableHeading: string }) => (
   <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%" pb={1}>
-    <Table variant={'unstyled'} size={'sm'}>
-      <TableCaption
-        mt="0"
-        placement="top"
-        textAlign={'left'}
-        fontSize={{ base: '3.8vw', sm: 'lg' }}
-      >
-        {tableHeading}: <Skeleton display="inline">Loading</Skeleton>
-      </TableCaption>
+    <Heading size="md" fontWeight="normal" fontSize="18px" px={4} py={3}>
+      {tableHeading}: <Skeleton display="inline">Loading</Skeleton>
+    </Heading>
 
-      <Divider color="#F4F6F9" />
+    <Divider color="#F4F6F9" />
 
-      <Skeleton w="100%" h="40" />
-    </Table>
+    <Skeleton w="100%" h="40" />
   </Column>
 );

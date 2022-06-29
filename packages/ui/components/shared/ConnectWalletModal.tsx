@@ -14,8 +14,8 @@ import {
 import React, { useEffect } from 'react';
 import { useConnect } from 'wagmi';
 
+import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { Column, Row } from '@ui/utils/chakraUtils';
 
 const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { connect, connectors, error: connectError } = useConnect();
@@ -54,8 +54,8 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 height="100%"
                 key={connector.id}
                 disabled={!connector.ready}
-                onClick={async () => {
-                  await connect(connector);
+                onClick={() => {
+                  connect({ connector });
                 }}
               >
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="center">

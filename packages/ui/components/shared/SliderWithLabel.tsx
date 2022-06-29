@@ -1,42 +1,77 @@
-import { Slider, SliderFilledTrack, SliderThumb, SliderTrack, Text } from '@chakra-ui/react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import {
+  InputGroup,
+  InputRightAddon,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Slider,
+  SliderFilledTrack,
+  SliderThumb,
+  SliderTrack,
+} from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
+import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
-import { Row } from '@ui/utils/chakraUtils';
 
 export const SliderWithLabel = ({
-  value,
-  setValue,
-  formatValue,
   min,
   max,
-  step,
-  isDisabled,
+  name,
+  value,
+  reff,
+  onChange,
   ...others
 }: {
-  min?: number;
-  max?: number;
-  step?: number;
+  min: number;
+  max: number;
+  name: string;
   value: number;
-  isDisabled?: boolean;
-  setValue: (value: number) => void;
-  formatValue?: (value: number) => string;
+  reff: any;
+  onChange: (...event: any[]) => void;
   [key: string]: ReactNode;
 }) => {
   const { cSlider } = useColors();
+
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
-      <Text fontWeight="bold" mr={2}>
-        {formatValue ? formatValue(value) : value}
-      </Text>
+      <InputGroup width="120px">
+        <NumberInput
+          maxW="70px"
+          clampValueOnBlur={false}
+          value={value}
+          onChange={onChange}
+          min={min}
+          max={max}
+          allowMouseWheel
+        >
+          <NumberInputField
+            paddingLeft={2}
+            paddingRight={7}
+            borderRightRadius={0}
+            ref={reff}
+            name={name}
+            textAlign="center"
+          />
+          <NumberInputStepper>
+            <NumberIncrementStepper />
+            <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
+        <InputRightAddon px={2}>%</InputRightAddon>
+      </InputGroup>
       <Slider
-        width="190px"
-        onChange={setValue}
+        width="150px"
+        focusThumbOnChange={false}
+        onChange={onChange}
         value={value}
-        min={min ?? 0}
-        max={max ?? 100}
-        step={step ?? 1}
-        isDisabled={isDisabled}
+        name={name}
+        min={min}
+        max={max}
+        step={1}
       >
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
           <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />

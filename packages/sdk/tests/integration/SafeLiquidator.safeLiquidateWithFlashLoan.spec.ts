@@ -121,7 +121,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`
     );
 
-    const borrowAmount = "0.135";
+    const borrowAmount = "0.2";
     const btcbBorrow = await sdk.borrow(deployedErc20One.assetAddress, ethers.utils.parseEther(borrowAmount), {
       from: bob.address,
     });

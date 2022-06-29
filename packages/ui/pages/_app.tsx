@@ -9,13 +9,13 @@ import { createClient, WagmiConfig } from 'wagmi';
 
 import CheckConnection from '@ui/components/shared/CheckConnection';
 import Layout from '@ui/components/shared/Layout';
+import { config } from '@ui/config/index';
 import { theme } from '@ui/theme/index';
 import { connectors, provider } from '@ui/utils/connectors';
 
 const queryClient = new QueryClient();
-const isDevelopment = process.env.NODE_ENV === 'development';
 
-if (!isDevelopment) {
+if (!config.isDevelopment) {
   LogRocket.init('ylr02p/midas-ui');
 }
 
@@ -30,7 +30,7 @@ function MidasDapp({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
-          {isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
+          {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
           <CheckConnection>
             <Layout>
               <Component {...pageProps} />

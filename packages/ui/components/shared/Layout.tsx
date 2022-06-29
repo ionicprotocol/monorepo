@@ -2,11 +2,11 @@ import { Container } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 import { Banner } from '@ui/components/shared/Banner';
+import { Column } from '@ui/components/shared/Flex';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useIsSmallScreen } from '@ui/hooks/useIsSmallScreen';
-import { Column } from '@ui/utils/chakraUtils';
+import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   const { loading } = useRari();
@@ -26,10 +26,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
           text="Midas just launched, use at your own risk. "
           linkText="Read about our Audit with Zellic here."
           linkUrl="https://medium.com/midas-capital/audit-with-zellic-29b63f1be25a"
-          status="warning"
-        ></Banner>
-        <Banner
-          text="All BOMB pool deposits are temporarily paused as we are checking into an issue.  Apologies for the inconvenience this might cause."
           status="warning"
         ></Banner>
         <Container maxWidth="8xl">

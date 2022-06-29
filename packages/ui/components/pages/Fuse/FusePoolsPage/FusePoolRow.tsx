@@ -17,7 +17,9 @@ import { useCallback, useMemo, useState } from 'react';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
@@ -25,9 +27,8 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { convertMantissaToAPR, convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { Column, Row } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 interface PoolRowProps {
@@ -55,7 +56,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
 
-  const { scanUrl, setLoading, currentChain, coingeckoId } = useRari();
+  const { fuse, scanUrl, setLoading, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <VStack
@@ -110,17 +111,21 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
           )}
         </VStack>
 
-        <VStack flex={2}>
-          <SimpleTooltip label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}>
-            <Box background={scoreGradient} px="4" py="2" borderRadius="5px">
-              <Text fontSize="lg" textColor="white" fontWeight="semibold">
-                {rssScore}
-              </Text>
-            </Box>
-          </SimpleTooltip>
-        </VStack>
+        {config.isRssScoreEnabled && (
+          <VStack flex={2}>
+            <SimpleTooltip
+              label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
+            >
+              <Box background={scoreGradient} px="4" py="2" borderRadius="5px">
+                <Text fontSize="lg" textColor="white" fontWeight="semibold">
+                  {rssScore}
+                </Text>
+              </Box>
+            </SimpleTooltip>
+          </VStack>
+        )}
 
-        <VStack flex={4} alignItems="flex-start">
+        <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
           {data.underlyingTokens.length === 0 ? null : (
             <AvatarGroup size="sm" max={30}>
               {tokens.slice(0, 10).map((token, i) => (
@@ -266,10 +271,12 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topLendingAPYAsset &&
-                    convertMantissaToAPY(
-                      poolDetails.topLendingAPYAsset.supplyRatePerBlock,
-                      365
-                    ).toFixed(2)}
+                    fuse
+                      .ratePerBlockToAPY(
+                        poolDetails.topLendingAPYAsset.supplyRatePerBlock,
+                        getBlockTimePerMinuteByChainId(currentChain.id)
+                      )
+                      .toFixed(2)}
                   % APY
                 </Text>
               </Column>
@@ -291,9 +298,12 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topBorrowAPRAsset &&
-                    convertMantissaToAPR(poolDetails.topBorrowAPRAsset.borrowRatePerBlock).toFixed(
-                      2
-                    )}
+                    fuse
+                      .ratePerBlockToAPY(
+                        poolDetails.topBorrowAPRAsset.borrowRatePerBlock,
+                        getBlockTimePerMinuteByChainId(currentChain.id)
+                      )
+                      .toFixed(2)}
                   % APR
                 </Text>
               </Column>

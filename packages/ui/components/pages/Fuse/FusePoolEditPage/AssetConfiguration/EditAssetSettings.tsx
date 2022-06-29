@@ -1,9 +1,10 @@
 import { Spinner, Text } from '@chakra-ui/react';
+import { MarketPluginConfig } from '@midas-capital/sdk';
 import React from 'react';
 
 import { AssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AssetSettings';
+import { Center } from '@ui/components/shared/Flex';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { Center } from '@ui/utils/chakraUtils';
 
 const EditAssetSettings = ({
   tokenAddress,
@@ -18,7 +19,7 @@ const EditAssetSettings = ({
   comptrollerAddress: string;
   cTokenAddress: string;
   isPaused: boolean;
-  plugin?: string;
+  plugin?: MarketPluginConfig;
 }) => {
   const { data: tokenData, isLoading } = useTokenData(tokenAddress);
   if (isLoading) {
@@ -36,7 +37,7 @@ const EditAssetSettings = ({
         tokenData={tokenData}
         cTokenAddress={cTokenAddress}
         isPaused={isPaused}
-        pluginAddress={plugin}
+        pluginAddress={plugin?.strategyAddress}
       />
     );
   }
