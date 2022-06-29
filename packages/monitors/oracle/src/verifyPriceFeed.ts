@@ -1,5 +1,5 @@
 import { Fuse, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, ethers, Wallet } from "ethers";
 
 import { logger, SupportedAssetPriceFeed } from "./index";
 
@@ -12,14 +12,16 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
       price: BigNumber.from(1),
     };
   }
-  logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
-  const mpo = fuse.createMasterPriceOracle();
-  const mpoPrice = await mpo.callStatic.getUnderlyingPrice(asset.underlying);
+  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
 
-  const underlyingOracleAddress = await mpo.oracles(asset.underlying);
-  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, oracle);
-  const underlyingOraclePrice = await underlyingOracle.callStatic.price();
-  if (mpoPrice !== underlyingOraclePrice) {
+  logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
+  const mpo = fuse.createMasterPriceOracle(signer);
+  const mpoPrice = await mpo.callStatic.price(asset.underlying);
+  const underlyingOracleAddress = await mpo.callStatic.oracles(asset.underlying);
+
+  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, oracle, signer);
+  const underlyingOraclePrice = await underlyingOracle.callStatic.price(asset.underlying);
+  if (!mpoPrice.eq(underlyingOraclePrice)) {
     throw "Oracle prices out of sync";
   }
   let valid = true;
