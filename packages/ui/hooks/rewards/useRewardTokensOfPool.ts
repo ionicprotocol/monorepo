@@ -1,5 +1,4 @@
 import { useQuery } from 'react-query';
-import { useAccount } from 'wagmi';
 
 import { useRari } from '@ui/context/RariContext';
 
@@ -7,16 +6,16 @@ export const useRewardTokensOfPool = (poolAddress?: string) => {
   const {
     fuse,
     currentChain: { id },
+    address,
   } = useRari();
-  const { data: accountData } = useAccount();
 
   const { data } = useQuery(
     ['useRewardTokensOfPool', id, poolAddress],
     async () => {
-      if (!accountData?.address || !poolAddress) return undefined;
+      if (!poolAddress) return undefined;
 
       const rewards = await fuse.getFlywheelMarketRewardsByPool(poolAddress, {
-        from: accountData.address,
+        from: address,
       });
 
       return rewards
