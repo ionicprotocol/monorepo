@@ -1,7 +1,7 @@
 import { Text, ToastId, useDisclosure, useToast } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef, useState } from 'react';
-import { Chain, useAccount, useConnect, useDisconnect, useNetwork, useSigner } from 'wagmi';
+import { Chain, useAccount, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
@@ -10,16 +10,10 @@ import { RariProvider } from '@ui/context/RariContext';
 import { isSupportedChainId } from '@ui/networkData/index';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
-  const {
-    activeChain,
-    chains,
-    switchNetworkAsync,
-    isLoading: isNetworkLoading,
-    isIdle,
-  } = useNetwork();
+  const { chain, chains } = useNetwork();
+  const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
   const { data: signerData } = useSigner();
-  const { isConnecting, isReconnecting, isConnected } = useConnect();
-  const { data: accountData } = useAccount();
+  const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const router = useRouter();
@@ -40,23 +34,23 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   }, [signerData]);
 
   useEffect(() => {
-    if ((!isConnecting && !isReconnecting && !isConnected) || activeChain?.unsupported) {
+    if ((!isConnecting && !isReconnecting && !isConnected) || chain?.unsupported) {
       onOpen();
     }
-  }, [isConnected, onOpen, isConnecting, isReconnecting, activeChain?.unsupported]);
+  }, [isConnected, onOpen, isConnecting, isReconnecting, chain?.unsupported]);
 
   useEffect(() => {
     const func = async () => {
       // if network isn't being changed and router is ready
       if (!isNetworkLoading && router.isReady) {
         // if active chain exists
-        if (activeChain?.id) {
+        if (chain?.id) {
           // if selected chain is unsupported
-          if (activeChain.unsupported) {
+          if (chain.unsupported) {
             // if warning notification should show for letting user change to support network
             if (!toastIdRef.current) {
               toastIdRef.current = toast({
-                title: `Unsupported Network(${activeChain.name}) Detected!`,
+                title: `Unsupported Network(${chain.name}) Detected!`,
                 description: (
                   <>
                     <Text>{`Supported Networks: ${chains
@@ -83,7 +77,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
               // if inputed URL contains one of supported chains
               if (isSupportedChainId(Number(routerChainId))) {
                 // if active chain id is different from router chain id
-                if (activeChain.id.toString() !== routerChainId) {
+                if (chain.id.toString() !== routerChainId) {
                   // if user didn't change network from the metamask, then it will require changing network from metamask
                   if (isIdle && switchNetworkAsync) {
                     const chain = await switchNetworkAsync(Number(routerChainId));
@@ -95,7 +89,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
                       .push(
                         {
                           pathname: `/[chainId]`,
-                          query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+                          query: { chainId: chain.id.toString(), sortBy: 'supply' },
                         },
                         undefined,
                         { shallow: true }
@@ -109,7 +103,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
                 router.push(
                   {
                     pathname: `/[chainId]`,
-                    query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+                    query: { chainId: chain.id.toString(), sortBy: 'supply' },
                   },
                   undefined,
                   { shallow: true }
@@ -131,7 +125,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
               router.push(
                 {
                   pathname: `/[chainId]`,
-                  query: { chainId: activeChain.id.toString(), sortBy: 'supply' },
+                  query: { chainId: chain.id.toString(), sortBy: 'supply' },
                 },
                 undefined,
                 { shallow: true }
@@ -146,7 +140,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
 
     func();
   }, [
-    activeChain,
+    chain,
     routerChainId,
     router,
     switchNetworkAsync,
@@ -157,30 +151,25 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     switchedChain,
   ]);
 
-  if (isConnecting || isReconnecting || isNetworkLoading || signerChainId !== activeChain?.id) {
+  if (isConnecting || isReconnecting || isNetworkLoading || signerChainId !== chain?.id) {
     return <LoadingOverlay isLoading={true} />;
   }
   // Not Connected
   else if (!isConnected && !isConnecting && !isReconnecting) {
     return <ConnectWalletModal isOpen={isOpen} onClose={onClose} />;
   } // Wrong Network
-  else if (!activeChain || activeChain.unsupported) {
+  else if (!chain || chain.unsupported) {
     return <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />;
   }
 
   // Everything Fine
-  else if (
-    activeChain &&
-    accountData?.address &&
-    signerData?.provider &&
-    signerChainId === activeChain.id
-  ) {
+  else if (chain && address && signerData?.provider && signerChainId === chain.id) {
     return (
       <RariProvider
-        currentChain={activeChain}
+        currentChain={chain}
         chains={chains}
         signerProvider={signerData.provider}
-        address={accountData.address}
+        address={address}
         disconnect={disconnect}
       >
         {children}
