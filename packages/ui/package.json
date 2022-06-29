@@ -25,7 +25,7 @@
     "framer-motion": "^6.3.16",
     "fuse.js": "^6.6.2",
     "logrocket": "^3.0.1",
-    "mathjs": "^10.6.3",
+    "mathjs": "^10.6.4",
     "next": "^12.2.0",
     "next-i18next": "^11.0.0",
     "react": "^18.2.0",
@@ -38,7 +38,7 @@
     "react-icons": "^4.4.0",
     "react-jazzicon": "^1.0.4",
     "react-query": "^3.39.1",
-    "wagmi": "^0.5.2",
+    "wagmi": "^0.5.5",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
     "eslint": "8.18.0",
-    "eslint-config-next": "12.1.6",
+    "eslint-config-next": "12.2.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-import-resolver-typescript": "^3.1.1",
     "eslint-plugin-import": "^2.26.0",
