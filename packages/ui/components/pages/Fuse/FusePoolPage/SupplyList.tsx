@@ -24,19 +24,19 @@ import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
-import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { convertMantissaToAPY } from '@ui/utils/apyUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
-import { Row, useIsMobile } from '@ui/utils/chakraUtils';
 
 interface SupplyListProps {
   assets: MarketData[];
@@ -165,12 +165,13 @@ const AssetSupplyRow = ({
 }: AssetSupplyRowProps) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
-  const authedOpenModal = useAuthedCallback(openModal);
-
   const asset = assets[index];
-  const { fuse, scanUrl } = useRari();
+  const { fuse, scanUrl, currentChain } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const supplyAPY = convertMantissaToAPY(asset.supplyRatePerBlock, 365);
+  const supplyAPY = fuse.ratePerBlockToAPY(
+    asset.supplyRatePerBlock,
+    getBlockTimePerMinuteByChainId(currentChain.id)
+  );
   const queryClient = useQueryClient();
   const toast = useErrorToast();
 
@@ -244,7 +245,7 @@ const AssetSupplyRow = ({
           bgColor: cCard.hoverBgColor,
         }}
       >
-        <Td cursor={'pointer'} onClick={authedOpenModal} pr={0}>
+        <Td cursor={'pointer'} onClick={openModal} pr={0}>
           <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
             <CTokenIcon size="sm" address={asset.underlyingToken} />
             <VStack alignItems={'flex-start'} ml={2}>
@@ -294,29 +295,34 @@ const AssetSupplyRow = ({
               </SimpleTooltip>
 
               {asset.plugin && (
-                <PopoverTooltip
-                  placement="top-start"
-                  body={
-                    <>
-                      This token has a ERC4626 strategy enabled. Read more about it{' '}
-                      <ChakraLink
-                        href={URL_MIDAS_DOCS}
-                        isExternal
-                        variant={'color'}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        in our Docs <ExternalLinkIcon mx="2px" />
-                      </ChakraLink>
-                      .
-                    </>
-                  }
-                >
-                  <span role="img" aria-label="plugin">
-                    🔌
-                  </span>
-                </PopoverTooltip>
+                <Box>
+                  <PopoverTooltip
+                    placement="top-start"
+                    body={
+                      <>
+                        This market is using the <b>{asset.plugin.strategyName}</b> ERC4626
+                        Strategy.
+                        <br />
+                        Read more about it{' '}
+                        <ChakraLink
+                          href={URL_MIDAS_DOCS}
+                          isExternal
+                          variant={'color'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          in our Docs <ExternalLinkIcon mx="2px" />
+                        </ChakraLink>
+                        .
+                      </>
+                    }
+                  >
+                    <span role="img" aria-label="plugin">
+                      🔌
+                    </span>
+                  </PopoverTooltip>
+                </Box>
               )}
             </HStack>
           </Row>
@@ -325,7 +331,7 @@ const AssetSupplyRow = ({
         {!isMobile && (
           <Td
             cursor={'pointer'}
-            onClick={authedOpenModal}
+            onClick={openModal}
             isNumeric
             verticalAlign={'top'}
             textAlign={'right'}
@@ -337,17 +343,14 @@ const AssetSupplyRow = ({
 
               {rewardsOfThisMarket?.rewardsInfo.map((info) => (
                 <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-                  <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                  <TokenWithLabel address={info.rewardToken} size="2xs" />
-
+                  <HStack mr={2}>
+                    <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+                    <TokenWithLabel address={info.rewardToken} size="2xs" />
+                  </HStack>
                   {info.formattedAPR && (
-                    <SimpleTooltip
-                      label={`The APR accrued by this auto-compounding asset and the value of each token grows in price. This is not controlled by Market!`}
-                    >
-                      <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
-                        {aprFormatter(info.formattedAPR)}% APR
-                      </Text>
-                    </SimpleTooltip>
+                    <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+                      {aprFormatter(info.formattedAPR)}%
+                    </Text>
                   )}
                 </HStack>
               ))}
@@ -357,7 +360,7 @@ const AssetSupplyRow = ({
 
         <Td
           cursor={'pointer'}
-          onClick={authedOpenModal}
+          onClick={openModal}
           isNumeric
           textAlign={'right'}
           verticalAlign={'top'}

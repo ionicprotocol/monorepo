@@ -17,22 +17,25 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
 export enum RedemptionStrategy {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
   XBombLiquidator = "XBombLiquidator",
-  jBRLLiquidator = "jBRLLiquidator",
-  // not deployed
+  JarvisSynthereumLiquidator = "JarvisSynthereumLiquidator",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
 }
 
 export enum DelegateContractName {
   CErc20Delegate = "CErc20Delegate",
-  CEtherDelegate = "CEtherDelegate",
   CErc20PluginDelegate = "CErc20PluginDelegate",
   CErc20PluginRewardsDelegate = "CErc20PluginRewardsDelegate",
 }
 
 export enum OracleTypes {
+  ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
+  CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
+  DiaPriceOracle = "DiaPriceOracle",
+  FixedNativePriceOracle = "FixedNativePriceOracle",
+  FluxPriceOracle = "FluxPriceOracle",
   MasterPriceOracle = "MasterPriceOracle",
   SimplePriceOracle = "SimplePriceOracle",
-  ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
+  UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
 }
 

@@ -1,9 +1,9 @@
 import { Heading, SystemProps, Text, TextProps } from '@chakra-ui/react';
 
+import { Column } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
 import { CaptionedStatProps } from '@ui/types/ComponentPropsType';
-import { Column } from '@ui/utils/chakraUtils';
 
 const CaptionedStat = ({
   stat,

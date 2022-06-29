@@ -20,13 +20,13 @@ import { useState } from 'react';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useAuthedCallback } from '@ui/hooks/useAuthedCallback';
+import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { convertMantissaToAPR } from '@ui/utils/apyUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
-import { useIsMobile } from '@ui/utils/chakraUtils';
 
 interface BorrowListProps {
   assets: MarketData[];
@@ -43,6 +43,7 @@ export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: Bo
   );
   const unBorrowableAssets = assets.filter((asset) => asset.isBorrowPaused);
 
+  // eslint-disable-next-line no-console
   const isMobile = useIsMobile();
   const { cCard } = useColors();
 
@@ -166,14 +167,14 @@ interface AssetBorrowRowProps {
 
 const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
   const asset = assets[index];
+  const { currentChain, fuse } = useRari();
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
-  const authedOpenModal = useAuthedCallback(openModal);
-
   const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const blocksPerMin = getBlockTimePerMinuteByChainId(currentChain.id);
 
-  const borrowAPR = convertMantissaToAPR(asset.borrowRatePerBlock);
+  const borrowAPR = fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
 
   const isMobile = useIsMobile();
 
@@ -198,7 +199,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
           if (asset.isBorrowPaused) {
             e.stopPropagation();
           } else {
-            authedOpenModal();
+            openModal();
           }
         }}
         cursor={'pointer'}

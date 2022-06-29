@@ -1,9 +1,10 @@
+/* eslint-disable no-console */
 import { constants, providers } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
-import { deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
+import { configureFuseSafeLiquidator, deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
@@ -45,6 +46,17 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   console.log("FuseFeeDistributor: ", ffd.address);
   const fuseFeeDistributor = await ethers.getContract("FuseFeeDistributor", deployer);
+
+  const ffdFee = await fuseFeeDistributor.defaultInterestFeeRate();
+  console.log(`ffd fee ${ffdFee}`);
+  if (ffdFee == 0) {
+    tx = await fuseFeeDistributor._setDefaultInterestFeeRate(ethers.utils.parseEther("0.1"));
+    await tx.wait();
+    console.log(`updated the FFD fee with tx ${tx.hash}`);
+
+    const feeAfter = await fuseFeeDistributor.defaultInterestFeeRate();
+    console.log(`ffd fee updated to ${feeAfter}`);
+  }
 
   tx = await fuseFeeDistributor._setPoolLimits(10, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
   await tx.wait();
@@ -320,7 +332,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   ////
 
   //// Liquidator
-  await deployFuseSafeLiquidator({ run, ethers, getNamedAccounts, deployments, deployConfig: chainDeployParams });
+  await deployFuseSafeLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig: chainDeployParams,
+  });
   ///
 
   ////
@@ -331,8 +349,17 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
   ////
 
-  /// EXTERNAL ADDRESSES
+  //// Configure Liquidator
+  await configureFuseSafeLiquidator({
+    ethers,
+    getNamedAccounts,
+    chainId,
+  });
+  ///
+
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+
+  /// EXTERNAL ADDRESSES
   tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
   await tx.wait();
   console.log("setAddress: ", tx.hash);

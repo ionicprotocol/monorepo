@@ -1,11 +1,11 @@
-import { BigNumber, BigNumberish, Contract, utils } from "ethers";
+import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { filterOnlyObjectProperties, filterPoolName } from "../Fuse/utils";
+import { filterOnlyObjectProperties, filterPoolName, getContract } from "../Fuse/utils";
 import { FuseBaseConstructor, FusePoolData, NativePricedFuseAsset } from "../types";
 
 export type LensPoolsWithData = [
@@ -41,6 +41,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
+      let totalAvailableLiquidityNative = 0;
       let totalSupplyBalanceNative = 0;
       let totalBorrowBalanceNative = 0;
       let totalSuppliedNative = 0;
@@ -51,7 +52,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       const promises: Promise<any>[] = [];
 
-      const comptrollerContract = new Contract(
+      const comptrollerContract = getContract(
         comptroller,
         this.chainDeployment.Comptroller.abi,
         this.provider.getSigner()
@@ -59,30 +60,35 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
+        const isBorrowPaused: boolean = await comptrollerContract.callStatic.borrowGuardianPaused(asset.cToken);
+        asset.isBorrowPaused = isBorrowPaused;
         // @todo aggregate the borrow/supply guardian paused into 1
-        promises.push(
-          comptrollerContract.callStatic
-            .borrowGuardianPaused(asset.cToken)
-            .then((isPaused: boolean) => (asset.isBorrowPaused = isPaused))
-        );
         promises.push(
           comptrollerContract.callStatic
             .mintGuardianPaused(asset.cToken)
             .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
         );
+
         promises.push(
-          this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
-            .callStatic.plugin()
-            .then((plugin) => (asset.plugin = plugin))
-            .catch(() =>
+          (async () => {
+            if (!this.chainPlugins[asset.underlyingToken]) return;
+            let plugin: string | undefined = undefined;
+
+            plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
+              .callStatic.plugin()
+              .catch(() => undefined);
+            if (!plugin) {
               // @ts-ignore
-              this.getAssetInstance<CErc20PluginRewardsDelegate>(
+              plugin = await this.getAssetInstance<CErc20PluginRewardsDelegate>(
                 asset.cToken,
                 "CErc20PluginRewardsDelegate"
-              ).callStatic.plugin()
-            )
-            .then((plugin) => (asset.plugin = plugin))
-            .catch(() => {})
+              )
+                .callStatic.plugin()
+                .catch(() => undefined);
+            }
+            if (!plugin) return;
+            asset.plugin = this.chainPlugins[asset.underlyingToken].find((p) => p.strategyAddress === plugin);
+          })()
         );
 
         asset.supplyBalanceNative =
@@ -104,13 +110,15 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         } else {
           asset.utilization = (asset.totalBorrowNative / asset.totalSupplyNative) * 100;
         }
+        const assetLiquidity =
+          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
-        asset.liquidityNative =
-          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
+        asset.liquidityNative = assetLiquidity;
 
+        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
         totalLiquidityNative += asset.liquidityNative;
 
         if (!asset.isBorrowPaused) {
@@ -132,6 +140,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
         comptroller,
         name,
         totalLiquidityNative,
+        totalAvailableLiquidityNative,
         totalSuppliedNative,
         totalBorrowedNative,
         totalSupplyBalanceNative,
@@ -223,11 +232,11 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
     ): T => {
       switch (implementation) {
         case "CErc20PluginDelegate":
-          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
+          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
         case "CErc20PluginRewardsDelegate":
-          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
+          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
         default:
-          return new Contract(address, this.chainDeployment[implementation].abi, this.provider) as T;
+          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
       }
     };
   };

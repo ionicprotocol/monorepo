@@ -1,5 +1,6 @@
 import { SupportedChains } from '@midas-capital/sdk';
 
+import { config } from '@ui/config/index';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 const mainnet: ChainMetadata = {
@@ -8,8 +9,8 @@ const mainnet: ChainMetadata = {
   name: 'Moonbeam',
   shortName: 'Moonbeam',
   img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg',
-  enabled: process.env.MOONBEAM === 'true',
-  supported: process.env.MOONBEAM === 'true',
+  enabled: config.isMoonbeamEnabled,
+  supported: config.isMoonbeamEnabled,
   blocksPerMin: 5,
   blockExplorerUrls: { default: { name: 'Moonbeam', url: 'https://moonscan.io/' } },
   rpcUrls: { default: 'ttps://rpc.api.moonbeam.network' },
@@ -37,8 +38,7 @@ const testnet: ChainMetadata = {
   img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg',
   rpcUrls: { default: 'https://rpc.testnet.moonbeam.network' },
   enabled: true,
-  supported:
-    process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
+  supported: config.isDevelopment || config.isTestnetEnabled,
   blocksPerMin: 5,
   blockExplorerUrls: {
     default: { name: 'Moonbeam(Testnet)', url: 'https://moonbase.moonscan.io/' },

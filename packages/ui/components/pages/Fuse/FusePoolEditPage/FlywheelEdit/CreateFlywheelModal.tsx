@@ -18,8 +18,8 @@ import {
 import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
 import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
 import React, { useMemo, useState } from 'react';
-import { useAccount } from 'wagmi';
 
+import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useRari } from '@ui/context/RariContext';
@@ -27,7 +27,6 @@ import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
-import { Center } from '@ui/utils/chakraUtils';
 
 const steps = [
   'Deploying Flywheel Core',
@@ -37,8 +36,7 @@ const steps = [
 ];
 
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
-  const { fuse } = useRari();
-  const { data: accountData } = useAccount();
+  const { fuse, address } = useRari();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -60,7 +58,6 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       setActiveStep(0);
       setFailedStep(0);
       if (!rewardTokenData) throw new Error('No Token Data');
-      if (!accountData?.address) throw new Error('No Account Data');
       setIsDeploying(true);
       let fwCore: FuseFlywheelCore;
 
@@ -68,7 +65,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
         setActiveStep(1);
 
         fwCore = await fuse.deployFlywheelCore(rewardTokenData.address, {
-          from: accountData.address,
+          from: address,
         });
         await fwCore.deployTransaction.wait();
         successToast({
@@ -82,13 +79,9 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       let fwStaticRewards: FlywheelStaticRewards;
       try {
         setActiveStep(2);
-        fwStaticRewards = await fuse.deployFlywheelStaticRewards(
-          rewardTokenData.address,
-          fwCore.address,
-          {
-            from: accountData.address,
-          }
-        );
+        fwStaticRewards = await fuse.deployFlywheelStaticRewards(fwCore.address, {
+          from: address,
+        });
         await fwStaticRewards.deployTransaction.wait();
         successToast({
           description: 'Flywheel Rewards Deployed',
@@ -105,7 +98,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       try {
         setActiveStep(3);
         const tx = await fuse.setFlywheelRewards(fwCore.address, fwStaticRewards.address, {
-          from: accountData.address,
+          from: address,
         });
         await tx.wait();
         successToast({
@@ -119,7 +112,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       try {
         setActiveStep(4);
         const tx = await fuse.addFlywheelCoreToComptroller(fwCore.address, comptrollerAddress, {
-          from: accountData.address,
+          from: address,
         });
         await tx.wait();
         successToast({

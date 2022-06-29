@@ -16,13 +16,14 @@ import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
-import { MidasBox } from '@ui/components/shared/MidasBox';
+import { MidasBox } from '@ui/components/shared/Box';
+import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
-import { Center, Column, Row, useIsMobile } from '@ui/utils/chakraUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolData>['data'] }) => {
@@ -31,7 +32,7 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
   const assets = poolData?.assets ?? [];
   const totalSuppliedFiat = poolData?.totalSuppliedFiat ?? 0;
   const totalBorrowedFiat = poolData?.totalBorrowedFiat ?? 0;
-  const totalLiquidityFiat = poolData?.totalLiquidityFiat ?? 0;
+  const totalAvailableLiquidityFiat = poolData?.totalAvailableLiquidityFiat ?? 0;
   const comptrollerAddress = poolData?.comptroller ?? '';
 
   const { cCard } = useColors();
@@ -96,12 +97,12 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
               />
               <StatRow
                 statATitle={'Available Liquidity'}
-                statA={shortUsdFormatter(totalLiquidityFiat)}
+                statA={shortUsdFormatter(totalAvailableLiquidityFiat)}
                 statBTitle={'Pool Utilization'}
                 statB={
                   totalSuppliedFiat.toString() === '0'
                     ? '0%'
-                    : (totalBorrowedFiat / totalSuppliedFiat / 100).toFixed(2) + '%'
+                    : poolData.utilization.toFixed(2) + '%'
                 }
               />
               <StatRow

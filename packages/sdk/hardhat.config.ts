@@ -1,6 +1,5 @@
 import "@nomiclabs/hardhat-ethers";
 import "@nomiclabs/hardhat-waffle";
-import "@tenderly/hardhat-tenderly";
 import "@typechain/hardhat";
 import "hardhat-deploy";
 import "hardhat-abi-exporter";
@@ -22,6 +21,7 @@ import "./tasks/createPool";
 import "./tasks/createStrategy";
 import "./tasks/fluxFeed";
 import "./tasks/pauseMarketMinting";
+import "./tasks/upgradeMarket";
 
 dotEnvConfig();
 
@@ -37,10 +37,6 @@ const mnemonic =
 const config: HardhatUserConfig = {
   mocha: {
     timeout: 200_000,
-  },
-  tenderly: {
-    username: "carlomazzaferro",
-    project: "midas-contracts",
   },
   solidity: {
     compilers: [
@@ -106,7 +102,10 @@ const config: HardhatUserConfig = {
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
-      url: urlOverride || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
+      url:
+        urlOverride ||
+        process.env.BSC_PROVIDER_URL ||
+        "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
     },
     bscfork: {
       accounts: { mnemonic },
@@ -119,12 +118,14 @@ const config: HardhatUserConfig = {
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      // url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      url: "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/testnet",
     },
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      // url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
     },
     evmostestnet: {
       accounts: { mnemonic },

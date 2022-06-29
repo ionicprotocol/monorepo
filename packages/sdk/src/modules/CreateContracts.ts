@@ -1,68 +1,50 @@
-import { Contract } from "ethers";
+import { Contract, Signer } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
+import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { FuseBaseConstructor } from "../types";
+import { Artifacts, FuseBaseConstructor } from "../types";
 
 export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
-    createComptroller(comptrollerAddress: string) {
-      return new Contract(
-        comptrollerAddress,
-        this.chainDeployment.Comptroller.abi,
-        this.provider.getSigner()
-      ) as Comptroller;
+    createContractInstance<T extends Contract>(contract: keyof Artifacts, signer: Signer = this.provider.getSigner()) {
+      return (address: string) => new Contract(address, this.artifacts[contract].abi, signer) as T;
     }
 
-    createUnitroller(comptrollerAddress: string) {
-      return new Contract(comptrollerAddress, this.artifacts.Unitroller.abi, this.provider.getSigner()) as Unitroller;
-    }
+    createUnitroller = this.createContractInstance<Unitroller>("Unitroller");
+    createFuseFlywheelCore = this.createContractInstance<FuseFlywheelCore>("FuseFlywheelCore");
+    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
+    createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
 
-    createRewardsDistributor(distributorAddress: string) {
+    createRewardsDistributor(distributorAddress: string, signer: Signer = this.provider.getSigner()) {
       return new Contract(
         distributorAddress,
         this.chainDeployment.RewardsDistributorDelegate.abi,
-        this.provider.getSigner()
+        signer
       ) as RewardsDistributorDelegate;
     }
-
-    createFuseFlywheelCore(flywheelCoreAddress: string) {
-      return new Contract(
-        flywheelCoreAddress,
-        this.artifacts.FuseFlywheelCore.abi,
-        this.provider.getSigner()
-      ) as FuseFlywheelCore;
-    }
-    createFlywheelStaticRewards(staticRewardsAddress: string) {
-      return new Contract(
-        staticRewardsAddress,
-        this.artifacts.FlywheelStaticRewards.abi,
-        this.provider.getSigner()
-      ) as FlywheelStaticRewards;
+    createComptroller(comptrollerAddress: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signer) as Comptroller;
     }
 
-    createOracle(oracleAddress: string, type: string) {
-      return new Contract(oracleAddress, this.chainDeployment[type].abi, this.provider.getSigner());
+    createOracle(oracleAddress: string, type: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(oracleAddress, this.chainDeployment[type].abi, signer);
     }
 
-    createCToken(cTokenAddress: string) {
-      return new Contract(
-        cTokenAddress,
-        this.chainDeployment.CErc20Delegate.abi,
-        this.provider.getSigner()
-      ) as CErc20Delegate;
+    createCToken(cTokenAddress: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signer) as CErc20Delegate;
     }
 
-    createMasterPriceOracle() {
+    createMasterPriceOracle(signer: Signer = this.provider.getSigner()) {
       return new Contract(
         this.chainDeployment.MasterPriceOracle.address!,
         this.chainDeployment.MasterPriceOracle.abi,
-        this.provider.getSigner()
+        signer
       ) as MasterPriceOracle;
     }
   };

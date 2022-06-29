@@ -1,24 +1,31 @@
-import { InterestRateModel } from '@midas-capital/sdk';
+import { Fuse, InterestRateModel } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
-export const convertIRMtoCurve = (interestRateModel: InterestRateModel, chainId?: number) => {
+export const convertIRMtoCurve = (
+  fuse: Fuse,
+  interestRateModel: InterestRateModel,
+  chainId: number
+) => {
   const borrowerRates = [];
   const supplierRates = [];
-  const blocksPerMin = chainId ? getBlockTimePerMinuteByChainId(chainId) : 4;
+  const blocksPerMin = getBlockTimePerMinuteByChainId(chainId);
 
   for (let i = 0; i <= 100; i++) {
     const asEther = utils.parseUnits((i / 100).toString());
 
-    const supplyRate = Number(utils.formatUnits(interestRateModel.getSupplyRate(asEther)));
-    const borrowRate = Number(utils.formatUnits(interestRateModel.getBorrowRate(asEther)));
+    const supplyAPY = fuse.ratePerBlockToAPY(
+      interestRateModel.getSupplyRate(asEther),
+      blocksPerMin
+    );
+    const borrowAPY = fuse.ratePerBlockToAPY(
+      interestRateModel.getBorrowRate(asEther),
+      blocksPerMin
+    );
 
-    const supplyLevel = (Math.pow(supplyRate * (blocksPerMin * 60 * 24) + 1, 365) - 1) * 100;
-    const borrowLevel = (Math.pow(borrowRate * (blocksPerMin * 60 * 24) + 1, 365) - 1) * 100;
-
-    supplierRates.push({ x: i, y: supplyLevel });
-    borrowerRates.push({ x: i, y: borrowLevel });
+    supplierRates.push({ x: i, y: supplyAPY });
+    borrowerRates.push({ x: i, y: borrowAPY });
   }
 
   return { borrowerRates, supplierRates };
