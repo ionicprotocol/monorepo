@@ -14,6 +14,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
+  nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
   blocksPerYear: chainSpecificParams[SupportedChains.moonbeam].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
     hardcoded: [],
@@ -32,6 +33,31 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying, // GLMR-GLINT
     ],
   },
+  plugins: [
+    {
+      // 0x
+      strategy: "BeamERC4626",
+      name: "GLMR-GLNT",
+      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying,
+      otherParams: ["0", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
+      flywheelIndices: [0],
+    },
+    {
+      // 0x
+      strategy: "BeamERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // BOMB
+      otherParams: ["1", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
+      name: "GLMR-USDC",
+      flywheelIndices: [0],
+    },
+  ],
+  dynamicFlywheels: [
+    {
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.GLINT)!.underlying,
+      cycleLength: 1,
+      name: assetSymbols.GLINT,
+    },
+  ],
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -61,16 +87,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x0147f2Ad7F1e2Bc51F998CC128a8355d5AE8C32D",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
-  {
-    symbol: assetSymbols.GLMR,
-    aggregator: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
-    symbol: assetSymbols.LINK,
-    aggregator: "0xd61D7398B7734aBe7C4B143fE57dC666D2fe83aD",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
   // stables
   {
     symbol: assetSymbols.madUSDC,
@@ -83,13 +99,18 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: assetSymbols.FRAX,
-    aggregator: "0x05Ec3Fb5B7CB3bE9D7150FBA1Fb0749407e5Aa8a",
+    symbol: assetSymbols.madUSDT,
+    aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: assetSymbols.USDT,
+    symbol: assetSymbols.multiUSDT,
     aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.FRAX,
+    aggregator: "0x05Ec3Fb5B7CB3bE9D7150FBA1Fb0749407e5Aa8a",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
 ];
@@ -104,7 +125,6 @@ const diaAssets: DiaAsset[] = [
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
-  console.log("no chain specific deployments to run");
   const { deployer } = await getNamedAccounts();
 
   //// ORACLES
