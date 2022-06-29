@@ -13,15 +13,14 @@ enum assetSymbols {
   FTM = "FTM",
   WBTC = "WBTC",
   BAL = "BAL",
+  BTC = "BTC",
+  LINK = "LINK",
 
   // bsc
   WBNB = "WBNB",
+  BNB = "BNB",
   BUSD = "BUSD",
   BTCB = "BTCB",
-  TSLA = "TSLA",
-  GOOGL = "GOOGL",
-  NFLX = "NFLX",
-  AMZN = "AMZN",
   BETH = "BETH",
   CAKE = "CAKE",
   ALPACA = "ALPACA",
@@ -48,6 +47,7 @@ enum assetSymbols {
   saddleOptFraxUSD = "saddleOptFraxUSD",
   saddleOptUSD = "saddleOptUSD",
   WEVMOS = "WEVMOS",
+  ATOM = "ATOM",
 
   // moonbeam
   GLMR = "GLMR",
@@ -55,6 +55,15 @@ enum assetSymbols {
   GLINT = "GLINT",
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
+  DOT = "DOT",
+  xcDOT = "xcDOT",
+  KSM = "KSM",
+  madWBTC = "madWBTC",
+  madUSDC = "madUSDC",
+  multiUSDC = "multiUSDC",
+  madUSDT = "madUSDT",
+  multiUSDT = "multiUSDT",
+
   // moonbase
   WDEV = "WDEV",
 
