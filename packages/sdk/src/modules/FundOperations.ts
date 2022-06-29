@@ -1,9 +1,9 @@
 import axios from "axios";
-import { BigNumber, constants, Contract, ContractTransaction, utils } from "ethers";
+import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { CEtherDelegate } from "../../lib/contracts/typechain/CEtherDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { getContract } from "../Fuse/utils";
 import { FuseBaseConstructor } from "../types";
 
 export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBase) {
@@ -36,7 +36,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
       amount: BigNumber,
       options: { from: string }
     ) {
-      const token = new Contract(
+      const token = getContract(
         underlyingTokenAddress,
         this.artifacts.EIP20Interface.abi,
         this.provider.getSigner(options.from)
@@ -49,7 +49,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
         await approveTx.wait();
       }
       if (enableAsCollateral) {
-        const comptrollerInstance = new Contract(
+        const comptrollerInstance = getContract(
           comptrollerAddress,
           this.artifacts.Comptroller.abi,
           this.provider.getSigner(options.from)
@@ -57,7 +57,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
 
         await comptrollerInstance.enterMarkets([cTokenAddress]);
       }
-      const cToken = new Contract(
+      const cToken = getContract(
         cTokenAddress,
         this.artifacts.CErc20Delegate.abi,
         this.provider.getSigner(options.from)
@@ -83,7 +83,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
     ) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
 
-      const token = new Contract(
+      const token = getContract(
         underlyingTokenAddress,
         this.artifacts.EIP20Interface.abi,
         this.provider.getSigner(options.from)
@@ -94,7 +94,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
         const approveTx = await token.approve(cTokenAddress, max);
         await approveTx.wait();
       }
-      const cToken = new Contract(
+      const cToken = getContract(
         cTokenAddress,
         this.artifacts.CErc20Delegate.abi,
         this.provider.getSigner(options.from)
@@ -113,7 +113,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
     }
 
     async borrow(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
-      const cToken = new Contract(
+      const cToken = getContract(
         cTokenAddress,
         this.artifacts.CErc20Delegate.abi,
         this.provider.getSigner(options.from)
@@ -131,7 +131,7 @@ export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBas
     }
 
     async withdraw(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
-      const cToken = new Contract(
+      const cToken = getContract(
         cTokenAddress,
         this.artifacts.CErc20Delegate.abi,
         this.provider.getSigner(options.from)

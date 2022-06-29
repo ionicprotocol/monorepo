@@ -58,6 +58,6 @@ export const getInterestRateModelContract = (abi: any, byteCode: string, signer?
   return new ContractFactory(abi, byteCode, signer);
 };
 
-export const getContract = (address: string, abi: any, provider: Web3Provider | JsonRpcProvider) => {
-  return new Contract(address, abi, provider);
+export const getContract = (address: string, abi: any, providerOrSigner: Web3Provider | JsonRpcProvider | Signer) => {
+  return new Contract(address, abi, providerOrSigner);
 };

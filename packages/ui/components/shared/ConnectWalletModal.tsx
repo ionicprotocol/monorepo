@@ -54,8 +54,8 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 height="100%"
                 key={connector.id}
                 disabled={!connector.ready}
-                onClick={async () => {
-                  await connect(connector);
+                onClick={() => {
+                  connect({ connector });
                 }}
               >
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="center">
