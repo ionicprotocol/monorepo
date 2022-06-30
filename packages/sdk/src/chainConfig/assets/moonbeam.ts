@@ -20,7 +20,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.xcDOT,
-    underlying: "0xAcc15dC74880C9944775448304B263D191c6077F",
+    underlying: "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
     name: "ERC20 DOT",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
