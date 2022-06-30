@@ -59,7 +59,7 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.GLINT,
     },
   ],
-  minBorrow: utils.parseUnits("200"),
+  cgId: "moonbeam",
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [

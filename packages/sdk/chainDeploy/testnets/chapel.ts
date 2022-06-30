@@ -58,7 +58,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: [],
     },
   ],
-  minBorrow: utils.parseUnits("0.5"),
+  cgId: "binancecoin",
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {

@@ -1,4 +1,4 @@
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { SupportedChains } from "../../src";
@@ -209,7 +209,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
-  minBorrow: utils.parseUnits("0.5"),
+  cgId: "binancecoin",
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [

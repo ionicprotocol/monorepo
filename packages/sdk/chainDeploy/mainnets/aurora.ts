@@ -1,5 +1,3 @@
-import { utils } from "ethers";
-
 import { SupportedChains } from "../../src";
 import { chainSpecificParams } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
@@ -20,5 +18,5 @@ export const deployConfig1313161554: ChainDeployConfig = {
     uniswapV2FactoryAddress: "",
     uniswapOracleInitialDeployTokens: [],
   },
-  minBorrow: utils.parseEther("0.1"),
+  cgId: "ethereum",
 };

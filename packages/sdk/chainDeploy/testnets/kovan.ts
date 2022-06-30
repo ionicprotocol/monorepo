@@ -18,7 +18,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     uniswapOracleInitialDeployTokens: [],
   },
-  minBorrow: utils.parseEther("0.1"),
+  cgId: "ethereum",
 };
 
 export const deploy = async ({ getNamedAccounts }): Promise<void> => {
