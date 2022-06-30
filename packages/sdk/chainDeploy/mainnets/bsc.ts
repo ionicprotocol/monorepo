@@ -53,37 +53,43 @@ export const deployConfig: ChainDeployConfig = {
     ],
   },
   plugins: [
-    { // CAKE-BNB LP
+    {
+      // CAKE-BNB LP
       strategy: "BeefyERC4626",
       name: "CAKEBNBLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["CAKE-WBNB"])!.underlying,
       otherParams: ["0xb26642B6690E4c4c9A6dAd6115ac149c700C7dfE", "10"], // Beefy Vault Address, withdrawal fee
     },
-    { // BUSD-BNB LP
+    {
+      // BUSD-BNB LP
       strategy: "BeefyERC4626",
       name: "WBNBBUSDLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying,
       otherParams: ["0xAd61143796D90FD5A61d89D63a546C7dB0a70475", "10"], // Beefy Vault Address, withdrawal fee
     },
-    { // BTCB-ETH LP
+    {
+      // BTCB-ETH LP
       strategy: "BeefyERC4626",
       name: "BTCBETHLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying,
       otherParams: ["0xEf43E54Bb4221106953951238FC301a1f8939490", "10"], // Beefy Vault Address, withdrawal fee
     },
-    { // ETH-WBNB LP
+    {
+      // ETH-WBNB LP
       strategy: "BeefyERC4626",
       name: "ETHWBNBLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["WBNB-ETH"])!.underlying,
       otherParams: ["0x0eb78598851D08218d54fCe965ee2bf29C288fac", "10"], // Beefy Vault Address, withdrawal fee
     },
-    { // USDC-BUSD LP
+    {
+      // USDC-BUSD LP
       strategy: "BeefyERC4626",
       name: "USDCBUSDLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["USDC-BUSD"])!.underlying,
       otherParams: ["0x9260c62866f36638964551A8f480C3aAAa4693fd", "10"], // Beefy Vault Address, withdrawal fee
     },
-    { // BOMB-BTCB LP
+    {
+      // BOMB-BTCB LP
       strategy: "BeefyERC4626",
       name: "BOMBBTCLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying,
