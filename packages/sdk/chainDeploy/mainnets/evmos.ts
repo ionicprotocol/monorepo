@@ -22,6 +22,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "",
     uniswapOracleInitialDeployTokens: [],
   },
+  cgId: "evmos",
 };
 
 const diaAssets: DiaAsset[] = [

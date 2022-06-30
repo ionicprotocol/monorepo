@@ -209,6 +209,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
+  cgId: "binancecoin",
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
