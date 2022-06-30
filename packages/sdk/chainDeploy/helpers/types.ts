@@ -32,7 +32,7 @@ export type ChainDeployConfig = {
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
   plugins?: PluginConfig[];
-  minBorrow: BigNumber;
+  cgId: string;
 };
 
 export type DynamicFlywheelConfig = {

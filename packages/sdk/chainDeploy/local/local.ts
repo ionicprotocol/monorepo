@@ -1,4 +1,4 @@
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { FixedNativePriceOracle } from "../../lib/contracts/typechain/FixedNativePriceOracle";
@@ -52,7 +52,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "TOUCH",
     },
   ],
-  minBorrow: utils.parseEther("0.1"),
+  cgId: "ethereum",
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: ChainDeployFnParams): Promise<void> => {
