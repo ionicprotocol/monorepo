@@ -37,11 +37,17 @@ enum assetSymbols {
   "WBNB-BUSD" = "WBNB-BUSD",
   "WBNB-USDT" = "WBNB-USDT",
   "WBNB-USDC" = "WBNB-USDC",
+  "WBNB-ETH" = "WBNB-ETH",
 
   "BUSD-USDT" = "BUSD-USDT",
   "BUSD-BTCB" = "BUSD-BTCB",
-  "BTCB-BOMB" = "BTCB-BOMB",
+  "USDC-BUSD" = "USDC-BUSD",
   "USDC-ETH" = "USDC-ETH",
+
+  "BTCB-BOMB" = "BTCB-BOMB",
+  "BTCB-ETH" = "BTCB-ETH",
+
+  "CAKE-WBNB" = "CAKE-WBNB",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
