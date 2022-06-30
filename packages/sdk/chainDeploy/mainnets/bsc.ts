@@ -71,7 +71,7 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying, // 3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
       name: "3EPS",
@@ -79,7 +79,7 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying, // dai3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
       name: "val3EPS",
@@ -87,7 +87,7 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying, // dai3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
       name: "valdai3EPS",
