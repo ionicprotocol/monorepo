@@ -198,6 +198,34 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },
+  {
+    symbol: assetSymbols["CAKE-WBNB"],
+    underlying: "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+    name: "CAKE-WBNB PCS LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["BTCB-ETH"],
+    underlying: "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D",
+    name: "BTCB-ETH PCS LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WBNB-ETH"],
+    underlying: "0x74E4716E431f45807DCF19f284c7aA99F18a4fbc",
+    name: "WBNB-ETH PCS LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["USDC-BUSD"],
+    underlying: "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1",
+    name: "USDC-BUSD PCS LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
 ];
 
 export default assets;
