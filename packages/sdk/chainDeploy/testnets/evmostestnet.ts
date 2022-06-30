@@ -20,6 +20,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xBB86C1332f54afb6509CB599BF88980f7b389403",
     uniswapOracleInitialDeployTokens: [],
   },
+  cgId: "evmos",
 };
 
 export const deploy = async ({ getNamedAccounts, deployments, ethers }: ChainDeployFnParams): Promise<void> => {
