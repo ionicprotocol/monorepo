@@ -4,6 +4,7 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import { deployABNBcOracle } from "../helpers/aBNBcOracle";
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
@@ -39,29 +40,69 @@ export const deployConfig: ChainDeployConfig = {
       },
     ],
     uniswapOracleLpTokens: [
-      assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying, // BOMB-BTC PCS LP
-      assets.find((a) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying, // WBNB-DAI PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying, // WBNB-BUSD PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying, // WBNB-DAI PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-USDC"])!.underlying, // WBNB-USDC PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-USDT"])!.underlying, // WBNB-USDT PCS LP
+      assets.find((a) => a.symbol === assetSymbols["USDC-ETH"])!.underlying, // USDC-ETH PCS LP
+      assets.find((a) => a.symbol === assetSymbols["BUSD-BTCB"])!.underlying, // BUSD-BTCB PCS LP
+      assets.find((a) => a.symbol === assetSymbols["CAKE-WBNB"])!.underlying, // CAKE-WBNB PCS LP
+      assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying, // BTCB-ETH PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WBNB-ETH"])!.underlying, // WBNB-ETH PCS LP
+      assets.find((a) => a.symbol === assetSymbols["USDC-BUSD"])!.underlying, // USDC-BUSD PCS LP
+      assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying, // BOMB-BTC PCS LP
     ],
   },
   plugins: [
     {
-      // 0x
+      // CAKE-BNB LP
+      strategy: "BeefyERC4626",
+      name: "CAKEBNBLP",
+      underlying: assets.find((a) => a.symbol === assetSymbols["CAKE-WBNB"])!.underlying,
+      otherParams: ["0xb26642B6690E4c4c9A6dAd6115ac149c700C7dfE", "10"], // Beefy Vault Address, withdrawal fee
+    },
+    {
+      // BUSD-BNB LP
+      strategy: "BeefyERC4626",
+      name: "WBNBBUSDLP",
+      underlying: assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying,
+      otherParams: ["0xAd61143796D90FD5A61d89D63a546C7dB0a70475", "10"], // Beefy Vault Address, withdrawal fee
+    },
+    {
+      // BTCB-ETH LP
+      strategy: "BeefyERC4626",
+      name: "BTCBETHLP",
+      underlying: assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying,
+      otherParams: ["0xEf43E54Bb4221106953951238FC301a1f8939490", "10"], // Beefy Vault Address, withdrawal fee
+    },
+    {
+      // ETH-WBNB LP
+      strategy: "BeefyERC4626",
+      name: "ETHWBNBLP",
+      underlying: assets.find((a) => a.symbol === assetSymbols["WBNB-ETH"])!.underlying,
+      otherParams: ["0x0eb78598851D08218d54fCe965ee2bf29C288fac", "10"], // Beefy Vault Address, withdrawal fee
+    },
+    {
+      // USDC-BUSD LP
+      strategy: "BeefyERC4626",
+      name: "USDCBUSDLP",
+      underlying: assets.find((a) => a.symbol === assetSymbols["USDC-BUSD"])!.underlying,
+      otherParams: ["0x9260c62866f36638964551A8f480C3aAAa4693fd", "10"], // Beefy Vault Address, withdrawal fee
+    },
+    {
+      // BOMB-BTCB LP
       strategy: "BeefyERC4626",
       name: "BOMBBTCLP",
       underlying: assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying,
       otherParams: ["0x94e85b8e050f3f281cb9597cc0144f1f7af1fe9b", "10"], // Beefy Vault Address, withdrawal fee
     },
     {
-      // 0x
       strategy: "BombERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.BOMB)!.underlying, // BOMB
       otherParams: [assets.find((a) => a.symbol === assetSymbols.xBOMB)!.underlying], // xBOMB
       name: "BOMBxBOMB",
     },
     {
-      // 0x
       strategy: "AutofarmERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.AUTO)!.underlying, // AUTO
       otherParams: ["0", "0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
@@ -69,23 +110,28 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTO",
     },
     {
-      // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying, // 3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
       name: "3EPS",
     },
     {
-      // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["dai3EPS"])!.underlying, // dai3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
-      name: "dai3EPS",
+      name: "val3EPS",
     },
     {
       // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "valdai3EPS",
+    },
+    {
       strategy: "DotDotLpERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying, // 2BRL
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
@@ -94,35 +140,30 @@ export const deployConfig: ChainDeployConfig = {
     },
     // All of these vaults are deprecated
     /*{
-      // 0x
       strategy: "AutofarmERC4626",
       underlying: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c", // WBNB
       otherParams: [ "1","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
       flywheelIndices: [2]
     },
     {
-      // 0x
       strategy: "AutofarmERC4626",
       underlying: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56", // BUSD
       otherParams: [ "2","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
       flywheelIndices: [2]
     },
     {
-      // 0x
       strategy: "AutofarmERC4626",
       underlying: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c", // BTCB
       otherParams: [ "3","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
      flywheelIndices: [2]
     },
     {
-      // 0x
       strategy: "AutofarmERC4626",
       underlying: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8", // BETH
       otherParams: [ "4","0xa184088a740c695E156F91f5cC086a06bb78b827", "0x0895196562C7868C5Be92459FaE7f877ED450452"], // poolId, AUTO, AutofarmV2 (Vault Handler)
       flywheelIndices: [2]
     }, */
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: wbnb, // WBNB
       otherParams: [
@@ -132,7 +173,6 @@ export const deployConfig: ChainDeployConfig = {
       name: "WBNB",
     },
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.ETH)!.underlying, // ETH
       otherParams: [
@@ -142,7 +182,6 @@ export const deployConfig: ChainDeployConfig = {
       name: "ETH",
     },
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying, // BUSD
       otherParams: [
@@ -152,7 +191,6 @@ export const deployConfig: ChainDeployConfig = {
       name: "BUSD",
     },
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying, // USDT
       otherParams: [
@@ -162,7 +200,6 @@ export const deployConfig: ChainDeployConfig = {
       name: "USDT",
     },
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying, // USDC
       otherParams: [
@@ -172,7 +209,6 @@ export const deployConfig: ChainDeployConfig = {
       name: "USDC",
     },
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.TUSD)!.underlying, // TUSD
       otherParams: [
@@ -182,7 +218,6 @@ export const deployConfig: ChainDeployConfig = {
       name: "TUSD",
     },
     {
-      // 0x
       strategy: "AlpacaERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying, // BTCB
       otherParams: [
@@ -209,6 +244,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
+  cgId: "binancecoin",
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -297,12 +333,22 @@ const curvePools: CurvePoolConfig[] = [
     ],
   },
   {
-    // dai3EPS metapool
-    lpToken: assets.find((a) => a.symbol === assetSymbols.dai3EPS)!.underlying,
-    pool: "0xc6a752948627bECaB5474a10821Df73fF4771a49",
+    // val3EPS metapool
+    lpToken: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
+    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
+    ],
+  },
+  {
+    // valdai3EPS metapool
+    lpToken: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
+    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
     ],
   },
   {
@@ -341,8 +387,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
-  ////
 
+  //// Uniswap LP Oracle
   await deployUniswapLpOracle({
     run,
     ethers,
@@ -351,6 +397,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
 
+  //// Curve LP Oracle
   await deployCurveLpOracle({
     run,
     ethers,
@@ -358,6 +405,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  //// Ankr BNB Certificate oracle
+  await deployABNBcOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
