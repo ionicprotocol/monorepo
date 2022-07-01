@@ -265,7 +265,7 @@ const chainPluginConfig: ChainPlugins = {
         cTokenContract: DelegateContractName.CErc20PluginDelegate,
         strategyName: "Alpaca Finance ibBTCB Vault",
         strategyCode: "AlpacaERC4626_BTCB",
-        strategyAddress: "0x9223EcAD6F7E73f73Ee7f9e74D48d9f9050A1954",
+        strategyAddress: "0xe9c47E742a2fD2b2a1cef2231BE7BDE16C82A0FB",
       },
     ],
     // BETH
