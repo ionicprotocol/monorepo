@@ -119,3 +119,7 @@ export type Erc4626PluginDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   dynamicFlywheels: Array<string>;
 };
+
+export type aBNBcDeployParams = ChainDeployFnParams & {
+  assets: SupportedAsset[];
+};
