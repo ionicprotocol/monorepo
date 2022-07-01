@@ -91,12 +91,35 @@ const chainPluginConfig: ChainPlugins = {
         ],
       },
     ],
-    // dai3EPS
-    [bscAssets.find((a) => a.symbol === assetSymbols["dai3EPS"])!.underlying]: [
+    // TODO: UPDATE AFTER DEPLOY
+    [bscAssets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying]: [
       {
         cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
-        strategyName: "dai3EPS LP Staker with EPX Rewards",
-        strategyCode: "DotDotLpERC4626_dai3EPS",
+        strategyName: "val3EPS LP Staker with EPX Rewards",
+        strategyCode: "DotDotLpERC4626_val3EPS",
+        strategyAddress: "0x574f934075D9b9392A8B0d1e0a4ADAD79B4cd16b",
+        flywheels: [
+          {
+            // FuseFlywheelCore_EPX.json
+            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
+            // EPX rewards
+            rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
+          },
+          {
+            // FuseFlywheelCore_DDD.json
+            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
+            // DDD rewards
+            rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
+          },
+        ],
+      },
+    ],
+    // TODO: UPDATE AFTER DEPLOY
+    [bscAssets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying]: [
+      {
+        cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate,
+        strategyName: "valdai3EPS LP Staker with EPX Rewards",
+        strategyCode: "DotDotLpERC4626_valdai3EPS",
         strategyAddress: "0x574f934075D9b9392A8B0d1e0a4ADAD79B4cd16b",
         flywheels: [
           {

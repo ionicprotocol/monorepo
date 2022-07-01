@@ -71,7 +71,7 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying, // 3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
       name: "3EPS",
@@ -79,10 +79,18 @@ export const deployConfig: ChainDeployConfig = {
     {
       // 0x
       strategy: "DotDotLpERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["dai3EPS"])!.underlying, // dai3EPS
+      underlying: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
       otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
       flywheelIndices: [0, 1],
-      name: "dai3EPS",
+      name: "val3EPS",
+    },
+    {
+      // 0x
+      strategy: "DotDotLpERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
+      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      flywheelIndices: [0, 1],
+      name: "valdai3EPS",
     },
     {
       // 0x
@@ -298,12 +306,22 @@ const curvePools: CurvePoolConfig[] = [
     ],
   },
   {
-    // dai3EPS metapool
-    lpToken: assets.find((a) => a.symbol === assetSymbols.dai3EPS)!.underlying,
-    pool: "0xc6a752948627bECaB5474a10821Df73fF4771a49",
+    // val3EPS metapool
+    lpToken: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
+    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
+    ],
+  },
+  {
+    // valdai3EPS metapool
+    lpToken: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
+    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
     ],
   },
   {
