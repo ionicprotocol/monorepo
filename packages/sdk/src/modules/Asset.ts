@@ -182,9 +182,9 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
               throw `Failed to approve to pool ${flywheelConfig.address}`;
             }
 
-            //3. Enable cToken as strategy on FuseFlywheelCore
+            //3. Enable Strategy on Flywheel
             const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
-              cToken.address
+              config.plugin.strategyAddress
             );
             const enableTxReceipt = await enableTx.wait();
 
