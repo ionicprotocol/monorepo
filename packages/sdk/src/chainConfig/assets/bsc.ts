@@ -143,6 +143,12 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
   },
   {
+    symbol: assetSymbols.aBNBc,
+    underlying: "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A",
+    name: "Ankr BNB Reward Bearing Certificate",
+    decimals: 18,
+  },
+  {
     symbol: assetSymbols["BTCB-BOMB"],
     underlying: "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6",
     name: "BOMB-BTC PCS LP",
