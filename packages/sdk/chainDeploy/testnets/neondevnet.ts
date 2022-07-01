@@ -24,6 +24,8 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
   },
+  // TODO: need to check
+  cgId: "neon",
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {
