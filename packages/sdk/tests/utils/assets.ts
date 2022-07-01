@@ -230,16 +230,21 @@ export const getEllipsisPoolAssets = async (
 ): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateFuse();
 
-  const dai3EPS = bscAssets.find((b) => b.symbol === assetSymbols.dai3EPS);
+  const val3EPS = bscAssets.find((b) => b.symbol === assetSymbols.val3EPS);
+  const valdai3EPS = bscAssets.find((b) => b.symbol === assetSymbols.valdai3EPS);
   const threeEPS = bscAssets.find((b) => b.symbol === assetSymbols["3EPS"]);
 
-  const assets = [dai3EPS, threeEPS];
-  const dai3EPSPlugin = sdk.chainPlugins[dai3EPS.underlying][0];
+  const assets = [val3EPS, threeEPS, valdai3EPS];
+  const dai3EPSPlugin = sdk.chainPlugins[val3EPS.underlying][0];
+  const valdai3EPSPlugin = sdk.chainPlugins[valdai3EPS.underlying][0];
   const threeEPSPlugin = sdk.chainPlugins[threeEPS.underlying][0];
 
   const assetConfigs = [
     {
       plugin: dai3EPSPlugin,
+    },
+    {
+      plugin: valdai3EPSPlugin,
     },
     {
       plugin: threeEPSPlugin,
