@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
@@ -58,6 +58,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: [],
     },
   ],
+  cgId: "binancecoin",
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {

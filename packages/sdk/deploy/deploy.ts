@@ -1,13 +1,15 @@
 /* eslint-disable no-console */
-import { constants, providers } from "ethers";
+import { constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
+import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import { configureFuseSafeLiquidator, deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
+  const MIN_BORROW_USD = 100;
   const chainId = await getChainId();
   console.log("chainId: ", chainId);
   const { deployer } = await getNamedAccounts();
@@ -58,7 +60,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(`ffd fee updated to ${feeAfter}`);
   }
 
-  tx = await fuseFeeDistributor._setPoolLimits(10, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
+  const cgPrice = await getCgPrice(chainDeployParams.cgId);
+  const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
+
+  tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
   await tx.wait();
   console.log("FuseFeeDistributor pool limits set", tx.hash);
 

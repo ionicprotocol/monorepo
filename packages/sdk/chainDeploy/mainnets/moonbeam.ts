@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
@@ -59,6 +59,7 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.GLINT,
     },
   ],
+  cgId: "moonbeam",
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
