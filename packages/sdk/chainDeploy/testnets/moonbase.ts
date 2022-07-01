@@ -1,4 +1,4 @@
-import { ethers, providers } from "ethers";
+import { ethers, providers, utils } from "ethers";
 
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
@@ -21,6 +21,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x049581aEB6Fe262727f290165C29BDAB065a1B68",
     uniswapOracleInitialDeployTokens: [],
   },
+  cgId: "moonbeam",
 };
 
 export const deploy = async ({ run, getNamedAccounts, deployments, ethers }: ChainDeployFnParams): Promise<void> => {

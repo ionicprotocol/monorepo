@@ -52,6 +52,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "TOUCH",
     },
   ],
+  cgId: "ethereum",
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: ChainDeployFnParams): Promise<void> => {
