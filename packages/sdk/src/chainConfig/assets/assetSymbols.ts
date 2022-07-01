@@ -32,6 +32,7 @@ enum assetSymbols {
   BRZ = "BRZ",
   BOMB = "BOMB",
   xBOMB = "xBOMB",
+  aBNBc = "aBNBc",
   SAFEMOON = "SAFEMOON",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",

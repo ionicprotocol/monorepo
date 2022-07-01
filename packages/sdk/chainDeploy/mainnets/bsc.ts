@@ -4,6 +4,7 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import { deployABNBcOracle } from "../helpers/aBNBcOracle";
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
@@ -360,8 +361,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
-  ////
 
+  //// Uniswap LP Oracle
   await deployUniswapLpOracle({
     run,
     ethers,
@@ -370,6 +371,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
 
+  //// Curve LP Oracle
   await deployCurveLpOracle({
     run,
     ethers,
@@ -377,6 +379,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  //// Ankr BNB Certificate oracle
+  await deployABNBcOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
