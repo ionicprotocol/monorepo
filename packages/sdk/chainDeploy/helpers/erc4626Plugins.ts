@@ -15,8 +15,10 @@ export const deployFlywheelWithDynamicRewards = async ({
 
   for (const config of deployConfig.dynamicFlywheels) {
     if (config) {
-      console.log(`Deploying FuseFlywheelCore & FuseFlywheelDynamicRewards for ${config.rewardToken} reward token`);
-      //// FuseFlyhweelCore with Dynamic Rewards
+      console.log(
+        `Deploying FuseFlywheelCore & FuseFlywheelDynamicRewardsPlugin for ${config.rewardToken} reward token`
+      );
+      //// FuseFlywheelCore with Dynamic Rewards
       const fwc = await deployments.deploy(`FuseFlywheelCore_${config.name}`, {
         contract: "FuseFlywheelCore",
         from: deployer,
@@ -33,13 +35,13 @@ export const deployFlywheelWithDynamicRewards = async ({
       console.log("FuseFlywheelCore: ", fwc.address);
 
       const fdr = await deployments.deploy(`FuseFlywheelDynamicRewards_${config.name}`, {
-        contract: "FuseFlywheelDynamicRewards",
+        contract: "FuseFlywheelDynamicRewardsPlugin",
         from: deployer,
         args: [fwc.address, config.cycleLength],
         log: true,
         waitConfirmations: 1,
       });
-      console.log("FuseFlywheelDynamicRewards: ", fdr.address);
+      console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
       const flywheelCore = (await ethers.getContractAt("FuseFlywheelCore", fwc.address, deployer)) as FuseFlywheelCore;
       const tx = await flywheelCore.setFlywheelRewards(fdr.address, { from: deployer });
