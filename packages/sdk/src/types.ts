@@ -1,4 +1,5 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
+import { Artifact } from "./Artifacts";
 
 import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
 import { FuseBase } from "./Fuse";
@@ -65,6 +66,9 @@ export type ChainDeployment = {
     address: string;
   };
 };
+
+export type OracleConfig = ChainDeployment;
+export type IrmConfig = OracleConfig;
 
 export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
 

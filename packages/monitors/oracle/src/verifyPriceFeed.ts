@@ -1,7 +1,7 @@
 import { Fuse, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
 import { BigNumber, ethers, Wallet } from "ethers";
 
-import { logger, SupportedAssetPriceFeed } from "./index";
+import { logger, SupportedAssetPriceFeed, verifyOracleProviderPriceFeed } from "./index";
 
 export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset): Promise<SupportedAssetPriceFeed> {
   const oracle = asset.oracle;
@@ -31,10 +31,10 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
     case OracleTypes.ChainlinkPriceOracleV2:
     case OracleTypes.DiaPriceOracle:
     case OracleTypes.FluxPriceOracle:
-      ({ price, valid } = await verifyOracleProviderPriceFeed(mpoPrice, underlyingOraclePrice));
+      await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying);
       break;
     case OracleTypes.UniswapTwapPriceOracleV2:
-      ({ price, valid } = await verifyTwapPriceFeed(mpoPrice, underlyingOraclePrice));
+      await verifyTwapPriceFeed(mpoPrice, underlyingOraclePrice);
       break;
     case OracleTypes.FixedNativePriceOracle:
       if (!underlyingOraclePrice.eq(ethers.utils.parseEther("1"))) {
@@ -52,14 +52,6 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
     valid,
     price,
   };
-}
-
-async function verifyOracleProviderPriceFeed(mpoPrice: BigNumber, oraclePrice: BigNumber) {
-  // TODO
-  if (mpoPrice !== oraclePrice) {
-    return { price: oraclePrice, valid: false };
-  }
-  return { price: oraclePrice, valid: true };
 }
 
 async function verifyTwapPriceFeed(mpoPrice: BigNumber, oraclePrice: BigNumber) {
