@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
 import { SupportedAsset } from "../../src/types";
@@ -31,6 +32,7 @@ export type ChainDeployConfig = {
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
   plugins?: PluginConfig[];
+  cgId: string;
 };
 
 export type DynamicFlywheelConfig = {
