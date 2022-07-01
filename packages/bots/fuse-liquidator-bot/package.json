@@ -29,10 +29,12 @@
     "dotenv": "^16.0.0",
     "ethers": "^5.6.5",
     "pino": "^8.0.0",
-    "pino-pretty": "^8.0.0"
+    "pino-pretty": "^8.0.0",
+    "prettier": "2.6.2"
   },
   "devDependencies": {
-    "@types/node": "18.0.0",
+    "@types/eslint": "^8.4.3",
+    "@types/node": "^18.0.0",
     "@types/rimraf": "^3",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
