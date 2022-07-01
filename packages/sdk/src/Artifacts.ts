@@ -9,18 +9,20 @@ import CEtherDelegatorArtifact from "../lib/contracts/out/CEtherDelegator.sol/CE
 import ChainlinkPriceOracleV2Artifact from "../lib/contracts/out/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
 import ComptrollerArtifact from "../lib/contracts/out/Comptroller.sol/Comptroller.json";
 import CTokenInterfaceArtifact from "../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
+import CurveLpTokenPriceOracleNoRegistryArtifact from "../lib/contracts/out/CurveLpTokenPriceOracleNoRegistry.sol/CurveLpTokenPriceOracleNoRegistry.json";
 import DAIInterestRateModelV2Artifact from "../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
 import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
+import FixedNativePriceOracleArtifact from "../lib/contracts/out/FixedNativePriceOracle.sol/FixedNativePriceOracle.json";
 import FlywheelStaticRewardsArtifact from "../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
 import FuseFlywheelCoreArtifact from "../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
 import FuseFlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FuseFlywheelDynamicRewards.sol/FuseFlywheelDynamicRewards.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
-import PreferredPriceOracleArtifact from "../lib/contracts/out/PreferredPriceOracle.sol/PreferredPriceOracle.json";
 import RewardsDistributorDelegateArtifact from "../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
 import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
 import SimplePriceOracleArtifact from "../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
+import UniswapLpTokenPriceOracleArtifact from "../lib/contracts/out/UniswapLpTokenPriceOracle.sol/UniswapLpTokenPriceOracle.json";
 import UniswapTwapPriceOracleV2Artifact from "../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import UnitrollerArtifact from "../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
@@ -54,7 +56,9 @@ const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
-const PreferredPriceOracle: Artifact = PreferredPriceOracleArtifact;
+const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
+const CurveLpTokenPriceOracleNoRegistry: Artifact = CurveLpTokenPriceOracleNoRegistryArtifact;
+const UniswapLpTokenPriceOracle: Artifact = UniswapLpTokenPriceOracleArtifact;
 const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
@@ -80,7 +84,9 @@ const ARTIFACTS = {
   FuseFlywheelCore,
   JumpRateModel,
   MasterPriceOracle,
-  PreferredPriceOracle,
+  FixedNativePriceOracle,
+  CurveLpTokenPriceOracleNoRegistry,
+  UniswapLpTokenPriceOracle,
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,
@@ -110,7 +116,6 @@ export {
   FuseFlywheelCore,
   JumpRateModel,
   MasterPriceOracle,
-  PreferredPriceOracle,
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,

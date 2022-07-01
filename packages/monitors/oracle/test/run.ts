@@ -7,5 +7,5 @@ import { setUpSdk, verifyPriceFeed } from "../src";
   const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
   const provider = new JsonRpcProvider(process.env.WEB3_HTTP_PROVIDER_URL);
   const fuse = setUpSdk(chainId, provider);
-  await verifyPriceFeed(fuse, fuse.supportedAssets[0]);
+  await verifyPriceFeed(fuse, fuse.supportedAssets[1]);
 })();
