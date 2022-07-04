@@ -14,7 +14,7 @@
     "resolveJsonModule":true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "rootDir":"./src",
+    // "rootDir":"./src",
     "outDir": "./netlify"
   },
   "include": ["src/**/*.ts"],
