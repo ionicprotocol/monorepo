@@ -6,6 +6,7 @@
     "@ethersproject/contracts": "^5.6.2",
     "@ethersproject/providers": "^5.6.8",
     "@midas-capital/sdk": "workspace:*",
+    "@supabase/supabase-js": "^1.35.4",
     "ethers": "^5.6.9",
     "yup": "^0.32.11"
   },
