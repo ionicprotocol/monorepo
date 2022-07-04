@@ -142,10 +142,8 @@ task("market:unsupport", "Unsupport a market")
   });
 
 task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
-  .setAction(async (taskArgs, { ethers }) => {
-
-    const signer = await ethers.getNamedSigner("deployer");
-
+  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
+  .setAction(async (taskArgs, { ethers, run }) => {
     // @ts-ignoreutils/fuseSdk
     const fuseModule = await import("../tests/utils/fuseSdk");
     // @ts-ignoreutils/pool
@@ -170,9 +168,17 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       );
 
       for(let j = 0; j < assets.length; j++) {
-        if (assets[0].plugin) {
-          console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${assets[j].underlying} --admin deployer --strategy-code ${assets[j].plugin.strategyCode} --implementation-address "" --network bsc`);
-        }
+        const assetConfig = assets[j];
+        assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying][0];
+        console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${assets[j].underlying} --admin deployer --strategy-code ${assets[j].plugin.strategyCode} --implementation-address "" --network bsc`);
+        // await run("market:upgrade",
+        //   {
+        //     poolName: pool.name,
+        //     marketId: assets[j].underlying,
+        //     admin: taskArgs.admin,
+        //     strategyCode: assets[j].plugin.strategyCode,
+        //     implementationAddress: ""
+        //   });
       }
     }
   }
