@@ -1,0 +1,22 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    // "allowJs": true,
+    // "forceConsistentCasingInFileNames": true,
+    // "noEmit": true,
+    // "module": "esnext",
+    // "moduleResolution": "node",
+    // "incremental": true,
+    // "downlevelIteration": true,
+    "target": "es6",
+    "skipLibCheck": true,
+    "strict": true,
+    "resolveJsonModule":true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "rootDir":"./src",
+    "outDir": "./netlify"
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}
