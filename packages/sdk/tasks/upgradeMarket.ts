@@ -170,15 +170,15 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       for(let j = 0; j < assets.length; j++) {
         const assetConfig = assets[j];
         assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying][0];
-        console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${assets[j].underlying} --admin deployer --strategy-code ${assets[j].plugin.strategyCode} --implementation-address "" --network bsc`);
-        // await run("market:upgrade",
-        //   {
-        //     poolName: pool.name,
-        //     marketId: assets[j].underlying,
-        //     admin: taskArgs.admin,
-        //     strategyCode: assets[j].plugin.strategyCode,
-        //     implementationAddress: ""
-        //   });
+        // console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${assets[j].underlying} --admin deployer --strategy-code ${assets[j].plugin.strategyCode} --implementation-address "" --network bsc`);
+        await run("market:upgrade",
+          {
+            poolName: pool.name,
+            marketId: assets[j].underlying,
+            admin: taskArgs.admin,
+            strategyCode: assets[j].plugin.strategyCode,
+            implementationAddress: ""
+          });
       }
     }
   }
