@@ -144,36 +144,31 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
     const fuseModule = await import("../tests/utils/fuseSdk");
     // @ts-ignoreutils/pool
     const poolModule = await import("../tests/utils/pool");
-    // @ts-ignoreutils/assets
-    const assetModule = await import("../tests/utils/assets");
 
-    const { chainId } = await ethers.provider.getNetwork();
-    console.log(`chain id is ${chainId}`);
     const sdk = await fuseModule.getOrCreateFuse();
+    const signer = await ethers.getNamedSigner(taskArgs.admin);
     const pools = await poolModule.getAllPools(sdk);
 
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-      const poolData = await poolModule.getPoolByName(pool.name, sdk);
-      const assets = poolData.assets;
-      console.log("pool assets", assets);
 
-      for (let j = 0; j < assets.length; j++) {
-        const assetConfig = assets[j];
-        console.log("asset config", assetConfig);
-        const signer = await ethers.getNamedSigner(taskArgs.admin);
-        const underlying = assetConfig.underlyingToken;
+      const comptroller = (await new Contract(
+        pool.comptroller,
+        sdk.chainDeployment.Comptroller.abi,
+        signer
+      )) as Comptroller;
+      const admin = await comptroller.callStatic.admin();
+      console.log("pool admin", admin);
 
-        const comptroller = (await new Contract(
-          pool.comptroller,
-          sdk.chainDeployment.Comptroller.abi,
-          signer
-        )) as Comptroller;
-
-        const admin = await comptroller.callStatic.admin();
-        console.log("pool admin", admin);
-        if (admin === signer.address) {
+      if (admin === signer.address) {
+        const poolData = await poolModule.getPoolByName(pool.name, sdk);
+        const assets = poolData.assets;
+        // console.log("pool assets", assets);
+        for (let j = 0; j < assets.length; j++) {
+          const assetConfig = assets[j];
+          console.log("asset config", assetConfig);
+          const underlying = assetConfig.underlyingToken;
           const assetPlugins = sdk.chainPlugins[underlying];
           if (assetPlugins && assetPlugins.length) {
             const plugin = assetPlugins[0];
@@ -190,12 +185,12 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
             });
           } else {
             console.log(
-              `No plugin config for pool/market ${pool.name}/${assetConfig.underlyingSymbol} with underlying asset ${underlying}`
+              `No plugin config for pool/market ${pool.name}/${assetConfig.cToken} with underlying asset ${underlying}`
             );
           }
-        } else {
-          console.log(`The signing address ${signer.address} is not the current admin of the market/pool ${admin}`);
         }
+      } else {
+        console.log(`The signing address ${signer.address} is not the current admin of the pool ${admin}`);
       }
     }
   });
