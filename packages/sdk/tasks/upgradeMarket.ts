@@ -1,7 +1,8 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import {constants, Contract} from "ethers";
+import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
-import {Comptroller} from "../lib/contracts/typechain";
+
+import { Comptroller } from "../lib/contracts/typechain";
 
 // example
 // hardhat market:upgrade --pool-name BOMB --market-id BTCB-BOMB --admin deployer --strategy-code BeefyERC4626_BOMBBTCLP --implementation-address "" --network bsc
@@ -158,17 +159,17 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const assets = poolData.assets;
       console.log("pool assets", assets);
 
-      for(let j = 0; j < assets.length; j++) {
+      for (let j = 0; j < assets.length; j++) {
         const assetConfig = assets[j];
-        console.log("asset config" , assetConfig);
+        console.log("asset config", assetConfig);
         const signer = await ethers.getNamedSigner(taskArgs.admin);
         const underlying = assetConfig.underlyingToken;
 
-        const comptroller = await new Contract(
+        const comptroller = (await new Contract(
           pool.comptroller,
           sdk.chainDeployment.Comptroller.abi,
           signer
-        ) as Comptroller;
+        )) as Comptroller;
 
         const admin = await comptroller.callStatic.admin();
         console.log("pool admin", admin);
@@ -177,22 +178,24 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
           if (assetPlugins && assetPlugins.length) {
             const plugin = assetPlugins[0];
             assetConfig.plugin = assetPlugins[0];
-            console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${underlying} --admin deployer --strategy-code ${plugin.strategyCode} --implementation-address "" --network bsc`);
-            await run("market:upgrade",
-              {
-                poolName: pool.name,
-                marketId: underlying,
-                admin: taskArgs.admin,
-                strategyCode: plugin.strategyCode,
-                implementationAddress: ""
-              });
+            console.log(
+              `hardhat market:upgrade --pool-name ${pool.name} --market-id ${underlying} --admin ${taskArgs.admin} --strategy-code ${plugin.strategyCode} --implementation-address "" --network bsc`
+            );
+            await run("market:upgrade", {
+              poolName: pool.name,
+              marketId: underlying,
+              admin: taskArgs.admin,
+              strategyCode: plugin.strategyCode,
+              implementationAddress: "",
+            });
           } else {
-            console.log(`No plugin config for pool/market ${pool.name}/${assetConfig.underlyingSymbol} with underlying asset ${underlying}`);
+            console.log(
+              `No plugin config for pool/market ${pool.name}/${assetConfig.underlyingSymbol} with underlying asset ${underlying}`
+            );
           }
         } else {
-          console.log(`The signing address ${signer.address} is not the current admin of the market/pool ${admin}`)
+          console.log(`The signing address ${signer.address} is not the current admin of the market/pool ${admin}`);
         }
       }
     }
-  }
-);
+  });

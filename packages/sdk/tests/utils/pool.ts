@@ -4,9 +4,9 @@ import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { Fuse, FusePoolData, MarketConfig, NativePricedFuseAsset } from "../../src";
+import { FusePool } from "../../src/types";
 
 import { getOrCreateFuse } from "./fuseSdk";
-import {FusePool} from "../../src/types";
 
 interface PoolCreationParams {
   closeFactor?: number;
@@ -137,7 +137,7 @@ export const getAllPools = async (sdk: Fuse): Promise<FusePool[]> => {
       comptroller: pp.comptroller,
       creator: pp.creator,
       blockPosted: pp.blockPosted.toNumber(),
-      timestampPosted: pp.timestampPosted.toNumber()
+      timestampPosted: pp.timestampPosted.toNumber(),
     };
   });
 };
