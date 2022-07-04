@@ -3,11 +3,12 @@
   "packageManager": "yarn@3.2.0",
   "private": true,
   "workspaces": [
-    "packages/sdk",
-    "packages/ui",
     "packages/bots/fuse-liquidator-bot",
     "packages/bots/fuse-twap-bot",
-    "packages/monitors/oracle"
+    "packages/functions",
+    "packages/monitors/oracle",
+    "packages/sdk",
+    "packages/ui"
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
