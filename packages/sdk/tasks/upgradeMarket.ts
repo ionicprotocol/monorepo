@@ -1,6 +1,7 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { constants } from "ethers";
+import {constants, Contract} from "ethers";
 import { task, types } from "hardhat/config";
+import {Comptroller} from "../lib/contracts/typechain";
 
 // example
 // hardhat market:upgrade --pool-name BOMB --market-id BTCB-BOMB --admin deployer --strategy-code BeefyERC4626_BOMBBTCLP --implementation-address "" --network bsc
@@ -18,10 +19,8 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const strategyCode = taskArgs.strategyCode;
 
     const signer = await ethers.getNamedSigner(taskArgs.admin);
-    console.log(signer.address);
+    console.log(`signer is ${signer.address}`);
 
-    // @ts-ignoreutils/assets
-    const assetModule = await import("../tests/utils/assets");
     // @ts-ignoreutils/pool
     const poolModule = await import("../tests/utils/pool");
     // @ts-ignoreutils/fuseSdk
@@ -29,29 +28,23 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const sdk = await fuseModule.getOrCreateFuse();
 
     const pool = await poolModule.getPoolByName(poolName, sdk);
-    const assets = await assetModule.getAssetsConf(
-      pool.comptroller,
-      sdk.contracts.FuseFeeDistributor.address,
-      sdk.irms.JumpRateModel.address,
-      ethers,
-      poolName
-    );
+    const poolData = await poolModule.getPoolByName(pool.name, sdk);
+    const assets = poolData.assets;
 
-    const assetConfig = assets.find((a) => a.underlying === marketId || a.symbol === marketId);
-    console.log(assetConfig);
+    const assetConfig = assets.find((a) => a.underlyingToken === marketId || a.underlyingSymbol === marketId);
 
     if (strategyCode) {
-      const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlying);
-      console.log(market);
+      const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
+      console.log("market", market);
 
       const cTokenInstance = sdk.getCTokenInstance(market.cToken);
       if (implementationAddress === "") {
         // reuse the current implementation, only update the plugin
         implementationAddress = await cTokenInstance.callStatic.implementation();
       }
-      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying].find((p) => p.strategyCode === strategyCode);
+      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlyingToken].find((p) => p.strategyCode === strategyCode);
 
-      console.log(await cTokenInstance.callStatic.fuseAdmin(), "FUSE ADMIN");
+      // console.log(await cTokenInstance.callStatic.fuseAdmin(), "FUSE ADMIN");
 
       const pluginAddress = assetConfig.plugin.strategyAddress;
       const abiCoder = new ethers.utils.AbiCoder();
@@ -72,7 +65,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     }
   });
 
-task("market:updatewhitelist", "Upgrades a market's implementation")
+task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   .addParam("oldImplementationAddress", "The address of the old implementation", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
@@ -99,6 +92,7 @@ task("market:updatewhitelist", "Upgrades a market's implementation")
         taskArgs.oldImplementationAddress,
         taskArgs.oldImplementationAddress,
         taskArgs.oldImplementationAddress,
+        taskArgs.oldImplementationAddress,
       ],
       [
         sdk.chainDeployment.CErc20Delegate.address,
@@ -112,9 +106,10 @@ task("market:updatewhitelist", "Upgrades a market's implementation")
         sdk.chainDeployment.CErc20Delegate.address,
         sdk.chainDeployment.CErc20PluginDelegate.address,
         sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
+        taskArgs.oldImplementationAddress,
       ],
-      [false, false, false, false, false, false, false, false, false, false],
-      [true, true, true, true, true, true, true, true, true, true]
+      [false, false, false, false, false, false, false, false, false, false, false],
+      [true, true, true, true, true, true, true, true, true, true, true]
     );
 
     const receipt = await tx.wait();
@@ -158,27 +153,45 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
 
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
-      console.log(pool.name);
-      const assets = await assetModule.getAssetsConf(
-        pool.comptroller,
-        sdk.contracts.FuseFeeDistributor.address,
-        sdk.irms.JumpRateModel.address,
-        ethers,
-        pool.name
-      );
+      console.log("pool name", pool.name);
+      const poolData = await poolModule.getPoolByName(pool.name, sdk);
+      const assets = poolData.assets;
+      console.log("pool assets", assets);
 
       for(let j = 0; j < assets.length; j++) {
         const assetConfig = assets[j];
-        assetConfig.plugin = sdk.chainPlugins[assetConfig.underlying][0];
-        // console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${assets[j].underlying} --admin deployer --strategy-code ${assets[j].plugin.strategyCode} --implementation-address "" --network bsc`);
-        await run("market:upgrade",
-          {
-            poolName: pool.name,
-            marketId: assets[j].underlying,
-            admin: taskArgs.admin,
-            strategyCode: assets[j].plugin.strategyCode,
-            implementationAddress: ""
-          });
+        console.log("asset config" , assetConfig);
+        const signer = await ethers.getNamedSigner(taskArgs.admin);
+        const underlying = assetConfig.underlyingToken;
+
+        const comptroller = await new Contract(
+          pool.comptroller,
+          sdk.chainDeployment.Comptroller.abi,
+          signer
+        ) as Comptroller;
+
+        const admin = await comptroller.callStatic.admin();
+        console.log("pool admin", admin);
+        if (admin === signer.address) {
+          const assetPlugins = sdk.chainPlugins[underlying];
+          if (assetPlugins && assetPlugins.length) {
+            const plugin = assetPlugins[0];
+            assetConfig.plugin = assetPlugins[0];
+            console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${underlying} --admin deployer --strategy-code ${plugin.strategyCode} --implementation-address "" --network bsc`);
+            await run("market:upgrade",
+              {
+                poolName: pool.name,
+                marketId: underlying,
+                admin: taskArgs.admin,
+                strategyCode: plugin.strategyCode,
+                implementationAddress: ""
+              });
+          } else {
+            console.log(`No plugin config for pool/market ${pool.name}/${assetConfig.underlyingSymbol} with underlying asset ${underlying}`);
+          }
+        } else {
+          console.log(`The signing address ${signer.address} is not the current admin of the market/pool ${admin}`)
+        }
       }
     }
   }
