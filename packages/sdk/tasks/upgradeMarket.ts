@@ -3,17 +3,17 @@ import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 // example
-// hardhat market:upgrade --pool-name BOMB --symbol BTCB-BOMB --admin deployer --strategy-code BeefyERC4626_BOMBBTCLP --implementation-address "" --network bsc
+// hardhat market:upgrade --pool-name BOMB --market-id BTCB-BOMB --admin deployer --strategy-code BeefyERC4626_BOMBBTCLP --implementation-address "" --network bsc
 
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("poolName", "Name of pool", undefined, types.string)
-  .addParam("symbol", "Asset symbol", undefined, types.string)
+  .addParam("marketId", "Underlying asset symbol or address", undefined, types.string)
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .addOptionalParam("implementationAddress", "The address of the new implementation", "", types.string)
   .addOptionalParam("strategyCode", "If using strategy, pass its code", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const poolName = taskArgs.poolName;
-    const symbol = taskArgs.symbol;
+    const marketId = taskArgs.marketId;
     let implementationAddress = taskArgs.implementationAddress;
     const strategyCode = taskArgs.strategyCode;
 
@@ -37,7 +37,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
       poolName
     );
 
-    const assetConfig = assets.find((a) => a.symbol === symbol);
+    const assetConfig = assets.find((a) => a.underlying === marketId || a.symbol === marketId);
     console.log(assetConfig);
 
     if (strategyCode) {
@@ -140,3 +140,40 @@ task("market:unsupport", "Unsupport a market")
     const receipt: TransactionReceipt = await tx.wait();
     console.log("Unsupported market with status:", receipt.status);
   });
+
+task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
+  .setAction(async (taskArgs, { ethers }) => {
+
+    const signer = await ethers.getNamedSigner("deployer");
+
+    // @ts-ignoreutils/fuseSdk
+    const fuseModule = await import("../tests/utils/fuseSdk");
+    // @ts-ignoreutils/pool
+    const poolModule = await import("../tests/utils/pool");
+    // @ts-ignoreutils/assets
+    const assetModule = await import("../tests/utils/assets");
+
+    const { chainId } = await ethers.provider.getNetwork();
+    console.log(`chain id is ${chainId}`);
+    const sdk = await fuseModule.getOrCreateFuse();
+    const pools = await poolModule.getAllPools(sdk);
+
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      console.log(pool.name);
+      const assets = await assetModule.getAssetsConf(
+        pool.comptroller,
+        sdk.contracts.FuseFeeDistributor.address,
+        sdk.irms.JumpRateModel.address,
+        ethers,
+        pool.name
+      );
+
+      for(let j = 0; j < assets.length; j++) {
+        if (assets[0].plugin) {
+          console.log(`hardhat market:upgrade --pool-name ${pool.name} --market-id ${assets[j].underlying} --admin deployer --strategy-code ${assets[j].plugin.strategyCode} --implementation-address "" --network bsc`);
+        }
+      }
+    }
+  }
+);
