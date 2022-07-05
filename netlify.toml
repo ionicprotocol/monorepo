@@ -35,4 +35,4 @@ SUPABASE_PRICE_TABLE="demo-table"
 directory = "./packages/functions/netlify/"
 
 [functions."save-price"]
-# schedule = "@hourly"
+schedule = "@hourly"
