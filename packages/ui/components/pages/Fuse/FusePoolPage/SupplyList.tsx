@@ -253,6 +253,7 @@ const AssetSupplyRow = ({
                 {tokenData?.symbol ?? asset.underlyingSymbol}
               </Text>
               <SimpleTooltip
+                placement="top-start"
                 label={
                   'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
                 }
@@ -271,7 +272,7 @@ const AssetSupplyRow = ({
               {asset.underlyingSymbol &&
                 tokenData?.symbol &&
                 asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() && (
-                  <SimpleTooltip placement="auto" label={asset.underlyingSymbol}>
+                  <SimpleTooltip label={asset.underlyingSymbol}>
                     <QuestionIcon />
                   </SimpleTooltip>
                 )}
