@@ -53,11 +53,3 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
     price,
   };
 }
-
-async function verifyTwapPriceFeed(mpoPrice: BigNumber, oraclePrice: BigNumber) {
-  // TODO
-  if (mpoPrice !== oraclePrice) {
-    return { price: oraclePrice, valid: false };
-  }
-  return { price: oraclePrice, valid: true };
-}
