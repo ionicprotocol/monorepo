@@ -13,14 +13,14 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "@typescript-eslint/parser": "^5.30.0",
     "netlify-cli": "^10.7.1",
+    "@typescript-eslint/eslint-plugin": "^5.30.4",
+    "@typescript-eslint/parser": "^5.30.4",
     "typescript": "^4.7.4"
   },
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
-    "ts-node": "^10.8.1"
+    "ts-node": "^10.8.2"
   },
   "resolutions": {
     "@types/react": "^17.0.15"
