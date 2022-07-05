@@ -24,6 +24,7 @@ import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDis
 import SimplePriceOracleArtifact from "../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
 import UniswapLpTokenPriceOracleArtifact from "../lib/contracts/out/UniswapLpTokenPriceOracle.sol/UniswapLpTokenPriceOracle.json";
 import UniswapTwapPriceOracleV2Artifact from "../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
+import UniswapTwapPriceOracleV2RootArtifact from "../lib/contracts/out/UniswapTwapPriceOracleV2Root.sol/UniswapTwapPriceOracleV2Root.json";
 import UnitrollerArtifact from "../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
 
@@ -59,6 +60,7 @@ const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
 const CurveLpTokenPriceOracleNoRegistry: Artifact = CurveLpTokenPriceOracleNoRegistryArtifact;
 const UniswapLpTokenPriceOracle: Artifact = UniswapLpTokenPriceOracleArtifact;
+const UniswapTwapPriceOracleV2Root: Artifact = UniswapTwapPriceOracleV2RootArtifact;
 const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
@@ -87,6 +89,7 @@ const ARTIFACTS = {
   FixedNativePriceOracle,
   CurveLpTokenPriceOracleNoRegistry,
   UniswapLpTokenPriceOracle,
+  UniswapTwapPriceOracleV2Root,
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,
@@ -120,6 +123,7 @@ export {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   UniswapTwapPriceOracleV2,
+  UniswapTwapPriceOracleV2Root,
   Unitroller,
   WhitePaperInterestRateModel,
 };
