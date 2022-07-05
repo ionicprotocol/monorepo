@@ -18,6 +18,7 @@ import {
   chainPluginConfig,
   chainRedemptionStrategies,
   chainSpecificAddresses,
+  chainSpecificParams,
   chainSupportedAssets,
   irmConfig,
   oracleConfig,
@@ -36,6 +37,7 @@ import {
   AssetPluginConfig,
   ChainAddresses,
   ChainDeployment,
+  ChainParams,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
@@ -79,6 +81,7 @@ export class FuseBase {
   public chainDeployment: ChainDeployment;
   public oracles: OracleConfig;
   public chainSpecificAddresses: ChainAddresses;
+  public chainSpecificParams: ChainParams;
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;
@@ -152,6 +155,7 @@ export class FuseBase {
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
 
     this.chainSpecificAddresses = chainSpecificAddresses[chainId];
+    this.chainSpecificParams = chainSpecificParams[chainId];
     this.liquidationConfig = chainLiquidationDefaults[chainId];
     this.supportedAssets = chainSupportedAssets[chainId];
     this.chainPlugins = chainPluginConfig[chainId];
