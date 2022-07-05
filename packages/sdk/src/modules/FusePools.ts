@@ -171,6 +171,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       // TODO: fix this shit later
       poolIds = poolIds.filter((id) => this.chainId !== 97 || (this.chainId === 97 && id !== "3"));
+      poolIds = poolIds.filter((id) => this.chainId !== 56 || (this.chainId === 56 && id !== "8"));
 
       if (!poolIds.length) {
         return undefined;
