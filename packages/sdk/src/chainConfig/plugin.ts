@@ -123,13 +123,13 @@ const chainPluginConfig: ChainPlugins = {
         flywheels: [
           {
             // FuseFlywheelCore_EPX.json
-            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
+            address: "0xf06bb51fB6bfA6B46D8641d5bCeA60bd9454Cf83",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
             // FuseFlywheelCore_DDD.json
-            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
+            address: "0x0429cBBdc856366857a60c5F3424A4b477621761",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -146,13 +146,13 @@ const chainPluginConfig: ChainPlugins = {
         flywheels: [
           {
             // FuseFlywheelCore_EPX.json
-            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
+            address: "0xf06bb51fB6bfA6B46D8641d5bCeA60bd9454Cf83",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
             // FuseFlywheelCore_DDD.json
-            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
+            address: "0x0429cBBdc856366857a60c5F3424A4b477621761",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -169,13 +169,13 @@ const chainPluginConfig: ChainPlugins = {
         flywheels: [
           {
             // FuseFlywheelCore_EPX.json
-            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
+            address: "0xf06bb51fB6bfA6B46D8641d5bCeA60bd9454Cf83",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
             // FuseFlywheelCore_DDD.json
-            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
+            address: "0x0429cBBdc856366857a60c5F3424A4b477621761",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
@@ -192,13 +192,13 @@ const chainPluginConfig: ChainPlugins = {
         flywheels: [
           {
             // FuseFlywheelCore_EPX.json
-            address: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
+            address: "0xf06bb51fB6bfA6B46D8641d5bCeA60bd9454Cf83",
             // EPX rewards
             rewardToken: "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71",
           },
           {
             // FuseFlywheelCore_DDD.json
-            address: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
+            address: "0x0429cBBdc856366857a60c5F3424A4b477621761",
             // DDD rewards
             rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
           },
