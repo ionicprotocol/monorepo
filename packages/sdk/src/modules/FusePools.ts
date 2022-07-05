@@ -167,11 +167,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
           from: options.from,
         }
       );
-      let poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
-
-      // TODO: fix this shit later
-      poolIds = poolIds.filter((id) => this.chainId !== 97 || (this.chainId === 97 && id !== "3"));
-      poolIds = poolIds.filter((id) => this.chainId !== 56 || (this.chainId === 56 && id !== "8"));
+      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
 
       if (!poolIds.length) {
         return undefined;
@@ -179,11 +175,14 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
       const poolData = await Promise.all(
         poolIds.map((_id, i) => {
-          return this.fetchFusePoolData(_id, options.from);
+          return this.fetchFusePoolData(_id, options.from).catch((error) => {
+            console.error(`Pool ID ${_id} wasn't able to be fetched from FusePoolLens without error.`, error);
+            return null;
+          });
         })
       );
 
-      return poolData;
+      return poolData.filter((p) => !!p);
     }
 
     async fetchPools({
