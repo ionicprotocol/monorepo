@@ -1,5 +1,4 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
-import { Artifact } from "./Artifacts";
 
 import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
 import { FuseBase } from "./Fuse";
@@ -263,9 +262,12 @@ export type ChainOracles = {
 };
 
 export type ChainSpecificParams = {
-  [chain in SupportedChains]: {
-    blocksPerYear: BigNumber;
-  };
+  [chain in SupportedChains]: ChainParams;
+};
+
+export type ChainParams = {
+  blocksPerYear: BigNumber;
+  cgId: string;
 };
 
 export type ChainAddresses = {
