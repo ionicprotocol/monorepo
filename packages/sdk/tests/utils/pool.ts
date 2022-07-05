@@ -4,6 +4,7 @@ import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { Fuse, FusePoolData, MarketConfig, NativePricedFuseAsset } from "../../src";
+import { FusePool } from "../../src/types";
 
 import { getOrCreateFuse } from "./fuseSdk";
 
@@ -126,6 +127,19 @@ export const getPoolByName = async (name: string, sdk: Fuse, address?: string): 
     }
   }
   return null;
+};
+
+export const getAllPools = async (sdk: Fuse): Promise<FusePool[]> => {
+  const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
+  return publicPools.map((pp) => {
+    return {
+      name: pp.name,
+      comptroller: pp.comptroller,
+      creator: pp.creator,
+      blockPosted: pp.blockPosted.toNumber(),
+      timestampPosted: pp.timestampPosted.toNumber(),
+    };
+  });
 };
 
 export const logPoolData = async (poolAddress, sdk) => {
