@@ -34,7 +34,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       });
       console.log("FuseFlywheelCore: ", fwc.address);
 
-      const fdr = await deployments.deploy(`FuseFlywheelDynamicRewards_${config.name}`, {
+      const fdr = await deployments.deploy(`FuseFlywheelDynamicRewardsPlugin_${config.name}`, {
         contract: "FuseFlywheelDynamicRewardsPlugin",
         from: deployer,
         args: [fwc.address, config.cycleLength],
