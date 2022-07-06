@@ -37,6 +37,7 @@ export enum OracleTypes {
   SimplePriceOracle = "SimplePriceOracle",
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
+  AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
 }
 
 export enum LiquidationStrategy {
