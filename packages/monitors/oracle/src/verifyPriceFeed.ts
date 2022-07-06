@@ -18,11 +18,7 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
   const mpo = fuse.createMasterPriceOracle(signer);
   const mpoPrice = await mpo.callStatic.price(asset.underlying);
   const underlyingOracleAddress = await mpo.callStatic.oracles(asset.underlying);
-  const underlyingOracle = await fuse.createOracle(underlyingOracleAddress, oracle, signer);
-  const underlyingOraclePrice = await underlyingOracle.callStatic.price(asset.underlying);
-  if (!mpoPrice.eq(underlyingOraclePrice)) {
-    throw "Oracle prices out of sync";
-  }
+
   let valid = true;
   let price: BigNumber = BigNumber.from(0);
 
@@ -33,16 +29,16 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
       await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying);
       break;
     case OracleTypes.UniswapTwapPriceOracleV2:
-      await verifyTwapPriceFeed(fuse, oracle, asset.underlying);
+      await verifyTwapPriceFeed(fuse, underlyingOracleAddress, asset.underlying);
       break;
     case OracleTypes.FixedNativePriceOracle:
-      if (!underlyingOraclePrice.eq(ethers.utils.parseEther("1"))) {
-        price = underlyingOraclePrice;
+      if (!mpoPrice.eq(ethers.utils.parseEther("1"))) {
+        price = mpoPrice;
         valid = false;
       }
       break;
     default:
-      price = underlyingOraclePrice;
+      price = mpoPrice;
       valid = true;
       break;
   }
