@@ -3,17 +3,19 @@
   "packageManager": "yarn@3.2.0",
   "private": true,
   "workspaces": [
-    "packages/sdk",
-    "packages/ui",
     "packages/bots/fuse-liquidator-bot",
     "packages/bots/fuse-twap-bot",
-    "packages/monitors/oracle"
+    "packages/functions",
+    "packages/monitors/oracle",
+    "packages/sdk",
+    "packages/ui"
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.30.4",
     "@typescript-eslint/parser": "^5.30.4",
+    "netlify-cli": "^10.7.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {
@@ -28,13 +30,15 @@
     "build:sdk": "yarn workspace @midas-capital/sdk build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
+    "build:functions": "yarn workspace @midas-capital/functions build",
     "build:liquidator": "yarn workspace @midas-capital/fuse-liquidator-bot build",
     "build:oracles-monitor": "yarn workspace @midas-capital/oracles-monitor build",
     "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
     "build:deploy:twap": "yarn build:sdk && yarn build:twap",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
-    "build:deploy:ui": "yarn build:sdk && yarn build:ui",
+    "build:deploy:ui": "yarn build:sdk && yarn build:ui && yarn build:functions",
     "dev:ui": "yarn workspace @midas-capital/sdk export; yarn build:sdk && yarn workspace @midas-capital/ui dev",
+    "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node"
   }
 }
