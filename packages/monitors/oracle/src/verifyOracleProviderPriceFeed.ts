@@ -42,6 +42,7 @@ async function verifyChainLinkOraclePriceFeed(provider: Provider, oracleConfig: 
   const updatedAtts = updatedAt.toNumber();
   console.log(Math.floor(Date.now() / 1000) - updatedAtts);
   logger.info({ roundId, answer, startedAt, updatedAt, answeredInRound });
+  return Math.floor(Date.now() / 1000) - updatedAtts < (parseInt(process.env.MAX_OBSERVATION_DELAY!) || 1800);
 }
 
 async function verifyDiaOraclePriceFeed(oracleConfig: OracleConfig, underlying: string) {
