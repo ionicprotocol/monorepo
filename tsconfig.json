@@ -24,6 +24,9 @@
     },
     {
       "path": "./packages/ui"
+    },
+    {
+      "path": "./packages/functions"
     }
   ]
 }

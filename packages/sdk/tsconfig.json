@@ -6,6 +6,7 @@
     "allowJs": true,
     "target": "ES2015",
     "rootDirs": ["./src", "./tests"],
-    "outDir": "./dist/cjs"
+    "outDir": "./dist/cjs",
+    "composite": true
   }
 }
