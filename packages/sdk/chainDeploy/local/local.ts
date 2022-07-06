@@ -161,11 +161,14 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   /// Addresses Provider - set flywheel rewards
   for (const dynamicFlywheel of deployConfig.dynamicFlywheels) {
     if (dynamicFlywheel) {
-      const flywheelRewards = await ethers.getContract(`FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`, deployer);
+      const flywheelRewards = await ethers.getContract(
+        `FuseFlywheelDynamicRewardsPlugin_${dynamicFlywheel.name}`,
+        deployer
+      );
       tx = await addressesProvider.setFlywheelRewards(
         dynamicFlywheel.rewardToken,
         flywheelRewards.address,
-        `FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`
+        `FuseFlywheelDynamicRewardsPlugin_${dynamicFlywheel.name}`
       );
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);
