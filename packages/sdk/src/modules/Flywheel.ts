@@ -81,16 +81,6 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       )) as FlywheelStaticRewards;
     }
 
-    async deployFuseFlywheelDynamicRewards(flywheelCoreAddress: string, rewardsCycleLength: number) {
-      const factory = new ContractFactory(
-        this.artifacts.FuseFlywheelDynamicRewards.abi,
-        this.artifacts.FuseFlywheelDynamicRewards.bytecode,
-        this.provider.getSigner()
-      ) as FuseFlywheelDynamicRewards__factory;
-
-      return (await factory.deploy(flywheelCoreAddress, rewardsCycleLength)) as FuseFlywheelDynamicRewards;
-    }
-
     setStaticRewardInfo(
       staticRewardsAddress: string,
       marketAddress: string,
