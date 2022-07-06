@@ -196,15 +196,6 @@ describe("Fuse Index", () => {
     });
   });
 
-  describe("#identifyPriceOracle", () => {
-    let name: string;
-
-    it("should return null when oracle is not found", async () => {
-      name = await fuseBase.identifyPriceOracle(mkAddress("0xabc"));
-      expect(name).to.be.null;
-    });
-  });
-
   describe("#identifyInterestRateModel", () => {
     let model;
     let interestRateModelAddress;

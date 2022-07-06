@@ -2,6 +2,8 @@ export { default as verifyPriceFeed } from "./verifyPriceFeed";
 export { default as fetchAssetPrices } from "./fetchAssetPrices";
 export { default as setUpSdk } from "./setUpSdk";
 export { default as fetchPricesAndRepeat } from "./fetchPricesAndRepeat";
+export { default as verifyOracleProviderPriceFeed } from "./verifyOracleProviderPriceFeed";
+export { default as verifyTwapPriceFeed } from "./verifyTwapPriceFeed";
 import { SupportedAsset } from "@midas-capital/sdk";
 import { BigNumber } from "ethers";
 import pino from "pino";
