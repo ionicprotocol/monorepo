@@ -21,13 +21,15 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     const twobrl = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
     const dddFlywheelAddress = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
     const epxFlywheelAddress = "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4";
+    const dddFlywheel = sdk.createFuseFlywheelCore(dddFlywheelAddress);
+    const epxFlywheel = sdk.createFuseFlywheelCore(epxFlywheelAddress);
     const marketAddress = await sdk
       .createComptroller("0x31d76A64Bc8BbEffb601fac5884372DEF910F044", signer)
       .callStatic.cTokensByUnderlying(twobrl);
-
-    // Step 1: Deploy Fresh Strategy with marketAddress=rewardsDestination
+    const cToken = await sdk.createCToken(marketAddress);
     console.log({ marketAddress });
 
+    // Step 1: Deploy Fresh Strategy with marketAddress=rewardsDestination
     const strategyArgs = [
       "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9", //_asset,
       dddFlywheelAddress, //_dddFlywheel,
@@ -46,42 +48,39 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     });
     console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
 
-    // Step 2: update plugin, use same implementation
-    const cToken = await sdk.createCToken(marketAddress);
-    const currentImplementation = await cToken.callStatic.implementation();
-    const abiCoder = new hre.ethers.utils.AbiCoder();
-    const implementationData = abiCoder.encode(["address"], [pluginDeployment.address]);
-    const upgradeTx = await cToken._setImplementationSafe(currentImplementation, false, implementationData);
-    const upgradeResult = upgradeTx.wait(2);
-    console.log("changed plugin successfully", upgradeResult);
+    // // Step 2: update plugin, use same implementation
 
-    // Step 3: Approve fwc Rewards to get rewardTokens from it
-    const dddFlywheel = sdk.createFuseFlywheelCore(dddFlywheelAddress);
-    const epxFlywheel = sdk.createFuseFlywheelCore(epxFlywheelAddress);
+    // const currentImplementation = await cToken.callStatic.implementation();
+    // const abiCoder = new hre.ethers.utils.AbiCoder();
+    // const implementationData = abiCoder.encode(["address"], [pluginDeployment.address]);
+    // const upgradeTx = await cToken._setImplementationSafe(currentImplementation, false, implementationData);
+    // const upgradeResult = await upgradeTx.wait(2);
+    // console.log("changed plugin successfully");
 
-    const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
-    const approveDDDTx = await cToken.approve(dddAddress, dddRewards);
-    const approveReceiptDDD = approveDDDTx.wait();
-    console.log("ctoken approved DDD rewards for DDD", approveReceiptDDD);
+    // // Step 3: Approve fwc Rewards to get rewardTokens from it
+    // const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
+    // const approveDDDTx = await cToken.approve(dddAddress, dddRewards);
+    // const approveReceiptDDD = await approveDDDTx.wait();
+    // console.log("ctoken approved DDD rewards for DDD");
 
-    const epxRewards = await epxFlywheel.callStatic.flywheelRewards();
-    const approveEPXTx = await cToken.approve(epxAddress, epxRewards);
-    const approveReceiptEPX = approveEPXTx.wait();
-    console.log("ctoken approved EPX rewards for EPX", approveReceiptEPX);
+    // const epxRewards = await epxFlywheel.callStatic.flywheelRewards();
+    // const approveEPXTx = await cToken.approve(epxAddress, epxRewards);
+    // const approveReceiptEPX = await approveEPXTx.wait();
+    // console.log("ctoken approved EPX rewards for EPX");
 
     // Step 4: enable marketAddress on flywheels
-    const dddAddTx = await dddFlywheel.addStrategyForRewards(marketAddress);
-    const resultDDD = await dddAddTx.wait(2);
-    console.log("enabled market on dddFWC", resultDDD);
-    const epxAddTx = await epxFlywheel.addStrategyForRewards(marketAddress);
-    const resultEPX = await epxAddTx.wait(2);
-    console.log("enabled market on epxFWC", resultEPX);
+    // const dddAddTx = await dddFlywheel.addStrategyForRewards(marketAddress);
+    // const resultDDD = await dddAddTx.wait(2);
+    // console.log("enabled market on dddFWC");
+    // const epxAddTx = await epxFlywheel.addStrategyForRewards(marketAddress);
+    // const resultEPX = await epxAddTx.wait(2);
+    // console.log("enabled market on epxFWC");
 
     // Step 5: add Flywheels to market
-    await sdk.addFlywheelCoreToComptroller(dddFlywheelAddress, jarvisComptroller, { from: signer.address });
-    console.log("dddFWC added to comptroller");
-    await sdk.addFlywheelCoreToComptroller(epxFlywheelAddress, jarvisComptroller, { from: signer.address });
-    console.log("epxFWC added to comptroller");
+    // await sdk.addFlywheelCoreToComptroller(dddFlywheelAddress, jarvisComptroller, { from: signer.address });
+    // console.log("dddFWC added to comptroller");
+    // await sdk.addFlywheelCoreToComptroller(epxFlywheelAddress, jarvisComptroller, { from: signer.address });
+    // console.log("epxFWC added to comptroller");
 
     console.log("DONE");
   });
