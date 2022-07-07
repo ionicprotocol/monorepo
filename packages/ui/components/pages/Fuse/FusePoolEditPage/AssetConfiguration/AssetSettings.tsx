@@ -281,6 +281,24 @@ export const AssetSettings = ({
     }
   };
 
+  const setReserveFactorDefault = () => {
+    if (cTokenData) {
+      setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
+    }
+  };
+
+  const setAdminFeeDefault = () => {
+    if (cTokenData) {
+      setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
+    }
+  };
+
+  const setInterestRateModelDefault = () => {
+    if (cTokenData) {
+      setValue('interestRateModel', cTokenData.interestRateModelAddress);
+    }
+  };
+
   return (
     <Column
       mainAxisAlignment="flex-start"
@@ -404,7 +422,7 @@ export const AssetSettings = ({
             px={8}
             py={4}
             w="100%"
-            direction={{ base: 'column', md: 'row' }}
+            direction="column"
             onSubmit={handleSubmit(updateReserveFactor)}
           >
             <FormControl isInvalid={!!errors.reserveFactor}>
@@ -463,14 +481,14 @@ export const AssetSettings = ({
             {cTokenData &&
               watchReserveFactor !==
                 parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)) && (
-                <Button
-                  type="submit"
-                  ml={{ base: 'auto', md: 4 }}
-                  mt={{ base: 2, md: 0 }}
-                  disabled={isUpdating}
-                >
-                  Save
-                </Button>
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button variant="silver" disabled={isUpdating} onClick={setReserveFactorDefault}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
               )}
           </Flex>
           <ModalDivider />
@@ -479,7 +497,7 @@ export const AssetSettings = ({
             px={8}
             py={4}
             w="100%"
-            direction={{ base: 'column', md: 'row' }}
+            direction="column"
             onSubmit={handleSubmit(updateAdminFee)}
           >
             <FormControl isInvalid={!!errors.adminFee}>
@@ -537,14 +555,14 @@ export const AssetSettings = ({
             </FormControl>
             {cTokenData &&
               watchAdminFee !== parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)) && (
-                <Button
-                  type="submit"
-                  ml={{ base: 'auto', md: 4 }}
-                  mt={{ base: 2, md: 0 }}
-                  disabled={isUpdating}
-                >
-                  Save
-                </Button>
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button variant="silver" disabled={isUpdating} onClick={setAdminFeeDefault}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
               )}
           </Flex>
 
@@ -596,7 +614,7 @@ export const AssetSettings = ({
             py={4}
             px={8}
             w="100%"
-            direction={{ base: 'column', md: 'row' }}
+            direction="column"
             onSubmit={handleSubmit(updateInterestRateModel)}
           >
             <FormControl isInvalid={!!errors.interestRateModel}>
@@ -651,14 +669,18 @@ export const AssetSettings = ({
             {cTokenData &&
               cTokenData.interestRateModelAddress.toLowerCase() !==
                 watchInterestRateModel.toLowerCase() && (
-                <Button
-                  type="submit"
-                  ml={{ base: 'auto', md: 4 }}
-                  mt={{ base: 2, md: 0 }}
-                  disabled={isUpdating}
-                >
-                  Save
-                </Button>
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button
+                    variant="silver"
+                    disabled={isUpdating}
+                    onClick={setInterestRateModelDefault}
+                  >
+                    Cancel
+                  </Button>
+                </ButtonGroup>
               )}
           </Flex>
           <IRMChart
