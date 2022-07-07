@@ -26,7 +26,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     const marketAddress = await sdk
       .createComptroller("0x31d76A64Bc8BbEffb601fac5884372DEF910F044", signer)
       .callStatic.cTokensByUnderlying(twobrl);
-    const cToken = await sdk.createCToken(marketAddress);
+    const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
     console.log({ marketAddress });
 
     // Step 1: Deploy Fresh Strategy with marketAddress=rewardsDestination
@@ -49,24 +49,30 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
 
     // // Step 2: update plugin, use same implementation
-
     // const currentImplementation = await cToken.callStatic.implementation();
+    // console.log({ currentImplementation });
     // const abiCoder = new hre.ethers.utils.AbiCoder();
     // const implementationData = abiCoder.encode(["address"], [pluginDeployment.address]);
-    // const upgradeTx = await cToken._setImplementationSafe(currentImplementation, false, implementationData);
+    // const upgradeTx = await cToken._setImplementationSafe(
+    //   "0xf698b0306342d197D1A55aE643F9aD26250b4624",
+    //   false,
+    //   implementationData
+    // );
     // const upgradeResult = await upgradeTx.wait(2);
     // console.log("changed plugin successfully");
 
-    // // Step 3: Approve fwc Rewards to get rewardTokens from it
-    // const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
-    // const approveDDDTx = await cToken.approve(dddAddress, dddRewards);
-    // const approveReceiptDDD = await approveDDDTx.wait();
-    // console.log("ctoken approved DDD rewards for DDD");
+    // Step 3: Approve fwc Rewards to get rewardTokens from it
+    const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
+    console.log({ dddRewards });
+    const approveDDDTx = await cToken["approve(address,address)"](dddAddress, dddRewards);
+    const approveReceiptDDD = await approveDDDTx.wait();
+    console.log("ctoken approved DDD rewards for DDD", approveReceiptDDD.status, approveDDDTx.hash);
 
-    // const epxRewards = await epxFlywheel.callStatic.flywheelRewards();
-    // const approveEPXTx = await cToken.approve(epxAddress, epxRewards);
-    // const approveReceiptEPX = await approveEPXTx.wait();
-    // console.log("ctoken approved EPX rewards for EPX");
+    const epxRewards = await epxFlywheel.callStatic.flywheelRewards();
+    console.log({ epxRewards });
+    const approveEPXTx = await cToken["approve(address,address)"](epxAddress, epxRewards);
+    const approveReceiptEPX = await approveEPXTx.wait();
+    console.log("ctoken approved EPX rewards for EPX", approveReceiptEPX.status, approveEPXTx.hash);
 
     // Step 4: enable marketAddress on flywheels
     // const dddAddTx = await dddFlywheel.addStrategyForRewards(marketAddress);
