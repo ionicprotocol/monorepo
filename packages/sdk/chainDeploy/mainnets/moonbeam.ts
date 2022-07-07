@@ -1,11 +1,11 @@
-import { ethers, utils } from "ethers";
+import { ethers } from "ethers";
 
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
-import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -177,12 +177,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
-  await deployERC4626Plugin({
-    ethers,
-    getNamedAccounts,
-    deployments,
-    run,
-    deployConfig,
-    dynamicFlywheels,
-  });
 };

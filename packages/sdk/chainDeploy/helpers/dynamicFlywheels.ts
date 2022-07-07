@@ -1,6 +1,6 @@
 import { constants } from "ethers";
 
-import { Erc4626PluginDeployFnParams, FuseFlywheelDeployFnParams, PluginConfig } from "..";
+import { FuseFlywheelDeployFnParams } from "..";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 
 export const deployFlywheelWithDynamicRewards = async ({
@@ -54,50 +54,3 @@ export const deployFlywheelWithDynamicRewards = async ({
   }
   return dynamicFlywheels;
 };
-
-function getFlywheelAddresses(pluginConfig: PluginConfig, dynamicFlywheels: string[]): string[] {
-  return pluginConfig.flywheelIndices
-    ? pluginConfig.flywheelIndices.map((index) => dynamicFlywheels[index])
-    : pluginConfig.flywheelAddresses;
-}
-
-export const deployERC4626Plugin = async ({
-  getNamedAccounts,
-  deployments,
-  deployConfig,
-  dynamicFlywheels,
-}: Erc4626PluginDeployFnParams): Promise<void> => {
-  const { deployer } = await getNamedAccounts();
-
-  for (const pluginConfig of deployConfig.plugins) {
-    if (pluginConfig) {
-      const hasFlywheel = pluginConfig.flywheelIndices || pluginConfig.flywheelAddresses;
-      const args = hasFlywheel
-        ? [
-            pluginConfig.underlying,
-            ...getFlywheelAddresses(pluginConfig, dynamicFlywheels),
-            ...pluginConfig.otherParams,
-          ]
-        : [pluginConfig.underlying, ...pluginConfig.otherParams];
-
-      console.log(`Deploying ${pluginConfig.strategy}_${pluginConfig.name}`, args);
-      const erc4626 = await deployments.deploy(`${pluginConfig.strategy}_${pluginConfig.name}`, {
-        contract: pluginConfig.strategy,
-        from: deployer,
-        args: args,
-        log: true,
-        waitConfirmations: 1,
-      });
-      console.log(`${pluginConfig.strategy}_${pluginConfig.name}: `, erc4626.address);
-    }
-  }
-};
-
-// 1. Deploy Flywheel
-// 2. Deploy Plugin
-// 3. Deploy Market (CErc20PluginRewardsDelegate) <-- Takes Flywheel + Plugin
-
-// AutofarmERC4626 1 == Address1
-// AutofarmERC4626 2 == Address2
-// AutofarmERC4626 3 == Address3
-// AutofarmERC4626 4 == Address4
