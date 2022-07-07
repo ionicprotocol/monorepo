@@ -53,7 +53,7 @@ export const useTokenData = (address: string | undefined) => {
         return fetchTokenData(validAddress, id);
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!validAddress }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!validAddress && !!id }
   );
 };
 

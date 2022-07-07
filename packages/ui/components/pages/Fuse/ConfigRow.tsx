@@ -14,8 +14,9 @@ export const ConfigRow = ({
       mainAxisAlignment="flex-start"
       crossAxisAlignment="center"
       width="100%"
-      py={4}
-      px={4}
+      pt={4}
+      pb={2}
+      px={8}
       overflowX="auto"
       flexShrink={0}
       {...others}

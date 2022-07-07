@@ -72,14 +72,16 @@ const PoolConfiguration = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      closeFactor: 50,
-      liquidationIncentive: 8,
+      closeFactor: CLOSE_FACTOR.DEFAULT,
+      liquidationIncentive: LIQUIDATION_INCENTIVE.DEFAULT,
       whitelist: [],
     },
   });
 
-  const watchCloseFactor = Number(watch('closeFactor', 50));
-  const watchLiquidationIncentive = Number(watch('liquidationIncentive', 8));
+  const watchCloseFactor = Number(watch('closeFactor', CLOSE_FACTOR.DEFAULT));
+  const watchLiquidationIncentive = Number(
+    watch('liquidationIncentive', LIQUIDATION_INCENTIVE.DEFAULT)
+  );
 
   const {
     isOpen: isTransferOwnershipModalOpen,
