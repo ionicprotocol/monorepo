@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import {ethers, utils} from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { SupportedChains } from "../../src";
@@ -112,14 +112,22 @@ export const deployConfig: ChainDeployConfig = {
     {
       strategy: "DotDotLpERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
-      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      otherParams: [
+        "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af",// lpDepositor
+        "", // _rewardsDestination
+        new utils.AbiCoder().encode(["address[]"], [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]), // _rewardTokens
+      ],
       flywheelIndices: [0, 1],
       name: "3EPS",
     },
     {
       strategy: "DotDotLpERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
-      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      otherParams: [
+        "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af",// lpDepositor
+        "", // _rewardsDestination
+        new utils.AbiCoder().encode(["address[]"], [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]), // _rewardTokens
+      ],
       flywheelIndices: [0, 1],
       name: "val3EPS",
     },
@@ -127,14 +135,22 @@ export const deployConfig: ChainDeployConfig = {
       // 0x
       strategy: "DotDotLpERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
-      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      otherParams: [
+        "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af",// lpDepositor
+        "", // _rewardsDestination
+        new utils.AbiCoder().encode(["address[]"], [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]), // _rewardTokens
+      ],
       flywheelIndices: [0, 1],
       name: "valdai3EPS",
     },
     {
       strategy: "DotDotLpERC4626",
       underlying: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying, // 2BRL
-      otherParams: ["0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af"], // lpDepositor
+      otherParams: [
+        "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af",// lpDepositor
+        "", // _rewardsDestination
+        new utils.AbiCoder().encode(["address[]"], [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]), // _rewardTokens
+      ],
       flywheelIndices: [0, 1],
       name: "2brl",
     },
