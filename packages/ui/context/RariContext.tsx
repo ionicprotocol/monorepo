@@ -115,7 +115,7 @@ export const RariProvider = ({
             title: <>Pending!</>,
             description: <>Transaction is pending now.</>,
             status: 'info',
-            duration: 2000,
+            duration: 5000,
             isClosable: true,
             position: 'top-right',
           });
@@ -137,7 +137,7 @@ export const RariProvider = ({
               </Button>
             ),
             status: 'success',
-            duration: 3000,
+            duration: 5000,
             isClosable: true,
             position: 'top-right',
           });

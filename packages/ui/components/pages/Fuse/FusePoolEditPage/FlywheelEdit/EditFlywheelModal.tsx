@@ -52,9 +52,7 @@ const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string
       }
       return undefined;
     },
-    {
-      enabled: !!flywheelAddress && !!marketAddress,
-    }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!flywheelAddress && !!marketAddress }
   );
 };
 
