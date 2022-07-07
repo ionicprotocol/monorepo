@@ -2,11 +2,9 @@ import { BigNumber, constants, Contract, ContractFactory } from "ethers";
 
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
 import { FuseFlywheelCore__factory } from "../../lib/contracts/typechain/factories/FuseFlywheelCore__factory";
-import { FuseFlywheelDynamicRewards__factory } from "../../lib/contracts/typechain/factories/FuseFlywheelDynamicRewards__factory";
 import { FlywheelCore } from "../../lib/contracts/typechain/FlywheelCore";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
-import { FuseFlywheelDynamicRewards } from "../../lib/contracts/typechain/FuseFlywheelDynamicRewards";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 
 import { withCreateContracts } from "./CreateContracts";
@@ -79,16 +77,6 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         options.ownerAddress || options.from,
         options.authorityAddress || constants.AddressZero
       )) as FlywheelStaticRewards;
-    }
-
-    async deployFuseFlywheelDynamicRewards(flywheelCoreAddress: string, rewardsCycleLength: number) {
-      const factory = new ContractFactory(
-        this.artifacts.FuseFlywheelDynamicRewards.abi,
-        this.artifacts.FuseFlywheelDynamicRewards.bytecode,
-        this.provider.getSigner()
-      ) as FuseFlywheelDynamicRewards__factory;
-
-      return (await factory.deploy(flywheelCoreAddress, rewardsCycleLength)) as FuseFlywheelDynamicRewards;
     }
 
     setStaticRewardInfo(
