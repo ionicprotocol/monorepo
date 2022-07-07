@@ -66,6 +66,9 @@ export type ChainDeployment = {
   };
 };
 
+export type OracleConfig = ChainDeployment;
+export type IrmConfig = OracleConfig;
+
 export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
 
 export interface MarketConfig {
@@ -259,9 +262,12 @@ export type ChainOracles = {
 };
 
 export type ChainSpecificParams = {
-  [chain in SupportedChains]: {
-    blocksPerYear: BigNumber;
-  };
+  [chain in SupportedChains]: ChainParams;
+};
+
+export type ChainParams = {
+  blocksPerYear: BigNumber;
+  cgId: string;
 };
 
 export type ChainAddresses = {

@@ -18,6 +18,7 @@ import {
   chainPluginConfig,
   chainRedemptionStrategies,
   chainSpecificAddresses,
+  chainSpecificParams,
   chainSupportedAssets,
   irmConfig,
   oracleConfig,
@@ -36,10 +37,13 @@ import {
   AssetPluginConfig,
   ChainAddresses,
   ChainDeployment,
+  ChainParams,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
+  IrmConfig,
   OracleConf,
+  OracleConfig,
   SupportedAsset,
 } from "../types";
 
@@ -56,15 +60,6 @@ import {
   getPoolComptroller,
   getPoolUnitroller,
 } from "./utils";
-
-type OracleConfig = {
-  [contractName: string]: {
-    artifact: Artifact;
-    address: string;
-  };
-};
-
-type IrmConfig = OracleConfig;
 
 export class FuseBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -86,6 +81,7 @@ export class FuseBase {
   public chainDeployment: ChainDeployment;
   public oracles: OracleConfig;
   public chainSpecificAddresses: ChainAddresses;
+  public chainSpecificParams: ChainParams;
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public chainPlugins: AssetPluginConfig;
@@ -159,6 +155,7 @@ export class FuseBase {
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
 
     this.chainSpecificAddresses = chainSpecificAddresses[chainId];
+    this.chainSpecificParams = chainSpecificParams[chainId];
     this.liquidationConfig = chainLiquidationDefaults[chainId];
     this.supportedAssets = chainSupportedAssets[chainId];
     this.chainPlugins = chainPluginConfig[chainId];
@@ -289,21 +286,6 @@ export class FuseBase {
 
     const deployedInterestRateModel = await interestRateModelContract.deploy(...deployArgs);
     return deployedInterestRateModel.address;
-  }
-
-  async identifyPriceOracle(priceOracleAddress: string) {
-    // Get PriceOracle type from runtime bytecode hash
-    const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(priceOracleAddress));
-
-    for (const [name, oracle] of Object.entries(this.oracles)) {
-      if (oracle.artifact && oracle.artifact.bytecode) {
-        const value = utils.keccak256(oracle.artifact.bytecode.object);
-        if (runtimeBytecodeHash == value) return name;
-      } else {
-        console.warn(`No Artifact or Bytecode found for enabled Oracle: ${name}`);
-      }
-    }
-    return null;
   }
 
   async identifyInterestRateModel(interestRateModelAddress: string): Promise<InterestRateModel> {

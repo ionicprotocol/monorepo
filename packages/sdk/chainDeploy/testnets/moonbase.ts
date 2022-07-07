@@ -21,7 +21,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x049581aEB6Fe262727f290165C29BDAB065a1B68",
     uniswapOracleInitialDeployTokens: [],
   },
-  cgId: "moonbeam",
+  cgId: chainSpecificParams[SupportedChains.moonbeam].cgId,
 };
 
 export const deploy = async ({ run, getNamedAccounts, deployments, ethers }: ChainDeployFnParams): Promise<void> => {

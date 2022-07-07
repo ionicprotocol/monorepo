@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { SupportedChains } from "../../src";
-import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployABNBcOracle } from "../helpers/aBNBcOracle";
 import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
@@ -244,7 +244,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
-  cgId: "binancecoin",
+  cgId: chainSpecificParams[SupportedChains.bsc].cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
