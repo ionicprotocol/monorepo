@@ -127,19 +127,23 @@ const AmountSelect = ({
     setUserAction(UserAction.NO_ACTION);
   };
 
-  const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount], async () => {
-    if (amount === null || amount.isZero()) {
-      return false;
-    }
+  const { data: amountIsValid } = useQuery(
+    ['ValidAmount', mode, amount],
+    async () => {
+      if (amount === null || amount.isZero()) {
+        return false;
+      }
 
-    try {
-      const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
-      return amount.lte(max);
-    } catch (e) {
-      handleGenericError(e, toast);
-      return false;
-    }
-  });
+      try {
+        const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
+        return amount.lte(max);
+      } catch (e) {
+        handleGenericError(e, toast);
+        return false;
+      }
+    },
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!mode && !!amount }
+  );
 
   let depositOrWithdrawAlert = null;
   if (mode === FundOperationMode.BORROW && isBorrowPaused) {
