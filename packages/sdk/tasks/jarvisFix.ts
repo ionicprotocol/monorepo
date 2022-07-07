@@ -16,6 +16,8 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     const sdk = await fuseModule.getOrCreateFuse();
 
     const jarvisComptroller = "0x31d76A64Bc8BbEffb601fac5884372DEF910F044";
+    const dddAddress = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
+    const epxAddress = "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71";
     const twobrl = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
     const dddFlywheelAddress = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
     const epxFlywheelAddress = "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4";
@@ -53,10 +55,21 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     const upgradeResult = upgradeTx.wait(2);
     console.log("changed plugin successfully", upgradeResult);
 
-    // Step 3: enable marketAddress on flywheels
+    // Step 3: Approve fwc Rewards to get rewardTokens from it
     const dddFlywheel = sdk.createFuseFlywheelCore(dddFlywheelAddress);
     const epxFlywheel = sdk.createFuseFlywheelCore(epxFlywheelAddress);
 
+    const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
+    const approveDDDTx = await cToken.approve(dddAddress, dddRewards);
+    const approveReceiptDDD = approveDDDTx.wait();
+    console.log("ctoken approved DDD rewards for DDD", approveReceiptDDD);
+
+    const epxRewards = await epxFlywheel.callStatic.flywheelRewards();
+    const approveEPXTx = await cToken.approve(epxAddress, epxRewards);
+    const approveReceiptEPX = approveEPXTx.wait();
+    console.log("ctoken approved EPX rewards for EPX", approveReceiptEPX);
+
+    // Step 4: enable marketAddress on flywheels
     const dddAddTx = await dddFlywheel.addStrategyForRewards(marketAddress);
     const resultDDD = await dddAddTx.wait(2);
     console.log("enabled market on dddFWC", resultDDD);
@@ -64,10 +77,11 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     const resultEPX = await epxAddTx.wait(2);
     console.log("enabled market on epxFWC", resultEPX);
 
-    // Step 4: add Flywheels to market
+    // Step 5: add Flywheels to market
     await sdk.addFlywheelCoreToComptroller(dddFlywheelAddress, jarvisComptroller, { from: signer.address });
     console.log("dddFWC added to comptroller");
     await sdk.addFlywheelCoreToComptroller(epxFlywheelAddress, jarvisComptroller, { from: signer.address });
     console.log("epxFWC added to comptroller");
+
     console.log("DONE");
   });
