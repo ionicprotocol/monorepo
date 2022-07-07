@@ -220,7 +220,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
         {isMobile ? null : tokenData?.symbol !== undefined ? (
           asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() ? (
             <Td maxW={'30px'}>
-              <SimpleTooltip placement="auto" label={asset?.underlyingSymbol ?? ''}>
+              <SimpleTooltip label={asset?.underlyingSymbol ?? ''}>
                 <QuestionIcon />
               </SimpleTooltip>
             </Td>

@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { utils } from 'ethers';
+import { ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
@@ -166,7 +166,7 @@ const AssetSupplyRow = ({
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const asset = assets[index];
-  const { fuse, scanUrl, currentChain } = useRari();
+  const { fuse, scanUrl, currentChain, setPendingTxHash } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const supplyAPY = fuse.ratePerBlockToAPY(
     asset.supplyRatePerBlock,
@@ -186,7 +186,7 @@ const AssetSupplyRow = ({
   const onToggleCollateral = async () => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
 
-    let call;
+    let call: ContractTransaction;
     if (asset.membership) {
       const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
       if (!exitCode.eq(0)) {
@@ -218,6 +218,8 @@ const AssetSupplyRow = ({
 
       return;
     }
+
+    setPendingTxHash(call.hash);
 
     LogRocket.track('Fuse-ToggleCollateral');
 
@@ -253,6 +255,7 @@ const AssetSupplyRow = ({
                 {tokenData?.symbol ?? asset.underlyingSymbol}
               </Text>
               <SimpleTooltip
+                placement="top-start"
                 label={
                   'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
                 }
@@ -271,7 +274,7 @@ const AssetSupplyRow = ({
               {asset.underlyingSymbol &&
                 tokenData?.symbol &&
                 asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() && (
-                  <SimpleTooltip placement="auto" label={asset.underlyingSymbol}>
+                  <SimpleTooltip label={asset.underlyingSymbol}>
                     <QuestionIcon />
                   </SimpleTooltip>
                 )}
