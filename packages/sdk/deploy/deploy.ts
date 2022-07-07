@@ -173,6 +173,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(
       `Set the latest Comptroller implementation from ${latestComptrollerImplementation} to ${comptroller.address}`
     );
+  } else {
+    console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
   }
 
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
@@ -188,6 +190,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     );
     await tx.wait();
     console.log(`Set the latest CErc20Delegate implementation from ${latestCErc20Delegate} to ${erc20Del.address}`);
+  } else {
+    console.log(`No change in the latest CErc20Delegate implementation ${erc20Del.address}`);
   }
 
   // CErc20PluginDelegate
@@ -203,6 +207,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(
       `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
     );
+  } else {
+    console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
   }
 
   // CErc20PluginRewardsDelegate
@@ -223,6 +229,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(
       `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
     );
+  } else {
+    console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
   }
 
   const fplDeployment = await deployments.deploy("FusePoolLens", {
