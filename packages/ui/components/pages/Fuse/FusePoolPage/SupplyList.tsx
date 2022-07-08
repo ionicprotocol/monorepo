@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { utils } from 'ethers';
+import { ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
@@ -166,7 +166,7 @@ const AssetSupplyRow = ({
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const asset = assets[index];
-  const { fuse, scanUrl, currentChain } = useRari();
+  const { fuse, scanUrl, currentChain, setPendingTxHash } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const supplyAPY = fuse.ratePerBlockToAPY(
     asset.supplyRatePerBlock,
@@ -186,7 +186,7 @@ const AssetSupplyRow = ({
   const onToggleCollateral = async () => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
 
-    let call;
+    let call: ContractTransaction;
     if (asset.membership) {
       const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
       if (!exitCode.eq(0)) {
@@ -218,6 +218,8 @@ const AssetSupplyRow = ({
 
       return;
     }
+
+    setPendingTxHash(call.hash);
 
     LogRocket.track('Fuse-ToggleCollateral');
 

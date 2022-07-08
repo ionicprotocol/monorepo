@@ -23,11 +23,11 @@ export interface PoolData extends SDKFusePoolData {
 }
 
 export const useFusePoolData = (poolId: string) => {
-  const { fuse, currentChain, address, coingeckoId } = useRari();
+  const { fuse, address, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   return useQuery<PoolData | null>(
-    ['useFusePoolData', currentChain.id, poolId, address, usdPrice],
+    ['useFusePoolData', poolId, address, usdPrice],
     async () => {
       if (!usdPrice) return null;
 
@@ -58,6 +58,6 @@ export const useFusePoolData = (poolId: string) => {
 
       return adaptedFusePoolData;
     },
-    { enabled: !!usdPrice }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!poolId && !!usdPrice && !!address }
   );
 };

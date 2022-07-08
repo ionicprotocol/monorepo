@@ -31,6 +31,10 @@ export function useTokenBalance(tokenAddress: string, customAddress?: string) {
   return useQuery(
     ['TokenBalance', currentChain.id, tokenAddress, addressToCheck],
     () => fetchTokenBalance(tokenAddress, fuse, addressToCheck),
-    { enabled: !!currentChain.id && !!tokenAddress && !!addressToCheck }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!currentChain.id && !!tokenAddress && !!addressToCheck,
+    }
   );
 }
