@@ -12,6 +12,7 @@ nextConfig = {
     FEATURE_CREATE_POOL: process.env.FEATURE_CREATE_POOL,
     PRODUCT_DOMAIN: process.env.PRODUCT_DOMAIN,
     PRODUCT_URL: process.env.PRODUCT_URL,
+    MIN_BORROW_USD: process.env.MIN_BORROW_USD,
   },
 };
 
