@@ -40,8 +40,10 @@ import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
+import { useMinBorrow } from '@ui/hooks/useMinBorrow';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -68,7 +70,9 @@ const AmountSelect = ({
 }: AmountSelectProps) => {
   const asset = assets[index];
 
-  const { fuse, setPendingTxHash, address } = useRari();
+  const { fuse, setPendingTxHash, address, coingeckoId } = useRari();
+  const { data: minBorrowNative } = useMinBorrow();
+  const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const toast = useToast();
 
@@ -127,23 +131,19 @@ const AmountSelect = ({
     setUserAction(UserAction.NO_ACTION);
   };
 
-  const { data: amountIsValid } = useQuery(
-    ['ValidAmount', mode, amount],
-    async () => {
-      if (amount === null || amount.isZero()) {
-        return false;
-      }
+  const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount], async () => {
+    if (amount === null || amount.isZero()) {
+      return false;
+    }
 
-      try {
-        const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
-        return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, toast);
-        return false;
-      }
-    },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!mode && !!amount }
-  );
+    try {
+      const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
+      return amount.lte(max);
+    } catch (e) {
+      handleGenericError(e, toast);
+      return false;
+    }
+  });
 
   let depositOrWithdrawAlert = null;
   if (mode === FundOperationMode.BORROW && isBorrowPaused) {
@@ -225,7 +225,12 @@ const AmountSelect = ({
         });
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode);
+          if (minBorrowNative && usdPrice) {
+            const minBorrow = (Number(utils.formatUnits(minBorrowNative)) * usdPrice).toFixed(2);
+            await fundOperationError(resp.errorCode, minBorrow);
+          } else {
+            await fundOperationError(resp.errorCode);
+          }
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -743,7 +748,7 @@ const AmountInput = ({
   );
 };
 
-export function fundOperationError(errorCode: number) {
+export async function fundOperationError(errorCode: number, limit?: string) {
   let err;
 
   if (errorCode >= 1000) {
@@ -751,8 +756,9 @@ export function fundOperationError(errorCode: number) {
     let msg = ComptrollerErrorCodes[comptrollerResponse];
 
     if (msg === 'BORROW_BELOW_MIN') {
-      msg =
-        'As part of our guarded launch, you cannot borrow less than 1 ETH worth of tokens at the moment.';
+      msg = `As part of our guarded launch, you cannot borrow ${
+        limit ? `less than ${limit}$ worth` : 'this amount'
+      } of tokens at the moment.`;
     }
 
     // This is a comptroller error:
