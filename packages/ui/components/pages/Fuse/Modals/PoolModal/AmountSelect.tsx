@@ -34,16 +34,15 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
-import { useMinBorrow } from '@ui/hooks/useMinBorrow';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -70,9 +69,7 @@ const AmountSelect = ({
 }: AmountSelectProps) => {
   const asset = assets[index];
 
-  const { fuse, setPendingTxHash, address, coingeckoId } = useRari();
-  const { data: minBorrowNative } = useMinBorrow();
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { fuse, setPendingTxHash, address } = useRari();
 
   const toast = useToast();
 
@@ -225,12 +222,7 @@ const AmountSelect = ({
         });
 
         if (resp.errorCode !== null) {
-          if (minBorrowNative && usdPrice) {
-            const minBorrow = (Number(utils.formatUnits(minBorrowNative)) * usdPrice).toFixed(2);
-            await fundOperationError(resp.errorCode, minBorrow);
-          } else {
-            await fundOperationError(resp.errorCode);
-          }
+          fundOperationError(resp.errorCode);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -748,7 +740,7 @@ const AmountInput = ({
   );
 };
 
-export async function fundOperationError(errorCode: number, limit?: string) {
+export function fundOperationError(errorCode: number) {
   let err;
 
   if (errorCode >= 1000) {
@@ -757,7 +749,7 @@ export async function fundOperationError(errorCode: number, limit?: string) {
 
     if (msg === 'BORROW_BELOW_MIN') {
       msg = `As part of our guarded launch, you cannot borrow ${
-        limit ? `less than ${limit}$ worth` : 'this amount'
+        config.minBorrowUsd ? `less than ${config.minBorrowUsd}$ worth` : 'this amount'
       } of tokens at the moment.`;
     }
 
