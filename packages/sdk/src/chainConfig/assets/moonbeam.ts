@@ -109,6 +109,27 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },
+  {
+    symbol: assetSymbols["USDC-ETH"],
+    underlying: "0x6BA3071760d46040FB4dc7B627C9f68efAca3000",
+    name: "BeamSwap ETH-USDC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WGLMR-xcDOT"],
+    underlying: "0xd8FbdeF502770832E90a6352b275f20F38269b74",
+    name: "BeamSwap WGLMR-xcDOT LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["GLMR-madUSDC"],
+    underlying: "0x6Ba38f006aFe746B9A0d465e53aB4182147AC3D7",
+    name: "BeamSwap GLMR-madUSDC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
 ];
 
 export default assets;

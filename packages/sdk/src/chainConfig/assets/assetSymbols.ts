@@ -62,6 +62,8 @@ enum assetSymbols {
   GLINT = "GLINT",
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
+  "WGLMR-xcDOT" = "WGLMR-xcDOT",
+  "GLMR-madUSDC" = "GLMR-madUSDC",
   DOT = "DOT",
   xcDOT = "xcDOT",
   KSM = "KSM",
