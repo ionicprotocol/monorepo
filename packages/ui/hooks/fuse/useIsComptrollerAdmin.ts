@@ -5,13 +5,17 @@ import { useRari } from '@ui/context/RariContext';
 export const useIsComptrollerAdmin = (comptrollerAddress?: string): boolean => {
   const { fuse, address } = useRari();
 
-  const { data } = useQuery(comptrollerAddress + ' admin', async () => {
-    if (!comptrollerAddress) return undefined;
+  const { data } = useQuery(
+    ['isComptrollerAdmin', comptrollerAddress],
+    async () => {
+      if (!comptrollerAddress) return undefined;
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+      const comptroller = fuse.createComptroller(comptrollerAddress);
 
-    return await comptroller.callStatic.admin();
-  });
+      return await comptroller.callStatic.admin();
+    },
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress }
+  );
 
   return address === data;
 };

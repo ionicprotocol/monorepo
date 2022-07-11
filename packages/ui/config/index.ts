@@ -9,6 +9,7 @@ type CONFIG = {
   allowedAddresses: string[];
   productDomain: string | undefined;
   productUrl: string | undefined;
+  minBorrowUsd: string | undefined;
 };
 
 const config: CONFIG = {
@@ -24,6 +25,7 @@ const config: CONFIG = {
     : [],
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
+  minBorrowUsd: process.env.MIN_BORROW_USD,
 };
 
 export { config };

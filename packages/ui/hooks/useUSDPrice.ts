@@ -16,12 +16,8 @@ export function useUSDPrice(coingeckoId: string) {
       // set 1.0 for undefined token prices in coingecko
       usdPrice = usdPrice ? usdPrice : 1.0;
 
-      // if (asBigNumber) {
-      //   return utils.parseUnits(UsdPrice.toString(), 18);
-      // }
-
       return usdPrice;
     },
-    { enabled: !!coingeckoId }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!coingeckoId }
   );
 }

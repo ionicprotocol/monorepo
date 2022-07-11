@@ -19,8 +19,6 @@ export function useChartData(market: string) {
 
       return convertIRMtoCurve(fuse, interestRateModel, currentChainId);
     },
-    {
-      enabled: !!fuse && !!currentChainId && !!market,
-    }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!fuse && !!currentChainId && !!market }
   );
 }
