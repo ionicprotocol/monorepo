@@ -85,6 +85,9 @@ enum assetSymbols {
 
   // neon
   WNEON = "WNEON",
+
+  // polygon
+  WMATIC = "WMATIC",
 }
 
 export default assetSymbols;
