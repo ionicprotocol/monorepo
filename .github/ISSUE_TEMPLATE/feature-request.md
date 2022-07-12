@@ -12,8 +12,8 @@ assignees: ''
 [ ] Yes
 [ ] No
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Describe the solution or new feature you'd like.  _How can we improve our product?  What will bring more users to our protocol?_**
+
 
 **Describe alternatives you've considered**
 A clear and concise description of any alternative solutions or features you've considered.
