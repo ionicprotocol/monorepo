@@ -12,7 +12,7 @@ assignees: ''
 [ ] Yes
 [ ] No
 
-**Describe the solution or new feature you'd like.**  _How can we improve our product?  What will bring more users to our protocol?_
+<ins>**Describe the solution or new feature you'd like.**</ins>  _How can we improve our product?  What will bring more users to our protocol?_
 
 
 **Describe alternatives you've considered**
