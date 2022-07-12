@@ -8,7 +8,7 @@ assignees: ''
 
 ---
 
-<ins>**Please describe the reasoning for this feature? _Please describe below, screenshots appreciated._</ins> <br>
+<ins>**Please describe the reasoning for this feature?** _Please mark one of the the checkboxes below, then put the description below that, screenshots preferred._</ins> <br>
 [ ] _Is this to resolve a process problem, bug. defect, error or glitch?_ <br>
 [ ] _Is this for a new feature or improvement?_ <br>
 
@@ -19,4 +19,5 @@ assignees: ''
 <ins>**Describe alternatives that would satisfy requirements.**</ins> _What's an alternative that could satisfy the same requirements I was looking for?  Will it be harder?  Will it require more resources?._ <br>
 
 <ins>**Additional context.**</ins> <br> _Any information that's relevant that doesn't fit in the categories above?_ <br>
+
 
