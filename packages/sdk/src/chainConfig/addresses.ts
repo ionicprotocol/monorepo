@@ -19,7 +19,7 @@ import {
 const chainSpecificAddresses: ChainSpecificAddresses = {
   [SupportedChains.ganache]: {
     W_TOKEN: ganacheAssets.find((a) => a.symbol === assetSymbols.WETH)!.underlying,
-    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419", // use mainnet
+    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419",
     UNISWAP_V2_ROUTER: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
     UNISWAP_V2_FACTORY: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
@@ -54,7 +54,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
   },
-  // TODO: check addresses
+  // checked
   [SupportedChains.moonbeam]: {
     W_TOKEN: moonbeamAssets.find((a) => a.symbol === assetSymbols.WGLMR)!.underlying,
     W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
@@ -85,6 +85,15 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
+  },
+
+  // TODO: change these to the correct addresses!
+  [SupportedChains.polygon]: {
+    W_TOKEN: "",
+    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "",
+    UNISWAP_V2_ROUTER: "",
+    UNISWAP_V2_FACTORY: "",
+    PAIR_INIT_HASH: "",
   },
 };
 
