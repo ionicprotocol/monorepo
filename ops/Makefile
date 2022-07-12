@@ -56,6 +56,7 @@ plan:
 	export TF_VAR_moralis_api_key=${MORALIS_API_KEY} && \
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_getblock_api_key=${GETBLOCK_API_KEY} && \
+	export TF_VAR_nodereal_api_key=${NODEREAL_API_KEY} && \
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	export TF_VAR_discord_webhook_url=${DISCORD_WEBHOOK_URL} && \
@@ -69,6 +70,7 @@ deploy:
 	export TF_VAR_moralis_api_key=${MORALIS_API_KEY} && \
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_getblock_api_key=${GETBLOCK_API_KEY} && \
+	export TF_VAR_nodereal_api_key=${NODEREAL_API_KEY} && \
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	export TF_VAR_discord_webhook_url=${DISCORD_WEBHOOK_URL} && \
