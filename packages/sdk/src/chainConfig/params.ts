@@ -42,6 +42,16 @@ const chainSpecificParams: ChainSpecificParams = {
     blocksPerYear: BigNumber.from((5 * 24 * 365 * 60).toString()),
     cgId: "solana",
   },
+  // TODO: for polygon
+  [SupportedChains.polygon]: {
+    blocksPerYear: BigNumber.from((30 * 24 * 365 * 60).toString()),
+    cgId: "matic-network",
+  },
+  // TODO: for mumbai
+  [SupportedChains.mumbai]: {
+    blocksPerYear: BigNumber.from((30 * 24 * 365 * 60).toString()),
+    cgId: "matic-network",
+  },
 };
 
 export default chainSpecificParams;

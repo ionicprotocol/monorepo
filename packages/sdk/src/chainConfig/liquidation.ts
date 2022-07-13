@@ -13,7 +13,9 @@ import {
   ganacheAssets,
   moonbaseAlphaAssets,
   moonbeamAssets,
+  mumbaiAssets,
   neonDevnetAssets,
+  polygonAssets,
 } from "./assets";
 
 const liquidationDefaults: ChainLiquidationDefaults = {
@@ -130,6 +132,34 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     SUPPORTED_INPUT_CURRENCIES: [
       constants.AddressZero,
       neonDevnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON)!.underlying,
+    ],
+    LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
+    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 30,
+  },
+  // TODO: for polygon
+  [SupportedChains.polygon]: {
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      polygonAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      polygonAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
+    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 30,
+  },
+  // TODO: for mumbai
+  [SupportedChains.mumbai]: {
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      mumbaiAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      mumbaiAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),

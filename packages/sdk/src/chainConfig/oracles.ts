@@ -34,6 +34,10 @@ const oracles: ChainOracles = {
 
   [SupportedChains.moonbase_alpha]: [...baseOracles],
   [SupportedChains.neon_devnet]: [...baseOracles],
+  //TODO: for polygon
+  [SupportedChains.polygon]: [...baseOracles],
+  //TODO: for mumbai
+  [SupportedChains.mumbai]: [...baseOracles],
 };
 
 export default oracles;
