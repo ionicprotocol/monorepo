@@ -180,6 +180,28 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
   },
+  // QuickSwap LPs
+  {
+    symbol: assetSymbols["WMATIC-USDC"],
+    underlying: "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827",
+    name: "WMATIC-USDC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WMATIC-ETH"],
+    underlying: "0xadbF1854e5883eB8aa7BAf50705338739e558E5b",
+    name: "WMATIC-ETH LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WETH-WBTC"],
+    underlying: "0xdC9232E2Df177d7a12FdFf6EcBAb114E2231198D",
+    name: "WETH-WBTC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
 ];
 
 export default assets;
