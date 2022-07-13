@@ -14,6 +14,7 @@ import {
   moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
+  polygonAssets,
 } from "./assets";
 
 const chainSpecificAddresses: ChainSpecificAddresses = {
@@ -86,14 +87,13 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
   },
-
-  // TODO: change these to the correct addresses!
+  // checked
   [SupportedChains.polygon]: {
-    W_TOKEN: "",
-    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "",
-    UNISWAP_V2_ROUTER: "",
-    UNISWAP_V2_FACTORY: "",
-    PAIR_INIT_HASH: "",
+    W_TOKEN: polygonAssets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0",
+    UNISWAP_V2_ROUTER: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
+    UNISWAP_V2_FACTORY: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
+    PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
   },
 };
 
