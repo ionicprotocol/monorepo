@@ -15,6 +15,22 @@ enum assetSymbols {
   BAL = "BAL",
   BTC = "BTC",
   LINK = "LINK",
+  AAVE = "AAVE",
+  ALCX = "ALCX",
+  AVAX = "AVAX",
+  AXS = "AXS",
+  CRV = "CRV",
+  CVX = "CVX",
+  FXS = "FXS",
+  GHST = "GHST",
+  GRT = "GRT",
+  MIM = "MIM",
+  MKR = "MKR",
+  RAI = "RAI",
+  SNX = "SNX",
+  SOL = "SOL",
+  SUSHI = "SUSHI",
+  YFI = "YFI",
 
   // bsc
   WBNB = "WBNB",
@@ -88,6 +104,11 @@ enum assetSymbols {
 
   // polygon
   WMATIC = "WMATIC",
+  oBNB = "oBNB",
+  "WMATIC-USDC" = "WMATIC-USDC",
+  "WMATIC-ETH" = "WMATIC-ETH",
+  "WMATIC-USDT" = "WMATIC-USDT",
+  "ETH-WBTC" = "ETH-WBTC",
 }
 
 export default assetSymbols;
