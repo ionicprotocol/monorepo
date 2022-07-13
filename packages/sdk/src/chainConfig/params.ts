@@ -44,7 +44,7 @@ const chainSpecificParams: ChainSpecificParams = {
   },
   [SupportedChains.polygon]: {
     blocksPerYear: BigNumber.from((26 * 24 * 365 * 60).toString()),
-    cgId: "polygon",
+    cgId: "matic-network",
   },
 };
 
