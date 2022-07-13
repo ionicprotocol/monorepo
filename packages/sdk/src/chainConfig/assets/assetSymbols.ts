@@ -108,7 +108,7 @@ enum assetSymbols {
   "WMATIC-USDC" = "WMATIC-USDC",
   "WMATIC-ETH" = "WMATIC-ETH",
   "WMATIC-USDT" = "WMATIC-USDT",
-  "ETH-WBTC" = "ETH-WBTC",
+  "WETH-WBTC" = "WETH-WBTC",
 }
 
 export default assetSymbols;

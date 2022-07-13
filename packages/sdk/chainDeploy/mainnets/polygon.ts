@@ -53,8 +53,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDC"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-ETH"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDT"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["USDC-ETH"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["ETH-WBTC"])!.underlying, // USDC-ETH PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying, // USDC-ETH PCS LP
     ],
   },
   plugins: [],
