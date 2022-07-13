@@ -17,3 +17,7 @@ export { default as auroraAssets } from "./aurora";
 export { default as ganacheAssets } from "./ganache";
 
 export { default as neonDevnetAssets } from "./neonDevnet";
+
+export { default as polygonAssets } from "./polygon";
+
+export { default as mumbaiAssets } from "./mumbai";

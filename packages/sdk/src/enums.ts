@@ -8,6 +8,8 @@ export enum SupportedChains {
   moonbeam = 1284,
   moonbase_alpha = 1287,
   neon_devnet = 245022926,
+  polygon = 137,
+  mumbai = 80001,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
