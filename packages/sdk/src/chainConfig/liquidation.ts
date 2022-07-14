@@ -14,6 +14,7 @@ import {
   moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
+  polygonAssets,
 } from "./assets";
 
 const liquidationDefaults: ChainLiquidationDefaults = {
@@ -134,6 +135,19 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
     LIQUIDATION_INTERVAL_SECONDS: 30,
+  },
+  [SupportedChains.polygon]: {
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      polygonAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      polygonAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
+    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 20,
   },
 };
 
