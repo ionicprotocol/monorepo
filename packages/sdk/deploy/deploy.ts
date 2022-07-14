@@ -195,43 +195,43 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   // CErc20PluginDelegate
-  const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(erc20PluginDel.address);
-  if (latestCErc20PluginDelegate !== constants.AddressZero && latestCErc20PluginDelegate !== erc20PluginDel.address) {
-    tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-      latestCErc20PluginDelegate,
-      erc20PluginDel.address,
-      false,
-      becomeImplementationData
-    );
-    await tx.wait();
-    console.log(
-      `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
-    );
-  } else {
-    console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
-  }
+  // const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(erc20PluginDel.address);
+  // if (latestCErc20PluginDelegate !== constants.AddressZero && latestCErc20PluginDelegate !== erc20PluginDel.address) {
+  //   tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+  //     latestCErc20PluginDelegate,
+  //     erc20PluginDel.address,
+  //     false,
+  //     becomeImplementationData
+  //   );
+  //   await tx.wait();
+  //   console.log(
+  //     `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
+  //   );
+  // } else {
+  //   console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
+  // }
 
   // CErc20PluginRewardsDelegate
-  const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
-    erc20PluginRewardsDel.address
-  );
-  if (
-    latestCErc20PluginRewardsDelegate !== constants.AddressZero &&
-    latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
-  ) {
-    tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-      latestCErc20PluginRewardsDelegate,
-      erc20PluginRewardsDel.address,
-      false,
-      becomeImplementationData
-    );
-    await tx.wait();
-    console.log(
-      `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
-    );
-  } else {
-    console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
-  }
+  // const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
+  //   erc20PluginRewardsDel.address
+  // );
+  // if (
+  //   latestCErc20PluginRewardsDelegate !== constants.AddressZero &&
+  //   latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
+  // ) {
+  //   tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+  //     latestCErc20PluginRewardsDelegate,
+  //     erc20PluginRewardsDel.address,
+  //     false,
+  //     becomeImplementationData
+  //   );
+  //   await tx.wait();
+  //   console.log(
+  //     `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
+  //   );
+  // } else {
+  //   console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
+  // }
 
   const fplDeployment = await deployments.deploy("FusePoolLens", {
     from: deployer,

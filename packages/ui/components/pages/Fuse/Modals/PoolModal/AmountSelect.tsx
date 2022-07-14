@@ -34,6 +34,7 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
@@ -747,8 +748,9 @@ export function fundOperationError(errorCode: number) {
     let msg = ComptrollerErrorCodes[comptrollerResponse];
 
     if (msg === 'BORROW_BELOW_MIN') {
-      msg =
-        'As part of our guarded launch, you cannot borrow less than 1 ETH worth of tokens at the moment.';
+      msg = `As part of our guarded launch, you cannot borrow ${
+        config.minBorrowUsd ? `less than ${config.minBorrowUsd}$ worth` : 'this amount'
+      } of tokens at the moment.`;
     }
 
     // This is a comptroller error:
