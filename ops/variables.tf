@@ -26,6 +26,10 @@ variable "pokt_api_key" {
   type = string
 }
 
+variable "nodereal_api_key" {
+  type = string
+}
+
 variable "getblock_api_key" {
   type = string
 }

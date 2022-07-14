@@ -15,6 +15,22 @@ enum assetSymbols {
   BAL = "BAL",
   BTC = "BTC",
   LINK = "LINK",
+  AAVE = "AAVE",
+  ALCX = "ALCX",
+  AVAX = "AVAX",
+  AXS = "AXS",
+  CRV = "CRV",
+  CVX = "CVX",
+  FXS = "FXS",
+  GHST = "GHST",
+  GRT = "GRT",
+  MIM = "MIM",
+  MKR = "MKR",
+  RAI = "RAI",
+  SNX = "SNX",
+  SOL = "SOL",
+  SUSHI = "SUSHI",
+  YFI = "YFI",
 
   // bsc
   WBNB = "WBNB",
@@ -62,6 +78,8 @@ enum assetSymbols {
   GLINT = "GLINT",
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
+  "WGLMR-xcDOT" = "WGLMR-xcDOT",
+  "GLMR-madUSDC" = "GLMR-madUSDC",
   DOT = "DOT",
   xcDOT = "xcDOT",
   KSM = "KSM",
@@ -83,6 +101,14 @@ enum assetSymbols {
 
   // neon
   WNEON = "WNEON",
+
+  // polygon
+  WMATIC = "WMATIC",
+  oBNB = "oBNB",
+  "WMATIC-USDC" = "WMATIC-USDC",
+  "WMATIC-ETH" = "WMATIC-ETH",
+  "WMATIC-USDT" = "WMATIC-USDT",
+  "WETH-WBTC" = "WETH-WBTC",
 }
 
 export default assetSymbols;

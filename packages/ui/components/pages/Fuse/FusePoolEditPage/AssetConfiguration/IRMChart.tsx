@@ -42,6 +42,11 @@ const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChar
       );
 
       return convertIRMtoCurve(fuse, IRM, currentChain.id);
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!interestRateModelAddress && !!adminFee.toString() && !!reserveFactor.toString(),
     }
   );
 
