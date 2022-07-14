@@ -11,6 +11,7 @@ import {
   moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
+  polygonAssets,
 } from "./assets";
 
 const assetArrayToMap = (assets: SupportedAsset[]): { [key: string]: SupportedAsset } =>
@@ -29,6 +30,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.moonbeam]: moonbeamAssets,
   [SupportedChains.aurora]: auroraAssets,
   [SupportedChains.neon_devnet]: neonDevnetAssets,
+  [SupportedChains.polygon]: polygonAssets,
 };
 
 export const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<typeof assetArrayToMap> } =

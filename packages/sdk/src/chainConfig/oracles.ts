@@ -34,6 +34,7 @@ const oracles: ChainOracles = {
 
   [SupportedChains.moonbase_alpha]: [...baseOracles],
   [SupportedChains.neon_devnet]: [...baseOracles],
+  [SupportedChains.polygon]: [...baseOracles],
 };
 
 export default oracles;
