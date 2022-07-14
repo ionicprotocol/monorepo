@@ -5,6 +5,7 @@ type CONFIG = {
   isBscEnabled: boolean;
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
+  isPolygonEnabled: boolean;
   isTestnetEnabled: boolean;
   allowedAddresses: string[];
   productDomain: string | undefined;
@@ -19,6 +20,7 @@ const config: CONFIG = {
   isBscEnabled: process.env.BSC === 'true',
   isEvmosEnabled: process.env.EVMOS === 'ture',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
+  isPolygonEnabled: process.env.POLYGON === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')
