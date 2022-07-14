@@ -169,26 +169,11 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
         for (let j = 0; j < assets.length; j++) {
           const assetConfig = assets[j];
           console.log("asset config", assetConfig);
-          const underlying = assetConfig.underlyingToken;
-          const assetPlugins = sdk.chainPlugins[underlying];
-          if (assetPlugins && assetPlugins.length) {
-            const plugin = assetPlugins[0];
-            assetConfig.plugin = assetPlugins[0];
-            console.log(
-              `hardhat market:upgrade --pool-name ${pool.name} --market-id ${underlying} --admin ${taskArgs.admin} --strategy-code ${plugin.strategyCode} --implementation-address "" --network bsc`
-            );
-            await run("market:upgrade", {
-              poolName: pool.name,
-              marketId: underlying,
-              admin: taskArgs.admin,
-              strategyCode: plugin.strategyCode,
-              implementationAddress: "",
-            });
-          } else {
-            console.log(
-              `No plugin config for pool/market ${pool.name}/${assetConfig.cToken} with underlying asset ${underlying}`
-            );
-          }
+
+          const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
+          const tx = await cTokenInstance.accrueInterest();
+          const receipt: TransactionReceipt = await tx.wait();
+          console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
         }
       } else {
         console.log(`The signing address ${signer.address} is not the current admin of the pool ${admin}`);

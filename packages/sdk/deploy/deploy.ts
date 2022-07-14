@@ -450,6 +450,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
   await tx.wait();
   console.log("setAddress: ", tx.hash);
+
+  tx = await addressesProvider.setAddress("FusePoolDirectory", fpd.address);
+  await tx.wait();
+  console.log("setAddress: ", tx.hash);
+
+  tx = await addressesProvider.setAddress("FuseFeeDistributor", ffd.address);
+  await tx.wait();
+  console.log("setAddress: ", tx.hash);
 };
 
 func.tags = ["prod"];
