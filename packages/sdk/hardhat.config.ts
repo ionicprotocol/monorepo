@@ -107,7 +107,7 @@ const config: HardhatUserConfig = {
       url:
         urlOverride ||
         process.env.BSC_PROVIDER_URL ||
-        "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
+        "https://bsc-mainnet.nodereal.io/v1/6e60a664b05244e0b0f2e7e043739f6f",
     },
     bscfork: {
       accounts: { mnemonic },
