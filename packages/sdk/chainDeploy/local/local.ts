@@ -7,7 +7,7 @@ import { SupportedChains } from "../../src";
 import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
-import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams } from "../helpers/types";
 
 const assets = chainSupportedAssets[SupportedChains.ganache];
@@ -141,7 +141,6 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     run,
     deployConfig,
   });
-  await deployERC4626Plugin({ ethers, getNamedAccounts, deployments, run, deployConfig, dynamicFlywheels });
 
   /// Addresses Provider - set plugins
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
@@ -161,11 +160,14 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   /// Addresses Provider - set flywheel rewards
   for (const dynamicFlywheel of deployConfig.dynamicFlywheels) {
     if (dynamicFlywheel) {
-      const flywheelRewards = await ethers.getContract(`FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`, deployer);
+      const flywheelRewards = await ethers.getContract(
+        `FuseFlywheelDynamicRewardsPlugin_${dynamicFlywheel.name}`,
+        deployer
+      );
       tx = await addressesProvider.setFlywheelRewards(
         dynamicFlywheel.rewardToken,
         flywheelRewards.address,
-        `FuseFlywheelDynamicRewards_${dynamicFlywheel.name}`
+        `FuseFlywheelDynamicRewardsPlugin_${dynamicFlywheel.name}`
       );
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);

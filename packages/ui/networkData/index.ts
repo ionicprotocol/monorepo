@@ -5,6 +5,7 @@ import Evmos from '@ui/networkData/networks/Evmos';
 import Ganache from '@ui/networkData/networks/Ganache';
 import Moonbeam from '@ui/networkData/networks/Moonbeam';
 import NeonDevnet from '@ui/networkData/networks/NeonDevnet';
+import Polygon from '@ui/networkData/networks/Polygon';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
 
 export const NETWORK_DATA: Record<string, ChainMetadata> = {
@@ -15,6 +16,7 @@ export const NETWORK_DATA: Record<string, ChainMetadata> = {
   [SupportedChains.moonbeam]: Moonbeam.mainnet,
   [SupportedChains.moonbase_alpha]: Moonbeam.testnet,
   [SupportedChains.neon_devnet]: NeonDevnet.devnet,
+  [SupportedChains.polygon]: Polygon.mainnet,
 };
 
 export const WRAPPED_NATIVE_TOKEN_DATA: Record<number, ChainMetadata['wrappedNativeCurrency']> = {
@@ -25,6 +27,7 @@ export const WRAPPED_NATIVE_TOKEN_DATA: Record<number, ChainMetadata['wrappedNat
   [SupportedChains.moonbeam]: Moonbeam.mainnet.wrappedNativeCurrency,
   [SupportedChains.moonbase_alpha]: Moonbeam.testnet.wrappedNativeCurrency,
   [SupportedChains.neon_devnet]: NeonDevnet.devnet.wrappedNativeCurrency,
+  [SupportedChains.polygon]: Polygon.mainnet.wrappedNativeCurrency,
 };
 
 export const isSupportedChainId = (chainId: number) => {
