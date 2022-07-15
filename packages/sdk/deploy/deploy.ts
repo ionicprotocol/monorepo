@@ -361,15 +361,19 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(`No old CErc20PluginRewardsDelegate to whitelist the upgrade for`);
   }
 
-  tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
-    oldImplementations,
-    newImplementations,
-    arrayOfFalse,
-    arrayOfTrue
-  );
+  if (oldImplementations.length) {
+    tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
+      oldImplementations,
+      newImplementations,
+      arrayOfFalse,
+      arrayOfTrue
+    );
 
-  receipt = await tx.wait();
-  console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
+    receipt = await tx.wait();
+    console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
+  } else {
+    console.log(`No old delegates implementations to whitelist the upgrade for`);
+  }
 
   const autoImplementation = await comptroller.callStatic.autoImplementation();
   console.log("autoImplementation: ", autoImplementation);
