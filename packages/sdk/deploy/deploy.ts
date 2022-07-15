@@ -308,28 +308,66 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const etherDelegate = await ethers.getContract("CEtherDelegate", deployer);
 
   let receipt: providers.TransactionReceipt;
-  const cetherDelegateWhitelist = await fuseFeeDistributor.callStatic.cEtherDelegateWhitelist(
-    constants.AddressZero,
-    etherDelegate.address,
-    false
-  );
-  console.log("cetherDelegateWhitelist: ", cetherDelegateWhitelist);
 
-  tx = await fuseFeeDistributor._editCEtherDelegateWhitelist(
-    [constants.AddressZero],
-    [etherDelegate.address],
-    [false],
-    [true]
-  );
-  receipt = await tx.wait();
-  console.log("Set whitelist for Ether Delegate with status:", receipt.status, tx.hash);
+  if (oldEtherDelegate) {
+    const cetherDelegateWhitelist = await fuseFeeDistributor.callStatic.cEtherDelegateWhitelist(
+      oldEtherDelegate.address,
+      etherDelegate.address,
+      false
+    );
+    console.log("cetherDelegateWhitelist: ", cetherDelegateWhitelist);
+
+    tx = await fuseFeeDistributor._editCEtherDelegateWhitelist(
+      [oldEtherDelegate.address],
+      [etherDelegate.address],
+      [false],
+      [true]
+    );
+    receipt = await tx.wait();
+    console.log("Set whitelist for Ether Delegate with status:", receipt.status, tx.hash);
+  } else {
+    console.log(`No old CEtherDelegate to whitelist the upgrade for`);
+  }
+
+  const oldImplementations = [];
+  const newImplementations = [];
+  const arrayOfFalse = [];
+  const arrayOfTrue = [];
+
+  if (oldErc20Delegate) {
+    oldImplementations.push(oldErc20Delegate);
+    newImplementations.push(erc20Delegate.address);
+    arrayOfFalse.push(false);
+    arrayOfTrue.push(true);
+  } else {
+    console.log(`No old CErc20Delegate to whitelist the upgrade for`);
+  }
+
+  if (oldErc20PluginDelegate) {
+    oldImplementations.push(oldErc20PluginDelegate);
+    newImplementations.push(erc20PluginDelegate.address);
+    arrayOfFalse.push(false);
+    arrayOfTrue.push(true);
+  } else {
+    console.log(`No old CErc20PluginDelegate to whitelist the upgrade for`);
+  }
+
+  if (oldErc20PluginRewardsDelegate) {
+    oldImplementations.push(oldErc20PluginRewardsDelegate);
+    newImplementations.push(erc20PluginRewardsDelegate.address);
+    arrayOfFalse.push(false);
+    arrayOfTrue.push(true);
+  } else {
+    console.log(`No old CErc20PluginRewardsDelegate to whitelist the upgrade for`);
+  }
 
   tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
-    [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address],
-    [oldErc20Delegate.address, oldErc20PluginDelegate.address, oldErc20PluginRewardsDelegate.address],
-    [false, false, false],
-    [true, true, true]
+    oldImplementations,
+    newImplementations,
+    arrayOfFalse,
+    arrayOfTrue
   );
+
   receipt = await tx.wait();
   console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
 
