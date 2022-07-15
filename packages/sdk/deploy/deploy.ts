@@ -317,16 +317,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("Set whitelist for Ether Delegate with status:", receipt.status, tx.hash);
 
   tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
-    [
-      erc20Delegate.address,
-      erc20PluginDelegate.address,
-      erc20PluginRewardsDelegate.address,
-    ],
-    [
-      oldErc20Delegate.address,
-      oldErc20PluginDelegate.address,
-      oldErc20PluginRewardsDelegate.address,
-    ],
+    [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address],
+    [oldErc20Delegate.address, oldErc20PluginDelegate.address, oldErc20PluginRewardsDelegate.address],
     [false, false, false],
     [true, true, true]
   );
