@@ -69,9 +69,24 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   });
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
-  .addOptionalParam("oldDelegate", "The old delegate implementation to whitelist for the latest impl", undefined, types.string)
-  .addOptionalParam("oldPluginDelegate", "The old plugin delegate implementation to whitelist for the latest impl", undefined, types.string)
-  .addOptionalParam("oldPluginRewardsDelegate", "The old plugin rewards delegate implementation to whitelist for the latest impl", undefined, types.string)
+  .addOptionalParam(
+    "oldDelegate",
+    "The old delegate implementation to whitelist for the latest impl",
+    undefined,
+    types.string
+  )
+  .addOptionalParam(
+    "oldPluginDelegate",
+    "The old plugin delegate implementation to whitelist for the latest impl",
+    undefined,
+    types.string
+  )
+  .addOptionalParam(
+    "oldPluginRewardsDelegate",
+    "The old plugin rewards delegate implementation to whitelist for the latest impl",
+    undefined,
+    types.string
+  )
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
     const oldErc20Delegate = taskArgs.oldDelegate;
@@ -153,7 +168,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
     const sdk = await fuseModule.getOrCreateFuse();
     const signer = await ethers.getNamedSigner(taskArgs.admin);
 
-    const fusePoolDirectory = await ethers.getContract("FusePoolDirectory", signer) as FusePoolDirectory;
+    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
     const pools = await fusePoolDirectory.callStatic.getAllPools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
@@ -200,7 +215,12 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
 task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 Delegates")
   .addOptionalParam("oldDelegate", "The old delegate implementation to replace", undefined, types.string)
   .addOptionalParam("oldPluginDelegate", "The old plugin delegate implementation to replace", undefined, types.string)
-  .addOptionalParam("oldPluginRewardsDelegate", "The old plugin rewards delegate implementation to replace", undefined, types.string)
+  .addOptionalParam(
+    "oldPluginRewardsDelegate",
+    "The old plugin rewards delegate implementation to replace",
+    undefined,
+    types.string
+  )
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers, run }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
@@ -239,7 +259,10 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
     if (oldErc20PluginDelegate) {
       // CErc20PluginDelegate
       const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate);
-      if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
+      if (
+        latestCErc20PluginDelegate === constants.AddressZero ||
+        latestCErc20PluginDelegate !== erc20PluginDel.address
+      ) {
         tx = await fuseFeeDistributor._setLatestCErc20Delegate(
           oldErc20PluginDelegate,
           erc20PluginDel.address,
@@ -275,7 +298,9 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
           `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
         );
       } else {
-        console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
+        console.log(
+          `No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`
+        );
       }
     }
   });
