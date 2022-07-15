@@ -327,8 +327,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       oldErc20PluginDelegate.address,
       oldErc20PluginRewardsDelegate.address,
     ],
-    [false, false, false, false, false, false, false],
-    [true, true, true, true, true, true, true]
+    [false, false, false],
+    [true, true, true]
   );
   receipt = await tx.wait();
   console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
