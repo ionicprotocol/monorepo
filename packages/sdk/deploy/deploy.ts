@@ -6,8 +6,8 @@ import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import { configureFuseSafeLiquidator, deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
-import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
+import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const MIN_BORROW_USD = 100;
