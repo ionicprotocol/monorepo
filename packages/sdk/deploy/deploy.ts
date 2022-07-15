@@ -240,7 +240,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
       );
     } else {
-      console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
+      console.log(
+        `No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`
+      );
     }
   }
 
