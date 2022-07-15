@@ -7,7 +7,9 @@
     "@ethersproject/providers": "^5.6.8",
     "@midas-capital/sdk": "workspace:*",
     "@supabase/supabase-js": "^1.35.4",
+    "dotenv": "^16.0.1",
     "ethers": "^5.6.9",
+    "ts-node": "^10.9.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -17,6 +19,7 @@
   },
   "scripts": {
     "build": "tsc",
+    "local": "ts-node src/functions/save-price.ts",
     "deploy": "netlify deploy --functions=netlify/functions"
   }
 }

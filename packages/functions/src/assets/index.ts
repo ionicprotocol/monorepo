@@ -1,5 +1,5 @@
 import { SupportedChains } from '@midas-capital/sdk';
-import { bscFlywheels } from './flywheel';
+import { bscFlywheels, moonbeamFlywheels } from './flywheel';
 import { bscPlugins, moonbeamPlugins } from './plugins';
 
 export const plugins = {
@@ -9,5 +9,5 @@ export const plugins = {
 
 export const flywheels = {
   [SupportedChains.bsc]: bscFlywheels,
-  [SupportedChains.moonbeam]: moonbeamPlugins,
+  [SupportedChains.moonbeam]: moonbeamFlywheels,
 };
