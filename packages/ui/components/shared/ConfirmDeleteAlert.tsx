@@ -13,7 +13,7 @@ export default function ConfirmDeleteAlert({
   onClose,
   onConfirm,
   isOpen,
-  title = 'Confirm Remove',
+  title = 'Are you sure',
   description = "Are you sure? You can't undo this action afterwards.",
 }: {
   onConfirm: () => void;
@@ -29,16 +29,16 @@ export default function ConfirmDeleteAlert({
       <AlertDialogOverlay>
         <AlertDialogContent>
           <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            {{ title }}
+            {title}
           </AlertDialogHeader>
 
-          <AlertDialogBody>{{ description }}</AlertDialogBody>
+          <AlertDialogBody>{description}</AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose}>
+            <Button ref={cancelRef} onClick={onClose} variant="outline">
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={onConfirm} ml={3}>
+            <Button onClick={onConfirm} ml={3}>
               Remove
             </Button>
           </AlertDialogFooter>
