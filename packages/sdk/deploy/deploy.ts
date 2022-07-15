@@ -77,10 +77,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (comp.transactionHash) await ethers.provider.waitForTransaction(comp.transactionHash);
   console.log("Comptroller.sol:Comptroller: ", comp.address);
 
-  const oldErc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
-  const oldErc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
-  const oldErc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", deployer);
-  const oldEtherDelegate = await ethers.getContract("CEtherDelegate", deployer);
+  const oldErc20Delegate = await ethers.getContractOrNull("CErc20Delegate");
+  const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate");
+  const oldErc20PluginRewardsDelegate = await ethers.getContractOrNull("CErc20PluginRewardsDelegate");
+  const oldEtherDelegate = await ethers.getContractOrNull("CEtherDelegate");
 
   const erc20Del = await deployments.deploy("CErc20Delegate", {
     from: deployer,
@@ -184,58 +184,64 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
-  // CErc20Delegate
-  const [latestCErc20Delegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20Delegate.address);
-  if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
-    tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-      oldErc20Delegate.address,
-      erc20Del.address,
-      false,
-      becomeImplementationData
-    );
-    await tx.wait();
-    console.log(`Set the latest CErc20Delegate implementation from ${latestCErc20Delegate} to ${erc20Del.address}`);
-  } else {
-    console.log(`No change in the latest CErc20Delegate implementation ${erc20Del.address}`);
+  if (oldErc20Delegate) {
+    // CErc20Delegate
+    const [latestCErc20Delegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20Delegate.address);
+    if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
+      tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+        oldErc20Delegate.address,
+        erc20Del.address,
+        false,
+        becomeImplementationData
+      );
+      await tx.wait();
+      console.log(`Set the latest CErc20Delegate implementation from ${latestCErc20Delegate} to ${erc20Del.address}`);
+    } else {
+      console.log(`No change in the latest CErc20Delegate implementation ${erc20Del.address}`);
+    }
   }
 
-  // CErc20PluginDelegate
-  const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate.address);
-  if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
-    tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-      oldErc20PluginDelegate.address,
-      erc20PluginDel.address,
-      false,
-      becomeImplementationData
-    );
-    await tx.wait();
-    console.log(
-      `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
-    );
-  } else {
-    console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
+  if (oldErc20PluginDelegate) {
+    // CErc20PluginDelegate
+    const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate.address);
+    if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
+      tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+        oldErc20PluginDelegate.address,
+        erc20PluginDel.address,
+        false,
+        becomeImplementationData
+      );
+      await tx.wait();
+      console.log(
+        `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
+      );
+    } else {
+      console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
+    }
   }
 
-  // CErc20PluginRewardsDelegate
-  const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
-    oldErc20PluginRewardsDelegate.address
-  );
-  if (
-    latestCErc20PluginRewardsDelegate === constants.AddressZero ||
-    latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
-  ) {
-    tx = await fuseFeeDistributor._setLatestCErc20Delegate(
-      oldErc20PluginRewardsDelegate.address,
-      erc20PluginRewardsDel.address,
-      false,
-      becomeImplementationData
+  if (oldErc20PluginRewardsDelegate) {
+    // CErc20PluginRewardsDelegate
+    const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
+      oldErc20PluginRewardsDelegate.address
     );
-    await tx.wait();
-    console.log(
-      `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
-    );
-  } else {
-    console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
+    if (
+      latestCErc20PluginRewardsDelegate === constants.AddressZero ||
+      latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
+    ) {
+      tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+        oldErc20PluginRewardsDelegate.address,
+        erc20PluginRewardsDel.address,
+        false,
+        becomeImplementationData
+      );
+      await tx.wait();
+      console.log(
+        `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
+      );
+    } else {
+      console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
+    }
   }
 
   const fplDeployment = await deployments.deploy("FusePoolLens", {
