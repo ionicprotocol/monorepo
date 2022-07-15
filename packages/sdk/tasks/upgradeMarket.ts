@@ -4,6 +4,7 @@ import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 
 // example
 // hardhat market:upgrade --pool-name BOMB --market-id BTCB-BOMB --admin deployer --strategy-code BeefyERC4626_BOMBBTCLP --implementation-address "" --network bsc
@@ -148,17 +149,15 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
   .setAction(async (taskArgs, { ethers, run }) => {
     // @ts-ignoreutils/fuseSdk
     const fuseModule = await import("../tests/utils/fuseSdk");
-    // @ts-ignoreutils/pool
-    const poolModule = await import("../tests/utils/pool");
 
     const sdk = await fuseModule.getOrCreateFuse();
     const signer = await ethers.getNamedSigner(taskArgs.admin);
-    const pools = await poolModule.getAllPools(sdk);
 
+    const fusePoolDirectory = await ethers.getContract("FusePoolDirectory", signer) as FusePoolDirectory;
+    const pools = await fusePoolDirectory.callStatic.getAllPools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-
       const comptroller = (await new Contract(
         pool.comptroller,
         sdk.chainDeployment.Comptroller.abi,
@@ -170,18 +169,17 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const autoImplOn = await comptroller.callStatic.autoImplementation();
 
       if (autoImplOn) {
-        const poolData = await poolModule.getPoolByName(pool.name, sdk);
-        const assets = poolData.assets;
+        const markets = await comptroller.callStatic.getAllMarkets();
         // console.log("pool assets", assets);
-        for (let j = 0; j < assets.length; j++) {
-          const assetConfig = assets[j];
-          console.log("asset config", {
-            cToken: assetConfig.cToken,
-            underlyingToken: assetConfig.underlyingToken,
-            underlyingSymbol: assetConfig.underlyingSymbol,
-          });
+        for (let j = 0; j < markets.length; j++) {
+          const market = markets[j];
+          const cTokenInstance = sdk.getCTokenInstance(market);
 
-          const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
+          console.log("market", {
+            cToken: market,
+            cTokenName: await cTokenInstance.callStatic.name(),
+            cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
+          });
 
           const implBefore = await cTokenInstance.callStatic.implementation();
           console.log(`implementation before ${implBefore}`);
