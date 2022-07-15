@@ -171,9 +171,16 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
           console.log("asset config", assetConfig);
 
           const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
+
+          const implBefore = await cTokenInstance.callStatic.implementation();
+          console.log(`implementation before ${implBefore}`);
+
           const tx = await cTokenInstance.accrueInterest();
           const receipt: TransactionReceipt = await tx.wait();
           console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+
+          const implAfter = await cTokenInstance.callStatic.implementation();
+          console.log(`implementation after ${implAfter}`);
         }
       } else {
         console.log(`The signing address ${signer.address} is not the current admin of the pool ${admin}`);
