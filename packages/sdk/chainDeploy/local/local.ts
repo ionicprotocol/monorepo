@@ -99,6 +99,11 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   await tx.wait();
   ////
 
+  // rewards
+  deployConfig.plugins[0].underlying = tribeToken.address;
+  deployConfig.plugins[1].underlying = touchToken.address;
+  deployConfig.dynamicFlywheels[0].rewardToken = touchToken.address;
+
   ////
   //// ORACLES
   const simplePO = await deployments.deploy("SimplePriceOracle", {
