@@ -68,9 +68,14 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   });
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
-  .addParam("oldImplementationAddress", "The address of the old implementation", undefined, types.string)
+  .addOptionalParam("oldDelegate", "The old delegate implementation to whitelist for the latest impl", undefined, types.string)
+  .addOptionalParam("oldPluginDelegate", "The old plugin delegate implementation to whitelist for the latest impl", undefined, types.string)
+  .addOptionalParam("oldPluginRewardsDelegate", "The old plugin rewards delegate implementation to whitelist for the latest impl", undefined, types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
+    const oldErc20Delegate = taskArgs.oldDelegate;
+    const oldErc20PluginDelegate = taskArgs.oldPluginDelegate;
+    const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
 
     // @ts-ignoreutils/fuseSdk
     const fuseModule = await import("../tests/utils/fuseSdk");
@@ -81,37 +86,37 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
       signer
     );
 
+    const oldImplementations = [];
+    const newImplementations = [];
+    const arrayOfFalse = [];
+    const arrayOfTrue = [];
+
+    if (oldErc20Delegate) {
+      oldImplementations.push(oldErc20Delegate);
+      newImplementations.push(sdk.chainDeployment.CErc20Delegate.address);
+      arrayOfFalse.push(false);
+      arrayOfTrue.push(true);
+    }
+
+    if (oldErc20PluginDelegate) {
+      oldImplementations.push(oldErc20PluginDelegate);
+      newImplementations.push(sdk.chainDeployment.CErc20PluginDelegate.address);
+      arrayOfFalse.push(false);
+      arrayOfTrue.push(true);
+    }
+
+    if (oldErc20PluginRewardsDelegate) {
+      oldImplementations.push(oldErc20PluginRewardsDelegate);
+      newImplementations.push(sdk.chainDeployment.CErc20PluginRewardsDelegate.address);
+      arrayOfFalse.push(false);
+      arrayOfTrue.push(true);
+    }
+
     const tx = await fuseFeeDistributor._editCErc20DelegateWhitelist(
-      [
-        constants.AddressZero,
-        constants.AddressZero,
-        constants.AddressZero,
-        sdk.chainDeployment.CErc20Delegate.address,
-        sdk.chainDeployment.CErc20Delegate.address,
-        sdk.chainDeployment.CErc20PluginDelegate.address,
-        sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-
-        taskArgs.oldImplementationAddress,
-        taskArgs.oldImplementationAddress,
-        taskArgs.oldImplementationAddress,
-        taskArgs.oldImplementationAddress,
-      ],
-      [
-        sdk.chainDeployment.CErc20Delegate.address,
-        sdk.chainDeployment.CErc20PluginDelegate.address,
-        sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-        sdk.chainDeployment.CErc20PluginDelegate.address,
-        sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-        sdk.chainDeployment.CErc20PluginDelegate.address,
-        sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-
-        sdk.chainDeployment.CErc20Delegate.address,
-        sdk.chainDeployment.CErc20PluginDelegate.address,
-        sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-        taskArgs.oldImplementationAddress,
-      ],
-      [false, false, false, false, false, false, false, false, false, false, false],
-      [true, true, true, true, true, true, true, true, true, true, true]
+      oldImplementations,
+      newImplementations,
+      arrayOfFalse,
+      arrayOfTrue
     );
 
     const receipt = await tx.wait();
@@ -162,28 +167,117 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const poolData = await poolModule.getPoolByName(pool.name, sdk);
-      const assets = poolData.assets;
-      // console.log("pool assets", assets);
-      for (let j = 0; j < assets.length; j++) {
-        const assetConfig = assets[j];
-        console.log("asset config", {
-          cToken: assetConfig.cToken,
-          underlyingToken: assetConfig.underlyingToken,
-          underlyingSymbol: assetConfig.underlyingSymbol,
-        });
+      const autoImplOn = await comptroller.callStatic.autoImplementation();
 
-        const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
+      if (autoImplOn) {
+        const poolData = await poolModule.getPoolByName(pool.name, sdk);
+        const assets = poolData.assets;
+        // console.log("pool assets", assets);
+        for (let j = 0; j < assets.length; j++) {
+          const assetConfig = assets[j];
+          console.log("asset config", {
+            cToken: assetConfig.cToken,
+            underlyingToken: assetConfig.underlyingToken,
+            underlyingSymbol: assetConfig.underlyingSymbol,
+          });
 
-        const implBefore = await cTokenInstance.callStatic.implementation();
-        console.log(`implementation before ${implBefore}`);
+          const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
 
-        const tx = await cTokenInstance.accrueInterest();
-        const receipt: TransactionReceipt = await tx.wait();
-        console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+          const implBefore = await cTokenInstance.callStatic.implementation();
+          console.log(`implementation before ${implBefore}`);
 
-        const implAfter = await cTokenInstance.callStatic.implementation();
-        console.log(`implementation after ${implAfter}`);
+          const tx = await cTokenInstance.accrueInterest();
+          const receipt: TransactionReceipt = await tx.wait();
+          console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+
+          const implAfter = await cTokenInstance.callStatic.implementation();
+          console.log(`implementation after ${implAfter}`);
+        }
+      } else {
+        console.log(`autoimplementations for the pool is off`);
+      }
+    }
+  });
+
+task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 Delegates")
+  .addOptionalParam("oldDelegate", "The old delegate implementation to replace", undefined, types.string)
+  .addOptionalParam("oldPluginDelegate", "The old plugin delegate implementation to replace", undefined, types.string)
+  .addOptionalParam("oldPluginRewardsDelegate", "The old plugin rewards delegate implementation to replace", undefined, types.string)
+  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
+  .setAction(async (taskArgs, { ethers, run }) => {
+    const signer = await ethers.getNamedSigner(taskArgs.admin);
+    const oldErc20Delegate = taskArgs.oldDelegate;
+    const oldErc20PluginDelegate = taskArgs.oldPluginDelegate;
+    const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
+
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
+
+    const erc20Del = await ethers.getContract("CErc20Delegate", signer);
+    const erc20PluginDel = await ethers.getContract("CErc20PluginDelegate", signer);
+    const erc20PluginRewardsDel = await ethers.getContract("CErc20PluginRewardsDelegate", signer);
+    const etherDel = await ethers.getContract("CEtherDelegate", signer);
+
+    const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
+
+    let tx;
+
+    if (oldErc20Delegate) {
+      // CErc20Delegate
+      const [latestCErc20Delegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20Delegate);
+      if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
+        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          oldErc20Delegate,
+          erc20Del.address,
+          false,
+          becomeImplementationData
+        );
+        await tx.wait();
+        console.log(`Set the latest CErc20Delegate implementation from ${latestCErc20Delegate} to ${erc20Del.address}`);
+      } else {
+        console.log(`No change in the latest CErc20Delegate implementation ${erc20Del.address}`);
+      }
+    }
+
+    if (oldErc20PluginDelegate) {
+      // CErc20PluginDelegate
+      const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate);
+      if (latestCErc20PluginDelegate === constants.AddressZero || latestCErc20PluginDelegate !== erc20PluginDel.address) {
+        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          oldErc20PluginDelegate,
+          erc20PluginDel.address,
+          false,
+          becomeImplementationData
+        );
+        await tx.wait();
+        console.log(
+          `Set the latest CErc20PluginDelegate implementation from ${latestCErc20PluginDelegate} to ${erc20PluginDel.address}`
+        );
+      } else {
+        console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
+      }
+    }
+
+    if (oldErc20PluginRewardsDelegate) {
+      // CErc20PluginRewardsDelegate
+      const [latestCErc20PluginRewardsDelegate] = await fuseFeeDistributor.latestCErc20Delegate(
+        oldErc20PluginRewardsDelegate
+      );
+      if (
+        latestCErc20PluginRewardsDelegate === constants.AddressZero ||
+        latestCErc20PluginRewardsDelegate !== erc20PluginRewardsDel.address
+      ) {
+        tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          oldErc20PluginRewardsDelegate,
+          erc20PluginRewardsDel.address,
+          false,
+          becomeImplementationData
+        );
+        await tx.wait();
+        console.log(
+          `Set the latest CErc20PluginRewardsDelegate implementation from ${latestCErc20PluginRewardsDelegate} to ${erc20PluginRewardsDel.address}`
+        );
+      } else {
+        console.log(`No change in the latest CErc20PluginRewardsDelegate implementation ${erc20PluginRewardsDel.address}`);
       }
     }
   });
