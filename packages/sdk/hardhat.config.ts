@@ -104,10 +104,7 @@ const config: HardhatUserConfig = {
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
-      url:
-        urlOverride ||
-        process.env.BSC_PROVIDER_URL ||
-        "",
+      url: urlOverride || process.env.BSC_PROVIDER_URL || "",
     },
     bscfork: {
       accounts: { mnemonic },
