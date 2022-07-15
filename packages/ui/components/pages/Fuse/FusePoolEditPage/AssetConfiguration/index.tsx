@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
+import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
 import { FilterButton } from '@ui/components/shared/Button';
 import { Center, Column } from '@ui/components/shared/Flex';
@@ -40,10 +41,13 @@ const AssetConfiguration = ({
       <ConfigRow mainAxisAlignment="space-between">
         <Heading size="sm">Assets Configuration</Heading>
 
-        <AddAssetButton
-          comptrollerAddress={comptrollerAddress}
-          openAddAssetModal={openAddAssetModal}
-        />
+        <Box display={'flex'}>
+          <AddAssetButton
+            comptrollerAddress={comptrollerAddress}
+            openAddAssetModal={openAddAssetModal}
+          />
+          <RemoveAssetButton comptrollerAddress={comptrollerAddress} asset={selectedAsset} />
+        </Box>
       </ConfigRow>
 
       <ModalDivider />
