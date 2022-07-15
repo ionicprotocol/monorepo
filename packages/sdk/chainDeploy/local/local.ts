@@ -99,11 +99,6 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   await tx.wait();
   ////
 
-  // rewards
-  deployConfig.plugins[0].underlying = tribeToken.address;
-  deployConfig.plugins[1].underlying = touchToken.address;
-  deployConfig.dynamicFlywheels[0].rewardToken = touchToken.address;
-
   ////
   //// ORACLES
   const simplePO = await deployments.deploy("SimplePriceOracle", {
@@ -141,37 +136,5 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
     run,
     deployConfig,
   });
-
-  /// Addresses Provider - set plugins
-  const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  for (const pluginConfig of deployConfig.plugins) {
-    if (pluginConfig) {
-      const plugin = await ethers.getContract(`${pluginConfig.strategy}_${pluginConfig.name}`, deployer);
-      tx = await addressesProvider.setPlugin(
-        pluginConfig.underlying,
-        plugin.address,
-        `${pluginConfig.strategy}_${pluginConfig.name}`
-      );
-      await tx.wait();
-      console.log("setPlugin: ", tx.hash);
-    }
-  }
-
-  /// Addresses Provider - set flywheel rewards
-  for (const dynamicFlywheel of deployConfig.dynamicFlywheels) {
-    if (dynamicFlywheel) {
-      const flywheelRewards = await ethers.getContract(
-        `FuseFlywheelDynamicRewardsPlugin_${dynamicFlywheel.name}`,
-        deployer
-      );
-      tx = await addressesProvider.setFlywheelRewards(
-        dynamicFlywheel.rewardToken,
-        flywheelRewards.address,
-        `FuseFlywheelDynamicRewardsPlugin_${dynamicFlywheel.name}`
-      );
-      await tx.wait();
-      console.log("setFlywheelRewards: ", tx.hash);
-    }
-  }
   ////
 };
