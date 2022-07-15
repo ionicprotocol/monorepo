@@ -162,28 +162,28 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      if (admin === signer.address) {
-        const poolData = await poolModule.getPoolByName(pool.name, sdk);
-        const assets = poolData.assets;
-        // console.log("pool assets", assets);
-        for (let j = 0; j < assets.length; j++) {
-          const assetConfig = assets[j];
-          console.log("asset config", assetConfig);
+      const poolData = await poolModule.getPoolByName(pool.name, sdk);
+      const assets = poolData.assets;
+      // console.log("pool assets", assets);
+      for (let j = 0; j < assets.length; j++) {
+        const assetConfig = assets[j];
+        console.log("asset config", {
+          cToken: assetConfig.cToken,
+          underlyingToken: assetConfig.underlyingToken,
+          underlyingSymbol: assetConfig.underlyingSymbol,
+        });
 
-          const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
+        const cTokenInstance = sdk.getCTokenInstance(assetConfig.cToken);
 
-          const implBefore = await cTokenInstance.callStatic.implementation();
-          console.log(`implementation before ${implBefore}`);
+        const implBefore = await cTokenInstance.callStatic.implementation();
+        console.log(`implementation before ${implBefore}`);
 
-          const tx = await cTokenInstance.accrueInterest();
-          const receipt: TransactionReceipt = await tx.wait();
-          console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+        const tx = await cTokenInstance.accrueInterest();
+        const receipt: TransactionReceipt = await tx.wait();
+        console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
 
-          const implAfter = await cTokenInstance.callStatic.implementation();
-          console.log(`implementation after ${implAfter}`);
-        }
-      } else {
-        console.log(`The signing address ${signer.address} is not the current admin of the pool ${admin}`);
+        const implAfter = await cTokenInstance.callStatic.implementation();
+        console.log(`implementation after ${implAfter}`);
       }
     }
   });
@@ -192,7 +192,7 @@ task("plugin:whitelist", "Whitelists a plugin implementation")
   .addParam("oldImplementation", "The old plugin implementation address", undefined, types.string)
   .addParam("newImplementation", "The new plugin implementation address", undefined, types.string)
   .addOptionalParam("admin", "Named account that is an admin of the FuseFeeDistributor", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers, run}) => {
+  .setAction(async (taskArgs, { ethers, run }) => {
     const oldPluginImplementation = taskArgs.oldImplementation;
     const newPluginImplementation = taskArgs.newImplementation;
     const signer = await ethers.getNamedSigner(taskArgs.admin);
