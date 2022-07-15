@@ -4,4 +4,4 @@ export const bscFlywheels = [
   '0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4',
 ];
 
-export const moonbeamPlugins = ['0xF57b2bD963F61C556F89e6dCb590A758eAd2F37B'];
+export const moonbeamFlywheels = ['0xF57b2bD963F61C556F89e6dCb590A758eAd2F37B'];
