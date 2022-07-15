@@ -11,7 +11,7 @@ assignees: ''
 <ins>**Please describe the reasoning for this feature?**</ins> _Please mark one of the the checkboxes below, then put the description below that, screenshots preferred._ <br>
 - [ ] _Is this to resolve a process problem, bug. defect, error or glitch?_ <br>
 - [ ] _Is this for a new feature or improvement?_ <br>
-
+***
 
 <ins>**Describe the solution or new feature you'd like.**</ins>  _How can we improve our product?  What will bring more users to our protocol?_ <br>
 
