@@ -8,6 +8,7 @@ export enum SupportedChains {
   moonbeam = 1284,
   moonbase_alpha = 1287,
   neon_devnet = 245022926,
+  polygon = 137,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -37,6 +38,7 @@ export enum OracleTypes {
   SimplePriceOracle = "SimplePriceOracle",
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
+  AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
 }
 
 export enum LiquidationStrategy {

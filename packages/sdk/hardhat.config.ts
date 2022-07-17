@@ -7,21 +7,23 @@ import "hardhat-tracer";
 import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
 
-import "./tasks/editDeployers";
 import "./tasks/addChainlinkFeeds";
-import "./tasks/createPoolsWithAssets";
-import "./tasks/sendTestTokens";
-import "./tasks/oracle";
-import "./tasks/getPoolData";
-import "./tasks/e2e";
-import "./tasks/swap";
-import "./tasks/liquidation";
 import "./tasks/createMarket";
 import "./tasks/createPool";
+import "./tasks/createPoolsWithAssets";
 import "./tasks/createStrategy";
+import "./tasks/e2e";
+import "./tasks/editDeployers";
 import "./tasks/fluxFeed";
+import "./tasks/flywheel";
+import "./tasks/getPoolData";
+import "./tasks/liquidation";
+import "./tasks/oracle";
 import "./tasks/pauseMarketMinting";
+import "./tasks/sendTestTokens";
+import "./tasks/swap";
 import "./tasks/upgradeMarket";
+import "./tasks/jarvisFix";
 
 dotEnvConfig();
 
@@ -102,10 +104,7 @@ const config: HardhatUserConfig = {
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
-      url:
-        urlOverride ||
-        process.env.BSC_PROVIDER_URL ||
-        "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
+      url: urlOverride || process.env.BSC_PROVIDER_URL || "",
     },
     bscfork: {
       accounts: { mnemonic },

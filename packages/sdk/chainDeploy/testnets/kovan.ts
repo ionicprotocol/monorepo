@@ -1,3 +1,7 @@
+import { utils } from "ethers";
+
+import { SupportedChains } from "../../src";
+import { chainSpecificParams } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 
 export const deployConfig: ChainDeployConfig = {
@@ -16,6 +20,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     uniswapOracleInitialDeployTokens: [],
   },
+  cgId: chainSpecificParams[SupportedChains.ganache].cgId,
 };
 
 export const deploy = async ({ getNamedAccounts }): Promise<void> => {

@@ -7,10 +7,10 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
-  HStack,
   Input,
   InputGroup,
   InputLeftElement,
+  Spacer,
   Spinner,
   Switch,
   Text,
@@ -72,14 +72,16 @@ const PoolConfiguration = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      closeFactor: 50,
-      liquidationIncentive: 8,
+      closeFactor: CLOSE_FACTOR.DEFAULT,
+      liquidationIncentive: LIQUIDATION_INCENTIVE.DEFAULT,
       whitelist: [],
     },
   });
 
-  const watchCloseFactor = Number(watch('closeFactor', 50));
-  const watchLiquidationIncentive = Number(watch('liquidationIncentive', 8));
+  const watchCloseFactor = Number(watch('closeFactor', CLOSE_FACTOR.DEFAULT));
+  const watchLiquidationIncentive = Number(
+    watch('liquidationIncentive', LIQUIDATION_INCENTIVE.DEFAULT)
+  );
 
   const {
     isOpen: isTransferOwnershipModalOpen,
@@ -297,9 +299,24 @@ const PoolConfiguration = ({
     setIsEditable(false);
   };
 
+  const setLiquidationIncentiveDefault = () => {
+    if (data) {
+      setValue(
+        'liquidationIncentive',
+        parseInt(utils.formatUnits(data.liquidationIncentive, 16)) - 100
+      );
+    }
+  };
+
+  const setCloseFactorDefault = () => {
+    if (data) {
+      setValue('closeFactor', parseInt(utils.formatUnits(data.closeFactor, 16)));
+    }
+  };
+
   return (
     <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%">
-      <Heading size="sm" px={4} py={4}>
+      <Heading size="sm" px={8} pt={8} pb={4}>
         {`Pool ${poolId} Configuration`}
       </Heading>
 
@@ -313,7 +330,7 @@ const PoolConfiguration = ({
           width="100%"
           overflowY="auto"
         >
-          <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
+          <Flex px={8} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <InputGroup width="100%">
               <InputLeftElement>
                 <Text fontWeight="bold">Pool Name:</Text>
@@ -354,7 +371,7 @@ const PoolConfiguration = ({
             </Text>
             {assets.length > 0 ? (
               <>
-                <AvatarGroup size="xs" max={30}>
+                <AvatarGroup size="sm" max={30}>
                   {assets.map(({ underlyingToken, cToken }) => {
                     return <CTokenIcon key={cToken} address={underlyingToken} />;
                   })}
@@ -385,24 +402,26 @@ const PoolConfiguration = ({
             />
           </ConfigRow>
           {data.enforceWhitelist && (
-            <Flex as="form" p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-              <FormControl>
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                  <Controller
-                    control={control}
-                    name="whitelist"
-                    render={({ field: { value, onChange } }) => (
-                      <WhitelistInfo
-                        value={value}
-                        onChange={onChange}
-                        addToWhitelist={addToWhitelist}
-                        removeFromWhitelist={removeFromWhitelist}
-                      />
-                    )}
-                  />
-                </Column>
-              </FormControl>
-            </Flex>
+            <ConfigRow>
+              <Flex as="form" w="100%" direction={{ base: 'column', md: 'row' }}>
+                <FormControl>
+                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                    <Controller
+                      control={control}
+                      name="whitelist"
+                      render={({ field: { value, onChange } }) => (
+                        <WhitelistInfo
+                          value={value}
+                          onChange={onChange}
+                          addToWhitelist={addToWhitelist}
+                          removeFromWhitelist={removeFromWhitelist}
+                        />
+                      )}
+                    />
+                  </Column>
+                </FormControl>
+              </Flex>
+            </ConfigRow>
           )}
           {/* {data.enforceWhitelist ? (
             <WhitelistInfo
@@ -414,148 +433,164 @@ const PoolConfiguration = ({
 
           <ModalDivider />
 
-          <Flex p={4} w="100%" direction={{ base: 'column', md: 'row' }}>
-            <Text fontWeight="bold">Upgradeable:</Text>
-
-            {data.upgradeable ? (
-              <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-                <Button height="35px" ml="auto" onClick={openTransferOwnershipModalOpen}>
-                  <Center fontWeight="bold">Transfer Ownership</Center>
-                </Button>
-                <TransferOwnershipModal
-                  isOpen={isTransferOwnershipModalOpen}
-                  onClose={closeTransferOwnershipModalOpen}
-                  comptrollerAddress={comptrollerAddress}
-                />
-                <Button height="35px" onClick={renounceOwnership} ml="auto">
-                  <Center fontWeight="bold">Renounce Ownership</Center>
-                </Button>
-              </Flex>
-            ) : (
-              <Text ml="auto" fontWeight="bold">
-                Admin Rights Disabled
-              </Text>
-            )}
-          </Flex>
-
-          <ModalDivider />
-          <Flex
-            as="form"
-            px={8}
-            py={4}
-            w="100%"
-            direction={{ base: 'column', md: 'row' }}
-            onSubmit={handleSubmit(updateCloseFactor)}
-          >
-            <FormControl isInvalid={!!errors.closeFactor}>
-              <HStack w="100%" justifyContent={'space-between'}>
-                <FormLabel htmlFor="closeFactor">
-                  <Text fontWeight="bold">Close Factor:</Text>
-                </FormLabel>
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                  <Controller
-                    control={control}
-                    name="closeFactor"
-                    rules={{
-                      required: 'Close factor is required',
-                      min: {
-                        value: CLOSE_FACTOR.MIN,
-                        message: `Close factor must be at least ${CLOSE_FACTOR.MIN}%`,
-                      },
-                      max: {
-                        value: CLOSE_FACTOR.MAX,
-                        message: `Close factor must be no more than ${CLOSE_FACTOR.MAX}%`,
-                      },
-                    }}
-                    render={({ field: { name, value, ref, onChange } }) => (
-                      <SliderWithLabel
-                        min={CLOSE_FACTOR.MIN}
-                        max={CLOSE_FACTOR.MAX}
-                        name={name}
-                        value={value}
-                        reff={ref}
-                        onChange={onChange}
-                        mt={{ base: 2, md: 0 }}
-                      />
-                    )}
+          <ConfigRow>
+            <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
+              <Text fontWeight="bold">Upgradeable:</Text>
+              {data.upgradeable ? (
+                <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
+                  <Button height="35px" ml="auto" onClick={openTransferOwnershipModalOpen}>
+                    <Center fontWeight="bold">Transfer Ownership</Center>
+                  </Button>
+                  <TransferOwnershipModal
+                    isOpen={isTransferOwnershipModalOpen}
+                    onClose={closeTransferOwnershipModalOpen}
+                    comptrollerAddress={comptrollerAddress}
                   />
-                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
-                    {errors.closeFactor && errors.closeFactor.message}
-                  </FormErrorMessage>
-                </Column>
-              </HStack>
-            </FormControl>
-            {data && watchCloseFactor !== parseInt(utils.formatUnits(data.closeFactor, 16)) && (
-              <Button
-                type="submit"
-                ml={{ base: 'auto', md: 4 }}
-                mt={{ base: 2, md: 0 }}
-                disabled={isUpdating}
-              >
-                Save
-              </Button>
-            )}
-          </Flex>
-          <ModalDivider />
-          <Flex
-            as="form"
-            px={8}
-            py={4}
-            w="100%"
-            direction={{ base: 'column', md: 'row' }}
-            onSubmit={handleSubmit(updateLiquidationIncentive)}
-          >
-            <FormControl isInvalid={!!errors.liquidationIncentive}>
-              <HStack w="100%" justifyContent={'space-between'}>
-                <FormLabel htmlFor="liquidationIncentive">
-                  <Text fontWeight="bold">Liquidation Incentive:</Text>
-                </FormLabel>
-                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                  <Controller
-                    control={control}
-                    name="liquidationIncentive"
-                    rules={{
-                      required: 'Liquidation incentive is required',
-                      min: {
-                        value: LIQUIDATION_INCENTIVE.MIN,
-                        message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
-                      },
-                      max: {
-                        value: LIQUIDATION_INCENTIVE.MAX,
-                        message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
-                      },
-                    }}
-                    render={({ field: { name, value, ref, onChange } }) => (
-                      <SliderWithLabel
-                        min={LIQUIDATION_INCENTIVE.MIN}
-                        max={LIQUIDATION_INCENTIVE.MAX}
-                        name={name}
-                        value={value}
-                        reff={ref}
-                        onChange={onChange}
-                        mt={{ base: 2, md: 0 }}
-                      />
-                    )}
-                  />
-                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
-                    {errors.liquidationIncentive && errors.liquidationIncentive.message}
-                  </FormErrorMessage>
-                </Column>
-              </HStack>
-            </FormControl>
-            {data &&
-              watchLiquidationIncentive !==
-                parseInt(utils.formatUnits(data.liquidationIncentive, 16)) - 100 && (
-                <Button
-                  type="submit"
-                  ml={{ base: 'auto', md: 4 }}
-                  mt={{ base: 2, md: 0 }}
-                  disabled={isUpdating}
-                >
-                  Save
-                </Button>
+                  <Button height="35px" onClick={renounceOwnership} ml="auto">
+                    <Center fontWeight="bold">Renounce Ownership</Center>
+                  </Button>
+                </Flex>
+              ) : (
+                <Text ml="auto" fontWeight="bold">
+                  Admin Rights Disabled
+                </Text>
               )}
-          </Flex>
+            </Flex>
+          </ConfigRow>
+          <ModalDivider />
+          <ConfigRow>
+            <Flex
+              as="form"
+              w="100%"
+              direction={'column'}
+              onSubmit={handleSubmit(updateCloseFactor)}
+            >
+              <FormControl isInvalid={!!errors.closeFactor}>
+                <Flex
+                  w="100%"
+                  wrap="wrap"
+                  direction={{ base: 'column', md: 'row' }}
+                  alignItems="center"
+                >
+                  <FormLabel htmlFor="closeFactor">
+                    <Text fontWeight="bold">Close Factor:</Text>
+                  </FormLabel>
+                  <Spacer />
+                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                    <Controller
+                      control={control}
+                      name="closeFactor"
+                      rules={{
+                        required: 'Close factor is required',
+                        min: {
+                          value: CLOSE_FACTOR.MIN,
+                          message: `Close factor must be at least ${CLOSE_FACTOR.MIN}%`,
+                        },
+                        max: {
+                          value: CLOSE_FACTOR.MAX,
+                          message: `Close factor must be no more than ${CLOSE_FACTOR.MAX}%`,
+                        },
+                      }}
+                      render={({ field: { name, value, ref, onChange } }) => (
+                        <SliderWithLabel
+                          min={CLOSE_FACTOR.MIN}
+                          max={CLOSE_FACTOR.MAX}
+                          name={name}
+                          value={value}
+                          reff={ref}
+                          onChange={onChange}
+                          mt={{ base: 2, md: 0 }}
+                        />
+                      )}
+                    />
+                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                      {errors.closeFactor && errors.closeFactor.message}
+                    </FormErrorMessage>
+                  </Column>
+                </Flex>
+              </FormControl>
+              {data && watchCloseFactor !== parseInt(utils.formatUnits(data.closeFactor, 16)) && (
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button variant="silver" disabled={isUpdating} onClick={setCloseFactorDefault}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
+              )}
+            </Flex>
+          </ConfigRow>
+          <ModalDivider />
+          <ConfigRow>
+            <Flex
+              as="form"
+              w="100%"
+              direction={'column'}
+              onSubmit={handleSubmit(updateLiquidationIncentive)}
+            >
+              <FormControl isInvalid={!!errors.liquidationIncentive}>
+                <Flex
+                  w="100%"
+                  wrap="wrap"
+                  direction={{ base: 'column', md: 'row' }}
+                  alignItems="center"
+                >
+                  <FormLabel htmlFor="liquidationIncentive">
+                    <Text fontWeight="bold">Liquidation Incentive:</Text>
+                  </FormLabel>
+                  <Spacer />
+                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                    <Controller
+                      control={control}
+                      name="liquidationIncentive"
+                      rules={{
+                        required: 'Liquidation incentive is required',
+                        min: {
+                          value: LIQUIDATION_INCENTIVE.MIN,
+                          message: `Liquidation incentive must be at least ${LIQUIDATION_INCENTIVE.MIN}%`,
+                        },
+                        max: {
+                          value: LIQUIDATION_INCENTIVE.MAX,
+                          message: `Liquidation incentive must be no more than ${LIQUIDATION_INCENTIVE.MAX}%`,
+                        },
+                      }}
+                      render={({ field: { name, value, ref, onChange } }) => (
+                        <SliderWithLabel
+                          min={LIQUIDATION_INCENTIVE.MIN}
+                          max={LIQUIDATION_INCENTIVE.MAX}
+                          name={name}
+                          value={value}
+                          reff={ref}
+                          onChange={onChange}
+                          mt={{ base: 2, md: 0 }}
+                        />
+                      )}
+                    />
+                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                      {errors.liquidationIncentive && errors.liquidationIncentive.message}
+                    </FormErrorMessage>
+                  </Column>
+                </Flex>
+              </FormControl>
+              {data &&
+                watchLiquidationIncentive !==
+                  parseInt(utils.formatUnits(data.liquidationIncentive, 16)) - 100 && (
+                  <ButtonGroup gap={0} mt={2} alignSelf="end">
+                    <Button type="submit" disabled={isUpdating}>
+                      Save
+                    </Button>
+                    <Button
+                      variant="silver"
+                      disabled={isUpdating}
+                      onClick={setLiquidationIncentiveDefault}
+                    >
+                      Cancel
+                    </Button>
+                  </ButtonGroup>
+                )}
+            </Flex>
+          </ConfigRow>
         </Column>
       ) : (
         <Center width="100%" height="100%">

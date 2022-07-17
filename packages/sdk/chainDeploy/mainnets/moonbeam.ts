@@ -5,7 +5,7 @@ import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../s
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
-import { deployERC4626Plugin, deployFlywheelWithDynamicRewards } from "../helpers/erc4626Plugins";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -32,11 +32,13 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleLpTokens: [
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // GLMR-USDC
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying, // GLMR-GLINT
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["USDC-ETH"])!.underlying, // USDC-ETH
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["WGLMR-xcDOT"])!.underlying, // WGLMR-xcDOT
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying, // GLMR-madUSDC
     ],
   },
   plugins: [
     {
-      // 0x
       strategy: "BeamERC4626",
       name: "GLMR-GLNT",
       underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying,
@@ -44,11 +46,40 @@ export const deployConfig: ChainDeployConfig = {
       flywheelIndices: [0],
     },
     {
-      // 0x
       strategy: "BeamERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // BOMB
+      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying,
       otherParams: ["1", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
       name: "GLMR-USDC",
+      flywheelIndices: [0],
+    },
+    {
+      strategy: "BeamERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["USDC-ETH"])!.underlying,
+      otherParams: ["4", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
+      name: "USDC-ETH",
+      flywheelIndices: [0],
+    },
+    {
+      strategy: "BeamERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["WGLMR"])!.underlying,
+      otherParams: ["5", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
+      name: "WGLMR",
+      flywheelIndices: [0],
+    },
+
+    {
+      strategy: "BeamERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["WGLMR-xcDOT"])!.underlying,
+      otherParams: ["13", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
+      name: "WGLMR-xcDOT",
+      flywheelIndices: [0],
+    },
+    {
+      // 0x
+      strategy: "BeamERC4626",
+      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying,
+      otherParams: ["15", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
+      name: "USDC-ETH",
       flywheelIndices: [0],
     },
   ],
@@ -59,6 +90,7 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.GLINT,
     },
   ],
+  cgId: chainSpecificParams[SupportedChains.moonbeam].cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -176,12 +208,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
-  await deployERC4626Plugin({
-    ethers,
-    getNamedAccounts,
-    deployments,
-    run,
-    deployConfig,
-    dynamicFlywheels,
-  });
 };

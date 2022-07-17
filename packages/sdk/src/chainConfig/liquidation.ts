@@ -14,6 +14,7 @@ import {
   moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
+  polygonAssets,
 } from "./assets";
 
 const liquidationDefaults: ChainLiquidationDefaults = {
@@ -28,7 +29,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 25,
+    LIQUIDATION_INTERVAL_SECONDS: 40,
   },
   [SupportedChains.chapel]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -41,7 +42,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 25,
+    LIQUIDATION_INTERVAL_SECONDS: 60,
   },
   [SupportedChains.evmos_testnet]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -54,7 +55,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 5,
+    LIQUIDATION_INTERVAL_SECONDS: 30,
   },
   [SupportedChains.aurora]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -67,7 +68,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 5,
+    LIQUIDATION_INTERVAL_SECONDS: 30,
   },
   [SupportedChains.evmos]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -80,7 +81,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 5,
+    LIQUIDATION_INTERVAL_SECONDS: 30,
   },
   // TODO: fix these
   [SupportedChains.moonbase_alpha]: {
@@ -107,7 +108,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 5,
+    LIQUIDATION_INTERVAL_SECONDS: 30,
   },
   [SupportedChains.ganache]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
@@ -133,7 +134,20 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     ],
     LIQUIDATION_STRATEGY: LiquidationStrategy.DEFAULT,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 5,
+    LIQUIDATION_INTERVAL_SECONDS: 30,
+  },
+  [SupportedChains.polygon]: {
+    SUPPORTED_OUTPUT_CURRENCIES: [
+      constants.AddressZero,
+      polygonAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    SUPPORTED_INPUT_CURRENCIES: [
+      constants.AddressZero,
+      polygonAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
+    ],
+    LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
+    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
+    LIQUIDATION_INTERVAL_SECONDS: 20,
   },
 };
 

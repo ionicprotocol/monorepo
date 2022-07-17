@@ -1,7 +1,7 @@
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 
 import { SupportedChains } from "../../src";
-import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
+import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
@@ -58,6 +58,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: [],
     },
   ],
+  cgId: chainSpecificParams[SupportedChains.chapel].cgId,
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {

@@ -17,6 +17,7 @@ export {
   AssetPluginConfig,
   MarketConfig,
   MarketPluginConfig,
+  OracleConfig,
 } from "./types";
 export {
   SupportedChains,

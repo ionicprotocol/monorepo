@@ -10,18 +10,18 @@ export { default as chainSupportedAssets } from "./supportedAssets";
 export { default as assetSymbols } from "./assets/assetSymbols";
 
 export const oracleConfig = (deployments: ChainDeployment, artifacts: Artifacts, availableOracles: Array<string>) => {
-  const asMap = new Map(availableOracles.map((o) => [o, { artifact: artifacts[o], address: deployments[o].address }]));
+  const asMap = new Map(availableOracles.map((o) => [o, { abi: artifacts[o].abi, address: deployments[o].address }]));
   return Object.fromEntries(asMap);
 };
 
 export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
   return {
     JumpRateModel: {
-      artifact: artifacts.JumpRateModel,
+      abi: artifacts.JumpRateModel.abi,
       address: deployments.JumpRateModel.address,
     },
     WhitePaperInterestRateModel: {
-      artifact: artifacts.WhitePaperInterestRateModel,
+      abi: artifacts.WhitePaperInterestRateModel.abi,
       address: deployments.WhitePaperInterestRateModel.address,
     },
   };
