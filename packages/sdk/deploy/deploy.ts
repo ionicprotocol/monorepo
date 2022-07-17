@@ -329,13 +329,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log(`No old CEtherDelegate to whitelist the upgrade for`);
   }
 
-  const oldImplementations = [];
-  const newImplementations = [];
-  const arrayOfFalse = [];
-  const arrayOfTrue = [];
+  const oldImplementations = [constants.AddressZero, constants.AddressZero, constants.AddressZero];
+  const newImplementations = [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address];
+  const arrayOfFalse = [false, false, false];
+  const arrayOfTrue = [true, true, true];
 
   if (oldErc20Delegate) {
-    oldImplementations.push(oldErc20Delegate);
+    oldImplementations.push(oldErc20Delegate.address);
     newImplementations.push(erc20Delegate.address);
     arrayOfFalse.push(false);
     arrayOfTrue.push(true);
@@ -344,7 +344,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   if (oldErc20PluginDelegate) {
-    oldImplementations.push(oldErc20PluginDelegate);
+    oldImplementations.push(oldErc20PluginDelegate.address);
     newImplementations.push(erc20PluginDelegate.address);
     arrayOfFalse.push(false);
     arrayOfTrue.push(true);
@@ -353,7 +353,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   if (oldErc20PluginRewardsDelegate) {
-    oldImplementations.push(oldErc20PluginRewardsDelegate);
+    oldImplementations.push(oldErc20PluginRewardsDelegate.address);
     newImplementations.push(erc20PluginRewardsDelegate.address);
     arrayOfFalse.push(false);
     arrayOfTrue.push(true);

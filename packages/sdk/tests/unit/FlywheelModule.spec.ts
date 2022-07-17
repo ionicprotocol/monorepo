@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
 
-import { CErc20 } from "../../lib/contracts/typechain/CErc20";
+import { CErc20 } from "../../lib/contracts/typechain/CErc20.sol";
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import Fuse from "../../src/Fuse";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
