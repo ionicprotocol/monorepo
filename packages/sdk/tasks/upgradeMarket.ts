@@ -101,11 +101,14 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
       sdk.chainDeployment.FuseFeeDistributor.abi,
       signer
     );
+    const erc20Delegate = await ethers.getContract("CErc20Delegate", signer);
+    const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", signer);
+    const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", signer);
 
-    const oldImplementations = [];
-    const newImplementations = [];
-    const arrayOfFalse = [];
-    const arrayOfTrue = [];
+    const oldImplementations = [constants.AddressZero, constants.AddressZero, constants.AddressZero];
+    const newImplementations = [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address];
+    const arrayOfFalse = [false, false, false];
+    const arrayOfTrue = [true, true, true];
 
     if (oldErc20Delegate) {
       oldImplementations.push(oldErc20Delegate);
@@ -233,7 +236,6 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
     const erc20Del = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDel = await ethers.getContract("CErc20PluginDelegate", signer);
     const erc20PluginRewardsDel = await ethers.getContract("CErc20PluginRewardsDelegate", signer);
-    const etherDel = await ethers.getContract("CEtherDelegate", signer);
 
     const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
