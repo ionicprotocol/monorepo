@@ -65,6 +65,7 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
   },
   [SupportedChains.ganache]: {},
   [SupportedChains.neon_devnet]: {},
+  [SupportedChains.polygon]: {},
 };
 
 export default chainRedemptionStrategies;
