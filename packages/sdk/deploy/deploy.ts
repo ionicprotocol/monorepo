@@ -305,34 +305,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const erc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
   const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
   const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", deployer);
-  const etherDelegate = await ethers.getContract("CEtherDelegate", deployer);
-
-  let receipt: providers.TransactionReceipt;
-
-  if (oldEtherDelegate) {
-    const cetherDelegateWhitelist = await fuseFeeDistributor.callStatic.cEtherDelegateWhitelist(
-      oldEtherDelegate.address,
-      etherDelegate.address,
-      false
-    );
-    console.log("cetherDelegateWhitelist: ", cetherDelegateWhitelist);
-
-    tx = await fuseFeeDistributor._editCEtherDelegateWhitelist(
-      [oldEtherDelegate.address],
-      [etherDelegate.address],
-      [false],
-      [true]
-    );
-    receipt = await tx.wait();
-    console.log("Set whitelist for Ether Delegate with status:", receipt.status, tx.hash);
-  } else {
-    console.log(`No old CEtherDelegate to whitelist the upgrade for`);
-  }
 
   const oldImplementations = [constants.AddressZero, constants.AddressZero, constants.AddressZero];
   const newImplementations = [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address];
   const arrayOfFalse = [false, false, false];
   const arrayOfTrue = [true, true, true];
+
+  let receipt: providers.TransactionReceipt;
 
   if (oldErc20Delegate) {
     oldImplementations.push(oldErc20Delegate.address);
