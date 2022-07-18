@@ -1,6 +1,7 @@
 import { Contract, Signer } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
@@ -38,6 +39,13 @@ export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBa
 
     createCToken(cTokenAddress: string, signer: Signer = this.provider.getSigner()) {
       return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signer) as CErc20Delegate;
+    }
+    createCErc20PluginRewardsDelegate(cTokenAddress: string, signer: Signer = this.provider.getSigner()) {
+      return new Contract(
+        cTokenAddress,
+        this.chainDeployment.CErc20PluginRewardsDelegate.abi,
+        signer
+      ) as CErc20PluginRewardsDelegate;
     }
 
     createMasterPriceOracle(signer: Signer = this.provider.getSigner()) {
