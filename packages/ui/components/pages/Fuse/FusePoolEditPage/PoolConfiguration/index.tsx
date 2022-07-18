@@ -322,7 +322,7 @@ const PoolConfiguration = ({
       <ModalDivider />
       {data ? (
         <Column expand overflowY="auto">
-          <Flex px={8} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
+          <Flex px={{ base: 4, md: 8 }} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <InputGroup width="100%">
               <InputLeftElement>
                 <Text fontWeight="bold">Pool Name:</Text>
@@ -461,10 +461,10 @@ const PoolConfiguration = ({
                 <Flex
                   w="100%"
                   wrap="wrap"
-                  direction={{ base: 'column', md: 'row' }}
+                  direction={{ base: 'column', sm: 'row' }}
                   alignItems="center"
                 >
-                  <FormLabel htmlFor="closeFactor">
+                  <FormLabel htmlFor="closeFactor" margin={0}>
                     <Text fontWeight="bold">Close Factor:</Text>
                   </FormLabel>
                   <Spacer />
@@ -491,7 +491,7 @@ const PoolConfiguration = ({
                           value={value}
                           reff={ref}
                           onChange={onChange}
-                          mt={{ base: 2, md: 0 }}
+                          mt={{ base: 2, sm: 0 }}
                         />
                       )}
                     />
@@ -525,10 +525,10 @@ const PoolConfiguration = ({
                 <Flex
                   w="100%"
                   wrap="wrap"
-                  direction={{ base: 'column', md: 'row' }}
+                  direction={{ base: 'column', sm: 'row' }}
                   alignItems="center"
                 >
-                  <FormLabel htmlFor="liquidationIncentive">
+                  <FormLabel htmlFor="liquidationIncentive" margin={0}>
                     <Text fontWeight="bold">Liquidation Incentive:</Text>
                   </FormLabel>
                   <Spacer />
@@ -555,7 +555,7 @@ const PoolConfiguration = ({
                           value={value}
                           reff={ref}
                           onChange={onChange}
-                          mt={{ base: 2, md: 0 }}
+                          mt={{ base: 2, sm: 0 }}
                         />
                       )}
                     />
