@@ -311,268 +311,279 @@ export const AssetSettings = ({
       {cTokenData && (
         <>
           <ConfigRow>
-            <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
-              <Text fontWeight="bold">
-                Borrowing Possibility{' '}
-                <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
-                  <QuestionIcon
-                    color={cCard.txtColor}
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    ml={1}
-                    mb="4px"
-                  />
-                </SimpleTooltip>
-              </Text>
-              <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
-              <Switch
-                ml="auto"
-                h="20px"
-                isChecked={!isPaused}
-                onChange={setBorrowingStatus}
-                className="borrowing-switch"
-              />
-            </Flex>
+            <Text fontWeight="bold">
+              Borrowing Possibility{' '}
+              <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
+                <QuestionIcon
+                  color={cCard.txtColor}
+                  bg={cCard.bgColor}
+                  borderRadius={'50%'}
+                  ml={1}
+                  mb="4px"
+                />
+              </SimpleTooltip>
+            </Text>
+            <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
+            <Switch
+              ml="auto"
+              h="20px"
+              isChecked={!isPaused}
+              onChange={setBorrowingStatus}
+              className="borrowing-switch"
+            />
           </ConfigRow>
 
           <ModalDivider />
-          <ConfigRow>
-            <Flex
-              as="form"
-              w="100%"
-              direction="column"
-              onSubmit={handleSubmit(updateCollateralFactor)}
-            >
-              <FormControl isInvalid={!!errors.collateralFactor}>
-                <Flex
-                  w="100%"
-                  wrap="wrap"
-                  direction={{ base: 'column', sm: 'row' }}
-                  alignItems="center"
-                >
-                  <FormLabel htmlFor="collateralFactor" margin={0}>
-                    <Text fontWeight="bold" width="max-content">
-                      Collateral Factor{' '}
-                      <SimpleTooltip
-                        label={
-                          'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
-                        }
-                      >
-                        <QuestionIcon
-                          color={cCard.txtColor}
-                          bg={cCard.bgColor}
-                          borderRadius={'50%'}
-                          ml={1}
-                          mb="4px"
-                        />
-                      </SimpleTooltip>
-                    </Text>
-                  </FormLabel>
-                  <Spacer />
-                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                    <Controller
-                      control={control}
-                      name="collateralFactor"
-                      rules={{
-                        required: 'Collateral factor is required',
-                        min: {
-                          value: COLLATERAL_FACTOR.MIN,
-                          message: `Collateral factor must be at least ${COLLATERAL_FACTOR.MIN}%`,
-                        },
-                        max: {
-                          value: COLLATERAL_FACTOR.MAX,
-                          message: `Collateral factor must be no more than ${COLLATERAL_FACTOR.MAX}%`,
-                        },
-                      }}
-                      render={({ field: { name, value, ref, onChange } }) => (
-                        <SliderWithLabel
-                          min={COLLATERAL_FACTOR.MIN}
-                          max={COLLATERAL_FACTOR.MAX}
-                          name={name}
-                          value={value}
-                          reff={ref}
-                          onChange={onChange}
-                          mt={{ base: 2, md: 0 }}
-                        />
-                      )}
-                    />
-                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
-                      {errors.collateralFactor && errors.collateralFactor.message}
-                    </FormErrorMessage>
-                  </Column>
-                </Flex>
-              </FormControl>
-              {cTokenData &&
-                watchCollateralFactor !==
-                  parseInt(utils.formatUnits(cTokenData.collateralFactorMantissa, 16)) && (
-                  <ButtonGroup gap={0} mt={2} alignSelf="end">
-                    <Button type="submit" disabled={isUpdating}>
-                      Save
-                    </Button>
-                    <Button
-                      variant="silver"
-                      disabled={isUpdating}
-                      onClick={setCollateralFactorDefault}
+          <Flex
+            as="form"
+            w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
+            direction="column"
+            onSubmit={handleSubmit(updateCollateralFactor)}
+          >
+            <FormControl isInvalid={!!errors.collateralFactor}>
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="collateralFactor" margin={0}>
+                  <Text fontWeight="bold" width="max-content">
+                    Collateral Factor{' '}
+                    <SimpleTooltip
+                      label={
+                        'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
+                      }
                     >
-                      Cancel
-                    </Button>
-                  </ButtonGroup>
-                )}
-            </Flex>
-          </ConfigRow>
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                        ml={1}
+                        mb="4px"
+                      />
+                    </SimpleTooltip>
+                  </Text>
+                </FormLabel>
+                <Spacer />
+                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Controller
+                    control={control}
+                    name="collateralFactor"
+                    rules={{
+                      required: 'Collateral factor is required',
+                      min: {
+                        value: COLLATERAL_FACTOR.MIN,
+                        message: `Collateral factor must be at least ${COLLATERAL_FACTOR.MIN}%`,
+                      },
+                      max: {
+                        value: COLLATERAL_FACTOR.MAX,
+                        message: `Collateral factor must be no more than ${COLLATERAL_FACTOR.MAX}%`,
+                      },
+                    }}
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <SliderWithLabel
+                        min={COLLATERAL_FACTOR.MIN}
+                        max={COLLATERAL_FACTOR.MAX}
+                        name={name}
+                        value={value}
+                        reff={ref}
+                        onChange={onChange}
+                        mt={{ base: 2, sm: 0 }}
+                      />
+                    )}
+                  />
+                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                    {errors.collateralFactor && errors.collateralFactor.message}
+                  </FormErrorMessage>
+                </Column>
+              </Flex>
+            </FormControl>
+            {cTokenData &&
+              watchCollateralFactor !==
+                parseInt(utils.formatUnits(cTokenData.collateralFactorMantissa, 16)) && (
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button
+                    variant="silver"
+                    disabled={isUpdating}
+                    onClick={setCollateralFactorDefault}
+                  >
+                    Cancel
+                  </Button>
+                </ButtonGroup>
+              )}
+          </Flex>
           <ModalDivider />
-          <ConfigRow>
-            <Flex
-              as="form"
-              w="100%"
-              direction="column"
-              onSubmit={handleSubmit(updateReserveFactor)}
-            >
-              <FormControl isInvalid={!!errors.reserveFactor}>
-                <HStack w="100%" justifyContent={'space-between'}>
-                  <FormLabel htmlFor="reserveFactor">
-                    <Text fontWeight="bold">
-                      Reserve Factor{' '}
-                      <SimpleTooltip
-                        label={
-                          "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
-                        }
-                      >
-                        <QuestionIcon
-                          color={cCard.txtColor}
-                          bg={cCard.bgColor}
-                          borderRadius={'50%'}
-                          ml={1}
-                          mb="4px"
-                        />
-                      </SimpleTooltip>
-                    </Text>
-                  </FormLabel>
-                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                    <Controller
-                      control={control}
-                      name="reserveFactor"
-                      rules={{
-                        required: 'Reserve factor is required',
-                        min: {
-                          value: RESERVE_FACTOR.MIN,
-                          message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
-                        },
-                        max: {
-                          value: RESERVE_FACTOR.MAX,
-                          message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
-                        },
-                      }}
-                      render={({ field: { name, value, ref, onChange } }) => (
-                        <SliderWithLabel
-                          min={RESERVE_FACTOR.MIN}
-                          max={RESERVE_FACTOR.MAX}
-                          name={name}
-                          value={value}
-                          reff={ref}
-                          onChange={onChange}
-                          mt={{ base: 2, md: 0 }}
-                        />
-                      )}
-                    />
-                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
-                      {errors.reserveFactor && errors.reserveFactor.message}
-                    </FormErrorMessage>
-                  </Column>
-                </HStack>
-              </FormControl>
-              {cTokenData &&
-                watchReserveFactor !==
-                  parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)) && (
-                  <ButtonGroup gap={0} mt={2} alignSelf="end">
-                    <Button type="submit" disabled={isUpdating}>
-                      Save
-                    </Button>
-                    <Button
-                      variant="silver"
-                      disabled={isUpdating}
-                      onClick={setReserveFactorDefault}
+          <Flex
+            as="form"
+            w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
+            direction="column"
+            onSubmit={handleSubmit(updateReserveFactor)}
+          >
+            <FormControl isInvalid={!!errors.reserveFactor}>
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="reserveFactor" margin={0}>
+                  <Text fontWeight="bold">
+                    Reserve Factor{' '}
+                    <SimpleTooltip
+                      label={
+                        "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
+                      }
                     >
-                      Cancel
-                    </Button>
-                  </ButtonGroup>
-                )}
-            </Flex>
-          </ConfigRow>
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                        ml={1}
+                        mb="4px"
+                      />
+                    </SimpleTooltip>
+                  </Text>
+                </FormLabel>
+                <Spacer />
+                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Controller
+                    control={control}
+                    name="reserveFactor"
+                    rules={{
+                      required: 'Reserve factor is required',
+                      min: {
+                        value: RESERVE_FACTOR.MIN,
+                        message: `Reserve factor must be at least ${RESERVE_FACTOR.MIN}%`,
+                      },
+                      max: {
+                        value: RESERVE_FACTOR.MAX,
+                        message: `Reserve factor must be no more than ${RESERVE_FACTOR.MAX}%`,
+                      },
+                    }}
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <SliderWithLabel
+                        min={RESERVE_FACTOR.MIN}
+                        max={RESERVE_FACTOR.MAX}
+                        name={name}
+                        value={value}
+                        reff={ref}
+                        onChange={onChange}
+                        mt={{ base: 2, sm: 0 }}
+                      />
+                    )}
+                  />
+                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                    {errors.reserveFactor && errors.reserveFactor.message}
+                  </FormErrorMessage>
+                </Column>
+              </Flex>
+            </FormControl>
+            {cTokenData &&
+              watchReserveFactor !==
+                parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)) && (
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button variant="silver" disabled={isUpdating} onClick={setReserveFactorDefault}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
+              )}
+          </Flex>
           <ModalDivider />
-          <ConfigRow>
-            <Flex as="form" w="100%" direction="column" onSubmit={handleSubmit(updateAdminFee)}>
-              <FormControl isInvalid={!!errors.adminFee}>
-                <HStack w="100%" justifyContent={'space-between'}>
-                  <FormLabel htmlFor="adminFee">
-                    <Text fontWeight="bold">
-                      Admin Fee{' '}
-                      <SimpleTooltip
-                        label={
-                          "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
-                        }
-                      >
-                        <QuestionIcon
-                          color={cCard.txtColor}
-                          bg={cCard.bgColor}
-                          borderRadius={'50%'}
-                          ml={1}
-                          mb="4px"
-                        />
-                      </SimpleTooltip>
-                    </Text>
-                  </FormLabel>
-                  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                    <Controller
-                      control={control}
-                      name="adminFee"
-                      rules={{
-                        required: 'Admin fee is required',
-                        min: {
-                          value: ADMIN_FEE.MIN,
-                          message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
-                        },
-                        max: {
-                          value: ADMIN_FEE.MAX,
-                          message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
-                        },
-                      }}
-                      render={({ field: { name, value, ref, onChange } }) => (
-                        <SliderWithLabel
-                          min={ADMIN_FEE.MIN}
-                          max={ADMIN_FEE.MAX}
-                          name={name}
-                          value={value}
-                          reff={ref}
-                          onChange={onChange}
-                          mt={{ base: 2, md: 0 }}
-                        />
-                      )}
-                    />
-                    <FormErrorMessage maxWidth="270px" marginBottom="-10px">
-                      {errors.adminFee && errors.adminFee.message}
-                    </FormErrorMessage>
-                  </Column>
-                </HStack>
-              </FormControl>
-              {cTokenData &&
-                watchAdminFee !== parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)) && (
-                  <ButtonGroup gap={0} mt={2} alignSelf="end">
-                    <Button type="submit" disabled={isUpdating}>
-                      Save
-                    </Button>
-                    <Button variant="silver" disabled={isUpdating} onClick={setAdminFeeDefault}>
-                      Cancel
-                    </Button>
-                  </ButtonGroup>
-                )}
-            </Flex>
-          </ConfigRow>
+          <Flex
+            as="form"
+            w="100%"
+            direction="column"
+            px={{ base: 4, md: 8 }}
+            py={4}
+            onSubmit={handleSubmit(updateAdminFee)}
+          >
+            <FormControl isInvalid={!!errors.adminFee}>
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="adminFee" margin={0}>
+                  <Text fontWeight="bold">
+                    Admin Fee{' '}
+                    <SimpleTooltip
+                      label={
+                        "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
+                      }
+                    >
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                        ml={1}
+                        mb="4px"
+                      />
+                    </SimpleTooltip>
+                  </Text>
+                </FormLabel>
+                <Spacer />
+                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Controller
+                    control={control}
+                    name="adminFee"
+                    rules={{
+                      required: 'Admin fee is required',
+                      min: {
+                        value: ADMIN_FEE.MIN,
+                        message: `Admin fee must be at least ${ADMIN_FEE.MIN}%`,
+                      },
+                      max: {
+                        value: ADMIN_FEE.MAX,
+                        message: `Admin fee must be no more than ${ADMIN_FEE.MAX}%`,
+                      },
+                    }}
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <SliderWithLabel
+                        min={ADMIN_FEE.MIN}
+                        max={ADMIN_FEE.MAX}
+                        name={name}
+                        value={value}
+                        reff={ref}
+                        onChange={onChange}
+                        mt={{ base: 2, sm: 0 }}
+                      />
+                    )}
+                  />
+                  <FormErrorMessage maxWidth="270px" marginBottom="-10px">
+                    {errors.adminFee && errors.adminFee.message}
+                  </FormErrorMessage>
+                </Column>
+              </Flex>
+            </FormControl>
+            {cTokenData &&
+              watchAdminFee !== parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)) && (
+                <ButtonGroup gap={0} mt={2} alignSelf="end">
+                  <Button type="submit" disabled={isUpdating}>
+                    Save
+                  </Button>
+                  <Button variant="silver" disabled={isUpdating} onClick={setAdminFeeDefault}>
+                    Cancel
+                  </Button>
+                </ButtonGroup>
+              )}
+          </Flex>
 
           {/* Plugin */}
           <ModalDivider />
           <ConfigRow>
-            <HStack w="100%" justifyContent={'space-between'}>
+            <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
               <Box>
                 <HStack>
                   <Text fontWeight="bold">Rewards Plugin </Text>
@@ -606,10 +617,9 @@ export const AssetSettings = ({
                   </PopoverTooltip>
                 </HStack>
               </Box>
-              <Text ml={{ base: 'auto' }} mt={{ base: 2 }}>
-                {pluginName}
-              </Text>
-            </HStack>
+              <Spacer />
+              <Text mt={{ base: 2, sm: 0 }}>{pluginName}</Text>
+            </Flex>
           </ConfigRow>
 
           {/* Interest Model */}
@@ -622,8 +632,13 @@ export const AssetSettings = ({
               onSubmit={handleSubmit(updateInterestRateModel)}
             >
               <FormControl isInvalid={!!errors.interestRateModel}>
-                <HStack w="100%" justifyContent={'space-between'}>
-                  <FormLabel htmlFor="interestRateModel">
+                <Flex
+                  w="100%"
+                  wrap="wrap"
+                  direction={{ base: 'column', sm: 'row' }}
+                  alignItems="center"
+                >
+                  <FormLabel htmlFor="interestRateModel" margin={0}>
                     <Text fontWeight="bold">
                       Interest Model{' '}
                       <SimpleTooltip
@@ -641,11 +656,8 @@ export const AssetSettings = ({
                       </SimpleTooltip>
                     </Text>
                   </FormLabel>
-                  <Column
-                    maxW="270px"
-                    mainAxisAlignment="flex-start"
-                    crossAxisAlignment="flex-start"
-                  >
+                  <Spacer />
+                  <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="center">
                     <Select
                       id="interestRateModel"
                       {...register('interestRateModel', {
@@ -653,7 +665,7 @@ export const AssetSettings = ({
                       })}
                       ml="auto"
                       cursor="pointer"
-                      mt={{ base: 2, md: 0 }}
+                      mt={{ base: 2, sm: 0 }}
                     >
                       <option
                         value={fuse.chainDeployment.JumpRateModel.address}
@@ -672,7 +684,7 @@ export const AssetSettings = ({
                       {errors.interestRateModel && errors.interestRateModel.message}
                     </FormErrorMessage>
                   </Column>
-                </HStack>
+                </Flex>
               </FormControl>
               {cTokenData &&
                 cTokenData.interestRateModelAddress.toLowerCase() !==
