@@ -6,6 +6,7 @@ import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
 import { FilterButton } from '@ui/components/shared/Button';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 
@@ -63,8 +64,10 @@ const AssetConfiguration = ({
                     setSelectedAsset(asset);
                     setSelectedIndex(index);
                   }}
+                  px={2}
                 >
-                  <Center px={4} py={1} fontWeight="bold">
+                  <CTokenIcon size="sm" address={asset.underlyingToken} />
+                  <Center px={1} fontWeight="bold">
                     {asset.underlyingSymbol}
                   </Center>
                 </FilterButton>
