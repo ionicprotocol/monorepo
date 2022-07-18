@@ -148,6 +148,11 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 245022926,
     },
+    polygon: {
+      url: `https://matic-mainnet.chainstacklabs.com`,
+      accounts: { mnemonic },
+      chainId: 137,
+    },
   },
 };
 

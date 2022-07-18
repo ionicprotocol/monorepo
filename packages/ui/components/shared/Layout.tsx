@@ -28,7 +28,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
           linkUrl="https://medium.com/midas-capital/audit-with-zellic-29b63f1be25a"
           status="warning"
         ></Banner>
-        <Container maxWidth="8xl">
+        <Container maxWidth="8xl" px={{ base: 2, md: 4 }}>
           <Column
             width={isMobile ? '100%' : '96%'}
             height="100%"
