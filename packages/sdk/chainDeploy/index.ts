@@ -2,6 +2,7 @@ import { ChainDeployConfig } from "./helpers";
 import { deploy as deploy1337, deployConfig as deployConfig1337 } from "./local/local";
 import { deploy as deploy56, deployConfig as deployConfig56 } from "./mainnets/bsc";
 import { deploy as deploy1284, deployConfig as deployConfig1284 } from "./mainnets/moonbeam";
+import { deploy as deploy137, deployConfig as deployConfig137 } from "./mainnets/polygon";
 import { deploy as deploy97, deployConfig as deployConfig97 } from "./testnets/chapel";
 import { deploy as deploy9000, deployConfig as deployConfig9000 } from "./testnets/evmostestnet";
 import { deploy as deploy42, deployConfig as deployConfig42 } from "./testnets/kovan";
@@ -20,6 +21,7 @@ export const chainDeployConfig: Record<number, { config: ChainDeployConfig; depl
   245022926: { config: deployConfig245022926, deployFunc: deploy245022926 },
   // local
   1337: { config: deployConfig1337, deployFunc: deploy1337 },
+  137: { config: deployConfig137, deployFunc: deploy137 },
 };
 
 export * from "./helpers/types";
