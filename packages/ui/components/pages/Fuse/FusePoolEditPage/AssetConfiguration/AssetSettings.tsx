@@ -16,7 +16,7 @@ import {
   Text,
   useToast,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, CTokenErrorCodes } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, CTokenErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, ContractFunction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
@@ -25,6 +25,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
+import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -79,19 +80,16 @@ export async function testForCTokenErrorAndSend(
 
 interface AssetSettingsProps {
   comptrollerAddress: string;
-  cTokenAddress?: string;
-  pluginAddress?: string;
-  isPaused: boolean;
+  selectedAsset: NativePricedFuseAsset;
   tokenData: TokenData;
 }
 
 export const AssetSettings = ({
   comptrollerAddress,
-  cTokenAddress,
-  pluginAddress,
-  isPaused,
   tokenData,
+  selectedAsset,
 }: AssetSettingsProps) => {
+  const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { fuse, setPendingTxHash } = useRari();
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -128,11 +126,12 @@ export const AssetSettings = ({
   );
 
   const pluginName = useMemo(() => {
-    if (!pluginAddress) return 'No Plugin';
+    if (!selectedAsset.plugin?.strategyAddress) return 'No Plugin';
     return availablePlugins.map((plugin) => {
-      if (plugin.strategyAddress === pluginAddress) return plugin.strategyName;
+      if (plugin.strategyAddress === selectedAsset.plugin?.strategyAddress)
+        return plugin.strategyName;
     });
-  }, [pluginAddress, availablePlugins]);
+  }, [selectedAsset.plugin?.strategyAddress, availablePlugins]);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {
@@ -720,6 +719,9 @@ export const AssetSettings = ({
             reserveFactor={watchReserveFactor}
             interestRateModelAddress={watchInterestRateModel}
           />
+          <ConfigRow>
+            <RemoveAssetButton comptrollerAddress={comptrollerAddress} asset={selectedAsset} />
+          </ConfigRow>
         </>
       )}
     </Column>

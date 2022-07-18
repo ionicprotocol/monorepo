@@ -1,7 +1,8 @@
-import { Button, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
+import { useQueryClient } from 'react-query';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
 import { useRari } from '@ui/context/RariContext';
@@ -11,17 +12,15 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 const RemoveAssetButton = ({
   comptrollerAddress,
   asset,
-  onSuccess,
 }: {
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
-  onSuccess: () => void;
 }) => {
   const { fuse } = useRari();
   const toast = useToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
   const { isOpen, onOpen, onClose } = useDisclosure();
-
+  const queryClient = useQueryClient();
   const [isRemoving, setIsRemoving] = useState(false);
 
   const removeAsset = () => {
@@ -54,7 +53,7 @@ const RemoveAssetButton = ({
         position: 'top-right',
       });
 
-      onSuccess();
+      await queryClient.refetchQueries();
     } catch (e) {
       handleGenericError(e, toast);
       return;
@@ -64,18 +63,18 @@ const RemoveAssetButton = ({
   };
 
   return isUpgradeable ? (
-    <>
+    <Box ml="auto">
       <Button ml={2} onClick={onOpen} isLoading={isRemoving}>
-        Remove Asset
+        Remove {asset.underlyingSymbol}
       </Button>
       <ConfirmDeleteAlert
         onConfirm={removeAsset}
         onClose={onClose}
         isOpen={isOpen}
-        title="Are you sure?"
+        title={`Are you sure to remove ${asset.underlyingSymbol}?`}
         description="You can't undo this action afterwards"
       />
-    </>
+    </Box>
   ) : null;
 };
 
