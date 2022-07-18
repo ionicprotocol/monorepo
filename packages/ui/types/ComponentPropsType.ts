@@ -46,16 +46,16 @@ export type CenterProps = {
 } & FlexProps;
 
 export type ColumnProps = {
-  mainAxisAlignment: MainAxisAlignment;
-  crossAxisAlignment: CrossAxisAlignment;
+  mainAxisAlignment?: MainAxisAlignment;
+  crossAxisAlignment?: CrossAxisAlignment;
   children?: React.ReactNode;
   expand?: boolean;
 } & FlexProps;
 
 export type RowProps = {
-  mainAxisAlignment: MainAxisAlignment;
-  crossAxisAlignment: CrossAxisAlignment;
-  children: React.ReactNode;
+  mainAxisAlignment?: MainAxisAlignment;
+  crossAxisAlignment?: CrossAxisAlignment;
+  children?: React.ReactNode;
   expand?: boolean;
 } & FlexProps;
 

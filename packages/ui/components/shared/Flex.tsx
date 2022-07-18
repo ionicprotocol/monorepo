@@ -17,8 +17,8 @@ const Center = ({ children, expand, ...others }: CenterProps) => {
 };
 
 const Column = ({
-  mainAxisAlignment,
-  crossAxisAlignment,
+  mainAxisAlignment = 'flex-start',
+  crossAxisAlignment = 'center',
   children,
   expand,
   ...others
@@ -40,7 +40,13 @@ const Column = ({
   );
 };
 
-const Row = ({ mainAxisAlignment, crossAxisAlignment, children, expand, ...others }: RowProps) => {
+const Row = ({
+  mainAxisAlignment = 'flex-start',
+  crossAxisAlignment = 'center',
+  children,
+  expand,
+  ...others
+}: RowProps) => {
   if (expand) {
     others.height = '100%';
     others.width = '100%';
@@ -59,8 +65,8 @@ const Row = ({ mainAxisAlignment, crossAxisAlignment, children, expand, ...other
 };
 
 const RowOrColumn = ({
-  mainAxisAlignment,
-  crossAxisAlignment,
+  mainAxisAlignment = 'flex-start',
+  crossAxisAlignment = 'center',
   children,
   expand,
   isRow,

@@ -27,6 +27,7 @@ import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/Ass
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
+import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
@@ -47,6 +48,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   const { data: poolData } = useFusePoolData(poolID);
 
   const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress);
+  const { cPage } = useColors();
 
   useEffect(() => {
     const searchResults = fuse.supportedAssets.filter(
@@ -145,14 +147,30 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                   Available supported assets
                 </Text>
               </Box>
-
               <Flex
+                className="addAssetModal"
                 direction="column"
-                width="100%"
+                width="95%"
                 alignItems="center"
-                px={6}
                 height="400px"
-                overflow="scroll"
+                overflow="auto"
+                css={{
+                  '&::-webkit-scrollbar': {
+                    display: 'block',
+                    width: '4px',
+                    height: '4px',
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    width: '4px',
+                    height: '4px',
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: cPage.primary.borderColor,
+                  },
+                  '&::-webkit-scrollbar-corner': {
+                    display: 'none',
+                  },
+                }}
               >
                 {supportedAssets.map((asset, index) => {
                   return (

@@ -24,6 +24,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
+import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import { Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -309,7 +310,7 @@ export const AssetSettings = ({
     >
       {cTokenData && (
         <>
-          <Flex px={8} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
+          <ConfigRow>
             <Text fontWeight="bold">
               Borrowing Possibility{' '}
               <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
@@ -330,13 +331,14 @@ export const AssetSettings = ({
               onChange={setBorrowingStatus}
               className="borrowing-switch"
             />
-          </Flex>
+          </ConfigRow>
+
           <ModalDivider />
           <Flex
             as="form"
-            px={8}
-            py={4}
             w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
             direction="column"
             onSubmit={handleSubmit(updateCollateralFactor)}
           >
@@ -344,7 +346,7 @@ export const AssetSettings = ({
               <Flex
                 w="100%"
                 wrap="wrap"
-                direction={{ base: 'column', md: 'row' }}
+                direction={{ base: 'column', sm: 'row' }}
                 alignItems="center"
               >
                 <FormLabel htmlFor="collateralFactor" margin={0}>
@@ -389,7 +391,7 @@ export const AssetSettings = ({
                         value={value}
                         reff={ref}
                         onChange={onChange}
-                        mt={{ base: 2, md: 0 }}
+                        mt={{ base: 2, sm: 0 }}
                       />
                     )}
                   />
@@ -419,15 +421,20 @@ export const AssetSettings = ({
           <ModalDivider />
           <Flex
             as="form"
-            px={8}
-            py={4}
             w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
             direction="column"
             onSubmit={handleSubmit(updateReserveFactor)}
           >
             <FormControl isInvalid={!!errors.reserveFactor}>
-              <HStack w="100%" justifyContent={'space-between'}>
-                <FormLabel htmlFor="reserveFactor">
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="reserveFactor" margin={0}>
                   <Text fontWeight="bold">
                     Reserve Factor{' '}
                     <SimpleTooltip
@@ -445,6 +452,7 @@ export const AssetSettings = ({
                     </SimpleTooltip>
                   </Text>
                 </FormLabel>
+                <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                   <Controller
                     control={control}
@@ -468,7 +476,7 @@ export const AssetSettings = ({
                         value={value}
                         reff={ref}
                         onChange={onChange}
-                        mt={{ base: 2, md: 0 }}
+                        mt={{ base: 2, sm: 0 }}
                       />
                     )}
                   />
@@ -476,7 +484,7 @@ export const AssetSettings = ({
                     {errors.reserveFactor && errors.reserveFactor.message}
                   </FormErrorMessage>
                 </Column>
-              </HStack>
+              </Flex>
             </FormControl>
             {cTokenData &&
               watchReserveFactor !==
@@ -494,15 +502,20 @@ export const AssetSettings = ({
           <ModalDivider />
           <Flex
             as="form"
-            px={8}
-            py={4}
             w="100%"
             direction="column"
+            px={{ base: 4, md: 8 }}
+            py={4}
             onSubmit={handleSubmit(updateAdminFee)}
           >
             <FormControl isInvalid={!!errors.adminFee}>
-              <HStack w="100%" justifyContent={'space-between'}>
-                <FormLabel htmlFor="adminFee">
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="adminFee" margin={0}>
                   <Text fontWeight="bold">
                     Admin Fee{' '}
                     <SimpleTooltip
@@ -520,6 +533,7 @@ export const AssetSettings = ({
                     </SimpleTooltip>
                   </Text>
                 </FormLabel>
+                <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                   <Controller
                     control={control}
@@ -543,7 +557,7 @@ export const AssetSettings = ({
                         value={value}
                         reff={ref}
                         onChange={onChange}
-                        mt={{ base: 2, md: 0 }}
+                        mt={{ base: 2, sm: 0 }}
                       />
                     )}
                   />
@@ -551,7 +565,7 @@ export const AssetSettings = ({
                     {errors.adminFee && errors.adminFee.message}
                   </FormErrorMessage>
                 </Column>
-              </HStack>
+              </Flex>
             </FormControl>
             {cTokenData &&
               watchAdminFee !== parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)) && (
@@ -568,121 +582,129 @@ export const AssetSettings = ({
 
           {/* Plugin */}
           <ModalDivider />
-          <HStack px={8} py={4} w="100%" justifyContent={'space-between'}>
-            <Box>
-              <HStack>
-                <Text fontWeight="bold">Rewards Plugin </Text>
-                <PopoverTooltip
-                  body={
-                    <>
-                      Token can have{' '}
-                      <Link
-                        href="https://eips.ethereum.org/EIPS/eip-4626"
-                        variant={'color'}
-                        isExternal
-                      >
-                        ERC4626 strategies
-                      </Link>{' '}
-                      , allowing users to utilize their deposits (e.g. to stake them for rewards)
-                      while using them as collateral. To learn mode about it, check out our{' '}
-                      <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
-                        docs
-                      </Link>
-                      .
-                    </>
-                  }
-                >
-                  <QuestionIcon
-                    color={cCard.txtColor}
-                    bg={cCard.bgColor}
-                    borderRadius={'50%'}
-                    ml={1}
-                    mb="4px"
-                  />
-                </PopoverTooltip>
-              </HStack>
-            </Box>
-            <Text ml={{ base: 'auto' }} mt={{ base: 2 }}>
-              {pluginName}
-            </Text>
-          </HStack>
+          <ConfigRow>
+            <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
+              <Box>
+                <HStack>
+                  <Text fontWeight="bold">Rewards Plugin </Text>
+                  <PopoverTooltip
+                    body={
+                      <>
+                        Token can have{' '}
+                        <Link
+                          href="https://eips.ethereum.org/EIPS/eip-4626"
+                          variant={'color'}
+                          isExternal
+                        >
+                          ERC4626 strategies
+                        </Link>{' '}
+                        , allowing users to utilize their deposits (e.g. to stake them for rewards)
+                        while using them as collateral. To learn mode about it, check out our{' '}
+                        <Link href="https://docs.midascapital.xyz/" variant={'color'} isExternal>
+                          docs
+                        </Link>
+                        .
+                      </>
+                    }
+                  >
+                    <QuestionIcon
+                      color={cCard.txtColor}
+                      bg={cCard.bgColor}
+                      borderRadius={'50%'}
+                      ml={1}
+                      mb="4px"
+                    />
+                  </PopoverTooltip>
+                </HStack>
+              </Box>
+              <Spacer />
+              <Text mt={{ base: 2, sm: 0 }}>{pluginName}</Text>
+            </Flex>
+          </ConfigRow>
 
           {/* Interest Model */}
           <ModalDivider />
-          <Flex
-            as="form"
-            py={4}
-            px={8}
-            w="100%"
-            direction="column"
-            onSubmit={handleSubmit(updateInterestRateModel)}
-          >
-            <FormControl isInvalid={!!errors.interestRateModel}>
-              <HStack w="100%" justifyContent={'space-between'}>
-                <FormLabel htmlFor="interestRateModel">
-                  <Text fontWeight="bold">
-                    Interest Model{' '}
-                    <SimpleTooltip
-                      label={
-                        'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
-                      }
+          <ConfigRow>
+            <Flex
+              as="form"
+              w="100%"
+              direction="column"
+              onSubmit={handleSubmit(updateInterestRateModel)}
+            >
+              <FormControl isInvalid={!!errors.interestRateModel}>
+                <Flex
+                  w="100%"
+                  wrap="wrap"
+                  direction={{ base: 'column', sm: 'row' }}
+                  alignItems="center"
+                >
+                  <FormLabel htmlFor="interestRateModel" margin={0}>
+                    <Text fontWeight="bold">
+                      Interest Model{' '}
+                      <SimpleTooltip
+                        label={
+                          'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
+                        }
+                      >
+                        <QuestionIcon
+                          color={cCard.txtColor}
+                          bg={cCard.bgColor}
+                          borderRadius={'50%'}
+                          ml={1}
+                          mb="4px"
+                        />
+                      </SimpleTooltip>
+                    </Text>
+                  </FormLabel>
+                  <Spacer />
+                  <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="center">
+                    <Select
+                      id="interestRateModel"
+                      {...register('interestRateModel', {
+                        required: 'interestRateModel is required',
+                      })}
+                      ml="auto"
+                      cursor="pointer"
+                      mt={{ base: 2, sm: 0 }}
                     >
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                        ml={1}
-                        mb="4px"
-                      />
-                    </SimpleTooltip>
-                  </Text>
-                </FormLabel>
-                <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-                  <Select
-                    id="interestRateModel"
-                    {...register('interestRateModel', {
-                      required: 'interestRateModel is required',
-                    })}
-                    ml="auto"
-                    cursor="pointer"
-                    mt={{ base: 2, md: 0 }}
-                  >
-                    <option
-                      value={fuse.chainDeployment.JumpRateModel.address}
-                      style={{ color: cSelect.txtColor }}
+                      <option
+                        value={fuse.chainDeployment.JumpRateModel.address}
+                        style={{ color: cSelect.txtColor }}
+                      >
+                        JumpRateModel
+                      </option>
+                      <option
+                        value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
+                        style={{ color: cSelect.txtColor }}
+                      >
+                        WhitePaperRateModel
+                      </option>
+                    </Select>
+                    <FormErrorMessage marginBottom="-10px">
+                      {errors.interestRateModel && errors.interestRateModel.message}
+                    </FormErrorMessage>
+                  </Column>
+                </Flex>
+              </FormControl>
+              {cTokenData &&
+                cTokenData.interestRateModelAddress.toLowerCase() !==
+                  watchInterestRateModel.toLowerCase() && (
+                  <ButtonGroup gap={0} mt={2} alignSelf="end">
+                    <Button type="submit" disabled={isUpdating}>
+                      Save
+                    </Button>
+                    <Button
+                      variant="silver"
+                      disabled={isUpdating}
+                      onClick={setInterestRateModelDefault}
                     >
-                      JumpRateModel
-                    </option>
-                    <option
-                      value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
-                      style={{ color: cSelect.txtColor }}
-                    >
-                      WhitePaperRateModel
-                    </option>
-                  </Select>
-                  <FormErrorMessage marginBottom="-10px">
-                    {errors.interestRateModel && errors.interestRateModel.message}
-                  </FormErrorMessage>
-                </Column>
-              </HStack>
-            </FormControl>
-            {cTokenData &&
-              cTokenData.interestRateModelAddress.toLowerCase() !==
-                watchInterestRateModel.toLowerCase() && (
-                <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" disabled={isUpdating}>
-                    Save
-                  </Button>
-                  <Button
-                    variant="silver"
-                    disabled={isUpdating}
-                    onClick={setInterestRateModelDefault}
-                  >
-                    Cancel
-                  </Button>
-                </ButtonGroup>
-              )}
-          </Flex>
+                      Cancel
+                    </Button>
+                  </ButtonGroup>
+                )}
+            </Flex>
+          </ConfigRow>
+
           <IRMChart
             adminFee={watchAdminFee}
             reserveFactor={watchReserveFactor}

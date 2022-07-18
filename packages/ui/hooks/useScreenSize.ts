@@ -41,4 +41,10 @@ const useIsSemiSmallScreen = () => {
   return width < 1180;
 };
 
-export { useIsMobile, useIsSmallScreen, useIsSemiSmallScreen };
+const useIsSm = () => {
+  const { width } = useWindowSize();
+
+  return width < 480;
+};
+
+export { useIsMobile, useIsSmallScreen, useIsSemiSmallScreen, useIsSm };
