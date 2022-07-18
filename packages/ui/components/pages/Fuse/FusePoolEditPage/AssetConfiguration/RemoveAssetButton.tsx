@@ -1,25 +1,26 @@
 import { useState } from 'react';
-import { Button, useDisclosure } from '@chakra-ui/react';
+import { Button, useDisclosure, useToast } from '@chakra-ui/react';
 import { useRari } from '@ui/context/RariContext';
 import LogRocket from 'logrocket';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import { ComptrollerErrorCodes } from '@midas-capital/sdk';
-import { useQueryClient } from 'react-query';
-
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
+import { handleGenericError } from '@ui/utils/errorHandling';
 
 const RemoveAssetButton = ({
   comptrollerAddress,
   asset,
+  onSuccess,
 }: {
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
+  onSuccess: () => void;
 }) => {
   const { fuse } = useRari();
+  const toast = useToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const queryClient = useQueryClient();
 
   const [isRemoving, setIsRemoving] = useState(false);
 
@@ -40,10 +41,26 @@ const RemoveAssetButton = ({
       throw err;
     }
 
-    await comptroller._unsupportMarket(asset.cToken);
+    try {
+      await comptroller._unsupportMarket(asset.cToken);
+      LogRocket.track('Fuse-RemoveAsset');
+
+      toast({
+        title: 'You have successfully added an asset to this pool!',
+        description: 'You may now lend and borrow with this asset.',
+        status: 'success',
+        duration: 2000,
+        isClosable: true,
+        position: 'top-right',
+      });
+
+      onSuccess();
+    } catch (e) {
+      handleGenericError(e, toast);
+      return;
+    }
+
     setIsRemoving(false);
-    LogRocket.track('Fuse-RemoveAsset');
-    await queryClient.refetchQueries();
   };
 
   return isUpgradeable ? (
