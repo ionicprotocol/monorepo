@@ -25,7 +25,7 @@ import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
-import { Column } from '@ui/components/shared/Flex';
+import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -310,7 +310,14 @@ export const AssetSettings = ({
     >
       {cTokenData && (
         <>
-          <ConfigRow>
+          <Flex
+            w="100%"
+            wrap="wrap"
+            direction={{ base: 'column', sm: 'row' }}
+            px={{ base: 4, md: 8 }}
+            py={4}
+            alignItems="center"
+          >
             <Text fontWeight="bold">
               Borrowing Possibility{' '}
               <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
@@ -323,15 +330,18 @@ export const AssetSettings = ({
                 />
               </SimpleTooltip>
             </Text>
-            <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
-            <Switch
-              ml="auto"
-              h="20px"
-              isChecked={!isPaused}
-              onChange={setBorrowingStatus}
-              className="switch-borrowing"
-            />
-          </ConfigRow>
+            <Spacer />
+            <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
+              <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
+              <Switch
+                ml="auto"
+                h="20px"
+                isChecked={!isPaused}
+                onChange={setBorrowingStatus}
+                className="switch-borrowing"
+              />
+            </Row>
+          </Flex>
 
           <ModalDivider />
           <Flex
