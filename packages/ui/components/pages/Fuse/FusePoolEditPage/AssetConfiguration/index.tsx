@@ -1,15 +1,15 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import React, { useEffect, useState } from 'react';
+import { useQueryClient } from 'react-query';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
-import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
+import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import { FilterButton } from '@ui/components/shared/Button';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useQueryClient } from 'react-query';
 
 const AssetConfiguration = ({
   openAddAssetModal,

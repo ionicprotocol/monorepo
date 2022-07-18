@@ -1,9 +1,9 @@
 import {
   AlertDialog,
   AlertDialogBody,
+  AlertDialogContent,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogContent,
   AlertDialogOverlay,
   Button,
 } from '@chakra-ui/react';
@@ -22,7 +22,8 @@ export default function ConfirmDeleteAlert({
   title: string;
   description: string;
 }) {
-  const cancelRef = useRef<any>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cancelRef = useRef<any>(null);
 
   return (
     <AlertDialog isOpen={isOpen} leastDestructiveRef={cancelRef} onClose={onClose} isCentered>

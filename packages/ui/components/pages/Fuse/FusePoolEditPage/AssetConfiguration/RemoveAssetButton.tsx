@@ -1,11 +1,11 @@
-import { useState } from 'react';
 import { Button, useDisclosure, useToast } from '@chakra-ui/react';
-import { useRari } from '@ui/context/RariContext';
+import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
-import { ComptrollerErrorCodes } from '@midas-capital/sdk';
-import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
+import { useState } from 'react';
+
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
+import { useRari } from '@ui/context/RariContext';
+import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const RemoveAssetButton = ({
