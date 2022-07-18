@@ -43,12 +43,7 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
     uniswapV2RouterAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
     uniswapV2FactoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: assets.find((a) => a.symbol === assetSymbols.BOMB)!.underlying,
-        baseToken: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying,
-      },
-    ],
+    uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDC"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-ETH"])!.underlying,
@@ -223,14 +218,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   //// Curve LP Oracle
-  await deployCurveLpOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-    curvePools,
-  });
+  // await deployCurveLpOracle({
+  //   run,
+  //   ethers,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  //   curvePools,
+  // });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,
