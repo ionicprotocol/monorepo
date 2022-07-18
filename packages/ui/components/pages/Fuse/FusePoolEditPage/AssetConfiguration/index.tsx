@@ -1,13 +1,12 @@
 import { Box, Flex, Heading, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import React, { useEffect, useState } from 'react';
-import { useQueryClient } from 'react-query';
 
 import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
-import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import { FilterButton } from '@ui/components/shared/Button';
+import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 
@@ -15,22 +14,13 @@ const AssetConfiguration = ({
   openAddAssetModal,
   assets,
   comptrollerAddress,
-  poolName,
-  poolID,
 }: {
   openAddAssetModal: () => void;
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
-  poolName: string;
-  poolID: string;
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const queryClient = useQueryClient();
-
-  const handleRemoveSuccess = async () => {
-    await queryClient.refetchQueries();
-  };
 
   useEffect(() => {
     setSelectedAsset(assets[selectedIndex]);
@@ -52,11 +42,6 @@ const AssetConfiguration = ({
             comptrollerAddress={comptrollerAddress}
             openAddAssetModal={openAddAssetModal}
           />
-          <RemoveAssetButton
-            comptrollerAddress={comptrollerAddress}
-            asset={selectedAsset}
-            onSuccess={handleRemoveSuccess}
-          />
         </Box>
       </ConfigRow>
 
@@ -77,8 +62,10 @@ const AssetConfiguration = ({
                     setSelectedAsset(asset);
                     setSelectedIndex(index);
                   }}
+                  px={2}
                 >
-                  <Center px={4} py={1} fontWeight="bold">
+                  <CTokenIcon size="sm" address={asset.underlyingToken} />
+                  <Center px={1} fontWeight="bold">
                     {asset.underlyingSymbol}
                   </Center>
                 </FilterButton>
@@ -90,15 +77,7 @@ const AssetConfiguration = ({
 
       <ModalDivider />
 
-      <EditAssetSettings
-        comptrollerAddress={comptrollerAddress}
-        tokenAddress={selectedAsset.underlyingToken}
-        cTokenAddress={selectedAsset.cToken}
-        poolName={poolName}
-        poolID={poolID}
-        isPaused={selectedAsset.isBorrowPaused}
-        plugin={selectedAsset.plugin}
-      />
+      <EditAssetSettings comptrollerAddress={comptrollerAddress} selectedAsset={selectedAsset} />
     </Column>
   );
 };

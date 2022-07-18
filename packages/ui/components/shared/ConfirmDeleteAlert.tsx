@@ -13,8 +13,8 @@ export default function ConfirmDeleteAlert({
   onClose,
   onConfirm,
   isOpen,
-  title = 'Are you sure',
-  description = "Are you sure? You can't undo this action afterwards.",
+  title = 'Are you sure?',
+  description = "You can't undo this action afterwards.",
 }: {
   onConfirm: () => void;
   onClose: () => void;
