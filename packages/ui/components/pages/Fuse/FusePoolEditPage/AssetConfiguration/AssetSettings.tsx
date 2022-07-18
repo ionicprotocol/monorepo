@@ -329,7 +329,7 @@ export const AssetSettings = ({
               h="20px"
               isChecked={!isPaused}
               onChange={setBorrowingStatus}
-              className="borrowing-switch"
+              className="switch-borrowing"
             />
           </ConfigRow>
 
