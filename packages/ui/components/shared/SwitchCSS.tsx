@@ -8,10 +8,10 @@ export const SwitchCSS = ({
   return (
     <style>
       {`  
-  .${symbol + '-switch'} > .chakra-switch__track[data-checked] {
-    background-color: ${color ? (color === '#FFFFFF' ? '#282727' : color) : '#282727'} !important;
+  .${'switch-' + symbol} > .chakra-switch__track[data-checked] {
+    background-color: ${color} !important;
   }
-  .${symbol + '-switch'} .chakra-switch__input {
+  .${'switch-' + symbol} .chakra-switch__input {
     /* Fixes a bug in the FusePoolPage with the switches creating bottom padding */
     position: static !important;
     height: 0px !important;
