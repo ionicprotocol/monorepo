@@ -315,21 +315,13 @@ const PoolConfiguration = ({
   };
 
   return (
-    <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%">
-      <Heading size="sm" px={8} pt={8} pb={4}>
-        {`Pool ${poolId} Configuration`}
-      </Heading>
-
+    <Column height="100%">
+      <ConfigRow>
+        <Heading size="sm">{`Pool ${poolId} Configuration`}</Heading>
+      </ConfigRow>
       <ModalDivider />
-
       {data ? (
-        <Column
-          mainAxisAlignment="flex-start"
-          crossAxisAlignment="flex-start"
-          height="100%"
-          width="100%"
-          overflowY="auto"
-        >
+        <Column expand overflowY="auto">
           <Flex px={8} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <InputGroup width="100%">
               <InputLeftElement>
