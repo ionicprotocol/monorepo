@@ -249,7 +249,7 @@ export const CreatePoolConfiguration = () => {
                     <>
                       <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
                       <Switch
-                        className="whitelist-switch"
+                        className="switch-whitelist"
                         id="isWhitelisted"
                         size={isMobile ? 'sm' : 'md'}
                         cursor={'pointer'}
