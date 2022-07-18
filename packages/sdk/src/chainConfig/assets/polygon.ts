@@ -20,7 +20,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.BAL,
-    underlying: "	0x9a71012B13CA4d3D0Cdc72A177DF3ef03b0E76A3",
+    underlying: "0x9a71012B13CA4d3D0Cdc72A177DF3ef03b0E76A3",
     name: "Balancer (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
@@ -185,6 +185,13 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols["WMATIC-USDC"],
     underlying: "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827",
     name: "WMATIC-USDC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WMATIC-USDT"],
+    underlying: "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3",
+    name: "WMATIC-USDT LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },

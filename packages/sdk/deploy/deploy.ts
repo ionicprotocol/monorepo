@@ -80,7 +80,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const oldErc20Delegate = await ethers.getContractOrNull("CErc20Delegate");
   const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate");
   const oldErc20PluginRewardsDelegate = await ethers.getContractOrNull("CErc20PluginRewardsDelegate");
-  const oldEtherDelegate = await ethers.getContractOrNull("CEtherDelegate");
 
   const erc20Del = await deployments.deploy("CErc20Delegate", {
     from: deployer,
