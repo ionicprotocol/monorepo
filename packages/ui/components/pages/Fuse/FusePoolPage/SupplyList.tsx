@@ -384,7 +384,7 @@ const AssetSupplyRow = ({
             <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
             <Switch
               isChecked={asset.membership}
-              className={asset.underlyingSymbol + '-switch'}
+              className={'switch-' + asset.underlyingSymbol}
               onChange={onToggleCollateral}
               size={isMobile ? 'sm' : 'md'}
               cursor={'pointer'}
