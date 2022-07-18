@@ -9,6 +9,7 @@ import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetC
 import { FilterButton } from '@ui/components/shared/Button';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { useQueryClient } from 'react-query';
 
 const AssetConfiguration = ({
   openAddAssetModal,
@@ -25,6 +26,11 @@ const AssetConfiguration = ({
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const queryClient = useQueryClient();
+
+  const handleRemoveSuccess = async () => {
+    await queryClient.refetchQueries();
+  };
 
   useEffect(() => {
     setSelectedAsset(assets[selectedIndex]);
@@ -46,7 +52,11 @@ const AssetConfiguration = ({
             comptrollerAddress={comptrollerAddress}
             openAddAssetModal={openAddAssetModal}
           />
-          <RemoveAssetButton comptrollerAddress={comptrollerAddress} asset={selectedAsset} />
+          <RemoveAssetButton
+            comptrollerAddress={comptrollerAddress}
+            asset={selectedAsset}
+            onSuccess={handleRemoveSuccess}
+          />
         </Box>
       </ConfigRow>
 
