@@ -1,3 +1,4 @@
 export const toFixedNoRound = (value: number, len: number) => {
-  return (Math.floor(value * Math.pow(10, len)) / Math.pow(10, len)).toFixed(len);
+  const factor = Math.pow(10, len);
+  return (Math.floor(value * factor) / factor).toString();
 };
