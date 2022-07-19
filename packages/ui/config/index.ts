@@ -13,6 +13,8 @@ type CONFIG = {
   minBorrowUsd: string | undefined;
   supabaseUrl: string;
   supabasePublicKey: string;
+  supabasePluginTableName: string;
+  supabaseFlywheelTableName: string;
 };
 
 const config: CONFIG = {
@@ -32,6 +34,8 @@ const config: CONFIG = {
   minBorrowUsd: process.env.MIN_BORROW_USD,
   supabaseUrl: process.env.SUPABASE_URL ?? '',
   supabasePublicKey: process.env.SUPABASE_PUBLIC_KEY ?? '',
+  supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
+  supabaseFlywheelTableName: process.env.SUPABASE_FLYWHEEL_TABLE_NAME ?? '',
 };
 
 export { config };
