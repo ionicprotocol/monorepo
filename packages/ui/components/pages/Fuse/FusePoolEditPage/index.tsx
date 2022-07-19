@@ -121,8 +121,6 @@ const FusePoolEditPage = memo(() => {
                     openAddAssetModal={openAddAssetModal}
                     assets={data.assets}
                     comptrollerAddress={data.comptroller}
-                    poolID={poolId}
-                    poolName={data.name}
                   />
                 ) : (
                   <Column expand mainAxisAlignment="center" crossAxisAlignment="center" py={4}>
