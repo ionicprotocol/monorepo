@@ -348,7 +348,7 @@ const AmountSelect = ({
                   <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
                   <Switch
                     h="20px"
-                    className={asset.underlyingSymbol + '-switch'}
+                    className={'switch-' + asset.underlyingSymbol}
                     isChecked={enableAsCollateral}
                     onChange={() => {
                       setEnableAsCollateral((past) => !past);
