@@ -12,7 +12,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (rewardAddress) {
     start = await client
-      .from('apy_flywheel')
+      .from(config.supabaseFlywheelTableName)
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -22,7 +22,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .limit(1);
     if (start.error) {
       start = await client
-        .from('apy_flywheel')
+        .from(config.supabaseFlywheelTableName)
         .select('pricePerShare,created_at')
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .limit(1);
     }
     end = await client
-      .from('apy_flywheel')
+      .from(config.supabaseFlywheelTableName)
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -40,7 +40,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .limit(1);
   } else {
     start = await client
-      .from('apy')
+      .from(config.supabasePluginTableName)
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -49,7 +49,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .limit(1);
     if (start.error) {
       start = await client
-        .from('apy')
+        .from(config.supabasePluginTableName)
         .select('pricePerShare,created_at')
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -57,7 +57,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .limit(1);
     }
     end = await client
-      .from('apy')
+      .from(config.supabasePluginTableName)
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
