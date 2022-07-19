@@ -390,7 +390,7 @@ const PoolConfiguration = ({
               onChange={() => {
                 changeWhitelistStatus(!data.enforceWhitelist);
               }}
-              className="whitelist-switch"
+              className="switch-whitelist"
             />
           </ConfigRow>
           {data.enforceWhitelist && (

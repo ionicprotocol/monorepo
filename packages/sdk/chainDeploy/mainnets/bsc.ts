@@ -294,7 +294,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.ETH,
-    aggregator: "0x63D407F32Aa72E63C7209ce1c2F5dA40b3AaE726",
+    aggregator: "0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // CZ
