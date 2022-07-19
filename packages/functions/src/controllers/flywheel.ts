@@ -18,7 +18,9 @@ const updateFlyWheelData = async () => {
         try {
           const pluginContract = new ethers.Contract(strategy, PLUGIN_ABI, provider);
           const state = await flywheelContract.strategyState(strategy);
+          const flywheelAsset = await flywheelContract.rewardToken();
           const totalSupply = await pluginContract.totalSupply();
+          const underlyingAsset = await pluginContract.asset();
           const index = state['index'];
           const pricePerShare = totalSupply ? index / totalSupply : 0;
           const { error } = await supabase.from('apy_flywheel').insert([
@@ -26,7 +28,9 @@ const updateFlyWheelData = async () => {
               index: index.toString(),
               totalSupply: totalSupply.toString(),
               pricePerShare: pricePerShare.toString(),
-              address: strategy,
+              rewardAddress: flywheelAsset.toLowerCase(),
+              pluginAddress: strategy.toLowerCase(),
+              underlyingAddress: underlyingAsset.toLowerCase(),
               chain: config.chain,
             },
           ]);

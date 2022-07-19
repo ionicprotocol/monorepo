@@ -15,6 +15,7 @@ const updatePluginsData = async () => {
         const contract = new ethers.Contract(plugin, PLUGINS_ABI, provider);
         const totalSupply = await contract.totalSupply();
         const totalAssets = await contract.totalAssets();
+        const underlyingAsset = await contract.asset();
         const pricePerShare = !totalSupply.eq('0') ? totalAssets / totalSupply : 0;
 
         const { error } = await supabase.from('apy').insert([
@@ -22,7 +23,8 @@ const updatePluginsData = async () => {
             totalSupply: totalSupply.toString(),
             totalAssets: totalAssets.toString(),
             pricePerShare: pricePerShare.toString(),
-            address: plugin.toLowerCase(),
+            pluginAddress: plugin.toLowerCase(),
+            underlyingAddress: underlyingAsset.toLowerCase(),
             chain: config.chain,
           },
         ]);
