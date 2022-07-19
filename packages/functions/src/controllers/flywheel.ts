@@ -23,7 +23,7 @@ const updateFlyWheelData = async () => {
           const underlyingAsset = await pluginContract.asset();
           const index = state['index'];
           const pricePerShare = totalSupply ? index / totalSupply : 0;
-          const { error } = await supabase.from('apy_flywheel').insert([
+          const { error } = await supabase.from(config.supabaseFlywheelTableName).insert([
             {
               totalAssets: index.toString(),
               totalSupply: totalSupply.toString(),

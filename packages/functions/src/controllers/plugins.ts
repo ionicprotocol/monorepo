@@ -18,7 +18,7 @@ const updatePluginsData = async () => {
         const underlyingAsset = await contract.asset();
         const pricePerShare = !totalSupply.eq('0') ? totalAssets / totalSupply : 0;
 
-        const { error } = await supabase.from('apy').insert([
+        const { error } = await supabase.from(config.supabasePluginTableName).insert([
           {
             totalSupply: totalSupply.toString(),
             totalAssets: totalAssets.toString(),
