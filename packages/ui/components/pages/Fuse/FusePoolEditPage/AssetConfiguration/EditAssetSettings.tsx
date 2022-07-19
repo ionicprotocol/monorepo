@@ -1,5 +1,5 @@
 import { Spinner, Text } from '@chakra-ui/react';
-import { MarketPluginConfig } from '@midas-capital/sdk';
+import { NativePricedFuseAsset } from '@midas-capital/sdk';
 import React from 'react';
 
 import { AssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AssetSettings';
@@ -7,21 +7,13 @@ import { Center } from '@ui/components/shared/Flex';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 const EditAssetSettings = ({
-  tokenAddress,
   comptrollerAddress,
-  cTokenAddress,
-  isPaused,
-  plugin,
+  selectedAsset,
 }: {
-  tokenAddress: string;
-  poolName: string;
-  poolID: string;
   comptrollerAddress: string;
-  cTokenAddress: string;
-  isPaused: boolean;
-  plugin?: MarketPluginConfig;
+  selectedAsset: NativePricedFuseAsset;
 }) => {
-  const { data: tokenData, isLoading } = useTokenData(tokenAddress);
+  const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken);
   if (isLoading) {
     return (
       <Center width="100%" height="100%">
@@ -34,10 +26,8 @@ const EditAssetSettings = ({
     return (
       <AssetSettings
         comptrollerAddress={comptrollerAddress}
+        selectedAsset={selectedAsset}
         tokenData={tokenData}
-        cTokenAddress={cTokenAddress}
-        isPaused={isPaused}
-        pluginAddress={plugin?.strategyAddress}
       />
     );
   }
