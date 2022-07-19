@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { config } from '@ui/config/index';
 import type { NextApiRequest, NextApiResponse } from 'next';
+
+import { config } from '@ui/config/index';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { underlyingAddress, pluginAddress, rewardAddress, days = '7' } = req.query;
