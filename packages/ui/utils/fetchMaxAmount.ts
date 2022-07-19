@@ -1,5 +1,7 @@
 import { FundOperationMode, Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
+
+import { toFixedNoRound } from './formatNumber';
 
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
@@ -38,10 +40,12 @@ export const fetchMaxAmount = async (
   }
 
   if (mode === FundOperationMode.WITHDRAW) {
-    const maxRedeem = await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
+    let maxRedeem = await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
       address,
       asset.cToken
     );
+    // round down under 6 digits below decimal point
+    maxRedeem = utils.parseUnits(toFixedNoRound(Number(utils.formatUnits(maxRedeem)), 6));
 
     if (maxRedeem) {
       return BigNumber.from(maxRedeem);
