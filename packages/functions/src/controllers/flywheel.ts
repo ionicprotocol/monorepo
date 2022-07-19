@@ -25,7 +25,7 @@ const updateFlyWheelData = async () => {
           const pricePerShare = totalSupply ? index / totalSupply : 0;
           const { error } = await supabase.from('apy_flywheel').insert([
             {
-              index: index.toString(),
+              totalAssets: index.toString(),
               totalSupply: totalSupply.toString(),
               pricePerShare: pricePerShare.toString(),
               rewardAddress: flywheelAsset.toLowerCase(),

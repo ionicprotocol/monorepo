@@ -3,36 +3,74 @@ import { config } from '@ui/config/index';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { underlyingAddress, pluginAddress, rewardAddress } = req.query;
+  const { underlyingAddress, pluginAddress, rewardAddress, days = '7' } = req.query;
 
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
-  let pricePerShares;
+  let start, end;
+  const dateLimit = new Date();
+  dateLimit.setDate(dateLimit.getDate() - parseInt(days as string, 10));
 
   if (rewardAddress) {
-    pricePerShares = await client
+    start = await client
+      .from('apy_flywheel')
+      .select('pricePerShare,created_at')
+      .eq('pluginAddress', (pluginAddress as string).toLowerCase())
+      .eq('rewardAddress', (rewardAddress as string).toLowerCase())
+      .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
+      .gte('created_at', dateLimit)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (start.error) {
+      start = await client
+        .from('apy_flywheel')
+        .select('pricePerShare,created_at')
+        .eq('pluginAddress', (pluginAddress as string).toLowerCase())
+        .eq('rewardAddress', (rewardAddress as string).toLowerCase())
+        .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
+        .order('created_at', { ascending: true })
+        .limit(1);
+    }
+    end = await client
       .from('apy_flywheel')
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
       .order('created_at', { ascending: false })
-      .limit(2);
+      .limit(1);
   } else {
-    pricePerShares = await client
+    start = await client
+      .from('apy')
+      .select('pricePerShare,created_at')
+      .eq('pluginAddress', (pluginAddress as string).toLowerCase())
+      .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
+      .gte('created_at', dateLimit)
+      .order('created_at', { ascending: false })
+      .limit(1);
+    if (start.error) {
+      start = await client
+        .from('apy')
+        .select('pricePerShare,created_at')
+        .eq('pluginAddress', (pluginAddress as string).toLowerCase())
+        .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
+        .order('created_at', { ascending: true })
+        .limit(1);
+    }
+    end = await client
       .from('apy')
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
       .order('created_at', { ascending: false })
-      .limit(2);
+      .limit(1);
   }
 
-  if (!pricePerShares.error) {
-    if (pricePerShares.data.length) {
-      const price1 = pricePerShares.data[0].pricePerShare;
-      const price2 = pricePerShares.data[1].pricePerShare;
-      const date1 = pricePerShares.data[0].created_at;
-      const date2 = pricePerShares.data[1].created_at;
+  if (!start.error && !end.error) {
+    if (start.data.length && end.data.length) {
+      const price1 = end.data[0].pricePerShare;
+      const price2 = start.data[0].pricePerShare;
+      const date1 = end.data[0].created_at;
+      const date2 = start.data[1].created_at;
       const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
       const apy = (Math.log(price1 / price2) / dateDelta) * 86400000 * 365;
 
@@ -46,7 +84,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   } else {
     return res.status(500).send({
-      error: pricePerShares.error.message,
+      error: start.error?.message ?? end.error?.message,
     });
   }
 };
