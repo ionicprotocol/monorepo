@@ -10,7 +10,7 @@ import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
-const ClaimRewardsButton: React.FC = () => {
+const ClaimAllRewardsButton: React.FC = () => {
   const {
     isOpen: isClaimModalOpen,
     onOpen: openClaimModal,
@@ -20,13 +20,18 @@ const ClaimRewardsButton: React.FC = () => {
 
   const isMobile = useIsSmallScreen();
 
-  const { data: claimableRewards } = useAllClaimableRewards();
+  const { data: allClaimableRewards, refetch: refetchRewards } = useAllClaimableRewards();
 
-  if (!claimableRewards || claimableRewards.length === 0) return null;
+  if (!allClaimableRewards || allClaimableRewards.length === 0) return null;
 
   return (
     <>
-      <ClaimRewardsModal isOpen={isClaimModalOpen} onClose={closeClaimModal} />
+      <ClaimRewardsModal
+        isOpen={isClaimModalOpen}
+        onClose={closeClaimModal}
+        claimableRewards={allClaimableRewards}
+        refetchRewards={refetchRewards}
+      />
       <GlowingBox
         as="button"
         height="40px"
@@ -37,13 +42,13 @@ const ClaimRewardsButton: React.FC = () => {
       >
         <Center>
           <AvatarGroup size="xs" max={30}>
-            {claimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
+            {allClaimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
               return <CTokenIcon key={index} address={rD.rewardToken} />;
             })}
           </AvatarGroup>
           {!isMobile && (
             <Text ml={1} mr={1} fontWeight="semibold" color={cCard.txtColor}>
-              Claim Rewards
+              Claim All Rewards
             </Text>
           )}
         </Center>
@@ -52,4 +57,4 @@ const ClaimRewardsButton: React.FC = () => {
   );
 };
 
-export default ClaimRewardsButton;
+export default ClaimAllRewardsButton;
