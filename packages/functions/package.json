@@ -12,7 +12,6 @@
   },
   "scripts": {
     "build": "tsc",
-    "local": "ts-node src/functions/save-price.ts",
     "deploy": "netlify deploy --functions=netlify/functions"
   }
 }
