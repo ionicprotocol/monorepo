@@ -1,4 +1,26 @@
 export const toFixedNoRound = (value: number, len: number) => {
-  const factor = Math.pow(10, len);
-  return (Math.floor(value * factor) / factor).toString();
+  let resultStr = '';
+  if (Math.abs(value) < 1.0) {
+    const e = parseInt(value.toString().split('e-')[1]);
+    if (e) {
+      if (e > len) {
+        resultStr = '0';
+      } else {
+        const val = value * Math.pow(10, e - 1);
+        resultStr = '0.' + new Array(e).join('0') + val.toString().substring(2, 3 + len - e);
+      }
+    } else {
+      resultStr =
+        value.toString().split('.')[0] + '.' + value.toString().split('.')[1].slice(0, len);
+    }
+  } else {
+    let e = parseInt(value.toString().split('+')[1]);
+    if (e > 20) {
+      e -= 20;
+      const val = value / Math.pow(10, e);
+      resultStr = val + new Array(e + 1).join('0');
+    }
+  }
+
+  return resultStr;
 };
