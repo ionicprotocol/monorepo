@@ -12,7 +12,11 @@ export const toFixedNoRound = (value: number, len: number) => {
     } else {
       const value1 = value.toString().split('.')[0];
       const value2 = value.toString().split('.')[1];
-      resultStr = value1 + '.' + value2 ? value2.slice(0, len) : '0';
+      if (value2) {
+        resultStr = value1 + '.' + value2.slice(0, len);
+      } else {
+        resultStr = value1;
+      }
     }
   } else {
     let e = parseInt(value.toString().split('+')[1]);
