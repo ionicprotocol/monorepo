@@ -2,14 +2,12 @@ import { ethers } from 'ethers';
 import FLYWHEEL_ABI from '../abi/flywheel.json';
 import CTOKEN_ABI from '../abi/ctoken.json';
 import { flywheels } from '../assets';
-import { config, supabase } from '../config';
+import { config, supabase, SupportedChains } from '../config';
 
-const updateFlyWheelData = async () => {
+const updateFlyWheelData = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
-    const provider = new ethers.providers.StaticJsonRpcProvider(config.rpcUrl);
-
-    const supportedChain: keyof typeof flywheels = config.chain;
-    const supportedFlywheels = flywheels[supportedChain] as any;
+    const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
+    const supportedFlywheels = flywheels[chainId];
 
     for (const flywheel of supportedFlywheels) {
       const flywheelContract = new ethers.Contract(flywheel, FLYWHEEL_ABI, provider);
@@ -22,7 +20,7 @@ const updateFlyWheelData = async () => {
           const totalSupply = await pluginContract.totalSupply();
           const underlyingAsset = await pluginContract.underlying();
           const index = state['index'];
-          const pricePerShare = totalSupply ? index / totalSupply : 0;
+          const pricePerShare = !totalSupply.eq('0') ? index / totalSupply : 0;
           const { error } = await supabase.from(config.supabaseFlywheelTableName).insert([
             {
               totalAssets: index.toString(),
@@ -31,7 +29,7 @@ const updateFlyWheelData = async () => {
               rewardAddress: flywheelAsset.toLowerCase(),
               pluginAddress: strategy.toLowerCase(),
               underlyingAddress: underlyingAsset.toLowerCase(),
-              chain: config.chain,
+              chain: chainId,
             },
           ]);
           if (error) {
