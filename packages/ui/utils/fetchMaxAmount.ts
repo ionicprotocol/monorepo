@@ -44,8 +44,8 @@ export const fetchMaxAmount = async (
       address,
       asset.cToken
     );
-    // round down under 6 digits below decimal point
-    maxRedeem = utils.parseUnits(toFixedNoRound(Number(utils.formatUnits(maxRedeem)), 6));
+    // round down under 5 digits below decimal point
+    maxRedeem = utils.parseUnits(toFixedNoRound(Number(utils.formatUnits(maxRedeem)), 5));
 
     if (maxRedeem) {
       return BigNumber.from(maxRedeem);
