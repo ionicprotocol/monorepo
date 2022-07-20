@@ -228,11 +228,12 @@ const FusePoolList = () => {
       {viewMode === 'list' && !isMobile && (
         <Grid mt={8} w={'100%'} mx="auto" gap={4}>
           <HStack px={6} alignItems={'flex-end'}>
-            <VStack flex={6}>
+            <VStack flex={5}>
               <Text fontWeight="bold" textAlign="center">
                 Pool Name
               </Text>
             </VStack>
+            <VStack flex={3}></VStack>
             {config.isRssScoreEnabled && (
               <VStack flex={2}>
                 <Text fontWeight="bold" textAlign="center">
