@@ -19,7 +19,6 @@ import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRari } from '@ui/context/RariContext';
-import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
@@ -65,11 +64,21 @@ const ClaimableToken = ({
   );
 };
 
-const ClaimRewardsModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+const ClaimRewardsModal = ({
+  isOpen,
+  onClose,
+  claimableRewards,
+  refetchRewards,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  claimableRewards: FlywheelClaimableRewards[] | undefined;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  refetchRewards: any;
+}) => {
   const { fuse, address } = useRari();
   const toast = useSuccessToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
-  const { data: claimableRewards, refetch: refetchRewards } = useAllClaimableRewards();
   const { data: signer } = useSigner();
 
   const claimRewards = useCallback(
