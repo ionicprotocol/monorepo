@@ -68,15 +68,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!start.error && !end.error) {
     if (start.data.length && end.data.length) {
-      const price1 = end.data[0].pricePerShare;
-      const price2 = start.data[0].pricePerShare;
+      const price1 = parseFloat(end.data[0].pricePerShare);
+      const price2 = parseFloat(start.data[0].pricePerShare);
       const date1 = end.data[0].created_at;
       const date2 = start.data[0].created_at;
       const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
       const apy = (Math.log(price1 / price2) / dateDelta) * 86400000 * 365;
 
       return res.json({
-        apy,
+        apy: apy || 0,
       });
     } else {
       return res.status(400).send({
