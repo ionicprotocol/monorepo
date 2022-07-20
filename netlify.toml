@@ -38,7 +38,7 @@ SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 MIN_BORROW_USD="100"
 
 [functions]
-directory = "./packages/functions/netlify/"
+directory = "./packages/functions/netlify/functions"
 
 [functions."save-price"]
 schedule = "@hourly"
