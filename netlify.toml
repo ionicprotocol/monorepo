@@ -39,6 +39,7 @@ MIN_BORROW_USD="100"
 
 [functions]
 directory = "./packages/functions/netlify/functions"
+node_bundler = "esbuild"
 
 [functions."save-price"]
 schedule = "@hourly"
