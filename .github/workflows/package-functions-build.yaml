@@ -1,0 +1,38 @@
+name: functions - netlify scheduled functions
+
+on:
+  push:
+    branches: [main, development]
+    paths:
+      - 'packages/functions'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      SUPPORT_CHAIN: 56
+      SUPPORT_RPC_URL: 'https://bsc-dataseed1.binance.org/'
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_PUBLIC_KEY: ${{ secrets.SUPABASE_PUBLIC_KEY }}
+      SUPABASE_PLUGIN_TABLE_NAME: 'apy-plugin'
+      SUPABASE_FLYWHEEL_TABLE_NAME: 'apy-flywheel'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: '${{ secrets.ACCESS_TOKEN }}'
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build functions
+        run: yarn build
