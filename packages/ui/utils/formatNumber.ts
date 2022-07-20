@@ -10,8 +10,9 @@ export const toFixedNoRound = (value: number, len: number) => {
         resultStr = '0.' + new Array(e).join('0') + val.toString().substring(2, 3 + len - e);
       }
     } else {
-      resultStr =
-        value.toString().split('.')[0] + '.' + value.toString().split('.')[1].slice(0, len);
+      const value1 = value.toString().split('.')[0];
+      const value2 = value.toString().split('.')[1];
+      resultStr = value1 + '.' + value2 ? value2.slice(0, len) : '0';
     }
   } else {
     let e = parseInt(value.toString().split('+')[1]);
