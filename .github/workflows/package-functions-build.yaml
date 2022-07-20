@@ -4,7 +4,15 @@ on:
   push:
     branches: [main, development]
     paths:
-      - 'packages/functions'
+      - 'packages/functions/**'
+      - 'yarn.lock'
+  pull_request:
+    branches:
+      - main
+      - development
+    paths:
+      - 'packages/functions/**'
+      - 'yarn.lock'
 
 jobs:
   deploy:
