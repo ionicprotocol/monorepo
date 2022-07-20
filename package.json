@@ -5,6 +5,7 @@
   "workspaces": [
     "packages/bots/fuse-liquidator-bot",
     "packages/bots/fuse-twap-bot",
+    "packages/bots/apy-tracking",
     "packages/functions",
     "packages/monitors/oracle",
     "packages/sdk",
