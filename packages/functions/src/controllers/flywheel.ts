@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import FLYWHEEL_ABI from '../abi/flywheel.json';
-import PLUGIN_ABI from '../abi/plugins.json';
+import CTOKEN_ABI from '../abi/ctoken.json';
 import { flywheels } from '../assets';
 import { config, supabase } from '../config';
 
@@ -16,11 +16,11 @@ const updateFlyWheelData = async () => {
       const strategies = await flywheelContract.getAllStrategies();
       for (const strategy of strategies) {
         try {
-          const pluginContract = new ethers.Contract(strategy, PLUGIN_ABI, provider);
+          const pluginContract = new ethers.Contract(strategy, CTOKEN_ABI, provider);
           const state = await flywheelContract.strategyState(strategy);
           const flywheelAsset = await flywheelContract.rewardToken();
           const totalSupply = await pluginContract.totalSupply();
-          const underlyingAsset = await pluginContract.asset();
+          const underlyingAsset = await pluginContract.underlying();
           const index = state['index'];
           const pricePerShare = totalSupply ? index / totalSupply : 0;
           const { error } = await supabase.from(config.supabaseFlywheelTableName).insert([
