@@ -33,7 +33,7 @@ const config: CONFIG = {
   productUrl: process.env.PRODUCT_URL,
   minBorrowUsd: process.env.MIN_BORROW_USD,
   supabaseUrl: process.env.SUPABASE_URL ?? '',
-  supabasePublicKey: process.env.SUPABASE_PUBLIC_KEY ?? '',
+  supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabaseFlywheelTableName: process.env.SUPABASE_FLYWHEEL_TABLE_NAME ?? '',
 };

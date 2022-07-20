@@ -19,7 +19,8 @@ ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
 FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
 SUPABASE_URL="https://xdjnvsfkwtkwfuayzmtm.supabase.co"
-SUPABASE_PRICE_TABLE="demo-table"
+SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
+SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 MIN_BORROW_USD="100"
 
 [context.production.environment]
@@ -32,7 +33,8 @@ ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
 FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
 SUPABASE_URL="https://xdjnvsfkwtkwfuayzmtm.supabase.co"
-SUPABASE_PRICE_TABLE="demo-table"
+SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
+SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 MIN_BORROW_USD="100"
 
 [functions]
