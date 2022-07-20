@@ -18,10 +18,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
-      .gte('created_at', dateLimit)
-      .order('created_at', { ascending: false })
+      .gte('created_at', dateLimit.toISOString())
+      .order('created_at', { ascending: true })
       .limit(1);
-    if (start.error) {
+    if (start.error || !start.data.length) {
       start = await client
         .from(config.supabaseFlywheelTableName)
         .select('pricePerShare,created_at')
@@ -45,10 +45,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .select('pricePerShare,created_at')
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
-      .gte('created_at', dateLimit)
-      .order('created_at', { ascending: false })
+      .gte('created_at', dateLimit.toISOString())
+      .order('created_at', { ascending: true })
       .limit(1);
-    if (start.error) {
+    if (start.error || !start.data.length) {
       start = await client
         .from(config.supabasePluginTableName)
         .select('pricePerShare,created_at')
@@ -71,7 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const price1 = end.data[0].pricePerShare;
       const price2 = start.data[0].pricePerShare;
       const date1 = end.data[0].created_at;
-      const date2 = start.data[1].created_at;
+      const date2 = start.data[0].created_at;
       const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
       const apy = (Math.log(price1 / price2) / dateDelta) * 86400000 * 365;
 
@@ -80,7 +80,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       });
     } else {
       return res.status(400).send({
-        error: 'Invalid request',
+        error: 'Invalid request or not enough apy feeds',
       });
     }
   } else {
