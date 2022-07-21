@@ -87,6 +87,7 @@ const AmountSelect = ({
   const { cCard, cSwitch } = useColors();
   const [borrowableAmount, setBorrowableAmount] = useState<number>(0);
   const [borrowedAmount, setBorrowedAmount] = useState<number>(0);
+
   useEffect(() => {
     const func = async () => {
       const borrowableAmountBN = (await fetchMaxAmount(
@@ -115,7 +116,7 @@ const AmountSelect = ({
     _setUserEnteredAmount(newAmount);
 
     const bigAmount = utils.parseUnits(
-      toFixedNoRound(Number(newAmount), tokenData?.decimals || DEFAULT_DECIMALS),
+      toFixedNoRound(newAmount, tokenData?.decimals || DEFAULT_DECIMALS),
       tokenData?.decimals
     );
     try {
@@ -276,8 +277,8 @@ const AmountSelect = ({
             height="72px"
             flexShrink={0}
           >
-            <Box height="35px" width="35px">
-              <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
+            <Box height="36px" width="36px">
+              <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
             <Heading fontSize="27px" ml={3}>
               {!isMobile && asset.underlyingName.length < 25

@@ -1,7 +1,5 @@
 import { FundOperationMode, Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
-import { BigNumber, utils } from 'ethers';
-
-import { toFixedNoRound } from './formatNumber';
+import { BigNumber } from 'ethers';
 
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
