@@ -6,6 +6,7 @@ on:
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
+      - 'packages/functions/**'
       - 'yarn.lock'
 
 jobs:
