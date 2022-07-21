@@ -60,6 +60,7 @@ plan:
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	export TF_VAR_discord_webhook_url=${DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	terraform init && \
 	terraform plan
 
@@ -74,6 +75,7 @@ deploy:
 	export TF_VAR_twap_bot_image=${TWAP_BOT_IMAGE} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	export TF_VAR_discord_webhook_url=${DISCORD_WEBHOOK_URL} && \
+	export TF_VAR_supabase_key=${SUPABASE_KEY} && \
 	terraform init && \
 	terraform apply -auto-approve
 
