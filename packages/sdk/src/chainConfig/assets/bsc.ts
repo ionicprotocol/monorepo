@@ -141,12 +141,14 @@ export const assets: SupportedAsset[] = [
     underlying: "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b",
     name: "xBOMB",
     decimals: 18,
+    disabled: true,
   },
   {
     symbol: assetSymbols.aBNBc,
     underlying: "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A",
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
+    disabled: true,
   },
   {
     symbol: assetSymbols["BTCB-BOMB"],
