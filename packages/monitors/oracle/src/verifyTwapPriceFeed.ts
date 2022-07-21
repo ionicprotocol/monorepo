@@ -1,10 +1,15 @@
 import { ERC20Abi, Fuse, OracleTypes } from "@midas-capital/sdk";
-import axios from "axios";
 import { BigNumber, Contract, utils, Wallet } from "ethers";
 
-import { logger } from "./index";
+import { config } from "./config";
 
-export default async function verifyTwapPriceFeed(fuse: Fuse, oracleAddress: string, underlying: string) {
+import { getCgPrice, InvalidReason, logger, SupportedAssetPriceValidity } from "./index";
+
+export default async function verifyTwapPriceFeed(
+  fuse: Fuse,
+  oracleAddress: string,
+  underlying: string
+): Promise<SupportedAssetPriceValidity> {
   logger.debug(`Verifying Uniswap Twap oracle for ${underlying}`);
   const twapOracle = new Contract(oracleAddress, fuse.oracles[OracleTypes.UniswapTwapPriceOracleV2].abi, fuse.provider);
   const baseToken = await twapOracle.callStatic.baseToken();
@@ -36,12 +41,44 @@ export default async function verifyTwapPriceFeed(fuse: Fuse, oracleAddress: str
     fuse.artifacts.UniswapTwapPriceOracleV2Root.abi,
     fuse.provider
   );
-  const minPeriod = BigNumber.from(process.env.DEFAULT_MIN_PERIOD! || "1800");
-  const deviationThreshold = utils.parseEther(process.env.DEFAULT_DEVIATION_THRESHOLD! || "0.05");
-  const workable = await rootTwapOracle.callStatic.workable([pair], [baseToken], [minPeriod], [deviationThreshold]);
-  logger.info(`Pair is in workable: ${workable[0]} state`);
-  const depthCheck = await verifyTwapDepth(fuse, reserves);
-  return depthCheck && !workable[0];
+  const workable = await rootTwapOracle.callStatic.workable(
+    [pair],
+    [baseToken],
+    [config.defaultMinPeriod],
+    [config.defaultDeviationThreshold]
+  );
+  if (workable[0]) {
+    logger.warn(`Pair is in workable = ${workable[0]} state, this is likely not a good sign`);
+    return {
+      valid: false,
+      invalidReason: InvalidReason.LAST_OBSERVATION_TOO_OLD,
+      extraInfo: {
+        message: `TWAP oracle is in workable = true state, meaning bot is not updating the values`,
+        extraData: {
+          workablePair: workable[0],
+        },
+      },
+    };
+  }
+
+  const twapDepthUSD = await verifyTwapDepth(fuse, reserves);
+  if (twapDepthUSD < config.minTwapDepth) {
+    return {
+      valid: false,
+      invalidReason: InvalidReason.TWAP_LIQUIDITY_LOW,
+      extraInfo: {
+        message: `TWAP oracle has too low liquidity`,
+        extraData: {
+          twapDepthUSD,
+        },
+      },
+    };
+  }
+  return {
+    valid: true,
+    invalidReason: null,
+    extraInfo: null,
+  };
 }
 
 type Reserves = {
@@ -56,11 +93,11 @@ type Reserves = {
 };
 
 async function verifyTwapDepth(fuse: Fuse, reserves: Reserves) {
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
+  const signer = new Wallet(config.adminPrivateKey, fuse.provider);
   const mpo = await fuse.createMasterPriceOracle(signer);
   const r0Price = await mpo.callStatic.price(reserves.r0.underlying.address);
   const r1Price = await mpo.callStatic.price(reserves.r1.underlying.address);
-  const nativeTokenPrice = await getCgPrice(fuse.chainSpecificParams.cgId);
+  const nativeTokenPriceUSD = await getCgPrice(fuse.chainSpecificParams.cgId);
 
   const r0decimals = await reserves.r0.underlying.callStatic.decimals();
   const r1decimals = await reserves.r1.underlying.callStatic.decimals();
@@ -68,18 +105,7 @@ async function verifyTwapDepth(fuse: Fuse, reserves: Reserves) {
   const r0reserves = r0Price.mul(reserves.r0.reserves).div(BigNumber.from(10).pow(r0decimals));
   const r1reserves = r1Price.mul(reserves.r1.reserves).div(BigNumber.from(10).pow(r1decimals));
 
-  const totalReservesUsd = parseFloat(utils.formatEther(r0reserves.add(r1reserves))) * nativeTokenPrice;
+  const totalReservesUsd = parseFloat(utils.formatEther(r0reserves.add(r1reserves))) * nativeTokenPriceUSD;
   logger.info(`Pair is operating with $${totalReservesUsd} of liquidity`);
-  return totalReservesUsd > parseFloat(process.env.MINIMAL_TWAP_DEPTH! || "1000000");
+  return totalReservesUsd;
 }
-
-const getCgPrice = async (coingeckoId: string) => {
-  let usdPrice: number;
-
-  usdPrice = (await axios.get(`https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${coingeckoId}`))
-    .data[coingeckoId].usd as number;
-
-  usdPrice = usdPrice ? usdPrice : 1.0;
-
-  return usdPrice;
-};
