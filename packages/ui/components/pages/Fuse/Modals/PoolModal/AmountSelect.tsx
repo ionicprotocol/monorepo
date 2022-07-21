@@ -696,16 +696,16 @@ const TokenNameAndMaxButton = ({
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-        <Box height="25px" width="25px" mb="2px" mr={2}>
+        <Box height="32px" width="32px" mr={1}>
           <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
-        <Heading fontSize="24px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
+        <Heading fontSize="18px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
           {asset.underlyingSymbol}
         </Heading>
       </Row>
 
       {mode !== FundOperationMode.BORROW && (
-        <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
+        <Button height={8} onClick={setToMax} isLoading={isMaxLoading} fontSize={14} p={2}>
           MAX
         </Button>
       )}
@@ -727,7 +727,7 @@ const AmountInput = ({
     <Input
       type="number"
       inputMode="decimal"
-      fontSize="2xl"
+      fontSize={22}
       fontWeight="bold"
       variant="unstyled"
       placeholder="0.0"
