@@ -206,6 +206,7 @@ jobs:
       TWAP_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-twap-image.outputs.json).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-liquidator-image.outputs.json).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.build-and-push-oracles-monitor-image.outputs.json).tags[0] }}
+      SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2

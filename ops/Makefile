@@ -115,6 +115,7 @@ oracles-monitor-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
+				-e SUPABASE_KEY=${SUPABASE_KEY} \
 				-e WEB3_HTTP_PROVIDER_URL="https://bsc-mainnet.gateway.pokt.network/v1/lb/${POKT_API_KEY}" \
 				-e TARGET_CHAIN_ID=56 \
 				${ORACLES_MONITOR_IMAGE} build/test/run.js

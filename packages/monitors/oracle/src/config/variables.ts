@@ -5,7 +5,7 @@ doetenv.config();
 const config = {
   chainId: parseInt(process.env.TARGET_CHAIN_ID ?? "56", 10),
   rpcUrl: process.env.WEB3_HTTP_PROVIDER_URL ?? "https://bsc-dataseed1.binance.org/",
-  supabaseUrl: process.env.SUPABASE_URL ?? "",
+  supabaseUrl: process.env.SUPABASE_URL ?? "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
   supabasePublicKey: process.env.SUPABASE_KEY ?? "",
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? "",
   supabaseOracleMonitorTableName: process.env.SUPABASE_ORACLE_MONITOR_TABLE_NAME ?? "oracle-monitor",
