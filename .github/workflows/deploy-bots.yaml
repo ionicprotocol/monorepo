@@ -202,7 +202,7 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      POKT_API_KEY: '${{ secrets.POKT_API_KEY }}'
+      NODEREAL_API_KEY: '${{ secrets.NODEREAL_API_KEY }}'
       TWAP_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-twap-image.outputs.json).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-liquidator-image.outputs.json).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.build-and-push-oracles-monitor-image.outputs.json).tags[0] }}
