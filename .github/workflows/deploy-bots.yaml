@@ -226,6 +226,7 @@ jobs:
     outputs:
       twap-tags: ${{ needs.build-and-push-twap-image.outputs.json }}
       liquidator-tags: ${{ needs.build-and-push-liquidator-image.outputs.json }}
+      oracles-monitor-tags: ${{ needs.build-and-push-oracles-monitor-image.outputs.json }}
 
   terraform-deploy-bots:
     if: github.ref == 'refs/heads/development' || startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'
@@ -241,6 +242,7 @@ jobs:
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       TWAP_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.twap-tags).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.liquidator-tags).tags[0] }}
+      ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.oracles-monitor-tags).tags[0] }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
     steps:
       - name: Checkout
