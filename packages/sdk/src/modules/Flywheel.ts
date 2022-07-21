@@ -147,6 +147,36 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       return flywheelWithRewards;
     }
 
+    async getFlywheelClaimableRewardsForAsset(
+      poolAddress: string,
+      market: string,
+      account: string,
+      options: { from: string }
+    ) {
+      const pool = this.getComptrollerInstance(poolAddress, options);
+      const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
+      const flywheels = rewardDistributorsOfPool.map((address) => this.createFuseFlywheelCore(address));
+      const flywheelWithRewards: FlywheelClaimableRewards[] = [];
+      for (const flywheel of flywheels) {
+        const rewards: FlywheelClaimableRewards["rewards"] = [];
+        const rewardOfMarket = await flywheel.callStatic["accrue(address,address)"](market, account);
+        if (rewardOfMarket.gt(0)) {
+          rewards.push({
+            market,
+            amount: rewardOfMarket,
+          });
+        }
+        if (rewards.length > 0) {
+          flywheelWithRewards.push({
+            flywheel: flywheel.address,
+            rewardToken: await flywheel.rewardToken(),
+            rewards,
+          });
+        }
+      }
+      return flywheelWithRewards;
+    }
+
     async getFlywheelClaimableRewards(account: string, options: { from: string }) {
       const [comptrollerIndexes, comptrollers, flywheels] =
         await this.contracts.FusePoolLensSecondary.callStatic.getRewardsDistributorsBySupplier(account, options);

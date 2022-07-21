@@ -50,7 +50,9 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying, // BTCB-ETH PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-ETH"])!.underlying, // WBNB-ETH PCS LP
       assets.find((a) => a.symbol === assetSymbols["USDC-BUSD"])!.underlying, // USDC-BUSD PCS LP
+      assets.find((a) => a.symbol === assetSymbols["BUSD-USDT"])!.underlying, // BUSD-USDT PCS LP
       assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying, // BOMB-BTC PCS LP
+      assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying, // BTCB-ETH PCS LP
     ],
   },
   plugins: [
@@ -294,7 +296,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.ETH,
-    aggregator: "0x63D407F32Aa72E63C7209ce1c2F5dA40b3AaE726",
+    aggregator: "0x9ef1B8c0E4F7dc8bF5719Ea496883DC6401d5b2e",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // CZ
@@ -328,6 +330,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.USDT,
     aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.TUSD,
+    aggregator: "0xa3334A9762090E827413A7495AfeCE76F41dFc06",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   // Jarvis

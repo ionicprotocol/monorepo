@@ -24,6 +24,7 @@ import "./tasks/sendTestTokens";
 import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/jarvisFix";
+import "./tasks/updateFuseFee";
 
 dotEnvConfig();
 
@@ -104,7 +105,7 @@ const config: HardhatUserConfig = {
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
-      url: urlOverride || process.env.BSC_PROVIDER_URL || "",
+      url: urlOverride || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
     },
     bscfork: {
       accounts: { mnemonic },
@@ -117,14 +118,12 @@ const config: HardhatUserConfig = {
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
-      // url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-      url: "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/testnet",
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
     },
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      // url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
-      url: "https://speedy-nodes-nyc.moralis.io/2d2926c3e761369208fba31f/bsc/mainnet",
+      url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
     },
     evmostestnet: {
       accounts: { mnemonic },
@@ -149,6 +148,11 @@ const config: HardhatUserConfig = {
       url: `https://proxy.devnet.neonlabs.org/solana`,
       accounts: { mnemonic },
       chainId: 245022926,
+    },
+    polygon: {
+      url: `https://matic-mainnet.chainstacklabs.com`,
+      accounts: { mnemonic },
+      chainId: 137,
     },
   },
 };

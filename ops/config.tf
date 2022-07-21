@@ -11,6 +11,12 @@ locals {
     { name = "SPEED_UP_TRANSACTION_AFTER_SECONDS", value = "120" },
     { name = "REDUNDANCY_DELAY_SECONDS", value = "0" },
   ]
+  oracle_monitor_env_vars = [
+    { name = "SUPABASE_URL", value = "https://xdjnvsfkwtkwfuayzmtm.supabase.co" },
+    { name = "SUPABASE_KEY", value = var.supabase_key },
+    { name = "CHECK_PRICE_INTERVAL", value = "21600" },
+    { name = "MINIMAL_TWAP_DEPTH", value = "1000000" },
+  ]
 
   bsc_mainnet_rpc_0          = "https://speedy-nodes-nyc.moralis.io/${var.moralis_api_key}/bsc/mainnet"
   bsc_mainnet_rpc_1          = "https://bsc.getblock.io/mainnet/?api_key=${var.getblock_api_key}"

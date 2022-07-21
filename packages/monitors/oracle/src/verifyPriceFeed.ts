@@ -1,7 +1,16 @@
 import { Fuse, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
-import { BigNumber, ethers, Wallet } from "ethers";
+import { BigNumber, ethers, utils, Wallet } from "ethers";
 
-import { logger, SupportedAssetPriceFeed, verifyOracleProviderPriceFeed, verifyTwapPriceFeed } from "./index";
+import { config } from "./config";
+
+import {
+  InvalidFeedExtraData,
+  InvalidReason,
+  logger,
+  SupportedAssetPriceFeed,
+  verifyOracleProviderPriceFeed,
+  verifyTwapPriceFeed,
+} from "./index";
 
 export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset): Promise<SupportedAssetPriceFeed> {
   const oracle = asset.oracle;
@@ -9,42 +18,60 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
     return {
       asset,
       valid: true,
-      price: BigNumber.from(1),
+      invalidReason: null,
+      extraInfo: null,
+      priceBN: BigNumber.from(1),
+      priceEther: 1,
     };
   }
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
+  const signer = new Wallet(config.adminPrivateKey, fuse.provider);
 
   logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
   const mpo = fuse.createMasterPriceOracle(signer);
   const mpoPrice = await mpo.callStatic.price(asset.underlying);
   const underlyingOracleAddress = await mpo.callStatic.oracles(asset.underlying);
 
-  let valid = true;
-  let price: BigNumber = BigNumber.from(0);
+  let valid: boolean;
+  let invalidReason: InvalidReason | null;
+  let extraInfo: InvalidFeedExtraData | null;
 
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
+      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying));
+      break;
     case OracleTypes.DiaPriceOracle:
+      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying));
+      break;
     case OracleTypes.FluxPriceOracle:
-      await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying);
+      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying));
       break;
     case OracleTypes.UniswapTwapPriceOracleV2:
-      await verifyTwapPriceFeed(fuse, underlyingOracleAddress, asset.underlying);
+      ({ valid, invalidReason, extraInfo } = await verifyTwapPriceFeed(
+        fuse,
+        underlyingOracleAddress,
+        asset.underlying
+      ));
       break;
     case OracleTypes.FixedNativePriceOracle:
       if (!mpoPrice.eq(ethers.utils.parseEther("1"))) {
-        price = mpoPrice;
         valid = false;
+        invalidReason = extraInfo = null;
+      } else {
+        valid = true;
+        invalidReason = extraInfo = null;
       }
       break;
     default:
-      price = mpoPrice;
       valid = true;
+      invalidReason = extraInfo = null;
       break;
   }
   return {
     asset,
     valid,
-    price,
+    priceBN: mpoPrice,
+    priceEther: parseFloat(utils.formatEther(mpoPrice)),
+    invalidReason,
+    extraInfo,
   };
 }

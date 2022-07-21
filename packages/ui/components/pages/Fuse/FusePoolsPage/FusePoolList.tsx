@@ -147,23 +147,70 @@ const FusePoolList = () => {
             )}
 
             {currentPools && currentPools.length !== 0 && (
-              <Grid
-                templateRows={{
-                  base: 'repeat(1, minmax(0, 1fr))',
-                  lg: 'repeat(2, minmax(0, 1fr))',
-                }}
-                autoFlow="row"
-                columns={{ base: 1, md: 2, lg: 2, xl: 3 }}
-                my={8}
-                w={'100%'}
-                mx="auto"
-                gridGap="8"
-                gridRowGap="8"
-              >
-                {currentPools.map((pool, index: number) => {
-                  return <PoolCard data={pool} key={index} />;
-                })}
-              </Grid>
+              <>
+                <Grid
+                  autoFlow="row"
+                  columns={{ base: 1, md: 2, lg: 2, xl: 3 }}
+                  my={8}
+                  w={'100%'}
+                  mx="auto"
+                  gridGap="8"
+                  gridRowGap="8"
+                >
+                  {currentPools.map((pool, index: number) => {
+                    return <PoolCard data={pool} key={index} />;
+                  })}
+                </Grid>
+                <Stack my={12} width="100%">
+                  <Pagination
+                    pagesCount={pagesCount}
+                    currentPage={currentPage}
+                    onPageChange={handlePageChange}
+                  >
+                    <PaginationContainer align="center" justify="center" w="full">
+                      <PaginationPrevious mr={4} fontSize="lg" height={10}>
+                        <Text>Previous</Text>
+                      </PaginationPrevious>
+                      <PaginationPageGroup
+                        isInline
+                        align="center"
+                        separator={
+                          <PaginationSeparator
+                            variant="outline"
+                            bg={cOutlineBtn.primary.bgColor}
+                            jumpSize={3}
+                            fontSize="lg"
+                            width={10}
+                            height={10}
+                          />
+                        }
+                      >
+                        {pages.map((page: number) => (
+                          <PaginationPage
+                            variant="outline"
+                            bg={
+                              page === currentPage ? cOutlineBtn.primary.selectedBgColor : undefined
+                            }
+                            color={
+                              page === currentPage
+                                ? cOutlineBtn.primary.selectedTxtColor
+                                : undefined
+                            }
+                            key={`pagination_page_${page}`}
+                            page={page}
+                            fontSize="lg"
+                            width={10}
+                            pt={4}
+                          />
+                        ))}
+                      </PaginationPageGroup>
+                      <PaginationNext ml={4} fontSize="lg" height={10}>
+                        <Text>Next</Text>
+                      </PaginationNext>
+                    </PaginationContainer>
+                  </Pagination>
+                </Stack>
+              </>
             )}
             {filteredPools.length === 0 && (
               <Text width="100%" textAlign="center" fontWeight="bold" fontSize={24} mt={12}>
@@ -181,11 +228,12 @@ const FusePoolList = () => {
       {viewMode === 'list' && !isMobile && (
         <Grid mt={8} w={'100%'} mx="auto" gap={4}>
           <HStack px={6} alignItems={'flex-end'}>
-            <VStack flex={6}>
+            <VStack flex={5}>
               <Text fontWeight="bold" textAlign="center">
                 Pool Name
               </Text>
             </VStack>
+            <VStack flex={3}></VStack>
             {config.isRssScoreEnabled && (
               <VStack flex={2}>
                 <Text fontWeight="bold" textAlign="center">

@@ -23,6 +23,7 @@ import { useMemo } from 'react';
 import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -81,6 +82,8 @@ export const SupplyList = ({
               <Td fontWeight={'bold'} fontSize={{ base: '2.9vw', sm: '0.9rem' }}>
                 Asset/LTV
               </Td>
+
+              <Td></Td>
 
               {isMobile ? null : (
                 <Td
@@ -331,6 +334,10 @@ const AssetSupplyRow = ({
           </Row>
         </Td>
 
+        <Td px={1}>
+          <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
+        </Td>
+
         {!isMobile && (
           <Td
             cursor={'pointer'}
@@ -384,7 +391,7 @@ const AssetSupplyRow = ({
             <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
             <Switch
               isChecked={asset.membership}
-              className={asset.underlyingSymbol + '-switch'}
+              className={'switch-' + asset.underlyingSymbol}
               onChange={onToggleCollateral}
               size={isMobile ? 'sm' : 'md'}
               cursor={'pointer'}
