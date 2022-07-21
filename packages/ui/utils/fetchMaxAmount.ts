@@ -40,12 +40,10 @@ export const fetchMaxAmount = async (
   }
 
   if (mode === FundOperationMode.WITHDRAW) {
-    let maxRedeem = await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
+    const maxRedeem = await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
       address,
       asset.cToken
     );
-    // round down under 5 digits below decimal point
-    maxRedeem = utils.parseUnits(toFixedNoRound(Number(utils.formatUnits(maxRedeem)), 5));
 
     if (maxRedeem) {
       return BigNumber.from(maxRedeem);
