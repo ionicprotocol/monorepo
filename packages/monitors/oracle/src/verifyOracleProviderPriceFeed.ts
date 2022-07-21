@@ -44,10 +44,8 @@ async function verifyChainLinkOraclePriceFeed(
     ],
     provider
   );
-  const [roundId, answer, startedAt, updatedAt, answeredInRound] = await chainLinkFeed.callStatic.latestRoundData();
+  const [, , , updatedAt] = await chainLinkFeed.callStatic.latestRoundData();
   const updatedAtts = updatedAt.toNumber();
-  console.log(Math.floor(Date.now() / 1000) - updatedAtts);
-  logger.info({ roundId, answer, startedAt, updatedAt, answeredInRound });
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
   const isValid = timeSinceLastUpdate < config.maxObservationDelay;
   return {

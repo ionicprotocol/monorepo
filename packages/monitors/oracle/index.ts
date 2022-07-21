@@ -1,6 +1,6 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import { fetchPricesAndRepeat, logger } from "./src";
+import { logger, verifyAndRepeat } from "./src";
 import { config } from "./src/config";
 
 (async function runBot() {
@@ -13,5 +13,5 @@ import { config } from "./src/config";
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await runBot();
   }
-  fetchPricesAndRepeat(config.chainId, provider);
+  verifyAndRepeat(config.chainId, provider);
 })();

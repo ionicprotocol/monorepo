@@ -1,9 +1,11 @@
 export { default as verifyPriceFeed } from "./verifyPriceFeed";
-export { default as fetchAssetPrices } from "./fetchAssetPrices";
+export { default as verify } from "./verify";
 export { default as setUpSdk } from "./setUpSdk";
-export { default as fetchPricesAndRepeat } from "./fetchPricesAndRepeat";
+export { default as verifyAndRepeat } from "./verifyAndRepeat";
 export { default as verifyOracleProviderPriceFeed } from "./verifyOracleProviderPriceFeed";
 export { default as verifyTwapPriceFeed } from "./verifyTwapPriceFeed";
+export { updateOracleMonitorData } from "./controllers/index";
+
 export { getCgPrice } from "./utils";
 import { SupportedAsset } from "@midas-capital/sdk";
 import { BigNumber } from "ethers";
