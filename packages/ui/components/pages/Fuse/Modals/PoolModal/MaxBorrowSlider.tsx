@@ -12,9 +12,11 @@ import { BigNumber, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 function MaxBorrowSlider({
   userEnteredAmount,
@@ -60,10 +62,10 @@ function MaxBorrowSlider({
   const handleSliderValueChange = (v: number) => {
     setSliderValue(v);
 
-    const borrowAmount = (
-      (borrowableAmount * (v - borrowedPercent)) /
-      (100 - borrowedPercent)
-    ).toString();
+    const borrowAmount = toFixedNoRound(
+      ((borrowableAmount * (v - borrowedPercent)) / (100 - borrowedPercent)).toString(),
+      DEFAULT_DECIMALS
+    );
 
     updateAmount(borrowAmount);
   };

@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Link as ChakraLink,
+  Flex,
   Heading,
   HStack,
   IconButton,
@@ -15,6 +16,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 
+import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Column, Row } from '@ui/components/shared/Flex';
@@ -95,10 +97,13 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
         px={6}
         width="100%"
       >
-        <VStack flex={6} alignItems={'flex-start'} spacing={1}>
-          <Heading mt={rewardTokens.length ? 2 : 0} fontWeight="bold" fontSize={'xl'}>
-            {data.name}
-          </Heading>
+        <VStack flex={5} alignItems={'flex-start'} spacing={1}>
+          <Flex>
+            <Heading mt={rewardTokens.length ? 2 : 0} fontWeight="bold" fontSize={'xl'} mr={2}>
+              {data.name}
+            </Heading>
+          </Flex>
+
           {rewardTokens.length && (
             <HStack m={0}>
               <Text fontWeight="bold">This pool is offering rewards</Text>
@@ -109,6 +114,9 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               </AvatarGroup>
             </HStack>
           )}
+        </VStack>
+        <VStack flex={3} alignItems={'center'}>
+          <ClaimPoolRewardsButton poolAddress={data.comptroller} />
         </VStack>
 
         {config.isRssScoreEnabled && (

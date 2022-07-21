@@ -32,7 +32,7 @@ export const ADMIN_FEE = {
   MAX: 30,
 };
 
-export const POOLS_PER_PAGE = 5;
+export const POOLS_PER_PAGE = 6;
 
 export const DEFAULT_DECIMALS = 18;
 

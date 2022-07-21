@@ -87,6 +87,7 @@ const AmountSelect = ({
   const { cCard, cSwitch } = useColors();
   const [borrowableAmount, setBorrowableAmount] = useState<number>(0);
   const [borrowedAmount, setBorrowedAmount] = useState<number>(0);
+
   useEffect(() => {
     const func = async () => {
       const borrowableAmountBN = (await fetchMaxAmount(
@@ -115,7 +116,7 @@ const AmountSelect = ({
     _setUserEnteredAmount(newAmount);
 
     const bigAmount = utils.parseUnits(
-      toFixedNoRound(Number(newAmount), tokenData?.decimals || DEFAULT_DECIMALS),
+      toFixedNoRound(newAmount, tokenData?.decimals || DEFAULT_DECIMALS),
       tokenData?.decimals
     );
     try {
@@ -276,8 +277,8 @@ const AmountSelect = ({
             height="72px"
             flexShrink={0}
           >
-            <Box height="35px" width="35px">
-              <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
+            <Box height="36px" width="36px">
+              <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
             <Heading fontSize="27px" ml={3}>
               {!isMobile && asset.underlyingName.length < 25
@@ -348,7 +349,7 @@ const AmountSelect = ({
                   <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
                   <Switch
                     h="20px"
-                    className={asset.underlyingSymbol + '-switch'}
+                    className={'switch-' + asset.underlyingSymbol}
                     isChecked={enableAsCollateral}
                     onChange={() => {
                       setEnableAsCollateral((past) => !past);
@@ -696,16 +697,16 @@ const TokenNameAndMaxButton = ({
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-        <Box height="25px" width="25px" mb="2px" mr={2}>
+        <Box height="32px" width="32px" mr={1}>
           <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
-        <Heading fontSize="24px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
+        <Heading fontSize="18px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
           {asset.underlyingSymbol}
         </Heading>
       </Row>
 
       {mode !== FundOperationMode.BORROW && (
-        <Button height={8} onClick={setToMax} isLoading={isMaxLoading}>
+        <Button height={8} onClick={setToMax} isLoading={isMaxLoading} fontSize={14} p={2}>
           MAX
         </Button>
       )}
@@ -727,7 +728,7 @@ const AmountInput = ({
     <Input
       type="number"
       inputMode="decimal"
-      fontSize="2xl"
+      fontSize={22}
       fontWeight="bold"
       variant="unstyled"
       placeholder="0.0"

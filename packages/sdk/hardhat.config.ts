@@ -24,6 +24,7 @@ import "./tasks/sendTestTokens";
 import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/jarvisFix";
+import "./tasks/updateFuseFee";
 
 dotEnvConfig();
 
@@ -147,6 +148,11 @@ const config: HardhatUserConfig = {
       url: `https://proxy.devnet.neonlabs.org/solana`,
       accounts: { mnemonic },
       chainId: 245022926,
+    },
+    polygon: {
+      url: `https://matic-mainnet.chainstacklabs.com`,
+      accounts: { mnemonic },
+      chainId: 137,
     },
   },
 };

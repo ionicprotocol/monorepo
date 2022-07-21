@@ -229,6 +229,7 @@ export type SupportedAsset = {
   underlying: string;
   name: string;
   decimals: number;
+  disabled?: boolean;
   oracle?: OracleTypes;
   simplePriceOracleAssetPrice?: BigNumber;
 };
