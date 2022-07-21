@@ -63,7 +63,7 @@ function MaxBorrowSlider({
     setSliderValue(v);
 
     const borrowAmount = toFixedNoRound(
-      (borrowableAmount * (v - borrowedPercent)) / (100 - borrowedPercent),
+      ((borrowableAmount * (v - borrowedPercent)) / (100 - borrowedPercent)).toString(),
       DEFAULT_DECIMALS
     );
 
