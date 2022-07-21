@@ -44,6 +44,14 @@ variable "liquidator_bot_image" {
   default = "ghcr.io/midas-protocol/fuse-liquidator-bot:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
 }
 
+variable "oracles_monitor_image" {
+  type    = string
+  default = "ghcr.io/midas-protocol/oracles-monitor:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
+}
 variable "discord_webhook_url" {
+  type = string
+}
+
+variable "supabase_key" {
   type = string
 }
