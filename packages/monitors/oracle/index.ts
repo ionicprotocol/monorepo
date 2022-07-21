@@ -1,14 +1,10 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { SupportedChains } from "@midas-capital/sdk";
-import dotenv from "dotenv";
 
 import { fetchPricesAndRepeat, logger } from "./src";
-
-dotenv.config();
+import { config } from "./src/config";
 
 (async function runBot() {
-  const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
-  const provider = new JsonRpcProvider(process.env.WEB3_HTTP_PROVIDER_URL);
+  const provider = new JsonRpcProvider(config.rpcUrl);
 
   try {
     await provider.getNetwork();
@@ -17,5 +13,5 @@ dotenv.config();
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await runBot();
   }
-  fetchPricesAndRepeat(chainId, provider);
+  fetchPricesAndRepeat(config.chainId, provider);
 })();

@@ -2,28 +2,34 @@ import { Provider } from "@ethersproject/providers";
 import { Fuse, OracleConfig, OracleTypes } from "@midas-capital/sdk";
 import { Contract } from "ethers";
 
-import { logger } from "./index";
+import { config } from "./config";
 
-export default async function verifyOracleProviderPriceFeed(fuse: Fuse, oracle: OracleTypes, underlying: string) {
+import { InvalidReason, logger, SupportedAssetPriceValidity } from "./index";
+
+export default async function verifyOracleProviderPriceFeed(
+  fuse: Fuse,
+  oracle: OracleTypes,
+  underlying: string
+): Promise<SupportedAssetPriceValidity> {
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
-      await verifyChainLinkOraclePriceFeed(fuse.provider, fuse.oracles, underlying);
-      break;
+      return await verifyChainLinkOraclePriceFeed(fuse.provider, fuse.oracles, underlying);
     case OracleTypes.DiaPriceOracle:
-      await verifyDiaOraclePriceFeed(fuse.oracles, underlying);
-      break;
+      return await verifyDiaOraclePriceFeed(fuse.oracles, underlying);
     case OracleTypes.FluxPriceOracle:
-      await verifyFluxOraclePriceFeed(fuse.oracles, underlying);
-      break;
+      return await verifyFluxOraclePriceFeed(fuse.oracles, underlying);
     case OracleTypes.AnkrBNBcPriceOracle:
-      await verifyAnkrOraclePriceFeed(fuse.oracles, underlying);
-      break;
+      return await verifyAnkrOraclePriceFeed(fuse.oracles, underlying);
     default:
-      logger.info("pass");
+      throw `No verification available oracle provider ${oracle}, underlying: ${underlying}`;
   }
 }
 
-async function verifyChainLinkOraclePriceFeed(provider: Provider, oracleConfig: OracleConfig, underlying: string) {
+async function verifyChainLinkOraclePriceFeed(
+  provider: Provider,
+  oracleConfig: OracleConfig,
+  underlying: string
+): Promise<SupportedAssetPriceValidity> {
   logger.debug(`Verifying ChainLink oracle for ${underlying}`);
   const chainLinkOracle = new Contract(
     oracleConfig[OracleTypes.ChainlinkPriceOracleV2].address,
@@ -42,17 +48,42 @@ async function verifyChainLinkOraclePriceFeed(provider: Provider, oracleConfig: 
   const updatedAtts = updatedAt.toNumber();
   console.log(Math.floor(Date.now() / 1000) - updatedAtts);
   logger.info({ roundId, answer, startedAt, updatedAt, answeredInRound });
-  return Math.floor(Date.now() / 1000) - updatedAtts < (parseInt(process.env.MAX_OBSERVATION_DELAY!) || 1800);
+  const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
+  const isValid = timeSinceLastUpdate < config.maxObservationDelay;
+  return {
+    valid: isValid,
+    invalidReason: isValid ? null : InvalidReason.LAST_OBSERVATION_TOO_OLD,
+    extraInfo: isValid
+      ? null
+      : {
+          message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay}`,
+          extraData: {
+            timeSinceLastUpdate,
+          },
+        },
+  };
 }
 
-async function verifyDiaOraclePriceFeed(oracleConfig: OracleConfig, underlying: string) {
+async function verifyDiaOraclePriceFeed(
+  oracleConfig: OracleConfig,
+  underlying: string
+): Promise<SupportedAssetPriceValidity> {
   console.log(oracleConfig, underlying);
+  return { valid: true, extraInfo: null, invalidReason: null };
 }
 
-async function verifyFluxOraclePriceFeed(oracleConfig: OracleConfig, underlying: string) {
+async function verifyFluxOraclePriceFeed(
+  oracleConfig: OracleConfig,
+  underlying: string
+): Promise<SupportedAssetPriceValidity> {
   console.log(oracleConfig, underlying);
+  return { valid: true, extraInfo: null, invalidReason: null };
 }
 
-async function verifyAnkrOraclePriceFeed(oracleConfig: OracleConfig, underlying: string) {
+async function verifyAnkrOraclePriceFeed(
+  oracleConfig: OracleConfig,
+  underlying: string
+): Promise<SupportedAssetPriceValidity> {
   console.log(oracleConfig, underlying);
+  return { valid: true, extraInfo: null, invalidReason: null };
 }
