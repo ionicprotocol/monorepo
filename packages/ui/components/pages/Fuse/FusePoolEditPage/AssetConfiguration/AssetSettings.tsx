@@ -121,7 +121,7 @@ export const AssetSettings = ({
     fuse.chainDeployment.JumpRateModel.address
   );
 
-  const { data: pluginName } = usePluginName(tokenData.address, selectedAsset.plugin);
+  const pluginName = usePluginName(tokenData.address, selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {

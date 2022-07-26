@@ -1,23 +1,19 @@
-import { useQuery } from 'react-query';
+import { useMemo } from 'react';
 
 import { useRari } from '@ui/context/RariContext';
 
-export function usePluginName(underlyingAddress: string, pluginAddress?: string) {
+export const usePluginName = (underlyingAddress: string, pluginAddress?: string) => {
   const { fuse } = useRari();
 
-  return useQuery(
-    ['usePluginName', underlyingAddress, pluginAddress, fuse],
-    async () => {
-      const availablePlugins = fuse.chainPlugins[underlyingAddress] || [];
-
-      if (!pluginAddress) {
-        return 'No Plugin';
-      } else {
-        return availablePlugins.map((plugin) => {
-          if (plugin.strategyAddress === pluginAddress) return plugin.strategyName;
-        });
-      }
-    },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!underlyingAddress }
+  const availablePlugins = useMemo(
+    () => fuse.chainPlugins[underlyingAddress] || [],
+    [fuse.chainPlugins, underlyingAddress]
   );
-}
+
+  const pluginName = useMemo(() => {
+    const pluginInfo = availablePlugins.find((plugin) => plugin.strategyAddress === pluginAddress);
+    return pluginInfo?.strategyName ? pluginInfo.strategyName : 'No Plugin';
+  }, [pluginAddress, availablePlugins]);
+
+  return pluginName;
+};
