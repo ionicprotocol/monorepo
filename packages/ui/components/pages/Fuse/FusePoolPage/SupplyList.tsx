@@ -325,6 +325,7 @@ const AssetSupplyRow = ({
                   label={`${scanUrl}/address/${asset.underlyingToken}`}
                 >
                   <Button
+                    minWidth={6}
                     m={0}
                     variant={'link'}
                     as={ChakraLink}
