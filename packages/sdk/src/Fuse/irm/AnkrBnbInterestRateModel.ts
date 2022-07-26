@@ -1,10 +1,10 @@
+import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import AnkrBNBINterestRateModelartifact from "../../../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
-import { InterestRateModel } from "../..";
+import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
+import { InterestRateModel } from "../../types";
 import { getContract } from "../utils";
-import { Web3Provider } from "@ethersproject/providers";
 
 export default class AnkrBNBInterestRateModel implements InterestRateModel {
   static RUNTIME_BYTECODE_HASH = utils.keccak256(AnkrBNBINterestRateModelartifact.deployedBytecode.object);

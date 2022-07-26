@@ -2,10 +2,10 @@ import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
 import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
 import { FuseBase } from "./Fuse";
+import AnkrBNBInterestRateModel from "./Fuse/irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
-import AnkrBNBInterestRateModel from "./Fuse/irm/AnkrBnbInterestRateModel";
 export { Artifacts, Artifact } from "./Artifacts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
