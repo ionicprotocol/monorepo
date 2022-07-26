@@ -319,24 +319,25 @@ const AssetSupplyRow = ({
                     <QuestionIcon />
                   </SimpleTooltip>
                 )}
-
-              <SimpleTooltip
-                placement="top-start"
-                label={`${scanUrl}/address/${asset.underlyingToken}`}
-              >
-                <Button
-                  m={0}
-                  variant={'link'}
-                  as={ChakraLink}
-                  href={`${scanUrl}/address/${asset.underlyingToken}`}
-                  isExternal
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+              <Box>
+                <SimpleTooltip
+                  placement="top-start"
+                  label={`${scanUrl}/address/${asset.underlyingToken}`}
                 >
-                  <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
-                </Button>
-              </SimpleTooltip>
+                  <Button
+                    m={0}
+                    variant={'link'}
+                    as={ChakraLink}
+                    href={`${scanUrl}/address/${asset.underlyingToken}`}
+                    isExternal
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
+                  </Button>
+                </SimpleTooltip>
+              </Box>
 
               {asset.plugin && (
                 <Box>
@@ -361,7 +362,7 @@ const AssetSupplyRow = ({
                       </>
                     }
                   >
-                    <span role="img" aria-label="plugin">
+                    <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
                       🔌
                     </span>
                   </PopoverTooltip>
@@ -389,16 +390,31 @@ const AssetSupplyRow = ({
               </Text>
 
               {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
-                rewardsOfThisMarket?.rewardsInfo.map(
-                  (info) =>
-                    asset.plugin && (
-                      <RewardsInfo
-                        key={info.rewardToken}
-                        underlyingAddress={asset.underlyingToken}
-                        pluginAddress={asset.plugin}
-                        rewardAddress={info.rewardToken}
-                      />
-                    )
+                rewardsOfThisMarket?.rewardsInfo.map((info) =>
+                  asset.plugin ? (
+                    <RewardsInfo
+                      key={info.rewardToken}
+                      underlyingAddress={asset.underlyingToken}
+                      pluginAddress={asset.plugin}
+                      rewardAddress={info.rewardToken}
+                    />
+                  ) : (
+                    <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+                      <HStack mr={2}>
+                        <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+                        <TokenWithLabel address={info.rewardToken} size="2xs" />
+                      </HStack>
+                      {info.formattedAPR && (
+                        <Text
+                          color={cCard.txtColor}
+                          fontSize={{ base: '2.8vw', sm: '0.8rem' }}
+                          ml={1}
+                        >
+                          {aprFormatter(info.formattedAPR)}%
+                        </Text>
+                      )}
+                    </HStack>
+                  )
                 )
               ) : asset.plugin ? (
                 <RewardsInfo
