@@ -8,7 +8,6 @@ import {
   Link,
   Select,
   Text,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { InterestRateModelConf, MarketConfig } from '@midas-capital/sdk';
@@ -27,6 +26,7 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -59,7 +59,8 @@ export const AddAssetSettings = ({
   tokenData: TokenData;
 }) => {
   const { fuse, address } = useRari();
-  const toast = useToast();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect } = useColors();
 
@@ -101,14 +102,9 @@ export const AddAssetSettings = ({
         const masterPriceOracle = fuse.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
-          toast({
-            title: 'Error!',
+          errorToast({
             description:
               'This asset is not supported. The price oracle is not available for this asset',
-            status: 'error',
-            duration: 2000,
-            isClosable: true,
-            position: 'top-right',
           });
 
           return;
@@ -121,7 +117,7 @@ export const AddAssetSettings = ({
     };
 
     func();
-  }, [tokenData.address, toast, fuse]);
+  }, [tokenData.address, errorToast, fuse]);
 
   const deploy = async (data: AddAssetFormData) => {
     const { collateralFactor, reserveFactor, adminFee, pluginIndex, interestRateModel } = data;
@@ -158,18 +154,14 @@ export const AddAssetSettings = ({
       // We do this instead of waiting the refetch because some fetches take a while or error out and we want to close now.
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toast({
+      successToast({
         title: 'You have successfully added an asset to this pool!',
         description: 'You may now lend and borrow with this asset.',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
       });
 
       if (onSuccess) onSuccess();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsDeploying(false);
     }

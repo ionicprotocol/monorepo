@@ -34,7 +34,7 @@ import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
@@ -176,7 +176,8 @@ const AssetSupplyRow = ({
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
   const queryClient = useQueryClient();
-  const toast = useErrorToast();
+  const errorToast = useErrorToast();
+  const infoToast = useInfoToast();
 
   const { cCard, cSwitch } = useColors();
   const isMobile = useIsMobile();
@@ -193,8 +194,7 @@ const AssetSupplyRow = ({
     if (asset.membership) {
       const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
       if (!exitCode.eq(0)) {
-        toast({
-          status: 'info',
+        infoToast({
           title: 'Cannot Remove Collateral',
           description: errorCodeToMessage(exitCode.toNumber()),
         });
@@ -207,13 +207,13 @@ const AssetSupplyRow = ({
 
     if (!call) {
       if (asset.membership) {
-        toast({
+        errorToast({
           title: 'Error! Code: ' + call,
           description:
             'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
         });
       } else {
-        toast({
+        errorToast({
           title: 'Error! Code: ' + call,
           description: 'You cannot enable this asset as collateral at this time.',
         });

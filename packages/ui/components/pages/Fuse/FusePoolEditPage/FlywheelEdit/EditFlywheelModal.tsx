@@ -18,7 +18,6 @@ import {
   StatLabel,
   StatNumber,
   Text,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { Contract, utils } from 'ethers';
@@ -33,6 +32,7 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, PoolData } from '@ui/hooks/useFusePoolData';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
@@ -79,7 +79,7 @@ const EditFlywheelModal = ({
   );
   const { data: myBalance } = useTokenBalance(flywheel.rewardToken);
 
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const [fundingAmount, setTransactionPendingAmount] = useState<number>(0);
   const [supplySpeed, setSupplySpeed] = useState<string>('0.0');
@@ -119,7 +119,7 @@ const EditFlywheelModal = ({
       await tx.wait();
       refetchRewardsBalance();
     } catch (err) {
-      handleGenericError(err, toast);
+      handleGenericError(err, errorToast);
     } finally {
       setTransactionPending(false);
     }
@@ -130,7 +130,7 @@ const EditFlywheelModal = ({
     fuse.provider,
     fundingAmount,
     refetchRewardsBalance,
-    toast,
+    errorToast,
   ]);
 
   const updateRewardInfo = useCallback(async () => {
@@ -155,7 +155,7 @@ const EditFlywheelModal = ({
       await tx.wait();
       refetchRewardsInfo();
     } catch (err) {
-      handleGenericError(err, toast);
+      handleGenericError(err, errorToast);
     } finally {
       setTransactionPending(false);
       setDateEditable(false);
@@ -170,7 +170,7 @@ const EditFlywheelModal = ({
     isAdmin,
     selectedMarket,
     refetchRewardsInfo,
-    toast,
+    errorToast,
   ]);
 
   const enableForRewards = useCallback(
@@ -183,12 +183,12 @@ const EditFlywheelModal = ({
         await tx.wait();
         setTransactionPending(false);
       } catch (err) {
-        handleGenericError(err, toast);
+        handleGenericError(err, errorToast);
       } finally {
         setTransactionPending(false);
       }
     },
-    [flywheel.address, fuse, toast, address]
+    [flywheel.address, fuse, errorToast, address]
   );
 
   return (

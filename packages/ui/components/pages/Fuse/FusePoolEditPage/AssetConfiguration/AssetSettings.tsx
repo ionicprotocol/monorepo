@@ -14,7 +14,6 @@ import {
   Spacer,
   Switch,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, CTokenErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, ContractFunction, utils } from 'ethers';
@@ -36,6 +35,7 @@ import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/inde
 import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -91,7 +91,7 @@ export const AssetSettings = ({
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { fuse, setPendingTxHash } = useRari();
-  const toast = useToast();
+  const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -173,7 +173,7 @@ export const AssetSettings = ({
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -198,7 +198,7 @@ export const AssetSettings = ({
 
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -223,7 +223,7 @@ export const AssetSettings = ({
 
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -245,7 +245,7 @@ export const AssetSettings = ({
 
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -266,7 +266,7 @@ export const AssetSettings = ({
 
       LogRocket.track('Fuse-UpdateCollateralFactor');
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
