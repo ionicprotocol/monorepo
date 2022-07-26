@@ -165,7 +165,8 @@ const RewardsInfo = ({
   pluginAddress: string;
   rewardAddress?: string;
 }) => {
-  const { data: apy } = useApy(underlyingAddress, pluginAddress, rewardAddress);
+  const { data } = useApy(underlyingAddress, pluginAddress, rewardAddress);
+
   const { cCard } = useColors();
 
   return (
@@ -180,9 +181,9 @@ const RewardsInfo = ({
           </span>
         )}
       </HStack>
-      {apy && (
+      {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {aprFormatter(apy)}%
+          {aprFormatter(utils.parseUnits(data.apy.toString()))}%
         </Text>
       )}
     </HStack>

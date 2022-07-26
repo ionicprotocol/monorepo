@@ -6,7 +6,9 @@ export function useApy(underlyingAddress: string, pluginAddress: string, rewardA
     ['useApy', underlyingAddress, pluginAddress, rewardAddress],
     async () => {
       const apy = await axios.get(
-        `/api/apyData?underlyingAddress=${underlyingAddress}&&pluginAddress=${pluginAddress}&&rewardAddress=${rewardAddress}`
+        `/api/apyData?underlyingAddress=${underlyingAddress}&&pluginAddress=${pluginAddress}&&rewardAddress=${
+          rewardAddress || ''
+        }`
       );
 
       return apy.data;
