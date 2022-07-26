@@ -29,7 +29,18 @@ export const deployFuseSafeLiquidator = async ({
         },
         onUpgrade: {
           methodName: "_becomeImplementation",
-          args: [new ethers.utils.AbiCoder().encode(["address"], [deployer])],
+          args: [
+            new ethers.utils.AbiCoder().encode(
+              ["address", "address", "address", "address", "bytes"],
+              [
+                deployConfig.wtoken,
+                deployConfig.uniswap.uniswapV2RouterAddress,
+                deployConfig.stableToken ?? constants.AddressZero,
+                deployConfig.wBTCToken ?? constants.AddressZero,
+                deployConfig.uniswap.pairInitHashCode ?? "0x",
+              ]
+            ),
+          ],
         },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
