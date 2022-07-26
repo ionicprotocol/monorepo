@@ -23,8 +23,8 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Cache-Control', 'max-age=86400, s-maxage=86400');
 
-  const { chain, address: rawAddress }: { chain: SupportedChains; address: string } = request.body;
   await querySchema.validate(request.body);
+  const { chain, address: rawAddress }: { chain: SupportedChains; address: string } = request.body;
   const address = utils.getAddress(rawAddress);
   const tokenContract = new Contract(
     address,

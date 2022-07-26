@@ -21,6 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .gte('created_at', dateLimit.toISOString())
       .order('created_at', { ascending: true })
       .limit(1);
+
     if (start.error || !start.data.length) {
       start = await client
         .from(config.supabaseFlywheelTableName)
@@ -73,6 +74,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const date1 = end.data[0].created_at;
       const date2 = start.data[0].created_at;
       const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
+
+      // TODO hardcoded value, can we keep this?
       const apy = (Math.log(price1 / price2) / dateDelta) * 86400000 * 365;
 
       return res.json({

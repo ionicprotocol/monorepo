@@ -71,7 +71,6 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
 
         promises.push(
           (async () => {
-            if (!this.chainPlugins[asset.underlyingToken]) return;
             let plugin: string | undefined = undefined;
 
             plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
@@ -87,6 +86,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
                 .catch(() => undefined);
             }
             if (!plugin) return;
+
             asset.plugin = plugin;
           })()
         );

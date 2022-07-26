@@ -21,15 +21,13 @@ const borrowAPRAssetZero = sdk.ratePerBlockToAPY(assetZero.borrowRatePerBlock, 2
 const supplyAPYAssetZero = sdk.ratePerBlockToAPY(assetZero.supplyRatePerBlock, 20)
 ```
 
-
 ## Functions
-
 
 ### fetchFusePoolData
 
 `fetchFusePoolData(poolId: string, signer?: string): Promise<FusePoolData>`
 
-Fetch data about an individual pool on midas capital based on the pool id. The pool id can be extracted from the pool urll `https://app.midascapital.xyz/56/pool/POOL_ID`
+Fetch data about an individual pool on midas capital based on the pool id. The pool id can be extracted from the pool url `https://app.midascapital.xyz/56/pool/POOL_ID`
 
 ### ratePerBlockToAPY
 
@@ -42,5 +40,3 @@ and
 
 `FusePoolData['assets'][0].supplyRatePerBlock`
 correspondingly.  (i.e. blocksPerMin for BSC: `20`)
-
-

@@ -1,17 +1,17 @@
-import axios from 'axios';
 import { useQuery } from 'react-query';
 
 export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
   return useQuery(
     ['useApy', underlyingAddress, pluginAddress, rewardAddress],
     async () => {
-      const apy = await axios.get(
-        `/api/apyData?underlyingAddress=${underlyingAddress}&&pluginAddress=${pluginAddress}&&rewardAddress=${
+      return await fetch(
+        `/api/apyData?underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}&rewardAddress=${
           rewardAddress || ''
         }`
-      );
-
-      return apy.data;
+      ).then((response) => {
+        if (response.status === 200) return response.json();
+        throw 'APY Response was not ok';
+      });
     },
     {
       enabled: !!underlyingAddress && !!pluginAddress,
