@@ -154,7 +154,7 @@ export type InterestRateModelConf = {
 
 export interface FuseAsset {
   cToken: string;
-  plugin?: MarketPluginConfig;
+  plugin?: string;
 
   borrowBalance: BigNumber;
   supplyBalance: BigNumber;

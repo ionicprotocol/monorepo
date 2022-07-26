@@ -31,8 +31,10 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
+import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
+import { usePluginName } from '@ui/hooks/usePluginName';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -154,6 +156,39 @@ export const SupplyList = ({
   );
 };
 
+const RewardsInfo = ({
+  underlyingAddress,
+  pluginAddress,
+  rewardAddress,
+}: {
+  underlyingAddress: string;
+  pluginAddress: string;
+  rewardAddress?: string;
+}) => {
+  const { data: apy } = useApy(underlyingAddress, pluginAddress, rewardAddress);
+  const { cCard } = useColors();
+
+  return (
+    <HStack key={rewardAddress} justifyContent={'flex-end'} spacing={0}>
+      <HStack mr={2}>
+        <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+        {rewardAddress ? (
+          <TokenWithLabel address={rewardAddress} size="2xs" />
+        ) : (
+          <span role="img" aria-label="plugin">
+            🔌
+          </span>
+        )}
+      </HStack>
+      {apy && (
+        <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+          {aprFormatter(apy)}%
+        </Text>
+      )}
+    </HStack>
+  );
+};
+
 interface AssetSupplyRowProps {
   assets: MarketData[];
   index: number;
@@ -185,6 +220,8 @@ const AssetSupplyRow = ({
     () => rewards.find((r) => r.market === asset.cToken),
     [asset.cToken, rewards]
   );
+
+  const pluginName = usePluginName(asset.underlyingToken, asset.plugin);
 
   const onToggleCollateral = async () => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
@@ -306,8 +343,7 @@ const AssetSupplyRow = ({
                     placement="top-start"
                     body={
                       <>
-                        This market is using the <b>{asset.plugin.strategyName}</b> ERC4626
-                        Strategy.
+                        This market is using the <b>{pluginName}</b> ERC4626 Strategy.
                         <br />
                         Read more about it{' '}
                         <ChakraLink
@@ -351,19 +387,24 @@ const AssetSupplyRow = ({
                 {supplyAPY.toFixed(2)}%
               </Text>
 
-              {rewardsOfThisMarket?.rewardsInfo.map((info) => (
-                <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-                  <HStack mr={2}>
-                    <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                    <TokenWithLabel address={info.rewardToken} size="2xs" />
-                  </HStack>
-                  {info.formattedAPR && (
-                    <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-                      {aprFormatter(info.formattedAPR)}%
-                    </Text>
-                  )}
-                </HStack>
-              ))}
+              {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
+                rewardsOfThisMarket?.rewardsInfo.map(
+                  (info) =>
+                    asset.plugin && (
+                      <RewardsInfo
+                        key={info.rewardToken}
+                        underlyingAddress={asset.underlyingToken}
+                        pluginAddress={asset.plugin}
+                        rewardAddress={info.rewardToken}
+                      />
+                    )
+                )
+              ) : asset.plugin ? (
+                <RewardsInfo
+                  underlyingAddress={asset.underlyingToken}
+                  pluginAddress={asset.plugin}
+                />
+              ) : null}
             </VStack>
           </Td>
         )}

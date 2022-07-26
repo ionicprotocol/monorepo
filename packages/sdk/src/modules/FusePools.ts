@@ -87,7 +87,7 @@ export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
                 .catch(() => undefined);
             }
             if (!plugin) return;
-            asset.plugin = this.chainPlugins[asset.underlyingToken].find((p) => p.strategyAddress === plugin);
+            asset.plugin = plugin;
           })()
         );
 
