@@ -1,6 +1,6 @@
 import { Contract, Signer } from "ethers";
-import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain";
 
+import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBInterestRateModel.sol";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
