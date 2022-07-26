@@ -18,6 +18,7 @@ import FlywheelStaticRewardsArtifact from "../lib/contracts/out/FlywheelStaticRe
 import FuseFlywheelCoreArtifact from "../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
 import FuseFlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FuseFlywheelDynamicRewards.sol/FuseFlywheelDynamicRewards.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
+import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
 import RewardsDistributorDelegateArtifact from "../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
 import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
@@ -56,6 +57,7 @@ const FuseFlywheelDynamicRewards: Artifact = FuseFlywheelDynamicRewardsArtifacts
 const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
+const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
 const CurveLpTokenPriceOracleNoRegistry: Artifact = CurveLpTokenPriceOracleNoRegistryArtifact;
@@ -85,6 +87,7 @@ const ARTIFACTS = {
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
+  AnkrBNBInterestRateModel,
   MasterPriceOracle,
   FixedNativePriceOracle,
   CurveLpTokenPriceOracleNoRegistry,
@@ -118,6 +121,7 @@ export {
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
+  AnkrBNBInterestRateModel,
   MasterPriceOracle,
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,

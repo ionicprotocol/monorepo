@@ -6,7 +6,7 @@ import { InterestRateModel } from "../..";
 import { getContract } from "../utils";
 import { Web3Provider } from "@ethersproject/providers";
 
-export default class AnkrBnbInterestRateModel implements InterestRateModel {
+export default class AnkrBNBInterestRateModel implements InterestRateModel {
   static RUNTIME_BYTECODE_HASH = utils.keccak256(AnkrBNBINterestRateModelartifact.deployedBytecode.object);
 
   initialized: boolean | undefined;

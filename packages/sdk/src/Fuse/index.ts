@@ -48,10 +48,16 @@ import {
 } from "../types";
 
 import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
-import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
+import {
+  ANKR_BNB_INTEREST_RATE_MODEL_CONF,
+  CTOKEN_ERROR_CODES,
+  JUMP_RATE_MODEL_CONF,
+  WHITE_PAPER_RATE_MODEL_CONF,
+} from "./config";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
+import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import {
   getComptrollerFactory,
   getContract,
@@ -74,6 +80,7 @@ export class FuseBase {
     [contractName: string]: Contract;
   };
   public JumpRateModelConf: InterestRateModelConf;
+  public AnkrBNBInterestRateModelConf: InterestRateModelConf;
   public WhitePaperRateModelConf: InterestRateModelConf;
 
   public availableOracles: Array<string>;
@@ -105,6 +112,7 @@ export class FuseBase {
     }
     this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
+    this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainId);
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -236,7 +244,7 @@ export class FuseBase {
       }
 
       return [poolAddress, implementationAddress, priceOracle, poolId];
-    } catch (error: any) {
+    } catch (error) {
       throw Error("Deployment of new Fuse pool failed: " + (error.message ? error.message : error));
     }
   }
@@ -273,6 +281,17 @@ export class FuseBase {
         deployArgs = [conf.blocksPerYear, conf.baseRatePerYear, conf.multiplierPerYear];
         modelArtifact = this.artifacts.WhitePaperInterestRateModel;
         break;
+      case "AnkrBNBInterestRateModel":
+        if (!conf) conf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
+        deployArgs = [
+          conf.blocksPerYear,
+          conf.baseRatePerYear,
+          conf.jumpMultiplierPerYear,
+          conf.kink,
+          conf.day,
+          conf.abnbr,
+        ];
+        modelArtifact = this.artifacts.AnkrBNBInterestRateModel;
       default:
         throw "IRM model specified is invalid";
     }
@@ -294,6 +313,7 @@ export class FuseBase {
       JumpRateModel: JumpRateModel,
       DAIInterestRateModelV2: DAIInterestRateModelV2,
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
+      AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 

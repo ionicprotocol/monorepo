@@ -5,6 +5,7 @@ import { FuseBase } from "./Fuse";
 import DAIInterestRateModelV2 from "./Fuse/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./Fuse/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./Fuse/irm/WhitePaperInterestRateModel";
+import AnkrBNBInterestRateModel from "./Fuse/irm/AnkrBnbInterestRateModel";
 export { Artifacts, Artifact } from "./Artifacts";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +70,11 @@ export type ChainDeployment = {
 export type OracleConfig = ChainDeployment;
 export type IrmConfig = OracleConfig;
 
-export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
+export type InterestRateModelType =
+  | JumpRateModel
+  | DAIInterestRateModelV2
+  | WhitePaperInterestRateModel
+  | AnkrBNBInterestRateModel;
 
 export interface MarketConfig {
   underlying: string;
@@ -145,6 +150,8 @@ export type InterestRateModelParams = {
   multiplierPerYear?: string;
   jumpMultiplierPerYear?: string;
   kink?: string;
+  day?: number;
+  abnbr?: string;
 };
 
 export type InterestRateModelConf = {

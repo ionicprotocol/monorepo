@@ -24,5 +24,9 @@ export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) =>
       abi: artifacts.WhitePaperInterestRateModel.abi,
       address: deployments.WhitePaperInterestRateModel.address,
     },
+    AnkrBNBInterestRateModel: {
+      abi: artifacts.AnkrBNBInterestRateModel.abi,
+      address: deployments.AnkrBNBInterestRateModel.address,
+    },
   };
 };
