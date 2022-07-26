@@ -55,7 +55,6 @@ export default class AnkrBnbInterestRateModel implements InterestRateModel {
 
   async __init(
     baseRatePerBlock: BigNumberish,
-    multiplierPerBlock: BigNumberish,
     jumpMultiplierPerBlock: BigNumberish,
     kink: BigNumberish,
     reserveFactorMantissa: BigNumberish,
@@ -63,7 +62,6 @@ export default class AnkrBnbInterestRateModel implements InterestRateModel {
     fuseFeeMantissa: BigNumberish
   ) {
     this.baseRatePerBlock = BigNumber.from(baseRatePerBlock);
-    this.multiplierPerBlock = BigNumber.from(multiplierPerBlock);
     this.jumpMultiplierPerBlock = BigNumber.from(jumpMultiplierPerBlock);
     this.kink = BigNumber.from(kink);
 
