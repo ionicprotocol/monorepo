@@ -222,7 +222,7 @@ const AssetSupplyRow = ({
     [asset.cToken, rewards]
   );
 
-  const pluginName = usePluginName(asset.underlyingToken, asset.plugin);
+  const pluginName = usePluginName(asset.plugin);
 
   const onToggleCollateral = async () => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
