@@ -89,10 +89,7 @@ export const AddAssetSettings = ({
     fuse.chainDeployment.JumpRateModel.address
   );
 
-  const availablePlugins = useMemo(
-    () => fuse.chainPlugins[tokenData.address] || [],
-    [fuse.chainPlugins, tokenData.address]
-  );
+  const availablePlugins = useMemo(() => [], []);
 
   useEffect(() => {
     const func = async () => {
