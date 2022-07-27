@@ -1,5 +1,4 @@
 import { ethers, utils } from "ethers";
-import { ANKR_BNB_INTEREST_RATE_MODEL_CONF } from "Fuse/config";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { SupportedChains } from "../../src";
@@ -521,17 +520,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
-  const abirmConfig = ANKR_BNB_INTEREST_RATE_MODEL_CONF(SupportedChains.bsc);
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
     from: deployer,
     args: [
-      abirmConfig.interestRateModelParams.blocksPerYear,
-      abirmConfig.interestRateModelParams.baseRatePerYear,
-      abirmConfig.interestRateModelParams.jumpMultiplierPerYear,
-      abirmConfig.interestRateModelParams.kink,
-      abirmConfig.interestRateModelParams.day,
-      abirmConfig.interestRateModelParams.abnbr,
+      deployConfig.blocksPerYear,
+      "25600000000000000",
+      "3000000000000000000",
+      "800000000000000000",
+      3,
+      "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
     ],
     log: true,
   });
