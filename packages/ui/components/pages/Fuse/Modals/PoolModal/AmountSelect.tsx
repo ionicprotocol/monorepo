@@ -11,7 +11,6 @@ import {
   TabList,
   Tabs,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import {
   ComptrollerErrorCodes,
@@ -42,6 +41,7 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -71,7 +71,7 @@ const AmountSelect = ({
 
   const { fuse, setPendingTxHash, address } = useRari();
 
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const { data: tokenData } = useTokenData(asset.underlyingToken);
 
@@ -138,7 +138,7 @@ const AmountSelect = ({
       const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
       return amount.lte(max);
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
       return false;
     }
   });
@@ -244,7 +244,7 @@ const AmountSelect = ({
       }
       onClose();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
       setUserAction(UserAction.NO_ACTION);
     }
   };
@@ -669,7 +669,7 @@ const TokenNameAndMaxButton = ({
 }) => {
   const { fuse, address } = useRari();
 
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const [isMaxLoading, setIsMaxLoading] = useState(false);
 
@@ -688,7 +688,7 @@ const TokenNameAndMaxButton = ({
 
       setIsMaxLoading(false);
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 

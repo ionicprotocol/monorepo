@@ -9,32 +9,32 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import React, { useEffect } from 'react';
 import { useConnect } from 'wagmi';
 
 import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { useErrorToast, useWarningToast } from '@ui/hooks/useToast';
 
 const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { connect, connectors, error: connectError } = useConnect();
 
-  const toast = useToast();
+  const warningToast = useWarningToast();
+  const errorToast = useErrorToast();
 
   useEffect(() => {
     if (isOpen && connectError) {
-      toast({
-        title: connectError?.name === 'ConnectorAlreadyConnectedError' ? 'Warning!' : 'Error!',
-        description: connectError?.message ?? 'Failed to connect',
-        status: connectError?.name === 'ConnectorAlreadyConnectedError' ? 'warning' : 'error',
-        duration: 9000,
-        isClosable: true,
-        position: 'top-right',
-      });
+      if (connectError?.name === 'ConnectorAlreadyConnectedError') {
+        warningToast({
+          description: connectError?.message ?? 'Failed to connect',
+        });
+      } else {
+        errorToast({ description: connectError?.message ?? 'Failed to connect' });
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [connectError, toast]);
+  }, [connectError, errorToast, warningToast]);
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>

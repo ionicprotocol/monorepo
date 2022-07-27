@@ -31,10 +31,12 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
+import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
+import { usePluginName } from '@ui/hooks/usePluginName';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
@@ -154,6 +156,40 @@ export const SupplyList = ({
   );
 };
 
+const RewardsInfo = ({
+  underlyingAddress,
+  pluginAddress,
+  rewardAddress,
+}: {
+  underlyingAddress: string;
+  pluginAddress: string;
+  rewardAddress?: string;
+}) => {
+  const { data } = useApy(underlyingAddress, pluginAddress, rewardAddress);
+
+  const { cCard } = useColors();
+
+  return (
+    <HStack key={rewardAddress} justifyContent={'flex-end'} spacing={0}>
+      <HStack mr={2}>
+        <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+        {rewardAddress ? (
+          <TokenWithLabel address={rewardAddress} size="2xs" />
+        ) : (
+          <span role="img" aria-label="plugin">
+            🔌
+          </span>
+        )}
+      </HStack>
+      {data && (
+        <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+          {aprFormatter(utils.parseUnits(data.apy.toString()))}%
+        </Text>
+      )}
+    </HStack>
+  );
+};
+
 interface AssetSupplyRowProps {
   assets: MarketData[];
   index: number;
@@ -176,7 +212,8 @@ const AssetSupplyRow = ({
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
   const queryClient = useQueryClient();
-  const toast = useErrorToast();
+  const errorToast = useErrorToast();
+  const infoToast = useInfoToast();
 
   const { cCard, cSwitch } = useColors();
   const isMobile = useIsMobile();
@@ -186,6 +223,8 @@ const AssetSupplyRow = ({
     [asset.cToken, rewards]
   );
 
+  const { data: pluginName } = usePluginName(asset.plugin);
+
   const onToggleCollateral = async () => {
     const comptroller = fuse.createComptroller(comptrollerAddress);
 
@@ -193,8 +232,7 @@ const AssetSupplyRow = ({
     if (asset.membership) {
       const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
       if (!exitCode.eq(0)) {
-        toast({
-          status: 'info',
+        infoToast({
           title: 'Cannot Remove Collateral',
           description: errorCodeToMessage(exitCode.toNumber()),
         });
@@ -207,13 +245,13 @@ const AssetSupplyRow = ({
 
     if (!call) {
       if (asset.membership) {
-        toast({
+        errorToast({
           title: 'Error! Code: ' + call,
           description:
             'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
         });
       } else {
-        toast({
+        errorToast({
           title: 'Error! Code: ' + call,
           description: 'You cannot enable this asset as collateral at this time.',
         });
@@ -281,24 +319,26 @@ const AssetSupplyRow = ({
                     <QuestionIcon />
                   </SimpleTooltip>
                 )}
-
-              <SimpleTooltip
-                placement="top-start"
-                label={`${scanUrl}/address/${asset.underlyingToken}`}
-              >
-                <Button
-                  m={0}
-                  variant={'link'}
-                  as={ChakraLink}
-                  href={`${scanUrl}/address/${asset.underlyingToken}`}
-                  isExternal
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
+              <Box>
+                <SimpleTooltip
+                  placement="top-start"
+                  label={`${scanUrl}/address/${asset.underlyingToken}`}
                 >
-                  <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
-                </Button>
-              </SimpleTooltip>
+                  <Button
+                    minWidth={6}
+                    m={0}
+                    variant={'link'}
+                    as={ChakraLink}
+                    href={`${scanUrl}/address/${asset.underlyingToken}`}
+                    isExternal
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  >
+                    <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
+                  </Button>
+                </SimpleTooltip>
+              </Box>
 
               {asset.plugin && (
                 <Box>
@@ -306,8 +346,7 @@ const AssetSupplyRow = ({
                     placement="top-start"
                     body={
                       <>
-                        This market is using the <b>{asset.plugin.strategyName}</b> ERC4626
-                        Strategy.
+                        This market is using the <b>{pluginName}</b> ERC4626 Strategy.
                         <br />
                         Read more about it{' '}
                         <ChakraLink
@@ -324,7 +363,7 @@ const AssetSupplyRow = ({
                       </>
                     }
                   >
-                    <span role="img" aria-label="plugin">
+                    <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
                       🔌
                     </span>
                   </PopoverTooltip>
@@ -351,19 +390,39 @@ const AssetSupplyRow = ({
                 {supplyAPY.toFixed(2)}%
               </Text>
 
-              {rewardsOfThisMarket?.rewardsInfo.map((info) => (
-                <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-                  <HStack mr={2}>
-                    <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                    <TokenWithLabel address={info.rewardToken} size="2xs" />
-                  </HStack>
-                  {info.formattedAPR && (
-                    <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-                      {aprFormatter(info.formattedAPR)}%
-                    </Text>
-                  )}
-                </HStack>
-              ))}
+              {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
+                rewardsOfThisMarket?.rewardsInfo.map((info) =>
+                  asset.plugin ? (
+                    <RewardsInfo
+                      key={info.rewardToken}
+                      underlyingAddress={asset.underlyingToken}
+                      pluginAddress={asset.plugin}
+                      rewardAddress={info.rewardToken}
+                    />
+                  ) : (
+                    <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+                      <HStack mr={2}>
+                        <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+                        <TokenWithLabel address={info.rewardToken} size="2xs" />
+                      </HStack>
+                      {info.formattedAPR && (
+                        <Text
+                          color={cCard.txtColor}
+                          fontSize={{ base: '2.8vw', sm: '0.8rem' }}
+                          ml={1}
+                        >
+                          {aprFormatter(info.formattedAPR)}%
+                        </Text>
+                      )}
+                    </HStack>
+                  )
+                )
+              ) : asset.plugin ? (
+                <RewardsInfo
+                  underlyingAddress={asset.underlyingToken}
+                  pluginAddress={asset.plugin}
+                />
+              ) : null}
             </VStack>
           </Td>
         )}

@@ -19,7 +19,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRari } from '@ui/context/RariContext';
-import { useSuccessToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -77,7 +77,8 @@ const ClaimRewardsModal = ({
   refetchRewards: any;
 }) => {
   const { fuse, address } = useRari();
-  const toast = useSuccessToast();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
   const { data: signer } = useSigner();
 
@@ -97,18 +98,18 @@ const ClaimRewardsModal = ({
             });
 
           await tx.wait();
-          toast({
+          successToast({
             title: 'Reward claimed!',
           });
           await refetchRewards();
         }
       } catch (e) {
-        handleGenericError(e, toast);
+        handleGenericError(e, errorToast);
       } finally {
         setIsClaiming(false);
       }
     },
-    [address, fuse.contracts, refetchRewards, signer, toast]
+    [address, fuse.contracts, refetchRewards, signer, errorToast, successToast]
   );
 
   return (
