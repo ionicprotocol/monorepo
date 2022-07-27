@@ -1,10 +1,34 @@
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import * as yup from 'yup';
+
+import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '../../constants';
 
 import { config } from '@ui/config/index';
 
+const querySchema = yup.object().shape({
+  chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
+  underlyingAddress: yup
+    .string()
+    .matches(VALID_ADDRESS_REGEX, 'Not a valid underlying asset address')
+    .required(),
+  pluginAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid plugin address').required(),
+  rewardAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid reward asset address'),
+});
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  const { underlyingAddress, pluginAddress, rewardAddress, days = '7' } = req.query;
+  try {
+    querySchema.validateSync(req.query);
+  } catch (error) {
+    if (error instanceof yup.ValidationError) {
+      return res.status(400).send({
+        error: error.message,
+      });
+    } else {
+      throw 'Unknown Error';
+    }
+  }
+  const { underlyingAddress, pluginAddress, rewardAddress, chain, days = '7' } = req.query;
 
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
   let start, end;
@@ -15,6 +39,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     start = await client
       .from(config.supabaseFlywheelTableName)
       .select('pricePerShare,created_at')
+      .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -26,6 +51,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       start = await client
         .from(config.supabaseFlywheelTableName)
         .select('pricePerShare,created_at')
+        .eq('chain', parseInt(chain as string, 10))
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('rewardAddress', (rewardAddress as string).toLowerCase())
         .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -35,6 +61,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     end = await client
       .from(config.supabaseFlywheelTableName)
       .select('pricePerShare,created_at')
+      .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -44,6 +71,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     start = await client
       .from(config.supabasePluginTableName)
       .select('pricePerShare,created_at')
+      .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
       .gte('created_at', dateLimit.toISOString())
@@ -53,6 +81,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       start = await client
         .from(config.supabasePluginTableName)
         .select('pricePerShare,created_at')
+        .eq('chain', parseInt(chain as string, 10))
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
         .order('created_at', { ascending: true })
@@ -61,6 +90,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     end = await client
       .from(config.supabasePluginTableName)
       .select('pricePerShare,created_at')
+      .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
       .order('created_at', { ascending: false })

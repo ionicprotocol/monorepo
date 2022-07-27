@@ -1,18 +1,18 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { ChainSupportedAssetsMap, SupportedChains, SupportedChainsArray } from '@midas-capital/sdk';
+import { ChainSupportedAssetsMap, SupportedChains } from '@midas-capital/sdk';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';
 import * as yup from 'yup';
 
+import { SUPPORTED_NETWORKS_REGEX } from '../../constants';
+
 import { config } from '@ui/config/index';
 import { TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
 
-const supportedNetworksRegex = new RegExp(SupportedChainsArray.join('|'));
-
 const querySchema = yup.object().shape({
-  chain: yup.string().matches(supportedNetworksRegex, 'Not a supported Network').required(),
+  chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
   address: yup
     .string()
     .matches(/^0x[a-fA-F0-9]{40}$/, 'Not a valid Wallet address')
@@ -23,7 +23,8 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<TokenD
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Cache-Control', 'max-age=86400, s-maxage=86400');
 
-  await querySchema.validate(request.body);
+  querySchema.validateSync(request.body);
+
   const { chain, address: rawAddress }: { chain: SupportedChains; address: string } = request.body;
   const address = utils.getAddress(rawAddress);
   const tokenContract = new Contract(
