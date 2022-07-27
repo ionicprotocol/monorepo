@@ -1,5 +1,5 @@
 import { FundOperationMode, Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
-import { BigNumber } from 'ethers';
+import { BigNumber, utils } from 'ethers';
 
 import { toFixedNoRound } from './formatNumber';
 
@@ -46,7 +46,7 @@ export const fetchMaxAmount = async (
       { from: address }
     );
 
-    maxRedeem = BigNumber.from(toFixedNoRound(maxRedeem.toString(), 10));
+    maxRedeem = utils.parseUnits(toFixedNoRound(utils.formatUnits(maxRedeem), 10));
 
     if (maxRedeem) {
       return BigNumber.from(maxRedeem);
