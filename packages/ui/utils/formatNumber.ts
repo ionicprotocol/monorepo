@@ -10,3 +10,13 @@ export const toFixedNoRound = (value: string, len: number) => {
 
   return str;
 };
+
+export const bigDiv = (value1: string, value2: string) => {
+  const val = divide(bignumber(value1), bignumber(value2));
+  return format(val, { notation: 'fixed' });
+};
+
+export const bigMul = (value1: string, value2: string) => {
+  const val = multiply(bignumber(value1), bignumber(value2));
+  return format(val, { notation: 'fixed' });
+};

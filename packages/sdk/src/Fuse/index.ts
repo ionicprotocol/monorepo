@@ -13,9 +13,9 @@ import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLen
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
 import { Artifact, Artifacts, ARTIFACTS } from "../Artifacts";
 import {
+  chainDeployedPlugins,
   chainLiquidationDefaults,
   chainOracles,
-  chainPluginConfig,
   chainRedemptionStrategies,
   chainSpecificAddresses,
   chainSpecificParams,
@@ -34,10 +34,10 @@ import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import {
-  AssetPluginConfig,
   ChainAddresses,
   ChainDeployment,
   ChainParams,
+  DeployedPlugins,
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
@@ -84,7 +84,7 @@ export class FuseBase {
   public chainSpecificParams: ChainParams;
   public artifacts: Artifacts;
   public irms: IrmConfig;
-  public chainPlugins: AssetPluginConfig;
+  public deployedPlugins: DeployedPlugins;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: RedemptionStrategy };
@@ -158,7 +158,7 @@ export class FuseBase {
     this.chainSpecificParams = chainSpecificParams[chainId];
     this.liquidationConfig = chainLiquidationDefaults[chainId];
     this.supportedAssets = chainSupportedAssets[chainId];
-    this.chainPlugins = chainPluginConfig[chainId];
+    this.deployedPlugins = chainDeployedPlugins[chainId];
     this.redemptionStrategies = chainRedemptionStrategies[chainId];
   }
 

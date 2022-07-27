@@ -14,7 +14,7 @@ import { useState } from 'react';
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useRari } from '@ui/context/RariContext';
-import { useSuccessToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const TransferOwnershipModal = ({
@@ -27,7 +27,8 @@ const TransferOwnershipModal = ({
   comptrollerAddress: string;
 }) => {
   const { fuse } = useRari();
-  const toast = useSuccessToast();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
   const [isTransferring, setIsTransferring] = useState<boolean>(false);
 
   const [inputAddress, setInputAddress] = useState<string>('');
@@ -42,16 +43,11 @@ const TransferOwnershipModal = ({
       const tx = await unitroller._setPendingAdmin(verifiedAddress);
       await tx.wait();
 
-      toast({
-        title: 'Success!',
+      successToast({
         description: `${verifiedAddress} can now become the admin of this pool!`,
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
       });
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsTransferring(false);
       setInputAddress('');

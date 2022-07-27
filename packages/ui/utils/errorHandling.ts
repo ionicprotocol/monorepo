@@ -1,6 +1,6 @@
 import LogRocket from 'logrocket';
 
-export const handleGenericError = (e: any, toast: (input: any) => any) => {
+export const handleGenericError = (e: any, errorToast: (input: any) => any) => {
   let message: string;
 
   if (e instanceof Error) {
@@ -11,12 +11,5 @@ export const handleGenericError = (e: any, toast: (input: any) => any) => {
     LogRocket.captureException(new Error(message));
   }
 
-  toast({
-    title: 'Error!',
-    description: message,
-    status: 'error',
-    duration: 9000,
-    isClosable: true,
-    position: 'top-right',
-  });
+  errorToast({ description: message });
 };

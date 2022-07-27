@@ -78,7 +78,8 @@ export interface MarketConfig {
   collateralFactor: number;
   interestRateModel: string; // TODO: Use an Enum here, similar to Contract, resolve address inside the function
   reserveFactor: number;
-  plugin?: MarketPluginConfig;
+  // TODO we are not yet able to create a Plugin with a Market via the UI
+  plugin?: string;
 
   // REFACTOR below:
   bypassPriceFeedCheck: boolean;
@@ -86,29 +87,6 @@ export interface MarketConfig {
   symbol: string; // TODO: Same as name
   name: string; // TODO: Make optional, should be set inside SDK for default value mToken or so
 }
-
-interface AbstractPluginConfig {
-  cTokenContract: DelegateContractName;
-  strategyName: string;
-  strategyCode: string;
-  strategyAddress: string;
-}
-
-export interface StandardPluginConfig extends AbstractPluginConfig {
-  cTokenContract: DelegateContractName.CErc20PluginDelegate;
-}
-
-type RewardFlywheel = {
-  address: string;
-  rewardToken: string;
-};
-
-export interface RewardsPluginConfig extends AbstractPluginConfig {
-  cTokenContract: DelegateContractName.CErc20PluginRewardsDelegate;
-  flywheels: RewardFlywheel[];
-}
-
-export type MarketPluginConfig = StandardPluginConfig | RewardsPluginConfig;
 
 export type RewardsDistributorConfig = {
   rewardsDistributor: string;
@@ -154,7 +132,7 @@ export type InterestRateModelConf = {
 
 export interface FuseAsset {
   cToken: string;
-  plugin?: MarketPluginConfig;
+  plugin?: string;
 
   borrowBalance: BigNumber;
   supplyBalance: BigNumber;
@@ -234,12 +212,18 @@ export type SupportedAsset = {
   simplePriceOracleAssetPrice?: BigNumber;
 };
 
-export type AssetPluginConfig = {
-  [asset: string]: MarketPluginConfig[];
+interface PluginData {
+  market: string;
+  name: string;
+  strategy?: string;
+}
+
+export type DeployedPlugins = {
+  [pluginAddress: string]: PluginData;
 };
 
-export type ChainPlugins = {
-  [chain in SupportedChains]: AssetPluginConfig;
+export type ChainDeployedPlugins = {
+  [chain in SupportedChains]: DeployedPlugins;
 };
 
 export type ChainLiquidationDefaults = {
