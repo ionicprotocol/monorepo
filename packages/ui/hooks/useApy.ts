@@ -1,12 +1,17 @@
 import { useQuery } from 'react-query';
 
+import { useRari } from '../context/RariContext';
+
 export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
+  const {
+    currentChain: { id: currentChainId },
+  } = useRari();
   return useQuery(
     ['useApy', underlyingAddress, pluginAddress, rewardAddress],
     async () => {
       return await fetch(
-        `/api/apyData?underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}&rewardAddress=${
-          rewardAddress || ''
+        `/api/apyData?chain=${currentChainId}&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
+          rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
         }`
       ).then((response) => {
         if (response.status === 200) return response.json();
@@ -14,7 +19,7 @@ export function useApy(underlyingAddress: string, pluginAddress: string, rewardA
       });
     },
     {
-      enabled: !!underlyingAddress && !!pluginAddress,
+      enabled: !!underlyingAddress && !!pluginAddress && !!currentChainId,
     }
   );
 }
