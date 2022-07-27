@@ -1,7 +1,8 @@
-import { ComponentWithAs, Text, useClipboard, useToast } from '@chakra-ui/react';
+import { ComponentWithAs, Text, useClipboard } from '@chakra-ui/react';
 import { ReactNode, useCallback, useEffect } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useInfoToast } from '@ui/hooks/useToast';
 
 const ClipboardValue = ({
   value = '',
@@ -23,15 +24,15 @@ const ClipboardValue = ({
     },
     [onCopy]
   );
-  const toast = useToast({ position: 'top' });
+  const infoToast = useInfoToast();
 
   useEffect(() => {
     if (hasCopied) {
-      toast({
+      infoToast({
         title: 'Copied to clipboard',
       });
     }
-  }, [hasCopied, toast]);
+  }, [hasCopied, infoToast]);
 
   return (
     <SimpleTooltip label={value}>
