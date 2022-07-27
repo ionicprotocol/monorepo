@@ -5,10 +5,9 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
-import { fetchFuseTVL } from '@ui/utils/fetchTVL';
 
 export const fetchFuseNumberTVL = async (fuse: Fuse, usdPrice: number) => {
-  const tvlNative = await fetchFuseTVL(fuse);
+  const tvlNative = await fuse.getTotalValueLocked(false);
   const { decimals } = WRAPPED_NATIVE_TOKEN_DATA[fuse.chainId];
 
   return Number(utils.formatUnits(tvlNative, decimals)) * usdPrice;
