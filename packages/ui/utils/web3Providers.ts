@@ -4,11 +4,12 @@ import { Fuse } from '@midas-capital/sdk';
 import { NETWORK_DATA } from '@ui/networkData/index';
 
 export function providerURLForChain(chainId: number) {
-  const network = Object.values(NETWORK_DATA).filter((each) => each.chainId === chainId);
-  if (network.length === 0) {
+  const network = Object.values(NETWORK_DATA).find((each) => each.chainId === chainId);
+  if (!network) {
     throw new Error(`Unable to get providerUrlForChain() for chainId: ${chainId}`);
   }
-  return network[0].rpcUrls.default;
+
+  return network.rpcUrls.default;
 }
 
 export const initFuseWithProviders = (

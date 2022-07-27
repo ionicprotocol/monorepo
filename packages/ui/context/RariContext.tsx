@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Button, Link as ChakraLink, useToast } from '@chakra-ui/react';
+import { Button, Link as ChakraLink } from '@chakra-ui/react';
 import { Provider, Web3Provider } from '@ethersproject/providers';
 import { Fuse } from '@midas-capital/sdk';
 import {
@@ -17,6 +17,7 @@ import { useQueryClient } from 'react-query';
 import { Chain } from 'wagmi';
 
 import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { getScanUrlByChainId, WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { initFuseWithProviders } from '@ui/utils/web3Providers';
@@ -77,7 +78,10 @@ export const RariProvider = ({
   const accountBtnElement = useRef<HTMLButtonElement>();
   const networkBtnElement = useRef<HTMLButtonElement>();
 
-  const toast = useToast();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
+  const infoToast = useInfoToast();
+
   const queryClient = useQueryClient();
 
   const { cPage } = useColors();
@@ -111,16 +115,12 @@ export const RariProvider = ({
       try {
         const tx = await fuse.provider.getTransaction(hash);
         if (tx.from === address) {
-          toast({
+          infoToast({
             title: <>Pending!</>,
             description: <>Transaction is pending now.</>,
-            status: 'info',
-            duration: 5000,
-            isClosable: true,
-            position: 'top-right',
           });
           const res = await tx.wait();
-          toast({
+          successToast({
             title: <>Complete!</>,
             description: (
               <Button
@@ -136,10 +136,6 @@ export const RariProvider = ({
                 View Transaction
               </Button>
             ),
-            status: 'success',
-            duration: 5000,
-            isClosable: true,
-            position: 'top-right',
           });
           if (res.blockNumber) {
             mounted.current && setFinishedTxHash(hash);
@@ -147,7 +143,7 @@ export const RariProvider = ({
           }
         }
       } catch (e) {
-        handleGenericError(e, toast);
+        handleGenericError(e, errorToast);
         mounted.current && setFinishedTxHash(hash);
       }
     };

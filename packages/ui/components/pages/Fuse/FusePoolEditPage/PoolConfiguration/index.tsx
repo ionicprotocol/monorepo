@@ -15,7 +15,6 @@ import {
   Switch,
   Text,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, Contract, utils } from 'ethers';
@@ -37,6 +36,7 @@ import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const PoolConfiguration = ({
@@ -55,7 +55,7 @@ const PoolConfiguration = ({
   const { cSwitch } = useColors();
 
   const queryClient = useQueryClient();
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const data = useExtraPoolInfo(comptrollerAddress);
 
@@ -103,7 +103,7 @@ const PoolConfiguration = ({
       LogRocket.track('Fuse-ChangeWhitelistStatus');
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
@@ -133,7 +133,7 @@ const PoolConfiguration = ({
 
       onChange(newList);
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
@@ -170,7 +170,7 @@ const PoolConfiguration = ({
 
       onChange(whitelist.filter((v) => v !== removeUser));
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
@@ -193,7 +193,7 @@ const PoolConfiguration = ({
       LogRocket.track('Fuse-RenounceOwnership');
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
@@ -231,7 +231,7 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -267,13 +267,13 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
   const onSave = async () => {
     if (!inputPoolName) {
-      handleGenericError('Input pool name', toast);
+      handleGenericError('Input pool name', errorToast);
       return;
     }
     try {
@@ -288,7 +288,7 @@ const PoolConfiguration = ({
       });
       await tx.wait();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsSaving(false);
     }
