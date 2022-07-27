@@ -5,6 +5,7 @@ import { Fuse } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
 import { useQuery } from 'react-query';
 
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
@@ -17,6 +18,7 @@ import {
   RewardsDataForMantissa,
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
+import { bigDiv, bigMul, toFixedNoRound } from '@ui/utils/formatNumber';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -132,10 +134,13 @@ const constructMantissa = (
   underlyingEthPrice: number
 ) => {
   return utils.parseEther(
-    (
-      (rewardSpeed * rewardEthPrice) /
-      (Number(utils.formatEther(underlyingTotalSupply)) * underlyingEthPrice)
-    ).toString()
+    toFixedNoRound(
+      bigDiv(
+        bigMul(rewardSpeed.toString(), rewardEthPrice.toString()),
+        bigMul(utils.formatEther(underlyingTotalSupply), underlyingEthPrice.toString())
+      ),
+      DEFAULT_DECIMALS
+    )
   );
 };
 
