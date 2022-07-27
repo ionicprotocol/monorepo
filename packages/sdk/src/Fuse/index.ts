@@ -54,10 +54,10 @@ import {
   JUMP_RATE_MODEL_CONF,
   WHITE_PAPER_RATE_MODEL_CONF,
 } from "./config";
+import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import {
   getComptrollerFactory,
   getContract,
