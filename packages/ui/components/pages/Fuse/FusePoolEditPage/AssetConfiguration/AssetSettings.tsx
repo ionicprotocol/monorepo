@@ -85,11 +85,7 @@ interface AssetSettingsProps {
   tokenData: TokenData;
 }
 
-export const AssetSettings = ({
-  comptrollerAddress,
-  tokenData,
-  selectedAsset,
-}: AssetSettingsProps) => {
+export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { fuse, setPendingTxHash } = useRari();
   const toast = useToast();
@@ -121,7 +117,7 @@ export const AssetSettings = ({
     fuse.chainDeployment.JumpRateModel.address
   );
 
-  const pluginName = usePluginName(tokenData.address, selectedAsset.plugin);
+  const { data: pluginName } = usePluginName(selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {
