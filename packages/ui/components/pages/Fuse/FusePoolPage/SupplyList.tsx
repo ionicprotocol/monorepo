@@ -183,7 +183,7 @@ const RewardsInfo = ({
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {aprFormatter(utils.parseUnits(data.apy.toString()))}%
+          {data.apy.toFixed(2)}%
         </Text>
       )}
     </HStack>
