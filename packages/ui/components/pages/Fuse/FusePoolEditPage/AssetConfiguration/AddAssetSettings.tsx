@@ -90,10 +90,7 @@ export const AddAssetSettings = ({
     fuse.chainDeployment.JumpRateModel.address
   );
 
-  const availablePlugins = useMemo(
-    () => fuse.chainPlugins[tokenData.address] || [],
-    [fuse.chainPlugins, tokenData.address]
-  );
+  const availablePlugins = useMemo(() => [], []);
 
   useEffect(() => {
     const func = async () => {
@@ -371,12 +368,8 @@ export const AddAssetSettings = ({
                 No plugin
               </option>
               {availablePlugins.map((plugin, index) => (
-                <option
-                  key={plugin.strategyAddress}
-                  value={index}
-                  style={{ color: cSelect.txtColor }}
-                >
-                  {plugin.strategyName}
+                <option key={plugin} value={index} style={{ color: cSelect.txtColor }}>
+                  {plugin}
                 </option>
               ))}
             </Select>

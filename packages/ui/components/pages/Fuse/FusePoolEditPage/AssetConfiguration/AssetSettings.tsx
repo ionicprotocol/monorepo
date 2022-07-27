@@ -19,7 +19,7 @@ import { ComptrollerErrorCodes, CTokenErrorCodes, NativePricedFuseAsset } from '
 import { BigNumber, ContractFunction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
@@ -35,6 +35,7 @@ import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/inde
 import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
+import { usePluginName } from '@ui/hooks/usePluginName';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -84,11 +85,7 @@ interface AssetSettingsProps {
   tokenData: TokenData;
 }
 
-export const AssetSettings = ({
-  comptrollerAddress,
-  tokenData,
-  selectedAsset,
-}: AssetSettingsProps) => {
+export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { fuse, setPendingTxHash } = useRari();
   const errorToast = useErrorToast();
@@ -120,18 +117,7 @@ export const AssetSettings = ({
     fuse.chainDeployment.JumpRateModel.address
   );
 
-  const availablePlugins = useMemo(
-    () => fuse.chainPlugins[tokenData.address] || [],
-    [fuse.chainPlugins, tokenData.address]
-  );
-
-  const pluginName = useMemo(() => {
-    if (!selectedAsset.plugin?.strategyAddress) return 'No Plugin';
-    return availablePlugins.map((plugin) => {
-      if (plugin.strategyAddress === selectedAsset.plugin?.strategyAddress)
-        return plugin.strategyName;
-    });
-  }, [selectedAsset.plugin?.strategyAddress, availablePlugins]);
+  const { data: pluginName } = usePluginName(selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {
