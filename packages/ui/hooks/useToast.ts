@@ -2,9 +2,9 @@ import { useToast, UseToastOptions } from '@chakra-ui/react';
 
 const useSuccessToast = (options: UseToastOptions = {}) =>
   useToast({
-    title: 'Success',
+    title: 'Success!',
     status: 'success',
-    duration: 2000,
+    duration: 5000,
     isClosable: true,
     position: 'top-right',
     ...options,
@@ -12,7 +12,7 @@ const useSuccessToast = (options: UseToastOptions = {}) =>
 
 const useErrorToast = (options: UseToastOptions = {}) =>
   useToast({
-    title: 'Error',
+    title: 'Error!',
     status: 'error',
     duration: 10000,
     isClosable: true,
@@ -20,4 +20,24 @@ const useErrorToast = (options: UseToastOptions = {}) =>
     ...options,
   });
 
-export { useSuccessToast, useErrorToast };
+const useWarningToast = (options: UseToastOptions = {}) =>
+  useToast({
+    title: 'Warning!',
+    status: 'warning',
+    duration: 10000,
+    isClosable: true,
+    position: 'top-right',
+    ...options,
+  });
+
+const useInfoToast = (options: UseToastOptions = {}) =>
+  useToast({
+    title: 'Info!',
+    status: 'info',
+    duration: 5000,
+    isClosable: true,
+    position: 'top-right',
+    ...options,
+  });
+
+export { useSuccessToast, useErrorToast, useWarningToast, useInfoToast };
