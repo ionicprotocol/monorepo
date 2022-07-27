@@ -38,6 +38,7 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -98,7 +99,7 @@ const EditFlywheelModal = ({
 
   useEffect(() => {
     if (rewardsInfo?.rewardsPerSecond) {
-      setSupplySpeed(Number(utils.formatEther(rewardsInfo.rewardsPerSecond)).toFixed(8));
+      setSupplySpeed(toFixedNoRound(utils.formatEther(rewardsInfo.rewardsPerSecond), 8));
     }
     if (rewardsInfo?.rewardsEndTimestamp && rewardsInfo.rewardsEndTimestamp > 0) {
       setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
