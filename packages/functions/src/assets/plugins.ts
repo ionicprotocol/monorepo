@@ -1,6 +1,6 @@
 export const bscPlugins = [
   '0x10c90bfcfb3d2a7ae814da1548ae3a7fc31c35a0', // BOMB
-  '0x6b8b935dfc9dcd0754eced708b1b633bf73fe854',
+  '0x6b8b935dfc9dcd0754eced708b1b633bf73fe854', // BTCB-BOMB
   '0x3c29e9b0cfe6fff97f373eabeade9475fac3bd4e', // 2brl
   '0xa89bf1b0fae877e8185e46af22b80f2d5333a90d',
   '0xdaeb649257bce27ab3b2d9b7ca483d1cf70d1b52',
