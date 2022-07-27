@@ -14,9 +14,8 @@ export {
   FuseAsset,
   SupportedAsset,
   InterestRateModelType,
-  AssetPluginConfig,
+  DeployedPlugins,
   MarketConfig,
-  MarketPluginConfig,
   OracleConfig,
 } from "./types";
 export {
