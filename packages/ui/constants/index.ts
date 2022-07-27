@@ -1,3 +1,8 @@
+import { SupportedChainsArray } from '@midas-capital/sdk';
+
+export const SUPPORTED_NETWORKS_REGEX = new RegExp(SupportedChainsArray.join('|'));
+export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
+
 export const ABILLY = 1e9;
 
 export const URL_MIDAS_DOCS = 'https://docs.midascapital.xyz/';

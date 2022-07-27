@@ -35,5 +35,8 @@ MIN_BORROW_USD="100"
 directory = "./packages/functions/netlify/functions"
 node_bundler = "esbuild"
 
-[functions."save-price"]
+[functions."bsc-save-price"]
+schedule = "@hourly"
+
+[functions."moonbeam-save-price"]
 schedule = "@hourly"
