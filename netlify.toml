@@ -8,6 +8,9 @@ command = "yarn build:deploy:ui"
 
 [build.environment]
 YARN_CHECKSUM_BEHAVIOR = "update"
+SUPABASE_URL="https://xdjnvsfkwtkwfuayzmtm.supabase.co"
+SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
+SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 
 [context.branch-deploy.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
