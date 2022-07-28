@@ -14,7 +14,7 @@ export const oracleConfig = (deployments: ChainDeployment, artifacts: Artifacts,
   return Object.fromEntries(asMap);
 };
 
-export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
+export const irmBscConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
   return {
     JumpRateModel: {
       abi: artifacts.JumpRateModel.abi,
@@ -27,6 +27,19 @@ export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) =>
     AnkrBNBInterestRateModel: {
       abi: artifacts.AnkrBNBInterestRateModel.abi,
       address: deployments.AnkrBNBInterestRateModel.address,
+    },
+  };
+};
+
+export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
+  return {
+    JumpRateModel: {
+      abi: artifacts.JumpRateModel.abi,
+      address: deployments.JumpRateModel.address,
+    },
+    WhitePaperInterestRateModel: {
+      abi: artifacts.WhitePaperInterestRateModel.abi,
+      address: deployments.WhitePaperInterestRateModel.address,
     },
   };
 };
