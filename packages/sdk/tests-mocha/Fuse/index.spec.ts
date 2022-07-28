@@ -170,32 +170,6 @@ describe("Fuse Index", () => {
     });
   });
 
-  describe("#deployInterestRateModel", () => {
-    let getInterestRateModelContractStub: SinonStub;
-
-    beforeEach(() => {
-      getInterestRateModelContractStub = stub(utilsFns, "getInterestRateModelContract").returns(mockFactory);
-    });
-
-    it("deploy JumpRateModel", () => {
-      fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "JumpRateModel");
-      expect(getInterestRateModelContractStub).to.be.calledWithExactly(
-        ARTIFACTS.JumpRateModel.abi,
-        ARTIFACTS.JumpRateModel.bytecode.object,
-        mkAddress("0xabc")
-      );
-    });
-
-    it("deploy WhitePaperInterestRateModel", () => {
-      fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "WhitePaperInterestRateModel");
-      expect(getInterestRateModelContractStub).to.be.calledWithExactly(
-        ARTIFACTS.WhitePaperInterestRateModel.abi,
-        ARTIFACTS.WhitePaperInterestRateModel.bytecode.object,
-        mkAddress("0xabc")
-      );
-    });
-  });
-
   describe("#identifyInterestRateModel", () => {
     let model;
     let interestRateModelAddress;
