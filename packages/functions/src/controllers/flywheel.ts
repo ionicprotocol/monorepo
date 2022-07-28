@@ -25,13 +25,13 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
               pluginContract.callStatic.underlying(),
               pluginContract.callStatic.plugin(),
             ]);
-          console.log({
-            state,
-            rewardToken,
-            totalSupply,
-            underlyingAsset,
-            pluginAddress,
-          });
+          // console.log({
+          //   state,
+          //   rewardToken,
+          //   totalSupply,
+          //   underlyingAsset,
+          //   pluginAddress,
+          // });
 
           const index = state['index'];
           const pricePerShare = !totalSupply.eq('0') ? index / totalSupply : 0;
@@ -48,9 +48,7 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
             },
           ]);
           if (error) {
-            console.error(
-              `Error occurred during saving data for flywheel's plugin ${strategy}: ${error.message}`
-            );
+            throw `Error occurred during saving data for flywheel's plugin ${pluginAddress}: ${error.message}`;
           } else {
             console.log(`Successfully saved data for flywheel's plugin ${strategy}`);
           }

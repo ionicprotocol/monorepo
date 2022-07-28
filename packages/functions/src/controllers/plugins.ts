@@ -17,7 +17,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           contract.callStatic.totalAssets(),
           contract.callStatic.asset(),
         ]);
-        console.log({ totalSupply, totalAssets, underlyingAsset });
+        // console.log({ totalSupply, totalAssets, underlyingAsset });
 
         const pricePerShare = !totalSupply.eq('0') ? totalAssets / totalSupply : 0;
 
@@ -32,9 +32,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           },
         ]);
         if (error) {
-          console.error(
-            `Error occurred during saving data for plugin ${plugin}:  ${error.message}`
-          );
+          throw `Error occurred during saving data for plugin ${plugin}:  ${error.message}`;
         } else {
           console.log(`Successfully saved data for plugin ${plugin}`);
         }
