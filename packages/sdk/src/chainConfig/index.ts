@@ -15,18 +15,31 @@ export const oracleConfig = (deployments: ChainDeployment, artifacts: Artifacts,
 };
 
 export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
-  return {
-    JumpRateModel: {
-      abi: artifacts.JumpRateModel.abi,
-      address: deployments.JumpRateModel.address,
-    },
-    WhitePaperInterestRateModel: {
-      abi: artifacts.WhitePaperInterestRateModel.abi,
-      address: deployments.WhitePaperInterestRateModel.address,
-    },
-    AnkrBNBInterestRateModel: {
-      abi: artifacts.AnkrBNBInterestRateModel.abi,
-      address: deployments.AnkrBNBInterestRateModel.address,
-    },
-  };
+  if (deployments.AnkrBNBInterestRateModel) {
+    return {
+      JumpRateModel: {
+        abi: artifacts.JumpRateModel.abi,
+        address: deployments.JumpRateModel.address,
+      },
+      WhitePaperInterestRateModel: {
+        abi: artifacts.WhitePaperInterestRateModel.abi,
+        address: deployments.WhitePaperInterestRateModel.address,
+      },
+      AnkrBNBInterestRateModel: {
+        abi: artifacts.AnkrBNBInterestRateModel.abi,
+        address: deployments.AnkrBNBInterestRateModel.address,
+      },
+    };
+  } else {
+    return {
+      JumpRateModel: {
+        abi: artifacts.JumpRateModel.abi,
+        address: deployments.JumpRateModel.address,
+      },
+      WhitePaperInterestRateModel: {
+        abi: artifacts.WhitePaperInterestRateModel.abi,
+        address: deployments.WhitePaperInterestRateModel.address,
+      },
+    };
+  }
 };
