@@ -54,10 +54,6 @@ export const getPoolComptroller = (poolAddress: string, signer?: Signer): Comptr
   return new Contract(poolAddress, ComptrollerArtifact.abi, signer) as Comptroller;
 };
 
-export const getInterestRateModelContract = (abi: any, byteCode: string, signer?: Signer) => {
-  return new ContractFactory(abi, byteCode, signer);
-};
-
 export const getContract = (address: string, abi: any, providerOrSigner: Web3Provider | JsonRpcProvider | Signer) => {
   return new Contract(address, abi, providerOrSigner);
 };
