@@ -20,6 +20,7 @@ import {
   chainSpecificAddresses,
   chainSpecificParams,
   chainSupportedAssets,
+  irmBscConfig,
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
@@ -152,7 +153,10 @@ export class FuseBase {
     }
     this.artifacts = ARTIFACTS;
 
-    this.irms = irmConfig(this.chainDeployment, this.artifacts);
+    this.irms =
+      this.chainId === SupportedChains.bsc
+        ? irmBscConfig(this.chainDeployment, this.artifacts)
+        : irmConfig(this.chainDeployment, this.artifacts);
     this.availableOracles = chainOracles[chainId].filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
         console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
