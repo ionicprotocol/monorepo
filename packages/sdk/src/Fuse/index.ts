@@ -20,7 +20,6 @@ import {
   chainSpecificAddresses,
   chainSpecificParams,
   chainSupportedAssets,
-  irmBscConfig,
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
@@ -77,6 +76,7 @@ export class FuseBase {
   public WhitePaperRateModelConf: InterestRateModelConf;
 
   public availableOracles: Array<string>;
+  public availableIrms: Array<string>;
   public chainId: SupportedChains;
   public chainDeployment: ChainDeployment;
   public oracles: OracleConfig;
@@ -145,10 +145,13 @@ export class FuseBase {
     }
     this.artifacts = ARTIFACTS;
 
-    this.irms =
-      this.chainId === SupportedChains.bsc
-        ? irmBscConfig(this.chainDeployment, this.artifacts)
-        : irmConfig(this.chainDeployment, this.artifacts);
+    this.availableIrms = chainOracles[chainId].filter((o) => {
+      if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
+        console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
+        return false;
+      }
+      return true;
+    });
     this.availableOracles = chainOracles[chainId].filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
         console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
@@ -157,6 +160,7 @@ export class FuseBase {
       return true;
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
+    this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
 
     this.chainSpecificAddresses = chainSpecificAddresses[chainId];
     this.chainSpecificParams = chainSpecificParams[chainId];

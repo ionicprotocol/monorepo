@@ -253,6 +253,10 @@ export type ChainOracles = {
   [chain in SupportedChains]: string[];
 };
 
+export type ChainIrms = {
+  [chain in SupportedChains]: string[];
+};
+
 export type ChainSpecificParams = {
   [chain in SupportedChains]: ChainParams;
 };
