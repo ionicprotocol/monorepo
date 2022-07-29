@@ -1,22 +1,21 @@
-import { FundOperationMode, Fuse, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { FundOperationMode, MidasSdk, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
 
-import { toFixedNoRound } from './formatNumber';
-
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
+import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export const fetchMaxAmount = async (
   mode: FundOperationMode,
-  fuse: Fuse,
+  midasSdk: MidasSdk,
   address: string,
   asset: NativePricedFuseAsset
 ) => {
   if (mode === FundOperationMode.SUPPLY) {
-    return await fetchTokenBalance(asset.underlyingToken, fuse, address);
+    return await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
   }
 
   if (mode === FundOperationMode.REPAY) {
-    const balance = await fetchTokenBalance(asset.underlyingToken, fuse, address);
+    const balance = await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
     const debt = asset.borrowBalance;
 
     if (balance.gt(debt)) {
@@ -27,7 +26,7 @@ export const fetchMaxAmount = async (
   }
 
   if (mode === FundOperationMode.BORROW) {
-    const maxBorrow = (await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
+    const maxBorrow = (await midasSdk.contracts.FusePoolLensSecondary.callStatic.getMaxBorrow(
       address,
       asset.cToken
     )) as BigNumber;
@@ -40,7 +39,7 @@ export const fetchMaxAmount = async (
   }
 
   if (mode === FundOperationMode.WITHDRAW) {
-    let maxRedeem = await fuse.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
+    let maxRedeem = await midasSdk.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
       address,
       asset.cToken,
       { from: address }

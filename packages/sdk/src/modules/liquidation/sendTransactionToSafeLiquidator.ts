@@ -1,12 +1,12 @@
 import { TransactionRequest } from "@ethersproject/providers";
 import { BigNumber, Wallet } from "ethers";
 
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { fetchGasLimitForTransaction } from "./utils";
 
 export default async function sendTransactionToSafeLiquidator(
-  fuse: FuseBase,
+  fuse: MidasBase,
   method: string | any,
   params: Array<any> | any,
   value: number | BigNumber

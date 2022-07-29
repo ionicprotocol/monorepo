@@ -3,7 +3,7 @@ import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
 import { LiquidationKind } from "../../enums";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 import { FuseAsset } from "../../types";
 
 export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);
@@ -50,7 +50,7 @@ export type PublicPoolUserWithData = {
   liquidationIncentive: BigNumber;
 };
 
-export async function fetchGasLimitForTransaction(fuse: FuseBase, method: string, tx: TransactionRequest) {
+export async function fetchGasLimitForTransaction(fuse: MidasBase, method: string, tx: TransactionRequest) {
   try {
     return await fuse.provider.estimateGas(tx);
   } catch (error) {

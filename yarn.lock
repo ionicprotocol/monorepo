@@ -2471,7 +2471,7 @@ __metadata:
     "@netlify/plugin-nextjs": latest
     "@supabase/supabase-js": ^1.35.4
     "@testing-library/react": ^13.3.0
-    "@types/node": 18.6.1
+    "@types/node": 18.6.2
     "@types/react": ^18.0.15
     "@types/react-datepicker": ^4.4.2
     "@types/react-dom": ^18.0.6
@@ -2499,13 +2499,13 @@ __metadata:
     react-datepicker: ^4.8.0
     react-dom: ^18.2.0
     react-error-boundary: ^3.1.4
-    react-hook-form: ^7.33.1
-    react-i18next: ^11.18.1
+    react-hook-form: ^7.34.0
+    react-i18next: ^11.18.3
     react-icons: ^4.4.0
     react-jazzicon: ^1.0.4
     react-query: ^3.39.2
     typescript: 4.7.4
-    wagmi: ^0.5.12
+    wagmi: ^0.6.0
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -4562,10 +4562,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.6.1":
-  version: 18.6.1
-  resolution: "@types/node@npm:18.6.1"
-  checksum: 06331f68bc73d93b73977ae19ca87818e004bc7b8e70b0d4f73b0ea5e341a4a1ba6f0e79db8fb75a841af2b8d74552d6b9a8f846b267954689f57effedcf5d77
+"@types/node@npm:18.6.2":
+  version: 18.6.2
+  resolution: "@types/node@npm:18.6.2"
+  checksum: 644c460baedb1fbbd55369ab621167cb39ddaa727fd4fcf4bc7080183cf936d7ff8c2c886ba93ff42768d6f7a579a540e6d1e63d3adba4e5758fb13671ae68ce
   languageName: node
   linkType: hard
 
@@ -5060,9 +5060,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:^0.4.9":
-  version: 0.4.9
-  resolution: "@wagmi/core@npm:0.4.9"
+"@wagmi/core@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@wagmi/core@npm:0.5.0"
   dependencies:
     eventemitter3: ^4.0.7
     zustand: ^4.0.0-rc.1
@@ -5075,7 +5075,7 @@ __metadata:
       optional: true
     "@walletconnect/ethereum-provider":
       optional: true
-  checksum: ea31970d4a34fbf07aff94e51e9ee060ccfc0c72d0b8dd6bfaa932181b4d88b9b048dc9bd264b73fd0fe4710c0a44fb0ec2599578f6e45c3ef22955a630a3535
+  checksum: d8e2822e32089f0acf566f5bddec12688eb34376ede503a5177b7a5fb67109ff235860f112631643b2b7fdfb6499bc2b93c0bae0ee74cfa5541b2f190dfdab2c
   languageName: node
   linkType: hard
 
@@ -16611,7 +16611,7 @@ __metadata:
     "@tsconfig/recommended": ^1.0.1
     "@typescript-eslint/eslint-plugin": ^5.31.0
     "@typescript-eslint/parser": ^5.31.0
-    netlify-cli: ^10.11.2
+    netlify-cli: ^10.12.1
     ts-node: ^10.9.1
     typescript: ^4.7.4
   languageName: unknown
@@ -16828,9 +16828,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netlify-cli@npm:^10.11.2":
-  version: 10.11.2
-  resolution: "netlify-cli@npm:10.11.2"
+"netlify-cli@npm:^10.12.1":
+  version: 10.12.1
+  resolution: "netlify-cli@npm:10.12.1"
   dependencies:
     "@netlify/build": ^27.5.0
     "@netlify/config": ^18.1.2
@@ -16903,7 +16903,7 @@ __metadata:
     multiparty: ^4.2.1
     netlify: ^12.0.0
     netlify-headers-parser: ^6.0.2
-    netlify-onegraph-internal: 0.3.6
+    netlify-onegraph-internal: 0.3.9
     netlify-redirect-parser: ^13.0.5
     netlify-redirector: ^0.2.1
     node-fetch: ^2.6.0
@@ -16943,7 +16943,7 @@ __metadata:
   bin:
     netlify: bin/run
     ntl: bin/run
-  checksum: b6f87b3d923b19a511c0e7f38d6f8ad0f6bd6073e9566c94b1f5df2c2cb4e203fd62e62597f83b0ae157df0babd6a188d39707627d7a5318010c5bb78b683365
+  checksum: b94d8d8c79301498c2c02757f27f62532aa712d4b1a2fc3452f6bb7ab342d2b21b1a79e0dd01c5c7a0c564ad6358c03ae627d958b959b93db288cf30a89d675e
   languageName: node
   linkType: hard
 
@@ -16960,14 +16960,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netlify-onegraph-internal@npm:0.3.6":
-  version: 0.3.6
-  resolution: "netlify-onegraph-internal@npm:0.3.6"
+"netlify-onegraph-internal@npm:0.3.9":
+  version: 0.3.9
+  resolution: "netlify-onegraph-internal@npm:0.3.9"
   dependencies:
     graphql: 16.0.0
     node-fetch: ^2.6.0
     uuid: ^8.3.2
-  checksum: d4139ca60126d05867e90ca204e154c727d35d663658c5133d39e150fa449959ab98a45544a411877104ed37b3d74086fa3435151baf189a4e369de82d196d3c
+  checksum: c7e40cc44e8c650537b82b4509d16b5ac02c5f11e6873ed38d169dbb043e78abc5463418095a09a29d11d160b32661888991feef04bfa86a2c6e660e6a8122d7
   languageName: node
   linkType: hard
 
@@ -19383,16 +19383,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.33.1":
-  version: 7.33.1
-  resolution: "react-hook-form@npm:7.33.1"
+"react-hook-form@npm:^7.34.0":
+  version: 7.34.0
+  resolution: "react-hook-form@npm:7.34.0"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
-  checksum: ec8f938b5af32148956edc9a87b6a0a99cc305617925608961cf4352ad1a786daea9fdc4d15106aea2821937d27367a69ab525882f07c0bb7ea45fba5dbf8ff2
+  checksum: 2b4a6f6ca5b3f729b88aa14a1a8c47ba86405d9c5fef2560b1dc85ac6fe1b105326571b8e1e857f8d8f3449636062d2d6201809918b5bb37f6f8f0b9c6cd6e2c
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^11.18.0, react-i18next@npm:^11.18.1":
+"react-i18next@npm:^11.18.0":
   version: 11.18.1
   resolution: "react-i18next@npm:11.18.1"
   dependencies:
@@ -19407,6 +19407,24 @@ __metadata:
     react-native:
       optional: true
   checksum: 3614d4f41a2bad2831aee7c02da6403955eacf7aeef1cd73635a99b072e72f2ebed3e83ac2bc1bfe72421cb2de025bfbecc9929bfc495ba1f055d49851bf6e62
+  languageName: node
+  linkType: hard
+
+"react-i18next@npm:^11.18.3":
+  version: 11.18.3
+  resolution: "react-i18next@npm:11.18.3"
+  dependencies:
+    "@babel/runtime": ^7.14.5
+    html-parse-stringify: ^3.0.1
+  peerDependencies:
+    i18next: ">= 19.0.0"
+    react: ">= 16.8.0"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 05fe3187dd092000c9f24dfd0cad2bd433f9a88a78cec2b43d74545ea1ec014f2b4e2ac84c579480be15bc571ef7fb2a2fafbe0bfac02f80ce10a8ffc6ad91e7
   languageName: node
   linkType: hard
 
@@ -23156,19 +23174,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.5.12":
-  version: 0.5.12
-  resolution: "wagmi@npm:0.5.12"
+"wagmi@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "wagmi@npm:0.6.0"
   dependencies:
     "@coinbase/wallet-sdk": ^3.3.0
-    "@wagmi/core": ^0.4.9
+    "@wagmi/core": ^0.5.0
     "@walletconnect/ethereum-provider": ^1.7.8
     react-query: 4.0.0-beta.23
     use-sync-external-store: ^1.2.0
   peerDependencies:
     ethers: ">=5.5.1"
     react: ">=17.0.0"
-  checksum: 347cdc8456594c42483d1ec4ce3c88930247d4ed0ea4f9544e1f68b7d14005388c1fb5066f61d593f57cd382f185b6dd5ef1b9a3a717ac0f37accf3cf65acb4c
+  checksum: a97edead84d0596a6e3ecefecf2784734ee0df047ca31176ed01b27c9f0c2201fa34ff4a07282722fbe0fadaed729d31a435d309a8395a75978b04cc79a8f820
   languageName: node
   linkType: hard
 

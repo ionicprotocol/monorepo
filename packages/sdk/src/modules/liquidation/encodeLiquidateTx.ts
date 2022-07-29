@@ -1,13 +1,13 @@
 import { BigNumber } from "ethers";
 
 import { LiquidationKind } from "../../enums";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { StrategyAndData } from "./redemptionStrategy";
 import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
 
 export default async function encodeLiquidateTx(
-  fuse: FuseBase,
+  fuse: MidasBase,
   liquidationKind: LiquidationKind,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,

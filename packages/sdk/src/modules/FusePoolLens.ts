@@ -1,8 +1,8 @@
 import { BigNumber } from "ethers";
 
-import { FuseBaseConstructor } from "../types";
+import { MidasBaseConstructor } from "../types";
 
-export function withFusePoolLens<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withFusePoolLens<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePoolLens extends Base {
     /**
      * @returns the TVL on current chain in native asset value

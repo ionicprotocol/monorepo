@@ -1,5 +1,5 @@
 import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
-import { Fuse } from '@midas-capital/sdk';
+import { MidasSdk } from '@midas-capital/sdk';
 
 import { NETWORK_DATA } from '@ui/networkData/index';
 
@@ -15,11 +15,11 @@ export function providerURLForChain(chainId: number) {
 export const initFuseWithProviders = (
   provider: JsonRpcProvider | Web3Provider,
   chainId: number
-): Fuse => {
-  const fuse = new Fuse(provider, chainId);
-  fuse.contracts.FusePoolLens = fuse.contracts.FusePoolLens.connect(
+): MidasSdk => {
+  const midasSdk = new MidasSdk(provider, chainId);
+  midasSdk.contracts.FusePoolLens = midasSdk.contracts.FusePoolLens.connect(
     new JsonRpcProvider(providerURLForChain(chainId), 'any')
   );
 
-  return fuse;
+  return midasSdk;
 };

@@ -25,8 +25,8 @@ task("flywheel:addStrategyForRewards", "Create pool if does not exist")
     }
 
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const addTx = await sdk.addStrategyForRewardsToFlywheelCore(flywheelAddress, strategyAddress, {
       from: signer.address,
@@ -64,9 +64,8 @@ task("flywheel:addToPool", "Create pool if does not exist")
     }
 
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    console.log({ fuseModule });
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     console.log({ sdk });
 
     const addTx = await sdk.addFlywheelCoreToComptroller(flywheelAddress, poolAddress, {

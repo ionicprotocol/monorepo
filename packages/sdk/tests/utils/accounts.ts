@@ -2,7 +2,6 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
 
 import { assetSymbols } from "../../src/chainConfig";
-import { bscAssets } from "../../src/chainConfig/assets";
 
 const WHALE_ACCOUNTS = {
   56: "0x8894E0a0c962CB723c1976a4421c95949bE2D4E3", // binance hot wallet 6

@@ -21,8 +21,8 @@ export default task("market:create", "Create Market")
     // @ts-ignore
     const enumsModule = await import("../src/enums");
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     // @ts-ignore
     const assetModule = await import("../tests/utils/assets");
     // @ts-ignore

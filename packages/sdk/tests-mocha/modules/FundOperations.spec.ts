@@ -3,15 +3,15 @@ import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { SupportedChains } from "../../src/enums";
-import { FuseBase } from "../../src/Fuse/index";
-import * as utilsFns from "../../src/Fuse/utils";
+import { MidasBase } from "../../src/MidasSdk/index";
+import * as utilsFns from "../../src/MidasSdk/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
-import { FuseBaseConstructor } from "../../src/types";
+import { MidasBaseConstructor } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 describe("FundOperation", () => {
-  let FundOperations: FuseBaseConstructor;
+  let FundOperations: MidasBaseConstructor;
   let fundOperations: any;
   let axiosStub: SinonStub;
 
@@ -22,7 +22,7 @@ describe("FundOperation", () => {
     (mockProvider as any).getSigner = (address: string) => address;
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
 
-    FundOperations = FundOperationsModule.withFundOperations(FuseBase);
+    FundOperations = FundOperationsModule.withFundOperations(MidasBase);
     fundOperations = new FundOperations(mockProvider, SupportedChains.ganache, {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },

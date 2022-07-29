@@ -12,8 +12,8 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     }
 
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const jarvisComptroller = "0x31d76A64Bc8BbEffb601fac5884372DEF910F044";
     const dddAddress = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
@@ -48,7 +48,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     });
     console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
 
-    // // Step 2: update plugin, use same implementation
+    // // Step 2: update market, use same implementation
     // const currentImplementation = await cToken.callStatic.implementation();
     // console.log({ currentImplementation });
     // const abiCoder = new hre.ethers.utils.AbiCoder();
@@ -61,7 +61,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     // const upgradeResult = await upgradeTx.wait(2);
     // console.log("changed plugin successfully");
 
-    // Step 3: Approve fwc Rewards to get rewardTokens from it
+    // Step 3: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)
     const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
     console.log({ dddRewards });
     const approveDDDTx = await cToken["approve(address,address)"](dddAddress, dddRewards);
