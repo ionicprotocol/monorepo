@@ -7,10 +7,10 @@ import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistrib
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
-import { Fuse } from "../../src";
+import { MidasSdk } from "../../src";
 
 import { BSC_POOLS, getAssetsConf } from "./assets";
-import { getOrCreateFuse } from "./fuseSdk";
+import { getOrCreateMidas } from "./midasSdk";
 import { createPool, deployAssets } from "./pool";
 
 export const resetPriceOracle = async (erc20One, erc20Two) => {
@@ -18,7 +18,7 @@ export const resetPriceOracle = async (erc20One, erc20Two) => {
 
   if (chainId !== 31337 && chainId !== 1337) {
     const { deployer } = await ethers.getNamedSigners();
-    const sdk = new Fuse(ethers.provider, Number(chainId));
+    const sdk = new MidasSdk(ethers.provider, Number(chainId));
     const mpo = (await ethers.getContractAt(
       "MasterPriceOracle",
       sdk.oracles.MasterPriceOracle.address,
@@ -48,7 +48,7 @@ const setupLocalOraclePrices = async () => {
 
 const setUpBscOraclePrices = async (assets?: Array<string>) => {
   const { deployer } = await ethers.getNamedSigners();
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
   const spo = await ethers.getContractAt("SimplePriceOracle", sdk.oracles.SimplePriceOracle.address, deployer);
   const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, deployer);
   const assetAddresses = assets ? assets : [constants.AddressZero];
@@ -89,7 +89,7 @@ export const setUpPools = async (poolNames: BSC_POOLS[]) => {
 export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
   const { deployer, rando } = await ethers.getNamedSigners();
 
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
 
   const simplePriceOracle: SimplePriceOracle = (await ethers.getContractAt(
     "SimplePriceOracle",
@@ -153,7 +153,7 @@ export const liquidateAndVerify = async (
   liquidator: FuseSafeLiquidator
 ) => {
   const { rando } = await ethers.getNamedSigners();
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
 
   // Check balance before liquidation
   const ratioBefore = await getPositionRatio({

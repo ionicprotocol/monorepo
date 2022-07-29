@@ -25,7 +25,7 @@ export const letterScore = (totalScore: number) => {
 // Quite ridiculous to fetch usd prices and pool data in frontend to just pass it to the backend...
 
 export const usePoolRSS = (poolId: string | number) => {
-  const { fuse, currentChain, coingeckoId } = useRari();
+  const { midasSdk, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const { data: poolData } = useFusePoolData(poolId.toString());
 
@@ -35,13 +35,13 @@ export const usePoolRSS = (poolId: string | number) => {
       if (!usdPrice || !poolData) return undefined;
 
       const { 0: admin, 1: upgradeable } =
-        await fuse.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(
+        await midasSdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(
           poolData.comptroller
         );
       const contract = new Contract(
         poolData.comptroller,
-        fuse.chainDeployment.Comptroller.abi,
-        fuse.provider.getSigner()
+        midasSdk.chainDeployment.Comptroller.abi,
+        midasSdk.provider.getSigner()
       );
       const liquidationIncentiveMantissa = await contract.liquidationIncentiveMantissa();
       const res = await axios.post('/api/rss', {

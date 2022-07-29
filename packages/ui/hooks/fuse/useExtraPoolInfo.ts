@@ -3,14 +3,14 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 
 export const useExtraPoolInfo = (comptrollerAddress: string) => {
-  const { fuse, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useRari();
 
   const { data } = useQuery(
     ['ExtraPoolInfo', currentChain.id, comptrollerAddress],
     async () => {
       if (comptrollerAddress) {
-        const comptroller = fuse.createComptroller(comptrollerAddress);
-        const oracle = fuse.getPriceOracle(await comptroller.callStatic.oracle());
+        const comptroller = midasSdk.createComptroller(comptrollerAddress);
+        const oracle = midasSdk.getPriceOracle(await comptroller.callStatic.oracle());
         const [
           { 0: admin, 1: upgradeable },
           closeFactor,
@@ -19,7 +19,7 @@ export const useExtraPoolInfo = (comptrollerAddress: string) => {
           whitelist,
           pendingAdmin,
         ] = await Promise.all([
-          fuse.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+          midasSdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
 
           comptroller.callStatic.closeFactorMantissa(),
 

@@ -17,7 +17,7 @@ const RemoveAssetButton = ({
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
 }) => {
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
@@ -32,7 +32,7 @@ const RemoveAssetButton = ({
 
   const remove = async () => {
     setIsRemoving(true);
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
     const response = await comptroller.callStatic._unsupportMarket(asset.cToken);
 
     if (!response.eq(0)) {

@@ -1,20 +1,20 @@
 import { expect } from "chai";
-import { BigNumber, constants, providers, utils } from "ethers";
+import { BigNumber, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
-import { assetSymbols } from "../../src/chainConfig";
-import Fuse from "../../src/Fuse";
+import * as chainConfig from "../../src/chainConfig";
+import MidasSdk from "../../src/MidasSdk";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as assetHelpers from "../utils/assets";
 import { BSC_POOLS } from "../utils/assets";
-import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getOrCreateMidas } from "../utils/midasSdk";
 import * as poolHelpers from "../utils/pool";
 import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
 
 (process.env.FORK_CHAIN_ID ? describe.skip : describe.skip)("FundOperationsERC4626Module", function () {
   let poolAddress: string;
-  let sdk: Fuse;
+  let sdk: MidasSdk;
   let tx: providers.TransactionResponse;
   let rec: providers.TransactionReceipt;
   const poolName = "Fund ERC4626 Pool";
@@ -24,7 +24,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
 
     const { deployer } = await ethers.getNamedSigners();
 
-    sdk = await getOrCreateFuse();
+    sdk = await getOrCreateMidas();
 
     [poolAddress] = await poolHelpers.createPool({
       signer: deployer,
@@ -45,7 +45,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
         ethers,
         BSC_POOLS.ALPACA
       )
-    ).filter((a) => a.symbol === assetSymbols.WBNB);
+    ).filter((a) => a.symbol === chainConfig.assetSymbols.WBNB);
     const baseAssets = (
       await assetHelpers.getAssetsConf(
         poolAddress,
@@ -53,7 +53,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
         sdk.irms.JumpRateModel.address,
         ethers
       )
-    ).filter((a) => a.symbol !== assetSymbols.BTCB && a.symbol !== assetSymbols.WBNB);
+    ).filter((a) => a.symbol !== chainConfig.assetSymbols.BTCB && a.symbol !== chainConfig.assetSymbols.WBNB);
 
     const assets = bombAssets.concat(...baseAssets).concat(...alpacaAssets);
 

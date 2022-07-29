@@ -3,10 +3,10 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
-import { Fuse, FusePoolData, MarketConfig, NativePricedFuseAsset } from "../../src";
+import { FusePoolData, MarketConfig, MidasSdk, NativePricedFuseAsset } from "../../src";
 import { FusePool } from "../../src/types";
 
-import { getOrCreateFuse } from "./fuseSdk";
+import { getOrCreateMidas } from "./midasSdk";
 
 interface PoolCreationParams {
   closeFactor?: number;
@@ -27,7 +27,7 @@ export async function createPool({
   priceOracleAddress = null,
   signer = null,
 }: PoolCreationParams) {
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
 
   if (!signer) {
     const { bob } = await ethers.getNamedSigners();
@@ -72,7 +72,7 @@ export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAd
     const { bob } = await ethers.getNamedSigners();
     signer = bob;
   }
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
   const deployed: DeployedAsset[] = [];
   for (const assetConf of assets) {
     console.log("Deploying asset: ", assetConf.name);
@@ -100,7 +100,7 @@ export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAd
 
 export const assetInPool = async (
   poolId: string,
-  sdk: Fuse,
+  sdk: MidasSdk,
   underlyingSymbol: string,
   address?: string
 ): Promise<NativePricedFuseAsset> => {
@@ -108,7 +108,7 @@ export const assetInPool = async (
   return fetchedAssetsInPool.assets.filter((a) => a.underlyingSymbol === underlyingSymbol)[0];
 };
 
-export const getPoolIndex = async (poolAddress: string, sdk: Fuse) => {
+export const getPoolIndex = async (poolAddress: string, sdk: MidasSdk) => {
   const [indexes, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].comptroller === poolAddress) {
@@ -118,7 +118,7 @@ export const getPoolIndex = async (poolAddress: string, sdk: Fuse) => {
   return null;
 };
 
-export const getPoolByName = async (name: string, sdk: Fuse, address?: string): Promise<FusePoolData> => {
+export const getPoolByName = async (name: string, sdk: MidasSdk, address?: string): Promise<FusePoolData> => {
   const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
@@ -129,7 +129,7 @@ export const getPoolByName = async (name: string, sdk: Fuse, address?: string): 
   return null;
 };
 
-export const getAllPools = async (sdk: Fuse): Promise<FusePool[]> => {
+export const getAllPools = async (sdk: MidasSdk): Promise<FusePool[]> => {
   const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   return publicPools.map((pp) => {
     return {

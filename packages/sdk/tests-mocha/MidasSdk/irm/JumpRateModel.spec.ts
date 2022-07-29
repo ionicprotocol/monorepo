@@ -1,8 +1,8 @@
 import { BigNumber, constants, Contract, providers } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import JumpRateModel from "../../../src/Fuse/irm/JumpRateModel";
-import * as utilsFns from "../../../src/Fuse/utils";
+import JumpRateModel from "../../../src/MidasSdk/irm/JumpRateModel";
+import * as utilsFns from "../../../src/MidasSdk/utils";
 import { expect } from "../../globalTestHook";
 import { mkAddress } from "../../helpers";
 

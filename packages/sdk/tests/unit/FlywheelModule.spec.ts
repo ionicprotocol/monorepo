@@ -3,18 +3,18 @@ import { deployments, ethers } from "hardhat";
 
 import { CErc20 } from "../../lib/contracts/typechain/CErc20";
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
-import Fuse from "../../src/Fuse";
+import MidasSdk from "../../src/MidasSdk";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as assetHelpers from "../utils/assets";
 import * as collateralHelpers from "../utils/collateral";
-import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getOrCreateMidas } from "../utils/midasSdk";
 import * as poolHelpers from "../utils/pool";
 import { wrapNativeToken } from "../utils/setup";
 
 describe("FlywheelModule", function () {
   let poolAAddress: string;
   let poolBAddress: string;
-  let sdk: Fuse;
+  let sdk: MidasSdk;
   let erc20OneCToken: CErc20;
   let erc20TwoCToken: CErc20;
 
@@ -28,7 +28,7 @@ describe("FlywheelModule", function () {
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
-    sdk = await getOrCreateFuse();
+    sdk = await getOrCreateMidas();
 
     [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-Flywheel-Test" });
     [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-Flywheel-Test" });

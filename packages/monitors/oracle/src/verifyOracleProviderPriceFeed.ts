@@ -1,5 +1,5 @@
 import { Provider } from "@ethersproject/providers";
-import { Fuse, OracleConfig, OracleTypes } from "@midas-capital/sdk";
+import { MidasSdk, OracleConfig, OracleTypes } from "@midas-capital/sdk";
 import { Contract } from "ethers";
 
 import { config } from "./config";
@@ -7,19 +7,19 @@ import { config } from "./config";
 import { InvalidReason, logger, SupportedAssetPriceValidity } from "./index";
 
 export default async function verifyOracleProviderPriceFeed(
-  fuse: Fuse,
+  midasSdk: MidasSdk,
   oracle: OracleTypes,
   underlying: string
 ): Promise<SupportedAssetPriceValidity> {
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
-      return await verifyChainLinkOraclePriceFeed(fuse.provider, fuse.oracles, underlying);
+      return await verifyChainLinkOraclePriceFeed(midasSdk.provider, midasSdk.oracles, underlying);
     case OracleTypes.DiaPriceOracle:
-      return await verifyDiaOraclePriceFeed(fuse.oracles, underlying);
+      return await verifyDiaOraclePriceFeed(midasSdk.oracles, underlying);
     case OracleTypes.FluxPriceOracle:
-      return await verifyFluxOraclePriceFeed(fuse.oracles, underlying);
+      return await verifyFluxOraclePriceFeed(midasSdk.oracles, underlying);
     case OracleTypes.AnkrBNBcPriceOracle:
-      return await verifyAnkrOraclePriceFeed(fuse.oracles, underlying);
+      return await verifyAnkrOraclePriceFeed(midasSdk.oracles, underlying);
     default:
       throw `No verification available oracle provider ${oracle}, underlying: ${underlying}`;
   }

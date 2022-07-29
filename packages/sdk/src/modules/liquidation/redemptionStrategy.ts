@@ -1,14 +1,14 @@
 import { BytesLike, Contract, ethers } from "ethers";
 
 import { RedemptionStrategy } from "../../enums";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 export type StrategyAndData = {
   strategyAddress: string[];
   strategyData: BytesLike[];
 };
 
-export const getStrategyAndData = async (fuse: FuseBase, token: string): Promise<StrategyAndData> => {
+export const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
   if (!(token in fuse.redemptionStrategies)) return { strategyData: [], strategyAddress: [] };
 
   const redemptionStrategy = fuse.redemptionStrategies[token] as RedemptionStrategy;

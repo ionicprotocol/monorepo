@@ -1,7 +1,7 @@
 import { BigNumber, constants } from "ethers";
 
 import { LiquidationKind, LiquidationStrategy } from "../../";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 export type ChainLiquidationConfig = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
@@ -11,7 +11,7 @@ export type ChainLiquidationConfig = {
   LIQUIDATION_INTERVAL_SECONDS: number;
 };
 
-export const getChainLiquidationConfig = (fuse: FuseBase): ChainLiquidationConfig => {
+export const getChainLiquidationConfig = (fuse: MidasBase): ChainLiquidationConfig => {
   return {
     SUPPORTED_OUTPUT_CURRENCIES: process.env.SUPPORTED_OUTPUT_CURRENCIES
       ? process.env.SUPPORTED_OUTPUT_CURRENCIES.split(",")

@@ -3,17 +3,17 @@ import { BigNumber } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { FundOperationMode } from "../../src/enums";
-import Fuse from "../../src/Fuse";
+import MidasSdk from "../../src/MidasSdk";
 import { FusePoolData } from "../../src/types";
 import { setUpPriceOraclePrices } from "../utils";
 import * as assetHelpers from "../utils/assets";
-import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getOrCreateMidas } from "../utils/midasSdk";
 import * as poolHelpers from "../utils/pool";
 import { wrapNativeToken } from "../utils/setup";
 
 describe("AssetModule", function () {
   let poolAddress: string;
-  let sdk: Fuse;
+  let sdk: MidasSdk;
   let assetsInPool: FusePoolData;
 
   this.beforeEach(async () => {
@@ -21,7 +21,7 @@ describe("AssetModule", function () {
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
-    sdk = await getOrCreateFuse();
+    sdk = await getOrCreateMidas();
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Pool-Asset-Updates-Test" });
 

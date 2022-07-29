@@ -5,20 +5,26 @@
 `npm install @midas-capital/sdk`
 
 ```typescript
-import { Fuse } from '@midas-capital/sdk';
+import { MidasSdk } from "@midas-capital/sdk";
 import { ethers } from "ethers";
 
-const chainId = 56
-const provider = new ethers.providers.JsonRpcProvider("PROVIDER_URL"),
+const chainId = 56;
+const provider = new ethers.providers.JsonRpcProvider("PROVIDER_URL");
 
 const sdk = new Fuse(provider, chainId);
 
 const poolOne = await sdk.fetchFusePoolData("1");
 
-const assetZero = poolOne.assets[0]
+const assetZero = poolOne.assets[0];
 
-const borrowAPRAssetZero = sdk.ratePerBlockToAPY(assetZero.borrowRatePerBlock, 20)
-const supplyAPYAssetZero = sdk.ratePerBlockToAPY(assetZero.supplyRatePerBlock, 20)
+const borrowAPRAssetZero = sdk.ratePerBlockToAPY(
+  assetZero.borrowRatePerBlock,
+  20
+);
+const supplyAPYAssetZero = sdk.ratePerBlockToAPY(
+  assetZero.supplyRatePerBlock,
+  20
+);
 ```
 
 ## Functions
@@ -39,4 +45,4 @@ Return the APY for a given current per-block borrow/supply interest rate. This r
 and
 
 `FusePoolData['assets'][0].supplyRatePerBlock`
-correspondingly.  (i.e. blocksPerMin for BSC: `20`)
+correspondingly. (i.e. blocksPerMin for BSC: `20`)

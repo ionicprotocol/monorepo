@@ -1,6 +1,6 @@
 import { BigNumber, Signer, utils, Wallet } from "ethers";
 
-import { FuseBaseConstructor } from "../../types";
+import { MidasBaseConstructor } from "../../types";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
@@ -8,7 +8,7 @@ import { LiquidatablePool } from "./utils";
 
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
-export function withSafeLiquidator<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class SafeLiquidator extends Base {
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 

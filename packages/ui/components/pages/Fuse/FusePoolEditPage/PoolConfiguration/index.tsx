@@ -51,7 +51,7 @@ const PoolConfiguration = ({
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
   const { cSwitch } = useColors();
 
   const queryClient = useQueryClient();
@@ -90,7 +90,7 @@ const PoolConfiguration = ({
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -108,7 +108,7 @@ const PoolConfiguration = ({
   };
 
   const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -138,7 +138,7 @@ const PoolConfiguration = ({
   };
 
   const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -177,8 +177,8 @@ const PoolConfiguration = ({
   const renounceOwnership = async () => {
     const unitroller = new Contract(
       comptrollerAddress,
-      fuse.artifacts.Unitroller.abi,
-      fuse.provider.getSigner()
+      midasSdk.artifacts.Unitroller.abi,
+      midasSdk.provider.getSigner()
     );
 
     try {
@@ -213,7 +213,7 @@ const PoolConfiguration = ({
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -247,7 +247,7 @@ const PoolConfiguration = ({
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(
@@ -279,9 +279,9 @@ const PoolConfiguration = ({
     try {
       setIsSaving(true);
       const FusePoolDirectory = new Contract(
-        fuse.chainDeployment.FusePoolDirectory.address,
-        fuse.chainDeployment.FusePoolDirectory.abi,
-        fuse.provider.getSigner()
+        midasSdk.chainDeployment.FusePoolDirectory.address,
+        midasSdk.chainDeployment.FusePoolDirectory.abi,
+        midasSdk.provider.getSigner()
       );
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
