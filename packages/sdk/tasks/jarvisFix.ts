@@ -48,7 +48,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     });
     console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
 
-    // // Step 2: update plugin, use same implementation
+    // // Step 2: update market, use same implementation
     // const currentImplementation = await cToken.callStatic.implementation();
     // console.log({ currentImplementation });
     // const abiCoder = new hre.ethers.utils.AbiCoder();
@@ -61,7 +61,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     // const upgradeResult = await upgradeTx.wait(2);
     // console.log("changed plugin successfully");
 
-    // Step 3: Approve fwc Rewards to get rewardTokens from it
+    // Step 3: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)
     const dddRewards = await dddFlywheel.callStatic.flywheelRewards();
     console.log({ dddRewards });
     const approveDDDTx = await cToken["approve(address,address)"](dddAddress, dddRewards);

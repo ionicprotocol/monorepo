@@ -30,8 +30,8 @@ describe("FlywheelModule", function () {
 
     sdk = await getOrCreateMidas();
 
-    [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-FlyWheel-Test" });
-    [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-FlyWheel-Test" });
+    [poolAAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolA-Flywheel-Test" });
+    [poolBAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "PoolB-Flywheel-Test" });
 
     const assetsA = await assetHelpers.getAssetsConf(
       poolAAddress,

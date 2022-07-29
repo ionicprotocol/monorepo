@@ -16,7 +16,7 @@
     "@tsconfig/recommended": "^1.0.1",
     "@typescript-eslint/eslint-plugin": "^5.31.0",
     "@typescript-eslint/parser": "^5.31.0",
-    "netlify-cli": "^10.11.2",
+    "netlify-cli": "^10.12.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {

@@ -26,7 +26,7 @@ import { ChainMetadata } from '@ui/types/ChainMetaData';
 //     color: '#627EEA',
 //     overlayTextColor: '#fff',
 //     logoURL: '/images/neon.svg',
-//     coingeckoId: '',
+//     coingeckoId: 'solana',
 //   },
 // };
 
@@ -53,7 +53,7 @@ const devnet: ChainMetadata = {
     color: '#627EEA',
     overlayTextColor: '#fff',
     logoURL: '/images/neon.jpg',
-    coingeckoId: '',
+    coingeckoId: 'solana',
   },
   testnet: true,
 };
