@@ -10,12 +10,12 @@ export const useAssetClaimableRewards = ({
   poolAddress: string;
   assetAddress: string;
 }) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
 
   return useQuery<FlywheelClaimableRewards[] | undefined>(
     ['useAssetClaimableRewards', poolAddress, assetAddress, address],
     () =>
-      fuse.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address, {
+      midasSdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address, {
         from: address,
       }),
     { enabled: !!poolAddress && !!address }

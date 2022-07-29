@@ -12,12 +12,12 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../lib/contracts/typechain";
-import { Fuse, MarketConfig } from "../src";
+import { MarketConfig, MidasSdk } from "../src";
 
 import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
 import { setupAndLiquidatePool, setupLiquidatablePool } from "./utils/collateral";
 import { FUSE_LIQUIDATION_PROTOCOL_FEE_PER_THOUSAND, FUSE_LIQUIDATION_SEIZE_FEE_PER_THOUSAND } from "./utils/config";
-import { getOrCreateFuse } from "./utils/fuseSdk";
+import { getOrCreateMidas } from "./utils/midasSdk";
 import { DeployedAsset } from "./utils/pool";
 import { resetPriceOracle } from "./utils/setup";
 
@@ -50,13 +50,13 @@ import { resetPriceOracle } from "./utils/setup";
   let chainId: number;
 
   let poolName: string;
-  let sdk: Fuse;
+  let sdk: MidasSdk;
 
   beforeEach(async () => {
     poolName = "liquidation - fee sizing" + Math.random().toString();
     ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
-    sdk = await getOrCreateFuse();
+    sdk = await getOrCreateMidas();
     await setUpPriceOraclePrices();
     ({ poolAddress, liquidator, oracle, fuseFeeDistributor } = await setUpLiquidation(poolName));
   });

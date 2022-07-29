@@ -4,7 +4,7 @@ import { useRari } from '@ui/context/RariContext';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheel = (flywheelAddress?: string) => {
-  const { fuse, currentChain } = useRari();
+  const { midasSdk, currentChain } = useRari();
 
   return useQuery(
     ['useFlywheel', currentChain.id, flywheelAddress],
@@ -12,7 +12,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
       if (!flywheelAddress) return undefined;
       if (!fuse) return undefined;
 
-      const flywheel = fuse.createFuseFlywheelCore(flywheelAddress);
+      const flywheel = midasSdk.createFuseFlywheelCore(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [authority, booster, rewards, markets, owner, rewardToken] = await Promise.all([
@@ -36,7 +36,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
     },
     {
       initialData: undefined,
-      enabled: !!flywheelAddress && !!currentChain && !!fuse,
+      enabled: !!flywheelAddress && !!currentChain && !!midasSdk,
     }
   );
 };

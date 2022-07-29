@@ -1,10 +1,10 @@
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { LiquidatablePool } from "./utils";
 
 import { sendTransactionToSafeLiquidator } from "./index";
 
-export default async function liquidateUnhealthyBorrows(fuse: FuseBase, liquidations: Array<LiquidatablePool>) {
+export default async function liquidateUnhealthyBorrows(fuse: MidasBase, liquidations: Array<LiquidatablePool>) {
   for (const liquidatablePool of liquidations) {
     for (const liquidation of liquidatablePool.liquidations) {
       const { method, args, value } = liquidation;

@@ -167,14 +167,14 @@ interface AssetBorrowRowProps {
 
 const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
   const asset = assets[index];
-  const { currentChain, fuse } = useRari();
+  const { currentChain, midasSdk } = useRari();
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const blocksPerMin = getBlockTimePerMinuteByChainId(currentChain.id);
 
-  const borrowAPR = fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
+  const borrowAPR = midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
 
   const isMobile = useIsMobile();
 

@@ -5,8 +5,8 @@ import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20Plugin
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { filterOnlyObjectProperties, filterPoolName, getContract } from "../Fuse/utils";
-import { FuseBaseConstructor, FusePoolData, NativePricedFuseAsset } from "../types";
+import { filterOnlyObjectProperties, filterPoolName, getContract } from "../MidasSdk/utils";
+import { FusePoolData, MidasBaseConstructor, NativePricedFuseAsset } from "../types";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],
@@ -15,7 +15,7 @@ export type LensPoolsWithData = [
   errors: boolean[]
 ];
 
-export function withFusePools<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
     async fetchFusePoolData(poolId: string, address?: string): Promise<FusePoolData> {
       const {

@@ -2,7 +2,7 @@ import { BigNumber, ethers, Wallet } from "ethers";
 
 import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
 
@@ -35,7 +35,7 @@ function getPositionHealth(totalBorrow: BigNumber, totalCollateral: BigNumber): 
 }
 
 async function getFusePoolUsers(
-  fuse: FuseBase,
+  fuse: MidasBase,
   comptroller: string,
   maxHealth: BigNumber,
   signer: Wallet
@@ -66,7 +66,7 @@ async function getFusePoolUsers(
 }
 
 export default async function getAllFusePoolUsers(
-  fuse: FuseBase,
+  fuse: MidasBase,
   maxHealth: BigNumber,
   signer: Wallet
 ): Promise<PublicPoolUserWithData[]> {

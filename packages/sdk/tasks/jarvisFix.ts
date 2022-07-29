@@ -12,8 +12,8 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     }
 
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const jarvisComptroller = "0x31d76A64Bc8BbEffb601fac5884372DEF910F044";
     const dddAddress = "0x84c97300a190676a19D1E13115629A11f8482Bd1";

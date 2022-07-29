@@ -5,19 +5,19 @@ import { convertIRMtoCurve } from '../utils/convertIRMtoCurve';
 
 export function useChartData(market: string) {
   const {
-    fuse,
+    midasSdk,
     currentChain: { id: currentChainId },
   } = useRari();
   return useQuery(
     ['useChartData', currentChainId, market],
     async () => {
-      const interestRateModel = await fuse.getInterestRateModel(market);
+      const interestRateModel = await midasSdk.getInterestRateModel(market);
 
       if (interestRateModel === null) {
         return { borrowerRates: null, supplierRates: null };
       }
 
-      return convertIRMtoCurve(fuse, interestRateModel, currentChainId);
+      return convertIRMtoCurve(midasSdk, interestRateModel, currentChainId);
     },
     { cacheTime: Infinity, staleTime: Infinity, enabled: !!fuse && !!currentChainId && !!market }
   );

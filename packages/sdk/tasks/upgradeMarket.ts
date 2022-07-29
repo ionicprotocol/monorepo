@@ -27,8 +27,8 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     // @ts-ignoreutils/pool
     const poolModule = await import("../tests/utils/pool");
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const pool = await poolModule.getPoolByName(poolName, sdk);
     const poolData = await poolModule.getPoolByName(pool.name, sdk);
@@ -94,8 +94,8 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
 
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const fuseFeeDistributor = new ethers.Contract(
       sdk.chainDeployment.FuseFeeDistributor.address,
       sdk.chainDeployment.FuseFeeDistributor.abi,
@@ -149,11 +149,11 @@ task("market:unsupport", "Unsupport a market")
     const signer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
+    const midasSdkModule = await import("../tests/utils/midasSdk");
     // @ts-ignoreutils/pool
     const poolModule = await import("../tests/utils/pool");
 
-    const sdk = await fuseModule.getOrCreateFuse();
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const pool = await poolModule.getPoolByName(taskArgs.poolName, sdk);
 
     const comptroller = await sdk.getComptrollerInstance(pool.comptroller, { from: signer.address });
@@ -166,9 +166,9 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers, run }) => {
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
+    const midasSdkModule = await import("../tests/utils/midasSdk");
 
-    const sdk = await fuseModule.getOrCreateFuse();
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const signer = await ethers.getNamedSigner(taskArgs.admin);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;

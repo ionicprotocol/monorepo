@@ -2,15 +2,15 @@ import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 
 import { SupportedChains } from "../../src/enums";
-import { FuseBase } from "../../src/Fuse/index";
-import * as utilsFns from "../../src/Fuse/utils";
+import { MidasBase } from "../../src/MidasSdk/index";
+import * as utilsFns from "../../src/MidasSdk/utils";
 import { withFusePools } from "../../src/modules/FusePools";
-import { FuseBaseConstructor } from "../../src/types";
+import { MidasBaseConstructor } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 describe("FusePools", () => {
-  let FusePools: FuseBaseConstructor;
+  let FusePools: MidasBaseConstructor;
   let fusePools: any;
 
   let mockFusePoolLensContract: SinonStubbedInstance<Contract>;
@@ -40,7 +40,7 @@ describe("FusePools", () => {
     (mockProvider as any).getSigner = (address: string) => address;
     (mockProvider as any).getCode = (address: string) => address;
 
-    FusePools = withFusePools(FuseBase);
+    FusePools = withFusePools(MidasBase);
 
     fusePools = new FusePools(mockProvider, SupportedChains.ganache, {
       Comptroller: { abi: [], address: mkAddress("0xabc") },

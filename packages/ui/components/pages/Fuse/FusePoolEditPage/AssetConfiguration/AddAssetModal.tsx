@@ -39,10 +39,10 @@ interface AddAssetProps {
 }
 
 const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
   const [nameOrAddress, setNameOrAddress] = useState<string>('');
   const [supportedAssets, setSupportedAssets] = useState<SupportedAsset[] | []>(
-    fuse.supportedAssets
+    midasSdk.supportedAssets
   );
   const [addedAssets, setAddedAssets] = useState<string[] | undefined>();
   const { data: poolData } = useFusePoolData(poolID);
@@ -51,13 +51,13 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   const { cPage } = useColors();
 
   useEffect(() => {
-    const searchResults = fuse.supportedAssets.filter(
+    const searchResults = midasSdk.supportedAssets.filter(
       (asset) =>
         asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
         asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())
     );
     setSupportedAssets(searchResults);
-  }, [nameOrAddress, fuse.supportedAssets]);
+  }, [nameOrAddress, midasSdk.supportedAssets]);
 
   useEffect(() => {
     if (poolData && poolData.assets.length !== 0) {

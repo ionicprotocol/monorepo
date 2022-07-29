@@ -58,7 +58,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
 
-  const { fuse, scanUrl, setLoading, currentChain, coingeckoId } = useRari();
+  const { midasSdk, scanUrl, setLoading, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <VStack
@@ -279,7 +279,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topLendingAPYAsset &&
-                    fuse
+                    midasSdk
                       .ratePerBlockToAPY(
                         poolDetails.topLendingAPYAsset.supplyRatePerBlock,
                         getBlockTimePerMinuteByChainId(currentChain.id)
@@ -306,7 +306,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                 <Text fontWeight="bold" textAlign="center">
                   {poolDetails?.topBorrowAPRAsset &&
-                    fuse
+                    midasSdk
                       .ratePerBlockToAPY(
                         poolDetails.topBorrowAPRAsset.borrowRatePerBlock,
                         getBlockTimePerMinuteByChainId(currentChain.id)
