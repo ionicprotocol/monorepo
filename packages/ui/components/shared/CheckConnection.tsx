@@ -27,8 +27,10 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   const [signerChainId, setSignerChainId] = useState<number | undefined>();
   useEffect(() => {
     const func = async () => {
-      const _signerChainId = await signerData?.getChainId();
-      setSignerChainId(_signerChainId);
+      if (typeof signerData?.getChainId === 'function') {
+        const _signerChainId = await signerData?.getChainId();
+        setSignerChainId(_signerChainId);
+      }
     };
 
     func();
