@@ -76,7 +76,7 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchRewards: any;
 }) => {
-  const { midasSdkari();
+  const { midasSdk, address } = useRari();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
