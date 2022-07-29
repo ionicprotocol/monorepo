@@ -14,6 +14,7 @@ import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquid
 import { Artifacts, ARTIFACTS } from "../Artifacts";
 import {
   chainDeployedPlugins,
+  chainIrms,
   chainLiquidationDefaults,
   chainOracles,
   chainRedemptionStrategies,
@@ -145,9 +146,9 @@ export class FuseBase {
     }
     this.artifacts = ARTIFACTS;
 
-    this.availableIrms = chainOracles[chainId].filter((o) => {
+    this.availableIrms = chainIrms[chainId].filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
-        console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
+        console.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
