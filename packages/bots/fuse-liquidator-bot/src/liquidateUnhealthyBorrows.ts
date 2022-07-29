@@ -26,7 +26,7 @@ export default async function liquidateUnhealthyBorrows(midasSdk: MidasSdk, retr
     if (poolLiquidations.liquidations.length > 0) {
       for (const liquidation of poolLiquidations.liquidations) {
         try {
-          await sendTransactionToSafeLiquidator(fuse, liquidation.method, liquidation.args, liquidation.value);
+          await sendTransactionToSafeLiquidator(midasSdk, liquidation.method, liquidation.args, liquidation.value);
         } catch (error) {
           const msg = "Error sending sendTransactionToSafeLiquidator transaction: " + error;
           logger.error(msg);

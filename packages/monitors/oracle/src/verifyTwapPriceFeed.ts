@@ -1,4 +1,4 @@
-import { ERC20Abi, Fuse, OracleTypes } from "@midas-capital/sdk";
+import { ERC20Abi, MidasSdk, OracleTypes } from "@midas-capital/sdk";
 import { BigNumber, Contract, utils, Wallet } from "ethers";
 
 import { config } from "./config";
@@ -11,35 +11,39 @@ export default async function verifyTwapPriceFeed(
   underlying: string
 ): Promise<SupportedAssetPriceValidity> {
   logger.debug(`Verifying Uniswap Twap oracle for ${underlying}`);
-  const twapOracle = new Contract(oracleAddress, fuse.oracles[OracleTypes.UniswapTwapPriceOracleV2].abi, fuse.provider);
+  const twapOracle = new Contract(
+    oracleAddress,
+    midasSdk.oracles[OracleTypes.UniswapTwapPriceOracleV2].abi,
+    midasSdk.provider
+  );
   const baseToken = await twapOracle.callStatic.baseToken();
   const uniswapV2Factory = new Contract(
-    fuse.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+    midasSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
     ["function getPair(address tokenA, address tokenB) external view returns (address pair)"],
-    fuse.provider
+    midasSdk.provider
   );
   const pair = await uniswapV2Factory.callStatic.getPair(underlying, baseToken);
   const uniswapV2Pair = new Contract(
     pair,
     ["function getReserves() external view returns (uint112 reserve0, uint112 reserve1, uint32 blockTimestampLast)"],
-    fuse.provider
+    midasSdk.provider
   );
   const [r0, r1, _] = await uniswapV2Pair.callStatic.getReserves();
   const reserves = {
     r0: {
       reserves: r0,
-      underlying: new Contract(underlying, ERC20Abi, fuse.provider),
+      underlying: new Contract(underlying, ERC20Abi, midasSdk.provider),
     },
     r1: {
       reserves: r1,
-      underlying: new Contract(baseToken, ERC20Abi, fuse.provider),
+      underlying: new Contract(baseToken, ERC20Abi, midasSdk.provider),
     },
   };
   const rootOracleAddress = await twapOracle.callStatic.rootOracle();
   const rootTwapOracle = new Contract(
     rootOracleAddress,
-    fuse.artifacts.UniswapTwapPriceOracleV2Root.abi,
-    fuse.provider
+    midasSdk.artifacts.UniswapTwapPriceOracleV2Root.abi,
+    midasSdk.provider
   );
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
@@ -61,7 +65,7 @@ export default async function verifyTwapPriceFeed(
     };
   }
 
-  const twapDepthUSD = await verifyTwapDepth(fuse, reserves);
+  const twapDepthUSD = await verifyTwapDepth(midasSdk, reserves);
   if (twapDepthUSD < config.minTwapDepth) {
     return {
       valid: false,
@@ -93,11 +97,11 @@ type Reserves = {
 };
 
 async function verifyTwapDepth(midasSdk: MidasSdk, reserves: Reserves) {
-  const signer = new Wallet(config.adminPrivateKey, fuse.provider);
-  const mpo = await fuse.createMasterPriceOracle(signer);
+  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
+  const mpo = await midasSdk.createMasterPriceOracle(signer);
   const r0Price = await mpo.callStatic.price(reserves.r0.underlying.address);
   const r1Price = await mpo.callStatic.price(reserves.r1.underlying.address);
-  const nativeTokenPriceUSD = await getCgPrice(fuse.chainSpecificParams.cgId);
+  const nativeTokenPriceUSD = await getCgPrice(midasSdk.chainSpecificParams.cgId);
 
   const r0decimals = await reserves.r0.underlying.callStatic.decimals();
   const r1decimals = await reserves.r1.underlying.callStatic.decimals();

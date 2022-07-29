@@ -11,7 +11,7 @@ export default async function updateCumulativePrices(
   useNonce: false | number,
   midasSdk: MidasSdk
 ) {
-  const rootPriceOracleContract = await getPriceOracle(fuse);
+  const rootPriceOracleContract = await getPriceOracle(midasSdk);
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
 
   // Create update transaction
@@ -50,7 +50,7 @@ export default async function updateCumulativePrices(
 
   // Estimate gas for transaction
   try {
-    const gasLimit = await fetchGasLimitForTransaction(fuse, "update", txRequest);
+    const gasLimit = await fetchGasLimitForTransaction(midasSdk, "update", txRequest);
     txRequest = { ...txRequest, gasLimit: gasLimit };
     logger.info(`Gas limit estimation: ${gasLimit}`);
   } catch (error) {
