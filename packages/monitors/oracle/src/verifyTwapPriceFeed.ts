@@ -6,7 +6,7 @@ import { config } from "./config";
 import { getCgPrice, InvalidReason, logger, SupportedAssetPriceValidity } from "./index";
 
 export default async function verifyTwapPriceFeed(
-  fuse: Fuse,
+  midasSdk: MidasSdk,
   oracleAddress: string,
   underlying: string
 ): Promise<SupportedAssetPriceValidity> {
@@ -92,7 +92,7 @@ type Reserves = {
   };
 };
 
-async function verifyTwapDepth(fuse: Fuse, reserves: Reserves) {
+async function verifyTwapDepth(midasSdk: MidasSdk, reserves: Reserves) {
   const signer = new Wallet(config.adminPrivateKey, fuse.provider);
   const mpo = await fuse.createMasterPriceOracle(signer);
   const r0Price = await mpo.callStatic.price(reserves.r0.underlying.address);

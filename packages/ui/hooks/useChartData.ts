@@ -19,6 +19,10 @@ export function useChartData(market: string) {
 
       return convertIRMtoCurve(midasSdk, interestRateModel, currentChainId);
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!fuse && !!currentChainId && !!market }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!midasSdk && !!currentChainId && !!market,
+    }
   );
 }

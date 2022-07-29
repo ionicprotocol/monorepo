@@ -1,14 +1,18 @@
 import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
-import { Fuse } from "@midas-capital/sdk";
+import { MidasSdk } from "@midas-capital/sdk";
 import { Wallet } from "ethers";
 
 import { fetchGasLimitForTransaction, getPriceOracle } from "./utils";
 
 import { logger } from "./index";
 
-export default async function updateCumulativePrices(pairs: Array<string>, useNonce: false | number, fuse: Fuse) {
+export default async function updateCumulativePrices(
+  pairs: Array<string>,
+  useNonce: false | number,
+  midasSdk: MidasSdk
+) {
   const rootPriceOracleContract = await getPriceOracle(fuse);
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
+  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
 
   // Create update transaction
   let method: string;
@@ -30,7 +34,7 @@ export default async function updateCumulativePrices(pairs: Array<string>, useNo
     to: rootPriceOracleContract.address,
     value: 0,
     data: data,
-    nonce: useNonce ? useNonce : await fuse.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!),
+    nonce: useNonce ? useNonce : await midasSdk.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!),
   };
 
   let txRequest: TransactionRequest = {
@@ -38,7 +42,7 @@ export default async function updateCumulativePrices(pairs: Array<string>, useNo
   };
 
   if (useNonce !== undefined && useNonce !== null) {
-    const gasPrice = (await fuse.provider.getGasPrice()).mul(250).div(100);
+    const gasPrice = (await midasSdk.provider.getGasPrice()).mul(250).div(100);
     txRequest = { ...txRequest, gasPrice: gasPrice };
   }
 

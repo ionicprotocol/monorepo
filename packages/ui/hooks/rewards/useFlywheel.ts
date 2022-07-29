@@ -10,7 +10,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
     ['useFlywheel', currentChain.id, flywheelAddress],
     async () => {
       if (!flywheelAddress) return undefined;
-      if (!fuse) return undefined;
+      if (!midasSdk) return undefined;
 
       const flywheel = midasSdk.createFuseFlywheelCore(flywheelAddress);
 

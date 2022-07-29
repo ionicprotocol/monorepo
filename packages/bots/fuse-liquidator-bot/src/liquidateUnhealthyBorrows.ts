@@ -1,22 +1,22 @@
-import { Fuse } from "@midas-capital/sdk";
+import { MidasSdk } from "@midas-capital/sdk";
 import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
 import { Wallet } from "ethers";
 
 import { logger, sendTransactionToSafeLiquidator } from "./index";
 
-export default async function liquidateUnhealthyBorrows(fuse: Fuse, retries = 0) {
+export default async function liquidateUnhealthyBorrows(midasSdk: MidasSdk, retries = 0) {
   if (retries >= 10) {
     throw "10 retries fetching liquidations, exiting";
   }
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
+  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
   let potentialLiquidations: Array<LiquidatablePool> = [];
   try {
-    potentialLiquidations = await fuse.getPotentialLiquidations(signer);
+    potentialLiquidations = await midasSdk.getPotentialLiquidations(signer);
   } catch (e) {
     console.log(`Error fetching potential liquidations: ${e}, timing out and re-trying`);
     retries += 1;
     await new Promise((resolve) => setTimeout(resolve, (retries + 1) * 5000));
-    await liquidateUnhealthyBorrows(fuse, retries);
+    await liquidateUnhealthyBorrows(midasSdk, retries);
   }
 
   if (potentialLiquidations.length == 0) {

@@ -1,5 +1,5 @@
 import { FusePoolData } from '@midas-capital/sdk';
-import FuseJS from 'midasSdk.js';
+import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 

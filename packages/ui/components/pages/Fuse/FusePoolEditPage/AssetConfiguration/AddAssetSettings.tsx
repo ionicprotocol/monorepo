@@ -114,7 +114,7 @@ export const AddAssetSettings = ({
     };
 
     func();
-  }, [tokenData.address, errorToast, fuse]);
+  }, [tokenData.address, errorToast, midasSdk]);
 
   const deploy = async (data: AddAssetFormData) => {
     const { collateralFactor, reserveFactor, adminFee, pluginIndex, interestRateModel } = data;
