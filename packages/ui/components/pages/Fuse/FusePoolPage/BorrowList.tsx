@@ -76,7 +76,7 @@ export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: Bo
                   isNumeric
                   textAlign={'right'}
                 >
-                  APR/TVL
+                  APY/TVL
                 </Td>
               )}
 

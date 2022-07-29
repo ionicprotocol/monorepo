@@ -7,7 +7,7 @@ export function useApy(underlyingAddress: string, pluginAddress: string, rewardA
     currentChain: { id: currentChainId },
   } = useRari();
   return useQuery(
-    ['useApy', underlyingAddress, pluginAddress, rewardAddress],
+    ['useApy', currentChainId, underlyingAddress, pluginAddress, rewardAddress],
     async () => {
       return await fetch(
         `/api/apyData?chain=${currentChainId}&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
