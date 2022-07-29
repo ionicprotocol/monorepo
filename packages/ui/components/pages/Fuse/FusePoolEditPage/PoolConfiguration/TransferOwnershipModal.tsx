@@ -26,7 +26,7 @@ const TransferOwnershipModal = ({
   onClose: () => void;
   comptrollerAddress: string;
 }) => {
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isTransferring, setIsTransferring] = useState<boolean>(false);
@@ -38,7 +38,7 @@ const TransferOwnershipModal = ({
       setIsTransferring(true);
       const verifiedAddress = utils.getAddress(inputAddress);
 
-      const unitroller = fuse.createUnitroller(comptrollerAddress);
+      const unitroller = midasSdk.createUnitroller(comptrollerAddress);
 
       const tx = await unitroller._setPendingAdmin(verifiedAddress);
       await tx.wait();

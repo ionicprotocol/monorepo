@@ -6,6 +6,7 @@ export default task("oracle:set-price", "Set price of token")
   .addParam("price", "Address to which the minted tokens should be sent to")
   .setAction(async ({ token: _token, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
+    // @ts-ignore
     const oracleModule = await import("../tests/utils/oracle");
 
     const [tokenAddress, oracle] = await oracleModule.setUpOracleWithToken(_token, _address, ethers, getNamedAccounts);
@@ -23,6 +24,7 @@ task("oracle:get-price", "Get price of token")
   .addOptionalParam("token", "Token symbol for which to get the price", undefined, types.string)
   .addOptionalParam("address", "Token address for which to get the price", undefined, types.string)
   .setAction(async ({ token: _token, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
+    // @ts-ignore
     const oracleModule = await import("../tests/utils/oracle");
     const [tokenAddress, oracle] = await oracleModule.setUpOracleWithToken(_token, _address, ethers, getNamedAccounts);
     const tokenPriceMPO = await oracle.price(tokenAddress);
@@ -37,8 +39,8 @@ task("oracle:add-tokens", "Initialize MasterPriceOracle with underlying oracle f
   .setAction(async ({ underlyings: _underlyings, oracles: _oracles }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, deployer);
     const underlyingTokens = _underlyings.split(",");
@@ -74,8 +76,8 @@ task("oracle:update-twap", "Call update on twap oracle to update the last price 
     const { deployer } = await ethers.getNamedSigners();
 
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const uniswapTwapRoot = await ethers.getContractAt(
       "UniswapTwapPriceOracleV2Root",

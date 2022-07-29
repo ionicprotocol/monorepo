@@ -11,16 +11,16 @@ export default async function approveTokensToSafeLiquidator(
   provider: JsonRpcProvider,
   erc20Address: string
 ) {
-  const fuse = setUpSdk(chainId, provider);
+  const midasSdk = setUpSdk(chainId, provider);
   // Build data
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, fuse.provider);
+  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
   let token = new Contract(erc20Address, ERC20Abi, signer);
 
   token = await token.connect(signer);
-  const txCount = await fuse.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
+  const txCount = await midasSdk.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
 
   const data = token.interface.encodeFunctionData("approve", [
-    fuse.contracts.FuseSafeLiquidator.address,
+    midasSdk.contracts.FuseSafeLiquidator.address,
     constants.MaxUint256,
   ]);
 
@@ -32,7 +32,7 @@ export default async function approveTokensToSafeLiquidator(
     data: data,
     nonce: txCount,
   };
-  const gasLimit = await fetchGasLimitForTransaction(fuse, "approve", tx);
+  const gasLimit = await fetchGasLimitForTransaction(midasSdk, "approve", tx);
   const txRequest: TransactionRequest = {
     ...tx,
     gasLimit: gasLimit,

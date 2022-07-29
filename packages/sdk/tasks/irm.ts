@@ -7,8 +7,8 @@ export default task("irm:set", "Set new IRM to ctoken")
     const { deployer } = await ethers.getNamedSigners();
 
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const cToken = new ethers.Contract(_ctoken, sdk.chainDeployment.CErc20Delegate.abi, deployer);
     // const interestRateModel = await ethers.getContractAt(_irm, await sdk.irms[_irm].address, deployer);

@@ -1,4 +1,4 @@
-import { Fuse, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
+import { MidasSdk, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
 import { BigNumber, ethers, utils, Wallet } from "ethers";
 
 import { config } from "./config";
@@ -12,7 +12,10 @@ import {
   verifyTwapPriceFeed,
 } from "./index";
 
-export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset): Promise<SupportedAssetPriceFeed> {
+export default async function verifyPriceFeed(
+  midasSdk: MidasSdk,
+  asset: SupportedAsset
+): Promise<SupportedAssetPriceFeed> {
   const oracle = asset.oracle;
   if (!oracle) {
     return {
@@ -24,10 +27,10 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
       priceEther: 1,
     };
   }
-  const signer = new Wallet(config.adminPrivateKey, fuse.provider);
+  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
 
   logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
-  const mpo = fuse.createMasterPriceOracle(signer);
+  const mpo = midasSdk.createMasterPriceOracle(signer);
   const mpoPrice = await mpo.callStatic.price(asset.underlying);
   const underlyingOracleAddress = await mpo.callStatic.oracles(asset.underlying);
 
@@ -37,17 +40,17 @@ export default async function verifyPriceFeed(fuse: Fuse, asset: SupportedAsset)
 
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
-      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying));
+      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(midasSdk, oracle, asset.underlying));
       break;
     case OracleTypes.DiaPriceOracle:
-      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying));
+      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(midasSdk, oracle, asset.underlying));
       break;
     case OracleTypes.FluxPriceOracle:
-      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(fuse, oracle, asset.underlying));
+      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(midasSdk, oracle, asset.underlying));
       break;
     case OracleTypes.UniswapTwapPriceOracleV2:
       ({ valid, invalidReason, extraInfo } = await verifyTwapPriceFeed(
-        fuse,
+        midasSdk,
         underlyingOracleAddress,
         asset.underlying
       ));

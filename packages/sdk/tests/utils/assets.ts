@@ -4,7 +4,7 @@ import { MarketConfig } from "../../src";
 import { assetSymbols } from "../../src/chainConfig";
 import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
 
-import { getOrCreateFuse } from "./fuseSdk";
+import { getOrCreateMidas } from "./midasSdk";
 
 export enum BSC_POOLS {
   JARVIS = "JARVIS",
@@ -186,7 +186,7 @@ export const getBombPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
 
   const btcb = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
   const bomb = bscAssets.find((b) => b.symbol === assetSymbols.BOMB);

@@ -16,7 +16,11 @@ import { useColors } from '@ui/hooks/useColors';
 const FuseNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { cPage } = useColors();
-  const logoPrefix = useBreakpointValue({ base: '/images/midas-mobile-', md: '/images/midas-' });
+  const logoPrefix = useBreakpointValue({
+    base: '/images/midas-',
+    sm: '/images/midas-mobile-',
+    md: '/images/midas-',
+  });
 
   return (
     <HStack w={'100%'} alignItems="flex-start" mb={8}>
@@ -24,7 +28,7 @@ const FuseNavbar = () => {
         <Image
           src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
           alt="Midas Capital"
-          height={'auto'}
+          height="auto"
           width={{ base: '80px', md: '400px' }}
         />
       </Link>

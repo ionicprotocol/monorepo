@@ -2,7 +2,7 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import { FundOperationMode } from "../enums";
-import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
+import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
 import { InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
 
 import { withCreateContracts } from "./CreateContracts";

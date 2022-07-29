@@ -3,10 +3,10 @@ import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { getContract } from "../Fuse/utils";
-import { FuseBaseConstructor } from "../types";
+import { getContract } from "../MidasSdk/utils";
+import { MidasBaseConstructor } from "../types";
 
-export function withFundOperations<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FundOperations extends Base {
     async fetchGasForCall(amount: BigNumber, address: string) {
       const estimatedGas = BigNumber.from(

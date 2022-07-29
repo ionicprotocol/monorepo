@@ -8,7 +8,7 @@ import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
 import { deployAssets, tradeNativeForAsset } from "./utils";
 import { BSC_POOLS, getAssetsConf } from "./utils/assets";
 import { addCollateral, borrowCollateral } from "./utils/collateral";
-import { getOrCreateFuse } from "./utils/fuseSdk";
+import { getOrCreateMidas } from "./utils/midasSdk";
 import { DeployedAsset } from "./utils/pool";
 import { liquidateAndVerify, setUpPools } from "./utils/setup";
 
@@ -44,7 +44,7 @@ describe.skip("#safeLiquidateWithFlashLoan", () => {
     console.log("HERE");
     const { deployer } = await ethers.getNamedSigners();
     ({ chainId } = await ethers.provider.getNetwork());
-    const sdk = await getOrCreateFuse();
+    const sdk = await getOrCreateMidas();
     const poolAddresses = await setUpPools([BSC_POOLS.ALPACA, BSC_POOLS.BOMB]);
 
     console.log(

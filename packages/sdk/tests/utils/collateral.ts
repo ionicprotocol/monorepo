@@ -5,13 +5,13 @@ import { ethers } from "hardhat";
 
 import { chainDeployConfig } from "../../chainDeploy";
 import { MasterPriceOracle, SimplePriceOracle } from "../../lib/contracts/typechain";
-import { ERC20Abi, Fuse, NativePricedFuseAsset } from "../../src";
+import { ERC20Abi, MidasSdk, NativePricedFuseAsset } from "../../src";
 
-import { getOrCreateFuse } from "./fuseSdk";
+import { getOrCreateMidas } from "./midasSdk";
 import { assetInPool, DeployedAsset, getPoolIndex } from "./pool";
 
 export async function getAsset(
-  sdk: Fuse,
+  sdk: MidasSdk,
   poolAddress: string,
   underlyingSymbol: string
 ): Promise<NativePricedFuseAsset> {
@@ -20,7 +20,7 @@ export async function getAsset(
   return assetsInPool.assets.filter((a) => a.underlyingSymbol === underlyingSymbol)[0];
 }
 
-export function getCToken(asset: NativePricedFuseAsset, sdk: Fuse, signer: SignerWithAddress) {
+export function getCToken(asset: NativePricedFuseAsset, sdk: MidasSdk, signer: SignerWithAddress) {
   if (asset.underlyingToken === constants.AddressZero) {
     return new Contract(asset.cToken, sdk.chainDeployment.CEtherDelegate.abi, signer);
   } else {
@@ -37,7 +37,7 @@ export async function addCollateral(
 ) {
   let tx: providers.TransactionResponse;
 
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
 
   const assetToDeploy = await getAsset(sdk, poolAddress, underlyingSymbol);
 
@@ -83,7 +83,7 @@ export async function borrowCollateral(
 ) {
   let tx: providers.TransactionResponse;
   const signer = await ethers.getSigner(borrowerAddress);
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
   const assetToDeploy = await getAsset(sdk, poolAddress, underlyingSymbol);
 
   const pool = await ethers.getContractAt("Comptroller.sol:Comptroller", poolAddress, signer);

@@ -18,8 +18,8 @@ task("pool:create", "Create pool if does not exist")
     // @ts-ignore
     const poolModule = await import("../tests/utils/pool");
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const whitelist = taskArgs.whitelist ? taskArgs.whitelist.split(",") : [];
     if (taskArgs.enforceWhitelist === "true" && whitelist.length === 0) {
       throw "If enforcing whitelist, a whitelist array of addresses must be provided";

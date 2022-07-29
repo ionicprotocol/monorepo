@@ -1,11 +1,11 @@
 import { constants } from "ethers";
 
-import { getOrCreateFuse } from "./fuseSdk";
+import { getOrCreateMidas } from "./midasSdk";
 
 export const setUpOracleWithToken = async (_token, _address, ethers, getNamedAccounts) => {
   const { deployer } = await getNamedAccounts();
   const signer = await ethers.getSigner(deployer);
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
   const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, signer);
 
   if (_address) {

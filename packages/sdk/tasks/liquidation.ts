@@ -15,8 +15,8 @@ export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam("maxHealth", "Filter pools by max health", "1", types.string)
   .setAction(async (taskArgs, hre) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const wallet = hre.ethers.Wallet.fromMnemonic(process.env.MNEMONIC);
     const liquidations = await sdk.getPotentialLiquidations(
       wallet,

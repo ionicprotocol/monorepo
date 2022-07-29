@@ -4,16 +4,16 @@ import { useRari } from '@ui/context/RariContext';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheelsForPool = (comptrollerAddress?: string) => {
-  const { fuse, currentChain } = useRari();
+  const { midasSdk, currentChain } = useRari();
 
   const queryResult = useQuery(
     ['useFlywheelsForPool', currentChain.id, comptrollerAddress],
     async () => {
       if (!comptrollerAddress) return [];
-      if (!fuse) return [];
+      if (!midasSdk) return [];
 
-      const flywheelCores = await fuse.getFlywheelsByPool(comptrollerAddress, {
-        from: await fuse.provider.getSigner().getAddress(),
+      const flywheelCores = await midasSdk.getFlywheelsByPool(comptrollerAddress, {
+        from: await midasSdk.provider.getSigner().getAddress(),
       });
 
       if (!flywheelCores.length) return [];
@@ -46,7 +46,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string) => {
     },
     {
       initialData: [],
-      enabled: !!comptrollerAddress && !!currentChain && !!fuse,
+      enabled: !!comptrollerAddress && !!currentChain && !!midasSdk,
     }
   );
   return queryResult;
