@@ -114,6 +114,15 @@ enum assetSymbols {
   "JJPY-JPYC" = "JJPY-JPYC",
   "JCAD-CADC" = "JCAD-CADC",
   "JSGD-XSGD" = "JSGD-XSGD",
+  AGEUR = "AGEUR",
+  JEUR = "JEUR",
+  PAR = "PAR",
+  JJPY = "JJPY",
+  JPYC = "JPYC",
+  JCAD = "JCAD",
+  CADC = "CADC",
+  JSGD = "JSGD",
+  XSGD = "XSGD",
 }
 
 export default assetSymbols;

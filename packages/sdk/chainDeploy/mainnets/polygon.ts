@@ -182,6 +182,51 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0xDE31F8bFBD8c84b5360CFACCa3539B938dd78ae6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.AGEUR,
+    aggregator: "0x9b88d07B2354eF5f4579690356818e07371c7BeD",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JEUR,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.PAR,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JJPY,
+    aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JPYC,
+    aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JCAD,
+    aggregator: "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.CADC,
+    aggregator: "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JSGD,
+    aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.XSGD,
+    aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // https://docs.ellipsis.finance/deployment-links
