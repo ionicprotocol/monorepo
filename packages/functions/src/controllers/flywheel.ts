@@ -15,15 +15,15 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
       const strategies = await flywheelContract.getAllStrategies();
       for (const strategy of strategies) {
         try {
-          const pluginContract = new ethers.Contract(strategy, CTOKEN_ABI, provider);
+          const marketContract = new ethers.Contract(strategy, CTOKEN_ABI, provider);
 
           const [state, rewardToken, totalSupply, underlyingAsset, pluginAddress] =
             await Promise.all([
               flywheelContract.callStatic.strategyState(strategy),
               flywheelContract.callStatic.rewardToken(),
-              pluginContract.callStatic.totalSupply(),
-              pluginContract.callStatic.underlying(),
-              pluginContract.callStatic.plugin(),
+              marketContract.callStatic.totalSupply(),
+              marketContract.callStatic.underlying(),
+              marketContract.callStatic.plugin(),
             ]);
           // console.log({
           //   state,
@@ -50,7 +50,7 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
           if (error) {
             throw `Error occurred during saving data for flywheel's plugin ${pluginAddress}: ${error.message}`;
           } else {
-            console.log(`Successfully saved data for flywheel's plugin ${strategy}`);
+            console.log(`Successfully saved data for flywheel's plugin ${pluginAddress}`);
           }
         } catch (err) {
           console.error(err);
