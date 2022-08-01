@@ -109,6 +109,11 @@ enum assetSymbols {
   "WMATIC-ETH" = "WMATIC-ETH",
   "WMATIC-USDT" = "WMATIC-USDT",
   "WETH-WBTC" = "WETH-WBTC",
+  "AGEUR-JEUR" = "AGEUR-JEUR",
+  "JEUR-PAR" = "JEUR-PAR",
+  "JJPY-JPYC" = "JJPY-JPYC",
+  "JCAD-CADC" = "JCAD-CADC",
+  "JSGD-XSGD" = "JSGD-XSGD",
 }
 
 export default assetSymbols;

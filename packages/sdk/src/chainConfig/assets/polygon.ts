@@ -209,6 +209,41 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },
+  {
+    symbol: assetSymbols["AGEUR-JEUR"],
+    underlying: "0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204",
+    name: "Jarvis agEUR-jEUR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["JEUR-PAR"],
+    underlying: "0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc",
+    name: "Jarvis jEUR-PAR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["JJPY-JPYC"],
+    underlying: "0x122E09FdD2FF73C8CEa51D432c45A474BAa1518a",
+    name: "Jarvis jJPY-JPYC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["JCAD-CADC"],
+    underlying: "0xcf9Dd1de1D02158B3d422779bd5184032674A6D1",
+    name: "Jarvis jCAD-CADC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["JSGD-XSGD"],
+    underlying: "0x18DAdac6d0AAF37BaAAC811F6338427B46815a81",
+    name: "Jarvis jSGD-XSGD LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
 ];
 
 export default assets;
