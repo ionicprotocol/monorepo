@@ -18,7 +18,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   .setAction(async (taskArgs, { ethers }) => {
     const poolName = taskArgs.poolName;
     const marketId = taskArgs.marketId;
-    let implementationAddress = taskArgs.implementationAddress;
+    const implementationAddress = taskArgs.implementationAddress;
     const strategyCode = taskArgs.strategyCode;
 
     const signer = await ethers.getNamedSigner(taskArgs.admin);
@@ -27,8 +27,8 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     // @ts-ignoreutils/pool
     const poolModule = await import("../tests/utils/pool");
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const pool = await poolModule.getPoolByName(poolName, sdk);
     const poolData = await poolModule.getPoolByName(pool.name, sdk);
@@ -36,36 +36,36 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     const assetConfig = assets.find((a) => a.underlyingToken === marketId || a.underlyingSymbol === marketId);
 
-    if (strategyCode) {
-      const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
-      console.log("market", market);
+    // if (strategyCode) {
+    //   const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
+    //   console.log("market", market);
 
-      const cTokenInstance = sdk.getCTokenInstance(market.cToken);
-      if (implementationAddress === "") {
-        // reuse the current implementation, only update the plugin
-        implementationAddress = await cTokenInstance.callStatic.implementation();
-      }
-      assetConfig.plugin = sdk.chainPlugins[assetConfig.underlyingToken].find((p) => p.strategyCode === strategyCode);
+    //   const cTokenInstance = sdk.getCTokenInstance(market.cToken);
+    //   if (implementationAddress === "") {
+    //     // reuse the current implementation, only update the plugin
+    //     implementationAddress = await cTokenInstance.callStatic.implementation();
+    //   }
+    //   assetConfig.plugin = sdk.chainPlugins[assetConfig.underlyingToken].find((p) => p.strategyCode === strategyCode);
 
-      // console.log(await cTokenInstance.callStatic.fuseAdmin(), "FUSE ADMIN");
+    //   // console.log(await cTokenInstance.callStatic.fuseAdmin(), "FUSE ADMIN");
 
-      const pluginAddress = assetConfig.plugin.strategyAddress;
-      const abiCoder = new ethers.utils.AbiCoder();
-      const implementationData = abiCoder.encode(["address"], [pluginAddress]);
+    //   const pluginAddress = assetConfig.plugin.strategyAddress;
+    //   const abiCoder = new ethers.utils.AbiCoder();
+    //   const implementationData = abiCoder.encode(["address"], [pluginAddress]);
 
-      console.log(`Setting implementation to ${implementationAddress} and plugin to ${pluginAddress}`);
-      const setImplementationTx = await cTokenInstance._setImplementationSafe(
-        implementationAddress,
-        false,
-        implementationData
-      );
+    //   console.log(`Setting implementation to ${implementationAddress} and plugin to ${pluginAddress}`);
+    //   const setImplementationTx = await cTokenInstance._setImplementationSafe(
+    //     implementationAddress,
+    //     false,
+    //     implementationData
+    //   );
 
-      const receipt: TransactionReceipt = await setImplementationTx.wait();
-      if (receipt.status != constants.One.toNumber()) {
-        throw `Failed set implementation to ${assetConfig.plugin.cTokenContract}`;
-      }
-      console.log(`Implementation successfully set to ${assetConfig.plugin.cTokenContract}`);
-    }
+    //   const receipt: TransactionReceipt = await setImplementationTx.wait();
+    //   if (receipt.status != constants.One.toNumber()) {
+    //     throw `Failed set implementation to ${assetConfig.plugin.cTokenContract}`;
+    //   }
+    //   console.log(`Implementation successfully set to ${assetConfig.plugin.cTokenContract}`);
+    // }
   });
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
@@ -94,8 +94,8 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
 
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const fuseFeeDistributor = new ethers.Contract(
       sdk.chainDeployment.FuseFeeDistributor.address,
       sdk.chainDeployment.FuseFeeDistributor.abi,
@@ -149,11 +149,11 @@ task("market:unsupport", "Unsupport a market")
     const signer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
+    const midasSdkModule = await import("../tests/utils/midasSdk");
     // @ts-ignoreutils/pool
     const poolModule = await import("../tests/utils/pool");
 
-    const sdk = await fuseModule.getOrCreateFuse();
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const pool = await poolModule.getPoolByName(taskArgs.poolName, sdk);
 
     const comptroller = await sdk.getComptrollerInstance(pool.comptroller, { from: signer.address });
@@ -166,9 +166,9 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers, run }) => {
     // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
+    const midasSdkModule = await import("../tests/utils/midasSdk");
 
-    const sdk = await fuseModule.getOrCreateFuse();
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const signer = await ethers.getNamedSigner(taskArgs.admin);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;

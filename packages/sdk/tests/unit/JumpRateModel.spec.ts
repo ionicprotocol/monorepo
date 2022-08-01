@@ -2,15 +2,15 @@ import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
 
 import { CErc20 } from "../../lib/contracts/typechain/CErc20";
-import Fuse from "../../src/Fuse";
+import MidasSdk from "../../src/MidasSdk";
 import { setUpPriceOraclePrices } from "../utils";
 import * as assetHelpers from "../utils/assets";
-import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getOrCreateMidas } from "../utils/midasSdk";
 import * as poolHelpers from "../utils/pool";
 
 describe("JumpRateModel", function () {
   let poolAddress: string;
-  let sdk: Fuse;
+  let sdk: MidasSdk;
   let cTokenA: CErc20;
 
   beforeEach(async () => {
@@ -18,7 +18,7 @@ describe("JumpRateModel", function () {
     await setUpPriceOraclePrices();
     const { deployer } = await ethers.getNamedSigners();
 
-    sdk = await getOrCreateFuse();
+    sdk = await getOrCreateMidas();
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Pool-JumpRateModel-Test" });
 

@@ -4,7 +4,7 @@ import { MarketConfig } from "../../src";
 import { assetSymbols } from "../../src/chainConfig";
 import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
 
-import { getOrCreateFuse } from "./fuseSdk";
+import { getOrCreateMidas } from "./midasSdk";
 
 export enum BSC_POOLS {
   JARVIS = "JARVIS",
@@ -128,20 +128,14 @@ export const getAlpacaPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const sdk = await getOrCreateFuse();
-
   const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
   const usdc = bscAssets.find((b) => b.symbol === assetSymbols.USDC);
   const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
   const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
-  const ethPlugin = sdk.chainPlugins[eth.underlying][0];
-  const usdcPlugin = sdk.chainPlugins[usdc.underlying][0];
-  const busdPlugin = sdk.chainPlugins[busd.underlying][0];
-  const wbnbPlugin = sdk.chainPlugins[wbnb.underlying][0];
 
   const assets = [eth, usdc, busd, wbnb];
 
-  const assetConfigs = [{ plugin: ethPlugin }, { plugin: usdcPlugin }, { plugin: busdPlugin }, { plugin: wbnbPlugin }];
+  const assetConfigs = [{ plugin: undefined }, { plugin: undefined }, { plugin: undefined }, { plugin: undefined }];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
@@ -164,14 +158,11 @@ export const getJarvisPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const sdk = await getOrCreateFuse();
-
   const jBRL = bscAssets.find((b) => b.symbol === assetSymbols.jBRL);
   const twoBRL = bscAssets.find((b) => b.symbol === assetSymbols["2brl"]);
   const assets = [jBRL, twoBRL];
 
-  const twoBRLplugin = sdk.chainPlugins[twoBRL.underlying][0];
-  const assetConfigs = [{}, { plugin: twoBRLplugin }];
+  const assetConfigs = [{}, { plugin: undefined }];
 
   return assets.map((a, i) => {
     return {
@@ -195,17 +186,15 @@ export const getBombPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const sdk = await getOrCreateFuse();
+  const sdk = await getOrCreateMidas();
 
   const btcb = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
   const bomb = bscAssets.find((b) => b.symbol === assetSymbols.BOMB);
   const bombbtcb = bscAssets.find((b) => b.symbol === assetSymbols["BTCB-BOMB"]);
-  const bombPlugin = sdk.chainPlugins[bomb.underlying][0];
-  const bombbtcbPlugin = sdk.chainPlugins[bombbtcb.underlying][0];
 
   const assets = [btcb, bomb, bombbtcb];
 
-  const assetConfigs = [{}, { plugin: bombPlugin }, { plugin: bombbtcbPlugin }];
+  const assetConfigs = [{}, { plugin: undefined }, { plugin: undefined }];
   return assets.map((a, i) => {
     return {
       ...assetConfigs[i],
@@ -228,26 +217,21 @@ export const getEllipsisPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const sdk = await getOrCreateFuse();
-
   const val3EPS = bscAssets.find((b) => b.symbol === assetSymbols.val3EPS);
   const valdai3EPS = bscAssets.find((b) => b.symbol === assetSymbols.valdai3EPS);
   const threeEPS = bscAssets.find((b) => b.symbol === assetSymbols["3EPS"]);
 
   const assets = [val3EPS, threeEPS, valdai3EPS];
-  const dai3EPSPlugin = sdk.chainPlugins[val3EPS.underlying][0];
-  const valdai3EPSPlugin = sdk.chainPlugins[valdai3EPS.underlying][0];
-  const threeEPSPlugin = sdk.chainPlugins[threeEPS.underlying][0];
 
   const assetConfigs = [
     {
-      plugin: dai3EPSPlugin,
+      plugin: undefined,
     },
     {
-      plugin: valdai3EPSPlugin,
+      plugin: undefined,
     },
     {
-      plugin: threeEPSPlugin,
+      plugin: undefined,
     },
   ];
   return assets.map((a, i) => {

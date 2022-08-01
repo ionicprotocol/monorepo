@@ -15,7 +15,6 @@ import {
   Switch,
   Text,
   useDisclosure,
-  useToast,
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, Contract, utils } from 'ethers';
@@ -37,6 +36,7 @@ import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const PoolConfiguration = ({
@@ -51,11 +51,11 @@ const PoolConfiguration = ({
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
   const { cSwitch } = useColors();
 
   const queryClient = useQueryClient();
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const data = useExtraPoolInfo(comptrollerAddress);
 
@@ -90,7 +90,7 @@ const PoolConfiguration = ({
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -103,12 +103,12 @@ const PoolConfiguration = ({
       LogRocket.track('Fuse-ChangeWhitelistStatus');
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
   const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -133,12 +133,12 @@ const PoolConfiguration = ({
 
       onChange(newList);
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
   const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -170,15 +170,15 @@ const PoolConfiguration = ({
 
       onChange(whitelist.filter((v) => v !== removeUser));
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
   const renounceOwnership = async () => {
     const unitroller = new Contract(
       comptrollerAddress,
-      fuse.artifacts.Unitroller.abi,
-      fuse.provider.getSigner()
+      midasSdk.artifacts.Unitroller.abi,
+      midasSdk.provider.getSigner()
     );
 
     try {
@@ -193,7 +193,7 @@ const PoolConfiguration = ({
       LogRocket.track('Fuse-RenounceOwnership');
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
@@ -213,7 +213,7 @@ const PoolConfiguration = ({
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -231,7 +231,7 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -247,7 +247,7 @@ const PoolConfiguration = ({
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(
@@ -267,28 +267,28 @@ const PoolConfiguration = ({
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
   const onSave = async () => {
     if (!inputPoolName) {
-      handleGenericError('Input pool name', toast);
+      handleGenericError('Input pool name', errorToast);
       return;
     }
     try {
       setIsSaving(true);
       const FusePoolDirectory = new Contract(
-        fuse.chainDeployment.FusePoolDirectory.address,
-        fuse.chainDeployment.FusePoolDirectory.abi,
-        fuse.provider.getSigner()
+        midasSdk.chainDeployment.FusePoolDirectory.address,
+        midasSdk.chainDeployment.FusePoolDirectory.abi,
+        midasSdk.provider.getSigner()
       );
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
       });
       await tx.wait();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsSaving(false);
     }

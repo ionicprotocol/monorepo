@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import {
@@ -14,7 +14,7 @@ import {
 import { getPotentialLiquidation } from "./index";
 
 async function getLiquidatableUsers(
-  fuse: FuseBase,
+  fuse: MidasBase,
   poolUsers: FusePoolUserStruct[],
   pool: PublicPoolUserWithData,
   chainLiquidationConfig: ChainLiquidationConfig
@@ -42,7 +42,7 @@ async function getLiquidatableUsers(
 }
 
 export default async function gatherLiquidations(
-  fuse: FuseBase,
+  fuse: MidasBase,
   pools: Array<PublicPoolUserWithData>,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<Array<LiquidatablePool>> {

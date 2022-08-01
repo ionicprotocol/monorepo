@@ -1,10 +1,11 @@
 // for supply-side rewards apy:
 // export const
 
-import { Fuse } from '@midas-capital/sdk';
+import { MidasSdk } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
 import { useQuery } from 'react-query';
 
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
@@ -17,6 +18,7 @@ import {
   RewardsDataForMantissa,
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
+import { bigDiv, bigMul, toFixedNoRound } from '@ui/utils/formatNumber';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (
@@ -31,7 +33,7 @@ export const useIncentivesWithRates = (
   rewardTokenAddrs: string[],
   comptroller: string
 ) => {
-  const { currentChain, fuse } = useRari();
+  const { currentChain, midasSdk } = useRari();
   // this is what we return
   const incentivesWithRates: CTokenRewardsDistributorIncentivesWithRatesMap = {};
 
@@ -94,19 +96,19 @@ export const useIncentivesWithRates = (
               borrowMantissaData.underlyingEthPrice
             );
 
-            const supplyAPY = fuse.ratePerBlockToAPY(
+            const supplyAPY = midasSdk.ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const supplyAPR = fuse.ratePerBlockToAPY(
+            const supplyAPR = midasSdk.ratePerBlockToAPY(
               supplyMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPY = fuse.ratePerBlockToAPY(
+            const borrowAPY = midasSdk.ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
-            const borrowAPR = fuse.ratePerBlockToAPY(
+            const borrowAPR = midasSdk.ratePerBlockToAPY(
               borrowMantissa,
               getBlockTimePerMinuteByChainId(currentChain.id)
             );
@@ -132,20 +134,23 @@ const constructMantissa = (
   underlyingEthPrice: number
 ) => {
   return utils.parseEther(
-    (
-      (rewardSpeed * rewardEthPrice) /
-      (Number(utils.formatEther(underlyingTotalSupply)) * underlyingEthPrice)
-    ).toString()
+    toFixedNoRound(
+      bigDiv(
+        bigMul(rewardSpeed.toString(), rewardEthPrice.toString()),
+        bigMul(utils.formatEther(underlyingTotalSupply), underlyingEthPrice.toString())
+      ),
+      DEFAULT_DECIMALS
+    )
   );
 };
 
 export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForRewardsMap => {
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
   const { data: cTokensMap } = useQuery(['CTokensDataForRewards', ...cTokenAddrs], async () => {
     const _map: CTokensDataForRewardsMap = {};
     await Promise.all(
       cTokenAddrs.map(async (cTokenAddr) => {
-        const cTokenInstance = fuse.createCToken(cTokenAddr);
+        const cTokenInstance = midasSdk.createCToken(cTokenAddr);
         const underlying = await cTokenInstance.callStatic.underlying();
         await cTokenInstance.callStatic.decimals();
         const cTokenTotalSupply = await cTokenInstance.callStatic.totalSupply();
@@ -191,15 +196,15 @@ export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForR
 export const getPriceFromOracles = async (
   tokenAddress: string,
   comptroller: string,
-  fuse: Fuse
+  midasSdk: MidasSdk
 ) => {
   // Rari MPO
-  const masterPriceOracle = fuse.createMasterPriceOracle();
+  const masterPriceOracle = midasSdk.createMasterPriceOracle();
 
   // Pool's MPO
-  const comptrollerInstance = fuse.createComptroller(comptroller);
+  const comptrollerInstance = midasSdk.createComptroller(comptroller);
   const oracleAddress: string = await comptrollerInstance.callStatic.oracle();
-  const oracleContract = fuse.createOracle(oracleAddress, 'MasterPriceOracle');
+  const oracleContract = midasSdk.createOracle(oracleAddress, 'MasterPriceOracle');
 
   let price;
   try {
@@ -216,9 +221,9 @@ export const useAssetPricesInEth = (
   tokenAddresses: string[],
   comptroller: string
 ): TokenPrices | undefined => {
-  const { fuse, coingeckoId } = useRari();
+  const { midasSdk, coingeckoId } = useRari();
 
-  fuse.createMasterPriceOracle();
+  midasSdk.createMasterPriceOracle();
 
   const tokensData = useTokensDataAsMap(tokenAddresses);
   const { data: usdPrice, isLoading, error } = useUSDPrice(coingeckoId);
@@ -231,7 +236,7 @@ export const useAssetPricesInEth = (
       if (isLoading || !usdPrice) return undefined;
 
       const tokenPricesInEth = await Promise.all(
-        tokenAddresses.map(async (t) => await getPriceFromOracles(t, comptroller, fuse))
+        tokenAddresses.map(async (t) => await getPriceFromOracles(t, comptroller, midasSdk))
       );
 
       const tokenUSDPrices: number[] = [];

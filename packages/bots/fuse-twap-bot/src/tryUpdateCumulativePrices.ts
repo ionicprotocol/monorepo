@@ -1,5 +1,5 @@
 import { TransactionResponse } from "@ethersproject/abstract-provider";
-import { Fuse } from "@midas-capital/sdk";
+import { MidasSdk } from "@midas-capital/sdk";
 import { BigNumber, utils } from "ethers";
 
 import { getPriceOracle } from "./utils";
@@ -7,19 +7,19 @@ import { getPriceOracle } from "./utils";
 import { logger, updateCumulativePrices } from "./index";
 
 export default async function tryUpdateCumulativePrices(
-  fuse: Fuse,
+  midasSdk: MidasSdk,
   lastTransaction: TransactionResponse | null,
   lastTransactionSent: number | null
 ): Promise<[TransactionResponse | null, number]> {
   const supportedPairs = process.env.SUPPORTED_PAIRS!.split(",");
   // Check if last TX sent is still pending; if so, wait until it has been 5 minutes since sending, after which we will overwrite it (i.e., same nonce)
 
-  const rootPriceOracleContract = await getPriceOracle(fuse);
+  const rootPriceOracleContract = await getPriceOracle(midasSdk);
   let useNonce: boolean | number = false;
 
   if (lastTransaction !== null) {
     try {
-      lastTransaction = await fuse.provider.getTransaction(lastTransaction.hash);
+      lastTransaction = await midasSdk.provider.getTransaction(lastTransaction.hash);
     } catch (e) {
       console.log(e);
     }
@@ -93,7 +93,7 @@ export default async function tryUpdateCumulativePrices(
   if (workablePairs.length <= 0) return [null, 0];
 
   // Update cumulative prices and return TX
-  const tx = await updateCumulativePrices(workablePairs, useNonce, fuse);
+  const tx = await updateCumulativePrices(workablePairs, useNonce, midasSdk);
 
   lastTransactionSent = new Date().getTime() / 1000;
   logger.info("Pending TX hash:", lastTransaction?.hash);

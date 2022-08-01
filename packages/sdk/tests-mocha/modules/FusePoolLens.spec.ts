@@ -3,13 +3,13 @@ import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 
 import { SupportedChains } from "../../src/enums";
-import { FuseBase } from "../../src/Fuse/index";
+import { MidasBase } from "../../src/MidasSdk/index";
 import { withFusePoolLens } from "../../src/modules/FusePoolLens";
-import { FuseBaseConstructor } from "../../src/types";
+import { MidasBaseConstructor } from "../../src/types";
 import { mkAddress } from "../helpers";
 
 describe("FusePoolLens", () => {
-  let FusePoolLens: FuseBaseConstructor;
+  let FusePoolLens: MidasBaseConstructor;
   let fusePoolLens: any;
   let mockContract: SinonStubbedInstance<Contract>;
   const totalLockedData = {
@@ -28,7 +28,7 @@ describe("FusePoolLens", () => {
     (mockProvider as any).getSigner = (address: string) => address;
     mockContract = createStubInstance(Contract);
 
-    FusePoolLens = withFusePoolLens(FuseBase);
+    FusePoolLens = withFusePoolLens(MidasBase);
     fusePoolLens = new FusePoolLens(mockProvider, SupportedChains.ganache, {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },

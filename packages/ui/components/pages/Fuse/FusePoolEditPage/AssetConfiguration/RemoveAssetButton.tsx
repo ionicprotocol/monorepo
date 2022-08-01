@@ -1,4 +1,4 @@
-import { Box, Button, useDisclosure, useToast } from '@chakra-ui/react';
+import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
@@ -7,6 +7,7 @@ import { useQueryClient } from 'react-query';
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
 import { useRari } from '@ui/context/RariContext';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const RemoveAssetButton = ({
@@ -16,8 +17,9 @@ const RemoveAssetButton = ({
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
 }) => {
-  const { fuse } = useRari();
-  const toast = useToast();
+  const { midasSdk } = useRari();
+  const errorToast = useErrorToast();
+  const successToast = useSuccessToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const queryClient = useQueryClient();
@@ -30,7 +32,7 @@ const RemoveAssetButton = ({
 
   const remove = async () => {
     setIsRemoving(true);
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
     const response = await comptroller.callStatic._unsupportMarket(asset.cToken);
 
     if (!response.eq(0)) {
@@ -44,18 +46,14 @@ const RemoveAssetButton = ({
       await comptroller._unsupportMarket(asset.cToken);
       LogRocket.track('Fuse-RemoveAsset');
 
-      toast({
+      successToast({
         title: 'You have successfully added an asset to this pool!',
         description: 'You may now lend and borrow with this asset.',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
       });
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
       return;
     }
 

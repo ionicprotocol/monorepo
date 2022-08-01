@@ -4,16 +4,16 @@ import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } fr
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../lib/contracts/typechain";
 import { ARTIFACTS } from "../../src/Artifacts";
 import { SupportedChains } from "../../src/enums";
-import { FuseBase } from "../../src/Fuse/index";
-import JumpRateModel from "../../src/Fuse/irm/JumpRateModel";
-import * as utilsFns from "../../src/Fuse/utils";
+import { MidasBase } from "../../src/MidasSdk/index";
+import JumpRateModel from "../../src/MidasSdk/irm/JumpRateModel";
+import * as utilsFns from "../../src/MidasSdk/utils";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [constants.Two] }] as any, blockNumber: 1 };
 
 describe("Fuse Index", () => {
-  let fuseBase: FuseBase;
+  let fuseBase: MidasBase;
   let mockContract: SinonStubbedInstance<Contract>;
   let mockFactory: SinonStubbedInstance<ContractFactory>;
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe("Fuse Index", () => {
     (mockProvider as any)._isSigner = true;
     (mockProvider as any).getSigner = (address: string) => address;
     (mockProvider as any).getCode = (address: string) => address;
-    fuseBase = new FuseBase(mockProvider, SupportedChains.ganache, {
+    fuseBase = new MidasBase(mockProvider, SupportedChains.ganache, {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
@@ -166,32 +166,6 @@ describe("Fuse Index", () => {
         constants.One,
         constants.One,
         mkAddress("0xa")
-      );
-    });
-  });
-
-  describe("#deployInterestRateModel", () => {
-    let getInterestRateModelContractStub: SinonStub;
-
-    beforeEach(() => {
-      getInterestRateModelContractStub = stub(utilsFns, "getInterestRateModelContract").returns(mockFactory);
-    });
-
-    it("deploy JumpRateModel", () => {
-      fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "JumpRateModel");
-      expect(getInterestRateModelContractStub).to.be.calledWithExactly(
-        ARTIFACTS.JumpRateModel.abi,
-        ARTIFACTS.JumpRateModel.bytecode.object,
-        mkAddress("0xabc")
-      );
-    });
-
-    it("deploy WhitePaperInterestRateModel", () => {
-      fuseBase.deployInterestRateModel({ from: mkAddress("0xabc") }, "WhitePaperInterestRateModel");
-      expect(getInterestRateModelContractStub).to.be.calledWithExactly(
-        ARTIFACTS.WhitePaperInterestRateModel.abi,
-        ARTIFACTS.WhitePaperInterestRateModel.bytecode.object,
-        mkAddress("0xabc")
       );
     });
   });

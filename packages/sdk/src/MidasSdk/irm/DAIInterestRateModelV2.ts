@@ -1,5 +1,5 @@
 import { Web3Provider } from "@ethersproject/providers";
-import { BigNumber, BigNumberish, Contract, utils } from "ethers";
+import { BigNumber, BigNumberish, utils } from "ethers";
 
 import CTokenInterfacesArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import DAIInterestRateModelV2Artifact from "../../../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";

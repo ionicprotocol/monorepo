@@ -27,7 +27,7 @@ import { AddFlywheelModalProps, AddFlywheelProps } from '@ui/types/ComponentProp
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -45,7 +45,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
     if (!flywheel) return;
     try {
       setIsAdding(true);
-      const comptroller = fuse.createComptroller(comptrollerAddress);
+      const comptroller = midasSdk.createComptroller(comptrollerAddress);
       const tx = await comptroller.functions._addRewardsDistributor(flywheel?.address, {
         from: address,
       });
@@ -60,7 +60,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
     } finally {
       setIsAdding(false);
     }
-  }, [address, comptrollerAddress, errorToast, flywheel, fuse, onSuccess, successToast]);
+  }, [address, comptrollerAddress, errorToast, flywheel, midasSdk, onSuccess, successToast]);
 
   return (
     <VStack width="100%">

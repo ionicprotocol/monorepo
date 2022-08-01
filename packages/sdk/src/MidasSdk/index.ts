@@ -11,11 +11,11 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
-import { Artifact, Artifacts, ARTIFACTS } from "../Artifacts";
+import { Artifacts, ARTIFACTS } from "../Artifacts";
 import {
+  chainDeployedPlugins,
   chainLiquidationDefaults,
   chainOracles,
-  chainPluginConfig,
   chainRedemptionStrategies,
   chainSpecificAddresses,
   chainSpecificParams,
@@ -34,13 +34,12 @@ import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 import {
-  AssetPluginConfig,
   ChainAddresses,
   ChainDeployment,
   ChainParams,
+  DeployedPlugins,
   InterestRateModel,
   InterestRateModelConf,
-  InterestRateModelParams,
   IrmConfig,
   OracleConf,
   OracleConfig,
@@ -52,16 +51,9 @@ import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF }
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import {
-  getComptrollerFactory,
-  getContract,
-  getInterestRateModelContract,
-  getPoolAddress,
-  getPoolComptroller,
-  getPoolUnitroller,
-} from "./utils";
+import { getComptrollerFactory, getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
-export class FuseBase {
+export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public provider: JsonRpcProvider | Web3Provider;
 
@@ -84,7 +76,7 @@ export class FuseBase {
   public chainSpecificParams: ChainParams;
   public artifacts: Artifacts;
   public irms: IrmConfig;
-  public chainPlugins: AssetPluginConfig;
+  public deployedPlugins: DeployedPlugins;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: RedemptionStrategy };
@@ -158,7 +150,7 @@ export class FuseBase {
     this.chainSpecificParams = chainSpecificParams[chainId];
     this.liquidationConfig = chainLiquidationDefaults[chainId];
     this.supportedAssets = chainSupportedAssets[chainId];
-    this.chainPlugins = chainPluginConfig[chainId];
+    this.deployedPlugins = chainDeployedPlugins[chainId];
     this.redemptionStrategies = chainRedemptionStrategies[chainId];
   }
 
@@ -239,53 +231,6 @@ export class FuseBase {
     } catch (error: any) {
       throw Error("Deployment of new Fuse pool failed: " + (error.message ? error.message : error));
     }
-  }
-
-  async deployInterestRateModel(options: any, model?: string, conf?: InterestRateModelParams): Promise<string> {
-    // Default model = JumpRateModel
-    if (!model) {
-      model = "JumpRateModel";
-    }
-
-    // Get deployArgs
-    let deployArgs: any[] = [];
-    let modelArtifact: Artifact;
-
-    switch (model) {
-      case "JumpRateModel":
-        if (!conf) conf = JUMP_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
-        deployArgs = [
-          conf.blocksPerYear,
-          conf.baseRatePerYear,
-          conf.multiplierPerYear,
-          conf.jumpMultiplierPerYear,
-          conf.kink,
-        ];
-        modelArtifact = this.artifacts.JumpRateModel;
-        break;
-      case "WhitePaperInterestRateModel":
-        if (!conf) conf = WHITE_PAPER_RATE_MODEL_CONF(this.chainId).interestRateModelParams;
-        conf = {
-          blocksPerYear: conf.blocksPerYear,
-          baseRatePerYear: conf.baseRatePerYear,
-          multiplierPerYear: conf.multiplierPerYear,
-        };
-        deployArgs = [conf.blocksPerYear, conf.baseRatePerYear, conf.multiplierPerYear];
-        modelArtifact = this.artifacts.WhitePaperInterestRateModel;
-        break;
-      default:
-        throw "IRM model specified is invalid";
-    }
-
-    // Deploy InterestRateModel
-    const interestRateModelContract = getInterestRateModelContract(
-      modelArtifact.abi,
-      modelArtifact.bytecode.object,
-      this.provider.getSigner(options.from)
-    );
-
-    const deployedInterestRateModel = await interestRateModelContract.deploy(...deployArgs);
-    return deployedInterestRateModel.address;
   }
 
   async identifyInterestRateModel(interestRateModelAddress: string): Promise<InterestRateModel> {
@@ -376,9 +321,9 @@ export class FuseBase {
   }
 }
 
-const FuseBaseWithModules = withFusePoolLens(
+const MidasBaseWithModules = withFusePoolLens(
   withFundOperations(
-    withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(FuseBase))))))
+    withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(MidasBase))))))
   )
 );
-export default class Fuse extends FuseBaseWithModules {}
+export default class MidasSdk extends MidasBaseWithModules {}

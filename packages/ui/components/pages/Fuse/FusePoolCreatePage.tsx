@@ -13,7 +13,6 @@ import {
   Spinner,
   Switch,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { isAddress } from '@ethersproject/address';
 import { utils } from 'ethers';
@@ -35,6 +34,7 @@ import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
+import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -60,9 +60,11 @@ type FormData = {
 };
 
 export const CreatePoolConfiguration = () => {
-  const toast = useToast();
+  const warningToast = useWarningToast();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
 
-  const { fuse, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useRari();
   const router = useRouter();
 
   const [isCreating, setIsCreating] = useState(false);
@@ -92,14 +94,7 @@ export const CreatePoolConfiguration = () => {
 
   const onDeploy = async (data: FormData) => {
     if (!config.allowedAddresses.includes(address.toLowerCase())) {
-      toast({
-        title: 'Warning!',
-        description: 'Pool creation is limited!',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-        position: 'top-right',
-      });
+      warningToast({ description: 'Pool creation is limited!' });
 
       return;
     }
@@ -116,7 +111,7 @@ export const CreatePoolConfiguration = () => {
     const reporter = null;
 
     try {
-      const deployResult = await fuse.deployPool(
+      const deployResult = await midasSdk.deployPool(
         name,
         isWhitelisted,
         bigCloseFactor,
@@ -128,13 +123,9 @@ export const CreatePoolConfiguration = () => {
       );
       const poolId = deployResult.pop();
 
-      toast({
+      successToast({
         title: 'Your pool has been deployed!',
         description: 'You may now add assets to it.',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
       });
 
       LogRocket.track('Fuse-CreatePool');
@@ -145,7 +136,7 @@ export const CreatePoolConfiguration = () => {
         await router.push(`/${currentChain.id}?filter=created-pools`);
       }
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
       setIsCreating(false);
     }
   };
@@ -206,7 +197,7 @@ export const CreatePoolConfiguration = () => {
                   {currentChain.id === 1337 ? (
                     <option
                       className="white-bg-option"
-                      value={fuse.chainDeployment.MasterPriceOracle.address}
+                      value={midasSdk.chainDeployment.MasterPriceOracle.address}
                     >
                       MasterPriceOracle
                     </option>
@@ -214,7 +205,7 @@ export const CreatePoolConfiguration = () => {
                     <>
                       <option
                         className="white-bg-option"
-                        value={fuse.chainDeployment.MasterPriceOracle.address}
+                        value={midasSdk.chainDeployment.MasterPriceOracle.address}
                       >
                         MasterPriceOracle
                       </option>
@@ -437,7 +428,7 @@ export const WhitelistInfo = ({
 }) => {
   const [_whitelistInput, _setWhitelistInput] = useState('');
 
-  const toast = useToast();
+  const errorToast = useErrorToast();
   const { cSolidBtn } = useColors();
 
   const add = () => {
@@ -447,14 +438,9 @@ export const WhitelistInfo = ({
       // onChange(value);
       _setWhitelistInput('');
     } else {
-      toast({
-        title: 'Error!',
+      errorToast({
         description:
           'This is not a valid ethereum address (or you have already entered this address)',
-        status: 'error',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
       });
     }
   };

@@ -15,6 +15,7 @@ import { parseUnits } from 'ethers/lib/utils';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
+import { useQueryClient } from 'react-query';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
@@ -40,17 +41,22 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
   const poolId = router.query.poolId as string;
   const data = useExtraPoolInfo(comptrollerAddress || '');
   const { hasCopied, onCopy } = useClipboard(data?.admin ?? '');
-  const { setLoading, currentChain } = useRari();
-  const { fuse } = useRari();
+  const { setLoading, currentChain, setPendingTxHash } = useRari();
+  const { midasSdk } = useRari();
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const queryClient = useQueryClient();
+
   const acceptOwnership = useCallback(async () => {
     if (!comptrollerAddress) return;
     setIsLoading(true);
-    const unitroller = fuse.createUnitroller(comptrollerAddress);
+    const unitroller = midasSdk.createUnitroller(comptrollerAddress);
     const tx = await unitroller._acceptAdmin();
+    setPendingTxHash(tx.hash);
     await tx.wait();
     setIsLoading(false);
-  }, [comptrollerAddress, fuse]);
+
+    await queryClient.refetchQueries();
+  }, [comptrollerAddress, midasSdk, queryClient, setPendingTxHash]);
 
   return (
     <MidasBox height={isMobile ? 'auto' : '450px'}>

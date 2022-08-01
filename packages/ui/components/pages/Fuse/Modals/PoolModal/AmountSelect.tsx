@@ -11,13 +11,12 @@ import {
   TabList,
   Tabs,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
   FundOperationMode,
-  Fuse,
+  MidasSdk,
   NativePricedFuseAsset,
 } from '@midas-capital/sdk';
 import axios from 'axios';
@@ -42,6 +41,7 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -69,9 +69,9 @@ const AmountSelect = ({
 }: AmountSelectProps) => {
   const asset = assets[index];
 
-  const { fuse, setPendingTxHash, address } = useRari();
+  const { midasSdk, setPendingTxHash, address } = useRari();
 
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const { data: tokenData } = useTokenData(asset.underlyingToken);
 
@@ -92,7 +92,7 @@ const AmountSelect = ({
     const func = async () => {
       const borrowableAmountBN = (await fetchMaxAmount(
         FundOperationMode.BORROW,
-        fuse,
+        midasSdk,
         address,
         asset
       )) as BigNumber;
@@ -104,7 +104,7 @@ const AmountSelect = ({
     };
 
     func();
-  }, [address, asset, fuse]);
+  }, [address, asset, midasSdk]);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -135,10 +135,10 @@ const AmountSelect = ({
     }
 
     try {
-      const max = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
+      const max = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
       return amount.lte(max);
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
       return false;
     }
   });
@@ -191,7 +191,7 @@ const AmountSelect = ({
       let tx: ContractTransaction;
 
       if (mode === FundOperationMode.SUPPLY) {
-        const resp = await fuse.supply(
+        const resp = await midasSdk.supply(
           asset.cToken,
           asset.underlyingToken,
           comptrollerAddress,
@@ -207,9 +207,13 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.REPAY) {
-        const resp = await fuse.repay(asset.cToken, asset.underlyingToken, isRepayingMax, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.repay(
+          asset.cToken,
+          asset.underlyingToken,
+          isRepayingMax,
+          amount,
+          { from: address }
+        );
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode);
@@ -218,7 +222,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.BORROW) {
-        const resp = await fuse.borrow(asset.cToken, amount, {
+        const resp = await midasSdk.borrow(asset.cToken, amount, {
           from: address,
         });
 
@@ -229,7 +233,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await fuse.withdraw(asset.cToken, amount, {
+        const resp = await midasSdk.withdraw(asset.cToken, amount, {
           from: address,
         });
 
@@ -244,7 +248,7 @@ const AmountSelect = ({
       }
       onClose();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
       setUserAction(UserAction.NO_ACTION);
     }
   };
@@ -518,7 +522,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   });
 
   const {
-    fuse,
+    midasSdk,
     currentChain: { id: chainId },
   } = useRari();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
@@ -536,15 +540,15 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = fuse.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
-  const borrowAPR = fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
+  const supplyAPY = midasSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
+  const borrowAPR = midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
 
-  const updatedSupplyAPY = fuse.ratePerBlockToAPY(
+  const updatedSupplyAPY = midasSdk.ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
 
-  const updatedBorrowAPR = fuse.ratePerBlockToAPY(
+  const updatedBorrowAPR = midasSdk.ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
@@ -667,9 +671,9 @@ const TokenNameAndMaxButton = ({
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
 }) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
 
-  const toast = useToast();
+  const errorToast = useErrorToast();
 
   const [isMaxLoading, setIsMaxLoading] = useState(false);
 
@@ -677,7 +681,7 @@ const TokenNameAndMaxButton = ({
     setIsMaxLoading(true);
 
     try {
-      const maxBN = (await fetchMaxAmount(mode, fuse, address, asset)) as BigNumber;
+      const maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
@@ -688,7 +692,7 @@ const TokenNameAndMaxButton = ({
 
       setIsMaxLoading(false);
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     }
   };
 
@@ -765,11 +769,11 @@ export function fundOperationError(errorCode: number) {
   throw err;
 }
 
-export const fetchGasForCall = async (amountBN: BigNumber, fuse: Fuse, address: string) => {
+export const fetchGasForCall = async (amountBN: BigNumber, midasSdk: MidasSdk, address: string) => {
   const estimatedGas = BigNumber.from(
     (
       (
-        await fuse.provider.estimateGas({
+        await midasSdk.provider.estimateGas({
           from: address,
           // Cut amountBN in half in case it screws up the gas estimation by causing a fail in the event that it accounts for gasPrice > 0 which means there will not be enough ETH (after paying gas)
           value: amountBN.div(BigNumber.from(2)),

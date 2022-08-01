@@ -11,7 +11,7 @@ import {
 import { ChainLiquidationConfig, ERC20Abi, MarketConfig } from "../../src";
 import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
 import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
-import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getOrCreateMidas } from "../utils/midasSdk";
 import { DeployedAsset } from "../utils/pool";
 import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/setup";
 
@@ -52,7 +52,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     poolName = "liquidation - fl - " + Math.random().toString();
     ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
-    const sdk = await getOrCreateFuse();
+    const sdk = await getOrCreateMidas();
 
     liquidationConfigOverrides = {
       ...getChainLiquidationConfig(sdk)[chainId],
@@ -83,7 +83,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
 
   it("FL - should liquidate a token borrow for token collateral", async function () {
     const { alice, bob } = await ethers.getNamedSigners();
-    const sdk = await getOrCreateFuse();
+    const sdk = await getOrCreateMidas();
 
     // get some liquidity via Uniswap
     await tradeNativeForAsset({ account: "alice", token: erc20One.underlying, amount: "300" });

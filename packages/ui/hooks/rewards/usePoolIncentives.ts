@@ -14,13 +14,15 @@ import {
 } from '@ui/types/ComponentPropsType';
 
 export function usePoolIncentives(comptroller?: string): IncentivesData {
-  const { fuse, currentChain } = useRari();
+  const { midasSdk, currentChain } = useRari();
 
   // 1. Make Call to FusePoolLens
   const { data } = useQuery(['PoolIncentives', currentChain.id, comptroller], async () => {
     if (!comptroller) return [];
 
-    return await fuse.contracts.FusePoolLensSecondary.callStatic.getRewardSpeedsByPool(comptroller);
+    return await midasSdk.contracts.FusePoolLensSecondary.callStatic.getRewardSpeedsByPool(
+      comptroller
+    );
   });
 
   // 2. Destructure data from Contract call
@@ -95,7 +97,7 @@ export function usePoolIncentives(comptroller?: string): IncentivesData {
 }
 
 export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyingMap => {
-  const { fuse, currentChain } = useRari();
+  const { midasSdk, currentChain } = useRari();
 
   const { data: cTokensUnderlying } = useQuery(
     ['CTokensUnderlying', currentChain.id, cTokenAddresses?.join(',')],
@@ -104,7 +106,7 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
       if (cTokenAddresses && cTokenAddresses.length) {
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
-            const cTokenInstance = fuse.createCToken(cTokenAddress);
+            const cTokenInstance = midasSdk.createCToken(cTokenAddress);
             _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
           })
         );

@@ -1,10 +1,10 @@
-import { Fuse, InterestRateModel } from '@midas-capital/sdk';
+import { InterestRateModel, MidasSdk } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
 export const convertIRMtoCurve = (
-  fuse: Fuse,
+  midasSdk: MidasSdk,
   interestRateModel: InterestRateModel,
   chainId: number
 ) => {
@@ -15,11 +15,11 @@ export const convertIRMtoCurve = (
   for (let i = 0; i <= 100; i++) {
     const asEther = utils.parseUnits((i / 100).toString());
 
-    const supplyAPY = fuse.ratePerBlockToAPY(
+    const supplyAPY = midasSdk.ratePerBlockToAPY(
       interestRateModel.getSupplyRate(asEther),
       blocksPerMin
     );
-    const borrowAPY = fuse.ratePerBlockToAPY(
+    const borrowAPY = midasSdk.ratePerBlockToAPY(
       interestRateModel.getBorrowRate(asEther),
       blocksPerMin
     );

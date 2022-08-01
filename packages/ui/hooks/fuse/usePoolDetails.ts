@@ -6,7 +6,7 @@ import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
   const {
-    fuse,
+    midasSdk,
     currentChain: { id: chainId },
   } = useRari();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
@@ -21,14 +21,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          fuse.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
-          fuse.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
+          midasSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          midasSdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          fuse.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
-          fuse.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
+          midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          midasSdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -42,5 +42,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets, fuse, blocksPerMinute]);
+  }, [assets, midasSdk, blocksPerMinute]);
 };

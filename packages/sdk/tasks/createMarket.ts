@@ -21,8 +21,8 @@ export default task("market:create", "Create Market")
     // @ts-ignore
     const enumsModule = await import("../src/enums");
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     // @ts-ignore
     const assetModule = await import("../tests/utils/assets");
     // @ts-ignore
@@ -38,37 +38,14 @@ export default task("market:create", "Create Market")
     );
 
     const assetConfig = assets.find((a) => a.symbol === symbol);
-
-    if (taskArgs.strategyCode) {
-      const plugin = sdk.chainPlugins[assetConfig.underlying].find((p) => p.strategyCode === taskArgs.strategyCode);
-      assetConfig.plugin = plugin;
-      assetConfig.plugin.cTokenContract = enumsModule.DelegateContractName.CErc20PluginDelegate;
-
-      if (taskArgs.strategyAddress) {
-        assetConfig.plugin.strategyAddress = taskArgs.strategyAddress;
-      }
-      if (taskArgs.flywheels) {
-        assetConfig.plugin.cTokenContract = enumsModule.DelegateContractName.CErc20PluginRewardsDelegate;
-        const rds: Array<string> = taskArgs.flywheels.split(",");
-        const rts: Array<string> = taskArgs.rewardTokens.split(",");
-        if (rds.length !== rts.length) {
-          throw "Length of RDs and RTs must be equal";
-        }
-        (assetConfig.plugin as any).flywheels = rds.map((r, i) => {
-          return {
-            address: r,
-            rewardToken: rts[i],
-          };
-        });
-        // @ts-ignore
-        console.log("Flywheel config: ", assetConfig.plugin.flywheels);
-      }
+    if (!assetConfig) {
+      throw "No asset config found";
     }
 
+    // TODO needs rewrite
+
     console.log(
-      `Creating market for token ${assetConfig.underlying}, pool ${poolName}, impl: ${
-        assetConfig.plugin ? assetConfig.plugin.cTokenContract : enumsModule.DelegateContractName.CErc20Delegate
-      }`
+      `Creating market for token ${assetConfig.underlying}, pool ${poolName}, impl: ${enumsModule.DelegateContractName.CErc20Delegate}`
     );
 
     console.log("Asset config: ", assetConfig);

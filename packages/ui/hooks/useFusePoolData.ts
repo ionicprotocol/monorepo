@@ -23,7 +23,7 @@ export interface PoolData extends SDKFusePoolData {
 }
 
 export const useFusePoolData = (poolId: string) => {
-  const { fuse, address, coingeckoId } = useRari();
+  const { midasSdk, address, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   return useQuery<PoolData | null>(
@@ -31,7 +31,7 @@ export const useFusePoolData = (poolId: string) => {
     async () => {
       if (!usdPrice) return null;
 
-      const res = await fuse.fetchFusePoolData(poolId, address);
+      const res = await midasSdk.fetchFusePoolData(poolId, address);
       const assetsWithPrice: MarketData[] = [];
       if (res.assets && res.assets.length !== 0) {
         res.assets.map((asset) => {

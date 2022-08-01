@@ -17,11 +17,11 @@ interface IRMChartProps {
 }
 const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChartProps) => {
   const { cChart } = useColors();
-  const { fuse, currentChain } = useRari();
+  const { midasSdk, currentChain } = useRari();
   const { data, isLoading, error } = useQuery(
     ['irmCurve', interestRateModelAddress, adminFee, reserveFactor],
     async () => {
-      const IRM = await fuse.identifyInterestRateModel(interestRateModelAddress);
+      const IRM = await midasSdk.identifyInterestRateModel(interestRateModelAddress);
       if (IRM === null) {
         return null;
       }
@@ -38,10 +38,10 @@ const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChar
 
         // hardcoded 10% Fuse fee
         utils.parseEther((10 / 100).toString()),
-        fuse.provider
+        midasSdk.provider
       );
 
-      return convertIRMtoCurve(fuse, IRM, currentChain.id);
+      return convertIRMtoCurve(midasSdk, IRM, currentChain.id);
     },
     {
       cacheTime: Infinity,

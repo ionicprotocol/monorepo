@@ -19,7 +19,7 @@ import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRari } from '@ui/context/RariContext';
-import { useSuccessToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -76,8 +76,9 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchRewards: any;
 }) => {
-  const { fuse, address } = useRari();
-  const toast = useSuccessToast();
+  const { midasSdk, address } = useRari();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
   const { data: signer } = useSigner();
 
@@ -86,7 +87,7 @@ const ClaimRewardsModal = ({
       try {
         setIsClaiming(true);
         if (!signer) return;
-        const fwLensRouter = fuse.contracts['FuseFlywheelLensRouter'];
+        const fwLensRouter = midasSdk.contracts['FuseFlywheelLensRouter'];
 
         for (const reward of rewards) {
           const markets = reward.rewards.map((reward) => reward.market);
@@ -97,18 +98,18 @@ const ClaimRewardsModal = ({
             });
 
           await tx.wait();
-          toast({
+          successToast({
             title: 'Reward claimed!',
           });
           await refetchRewards();
         }
       } catch (e) {
-        handleGenericError(e, toast);
+        handleGenericError(e, errorToast);
       } finally {
         setIsClaiming(false);
       }
     },
-    [address, fuse.contracts, refetchRewards, signer, toast]
+    [address, midasSdk.contracts, refetchRewards, signer, errorToast, successToast]
   );
 
   return (

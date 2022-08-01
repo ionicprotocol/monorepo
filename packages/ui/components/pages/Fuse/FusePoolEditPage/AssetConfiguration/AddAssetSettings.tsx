@@ -8,7 +8,6 @@ import {
   Link,
   Select,
   Text,
-  useToast,
   VStack,
 } from '@chakra-ui/react';
 import { InterestRateModelConf, MarketConfig } from '@midas-capital/sdk';
@@ -27,6 +26,7 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -58,8 +58,9 @@ export const AddAssetSettings = ({
   poolName: string;
   tokenData: TokenData;
 }) => {
-  const { fuse, address } = useRari();
-  const toast = useToast();
+  const { midasSdk, address } = useRari();
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect } = useColors();
 
@@ -78,7 +79,7 @@ export const AddAssetSettings = ({
       reserveFactor: 10,
       adminFee: 5,
       pluginIndex: -1,
-      interestRateModel: fuse.chainDeployment.JumpRateModel.address,
+      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
@@ -86,29 +87,21 @@ export const AddAssetSettings = ({
   const watchReserveFactor = watch('reserveFactor', 10);
   const watchInterestRateModel = watch(
     'interestRateModel',
-    fuse.chainDeployment.JumpRateModel.address
+    midasSdk.chainDeployment.JumpRateModel.address
   );
 
-  const availablePlugins = useMemo(
-    () => fuse.chainPlugins[tokenData.address] || [],
-    [fuse.chainPlugins, tokenData.address]
-  );
+  const availablePlugins = useMemo(() => [], []);
 
   useEffect(() => {
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = fuse.createMasterPriceOracle();
+        const masterPriceOracle = midasSdk.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
-          toast({
-            title: 'Error!',
+          errorToast({
             description:
               'This asset is not supported. The price oracle is not available for this asset',
-            status: 'error',
-            duration: 2000,
-            isClosable: true,
-            position: 'top-right',
           });
 
           return;
@@ -121,7 +114,7 @@ export const AddAssetSettings = ({
     };
 
     func();
-  }, [tokenData.address, toast, fuse]);
+  }, [tokenData.address, errorToast, midasSdk]);
 
   const deploy = async (data: AddAssetFormData) => {
     const { collateralFactor, reserveFactor, adminFee, pluginIndex, interestRateModel } = data;
@@ -143,13 +136,13 @@ export const AddAssetSettings = ({
       reserveFactor: reserveFactor,
       plugin: plugin,
       bypassPriceFeedCheck: true,
-      fuseFeeDistributor: fuse.chainDeployment.FuseFeeDistributor.address,
+      fuseFeeDistributor: midasSdk.chainDeployment.FuseFeeDistributor.address,
       symbol: 'f' + tokenData.symbol + '-' + poolID,
       name: poolName + ' ' + tokenData.name,
     };
 
     try {
-      await fuse.deployAsset(irmConfig, marketConfig, { from: address });
+      await midasSdk.deployAsset(irmConfig, marketConfig, { from: address });
 
       LogRocket.track('Fuse-DeployAsset');
 
@@ -158,18 +151,14 @@ export const AddAssetSettings = ({
       // We do this instead of waiting the refetch because some fetches take a while or error out and we want to close now.
       await new Promise((resolve) => setTimeout(resolve, 2000));
 
-      toast({
+      successToast({
         title: 'You have successfully added an asset to this pool!',
         description: 'You may now lend and borrow with this asset.',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-        position: 'top-right',
       });
 
       if (onSuccess) onSuccess();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsDeploying(false);
     }
@@ -379,12 +368,8 @@ export const AddAssetSettings = ({
                 No plugin
               </option>
               {availablePlugins.map((plugin, index) => (
-                <option
-                  key={plugin.strategyAddress}
-                  value={index}
-                  style={{ color: cSelect.txtColor }}
-                >
-                  {plugin.strategyName}
+                <option key={plugin} value={index} style={{ color: cSelect.txtColor }}>
+                  {plugin}
                 </option>
               ))}
             </Select>
@@ -426,13 +411,13 @@ export const AddAssetSettings = ({
               mt={{ base: 2, md: 0 }}
             >
               <option
-                value={fuse.chainDeployment.JumpRateModel.address}
+                value={midasSdk.chainDeployment.JumpRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
                 JumpRateModel
               </option>
               <option
-                value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
+                value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
                 WhitePaperRateModel

@@ -1,4 +1,4 @@
-import { Text, ToastId, useDisclosure, useToast } from '@chakra-ui/react';
+import { Text, ToastId, useDisclosure } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Chain, useAccount, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
@@ -7,6 +7,7 @@ import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { RariProvider } from '@ui/context/RariContext';
+import { useWarningToast } from '@ui/hooks/useToast';
 import { isSupportedChainId } from '@ui/networkData/index';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
@@ -20,14 +21,16 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   const routerChainId = router.query.chainId as string;
 
   const toastIdRef = useRef<ToastId | undefined>();
-  const toast = useToast();
+  const warningToast = useWarningToast();
   const [switchedChain, setSwitchedChain] = useState<Chain | undefined>();
 
   const [signerChainId, setSignerChainId] = useState<number | undefined>();
   useEffect(() => {
     const func = async () => {
-      const _signerChainId = await signerData?.getChainId();
-      setSignerChainId(_signerChainId);
+      if (typeof signerData?.getChainId === 'function') {
+        const _signerChainId = await signerData?.getChainId();
+        setSignerChainId(_signerChainId);
+      }
     };
 
     func();
@@ -49,7 +52,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
           if (chain.unsupported) {
             // if warning notification should show for letting user change to support network
             if (!toastIdRef.current) {
-              toastIdRef.current = toast({
+              toastIdRef.current = warningToast({
                 title: `Unsupported Network(${chain.name}) Detected!`,
                 description: (
                   <>
@@ -58,10 +61,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
                       .join(', ')}`}</Text>
                   </>
                 ),
-                status: 'warning',
-                position: 'bottom-right',
                 duration: null,
-                isClosable: true,
               });
             }
           }
@@ -69,7 +69,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
           else {
             // if warning notification is still displayed, then remove it
             if (toastIdRef.current) {
-              toast.close(toastIdRef.current);
+              warningToast.close(toastIdRef.current);
               toastIdRef.current = undefined;
             }
             // if URL contains routerChainId
@@ -108,17 +108,13 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
                   undefined,
                   { shallow: true }
                 );
-                toast({
+                warningToast({
                   title: `Wrong Chain ID`,
                   description: (
                     <>
                       <Text>Detected unsupported chain ID in the URL</Text>
                     </>
                   ),
-                  status: 'warning',
-                  position: 'top-right',
-                  duration: 5000,
-                  isClosable: true,
                 });
               }
             } else {
@@ -146,7 +142,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
     switchNetworkAsync,
     isNetworkLoading,
     isIdle,
-    toast,
+    warningToast,
     chains,
     switchedChain,
   ]);

@@ -14,13 +14,12 @@ import {
   Spacer,
   Switch,
   Text,
-  useToast,
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, CTokenErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
 import { BigNumber, ContractFunction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
@@ -36,6 +35,8 @@ import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/inde
 import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
+import { usePluginName } from '@ui/hooks/usePluginName';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -84,14 +85,10 @@ interface AssetSettingsProps {
   tokenData: TokenData;
 }
 
-export const AssetSettings = ({
-  comptrollerAddress,
-  tokenData,
-  selectedAsset,
-}: AssetSettingsProps) => {
+export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { fuse, setPendingTxHash } = useRari();
-  const toast = useToast();
+  const { midasSdk, setPendingTxHash } = useRari();
+  const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -108,7 +105,7 @@ export const AssetSettings = ({
       collateralFactor: COLLATERAL_FACTOR.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
-      interestRateModel: fuse.chainDeployment.JumpRateModel.address,
+      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
@@ -117,21 +114,10 @@ export const AssetSettings = ({
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
   const watchInterestRateModel = watch(
     'interestRateModel',
-    fuse.chainDeployment.JumpRateModel.address
+    midasSdk.chainDeployment.JumpRateModel.address
   );
 
-  const availablePlugins = useMemo(
-    () => fuse.chainPlugins[tokenData.address] || [],
-    [fuse.chainPlugins, tokenData.address]
-  );
-
-  const pluginName = useMemo(() => {
-    if (!selectedAsset.plugin?.strategyAddress) return 'No Plugin';
-    return availablePlugins.map((plugin) => {
-      if (plugin.strategyAddress === selectedAsset.plugin?.strategyAddress)
-        return plugin.strategyName;
-    });
-  }, [selectedAsset.plugin?.strategyAddress, availablePlugins]);
+  const { data: pluginName } = usePluginName(selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {
@@ -149,7 +135,7 @@ export const AssetSettings = ({
   const updateCollateralFactor = async ({ collateralFactor }: { collateralFactor: number }) => {
     if (!cTokenAddress) return;
     setIsUpdating(true);
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -173,7 +159,7 @@ export const AssetSettings = ({
 
       await queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -181,7 +167,7 @@ export const AssetSettings = ({
 
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
     setIsUpdating(true);
-    const cToken = fuse.createCToken(cTokenAddress || '');
+    const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -198,7 +184,7 @@ export const AssetSettings = ({
 
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -206,7 +192,7 @@ export const AssetSettings = ({
 
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
     setIsUpdating(true);
-    const cToken = fuse.createCToken(cTokenAddress || '');
+    const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -223,7 +209,7 @@ export const AssetSettings = ({
 
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -231,7 +217,7 @@ export const AssetSettings = ({
 
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
     setIsUpdating(true);
-    const cToken = fuse.createCToken(cTokenAddress || '');
+    const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     try {
       await testForCTokenErrorAndSend(
@@ -245,7 +231,7 @@ export const AssetSettings = ({
 
       queryClient.refetchQueries();
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -258,7 +244,7 @@ export const AssetSettings = ({
     }
     setIsUpdating(true);
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
@@ -266,7 +252,7 @@ export const AssetSettings = ({
 
       LogRocket.track('Fuse-UpdateCollateralFactor');
     } catch (e) {
-      handleGenericError(e, toast);
+      handleGenericError(e, errorToast);
     } finally {
       setIsUpdating(false);
     }
@@ -677,13 +663,13 @@ export const AssetSettings = ({
                       mt={{ base: 2, sm: 0 }}
                     >
                       <option
-                        value={fuse.chainDeployment.JumpRateModel.address}
+                        value={midasSdk.chainDeployment.JumpRateModel.address}
                         style={{ color: cSelect.txtColor }}
                       >
                         JumpRateModel
                       </option>
                       <option
-                        value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
+                        value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
                         style={{ color: cSelect.txtColor }}
                       >
                         WhitePaperRateModel

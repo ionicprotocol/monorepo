@@ -1,9 +1,8 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
-import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { DelegateContractName, FundOperationMode } from "../enums";
-import { COMPTROLLER_ERROR_CODES } from "../Fuse/config";
+import { FundOperationMode } from "../enums";
+import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
 import { InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
 
 import { withCreateContracts } from "./CreateContracts";
@@ -72,13 +71,8 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       const comptroller = this.getComptrollerInstance(config.comptroller, options);
 
       // Use Default CErc20Delegate
-      let implementationAddress = this.chainDeployment.CErc20Delegate.address;
-      let implementationData = "0x00";
-
-      if (config.plugin) {
-        implementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
-        implementationData = abiCoder.encode(["address"], [config.plugin.strategyAddress]);
-      }
+      const implementationAddress = this.chainDeployment.CErc20Delegate.address;
+      const implementationData = "0x00";
 
       // Prepare Transaction Data
       const deployArgs = [
@@ -131,69 +125,6 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
         saltsHash,
         byteCodeHash
       );
-
-      // Plugin related code
-      if (config.plugin) {
-        // Change implementation
-        const newImplementationAddress = this.chainDeployment[config.plugin.cTokenContract].address;
-
-        const setImplementationTx = await this.getCTokenInstance(cErc20DelegatorAddress)._setImplementationSafe(
-          newImplementationAddress,
-          false,
-          implementationData
-        );
-
-        const receipt: TransactionReceipt = await setImplementationTx.wait();
-        if (receipt.status != constants.One.toNumber()) {
-          throw `Failed set implementation to ${config.plugin.cTokenContract}`;
-        }
-        // updates value here, as it's used as return value
-        implementationAddress = newImplementationAddress;
-
-        // Further actions required for `CErc20PluginRewardsDelegate`
-        if (config.plugin.cTokenContract === DelegateContractName.CErc20PluginRewardsDelegate) {
-          const rdsOfComptroller = await comptroller.callStatic.getRewardsDistributors();
-          const cToken: CErc20PluginRewardsDelegate = this.getCErc20PluginRewardsInstance(cErc20DelegatorAddress);
-
-          // Add Flywheels as RewardsDistributors to Pool
-          for (const flywheelConfig of config.plugin.flywheels) {
-            if (rdsOfComptroller.includes(flywheelConfig.address)) continue;
-
-            //1. Add Flywheel to Pool
-            const addRdTx = await comptroller._addRewardsDistributor(flywheelConfig.address, {
-              from: options.from,
-            });
-            const addRdTxReceipt: TransactionReceipt = await addRdTx.wait();
-
-            if (addRdTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed set add RD to pool ${flywheelConfig.address}`;
-            }
-
-            //2. Approve Flywheel to spend underlying
-            const approveTx = await cToken["approve(address,address)"](
-              flywheelConfig.rewardToken,
-              flywheelConfig.address,
-              {
-                from: options.from,
-              }
-            );
-            const approveTxReceipt = await approveTx.wait();
-            if (approveTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed to approve to pool ${flywheelConfig.address}`;
-            }
-
-            //3. Enable Strategy on Flywheel
-            const enableTx = await this.createFuseFlywheelCore(flywheelConfig.address).addStrategyForRewards(
-              config.plugin.strategyAddress
-            );
-            const enableTxReceipt = await enableTx.wait();
-
-            if (enableTxReceipt.status != constants.One.toNumber()) {
-              throw `Failed "addStrategyForRewards()" on Flywheel, are you authorized? ${flywheelConfig.address}`;
-            }
-          }
-        }
-      }
 
       // Return cToken proxy and implementation contract addresses
       return [cErc20DelegatorAddress, implementationAddress, receipt];
