@@ -222,11 +222,10 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
 task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed pools")
   .addParam("enabled", "If autoimplementations should be on or off", true, types.boolean)
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers, run }) => {
-    // @ts-ignoreutils/fuseSdk
-    const fuseModule = await import("../tests/utils/fuseSdk");
-
-    const sdk = await fuseModule.getOrCreateFuse();
+  .setAction(async (taskArgs, { ethers }) => {
+    // @ts-ignore
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const signer = await ethers.getNamedSigner(taskArgs.admin);
     const enabled = taskArgs.enabled;
 
@@ -246,8 +245,8 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
       const autoImplOn = await comptroller.callStatic.autoImplementation();
       if (autoImplOn != enabled) {
         if (admin === signer.address) {
-          let tx = await comptroller._toggleAutoImplementations(enabled);
-          let receipt = await tx.wait();
+          const tx = await comptroller._toggleAutoImplementations(enabled);
+          const receipt = await tx.wait();
           console.log(`toggled to ${enabled} with ${receipt.transactionHash}`);
         } else {
           console.log(`signer is not the admin`);
