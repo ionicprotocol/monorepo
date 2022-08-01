@@ -58,7 +58,7 @@ export const AddAssetSettings = ({
   poolName: string;
   tokenData: TokenData;
 }) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
@@ -79,7 +79,7 @@ export const AddAssetSettings = ({
       reserveFactor: 10,
       adminFee: 5,
       pluginIndex: -1,
-      interestRateModel: fuse.chainDeployment.JumpRateModel.address,
+      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
@@ -87,7 +87,7 @@ export const AddAssetSettings = ({
   const watchReserveFactor = watch('reserveFactor', 10);
   const watchInterestRateModel = watch(
     'interestRateModel',
-    fuse.chainDeployment.JumpRateModel.address
+    midasSdk.chainDeployment.JumpRateModel.address
   );
 
   const availablePlugins = useMemo(() => [], []);
@@ -96,7 +96,7 @@ export const AddAssetSettings = ({
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = fuse.createMasterPriceOracle();
+        const masterPriceOracle = midasSdk.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
           errorToast({
@@ -114,7 +114,7 @@ export const AddAssetSettings = ({
     };
 
     func();
-  }, [tokenData.address, errorToast, fuse]);
+  }, [tokenData.address, errorToast, midasSdk]);
 
   const deploy = async (data: AddAssetFormData) => {
     const { collateralFactor, reserveFactor, adminFee, pluginIndex, interestRateModel } = data;
@@ -136,13 +136,13 @@ export const AddAssetSettings = ({
       reserveFactor: reserveFactor,
       plugin: plugin,
       bypassPriceFeedCheck: true,
-      fuseFeeDistributor: fuse.chainDeployment.FuseFeeDistributor.address,
+      fuseFeeDistributor: midasSdk.chainDeployment.FuseFeeDistributor.address,
       symbol: 'f' + tokenData.symbol + '-' + poolID,
       name: poolName + ' ' + tokenData.name,
     };
 
     try {
-      await fuse.deployAsset(irmConfig, marketConfig, { from: address });
+      await midasSdk.deployAsset(irmConfig, marketConfig, { from: address });
 
       LogRocket.track('Fuse-DeployAsset');
 
@@ -411,13 +411,13 @@ export const AddAssetSettings = ({
               mt={{ base: 2, md: 0 }}
             >
               <option
-                value={fuse.chainDeployment.JumpRateModel.address}
+                value={midasSdk.chainDeployment.JumpRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
                 JumpRateModel
               </option>
               <option
-                value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
+                value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
                 WhitePaperRateModel

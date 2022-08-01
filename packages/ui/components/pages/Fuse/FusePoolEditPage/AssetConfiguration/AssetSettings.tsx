@@ -87,7 +87,7 @@ interface AssetSettingsProps {
 
 export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { fuse, setPendingTxHash } = useRari();
+  const { midasSdk, setPendingTxHash } = useRari();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();
@@ -105,7 +105,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
       collateralFactor: COLLATERAL_FACTOR.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
-      interestRateModel: fuse.chainDeployment.JumpRateModel.address,
+      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
@@ -114,7 +114,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
   const watchInterestRateModel = watch(
     'interestRateModel',
-    fuse.chainDeployment.JumpRateModel.address
+    midasSdk.chainDeployment.JumpRateModel.address
   );
 
   const { data: pluginName } = usePluginName(selectedAsset.plugin);
@@ -135,7 +135,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   const updateCollateralFactor = async ({ collateralFactor }: { collateralFactor: number }) => {
     if (!cTokenAddress) return;
     setIsUpdating(true);
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -167,7 +167,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
 
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
     setIsUpdating(true);
-    const cToken = fuse.createCToken(cTokenAddress || '');
+    const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -192,7 +192,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
 
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
     setIsUpdating(true);
-    const cToken = fuse.createCToken(cTokenAddress || '');
+    const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -217,7 +217,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
 
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
     setIsUpdating(true);
-    const cToken = fuse.createCToken(cTokenAddress || '');
+    const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     try {
       await testForCTokenErrorAndSend(
@@ -244,7 +244,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
     }
     setIsUpdating(true);
 
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
@@ -663,13 +663,13 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                       mt={{ base: 2, sm: 0 }}
                     >
                       <option
-                        value={fuse.chainDeployment.JumpRateModel.address}
+                        value={midasSdk.chainDeployment.JumpRateModel.address}
                         style={{ color: cSelect.txtColor }}
                       >
                         JumpRateModel
                       </option>
                       <option
-                        value={fuse.chainDeployment.WhitePaperInterestRateModel.address}
+                        value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
                         style={{ color: cSelect.txtColor }}
                       >
                         WhitePaperRateModel

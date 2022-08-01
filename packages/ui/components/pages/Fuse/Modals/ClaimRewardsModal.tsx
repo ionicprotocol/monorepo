@@ -76,7 +76,7 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchRewards: any;
 }) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
@@ -87,7 +87,7 @@ const ClaimRewardsModal = ({
       try {
         setIsClaiming(true);
         if (!signer) return;
-        const fwLensRouter = fuse.contracts['FuseFlywheelLensRouter'];
+        const fwLensRouter = midasSdk.contracts['FuseFlywheelLensRouter'];
 
         for (const reward of rewards) {
           const markets = reward.rewards.map((reward) => reward.market);
@@ -109,7 +109,7 @@ const ClaimRewardsModal = ({
         setIsClaiming(false);
       }
     },
-    [address, fuse.contracts, refetchRewards, signer, errorToast, successToast]
+    [address, midasSdk.contracts, refetchRewards, signer, errorToast, successToast]
   );
 
   return (

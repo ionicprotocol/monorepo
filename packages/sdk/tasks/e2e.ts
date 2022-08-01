@@ -43,8 +43,8 @@ task("e2e:admin-fees-are-seized", "e2e: check fees are seized").setAction(async 
   const poolModule = await import("../tests/utils/pool");
 
   // @ts-ignore
-  const fuseModule = await import("../tests/utils/fuseSdk");
-  const sdk = await fuseModule.getOrCreateFuse();
+  const midasSdkModule = await import("../tests/utils/midasSdk");
+  const sdk = await midasSdkModule.getOrCreateMidas();
   for (const pool of UNHEALTHY_POOLS) {
     const poolData = await poolModule.getPoolByName(pool.name, sdk);
     const poolAsset = poolData.assets.filter((a) => a.underlyingSymbol === pool.debtToken)[0];

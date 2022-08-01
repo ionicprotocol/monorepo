@@ -21,7 +21,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { pendingTxHashes, fuse, scanUrl, disconnect, address } = useRari();
+  const { pendingTxHashes, midasSdk, scanUrl, disconnect, address } = useRari();
   const { cCard } = useColors();
   const {
     isOpen: isConnectWalletModalOpen,
@@ -45,7 +45,7 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
     const func = async () => {
       const info = await Promise.all(
         pendingTxHashes.map(async (hash) => {
-          return await fuse.provider.getTransaction(hash);
+          return await midasSdk.provider.getTransaction(hash);
         })
       );
       setTxInfo(info);
@@ -54,7 +54,7 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
     if (pendingTxHashes.length) {
       func();
     }
-  }, [pendingTxHashes, fuse]);
+  }, [pendingTxHashes, midasSdk]);
 
   return (
     <>

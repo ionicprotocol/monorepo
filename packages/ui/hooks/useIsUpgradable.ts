@@ -3,12 +3,12 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 
 export const useIsUpgradeable = (comptrollerAddress: string) => {
-  const { fuse, currentChain } = useRari();
+  const { midasSdk, currentChain } = useRari();
 
   const { data } = useQuery(
     ['useIsUpgradeable', currentChain.id, comptrollerAddress],
     async () => {
-      const comptroller = fuse.createComptroller(comptrollerAddress);
+      const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
       const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 

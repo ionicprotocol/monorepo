@@ -1,8 +1,8 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { Fuse } from "@midas-capital/sdk";
+import { MidasSdk } from "@midas-capital/sdk";
 
 const setUpSdk = (chainId: number, provider: JsonRpcProvider) => {
-  return new Fuse(provider, chainId);
+  return new MidasSdk(provider, chainId);
 };
 
 export default setUpSdk;

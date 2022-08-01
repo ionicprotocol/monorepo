@@ -44,8 +44,8 @@ task("pools:create", "Create pool if does not exist")
     // @ts-ignore
     const poolModule = await import("../tests/utils/pool");
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     if (!taskArgs.priceOracle) {
       await hre.run("oracle:set-price", { token: "TOUCH", price: "0.1" });

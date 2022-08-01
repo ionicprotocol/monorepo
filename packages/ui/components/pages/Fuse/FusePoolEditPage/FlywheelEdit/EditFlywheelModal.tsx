@@ -43,13 +43,13 @@ import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
 
   return useQuery(
     ['useRewardsInfo', flywheelAddress, marketAddress],
     async () => {
       if (flywheelAddress && marketAddress) {
-        return fuse.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
+        return midasSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
       }
       return undefined;
     },
@@ -68,7 +68,7 @@ const EditFlywheelModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
 
   const { data: tokenData } = useTokenData(flywheel.rewardToken);
   const isAdmin = address === flywheel.owner;
@@ -109,8 +109,8 @@ const EditFlywheelModal = ({
   const fund = useCallback(async () => {
     const token = new Contract(
       flywheel.rewardToken,
-      fuse.artifacts.EIP20Interface.abi,
-      fuse.provider.getSigner()
+      midasSdk.artifacts.EIP20Interface.abi,
+      midasSdk.provider.getSigner()
     );
 
     setTransactionPending(true);
@@ -127,8 +127,8 @@ const EditFlywheelModal = ({
   }, [
     flywheel.rewardToken,
     flywheel.rewards,
-    fuse.artifacts.EIP20Interface.abi,
-    fuse.provider,
+    midasSdk.artifacts.EIP20Interface.abi,
+    midasSdk.provider,
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
@@ -141,7 +141,7 @@ const EditFlywheelModal = ({
 
       setTransactionPending(true);
 
-      const tx = await fuse.setStaticRewardInfo(
+      const tx = await midasSdk.setStaticRewardInfo(
         flywheel.rewards,
         selectedMarket.cToken,
         {
@@ -167,7 +167,7 @@ const EditFlywheelModal = ({
     endDate,
     address,
     flywheel.rewards,
-    fuse,
+    midasSdk,
     isAdmin,
     selectedMarket,
     refetchRewardsInfo,
@@ -178,7 +178,7 @@ const EditFlywheelModal = ({
     (market: string) => async () => {
       try {
         setTransactionPending(true);
-        const tx = await fuse.addMarketForRewardsToFlywheelCore(flywheel.address, market, {
+        const tx = await midasSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market, {
           from: address,
         });
         await tx.wait();
@@ -189,7 +189,7 @@ const EditFlywheelModal = ({
         setTransactionPending(false);
       }
     },
-    [flywheel.address, fuse, errorToast, address]
+    [flywheel.address, midasSdk, errorToast, address]
   );
 
   return (

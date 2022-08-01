@@ -3,14 +3,14 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 
 export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
 
   const { data } = useQuery(
     ['CTokenData', cTokenAddress, comptrollerAddress],
     async () => {
       if (comptrollerAddress && cTokenAddress) {
-        const comptroller = fuse.createComptroller(comptrollerAddress);
-        const cToken = fuse.createCToken(cTokenAddress);
+        const comptroller = midasSdk.createComptroller(comptrollerAddress);
+        const cToken = midasSdk.createCToken(cTokenAddress);
 
         const [
           adminFeeMantissa,

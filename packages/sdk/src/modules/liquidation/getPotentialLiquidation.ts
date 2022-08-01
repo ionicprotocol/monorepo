@@ -1,7 +1,7 @@
 import { BigNumber, constants, utils } from "ethers";
 
 import { LiquidationStrategy } from "../../enums";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig, getLiquidationKind } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
@@ -16,7 +16,7 @@ import {
 import { estimateGas } from "./index";
 
 export default async function getPotentialLiquidation(
-  fuse: FuseBase,
+  fuse: MidasBase,
   borrower: FusePoolUserWithAssets,
   closeFactor: BigNumber,
   liquidationIncentive: BigNumber,

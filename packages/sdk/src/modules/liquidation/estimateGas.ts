@@ -1,13 +1,13 @@
 import { BigNumber } from "ethers";
 
 import { LiquidationKind } from "../../enums";
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { StrategyAndData } from "./redemptionStrategy";
 import { FusePoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
-  fuse: FuseBase,
+  fuse: MidasBase,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,

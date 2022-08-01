@@ -64,7 +64,7 @@ export const CreatePoolConfiguration = () => {
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
-  const { fuse, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useRari();
   const router = useRouter();
 
   const [isCreating, setIsCreating] = useState(false);
@@ -111,7 +111,7 @@ export const CreatePoolConfiguration = () => {
     const reporter = null;
 
     try {
-      const deployResult = await fuse.deployPool(
+      const deployResult = await midasSdk.deployPool(
         name,
         isWhitelisted,
         bigCloseFactor,
@@ -197,7 +197,7 @@ export const CreatePoolConfiguration = () => {
                   {currentChain.id === 1337 ? (
                     <option
                       className="white-bg-option"
-                      value={fuse.chainDeployment.MasterPriceOracle.address}
+                      value={midasSdk.chainDeployment.MasterPriceOracle.address}
                     >
                       MasterPriceOracle
                     </option>
@@ -205,7 +205,7 @@ export const CreatePoolConfiguration = () => {
                     <>
                       <option
                         className="white-bg-option"
-                        value={fuse.chainDeployment.MasterPriceOracle.address}
+                        value={midasSdk.chainDeployment.MasterPriceOracle.address}
                       >
                         MasterPriceOracle
                       </option>

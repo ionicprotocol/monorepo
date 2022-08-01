@@ -1,10 +1,10 @@
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
-import { Fuse } from "../../src";
+import { MidasSdk } from "../../src";
 import { ChainDeployment } from "../../src/types";
 
-let fuseSdk: Fuse;
+let midasSdk: MidasSdk;
 
 export const getCommonDeployments = async (chainDeployment: ChainDeployment) => {
   const CErc20Delegate = await ethers.getContract("CErc20Delegate");
@@ -157,23 +157,23 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   return await getCommonDeployments(chainDeployment);
 };
 
-export const getOrCreateFuse = async (): Promise<Fuse> => {
-  if (!fuseSdk) {
+export const getOrCreateMidas = async (): Promise<MidasSdk> => {
+  if (!midasSdk) {
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
     if (process.env.INTEGRATION_TEST!) {
-      fuseSdk = new Fuse(ethers.provider, chainId, null);
+      midasSdk = new MidasSdk(ethers.provider, chainId, null);
     } else if (chainId === 1337) {
       chainDeployment = await getLocalDeployments();
     } else if (process.env.FORK_CHAIN_ID!) {
       chainDeployment = await getBscForkDeployments();
     }
-    fuseSdk = new Fuse(ethers.provider, chainId, chainDeployment);
+    midasSdk = new MidasSdk(ethers.provider, chainId, chainDeployment);
     if (chainId === 31337 || chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
-      fuseSdk.chainSpecificAddresses.W_TOKEN = weth.address;
+      midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
   }
 
-  return fuseSdk;
+  return midasSdk;
 };

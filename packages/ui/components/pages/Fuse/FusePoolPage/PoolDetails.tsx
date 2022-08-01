@@ -42,21 +42,21 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
   const data = useExtraPoolInfo(comptrollerAddress || '');
   const { hasCopied, onCopy } = useClipboard(data?.admin ?? '');
   const { setLoading, currentChain, setPendingTxHash } = useRari();
-  const { fuse } = useRari();
+  const { midasSdk } = useRari();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const acceptOwnership = useCallback(async () => {
     if (!comptrollerAddress) return;
     setIsLoading(true);
-    const unitroller = fuse.createUnitroller(comptrollerAddress);
+    const unitroller = midasSdk.createUnitroller(comptrollerAddress);
     const tx = await unitroller._acceptAdmin();
     setPendingTxHash(tx.hash);
     await tx.wait();
     setIsLoading(false);
 
     await queryClient.refetchQueries();
-  }, [comptrollerAddress, fuse, queryClient, setPendingTxHash]);
+  }, [comptrollerAddress, midasSdk, queryClient, setPendingTxHash]);
 
   return (
     <MidasBox height={isMobile ? 'auto' : '450px'}>

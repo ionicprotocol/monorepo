@@ -1,11 +1,11 @@
 import { BigNumber, utils } from "ethers";
 
-import { FuseBase } from "../../Fuse";
+import { MidasBase } from "../../MidasSdk";
 
 import { SCALE_FACTOR_ONE_18_WEI } from "./utils";
 
 export const minProfitEstimate = async (
-  fuse: FuseBase,
+  fuse: MidasBase,
   liquidationAmount: BigNumber,
   liquidationValueWei: BigNumber,
   outputPrice: BigNumber,

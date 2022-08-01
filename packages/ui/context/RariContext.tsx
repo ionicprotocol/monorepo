@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Button, Link as ChakraLink } from '@chakra-ui/react';
 import { Provider, Web3Provider } from '@ethersproject/providers';
-import { Fuse } from '@midas-capital/sdk';
+import { MidasSdk } from '@midas-capital/sdk';
 import {
   createContext,
   Dispatch,
@@ -22,7 +22,7 @@ import { getScanUrlByChainId, WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { initFuseWithProviders } from '@ui/utils/web3Providers';
 export interface RariContextData {
-  fuse: Fuse;
+  midasSdk: MidasSdk;
   scanUrl: string | null;
   viewMode: string;
   setViewMode: Dispatch<string>;
@@ -65,7 +65,7 @@ export const RariProvider = ({
   address,
   disconnect,
 }: RariProviderProps) => {
-  const fuse = useMemo(() => {
+  const midasSdk = useMemo(() => {
     return initFuseWithProviders(signerProvider as Web3Provider, currentChain.id);
   }, [signerProvider, currentChain.id]);
   const scanUrl = getScanUrlByChainId(currentChain.id);
@@ -113,7 +113,7 @@ export const RariProvider = ({
   useEffect(() => {
     const pendingFunc = async (hash: string) => {
       try {
-        const tx = await fuse.provider.getTransaction(hash);
+        const tx = await midasSdk.provider.getTransaction(hash);
         if (tx.from === address) {
           infoToast({
             title: <>Pending!</>,
@@ -156,7 +156,7 @@ export const RariProvider = ({
       setPendingTxHash('');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pendingTxHash, fuse, address]);
+  }, [pendingTxHash, midasSdk, address]);
 
   useEffect(() => {
     if (mounted.current) {
@@ -170,7 +170,7 @@ export const RariProvider = ({
 
   const value = useMemo(() => {
     return {
-      fuse,
+      midasSdk,
       scanUrl,
       viewMode,
       setViewMode,
@@ -189,7 +189,7 @@ export const RariProvider = ({
       coingeckoId,
     };
   }, [
-    fuse,
+    midasSdk,
     scanUrl,
     viewMode,
     setViewMode,

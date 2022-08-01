@@ -53,7 +53,7 @@ import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getComptrollerFactory, getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
-export class FuseBase {
+export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public provider: JsonRpcProvider | Web3Provider;
 
@@ -321,9 +321,9 @@ export class FuseBase {
   }
 }
 
-const FuseBaseWithModules = withFusePoolLens(
+const MidasBaseWithModules = withFusePoolLens(
   withFundOperations(
-    withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(FuseBase))))))
+    withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(MidasBase))))))
   )
 );
-export default class Fuse extends FuseBaseWithModules {}
+export default class MidasSdk extends MidasBaseWithModules {}

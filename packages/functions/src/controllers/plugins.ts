@@ -10,12 +10,12 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
 
     for (const plugin of supportedPlugins) {
       try {
-        const contract = new ethers.Contract(plugin, PLUGINS_ABI, provider);
+        const marketContract = new ethers.Contract(plugin, PLUGINS_ABI, provider);
 
         const [totalSupply, totalAssets, underlyingAsset] = await Promise.all([
-          contract.callStatic.totalSupply(),
-          contract.callStatic.totalAssets(),
-          contract.callStatic.asset(),
+          marketContract.callStatic.totalSupply(),
+          marketContract.callStatic.totalAssets(),
+          marketContract.callStatic.asset(),
         ]);
         // console.log({ totalSupply, totalAssets, underlyingAsset });
 

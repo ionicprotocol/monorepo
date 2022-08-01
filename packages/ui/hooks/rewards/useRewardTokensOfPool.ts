@@ -4,7 +4,7 @@ import { useRari } from '@ui/context/RariContext';
 
 export const useRewardTokensOfPool = (poolAddress?: string) => {
   const {
-    fuse,
+    midasSdk,
     currentChain: { id },
     address,
   } = useRari();
@@ -14,7 +14,7 @@ export const useRewardTokensOfPool = (poolAddress?: string) => {
     async () => {
       if (!poolAddress) return undefined;
 
-      const rewards = await fuse.getFlywheelMarketRewardsByPool(poolAddress, {
+      const rewards = await midasSdk.getFlywheelMarketRewardsByPool(poolAddress, {
         from: address,
       });
 

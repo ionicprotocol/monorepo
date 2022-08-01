@@ -36,7 +36,7 @@ const steps = [
 ];
 
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -64,7 +64,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       try {
         setActiveStep(1);
 
-        fwCore = await fuse.deployFlywheelCore(rewardTokenData.address, {
+        fwCore = await midasSdk.deployFlywheelCore(rewardTokenData.address, {
           from: address,
         });
         await fwCore.deployTransaction.wait();
@@ -79,7 +79,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       let fwStaticRewards: FlywheelStaticRewards;
       try {
         setActiveStep(2);
-        fwStaticRewards = await fuse.deployFlywheelStaticRewards(fwCore.address, {
+        fwStaticRewards = await midasSdk.deployFlywheelStaticRewards(fwCore.address, {
           from: address,
         });
         await fwStaticRewards.deployTransaction.wait();
@@ -97,7 +97,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
 
       try {
         setActiveStep(3);
-        const tx = await fuse.setFlywheelRewards(fwCore.address, fwStaticRewards.address, {
+        const tx = await midasSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address, {
           from: address,
         });
         await tx.wait();
@@ -111,7 +111,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
 
       try {
         setActiveStep(4);
-        const tx = await fuse.addFlywheelCoreToComptroller(fwCore.address, comptrollerAddress, {
+        const tx = await midasSdk.addFlywheelCoreToComptroller(fwCore.address, comptrollerAddress, {
           from: address,
         });
         await tx.wait();
