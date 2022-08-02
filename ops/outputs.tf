@@ -9,14 +9,21 @@ output "bsc-mainnet-twap-bot" {
   value = module.bsc_mainnet_twap_bot.service_name
 }
 
+output "bsc-mainnet-oracle-monitor" {
+  value = module.bsc_mainnet_oracle_monitor.service_name
+}
+
 output "bsc-testnet-twap-bot" {
   value = module.bsc_testnet_twap_bot.service_name
 }
 
-output "evmos-testnet-liquidation-bot" {
-  value = module.evmos_testnet_liquidation_bot.service_name
+output "polygon-mainnet-liquidation-bot" {
+  value = module.polygon_mainnet_liquidation_bot.service_name
 }
 
+output "polygon-mainnet-oracle-monitor" {
+  value = module.polygon_mainnet_oracle_monitor.service_name
+}
 output "moonbeam-mainnet-twap-bot" {
   value = module.moonbeam_mainnet_twap_bot.service_name
 }

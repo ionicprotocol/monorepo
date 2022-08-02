@@ -26,7 +26,11 @@ variable "pokt_api_key" {
   type = string
 }
 
-variable "nodereal_api_key" {
+variable "nodereal_bsc_api_key" {
+  type = string
+}
+
+variable "nodereal_matic_api_key" {
   type = string
 }
 
