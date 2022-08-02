@@ -55,7 +55,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, tokens[0]]),
-        outputToken: tokens, // TODO should be correct?
+        outputToken: tokens[0], // TODO should be correct?
       };
 
     case RedemptionStrategyContract.XBombLiquidator: {
