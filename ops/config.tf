@@ -20,7 +20,7 @@ locals {
 
   bsc_mainnet_rpc_0          = "https://speedy-nodes-nyc.moralis.io/${var.moralis_api_key}/bsc/mainnet"
   bsc_mainnet_rpc_1          = "https://bsc.getblock.io/mainnet/?api_key=${var.getblock_api_key}"
-  bsc_mainnet_rpc_2          = "https://bsc-mainnet.nodereal.io/v1/${var.nodereal_api_key}"
+  bsc_mainnet_rpc_2          = "https://bsc-mainnet.nodereal.io/v1/${var.nodereal_bsc_api_key}"
   bsc_mainnet_rpc_3          = "https://rpc.ankr.com/bsc"
   bsc_mainnet_chain_id       = "56"
   bsc_mainnet_supported_pais = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6|0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c"
@@ -37,4 +37,10 @@ locals {
   evmos_testnet_rpc            = "https://eth.bd.evmos.dev:8545"
   evmos_testnet_chain_id       = "9000"
   evmos_testnet_supported_pais = "0x99588867e817023162F4d4829995299054a5fC57|0xAcc15dC74880C9944775448304B263D191c6077F"
+
+  polygon_mainnet_rpc_0          = "https://polygon-mainnet.nodereal.io/v1/${var.nodereal_matic_api_key}"
+  polygon_mainnet_rpc_1          = "https://matic.getblock.io/mainnet/?api_key=${var.getblock_api_key}"
+  polygon_mainnet_chain_id       = "137"
+  polygon_mainnet_supported_pais = ""
+
 }
