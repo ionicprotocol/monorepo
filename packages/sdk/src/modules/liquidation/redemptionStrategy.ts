@@ -66,7 +66,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, [], []]
+          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, [], []] // TODO swapTokenPaths
         ),
         outputToken: outputToken,
       };
