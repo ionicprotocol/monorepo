@@ -5,56 +5,56 @@ import { assetSymbols, bscAssets, moonbeamAssets } from "./assets";
 
 const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.bsc]: {
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["3EPS"])!.underlying]:
+    [underlying(bscAssets, assetSymbols["3EPS"])]:
       [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["2brl"])!.underlying]:
+    [underlying(bscAssets, assetSymbols["2brl"])]:
       [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.val3EPS)!.underlying]:
+    [underlying(bscAssets, assetSymbols.val3EPS)]:
       [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.valdai3EPS)!.underlying]:
+    [underlying(bscAssets, assetSymbols.valdai3EPS)]:
       [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.BOMB)!.underlying]:
-      [RedemptionStrategyContract.XBombLiquidator, assetSymbols.xBOMB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.xBOMB)!.underlying]:
-      [RedemptionStrategyContract.XBombLiquidator, assetSymbols.BOMB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.jBRL)!.underlying]:
-      [RedemptionStrategyContract.JarvisSynthereumLiquidator, assetSymbols.BUSD],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-USDC"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-USDT"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-ETH"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["BUSD-USDT"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.BUSD],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["BUSD-BTCB"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.BUSD],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["USDC-BUSD"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.BUSD],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["USDC-ETH"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.USDC],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.BTCB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.BTCB],
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["CAKE-WBNB"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
+    [underlying(bscAssets, assetSymbols.BOMB)]:
+      [RedemptionStrategyContract.XBombLiquidator, underlying(bscAssets, assetSymbols.xBOMB)],
+    [underlying(bscAssets, assetSymbols.xBOMB)]:
+      [RedemptionStrategyContract.XBombLiquidator, underlying(bscAssets, assetSymbols.BOMB)],
+    [underlying(bscAssets, assetSymbols.jBRL)]:
+      [RedemptionStrategyContract.JarvisSynthereumLiquidator, underlying(bscAssets, assetSymbols.BUSD)],
+    [underlying(bscAssets, assetSymbols["WBNB-BUSD"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
+    [underlying(bscAssets, assetSymbols["WBNB-DAI"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
+    [underlying(bscAssets, assetSymbols["WBNB-USDC"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
+    [underlying(bscAssets, assetSymbols["WBNB-USDT"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
+    [underlying(bscAssets, assetSymbols["WBNB-ETH"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
+    [underlying(bscAssets, assetSymbols["BUSD-USDT"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.BUSD)],
+    [underlying(bscAssets, assetSymbols["BUSD-BTCB"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.BUSD)],
+    [underlying(bscAssets, assetSymbols["USDC-BUSD"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.BUSD)],
+    [underlying(bscAssets, assetSymbols["USDC-ETH"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.USDC)],
+    [underlying(bscAssets, assetSymbols["BTCB-BOMB"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.BTCB)],
+    [underlying(bscAssets, assetSymbols["BTCB-ETH"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.BTCB)],
+    [underlying(bscAssets, assetSymbols["CAKE-WBNB"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
   },
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.chapel]: {
-    [bscAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.WBNB],
+    [underlying(bscAssets, assetSymbols["WBNB-BUSD"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(bscAssets, assetSymbols.WBNB)],
   },
   [SupportedChains.aurora]: {},
   [SupportedChains.moonbeam]: {
-    [moonbeamAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.GLMR],
-    [moonbeamAssets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying]:
-      [RedemptionStrategyContract.UniswapLpTokenLiquidator, assetSymbols.GLMR],
+    [underlying(moonbeamAssets, assetSymbols["GLMR-USDC"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(moonbeamAssets, assetSymbols.GLMR)],
+    [underlying(moonbeamAssets, assetSymbols["GLMR-GLINT"])]:
+      [RedemptionStrategyContract.UniswapLpTokenLiquidator, underlying(moonbeamAssets, assetSymbols.GLMR)],
   },
   [SupportedChains.evmos_testnet]: {},
   [SupportedChains.evmos]: {
@@ -64,5 +64,9 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.neon_devnet]: {},
   [SupportedChains.polygon]: {},
 };
+
+function underlying(assets: SupportedAsset[], symbol: string): string {
+  return assets.find((a: SupportedAsset) => a.symbol === symbol)!.underlying;
+}
 
 export default chainRedemptionStrategies;
