@@ -1,28 +1,50 @@
 import { BytesLike, Contract, ethers } from "ethers";
 
-import { RedemptionStrategy } from "../../enums";
+import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
-export type StrategyAndData = {
-  strategyAddress: string[];
-  strategyData: BytesLike[];
+// TODO remove
+export type StrategiesAndDatas = {
+  strategies: string[];
+  datas: BytesLike[];
 };
 
-export const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
-  if (!(token in fuse.redemptionStrategies)) return { strategyData: [], strategyAddress: [] };
+export type StrategyAndData = {
+  strategyAddress: string;
+  strategyData: BytesLike;
+  outputToken: string;
+};
 
-  const redemptionStrategy = fuse.redemptionStrategies[token] as RedemptionStrategy;
+export const getStrategiesAndDatas = async (fuse: MidasBase, inputToken: string, expectedOutputToken: string | null): Promise<StrategiesAndDatas> => {
+  const strategies: string[] = [];
+  const datas: BytesLike[] = [];
+
+  let tokenToRedeem = inputToken;
+  do {
+    if (tokenToRedeem == expectedOutputToken || !(tokenToRedeem in fuse.redemptionStrategies)) {
+      return {
+        strategies,
+        datas
+      };
+    }
+
+    const { strategyAddress, strategyData, outputToken } = await getStrategyAndData(fuse, tokenToRedeem) as StrategyAndData;
+    strategies.push(strategyAddress);
+    datas.push(strategyData);
+    tokenToRedeem = outputToken;
+  } while (true);
+}
+
+const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
+  const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[token];
   const redemptionStrategyContract = new Contract(
     fuse.chainDeployment[redemptionStrategy].address,
     fuse.chainDeployment[redemptionStrategy].abi,
     fuse.provider
   );
-  const strategyAndData = {
-    strategyAddress: [redemptionStrategyContract.address],
-  };
 
   switch (redemptionStrategy) {
-    case RedemptionStrategy.CurveLpTokenLiquidatorNoRegistry:
+    case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
       const curveLpOracleAddress = await redemptionStrategyContract.callStatic.oracle();
       const curveLpOracle = new Contract(
         curveLpOracleAddress,
@@ -31,29 +53,29 @@ export const getStrategyAndData = async (fuse: MidasBase, token: string): Promis
       );
       const tokens = await curveLpOracle.callStatic.underlyingTokens(token);
       return {
-        ...strategyAndData,
-        strategyData: [new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, tokens[0]])],
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, tokens[0]]),
+        outputToken: tokens, // TODO should be correct?
       };
 
-    case RedemptionStrategy.XBombLiquidator: {
-      return { ...strategyAndData, strategyData: [] };
+    case RedemptionStrategyContract.XBombLiquidator: {
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
     }
-    case RedemptionStrategy.UniswapLpTokenLiquidator: {
+    case RedemptionStrategyContract.UniswapLpTokenLiquidator: {
       return {
-        ...strategyAndData,
-        strategyData: [
-          new ethers.utils.AbiCoder().encode(
-            ["address", "address[]", "address[]"],
-            [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, [], []]
-          ),
-        ],
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["address", "address[]", "address[]"],
+          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, [], []]
+        ),
+        outputToken: outputToken,
       };
     }
-    case RedemptionStrategy.JarvisSynthereumLiquidator: {
-      return { ...strategyAndData, strategyData: [] };
+    case RedemptionStrategyContract.JarvisSynthereumLiquidator: {
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
     }
     default: {
-      return { ...strategyAndData, strategyData: [] };
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
     }
   }
 };

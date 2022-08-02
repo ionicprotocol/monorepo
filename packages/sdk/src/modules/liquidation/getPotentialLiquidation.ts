@@ -5,7 +5,7 @@ import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig, getLiquidationKind } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
-import { getStrategyAndData } from "./redemptionStrategy";
+import { getStrategiesAndDatas } from "./redemptionStrategy";
 import {
   EncodedLiquidationTx,
   FusePoolUserWithAssets,
@@ -92,7 +92,7 @@ export default async function getPotentialLiquidation(
     return null;
   }
   // Depending on liquidation strategy
-  const strategyAndData = await getStrategyAndData(fuse, borrower.collateral[0].underlyingToken);
+  const strategyAndData = await getStrategiesAndDatas(fuse, borrower.collateral[0].underlyingToken, null);
   const liquidationKind = getLiquidationKind(
     chainLiquidationConfig.LIQUIDATION_STRATEGY,
     borrower.debt[0].underlyingToken

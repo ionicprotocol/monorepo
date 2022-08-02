@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 import { LiquidationKind } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
-import { StrategyAndData } from "./redemptionStrategy";
+import { StrategiesAndDatas } from "./redemptionStrategy";
 import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
 
 export default async function encodeLiquidateTx(
@@ -11,7 +11,7 @@ export default async function encodeLiquidateTx(
   liquidationKind: LiquidationKind,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
-  strategyAndData: StrategyAndData,
+  strategiesAndDatas: StrategiesAndDatas,
   liquidationAmount: BigNumber,
   minProfitAmountScaled: BigNumber
 ): Promise<EncodedLiquidationTx> {
@@ -34,8 +34,8 @@ export default async function encodeLiquidateTx(
           0,
           borrower.collateral[0].cToken,
           exchangeToTokenAddress,
-          strategyAndData.strategyAddress,
-          strategyAndData.strategyData,
+          strategiesAndDatas.strategies,
+          strategiesAndDatas.datas,
         ],
         value: liquidationAmount,
       };
@@ -50,8 +50,8 @@ export default async function encodeLiquidateTx(
           0,
           borrower.collateral[0].cToken,
           exchangeToTokenAddress,
-          strategyAndData.strategyAddress,
-          strategyAndData.strategyData,
+          strategiesAndDatas.strategies,
+          strategiesAndDatas.datas,
         ],
         value: BigNumber.from(0),
       };
@@ -67,8 +67,8 @@ export default async function encodeLiquidateTx(
           minProfitAmountScaled,
           exchangeToTokenAddress,
           fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-          strategyAndData.strategyAddress,
-          strategyAndData.strategyData,
+          strategiesAndDatas.strategies,
+          strategiesAndDatas.datas,
           0,
         ],
         value: BigNumber.from(0),
@@ -85,8 +85,8 @@ export default async function encodeLiquidateTx(
           exchangeToTokenAddress,
           fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
           fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-          strategyAndData.strategyAddress,
-          strategyAndData.strategyData,
+          strategiesAndDatas.strategies,
+          strategiesAndDatas.datas,
           0,
         ],
         value: BigNumber.from(0),

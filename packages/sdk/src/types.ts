@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
+import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategyContract, SupportedChains } from "./enums";
 import { MidasBase } from "./MidasSdk";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
@@ -238,7 +238,7 @@ export type ChainLiquidationDefaults = {
 
 export type ChainRedemptionStrategy = {
   [chain in SupportedChains]: {
-    [token: string]: RedemptionStrategy;
+    [token: string]: [RedemptionStrategyContract, string];
   };
 };
 

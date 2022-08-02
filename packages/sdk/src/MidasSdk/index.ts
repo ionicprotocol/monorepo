@@ -23,7 +23,7 @@ import {
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
-import { DelegateContractName, RedemptionStrategy, SupportedChains } from "../enums";
+import { DelegateContractName, RedemptionStrategyContract, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -79,7 +79,7 @@ export class MidasBase {
   public deployedPlugins: DeployedPlugins;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
-  public redemptionStrategies: { [token: string]: RedemptionStrategy };
+  public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
 
   constructor(
     web3Provider: JsonRpcProvider | Web3Provider,
