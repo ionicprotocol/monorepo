@@ -4,6 +4,7 @@ import { task, types } from "hardhat/config";
 
 task("strategy:create", "Create ERC4626 Strategy")
   .addParam("strategyName", "Name of the ERC4626 strategy", undefined, types.string)
+  .addParam("contractName", "Name of the ERC4626 contract", undefined, types.string)
   .addParam("underlying", "Address of the underlying token", undefined, types.string)
   .addParam("creator", "Deployer Address", "deployer", types.string)
   .addOptionalParam(
@@ -14,6 +15,7 @@ task("strategy:create", "Create ERC4626 Strategy")
   )
   .setAction(async (taskArgs, hre) => {
     const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
+    const contract = taskArgs.contractName;
 
     const otherParams = taskArgs.otherParams ? taskArgs.otherParams.split(",") : null;
     let deployArgs;
@@ -24,10 +26,13 @@ task("strategy:create", "Create ERC4626 Strategy")
     }
 
     const deployment = await hre.deployments.deploy(taskArgs.strategyName, {
+      contract,
       from: signer.address,
       args: deployArgs,
       log: true,
     });
+
+    if (deployment.transactionHash) await hre.ethers.provider.waitForTransaction(deployment.transactionHash);
 
     console.log("ERC4626 Strategy: ", deployment.address);
   });
