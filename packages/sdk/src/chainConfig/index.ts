@@ -2,6 +2,7 @@ import { Artifacts, ChainDeployment } from "../types";
 
 export { default as chainSpecificAddresses } from "./addresses";
 export { default as chainOracles } from "./oracles";
+export { default as chainIrms } from "./irms";
 export { default as chainSpecificParams } from "./params";
 export { default as chainDeployedPlugins } from "./plugins";
 export { default as chainRedemptionStrategies } from "./redemptionStrategies";
@@ -14,15 +15,7 @@ export const oracleConfig = (deployments: ChainDeployment, artifacts: Artifacts,
   return Object.fromEntries(asMap);
 };
 
-export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts) => {
-  return {
-    JumpRateModel: {
-      abi: artifacts.JumpRateModel.abi,
-      address: deployments.JumpRateModel.address,
-    },
-    WhitePaperInterestRateModel: {
-      abi: artifacts.WhitePaperInterestRateModel.abi,
-      address: deployments.WhitePaperInterestRateModel.address,
-    },
-  };
+export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts, availableIrms: Array<string>) => {
+  const asMap = new Map(availableIrms.map((o) => [o, { abi: artifacts[o].abi, address: deployments[o].address }]));
+  return Object.fromEntries(asMap);
 };

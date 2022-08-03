@@ -1,7 +1,8 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
+import { LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
 import { MidasBase } from "./MidasSdk";
+import AnkrBNBInterestRateModel from "./MidasSdk/irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./MidasSdk/irm/WhitePaperInterestRateModel";
@@ -69,7 +70,11 @@ export type ChainDeployment = {
 export type OracleConfig = ChainDeployment;
 export type IrmConfig = OracleConfig;
 
-export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
+export type InterestRateModelType =
+  | JumpRateModel
+  | DAIInterestRateModelV2
+  | WhitePaperInterestRateModel
+  | AnkrBNBInterestRateModel;
 
 export interface MarketConfig {
   underlying: string;
@@ -123,6 +128,8 @@ export type InterestRateModelParams = {
   multiplierPerYear?: string;
   jumpMultiplierPerYear?: string;
   kink?: string;
+  day?: number;
+  abnbr?: string;
 };
 
 export type InterestRateModelConf = {
@@ -243,6 +250,10 @@ export type ChainRedemptionStrategy = {
 };
 
 export type ChainOracles = {
+  [chain in SupportedChains]: string[];
+};
+
+export type ChainIrms = {
   [chain in SupportedChains]: string[];
 };
 
