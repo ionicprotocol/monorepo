@@ -1,7 +1,7 @@
 import { BigNumber, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20 } from "../lib/contracts/typechain/CErc20";
+import { CErc20Delegate } from "../lib/contracts/typechain/CErc20Delegate";
 import { ERC20 } from "../lib/contracts/typechain/ERC20";
 import { FuseSafeLiquidator } from "../lib/contracts/typechain/FuseSafeLiquidator";
 
@@ -15,8 +15,8 @@ export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam("maxHealth", "Filter pools by max health", "1", types.string)
   .setAction(async (taskArgs, hre) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const wallet = hre.ethers.Wallet.fromMnemonic(process.env.MNEMONIC);
     const liquidations = await sdk.getPotentialLiquidations(
       wallet,
@@ -75,7 +75,7 @@ task("liquidate", "Liquidate a position without a flash loan")
     const repayAmount = BigNumber.from(taskArgs.repayAmount);
     const fuseSafeLiquidator = (await hre.ethers.getContract("FuseSafeLiquidator", signer)) as FuseSafeLiquidator;
 
-    const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20;
+    const debtToken = (await hre.ethers.getContractAt("CErc20", taskArgs.debtCerc20, signer)) as CErc20Delegate;
 
     const underlyingAddress = await debtToken.callStatic.underlying();
     const underlying = (await hre.ethers.getContractAt("ERC20", underlyingAddress, signer)) as ERC20;

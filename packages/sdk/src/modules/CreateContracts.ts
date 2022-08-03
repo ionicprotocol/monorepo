@@ -10,9 +10,9 @@ import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { Artifacts, FuseBaseConstructor } from "../types";
+import { Artifacts, MidasBaseConstructor } from "../types";
 
-export function withCreateContracts<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
     createContractInstance<T extends Contract>(contract: keyof Artifacts, signer: Signer = this.provider.getSigner()) {
       return (address: string) => new Contract(address, this.artifacts[contract].abi, signer) as T;

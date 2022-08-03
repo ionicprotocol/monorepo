@@ -1,9 +1,9 @@
 import { BigNumber, utils } from "ethers";
 
-import { FuseBaseConstructor } from "../types";
+import { MidasBaseConstructor } from "../types";
 
 const daysPerYear = 365;
-export function withConvertMantissa<TBase extends FuseBaseConstructor>(Base: TBase) {
+export function withConvertMantissa<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class ConvertMantissa extends Base {
     /**
      * Directly taken from the compound.finance docs:

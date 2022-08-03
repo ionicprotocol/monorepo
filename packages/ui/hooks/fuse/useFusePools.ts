@@ -24,7 +24,7 @@ const poolSort = (pools: FusePoolData[]) => {
 export const useFusePools = (
   filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null
 ) => {
-  const { fuse, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useRari();
 
   const isCreatedPools = filter === 'created-pools';
   const isAllPools = filter === '';
@@ -35,14 +35,14 @@ export const useFusePools = (
       let res;
 
       if (!filter) {
-        res = await fuse.fetchPoolsManual({
+        res = await midasSdk.fetchPoolsManual({
           verification: false,
           options: {
             from: address,
           },
         });
       } else {
-        res = await fuse.fetchPools({
+        res = await midasSdk.fetchPools({
           filter,
           options: { from: address },
         });

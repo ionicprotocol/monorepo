@@ -4,12 +4,12 @@ import { useQuery } from 'react-query';
 import { useRari } from '@ui/context/RariContext';
 
 export const useAllClaimableRewards = () => {
-  const { fuse, address } = useRari();
+  const { midasSdk, address } = useRari();
 
   return useQuery<FlywheelClaimableRewards[] | undefined>(
-    ['useAllClaimableRewards', fuse.chainId, address],
+    ['useAllClaimableRewards', midasSdk.chainId, address],
     () =>
-      fuse.getFlywheelClaimableRewards(address, {
+      midasSdk.getFlywheelClaimableRewards(address, {
         from: address,
       }),
     { enabled: !!address }

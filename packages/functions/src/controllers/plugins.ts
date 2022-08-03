@@ -10,11 +10,15 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
 
     for (const plugin of supportedPlugins) {
       try {
-        const contract = new ethers.Contract(plugin, PLUGINS_ABI, provider);
-        const totalSupply = await contract.totalSupply();
-        const totalAssets = await contract.totalAssets();
-        const underlyingAsset = await contract.asset();
-        console.log(totalSupply);
+        const marketContract = new ethers.Contract(plugin, PLUGINS_ABI, provider);
+
+        const [totalSupply, totalAssets, underlyingAsset] = await Promise.all([
+          marketContract.callStatic.totalSupply(),
+          marketContract.callStatic.totalAssets(),
+          marketContract.callStatic.asset(),
+        ]);
+        // console.log({ totalSupply, totalAssets, underlyingAsset });
+
         const pricePerShare = !totalSupply.eq('0') ? totalAssets / totalSupply : 0;
 
         const { error } = await supabase.from(config.supabasePluginTableName).insert([
@@ -28,16 +32,16 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           },
         ]);
         if (error) {
-          console.log(`Error occurred during saving data for plugin ${plugin}:  ${error.message}`);
+          throw `Error occurred during saving data for plugin ${plugin}:  ${error.message}`;
         } else {
           console.log(`Successfully saved data for plugin ${plugin}`);
         }
       } catch (err) {
-        console.log(err);
+        throw err;
       }
     }
   } catch (err) {
-    console.log(err);
+    console.error(err);
   }
 };
 

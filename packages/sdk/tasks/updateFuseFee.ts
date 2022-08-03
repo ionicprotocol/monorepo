@@ -10,9 +10,9 @@ export default task("fusefee:update", "Update FuseFee")
 
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
 
-    // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    // @ts-ignoreutils/fuseSdk
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const cToken = new Contract(taskArgs.cToken, sdk.chainDeployment.CErc20Delegate.abi, signer);
 

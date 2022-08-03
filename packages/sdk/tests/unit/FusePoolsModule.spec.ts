@@ -3,17 +3,17 @@ import { expect, use } from "chai";
 import { solidity } from "ethereum-waffle";
 import { deployments, ethers } from "hardhat";
 
-import { Fuse } from "../../src";
+import MidasSdk from "../../src/MidasSdk";
 import { setUpPriceOraclePrices } from "../utils";
 import * as assetHelpers from "../utils/assets";
-import { getOrCreateFuse } from "../utils/fuseSdk";
+import { getOrCreateMidas } from "../utils/midasSdk";
 import * as poolHelpers from "../utils/pool";
 
 use(solidity);
 
 describe("FusePoolsModule", function () {
   let poolAddress: string;
-  let sdk: Fuse;
+  let sdk: MidasSdk;
   let deployer: SignerWithAddress;
 
   this.beforeEach(async () => {
@@ -21,7 +21,7 @@ describe("FusePoolsModule", function () {
     await setUpPriceOraclePrices();
     deployer = (await ethers.getNamedSigners()).deployer;
 
-    sdk = await getOrCreateFuse();
+    sdk = await getOrCreateMidas();
 
     [poolAddress] = await poolHelpers.createPool({ signer: deployer, poolName: "Fetching-Pools-Test" });
     const assets = await assetHelpers.getAssetsConf(

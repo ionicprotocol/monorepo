@@ -183,7 +183,7 @@ const RewardsInfo = ({
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {data.apy.toFixed(2)}%
+          {data.apy > 0 && data.apy.toFixed(2) + '%'}
         </Text>
       )}
     </HStack>
@@ -205,9 +205,9 @@ const AssetSupplyRow = ({
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const asset = assets[index];
-  const { fuse, scanUrl, currentChain, setPendingTxHash } = useRari();
+  const { midasSdk, scanUrl, currentChain, setPendingTxHash } = useRari();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const supplyAPY = fuse.ratePerBlockToAPY(
+  const supplyAPY = midasSdk.ratePerBlockToAPY(
     asset.supplyRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
@@ -226,7 +226,7 @@ const AssetSupplyRow = ({
   const { data: pluginName } = usePluginName(asset.plugin);
 
   const onToggleCollateral = async () => {
-    const comptroller = fuse.createComptroller(comptrollerAddress);
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
     let call: ContractTransaction;
     if (asset.membership) {

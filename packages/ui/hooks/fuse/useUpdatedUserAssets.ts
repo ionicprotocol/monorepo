@@ -20,7 +20,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
   assets,
   amount,
 }: UseUpdatedUserAssetsResult<T>) => {
-  const { fuse, currentChain, coingeckoId } = useRari();
+  const { midasSdk, currentChain, coingeckoId } = useRari();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const { data: updatedAssets }: UseQueryResult<MarketData[]> = useQuery(
@@ -36,7 +36,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
     async () => {
       if (!assets || !assets.length || !usdPrice) return [];
 
-      const resAssets = await fuse.getUpdatedAssets(mode, index, assets, amount);
+      const resAssets = await midasSdk.getUpdatedAssets(mode, index, assets, amount);
       const assetsWithPrice: MarketData[] = [];
       if (resAssets && resAssets.length !== 0) {
         resAssets.map((asset) => {

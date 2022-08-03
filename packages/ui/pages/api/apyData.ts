@@ -103,10 +103,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const price2 = parseFloat(start.data[0].pricePerShare);
       const date1 = end.data[0].created_at;
       const date2 = start.data[0].created_at;
-      const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
 
-      // TODO hardcoded value, can we keep this?
-      const apy = (Math.log(price1 / price2) / dateDelta) * 86400000 * 365;
+      const dateDelta = new Date(date1).getTime() - new Date(date2).getTime(); // time difference in milliseconds
+      const totalTimePeriod = 86400000 * 365; // 1 year in milliseconds
+
+      const apy = (Math.log(price1 / price2) / dateDelta) * totalTimePeriod;
 
       return res.json({
         apy: apy || 0,

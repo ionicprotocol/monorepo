@@ -8,10 +8,10 @@ export default task("swap-wtoken-for-token", "Swap WNATIVE for token")
   .addOptionalParam("account", "Account with which to trade", "bob", types.string)
   .setAction(async ({ token: _token, amount: _amount, account: _account }, { ethers }) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
+    const midasSdkModule = await import("../tests/utils/midasSdk");
     // @ts-ignore
     const sdkModule = await import("../src");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const sdk = await midasSdkModule.getOrCreateMidas();
     let account: SignerWithAddress;
     if (_account === "whale") {
       const signers = await ethers.getSigners();
@@ -67,8 +67,8 @@ task("swap-token-for-wtoken", "Swap token for WNATIVE")
   .addOptionalParam("account", "Account with which to trade", "bob", types.string)
   .setAction(async ({ token: _token, amount: _amount, account: _account }, { ethers }) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const token = await ethers.getContractAt("EIP20Interface", _token);
     let account: SignerWithAddress;
     if (_account === "whale") {
@@ -119,8 +119,8 @@ task("swap-token-for-token", "Swap token for token")
   .addOptionalParam("account", "Account with which to trade", "bob", types.string)
   .setAction(async ({ token1: _token1, token2: _token2, amount: _amount, account: _account }, { ethers }) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const token1 = await ethers.getContractAt("EIP20Interface", _token1);
     const token2 = await ethers.getContractAt("EIP20Interface", _token2);
     let account: SignerWithAddress;
@@ -173,8 +173,8 @@ task("get-token-pair", "Get token pair address")
   .addOptionalParam("account", "Account with which to trade", "deployer", types.string)
   .setAction(async ({ token0: _token0, token1: _token1, account: _account }, { ethers }) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const account = await ethers.getNamedSigner(_account);
 
     if (!_token0) {
@@ -196,8 +196,8 @@ task("wrap-native-token", "Get token pair address")
   .addOptionalParam("weth", "weth address override", undefined, types.string)
   .setAction(async ({ account: _account, amount: _amount, weth: _weth }, { ethers }) => {
     // @ts-ignore
-    const fuseModule = await import("../tests/utils/fuseSdk");
-    const sdk = await fuseModule.getOrCreateFuse();
+    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
     const account = await ethers.getNamedSigner(_account);
 
     const wnative = new ethers.Contract(

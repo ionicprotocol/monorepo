@@ -5,7 +5,7 @@ import { useRari } from '@ui/context/RariContext';
 
 export const useFlywheelRewardsForPool = (poolAddress?: string) => {
   const {
-    fuse,
+    midasSdk,
     currentChain: { id: chainId },
     address,
   } = useRari();
@@ -16,13 +16,13 @@ export const useFlywheelRewardsForPool = (poolAddress?: string) => {
       if (!poolAddress) return undefined;
       try {
         // Try with APRs first
-        return await fuse.getFlywheelMarketRewardsByPoolWithAPR(poolAddress, {
+        return await midasSdk.getFlywheelMarketRewardsByPoolWithAPR(poolAddress, {
           from: address,
         });
       } catch (error) {
         LogRocket.captureException(new Error(`Unable to get Rewards with APRs for ${poolAddress}`));
         // Fallback to rewards without APRs
-        return fuse.getFlywheelMarketRewardsByPool(poolAddress, {
+        return midasSdk.getFlywheelMarketRewardsByPool(poolAddress, {
           from: address,
         });
       }
