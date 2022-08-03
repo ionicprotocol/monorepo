@@ -265,8 +265,49 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
 ];
 
-// https://docs.ellipsis.finance/deployment-links
-const curvePools: CurvePoolConfig[] = [];
+// https://polygon.curve.fi/
+const curvePools: CurvePoolConfig[] = [
+  {
+    lpToken: "0x2ffbce9099cbed86984286a54e5932414af4b717",
+    pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.AGEUR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
+    pool: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
+    pool: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JJPY)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JPYC)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+    pool: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JCAD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.CADC)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
+    pool: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
+    ],
+  },
+];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
