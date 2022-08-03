@@ -124,9 +124,9 @@ task("deploy-jarvis-2fiat-plugins", "deploy beefy plugins for jarvis 2fiat")
     ];
 
     for (const plugin of pluginDetails) {
-      await hre.run("strategy:create", {
-        strategyName: `BeefyERC4626_${plugin.strategyName}_${taskArgs.poolAddress}`,
+      await hre.run("plugin:deploy", {
         contractName: "BeefyERC4626",
+        deploymentName: `BeefyERC4626_${plugin.strategyName}`,
         underlying: plugin.underlying,
         creator: taskArgs.signer,
         otherParams: plugin.otherParams.join(","),
