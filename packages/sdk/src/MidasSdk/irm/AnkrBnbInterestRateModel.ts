@@ -19,8 +19,8 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
   async init(interestRateModelAddress: string, assetAddress: string, provider: Web3Provider): Promise<void> {
     const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBINterestRateModelartifact.abi, provider);
     this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.baseRatePerBlock());
-    this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getJumpMultiplierPerBlock());
-    this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.multiplierPerBlock());
+    this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.multiplierPerBlock());
+    this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getJumpMultiplierPerBlock());
     this.kink = BigNumber.from(await jumpRateModelContract.callStatic.kink());
     const cTokenContract = getContract(assetAddress, CTokenInterfaceArtifact.abi, provider);
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
