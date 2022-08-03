@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
+import { LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
 import { MidasBase } from "./MidasSdk";
 import AnkrBNBInterestRateModel from "./MidasSdk/irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";

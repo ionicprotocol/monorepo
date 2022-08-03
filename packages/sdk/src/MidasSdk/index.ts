@@ -11,6 +11,18 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import {
+  ChainAddresses,
+  ChainDeployment,
+  ChainParams,
+  DeployedPlugins,
+  InterestRateModel,
+  InterestRateModelConf,
+  IrmConfig,
+  OracleConf,
+  OracleConfig,
+  SupportedAsset,
+} from "../../src/types";
 import { Artifacts, ARTIFACTS } from "../Artifacts";
 import {
   chainDeployedPlugins,
@@ -34,18 +46,6 @@ import { withFusePoolLens } from "../modules/FusePoolLens";
 import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
-import {
-  ChainAddresses,
-  ChainDeployment,
-  ChainParams,
-  DeployedPlugins,
-  InterestRateModel,
-  InterestRateModelConf,
-  IrmConfig,
-  OracleConf,
-  OracleConfig,
-  SupportedAsset,
-} from "../types";
 
 import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
 import {
