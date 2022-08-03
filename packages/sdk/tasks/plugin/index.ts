@@ -1,0 +1,2 @@
+import "./whitelist";
+import "./deploy";

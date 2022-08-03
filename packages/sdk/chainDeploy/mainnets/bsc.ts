@@ -520,6 +520,21 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+  //// deploy ankr bnb interest rate model
+  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
+    from: deployer,
+    args: [
+      deployConfig.blocksPerYear,
+      "25600000000000000",
+      "64000000000000000",
+      "800000000000000000",
+      3,
+      "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
+    ],
+    log: true,
+  });
+  if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
+  console.log("AnkrBNBInterestRateModel: ", abirm.address);
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;

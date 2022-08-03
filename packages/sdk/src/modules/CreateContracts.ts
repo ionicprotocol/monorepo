@@ -1,5 +1,6 @@
 import { Contract, Signer } from "ethers";
 
+import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBInterestRateModel.sol";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
@@ -21,6 +22,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createFuseFlywheelCore = this.createContractInstance<FuseFlywheelCore>("FuseFlywheelCore");
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
+    createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
 
     createRewardsDistributor(distributorAddress: string, signer: Signer = this.provider.getSigner()) {
       return new Contract(

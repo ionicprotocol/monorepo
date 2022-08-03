@@ -7,11 +7,12 @@ import "hardhat-tracer";
 import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
 
+import "./tasks/market";
+import "./tasks/plugin";
+import "./tasks/pool";
+
 import "./tasks/addChainlinkFeeds";
-import "./tasks/createMarket";
-import "./tasks/createPool";
 import "./tasks/createPoolsWithAssets";
-import "./tasks/createStrategy";
 import "./tasks/e2e";
 import "./tasks/editDeployers";
 import "./tasks/fluxFeed";
@@ -78,7 +79,7 @@ const config: HardhatUserConfig = {
         : undefined,
       saveDeployments: true,
       chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
-      gasPrice: 20e9,
+      gasPrice: 20e10,
       gas: 25e6,
       allowUnlimitedContractSize: true,
       accounts: { mnemonic },
