@@ -41,6 +41,12 @@ export enum OracleTypes {
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
 }
 
+export enum IrmTypes {
+  JumpRateModel = "JumpRateModel",
+  WhitePaperRateModel = "WhitePaperRateModel",
+  AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
+}
+
 export enum LiquidationStrategy {
   DEFAULT = "DEFAULT",
   UNISWAP = "UNISWAP",

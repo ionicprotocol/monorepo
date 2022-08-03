@@ -1,5 +1,6 @@
 // TODO split up into ABI and Bytecode
 
+import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "../lib/contracts/out/CErc20PluginDelegate.sol/CErc20PluginDelegate.json";
@@ -56,6 +57,7 @@ const FuseFlywheelDynamicRewards: Artifact = FuseFlywheelDynamicRewardsArtifacts
 const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
+const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
 const CurveLpTokenPriceOracleNoRegistry: Artifact = CurveLpTokenPriceOracleNoRegistryArtifact;
@@ -85,6 +87,7 @@ const ARTIFACTS = {
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
+  AnkrBNBInterestRateModel,
   MasterPriceOracle,
   FixedNativePriceOracle,
   CurveLpTokenPriceOracleNoRegistry,
@@ -118,6 +121,7 @@ export {
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
+  AnkrBNBInterestRateModel,
   MasterPriceOracle,
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
