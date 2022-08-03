@@ -77,7 +77,7 @@ export const ANKR_BNB_INTEREST_RATE_MODEL_CONF = (chainId: SupportedChains) => {
     interestRateModelParams: {
       blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
       baseRatePerYear: "25600000000000000",
-      jumpMultiplierPerYear: "3000000000000000000",
+      multiplierPerYear: "64000000000000000",
       kink: "800000000000000000",
       day: 3, // set day period
       abnbr: "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
