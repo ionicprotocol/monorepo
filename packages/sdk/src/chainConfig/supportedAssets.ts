@@ -43,6 +43,6 @@ export const underlying = function (assets: SupportedAsset[], symbol: string): s
   const asset = assets.find((a: SupportedAsset) => a.symbol === symbol);
   if (!asset) throw new Error(`no such SupportedAsset with symbol ${symbol} in assets ${JSON.stringify(assets)}`);
   return asset.underlying;
-}
+};
 
 export default ChainSupportedAssets;
