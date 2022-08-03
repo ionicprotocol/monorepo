@@ -97,9 +97,7 @@ export default async function getPotentialLiquidation(
     borrower.debt[0].underlyingToken
   );
   const expectedOutputToken =
-    chainLiquidationConfig.LIQUIDATION_STRATEGY == LiquidationKind.UNISWAP_NATIVE_BORROW
-      ? borrower.debt[0].underlyingToken
-      : null;
+    liquidationKind == LiquidationKind.UNISWAP_NATIVE_BORROW ? borrower.debt[0].underlyingToken : null;
   const strategyAndData = await getStrategiesAndDatas(
     fuse,
     borrower.collateral[0].underlyingToken,
