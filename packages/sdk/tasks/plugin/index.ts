@@ -1,1 +1,2 @@
 import "./whitelist";
+import "./deploy";
