@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 import { LiquidationKind } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
-import {StrategiesAndDatas, StrategyAndData} from "./redemptionStrategy";
+import { StrategiesAndDatas, StrategyAndData } from "./redemptionStrategy";
 import { FusePoolUserWithAssets } from "./utils";
 
 const estimateGas = async (

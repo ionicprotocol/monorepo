@@ -15,7 +15,11 @@ export type StrategyAndData = {
   outputToken: string;
 };
 
-export const getStrategiesAndDatas = async (fuse: MidasBase, inputToken: string, expectedOutputToken: string | null): Promise<StrategiesAndDatas> => {
+export const getStrategiesAndDatas = async (
+  fuse: MidasBase,
+  inputToken: string,
+  expectedOutputToken: string | null
+): Promise<StrategiesAndDatas> => {
   const strategies: string[] = [];
   const datas: BytesLike[] = [];
 
@@ -24,16 +28,19 @@ export const getStrategiesAndDatas = async (fuse: MidasBase, inputToken: string,
     if (tokenToRedeem == expectedOutputToken || !(tokenToRedeem in fuse.redemptionStrategies)) {
       return {
         strategies,
-        datas
+        datas,
       };
     }
 
-    const { strategyAddress, strategyData, outputToken } = await getStrategyAndData(fuse, tokenToRedeem) as StrategyAndData;
+    const { strategyAddress, strategyData, outputToken } = (await getStrategyAndData(
+      fuse,
+      tokenToRedeem
+    )) as StrategyAndData;
     strategies.push(strategyAddress);
     datas.push(strategyData);
     tokenToRedeem = outputToken;
   } while (true);
-}
+};
 
 const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
   const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[token];
