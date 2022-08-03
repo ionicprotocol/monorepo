@@ -93,6 +93,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
 
 task("deploy-jarvis-2fiat-plugins", "deploy beefy plugins for jarvis 2fiat")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
+  .addParam("poolAddress", "Address for the pool", undefined, types.string)
   .setAction(async (taskArgs, hre) => {
     const pluginDetails = [
       {
@@ -124,7 +125,7 @@ task("deploy-jarvis-2fiat-plugins", "deploy beefy plugins for jarvis 2fiat")
 
     for (const plugin of pluginDetails) {
       await hre.run("strategy:create", {
-        strategyName: `BeefyERC4626_${plugin.strategyName}`,
+        strategyName: `BeefyERC4626_${plugin.strategyName}_${taskArgs.poolAddress}`,
         contractName: "BeefyERC4626",
         underlying: plugin.underlying,
         creator: taskArgs.signer,
