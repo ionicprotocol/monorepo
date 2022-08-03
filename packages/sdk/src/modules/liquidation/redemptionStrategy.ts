@@ -25,7 +25,7 @@ export const getStrategiesAndDatas = async (
 
   let tokenToRedeem = inputToken;
   do {
-    if (tokenToRedeem == expectedOutputToken || !(tokenToRedeem in fuse.redemptionStrategies)) {
+    if (!expectedOutputToken || tokenToRedeem == expectedOutputToken || !(tokenToRedeem in fuse.redemptionStrategies)) {
       return {
         strategies,
         datas,
