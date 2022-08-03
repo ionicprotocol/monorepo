@@ -5,7 +5,7 @@ import { task, types } from "hardhat/config";
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("poolName", "Name of pool", undefined, types.string)
   .addParam("market", "Underlying asset symbol or address", undefined, types.string)
-  .addOptionalParam("implementationAddress", "The address of the new implementation", "", types.string)
+  .addParam("implementationAddress", "The address of the new implementation", "", types.string)
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const { poolName, marketId } = taskArgs;
@@ -34,15 +34,13 @@ export default task("market:upgrade", "Upgrades a market's implementation")
       // reuse the current implementation, only update the plugin
       implementationAddress = await cTokenInstance.callStatic.implementation();
     }
-    assetConfig.plugin = sdk.chainPlugins[assetConfig.underlyingToken].find((p) => p.strategyCode === strategyCode);
 
-    // console.log(await cTokenInstance.callStatic.fuseAdmin(), "FUSE ADMIN");
-
-    const pluginAddress = 0x00;
+    // TODO Using Zero Address here as this task should not set a plugin on the new implementaiton
+    const pluginAddress = ethers.constants.AddressZero;
     const abiCoder = new ethers.utils.AbiCoder();
     const implementationData = abiCoder.encode(["address"], [pluginAddress]);
 
-    console.log(`Setting implementation to ${implementationAddress} and plugin to ${pluginAddress}`);
+    console.log(`Setting implementation to ${implementationAddress}`);
     const setImplementationTx = await cTokenInstance._setImplementationSafe(
       implementationAddress,
       false,
