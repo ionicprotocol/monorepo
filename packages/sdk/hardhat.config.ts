@@ -9,9 +9,9 @@ import { HardhatUserConfig } from "hardhat/types";
 
 import "./tasks/market";
 import "./tasks/plugin";
+import "./tasks/pool";
 
 import "./tasks/addChainlinkFeeds";
-import "./tasks/createPool";
 import "./tasks/createPoolsWithAssets";
 import "./tasks/e2e";
 import "./tasks/editDeployers";
