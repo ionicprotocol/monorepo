@@ -93,6 +93,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
 
 task("deploy-jarvis-2fiat-plugins", "deploy beefy plugins for jarvis 2fiat")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
+  .addParam("poolAddress", "Address for the pool", undefined, types.string)
   .setAction(async (taskArgs, hre) => {
     const pluginDetails = [
       {
@@ -112,11 +113,11 @@ task("deploy-jarvis-2fiat-plugins", "deploy beefy plugins for jarvis 2fiat")
       },
       {
         strategyName: "JCADCADC",
-        underlying: "0xcf9Dd1de1D02158B3d422779bd5184032674A6D1",
-        otherParams: ["0xa69b0d5c0c401bba2d5162138613b5e38584f63f", "10"],
+        underlying: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+        otherParams: ["0xcf9Dd1de1D02158B3d422779bd5184032674A6D1", "10"],
       },
       {
-        strategyName: "JCADCADC",
+        strategyName: "JSGDXSGD",
         underlying: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
         otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
       },
