@@ -21,7 +21,7 @@ import {
   WrapItem,
 } from '@chakra-ui/react';
 import { SupportedAsset } from '@midas-capital/sdk/dist/cjs/src/types';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -40,10 +40,14 @@ interface AddAssetProps {
 
 const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
   const { midasSdk } = useRari();
+
+  const supportedAssets = useMemo(() => {
+    return midasSdk.supportedAssets.filter((asset) => !asset.disabled);
+  }, [midasSdk.supportedAssets]);
+
   const [nameOrAddress, setNameOrAddress] = useState<string>('');
-  const [supportedAssets, setSupportedAssets] = useState<SupportedAsset[] | []>(
-    midasSdk.supportedAssets
-  );
+
+  const [availableAssets, setAvailableAssets] = useState<SupportedAsset[] | []>([]);
   const [addedAssets, setAddedAssets] = useState<string[] | undefined>();
   const { data: poolData } = useFusePoolData(poolID);
 
@@ -51,13 +55,13 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   const { cPage } = useColors();
 
   useEffect(() => {
-    const searchResults = midasSdk.supportedAssets.filter(
+    const availableAssets = supportedAssets.filter(
       (asset) =>
         asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
         asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())
     );
-    setSupportedAssets(searchResults);
-  }, [nameOrAddress, midasSdk.supportedAssets]);
+    setAvailableAssets(availableAssets);
+  }, [nameOrAddress, supportedAssets]);
 
   useEffect(() => {
     if (poolData && poolData.assets.length !== 0) {
@@ -140,7 +144,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
               })}
           </Wrap>
 
-          {supportedAssets.length !== 0 ? (
+          {availableAssets.length !== 0 ? (
             <>
               <Box width="100%">
                 <Text textAlign="left" fontSize={18} fontWeight="bold" px={6} mt={4}>
@@ -172,7 +176,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                   },
                 }}
               >
-                {supportedAssets.map((asset, index) => {
+                {availableAssets.map((asset, index) => {
                   return (
                     <Button
                       variant="listed"
