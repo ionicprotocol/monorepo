@@ -7,8 +7,9 @@ import "hardhat-tracer";
 import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
 
+import "./tasks/market";
+import "./tasks/plugin";
 import "./tasks/addChainlinkFeeds";
-import "./tasks/createMarket";
 import "./tasks/createPool";
 import "./tasks/createPoolsWithAssets";
 import "./tasks/createStrategy";
