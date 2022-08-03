@@ -1,7 +1,7 @@
 import { RedemptionStrategyContract, SupportedChains } from "../enums";
-import { ChainRedemptionStrategy, SupportedAsset } from "../types";
-
+import { ChainRedemptionStrategy } from "../types";
 import { assetSymbols, bscAssets, moonbeamAssets } from "./assets";
+import { underlying } from "./supportedAssets";
 
 const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.bsc]: {
@@ -108,11 +108,5 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.neon_devnet]: {},
   [SupportedChains.polygon]: {},
 };
-
-function underlying(assets: SupportedAsset[], symbol: string): string {
-  const asset = assets.find((a: SupportedAsset) => a.symbol === symbol);
-  if (!asset) throw new Error(`no such SupportedAsset with symbol ${symbol} in assets ${JSON.stringify(assets)}`);
-  return asset.underlying;
-}
 
 export default chainRedemptionStrategies;
