@@ -93,11 +93,11 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.moonbeam]: {
     [underlying(moonbeamAssets, assetSymbols["GLMR-USDC"])]: [
       RedemptionStrategyContract.UniswapLpTokenLiquidator,
-      underlying(moonbeamAssets, assetSymbols.GLMR),
+      underlying(moonbeamAssets, assetSymbols.WGLMR),
     ],
     [underlying(moonbeamAssets, assetSymbols["GLMR-GLINT"])]: [
       RedemptionStrategyContract.UniswapLpTokenLiquidator,
-      underlying(moonbeamAssets, assetSymbols.GLMR),
+      underlying(moonbeamAssets, assetSymbols.WGLMR),
     ],
   },
   [SupportedChains.evmos_testnet]: {},
@@ -110,7 +110,9 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
 };
 
 function underlying(assets: SupportedAsset[], symbol: string): string {
-  return assets.find((a: SupportedAsset) => a.symbol === symbol)!.underlying;
+  const asset = assets.find((a: SupportedAsset) => a.symbol === symbol);
+  if (!asset) throw new Error(`no such SupportedAsset with symbol ${symbol} in assets ${JSON.stringify(assets)}`);
+  return asset.underlying;
 }
 
 export default chainRedemptionStrategies;
