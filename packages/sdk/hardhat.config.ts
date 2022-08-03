@@ -8,6 +8,7 @@ import { config as dotEnvConfig } from "dotenv";
 import { HardhatUserConfig } from "hardhat/types";
 
 import "./tasks/market";
+import "./tasks/oracle";
 import "./tasks/plugin";
 import "./tasks/pool";
 
@@ -19,7 +20,6 @@ import "./tasks/fluxFeed";
 import "./tasks/flywheel";
 import "./tasks/getPoolData";
 import "./tasks/liquidation";
-import "./tasks/oracle";
 import "./tasks/pauseMarketMinting";
 import "./tasks/sendTestTokens";
 import "./tasks/swap";
