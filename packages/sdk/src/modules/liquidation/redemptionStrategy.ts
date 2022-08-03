@@ -27,13 +27,13 @@ export const getStrategiesAndDatas = async (
 
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
-    while(tokenToRedeem != expectedOutputToken && tokenToRedeem in fuse.redemptionStrategies) {
+    while (tokenToRedeem != expectedOutputToken && tokenToRedeem in fuse.redemptionStrategies) {
       const { strategyAddress, strategyData, outputToken } = (await getStrategyAndData(
         fuse,
         tokenToRedeem
       )) as StrategyAndData;
 
-      if (tokenPath.find(p => p == outputToken)) break;
+      if (tokenPath.find((p) => p == outputToken)) break;
 
       tokenPath.push(outputToken);
       strategies.push(strategyAddress);
