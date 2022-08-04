@@ -23,6 +23,9 @@
       "path": "./packages/sdk"
     },
     {
+      "path": "./packages/typing"
+    },
+    {
       "path": "./packages/ui"
     },
     {

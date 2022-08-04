@@ -9,6 +9,7 @@
     "packages/functions",
     "packages/monitors/oracle",
     "packages/sdk",
+    "packages/typing",
     "packages/ui"
   ],
   "devDependencies": {
@@ -29,6 +30,7 @@
   "scripts": {
     "build:all": "yarn workspaces foreach run build",
     "build:sdk": "yarn workspace @midas-capital/sdk build",
+    "build:typing": "yarn workspace @midas-capital/typing build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:functions": "yarn workspace @midas-capital/functions build",
