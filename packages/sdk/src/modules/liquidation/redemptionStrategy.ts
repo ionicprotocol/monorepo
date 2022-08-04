@@ -3,7 +3,6 @@ import { BytesLike, Contract, ethers } from "ethers";
 import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
-// TODO remove
 export type StrategiesAndDatas = {
   strategies: string[];
   datas: BytesLike[];
