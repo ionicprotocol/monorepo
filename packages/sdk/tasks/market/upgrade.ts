@@ -9,6 +9,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   .addOptionalParam("signer", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const { implementationAddress, comptroller: comptrollerAddress, underlying, signer: namedSigner } = taskArgs;
+    let { pluginAddress } = taskArgs;
 
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
