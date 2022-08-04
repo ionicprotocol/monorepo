@@ -3,6 +3,7 @@ import { BigNumber, constants, Contract, utils } from "ethers";
 
 import Deployments from "../../deployments.json";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
@@ -336,6 +337,14 @@ export class MidasBase {
       this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
       this.provider.getSigner()
     ) as CErc20PluginRewardsDelegate;
+  }
+
+  getCErc20PluginInstance(address: string) {
+    return new Contract(
+      address,
+      this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
+      this.provider.getSigner()
+    ) as CErc20PluginDelegate;
   }
 }
 
