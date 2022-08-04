@@ -2,7 +2,6 @@ import { BytesLike, Contract, ethers } from "ethers";
 
 import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
-import { SupportedAsset } from "../../types";
 
 // TODO remove
 export type StrategiesAndDatas = {
@@ -23,7 +22,7 @@ export const getStrategiesAndDatas = async (
 ): Promise<StrategiesAndDatas> => {
   const strategies: string[] = [];
   const datas: BytesLike[] = [];
-  const tokenPath = [];
+  const tokenPath: string[] = [];
 
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
