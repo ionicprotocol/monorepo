@@ -21,11 +21,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     const pool = await poolModule.getPoolByName(poolName, sdk);
 
-    const assets = pool.assets;
-
-    const assetConfig = assets.find((a) => a.underlyingToken === underlying || a.underlyingSymbol === underlying);
-
-    const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
+    const market = pool.assets.find((a) => a.underlyingToken === underlying || a.underlyingSymbol === underlying);
     console.log("market", market);
 
     const cTokenInstance = sdk.getCTokenInstance(market.cToken);

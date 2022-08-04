@@ -20,11 +20,7 @@ export default task("market:set-plugin", "Set's the plugin of a market")
 
     const pool = await poolModule.getPoolByName(poolName, sdk);
 
-    const assets = pool.assets;
-
-    const assetConfig = assets.find((a) => a.underlyingToken === underlying || a.underlyingSymbol === underlying);
-
-    const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
+    const market = pool.assets.find((a) => a.underlyingToken === underlying || a.underlyingSymbol === underlying);
     console.log("market", market);
 
     const cTokenInstance = sdk.getCErc20PluginInstance(market.cToken);
