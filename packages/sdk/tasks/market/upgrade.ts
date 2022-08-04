@@ -1,46 +1,51 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
-  .addParam("poolName", "Name of pool", undefined, types.string)
-  .addParam("market", "Underlying asset symbol or address", undefined, types.string)
-  .addParam("implementationAddress", "The address of the new implementation", "", types.string)
-  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
+  .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.
+  .addParam("underlying", "Underlying asset symbol or address", undefined, types.string)
+  .addOptionalParam("implementationAddress", "The address of the new implementation", "", types.string)
+  .addOptionalParam("pluginAddress", "The address of plugin which is supposed to used", "", types.string)
+  .addOptionalParam("signer", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
-    const { poolName, marketId } = taskArgs;
-    let { implementationAddress } = taskArgs;
+    const { implementationAddress, comptroller: comptrollerAddress, underlying, signer: namedSigner } = taskArgs;
+    let { pluginAddress } = taskArgs;
 
-    const signer = await ethers.getNamedSigner(taskArgs.admin);
+    const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    // @ts-ignoreutils/pool
-    const poolModule = await import("../../tests/utils/pool");
-    // @ts-ignoreutils/fuseSdk
+    // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const pool = await poolModule.getPoolByName(poolName, sdk);
+    const comptroller = sdk.createComptroller(comptrollerAddress);
 
-    const assets = pool.assets;
+    const allMarkets = await comptroller.callStatic.getAllMarkets();
+    console.log({ allMarkets });
 
-    const assetConfig = assets.find((a) => a.underlyingToken === marketId || a.underlyingSymbol === marketId);
+    const cTokenInstances = allMarkets.map((marketAddress) => sdk.createCErc20PluginRewardsDelegate(marketAddress));
 
-    const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
-    console.log("market", market);
+    let cTokenInstance = undefined;
 
-    const cTokenInstance = sdk.getCTokenInstance(market.cToken);
-    if (implementationAddress === "") {
-      // reuse the current implementation, only update the plugin
-      implementationAddress = await cTokenInstance.callStatic.implementation();
+    for (let index = 0; index < cTokenInstances.length; index++) {
+      const thisUnderlying = await cTokenInstances[index].callStatic.underlying();
+      const plugin = await cTokenInstances[index].callStatic.plugin();
+      const ctoken = await cTokenInstances[index].address;
+
+      if (!cTokenInstance && thisUnderlying === underlying) {
+        cTokenInstance = cTokenInstances[index];
+        console.log({ thisUnderlying, plugin, ctoken, cTokenInstance: cTokenInstance.address });
+      }
     }
 
-    // TODO Using Zero Address here as this task should not set a plugin on the new implementaiton
-    const pluginAddress = ethers.constants.AddressZero;
+    if (!pluginAddress) {
+      pluginAddress = ethers.constants.AddressZero;
+    }
+
     const abiCoder = new ethers.utils.AbiCoder();
     const implementationData = abiCoder.encode(["address"], [pluginAddress]);
 
-    console.log(`Setting implementation to ${implementationAddress}`);
+    console.log(`Setting implementation to ${implementationAddress} with plugin ${pluginAddress}`);
     const setImplementationTx = await cTokenInstance._setImplementationSafe(
       implementationAddress,
       false,
@@ -48,8 +53,8 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     );
 
     const receipt: TransactionReceipt = await setImplementationTx.wait();
-    if (receipt.status != constants.One.toNumber()) {
+    if (receipt.status != ethers.constants.One.toNumber()) {
       throw `Failed set implementation to ${implementationAddress}`;
     }
-    console.log(`Implementation successfully set to ${implementationAddress}`);
+    console.log(`Implementation successfully set to ${implementationAddress} with plugin ${pluginAddress}`);
   });
