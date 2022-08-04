@@ -24,7 +24,28 @@ const chainDeployedPlugins: ChainDeployedPlugins = {
   [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.aurora]: {},
   [SupportedChains.neon_devnet]: {},
-  [SupportedChains.polygon]: {},
+  [SupportedChains.polygon]: {
+    "0x6578e774120F6010315784C69C634bF3946AFb0c": {
+      market: "",
+      name: "Beefy agEUR-jEUR Vault",
+    },
+    "0x74bA0D32B7430a2aad36e48B7aAD57bf233bDDa6": {
+      market: "",
+      name: "Beefy jEUR-PAR Vault",
+    },
+    "0xCC9083ad35bd9d55eF9D4cB4C2A6e879fB70fdc1": {
+      market: "",
+      name: "Beefy jJPY-JPYC Vault",
+    },
+    "0x742EF90E1828FCEec848c8FB548d45Eaaf17B56d": {
+      market: "",
+      name: "Beefy jCAD-CADC Vault",
+    },
+    "0x05fCE131DA43e7Be1cdDda3137f402034a5232fc": {
+      market: "",
+      name: "Beefy jSGD-XSGD Vault",
+    },
+  },
 };
 
 export default chainDeployedPlugins;
