@@ -1,22 +1,21 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 export default task("market:upgrade", "Upgrades a market's implementation")
-  .addParam("poolName", "Name of pool", undefined, types.string)
-  .addParam("market", "Underlying asset symbol or address", undefined, types.string)
+  .addParam("poolName", "Name of pool", undefined, types.string) // TODO I would rather use id or comptroller address directly.
+  .addParam("underlying", "Underlying asset symbol or address", undefined, types.string)
   .addParam("implementationAddress", "The address of the new implementation", "", types.string)
-  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
+  .addOptionalParam("signer", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
-    const { poolName, marketId } = taskArgs;
+    const { poolName, underlying, signer: namedSigner } = taskArgs;
     let { implementationAddress } = taskArgs;
 
-    const signer = await ethers.getNamedSigner(taskArgs.admin);
+    const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
 
-    // @ts-ignoreutils/pool
+    // @ts-ignore
     const poolModule = await import("../../tests/utils/pool");
-    // @ts-ignoreutils/fuseSdk
+    // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
@@ -24,7 +23,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     const assets = pool.assets;
 
-    const assetConfig = assets.find((a) => a.underlyingToken === marketId || a.underlyingSymbol === marketId);
+    const assetConfig = assets.find((a) => a.underlyingToken === underlying || a.underlyingSymbol === underlying);
 
     const market = pool.assets.find((a) => a.underlyingToken == assetConfig.underlyingToken);
     console.log("market", market);
@@ -48,7 +47,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     );
 
     const receipt: TransactionReceipt = await setImplementationTx.wait();
-    if (receipt.status != constants.One.toNumber()) {
+    if (receipt.status != ethers.constants.One.toNumber()) {
       throw `Failed set implementation to ${implementationAddress}`;
     }
     console.log(`Implementation successfully set to ${implementationAddress}`);
