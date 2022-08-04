@@ -3,6 +3,8 @@ import { BytesLike, Contract, ethers } from "ethers";
 import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
+import { chainDeployConfig } from "../../../chainDeploy";
+
 export type StrategiesAndDatas = {
   strategies: string[];
   datas: BytesLike[];
@@ -47,6 +49,20 @@ export const getStrategiesAndDatas = async (
   };
 };
 
+const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
+  const deployConfig = chainDeployConfig[fuse.chainId].config;
+
+  if (tokens.find(t => t == deployConfig.wtoken)) {
+    return deployConfig.wtoken;
+  } else if (tokens.find(t => t == deployConfig.stableToken)) {
+    return deployConfig.stableToken;
+  } else if (tokens.find(t => t == deployConfig.wBTCToken)) {
+    return deployConfig.wBTCToken;
+  } else {
+    return tokens[0];
+  }
+}
+
 const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
   const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[token];
   const redemptionStrategyContract = new Contract(
@@ -64,10 +80,11 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         fuse.provider
       );
       const tokens = await curveLpOracle.callStatic.underlyingTokens(token);
+      const preferredOutputToken = pickPreferredToken(fuse, tokens);
       return {
         strategyAddress: redemptionStrategyContract.address,
-        strategyData: new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, tokens[0]]),
-        outputToken: tokens[0], // TODO should be correct?
+        strategyData: new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, preferredOutputToken]),
+        outputToken: preferredOutputToken,
       };
 
     case RedemptionStrategyContract.XBombLiquidator: {
