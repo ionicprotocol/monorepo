@@ -8,8 +8,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
   .addOptionalParam("pluginAddress", "The address of plugin which is supposed to used", "", types.string)
   .addOptionalParam("signer", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
-    const { comptroller: comptrollerAddress, underlying, signer: namedSigner } = taskArgs;
-    let { implementationAddress, pluginAddress } = taskArgs;
+    const { implementationAddress, comptroller: comptrollerAddress, underlying, signer: namedSigner } = taskArgs;
 
     const signer = await ethers.getNamedSigner(namedSigner);
     console.log(`signer is ${signer.address}`);
@@ -37,7 +36,6 @@ export default task("market:upgrade", "Upgrades a market's implementation")
         console.log({ thisUnderlying, plugin, ctoken, cTokenInstance: cTokenInstance.address });
       }
     }
-    return;
 
     if (!pluginAddress) {
       pluginAddress = ethers.constants.AddressZero;
