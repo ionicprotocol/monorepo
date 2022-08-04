@@ -1,3 +1,5 @@
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
@@ -171,6 +173,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.LINK,
     aggregator: "0xd9FFdb71EbE7496cC440152d43986Aae0AB76665",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.MAI,
+    aggregator: "0xd8d483d813547CfB624b8Dc33a00F2fcbCd2D428",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {

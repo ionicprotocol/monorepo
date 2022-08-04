@@ -1,6 +1,7 @@
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+
 import { ethers } from "ethers";
 
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { FixedNativePriceOracle } from "../../lib/contracts/typechain/FixedNativePriceOracle";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { SupportedChains } from "../../src";

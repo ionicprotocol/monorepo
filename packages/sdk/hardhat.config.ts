@@ -24,7 +24,6 @@ import "./tasks/pauseMarketMinting";
 import "./tasks/sendTestTokens";
 import "./tasks/swap";
 import "./tasks/upgradeMarket";
-import "./tasks/jarvisFix";
 import "./tasks/updateFuseFee";
 
 dotEnvConfig();

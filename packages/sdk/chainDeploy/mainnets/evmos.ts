@@ -1,3 +1,5 @@
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { SupportedAsset } from "../../src/types";
