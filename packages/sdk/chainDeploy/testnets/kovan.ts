@@ -1,4 +1,4 @@
-import { utils } from "ethers";
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
 
 import { SupportedChains } from "../../src";
 import { chainSpecificParams } from "../../src/chainConfig";
