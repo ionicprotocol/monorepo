@@ -1,5 +1,6 @@
 import { task, types } from "hardhat/config";
 
+const POOL_NAME = "Jarvis jFIAT";
 const COMPTROLLER = "0xD265ff7e5487E9DD556a4BB900ccA6D087Eb3AD2";
 
 const UNDERLYINGS = {
@@ -26,13 +27,13 @@ const DETAILS = [
   {
     strategyName: "JJPYJPYC",
     underlying: UNDERLYINGS["jJPY-JPYC"],
-    deployedPlugin: "0x742EF90E1828FCEec848c8FB548d45Eaaf17B56d",
+    deployedPlugin: "0xCC9083ad35bd9d55eF9D4cB4C2A6e879fB70fdc1",
     otherParams: ["0x122E09FdD2FF73C8CEa51D432c45A474BAa1518a", "10"],
   },
   {
     strategyName: "JCADCADC",
     underlying: UNDERLYINGS["jCAD-CADC (2cad)"],
-    deployedPlugin: "0x6578e774120F6010315784C69C634bF3946AFb0c",
+    deployedPlugin: "0x742EF90E1828FCEec848c8FB548d45Eaaf17B56d",
     otherParams: ["0xcf9Dd1de1D02158B3d422779bd5184032674A6D1", "10"],
   },
   {
@@ -57,10 +58,47 @@ task("jarvis:polygon:deploy-plugins", "deploy beefy plugins for jarvis 2fiat poo
     }
   });
 
+task("jarvis:polygon:whitelist-plugins", "deploy beefy plugins for jarvis 2fiat pool on polygon")
+  .addParam("signer", "Named account to use for tx", "deployer", types.string)
+  .setAction(async (taskArgs, hre) => {
+    for (const detail of DETAILS) {
+      console.log(`whitelisting plugin for: ${detail.strategyName} ...`);
+
+      // setting the whitelist for the first time for this plugin
+      await hre.run("plugin:whitelist", {
+        oldImplementation: detail.deployedPlugin,
+        newImplementation: detail.deployedPlugin,
+        admin: taskArgs.signer,
+      });
+    }
+  });
+
 task("jarvis:polygon:upgrade-implementations", "upgrade all markets of the polygon pool to handle plugins")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
-  .setAction(async (taskArgs, hre) => {});
+  .setAction(async (taskArgs, hre) => {
+    const IMPLEMENTATION_ADDRESS = "0xDf35EaAE5bacd47d193cb3795be32756d6b5993d"; // Polygon CErc20PluginDelegate
+
+    for (const detail of DETAILS) {
+      console.log(`upgrading market for: ${detail.strategyName} ...`);
+
+      await hre.run("market:upgrade", {
+        poolName: POOL_NAME,
+        market: detail.underlying, // FYI it's expecting the underlying here
+        implementationAddress: IMPLEMENTATION_ADDRESS,
+        signer: taskArgs.signer,
+      });
+    }
+  });
 
 task("jarvis:polygon:set-plugins", "set plugin for each market")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)
-  .setAction(async (taskArgs, hre) => {});
+  .setAction(async (taskArgs, hre) => {
+    for (const detail of DETAILS) {
+      await hre.run("market:set-plugin", {
+        poolName: POOL_NAME,
+        market: detail.underlying, // FYI it's expecting the underlying here
+        pluginAddress: detail.deployedPlugin,
+        signer: taskArgs.signer,
+      });
+    }
+  });
