@@ -1,4 +1,6 @@
-import { ethers, providers, utils } from "ethers";
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+
+import { ethers, providers } from "ethers";
 
 import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
