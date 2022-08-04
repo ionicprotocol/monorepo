@@ -111,6 +111,13 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
+    symbol: assetSymbols.MAI,
+    underlying: "0xa3Fa99A148fA48D14Ed51d610c367C61876997F1",
+    name: "miMATIC",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
     symbol: assetSymbols.MKR,
     underlying: "0x6f7C932e7684666C9fd1d44527765433e01fF61d",
     name: "Maker DAO",
