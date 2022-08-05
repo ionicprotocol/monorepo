@@ -15,7 +15,7 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
   .map(([, value]) => value)
   .filter((value) => typeof value === "number");
 
-export enum RedemptionStrategy {
+export enum RedemptionStrategyContract {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
   XBombLiquidator = "XBombLiquidator",
   JarvisSynthereumLiquidator = "JarvisSynthereumLiquidator",

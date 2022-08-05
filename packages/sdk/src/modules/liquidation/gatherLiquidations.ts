@@ -48,9 +48,13 @@ export default async function gatherLiquidations(
 ): Promise<Array<LiquidatablePool>> {
   const liquidations: Array<LiquidatablePool> = [];
   for (const pool of pools) {
-    const poolUsers = pool.users
-      .slice()
-      .sort((a, b) => BigNumber.from(b.totalBorrow).sub(BigNumber.from(a.totalBorrow)).toNumber());
+    const poolUsers = pool.users.slice().sort((a, b) => {
+      const right = BigNumber.from(b.totalBorrow);
+      const left = BigNumber.from(a.totalBorrow);
+      if (right.gt(left)) return 1;
+      if (right.lt(left)) return -1;
+      return 0;
+    });
     const liquidatableUsers = await getLiquidatableUsers(fuse, poolUsers, pool, chainLiquidationConfig);
     if (liquidatableUsers.length > 0) {
       liquidations.push({

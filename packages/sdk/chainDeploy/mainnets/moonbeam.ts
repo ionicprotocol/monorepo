@@ -157,6 +157,30 @@ const diaAssets: DiaAsset[] = [
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
     key: "FTM/USD",
   },
+  {
+    symbol: assetSymbols.multiUSDT,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.multiUSDT)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "USDT/USD",
+  },
+  {
+    symbol: assetSymbols.madUSDT,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.madUSDT)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "USDT/USD",
+  },
+  {
+    symbol: assetSymbols.multiDAI,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.multiDAI)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "DAI/USD",
+  },
+  {
+    symbol: assetSymbols.madDAI,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.madDAI)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "DAI/USD",
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
