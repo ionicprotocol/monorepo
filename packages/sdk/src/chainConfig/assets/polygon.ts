@@ -218,7 +218,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols["AGEUR-JEUR"],
-    underlying: "0x2ffbce9099cbed86984286a54e5932414af4b717",
+    underlying: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     name: "Jarvis agEUR-jEUR LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
