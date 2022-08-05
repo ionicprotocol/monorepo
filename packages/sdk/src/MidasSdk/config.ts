@@ -62,7 +62,7 @@ export const JUMP_RATE_MODEL_CONF = (chainId: SupportedChains) => {
 
 export const WHITE_PAPER_RATE_MODEL_CONF = (chainId: SupportedChains) => {
   return {
-    interestRateModel: "WhitePaperRateModel",
+    interestRateModel: "WhitePaperInterestRateModel",
     interestRateModelParams: {
       blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
       baseRatePerYear: "20000000000000000",
