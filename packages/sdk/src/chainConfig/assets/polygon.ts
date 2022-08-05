@@ -287,6 +287,13 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
+    symbol: assetSymbols.EURT,
+    underlying: "0x7BDF330f423Ea880FF95fC41A280fD5eCFD3D09f",
+    name: "Euro Tether (PoS)",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
     symbol: assetSymbols.JJPY,
     underlying: "0x8343091F2499FD4b6174A46D067A920a3b851FF9",
     name: "Jarvis JJPY Token",
