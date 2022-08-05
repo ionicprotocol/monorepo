@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 
 import { OracleTypes } from "../../enums";
 import { SupportedAsset } from "../../types";
+
 import { assetSymbols } from "./index";
 
 const assets: SupportedAsset[] = [
