@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 export default task("oracle:set-price", "Set price of token")
   .addOptionalParam("token", "Token for which to set the price", undefined, types.string)
   .addOptionalParam("address", "Token address for which to set the price", undefined, types.string)
-  .addParam("price", "Address to which the minted tokens should be sent to")
+  .addParam("price", "Price to set in the SPO for the token")
   .setAction(async ({ token: _token, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
     // @ts-ignore

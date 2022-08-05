@@ -23,7 +23,7 @@ export {
   SupportedChainsArray,
   DelegateContractName,
   OracleTypes,
-  RedemptionStrategy,
+  RedemptionStrategyContract,
   LiquidationStrategy,
   LiquidationKind,
   ComptrollerErrorCodes,

@@ -1,14 +1,15 @@
 /* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
 
-import { ethers, utils } from "ethers";
+import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
+import { SupportedAsset, SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployABNBcOracle } from "../helpers/aBNBcOracle";
+import { deployDiaOracle } from "../helpers/dia";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -399,10 +400,30 @@ const curvePools: CurvePoolConfig[] = [
   },
 ];
 
+const diaAssets: DiaAsset[] = [
+  {
+    symbol: assetSymbols.MAI,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.MAI)!.underlying,
+    feed: "0xA6f83D792372487d7986657320e66b62DccfeC67",
+    key: "miMATIC/USD",
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  //// Dia Price Oracle
+  await deployDiaOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    diaAssets,
+    deployConfig,
+    diaNativeFeed: { feed: constants.AddressZero, key: "BNB/USD" },
+  });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({

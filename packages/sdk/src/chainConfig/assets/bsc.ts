@@ -98,6 +98,13 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
+  {
+    symbol: assetSymbols.MAI,
+    underlying: "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d",
+    name: "Mai Stablecoin",
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
+  },
   // Ellipsis
   {
     symbol: assetSymbols["3EPS"],
