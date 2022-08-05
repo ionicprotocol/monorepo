@@ -236,6 +236,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.EURT,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.JJPY,
     aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
