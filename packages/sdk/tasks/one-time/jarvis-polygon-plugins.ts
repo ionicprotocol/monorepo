@@ -8,7 +8,7 @@ const UNDERLYINGS = {
   "jJPY-JPYC": "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
   "jCAD-CADC (2cad)": "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
   "jSGD-XSGD (2sgd)": "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
-  "jEUR-EURt": "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+  "jEUR-EURt": "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
   "jNZD-NZDS": "0x976A750168801F58E8AEdbCfF9328138D544cc09",
 };
 
@@ -46,14 +46,13 @@ const DETAILS = [
   {
     strategyName: "JEUREURT",
     underlying: UNDERLYINGS["jEUR-EURt"],
-    deployedPlugin: null,
-
+    deployedPlugin: "0xd2C9a07710e04d7d175c55fDE0be026194D1e666",
     otherParams: ["0x26B7d2fe697e932907175A3920B5dC2C2e2440A4", "10"],
   },
   {
     strategyName: "JNZDNZDS",
     underlying: UNDERLYINGS["jNZD-NZDS"],
-    deployedPlugin: null,
+    deployedPlugin: "0xE5dE7E6Bb9F2ca5058aF4037E518654B4868b223",
     otherParams: ["0x6720C2b7fd7dE1CAD3242dd3E8a86d033D4ed3f9", "10"],
   },
 ];
