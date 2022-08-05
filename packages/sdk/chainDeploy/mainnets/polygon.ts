@@ -1,3 +1,5 @@
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
@@ -56,7 +58,43 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
     ],
   },
-  plugins: [],
+  plugins: [
+    {
+      // agEUR-jEUR LP
+      strategy: "BeefyERC4626",
+      name: "AGEURJEUR",
+      underlying: assets.find((a) => a.symbol === assetSymbols["AGEUR-JEUR"])!.underlying,
+      otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "10"],
+    },
+    {
+      // jEUR-PAR LP
+      strategy: "BeefyERC4626",
+      name: "JEURPAR",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JEUR-PAR"])!.underlying,
+      otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "10"],
+    },
+    {
+      // agEUR-jEUR LP
+      strategy: "BeefyERC4626",
+      name: "JJPYJPYC",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JJPY-JPYC"])!.underlying,
+      otherParams: ["0x122E09FdD2FF73C8CEa51D432c45A474BAa1518a", "10"],
+    },
+    {
+      // agEUR-jEUR LP
+      strategy: "BeefyERC4626",
+      name: "JCADCADC",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JCAD-CADC"])!.underlying,
+      otherParams: ["0xcf9Dd1de1D02158B3d422779bd5184032674A6D1", "10"],
+    },
+    {
+      // agEUR-jEUR LP
+      strategy: "BeefyERC4626",
+      name: "JSGDXSGD",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
+      otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
+    },
+  ],
   cgId: chainSpecificParams[SupportedChains.polygon].cgId,
 };
 
@@ -135,6 +173,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.LINK,
     aggregator: "0xd9FFdb71EbE7496cC440152d43986Aae0AB76665",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.MAI,
+    aggregator: "0xd8d483d813547CfB624b8Dc33a00F2fcbCd2D428",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -229,8 +272,49 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
 ];
 
-// https://docs.ellipsis.finance/deployment-links
-const curvePools: CurvePoolConfig[] = [];
+// https://polygon.curve.fi/
+const curvePools: CurvePoolConfig[] = [
+  {
+    lpToken: "0x2ffbce9099cbed86984286a54e5932414af4b717",
+    pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.AGEUR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
+    pool: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
+    pool: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JJPY)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JPYC)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+    pool: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JCAD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.CADC)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
+    pool: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
+    ],
+  },
+];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
@@ -268,14 +352,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   //// Curve LP Oracle
-  // await deployCurveLpOracle({
-  //   run,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  //   curvePools,
-  // });
+  await deployCurveLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curvePools,
+  });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,

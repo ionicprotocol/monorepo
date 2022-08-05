@@ -1,3 +1,5 @@
+/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+
 import { ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";

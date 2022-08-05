@@ -24,6 +24,7 @@ enum assetSymbols {
   FXS = "FXS",
   GHST = "GHST",
   GRT = "GRT",
+  MAI = "MAI",
   MIM = "MIM",
   MKR = "MKR",
   RAI = "RAI",

@@ -19,14 +19,14 @@ export default task("market:create", "Create Market")
     const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
 
     // @ts-ignore
-    const enumsModule = await import("../src/enums");
+    const enumsModule = await import("../../src/enums");
     // @ts-ignore
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     // @ts-ignore
-    const assetModule = await import("../tests/utils/assets");
+    const assetModule = await import("../../tests/utils/assets");
     // @ts-ignore
-    const poolModule = await import("../tests/utils/pool");
+    const poolModule = await import("../../tests/utils/pool");
     const pool = await poolModule.getPoolByName(poolName, sdk);
 
     const assets = await assetModule.getAssetsConf(

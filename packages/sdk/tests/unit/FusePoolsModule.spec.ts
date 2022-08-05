@@ -36,7 +36,6 @@ describe("FusePoolsModule", function () {
   describe("fetch pools", async function () {
     it("user can fetch all pools", async function () {
       const pools = await sdk.fetchPoolsManual({
-        verification: false,
         options: { from: deployer.address },
       });
       expect(pools.length).to.equal(1);
