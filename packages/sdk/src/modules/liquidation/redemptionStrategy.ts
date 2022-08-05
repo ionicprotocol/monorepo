@@ -1,10 +1,9 @@
 import { BytesLike, Contract, ethers } from "ethers";
 
+import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
+import { IUniswapV2Pair } from "../../../lib/contracts/typechain/IUniswapV2Pair";
 import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
-
-import { IUniswapV2Pair } from "../../../lib/contracts/typechain/IUniswapV2Pair";
-import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
 
 export type StrategiesAndDatas = {
   strategies: string[];
@@ -55,16 +54,16 @@ const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
   const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
   const wBTCToken = fuse.chainSpecificAddresses.W_BTC_TOKEN;
 
-  if (tokens.find(t => t == wtoken)) {
+  if (tokens.find((t) => t == wtoken)) {
     return wtoken;
-  } else if (tokens.find(t => t == stableToken)) {
+  } else if (tokens.find((t) => t == stableToken)) {
     return stableToken;
-  } else if (tokens.find(t => t == wBTCToken)) {
+  } else if (tokens.find((t) => t == wBTCToken)) {
     return wBTCToken;
   } else {
     return tokens[0];
   }
-}
+};
 
 const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
   const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[token];
@@ -94,11 +93,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator: {
-      const lpToken = new Contract(
-        token,
-        IUniswapV2Pair__factory.abi,
-        fuse.provider
-      ) as IUniswapV2Pair;
+      const lpToken = new Contract(token, IUniswapV2Pair__factory.abi, fuse.provider) as IUniswapV2Pair;
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();
@@ -118,11 +113,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [
-            fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-            swapToken0Path,
-            swapToken1Path
-          ]
+          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, swapToken0Path, swapToken1Path]
         ),
         outputToken,
       };
