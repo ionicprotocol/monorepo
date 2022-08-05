@@ -40,6 +40,20 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
+    symbol: assetSymbols.multiDAI,
+    underlying: "0x765277eebeca2e31912c9946eae1021199b39c61",
+    name: "Multichain DAI Stablecoin",
+    decimals: 6,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
+    symbol: assetSymbols.madDAI,
+    underlying: "0xc234A67a4F840E61adE794be47de455361b52413",
+    name: "Nomad DAI Stablecoin",
+    decimals: 6,
+    oracle: OracleTypes.DiaPriceOracle,
+  },
+  {
     symbol: assetSymbols.madUSDC,
     underlying: "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9",
     name: "Nomad USDC",
@@ -58,14 +72,14 @@ export const assets: SupportedAsset[] = [
     underlying: "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594",
     name: "Nomad USDT",
     decimals: 6,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.DiaPriceOracle,
   },
   {
     symbol: assetSymbols.multiUSDT,
     underlying: "0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73",
     name: "Multichain USDT",
     decimals: 6,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.DiaPriceOracle,
   },
   {
     symbol: assetSymbols.FRAX,
