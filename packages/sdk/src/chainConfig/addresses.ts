@@ -2,7 +2,6 @@ import { ethers } from "ethers";
 
 import { SupportedChains } from "../enums";
 import { ChainSpecificAddresses } from "../types";
-import { underlying } from "./supportedAssets";
 
 import {
   assetSymbols,
@@ -17,6 +16,7 @@ import {
   neonDevnetAssets,
   polygonAssets,
 } from "./assets";
+import { underlying } from "./supportedAssets";
 
 const chainSpecificAddresses: ChainSpecificAddresses = {
   [SupportedChains.ganache]: {
