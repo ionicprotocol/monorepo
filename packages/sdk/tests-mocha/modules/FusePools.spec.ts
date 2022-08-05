@@ -120,7 +120,6 @@ describe("FusePools", () => {
 
   it("fetchPoolsManual", async () => {
     const poolData = await fusePools.fetchPoolsManual({
-      verification: true,
       options: { from: mkAddress("0xacd") },
     });
     expect(poolData[0].id).to.be.eq(12);
