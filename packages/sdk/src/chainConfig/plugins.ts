@@ -45,6 +45,14 @@ const chainDeployedPlugins: ChainDeployedPlugins = {
       market: "",
       name: "Beefy jSGD-XSGD Vault",
     },
+    "0xd2C9a07710e04d7d175c55fDE0be026194D1e666": {
+      market: "",
+      name: "Beefy jEUR-EURt Vault",
+    },
+    "0xE5dE7E6Bb9F2ca5058aF4037E518654B4868b223": {
+      market: "",
+      name: "Beefy jNZD-NZDS Vault",
+    },
   },
 };
 
