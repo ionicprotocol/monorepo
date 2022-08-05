@@ -20,7 +20,6 @@ import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modul
 import { ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
-import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
@@ -211,7 +210,6 @@ const AssetSupplyRow = ({
     asset.supplyRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
-  const queryClient = useQueryClient();
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -263,8 +261,6 @@ const AssetSupplyRow = ({
     setPendingTxHash(call.hash);
 
     LogRocket.track('Fuse-ToggleCollateral');
-
-    await queryClient.refetchQueries();
   };
 
   return (

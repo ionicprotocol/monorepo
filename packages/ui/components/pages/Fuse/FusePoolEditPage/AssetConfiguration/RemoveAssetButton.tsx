@@ -43,15 +43,15 @@ const RemoveAssetButton = ({
     }
 
     try {
-      await comptroller._unsupportMarket(asset.cToken);
+      const tx = await comptroller._unsupportMarket(asset.cToken);
+      await tx.wait();
       LogRocket.track('Fuse-RemoveAsset');
 
-      successToast({
-        title: 'You have successfully added an asset to this pool!',
-        description: 'You may now lend and borrow with this asset.',
-      });
-
       await queryClient.refetchQueries();
+
+      successToast({
+        description: 'You have successfully removed an asset from this pool!',
+      });
     } catch (e) {
       handleGenericError(e, errorToast);
       return;
