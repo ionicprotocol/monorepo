@@ -21,7 +21,6 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const comptroller = sdk.createComptroller(comptrollerAddress);
 
     const allMarkets = await comptroller.callStatic.getAllMarkets();
-    console.log({ allMarkets });
 
     const cTokenInstances = allMarkets.map((marketAddress) => sdk.createCErc20PluginRewardsDelegate(marketAddress));
 
@@ -29,13 +28,16 @@ export default task("market:upgrade", "Upgrades a market's implementation")
 
     for (let index = 0; index < cTokenInstances.length; index++) {
       const thisUnderlying = await cTokenInstances[index].callStatic.underlying();
-      const plugin = await cTokenInstances[index].callStatic.plugin();
-      const ctoken = await cTokenInstances[index].address;
-
+      console.log({
+        underlying: thisUnderlying,
+        market: cTokenInstances[index].address,
+      });
       if (!cTokenInstance && thisUnderlying === underlying) {
         cTokenInstance = cTokenInstances[index];
-        console.log({ thisUnderlying, plugin, ctoken, cTokenInstance: cTokenInstance.address });
       }
+    }
+    if (!cTokenInstance) {
+      throw Error(`No market corresponds to this underlying: ${underlying}`);
     }
 
     if (!pluginAddress) {

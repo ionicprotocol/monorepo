@@ -50,12 +50,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDC"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-ETH"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDT"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying, // USDC-ETH PCS LP
-      assets.find((a) => a.symbol === assetSymbols["AGEUR-JEUR"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["JEUR-PAR"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["JJPY-JPYC"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["JCAD-CADC"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
+      assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying,
     ],
   },
   plugins: [
@@ -74,21 +69,21 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "10"],
     },
     {
-      // agEUR-jEUR LP
+      // jJPY-JPYC LP
       strategy: "BeefyERC4626",
       name: "JJPYJPYC",
       underlying: assets.find((a) => a.symbol === assetSymbols["JJPY-JPYC"])!.underlying,
       otherParams: ["0x122E09FdD2FF73C8CEa51D432c45A474BAa1518a", "10"],
     },
     {
-      // agEUR-jEUR LP
+      // jCAD-CADC LP
       strategy: "BeefyERC4626",
       name: "JCADCADC",
       underlying: assets.find((a) => a.symbol === assetSymbols["JCAD-CADC"])!.underlying,
       otherParams: ["0xcf9Dd1de1D02158B3d422779bd5184032674A6D1", "10"],
     },
     {
-      // agEUR-jEUR LP
+      // jSGD-XSGD LP
       strategy: "BeefyERC4626",
       name: "JSGDXSGD",
       underlying: assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
@@ -241,6 +236,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.EURT,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.JJPY,
     aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -270,6 +270,61 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.JNZD,
+    aggregator: "0xa302a0B8a499fD0f00449df0a490DedE21105955",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.NZDS,
+    aggregator: "0xa302a0B8a499fD0f00449df0a490DedE21105955",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JCHF,
+    aggregator: "0xc76f762CedF0F78a439727861628E0fdfE1e70c2",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JMXN,
+    aggregator: "0x171b16562EA3476F5C61d1b8dad031DbA0768545",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JGBP,
+    aggregator: "0x099a2540848573e94fb1Ca0Fa420b00acbBc845a",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JCNY,
+    aggregator: "0x04bB437Aa63E098236FA47365f0268547f6EAB32",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JAUD,
+    aggregator: "0x062Df9C4efd2030e243ffCc398b652e8b8F95C6f",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JPLN,
+    aggregator: "0xB34BCE11040702f71c11529D00179B2959BcE6C0",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JSEK,
+    aggregator: "0xbd92B4919ae82be8473859295dEF0e778A626302",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JKRW,
+    aggregator: "0x24B820870F726dA9B0D83B0B28a93885061dbF50",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JPHP,
+    aggregator: "0x218231089Bebb2A31970c3b77E96eCfb3BA006D1",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // https://polygon.curve.fi/
@@ -288,6 +343,14 @@ const curvePools: CurvePoolConfig[] = [
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+    pool: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.EURT)!.underlying,
     ],
   },
   {
@@ -312,6 +375,14 @@ const curvePools: CurvePoolConfig[] = [
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
+    pool: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JNZD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.NZDS)!.underlying,
     ],
   },
 ];
