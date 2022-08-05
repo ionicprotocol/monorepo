@@ -1,6 +1,5 @@
 import { task, types } from "hardhat/config";
 
-const POOL_NAME = "Jarvis jFIAT";
 const COMPTROLLER = "0xD265ff7e5487E9DD556a4BB900ccA6D087Eb3AD2";
 
 const UNDERLYINGS = {
@@ -9,15 +8,17 @@ const UNDERLYINGS = {
   "jJPY-JPYC": "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
   "jCAD-CADC (2cad)": "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
   "jSGD-XSGD (2sgd)": "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
+  "jEUR-EURt": "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+  "jNZD-NZDS": "0x976A750168801F58E8AEdbCfF9328138D544cc09",
 };
 
 const DETAILS = [
-  {
-    strategyName: "AGEURJEUR",
-    underlying: UNDERLYINGS["agEUR-jEUR"],
-    deployedPlugin: "0x6578e774120F6010315784C69C634bF3946AFb0c",
-    otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "10"],
-  },
+  // {
+  //   strategyName: "AGEURJEUR",
+  //   underlying: UNDERLYINGS["agEUR-jEUR"],
+  //   deployedPlugin: "0x6578e774120F6010315784C69C634bF3946AFb0c",
+  //   otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "10"],
+  // },
   // {
   //   strategyName: "JEURPAR",
   //   underlying: UNDERLYINGS["jEUR-PAR"],
@@ -42,6 +43,19 @@ const DETAILS = [
   //   deployedPlugin: "0x05fCE131DA43e7Be1cdDda3137f402034a5232fc",
   //   otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
   // },
+  {
+    strategyName: "JEUREURT",
+    underlying: UNDERLYINGS["jEUR-EURt"],
+    deployedPlugin: null,
+
+    otherParams: ["0x26B7d2fe697e932907175A3920B5dC2C2e2440A4", "10"],
+  },
+  {
+    strategyName: "JNZDNZDS",
+    underlying: UNDERLYINGS["jNZD-NZDS"],
+    deployedPlugin: null,
+    otherParams: ["0x6720C2b7fd7dE1CAD3242dd3E8a86d033D4ed3f9", "10"],
+  },
 ];
 
 task("jarvis:polygon:deploy-plugins", "deploy beefy plugins for jarvis 2fiat pool on polygon")
