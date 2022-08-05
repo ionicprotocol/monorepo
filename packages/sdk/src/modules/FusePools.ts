@@ -154,29 +154,17 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       };
     }
 
-    async fetchPoolsManual({
-      verification,
-      options,
-    }: {
-      verification: boolean;
-      options: { from: string };
-    }): Promise<(FusePoolData | null)[] | undefined> {
-      const fusePoolsDirectoryResult = await this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(
-        verification,
-        {
-          from: options.from,
-        }
-      );
-      const poolIds: string[] = (fusePoolsDirectoryResult[0] ?? []).map((bn: BigNumber) => bn.toString());
+    async fetchPoolsManual({ options }: { options: { from: string } }): Promise<(FusePoolData | null)[] | undefined> {
+      const res = await this.contracts.FusePoolDirectory.callStatic.getAllPools();
 
-      if (!poolIds.length) {
+      if (!res.length) {
         return undefined;
       }
 
       const poolData = await Promise.all(
-        poolIds.map((_id, i) => {
-          return this.fetchFusePoolData(_id, options.from).catch((error) => {
-            console.error(`Pool ID ${_id} wasn't able to be fetched from FusePoolLens without error.`, error);
+        res.map((pool, i) => {
+          return this.fetchFusePoolData(i.toString(), options.from).catch((error) => {
+            console.error(`Pool ID ${i} wasn't able to be fetched from FusePoolLens without error.`, error);
             return null;
           });
         })
@@ -199,9 +187,9 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       const req = isCreatedPools
         ? this.contracts.FusePoolLens.callStatic.getPoolsByAccountWithData(options.from)
         : isVerifiedPools
-        ? this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(true)
+        ? this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(true)
         : isUnverifiedPools
-        ? this.contracts.FusePoolLens.callStatic.getPublicPoolsByVerificationWithData(false)
+        ? this.contracts.FusePoolDirectory.callStatic.getPublicPoolsByVerification(false)
         : this.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
 
       const whitelistedPoolsRequest = this.contracts.FusePoolLens.callStatic.getWhitelistedPoolsByAccountWithData(
