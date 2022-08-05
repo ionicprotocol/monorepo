@@ -27,7 +27,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
     STABLE_TOKEN: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
-    W_BTC_TOKEN: underlying(ganacheAssets, assetSymbols.WBTC),
+    W_BTC_TOKEN: "0x2260FAC5E5542a773Aa44fBCfeDf7C193bc2C599",
   },
   [SupportedChains.chapel]: {
     W_TOKEN: underlying(chapelAssets, assetSymbols.WBNB),
@@ -55,7 +55,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: "0x81BC50a2df9cE424843e3c17110E1ab1FedCD4b8",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
     STABLE_TOKEN: underlying(evmosTestnetAssets, assetSymbols.USDC),
-    W_BTC_TOKEN: underlying(evmosTestnetAssets, assetSymbols.WBTC),
+    W_BTC_TOKEN: "",
   },
   // checked
   [SupportedChains.evmos]: {
@@ -65,7 +65,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
     STABLE_TOKEN: underlying(evmosAssets, assetSymbols.USDC),
-    W_BTC_TOKEN: underlying(evmosAssets, assetSymbols.WBTC),
+    W_BTC_TOKEN: "",
   },
   // checked
   [SupportedChains.moonbeam]: {
@@ -85,7 +85,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_FACTORY: "0x6725F303b657a9451d8BA641348b6761A6CC7a17",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66"),
     STABLE_TOKEN: underlying(moonbaseAlphaAssets, assetSymbols.USDC),
-    W_BTC_TOKEN: underlying(moonbaseAlphaAssets, assetSymbols.WBTC),
+    W_BTC_TOKEN: "",
   },
   // TODO: check addresses
   [SupportedChains.aurora]: {
@@ -94,8 +94,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
-    STABLE_TOKEN: underlying(auroraAssets, assetSymbols.WNEAR),
-    W_BTC_TOKEN: underlying(auroraAssets, assetSymbols.WNEAR),
+    STABLE_TOKEN: "",
+    W_BTC_TOKEN: "",
   },
   // TODO: change these to the correct addresses!
   [SupportedChains.neon_devnet]: {
