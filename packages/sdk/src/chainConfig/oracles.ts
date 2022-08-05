@@ -34,7 +34,13 @@ const oracles: ChainOracles = {
 
   [SupportedChains.moonbase_alpha]: [...baseOracles],
   [SupportedChains.neon_devnet]: [...baseOracles],
-  [SupportedChains.polygon]: [...baseOracles],
+  [SupportedChains.polygon]: [
+    ...baseOracles,
+    OracleTypes.ChainlinkPriceOracleV2,
+    OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    OracleTypes.UniswapLpTokenPriceOracle,
+    OracleTypes.UniswapTwapPriceOracleV2,
+  ],
 };
 
 export default oracles;
