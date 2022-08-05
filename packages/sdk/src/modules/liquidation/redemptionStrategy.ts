@@ -81,7 +81,17 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.abi,
         fuse.provider
       );
-      const tokens = await curveLpOracle.callStatic.underlyingTokens(token);
+
+      const tokens: string[] = [];
+      while (true) {
+        try {
+          const underlying = await curveLpOracle.callStatic.underlyingTokens(token, tokens.length);
+          tokens.push(underlying);
+        } catch (e) {
+          break;
+        }
+      }
+
       const preferredOutputToken = pickPreferredToken(fuse, tokens);
       return {
         strategyAddress: redemptionStrategyContract.address,

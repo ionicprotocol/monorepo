@@ -20,7 +20,6 @@ import {
 
 const chainSpecificAddresses: ChainSpecificAddresses = {
   [SupportedChains.ganache]: {
-
     W_TOKEN: underlying(ganacheAssets, assetSymbols.WETH),
     W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419",
     UNISWAP_V2_ROUTER: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
