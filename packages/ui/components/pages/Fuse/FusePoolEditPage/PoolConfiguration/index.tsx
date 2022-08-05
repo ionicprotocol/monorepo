@@ -17,7 +17,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
-import { BigNumber, Contract, utils } from 'ethers';
+import { BigNumber, Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -36,7 +36,7 @@ import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const PoolConfiguration = ({
@@ -56,6 +56,7 @@ const PoolConfiguration = ({
 
   const queryClient = useQueryClient();
   const errorToast = useErrorToast();
+  const successToast = useSuccessToast();
 
   const data = useExtraPoolInfo(comptrollerAddress);
 
@@ -99,9 +100,13 @@ const PoolConfiguration = ({
         LogRocket.captureException(err);
         throw err;
       }
-      await comptroller._setWhitelistEnforcement(enforce);
+      const tx = await comptroller._setWhitelistEnforcement(enforce);
+      await tx.wait();
       LogRocket.track('Fuse-ChangeWhitelistStatus');
-      queryClient.refetchQueries();
+
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully changed whitelist status!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     }
@@ -125,13 +130,15 @@ const PoolConfiguration = ({
         throw err;
       }
 
-      await comptroller._setWhitelistStatuses(newList, Array(newList.length).fill(true));
-
+      const tx = await comptroller._setWhitelistStatuses(newList, Array(newList.length).fill(true));
+      await tx.wait();
       LogRocket.track('Fuse-AddToWhitelist');
 
       await queryClient.refetchQueries();
 
       onChange(newList);
+
+      successToast({ description: 'Successfully added!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     }
@@ -159,16 +166,18 @@ const PoolConfiguration = ({
         throw err;
       }
 
-      await comptroller._setWhitelistStatuses(
+      const tx = await comptroller._setWhitelistStatuses(
         whitelist,
         whitelist?.map((user) => user !== removeUser)
       );
-
+      await tx.wait();
       LogRocket.track('Fuse-RemoveFromWhitelist');
 
       await queryClient.refetchQueries();
 
       onChange(whitelist.filter((v) => v !== removeUser));
+
+      successToast({ description: 'Successfully removed from the whitelist!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     }
@@ -189,9 +198,13 @@ const PoolConfiguration = ({
         LogRocket.captureException(err);
         throw err;
       }
-      unitroller._toggleAdminRights(false);
+      const tx: ContractTransaction = await unitroller._toggleAdminRights(false);
+      await tx.wait();
       LogRocket.track('Fuse-RenounceOwnership');
-      queryClient.refetchQueries();
+
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully changed admin rights!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     }
@@ -225,11 +238,13 @@ const PoolConfiguration = ({
         throw err;
       }
 
-      await comptroller._setCloseFactor(bigCloseFactor);
-
+      const tx = await comptroller._setCloseFactor(bigCloseFactor);
+      await tx.wait();
       LogRocket.track('Fuse-UpdateCloseFactor');
 
       await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated close factor!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
@@ -261,11 +276,13 @@ const PoolConfiguration = ({
         throw err;
       }
 
-      await comptroller._setLiquidationIncentive(bigLiquidationIncentive);
-
+      const tx = await comptroller._setLiquidationIncentive(bigLiquidationIncentive);
+      await tx.wait();
       LogRocket.track('Fuse-UpdateLiquidationIncentive');
 
       await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated liquidation incentive!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     }

@@ -11,6 +11,7 @@ import "./tasks/market";
 import "./tasks/oracle";
 import "./tasks/plugin";
 import "./tasks/pool";
+import "./tasks/irm";
 
 import "./tasks/addChainlinkFeeds";
 import "./tasks/createPoolsWithAssets";
