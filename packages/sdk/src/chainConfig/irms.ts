@@ -1,7 +1,7 @@
 import { IrmTypes, SupportedChains } from "../enums";
 import { ChainIrms } from "../types";
 
-const baseIrms = [IrmTypes.WhitePaperRateModel, IrmTypes.JumpRateModel];
+const baseIrms = [IrmTypes.WhitePaperInterestRateModel, IrmTypes.JumpRateModel];
 
 const irms: ChainIrms = {
   [SupportedChains.ganache]: [...baseIrms],
