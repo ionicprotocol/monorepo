@@ -268,6 +268,8 @@ export type ChainParams = {
 
 export type ChainAddresses = {
   W_TOKEN: string;
+  STABLE_TOKEN: string;
+  W_BTC_TOKEN: string;
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
   UNISWAP_V2_ROUTER: string;
   UNISWAP_V2_FACTORY: string;

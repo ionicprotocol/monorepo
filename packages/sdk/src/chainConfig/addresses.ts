@@ -24,6 +24,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D",
     UNISWAP_V2_FACTORY: "0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
+    STABLE_TOKEN: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+    W_BTC_TOKEN: ganacheAssets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
   },
   [SupportedChains.chapel]: {
     W_TOKEN: chapelAssets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
@@ -31,6 +33,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
     UNISWAP_V2_FACTORY: "0xb7926c0430afb07aa7defde6da862ae0bde767bc",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xecba335299a6693cb2ebc4782e74669b84290b6378ea3a3873c7231a8d7d1074"),
+    STABLE_TOKEN: chapelAssets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
+    W_BTC_TOKEN: chapelAssets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying,
   },
   [SupportedChains.bsc]: {
     W_TOKEN: bscAssets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
@@ -38,6 +42,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     UNISWAP_V2_FACTORY: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
+    STABLE_TOKEN: bscAssets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
+    W_BTC_TOKEN: bscAssets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying,
   },
   // checked
   [SupportedChains.evmos_testnet]: {
@@ -46,6 +52,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x72bd489d3cF0e9cC36af6e306Ff53E56d0f9EFb4",
     UNISWAP_V2_FACTORY: "0x81BC50a2df9cE424843e3c17110E1ab1FedCD4b8",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
+    STABLE_TOKEN: evmosTestnetAssets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+    W_BTC_TOKEN: evmosTestnetAssets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
   },
   // checked
   [SupportedChains.evmos]: {
@@ -54,6 +62,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0xFCd2Ce20ef8ed3D43Ab4f8C2dA13bbF1C6d9512F",
     UNISWAP_V2_FACTORY: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
+    STABLE_TOKEN: evmosAssets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+    W_BTC_TOKEN: evmosAssets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
   },
   // checked
   [SupportedChains.moonbeam]: {
@@ -62,6 +72,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
+    STABLE_TOKEN: moonbeamAssets.find((a) => a.symbol === assetSymbols.madUSDC)!.underlying,
+    W_BTC_TOKEN: moonbeamAssets.find((a) => a.symbol === assetSymbols.madWBTC)!.underlying,
   },
   // TODO: check addresses
   [SupportedChains.moonbase_alpha]: {
@@ -70,6 +82,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0xD99D1c33F9fC3444f8101754aBC46c52416550D1",
     UNISWAP_V2_FACTORY: "0x6725F303b657a9451d8BA641348b6761A6CC7a17",
     PAIR_INIT_HASH: ethers.utils.hexlify("0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66"),
+    STABLE_TOKEN: moonbaseAlphaAssets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+    W_BTC_TOKEN: moonbaseAlphaAssets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
   },
   // TODO: check addresses
   [SupportedChains.aurora]: {
@@ -78,6 +92,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
+    STABLE_TOKEN: auroraAssets.find((a) => a.symbol === assetSymbols.WNEAR)!.underlying,
+    W_BTC_TOKEN: auroraAssets.find((a) => a.symbol === assetSymbols.WNEAR)!.underlying,
   },
   // TODO: change these to the correct addresses!
   [SupportedChains.neon_devnet]: {
@@ -86,6 +102,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
     UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
+    STABLE_TOKEN: neonDevnetAssets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+    W_BTC_TOKEN: neonDevnetAssets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
   },
   // checked
   [SupportedChains.polygon]: {
@@ -94,6 +112,8 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     UNISWAP_V2_ROUTER: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
     UNISWAP_V2_FACTORY: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
     PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
+    STABLE_TOKEN: polygonAssets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
+    W_BTC_TOKEN: polygonAssets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
   },
 };
 

@@ -3,7 +3,8 @@ import { BytesLike, Contract, ethers } from "ethers";
 import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
-import { chainDeployConfig } from "../../../chainDeploy";
+import { IUniswapV2Pair } from "../../../lib/contracts/typechain/IUniswapV2Pair";
+import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
 
 export type StrategiesAndDatas = {
   strategies: string[];
@@ -50,14 +51,16 @@ export const getStrategiesAndDatas = async (
 };
 
 const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
-  const deployConfig = chainDeployConfig[fuse.chainId].config;
+  const wtoken = fuse.chainSpecificAddresses.W_TOKEN;
+  const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
+  const wBTCToken = fuse.chainSpecificAddresses.W_BTC_TOKEN;
 
-  if (tokens.find(t => t == deployConfig.wtoken)) {
-    return deployConfig.wtoken;
-  } else if (tokens.find(t => t == deployConfig.stableToken)) {
-    return deployConfig.stableToken;
-  } else if (tokens.find(t => t == deployConfig.wBTCToken)) {
-    return deployConfig.wBTCToken;
+  if (tokens.find(t => t == wtoken)) {
+    return wtoken;
+  } else if (tokens.find(t => t == stableToken)) {
+    return stableToken;
+  } else if (tokens.find(t => t == wBTCToken)) {
+    return wBTCToken;
   } else {
     return tokens[0];
   }
@@ -88,16 +91,40 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       };
 
     case RedemptionStrategyContract.XBombLiquidator: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator: {
+      const lpToken = new Contract(
+        token,
+        IUniswapV2Pair__factory.abi,
+        fuse.provider
+      ) as IUniswapV2Pair;
+
+      const token0 = await lpToken.callStatic.token0();
+      const token1 = await lpToken.callStatic.token1();
+
+      if (token0 != outputToken && token1 != outputToken) {
+        throw new Error(`Output token ${outputToken} does not match either of the pair tokens! ${token0} ${token1}`);
+      }
+
+      const token0IsOutputToken = token0 == outputToken;
+
+      // token0 is the output token if swapToken0Path.length == 0
+      // else output token is the last in swapToken0Path
+      const swapToken0Path = !token0IsOutputToken ? [token0, outputToken] : [];
+      const swapToken1Path = token0IsOutputToken ? [token1, outputToken] : [];
+
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, [], []] // TODO swapTokenPaths
+          [
+            fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+            swapToken0Path,
+            swapToken1Path
+          ]
         ),
-        outputToken: outputToken,
+        outputToken,
       };
     }
     case RedemptionStrategyContract.JarvisSynthereumLiquidator: {
