@@ -13,14 +13,15 @@ export default async function liquidateUnhealthyBorrows(midasSdk: MidasSdk, retr
   try {
     potentialLiquidations = await midasSdk.getPotentialLiquidations(signer);
   } catch (e) {
-    console.log(`Error fetching potential liquidations: ${e}, timing out and re-trying`);
+    console.log(`Error fetching potential liquidations, timing out and retrying`);
+    console.error(e);
     retries += 1;
     await new Promise((resolve) => setTimeout(resolve, (retries + 1) * 5000));
     await liquidateUnhealthyBorrows(midasSdk, retries);
   }
 
   if (potentialLiquidations.length == 0) {
-    logger.info("No liquidatable pools found. Timing out and re-staring...");
+    logger.info("No liquidatable pools found. Timing out and restarting...");
   }
   for (const poolLiquidations of potentialLiquidations) {
     if (poolLiquidations.liquidations.length > 0) {
