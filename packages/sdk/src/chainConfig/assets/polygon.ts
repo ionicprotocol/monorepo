@@ -364,6 +364,13 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
+    symbol: assetSymbols.JNZD,
+    underlying: "0x6b526Daf03B4C47AF2bcc5860B12151823Ff70E0",
+    name: "Jarvis JNZD Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
     symbol: assetSymbols.JPLN,
     underlying: "0x08E6d1F0c4877Ef2993Ad733Fc6F1D022d0E9DBf",
     name: "Jarvis JPLN Token",
