@@ -75,7 +75,7 @@ export class MidasBase {
   };
   public JumpRateModelConf: InterestRateModelConf;
   public AnkrBNBInterestRateModelConf: InterestRateModelConf;
-  public WhitePaperRateModelConf: InterestRateModelConf;
+  public WhitePaperInterestRateModelConf: InterestRateModelConf;
 
   public availableOracles: Array<string>;
   public availableIrms: Array<string>;
@@ -105,7 +105,7 @@ export class MidasBase {
     if (!this.chainDeployment) {
       throw new Error(`Chain deployment not found or provided for chainId ${chainId}`);
     }
-    this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
+    this.WhitePaperInterestRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
     this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainId);
 
