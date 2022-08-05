@@ -89,6 +89,8 @@ enum assetSymbols {
   multiUSDC = "multiUSDC",
   madUSDT = "madUSDT",
   multiUSDT = "multiUSDT",
+  madDAI = "madDAI",
+  multiDAI = "multiDAI",
 
   // moonbase
   WDEV = "WDEV",
