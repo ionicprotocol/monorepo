@@ -79,6 +79,7 @@ describe("FusePools", () => {
     Object.defineProperty(mockFusePoolDirectoryContract, "callStatic", {
       value: {
         getPublicPoolsByVerification: stub().resolves([[12]]),
+        getAllPools: stub().resolves(["0"]),
       },
     });
     fusePools.contracts.FusePoolDirectory = mockFusePoolDirectoryContract;
@@ -122,7 +123,7 @@ describe("FusePools", () => {
     const poolData = await fusePools.fetchPoolsManual({
       options: { from: mkAddress("0xacd") },
     });
-    expect(poolData[0].id).to.be.eq(12);
+    expect(poolData[0].id).to.be.eq(0);
   });
 
   it("fetchPools", async () => {
