@@ -1,7 +1,5 @@
-import { BigNumber } from "ethers";
+import { SupportedAsset } from "@midas-capital/types";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
-
-import { SupportedAsset } from "../../src/types";
 
 export enum ChainlinkFeedBaseCurrency {
   ETH,
