@@ -1,5 +1,5 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
 import { useQueryClient } from 'react-query';

@@ -1,7 +1,5 @@
+import { ChainSpecificAddresses, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
-
-import { SupportedChains } from "../enums";
-import { ChainSpecificAddresses } from "../types";
 
 import {
   assetSymbols,

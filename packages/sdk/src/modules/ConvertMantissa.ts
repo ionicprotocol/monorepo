@@ -1,6 +1,6 @@
 import { BigNumber, utils } from "ethers";
 
-import { MidasBaseConstructor } from "../types";
+import { MidasBaseConstructor } from "..";
 
 const daysPerYear = 365;
 export function withConvertMantissa<TBase extends MidasBaseConstructor>(Base: TBase) {

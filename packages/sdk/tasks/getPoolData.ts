@@ -1,3 +1,4 @@
+import { SupportedChains } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 export default task("get-pool-data", "Get pools data")
@@ -14,7 +15,7 @@ export default task("get-pool-data", "Get pools data")
     const midasSdkModule = await import("../tests/utils/midasSdk");
 
     const chainId = parseInt(await hre.getChainId());
-    if (!(chainId in sdkModule.SupportedChains)) {
+    if (!(chainId in SupportedChains)) {
       throw "Invalid chain provided";
     }
     let chainDeployment;
@@ -74,7 +75,7 @@ task("get-position-ratio", "Get unhealthy po data")
     const midasSdkModule = await import("../tests/utils/midasSdk");
 
     const chainId = parseInt(await hre.getChainId());
-    if (!(chainId in sdkModule.SupportedChains)) {
+    if (!(chainId in SupportedChains)) {
       throw "Invalid chain provided";
     }
     let chainDeployment = {};

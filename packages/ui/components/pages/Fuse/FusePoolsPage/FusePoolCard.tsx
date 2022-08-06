@@ -1,5 +1,5 @@
 import { AvatarGroup, Box, Button, chakra, Flex, Heading, Text, Tooltip } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/sdk';
+import { FusePoolData } from '@midas-capital/types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useMemo } from 'react';

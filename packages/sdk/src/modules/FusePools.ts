@@ -1,12 +1,13 @@
-import { BigNumber, BigNumberish, utils } from "ethers";
+import { FusePoolData, NativePricedFuseAsset } from "@midas-capital/types";
+import { BigNumberish, utils } from "ethers";
 
+import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { filterOnlyObjectProperties, filterPoolName, getContract } from "../MidasSdk/utils";
-import { FusePoolData, MidasBaseConstructor, NativePricedFuseAsset } from "../types";
 
 export type LensPoolsWithData = [
   ids: BigNumberish[],

@@ -16,7 +16,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import { BigNumber, Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';

@@ -1,5 +1,4 @@
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 import { assetSymbols } from "./index";
 
