@@ -75,7 +75,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Build `sdk`
-        run: yarn workspace @midas-capital/sdk build
+        run: yarn build:sdk
 
       - name: Lint `sdk`
         run: yarn workspace @midas-capital/sdk lint

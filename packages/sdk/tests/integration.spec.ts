@@ -1,8 +1,9 @@
+import { MarketConfig } from "@midas-capital/types";
 import { BigNumber, providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { EIP20Interface, FuseSafeLiquidator, SimplePriceOracle } from "../lib/contracts/typechain";
-import { ChainLiquidationConfig, MarketConfig } from "../src";
+import { ChainLiquidationConfig } from "../src";
 import { getChainLiquidationConfig } from "../src/modules/liquidation/config";
 
 import { deployAssets, tradeNativeForAsset } from "./utils";
