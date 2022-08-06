@@ -26,6 +26,7 @@ COPY .yarnrc.yml /tmp/build/
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
+COPY packages/types/package.json /tmp/build/packages/types/
 COPY packages/bots/fuse-twap-bot/package.json /tmp/build/packages/bots/fuse-twap-bot/
 
 RUN touch /tmp/build/yarn.lock
@@ -36,6 +37,7 @@ RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
+COPY packages/types /tmp/build/packages/types
 COPY packages/bots/fuse-twap-bot /tmp/build/packages/bots/fuse-twap-bot
 
 # ----- build -----
