@@ -23,7 +23,7 @@
       "path": "./packages/sdk"
     },
     {
-      "path": "./packages/typing"
+      "path": "./packages/types"
     },
     {
       "path": "./packages/ui"

@@ -1,6 +1,2 @@
-lib/
 dist/
-deployments/
 cache/
-scripts/
-deployments.json
