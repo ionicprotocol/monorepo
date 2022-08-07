@@ -26,8 +26,8 @@ export const deployDiaOracle = async ({
       deployConfig.wtoken,
       diaNativeFeed.feed,
       diaNativeFeed.key,
-      constants.AddressZero,
-      constants.AddressZero,
+      mpo.address,
+      deployConfig.stableToken,
     ],
     log: true,
   });
