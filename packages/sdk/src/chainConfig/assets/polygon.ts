@@ -281,7 +281,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.PAR,
-    underlying: "0x7b367a058f370c0057762280547d0b974cf3ac10",
+    underlying: "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128",
     name: "PAR Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
