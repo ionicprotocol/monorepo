@@ -1,4 +1,6 @@
-import { Artifacts, ChainDeployment } from "../types";
+import { ChainDeployment } from "@midas-capital/types";
+
+import { Artifacts } from "../Artifacts";
 
 export { default as chainSpecificAddresses } from "./addresses";
 export { default as chainOracles } from "./oracles";

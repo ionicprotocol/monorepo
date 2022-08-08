@@ -1,3 +1,4 @@
+import { MarketConfig } from "@midas-capital/types";
 import { BigNumber, Contract, providers } from "ethers";
 import { deployments, ethers } from "hardhat";
 
@@ -8,7 +9,7 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../../lib/contracts/typechain";
-import { ChainLiquidationConfig, ERC20Abi, MarketConfig } from "../../src";
+import { ChainLiquidationConfig, ERC20Abi } from "../../src";
 import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
 import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import { getOrCreateMidas } from "../utils/midasSdk";

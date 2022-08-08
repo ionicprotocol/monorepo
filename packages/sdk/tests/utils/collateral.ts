@@ -1,3 +1,4 @@
+import { NativePricedFuseAsset } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { expect } from "chai";
 import { BigNumber, constants, Contract, providers, utils } from "ethers";
@@ -5,7 +6,7 @@ import { ethers } from "hardhat";
 
 import { chainDeployConfig } from "../../chainDeploy";
 import { MasterPriceOracle, SimplePriceOracle } from "../../lib/contracts/typechain";
-import { ERC20Abi, MidasSdk, NativePricedFuseAsset } from "../../src";
+import { ERC20Abi, MidasSdk } from "../../src";
 
 import { getOrCreateMidas } from "./midasSdk";
 import { assetInPool, DeployedAsset, getPoolIndex } from "./pool";

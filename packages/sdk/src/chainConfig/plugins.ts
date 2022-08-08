@@ -1,5 +1,4 @@
-import { SupportedChains } from "../enums";
-import { ChainDeployedPlugins } from "../types";
+import { ChainDeployedPlugins, SupportedChains } from "@midas-capital/types";
 
 const chainDeployedPlugins: ChainDeployedPlugins = {
   [SupportedChains.ganache]: {},

@@ -1,6 +1,6 @@
-import { BigNumber, Signer, utils, Wallet } from "ethers";
+import { BigNumber, utils, Wallet } from "ethers";
 
-import { MidasBaseConstructor } from "../../types";
+import { MidasBaseConstructor } from "../..";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";

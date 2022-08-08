@@ -1,8 +1,7 @@
 /* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";

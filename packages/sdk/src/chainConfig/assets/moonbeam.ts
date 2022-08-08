@@ -1,5 +1,4 @@
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 import { assetSymbols } from "./index";
 
@@ -41,7 +40,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.multiDAI,
-    underlying: "0x765277eebeca2e31912c9946eae1021199b39c61",
+    underlying: "0x765277EebeCA2e31912C9946eAe1021199B39C61",
     name: "Multichain DAI Stablecoin",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,

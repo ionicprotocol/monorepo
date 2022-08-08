@@ -20,7 +20,7 @@ import {
   Wrap,
   WrapItem,
 } from '@chakra-ui/react';
-import { SupportedAsset } from '@midas-capital/sdk/dist/cjs/src/types';
+import { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';

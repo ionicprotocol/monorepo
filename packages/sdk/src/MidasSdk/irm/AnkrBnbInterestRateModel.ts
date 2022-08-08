@@ -1,9 +1,9 @@
 import { Web3Provider } from "@ethersproject/providers";
+import { InterestRateModel } from "@midas-capital/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import AnkrBNBINterestRateModelartifact from "../../../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
-import { InterestRateModel } from "../../types";
 import { getContract } from "../utils";
 
 export default class AnkrBNBInterestRateModel implements InterestRateModel {

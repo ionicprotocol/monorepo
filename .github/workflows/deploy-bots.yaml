@@ -51,7 +51,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Build `sdk`
-        run: yarn workspace @midas-capital/sdk build
+        run: yarn build:sdk
 
       - name: Lint `fuse-liquidator-bot`
         run: yarn workspace @midas-capital/fuse-liquidator-bot lint

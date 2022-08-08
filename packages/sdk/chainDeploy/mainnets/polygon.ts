@@ -1,9 +1,8 @@
 /* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
-
+import { SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";

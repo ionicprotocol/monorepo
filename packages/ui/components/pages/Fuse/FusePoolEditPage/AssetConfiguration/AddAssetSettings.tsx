@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { InterestRateModelConf, MarketConfig } from '@midas-capital/sdk';
+import { InterestRateModelConf, MarketConfig } from '@midas-capital/types';
 import { constants } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
@@ -420,7 +420,7 @@ export const AddAssetSettings = ({
                 value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
-                WhitePaperRateModel
+                WhitePaperInterestRateModel
               </option>
             </Select>
             <FormErrorMessage marginBottom="-10px">

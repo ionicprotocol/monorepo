@@ -1,4 +1,5 @@
-import { InterestRateModel, MidasSdk } from '@midas-capital/sdk';
+import { MidasSdk } from '@midas-capital/sdk';
+import { InterestRateModel } from '@midas-capital/types';
 import { utils } from 'ethers';
 
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
