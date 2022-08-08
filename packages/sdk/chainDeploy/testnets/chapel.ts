@@ -2,9 +2,14 @@ import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployChainlinkOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.chapel];
 

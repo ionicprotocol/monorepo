@@ -3,11 +3,16 @@ import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployGelatoGUniPriceOracle } from "../helpers/gelato";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
+import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
-import { deployCurveLpOracle } from "../oracles/curveLp";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.polygon];
 const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;

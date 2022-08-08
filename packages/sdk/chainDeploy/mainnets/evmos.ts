@@ -1,8 +1,7 @@
 import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig } from "../helpers";
-import { deployDiaOracle } from "../helpers/dia";
+import { ChainDeployConfig, deployDiaOracle } from "../helpers";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 
 const assets = chainSupportedAssets[SupportedChains.evmos];

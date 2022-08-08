@@ -4,7 +4,10 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
-import { configureFuseSafeLiquidator, deployFuseSafeLiquidator } from "../chainDeploy/helpers/liquidator";
+import {
+  configureFuseSafeLiquidator,
+  deployFuseSafeLiquidator,
+} from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
 import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 

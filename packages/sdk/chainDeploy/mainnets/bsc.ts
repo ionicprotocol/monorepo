@@ -3,13 +3,18 @@ import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployABNBcOracle } from "../helpers/aBNBcOracle";
-import { deployDiaOracle } from "../helpers/dia";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployABNBcOracle,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployDiaOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
-import { deployCurveLpOracle } from "../oracles/curveLp";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.bsc];
 const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
