@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 
-import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol";
+import { GelatoGUniPriceOracle } from "../../lib/contracts/typechain/GelatoGUniPriceOracle";
 
 import { gelatoGUniPriceOracleDeployParams } from "./types";
 
@@ -10,9 +10,8 @@ export const deployGelatoGUniPriceOracle = async ({
   deployments,
   deployConfig,
   gelatoAssets,
-}: gelatoGUniPriceOracleDeployParams): Promise<{ diaOracle: DiaPriceOracle }> => {
+}: gelatoGUniPriceOracleDeployParams): Promise<{ gUniOracle: GelatoGUniPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
-  let tx: providers.TransactionResponse;
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
@@ -22,26 +21,21 @@ export const deployGelatoGUniPriceOracle = async ({
     args: [deployConfig.wtoken],
     log: true,
   });
-  if (gelatoGUniPriceOracle.transactionHash) await ethers.provider.waitForTransaction(dia.transactionHash);
+
+  if (gelatoGUniPriceOracle.transactionHash)
+    await ethers.provider.waitForTransaction(gelatoGUniPriceOracle.transactionHash);
+
   console.log("GelatoGUniPriceOracle: ", gelatoGUniPriceOracle.address);
 
-  const diaOracle = (await ethers.getContract("DiaPriceOracle", deployer)) as DiaPriceOracle;
-  tx = await diaOracle.setPriceFeeds(
-    diaAssets.map((d) => d.underlying),
-    diaAssets.map((d) => d.feed),
-    diaAssets.map((d) => d.key)
-  );
-  console.log(`Set price feeds for DiaPriceOracle: ${tx.hash}`);
-  await tx.wait();
-  console.log(`Set price feeds for DiaPriceOracle mined: ${tx.hash}`);
+  const gUniOracle = (await ethers.getContract("GelatoGUniPriceOracle", deployer)) as GelatoGUniPriceOracle;
 
-  const underlyings = diaAssets.map((d) => d.underlying);
-  const oracles = Array(diaAssets.length).fill(diaOracle.address);
+  const underlyings = gelatoAssets.map((d) => d.underlying);
+  const oracles = Array(gelatoAssets.length).fill(gUniOracle.address);
 
-  tx = await mpo.add(underlyings, oracles);
+  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
   await tx.wait();
 
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
 
-  return { diaOracle };
+  return { gUniOracle };
 };
