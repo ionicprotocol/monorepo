@@ -93,7 +93,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.TUSD,
-    underlying: "0x14016e85a25aeb13065688cafb43044c2ef86784",
+    underlying: "0x14016E85a25aeb13065688cAFB43044C2ef86784",
     name: "Wrapped TrueUSD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
