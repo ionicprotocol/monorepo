@@ -39,6 +39,7 @@ export enum OracleTypes {
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
+  GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
 }
 
 export enum IrmTypes {

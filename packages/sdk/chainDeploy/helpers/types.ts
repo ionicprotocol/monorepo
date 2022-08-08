@@ -61,6 +61,10 @@ export type DiaAsset = {
   key: string;
 };
 
+export type GelatoGUniAsset = {
+  vaultAddress: string;
+};
+
 export type CurvePoolConfig = {
   lpToken: string;
   pool: string;
@@ -120,4 +124,9 @@ export type Erc4626PluginDeployFnParams = ChainDeployFnParams & {
 
 export type aBNBcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
+};
+
+export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  gelatoAssets: GelatoGUniAsset[];
 };
