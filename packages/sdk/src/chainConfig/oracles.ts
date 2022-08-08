@@ -39,6 +39,7 @@ const oracles: ChainOracles = {
     OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     OracleTypes.UniswapLpTokenPriceOracle,
     OracleTypes.UniswapTwapPriceOracleV2,
+    OracleTypes.GelatoGUniPriceOracle,
   ],
 };
 
