@@ -1,5 +1,3 @@
-/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
-
 import { SupportedChains } from "@midas-capital/types";
 import { constants, ethers, providers, utils } from "ethers";
 

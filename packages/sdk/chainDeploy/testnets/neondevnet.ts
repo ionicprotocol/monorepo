@@ -1,4 +1,3 @@
-/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
 import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers, utils } from "ethers";
 
