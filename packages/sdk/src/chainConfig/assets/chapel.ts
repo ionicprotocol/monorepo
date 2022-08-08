@@ -1,5 +1,4 @@
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 import { assetSymbols } from "./index";
 
@@ -20,7 +19,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.BTCB,
-    underlying: "0x6ce8da28e2f864420840cf74474eff5fd80e65b8",
+    underlying: "0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8",
     name: "Binance BTC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
@@ -34,7 +33,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.ETH,
-    underlying: "0x8babbb98678facc7342735486c851abd7a0d17ca",
+    underlying: "0x8BaBbB98678facC7342735486C851ABD7A0d17Ca",
     name: "Binance ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,

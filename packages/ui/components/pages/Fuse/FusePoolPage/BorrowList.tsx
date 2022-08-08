@@ -13,7 +13,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/sdk';
+import { FundOperationMode } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useState } from 'react';
 

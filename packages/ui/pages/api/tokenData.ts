@@ -1,5 +1,6 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { ChainSupportedAssetsMap, SupportedChains } from '@midas-capital/sdk';
+import { ChainSupportedAssetsMap } from '@midas-capital/sdk';
+import { SupportedChains } from '@midas-capital/types';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';

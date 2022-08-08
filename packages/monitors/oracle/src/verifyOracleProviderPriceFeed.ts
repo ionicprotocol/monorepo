@@ -1,5 +1,6 @@
 import { Provider } from "@ethersproject/providers";
-import { MidasSdk, OracleConfig, OracleTypes } from "@midas-capital/sdk";
+import { MidasSdk } from "@midas-capital/sdk";
+import { OracleConfig, OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
 import { config } from "./config";

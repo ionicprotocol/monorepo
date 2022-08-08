@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useMemo } from 'react';
 
 import { useRari } from '@ui/context/RariContext';

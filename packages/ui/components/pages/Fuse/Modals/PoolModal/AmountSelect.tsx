@@ -12,13 +12,13 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
+import { MidasSdk } from '@midas-capital/sdk';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
   FundOperationMode,
-  MidasSdk,
   NativePricedFuseAsset,
-} from '@midas-capital/sdk';
+} from '@midas-capital/types';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';

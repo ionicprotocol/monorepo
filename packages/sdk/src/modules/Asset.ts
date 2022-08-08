@@ -1,9 +1,8 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
+import { FundOperationMode, InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
-import { FundOperationMode } from "../enums";
 import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
-import { InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "../types";
 
 import { withCreateContracts } from "./CreateContracts";
 import { withFlywheel } from "./Flywheel";

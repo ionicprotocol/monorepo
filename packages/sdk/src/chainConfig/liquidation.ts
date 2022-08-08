@@ -1,7 +1,5 @@
+import { ChainLiquidationDefaults, LiquidationStrategy, SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
-
-import { LiquidationStrategy, SupportedChains } from "../enums";
-import { ChainLiquidationDefaults, SupportedAsset } from "../types";
 
 import {
   assetSymbols,

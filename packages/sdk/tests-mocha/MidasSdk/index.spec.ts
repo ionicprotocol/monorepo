@@ -1,9 +1,9 @@
+import { SupportedChains } from "@midas-capital/types";
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../lib/contracts/typechain";
 import { ARTIFACTS } from "../../src/Artifacts";
-import { SupportedChains } from "../../src/enums";
 import { MidasBase } from "../../src/MidasSdk/index";
 import JumpRateModel from "../../src/MidasSdk/irm/JumpRateModel";
 import * as utilsFns from "../../src/MidasSdk/utils";

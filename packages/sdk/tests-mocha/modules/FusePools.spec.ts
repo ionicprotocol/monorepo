@@ -1,11 +1,11 @@
+import { SupportedChains } from "@midas-capital/types";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 
-import { SupportedChains } from "../../src/enums";
+import { MidasBaseConstructor } from "../../src";
 import { MidasBase } from "../../src/MidasSdk/index";
 import * as utilsFns from "../../src/MidasSdk/utils";
 import { withFusePools } from "../../src/modules/FusePools";
-import { MidasBaseConstructor } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
