@@ -90,14 +90,14 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.GHST,
-    underlying: "0x385eeac5cb85a38a9a07a70c73e0a3271cfb54a7",
+    underlying: "0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7",
     name: "Aavegotchi GHST Token (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
     symbol: assetSymbols.GRT,
-    underlying: "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
+    underlying: "0x5fe2B58c013d7601147DcdD68C143A77499f5531",
     name: "Graph Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
@@ -174,7 +174,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.WBTC,
-    underlying: "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
+    underlying: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
     name: "Wrapped BTC (PoS)",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
@@ -259,7 +259,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols["JEUR-EURT"],
-    underlying: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+    underlying: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
     name: "Jarvis JEUR-EURT LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
@@ -280,7 +280,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.PAR,
-    underlying: "0x7b367a058f370c0057762280547d0b974cf3ac10",
+    underlying: "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128",
     name: "PAR Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
