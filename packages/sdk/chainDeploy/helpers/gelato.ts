@@ -29,7 +29,7 @@ export const deployGelatoGUniPriceOracle = async ({
 
   const gUniOracle = (await ethers.getContract("GelatoGUniPriceOracle", deployer)) as GelatoGUniPriceOracle;
 
-  const underlyings = gelatoAssets.map((d) => d.underlying);
+  const underlyings = gelatoAssets.map((d) => d.vaultAddress);
   const oracles = Array(gelatoAssets.length).fill(gUniOracle.address);
 
   const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);

@@ -5,7 +5,8 @@ import { ethers } from "ethers";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
+import { deployGelatoGUniPriceOracle } from "../helpers/gelato";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -329,7 +330,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
 // https://polygon.curve.fi/
 const curvePools: CurvePoolConfig[] = [
   {
-    lpToken: "0x2ffbce9099cbed86984286a54e5932414af4b717",
+    lpToken: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.AGEUR)!.underlying,
@@ -337,40 +338,40 @@ const curvePools: CurvePoolConfig[] = [
     ],
   },
   {
-    lpToken: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
-    pool: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
+    lpToken: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
+    pool: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
     ],
   },
   {
-    lpToken: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
-    pool: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+    lpToken: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
+    pool: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.EURT)!.underlying,
     ],
   },
   {
-    lpToken: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
-    pool: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
+    lpToken: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    pool: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JJPY)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.JPYC)!.underlying,
     ],
   },
   {
-    lpToken: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
-    pool: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+    lpToken: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
+    pool: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JCAD)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.CADC)!.underlying,
     ],
   },
   {
-    lpToken: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
-    pool: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
+    lpToken: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
+    pool: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
@@ -383,6 +384,58 @@ const curvePools: CurvePoolConfig[] = [
       assets.find((a) => a.symbol === assetSymbols.JNZD)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.NZDS)!.underlying,
     ],
+  },
+];
+
+const gelatoAssets: GelatoGUniAsset[] = [
+  {
+    // USDC/WETH
+    vaultAddress: "0xA173340f1E942c2845bcBCe8EBD411022E18EB13",
+  },
+  {
+    // WBTC/WETH
+    vaultAddress: "0x590217ef04BcB96FF6Da991AB070958b8F9E77f0",
+  },
+  {
+    // USDC/PAR
+    vaultAddress: "0xC1DF4E2fd282e39346422e40C403139CD633Aacd",
+  },
+  {
+    // WMATIC/USDC
+    vaultAddress: "0x4520c823E3a84ddFd3F99CDd01b2f8Bf5372A82a",
+  },
+  {
+    // USDC/agEUR
+    vaultAddress: "0x1644de0A8E54626b54AC77463900FcFFD8B94542",
+  },
+  {
+    // WMATIC/WETH
+    vaultAddress: "0xDC0eCA1D69ab51C2B2171C870A1506499081dA5B",
+  },
+  {
+    // WMATIC/AAVE
+    vaultAddress: "0x3Cc255339a27eFa6c38bEe880F4061AB9b231732",
+  },
+  {
+    // USDC/USDT 0.01 % fee tier
+    vaultAddress: "0x2817E729178471DBAC8b1FC190b4fd8e6F3984e3",
+  },
+  {
+    // USDC/USDT 0.05 % fee tier
+    vaultAddress: "0x869A75D6F7ae09810c9083684cf22e9A618c8B05",
+  },
+
+  {
+    // USDC/DAI
+    vaultAddress: "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA",
+  },
+  {
+    // WETH/DAI
+    vaultAddress: "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c",
+  },
+  {
+    // USDC/DAI
+    vaultAddress: "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA",
   },
 ];
 
@@ -429,6 +482,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  //// Gelato GUni Oracle
+  await deployGelatoGUniPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gelatoAssets,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {

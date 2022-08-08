@@ -62,10 +62,7 @@ export type DiaAsset = {
 };
 
 export type GelatoGUniAsset = {
-  symbol: string;
-  underlying: string;
-  feed: string;
-  key: string;
+  vaultAddress: string;
 };
 
 export type CurvePoolConfig = {
