@@ -390,52 +390,51 @@ const curvePools: CurvePoolConfig[] = [
 const gelatoAssets: GelatoGUniAsset[] = [
   {
     // USDC/WETH
-    vaultAddress: "0xA173340f1E942c2845bcBCe8EBD411022E18EB13",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
   },
   {
     // WBTC/WETH
-    vaultAddress: "0x590217ef04BcB96FF6Da991AB070958b8F9E77f0",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WBTC_WETH_005)!.underlying,
   },
   {
     // USDC/PAR
-    vaultAddress: "0xC1DF4E2fd282e39346422e40C403139CD633Aacd",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_PAR_005)!.underlying,
   },
   {
     // WMATIC/USDC
-    vaultAddress: "0x4520c823E3a84ddFd3F99CDd01b2f8Bf5372A82a",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_USDC_005)!.underlying,
   },
   {
     // USDC/agEUR
-    vaultAddress: "0x1644de0A8E54626b54AC77463900FcFFD8B94542",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_agEUR_001)!.underlying,
   },
   {
     // WMATIC/WETH
-    vaultAddress: "0xDC0eCA1D69ab51C2B2171C870A1506499081dA5B",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_WETH_005)!.underlying,
   },
   {
     // WMATIC/AAVE
-    vaultAddress: "0x3Cc255339a27eFa6c38bEe880F4061AB9b231732",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_AAVE_03)!.underlying,
+  },
+  {
+    // USDC/MAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_MAI_005)!.underlying,
   },
   {
     // USDC/USDT 0.01 % fee tier
-    vaultAddress: "0x2817E729178471DBAC8b1FC190b4fd8e6F3984e3",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
   },
   {
     // USDC/USDT 0.05 % fee tier
-    vaultAddress: "0x869A75D6F7ae09810c9083684cf22e9A618c8B05",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_005)!.underlying,
   },
-
   {
     // USDC/DAI
-    vaultAddress: "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_DAI_005)!.underlying,
   },
   {
     // WETH/DAI
-    vaultAddress: "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c",
-  },
-  {
-    // USDC/DAI
-    vaultAddress: "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA",
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WETH_DAI_03)!.underlying,
   },
 ];
 
