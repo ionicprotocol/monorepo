@@ -1,4 +1,3 @@
-import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
 import { SupportedAsset } from "../../src/types";
@@ -57,6 +56,13 @@ export type ChainlinkAsset = {
 };
 
 export type DiaAsset = {
+  symbol: string;
+  underlying: string;
+  feed: string;
+  key: string;
+};
+
+export type GelatoGUniAsset = {
   symbol: string;
   underlying: string;
   feed: string;
@@ -122,4 +128,9 @@ export type Erc4626PluginDeployFnParams = ChainDeployFnParams & {
 
 export type aBNBcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
+};
+
+export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  gelatoAssets: GelatoGUniAsset[];
 };

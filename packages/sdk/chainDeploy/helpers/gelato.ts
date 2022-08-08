@@ -2,37 +2,28 @@ import { providers } from "ethers";
 
 import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol";
 
-import { DiaDeployFnParams } from "./types";
+import { gelatoGUniPriceOracleDeployParams } from "./types";
 
-export const deployDiaOracle = async ({
+export const deployGelatoGUniPriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
   deployConfig,
-  diaAssets,
-  diaNativeFeed,
-}: DiaDeployFnParams): Promise<{ diaOracle: DiaPriceOracle }> => {
+  gelatoAssets,
+}: gelatoGUniPriceOracleDeployParams): Promise<{ diaOracle: DiaPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
-  //// Dia Oracle
-  const dia = await deployments.deploy("DiaPriceOracle", {
+  //// Gelato GUni Price Oracle
+  const gelatoGUniPriceOracle = await deployments.deploy("GelatoGUniPriceOracle", {
     from: deployer,
-    args: [
-      deployer,
-      true,
-      deployConfig.wtoken,
-      diaNativeFeed.feed,
-      diaNativeFeed.key,
-      mpo.address,
-      deployConfig.stableToken,
-    ],
+    args: [deployConfig.wtoken],
     log: true,
   });
-  if (dia.transactionHash) await ethers.provider.waitForTransaction(dia.transactionHash);
-  console.log("DiaPriceOracle: ", dia.address);
+  if (gelatoGUniPriceOracle.transactionHash) await ethers.provider.waitForTransaction(dia.transactionHash);
+  console.log("GelatoGUniPriceOracle: ", gelatoGUniPriceOracle.address);
 
   const diaOracle = (await ethers.getContract("DiaPriceOracle", deployer)) as DiaPriceOracle;
   tx = await diaOracle.setPriceFeeds(
