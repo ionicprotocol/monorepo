@@ -1,7 +1,5 @@
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 import { ethers } from "ethers";
-
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
 
 import { assetSymbols } from "./index";
 

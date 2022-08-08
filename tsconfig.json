@@ -23,6 +23,9 @@
       "path": "./packages/sdk"
     },
     {
+      "path": "./packages/types"
+    },
+    {
       "path": "./packages/ui"
     },
     {

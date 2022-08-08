@@ -1,10 +1,10 @@
 // pool utilities used across downstream tests
+import { FusePool, FusePoolData, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
-import { FusePoolData, MarketConfig, MidasSdk, NativePricedFuseAsset } from "../../src";
-import { FusePool } from "../../src/types";
+import { MidasSdk } from "../../src";
 
 import { getOrCreateMidas } from "./midasSdk";
 

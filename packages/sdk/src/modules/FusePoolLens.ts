@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { MidasBaseConstructor } from "../types";
+import { MidasBaseConstructor } from "..";
 
 export function withFusePoolLens<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePoolLens extends Base {

@@ -1,8 +1,8 @@
+import { ChainDeployment } from "@midas-capital/types";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
 import { MidasSdk } from "../../src";
-import { ChainDeployment } from "../../src/types";
 
 let midasSdk: MidasSdk;
 

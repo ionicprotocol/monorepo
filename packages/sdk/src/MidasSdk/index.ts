@@ -1,4 +1,19 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import {
+  ChainAddresses,
+  ChainDeployment,
+  ChainParams,
+  DelegateContractName,
+  DeployedPlugins,
+  InterestRateModel,
+  InterestRateModelConf,
+  IrmConfig,
+  OracleConf,
+  OracleConfig,
+  RedemptionStrategyContract,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumber, constants, Contract, utils } from "ethers";
 
 import Deployments from "../../deployments.json";
@@ -12,18 +27,6 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
-import {
-  ChainAddresses,
-  ChainDeployment,
-  ChainParams,
-  DeployedPlugins,
-  InterestRateModel,
-  InterestRateModelConf,
-  IrmConfig,
-  OracleConf,
-  OracleConfig,
-  SupportedAsset,
-} from "../../src/types";
 import { Artifacts, ARTIFACTS } from "../Artifacts";
 import {
   chainDeployedPlugins,
@@ -37,7 +40,6 @@ import {
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
-import { DelegateContractName, RedemptionStrategyContract, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";

@@ -1,6 +1,6 @@
+import { LiquidationKind } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
-import { LiquidationKind } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
 import { StrategiesAndDatas } from "./redemptionStrategy";

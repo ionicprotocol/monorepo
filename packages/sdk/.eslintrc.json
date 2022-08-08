@@ -44,5 +44,13 @@
         "newlines-between": "always"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["tasks/**/*.ts", "tests/**/*.ts"], // Or *.test.js
+      "rules": {
+        "no-console": ["off"]
+      }
+    }
+  ]
 }

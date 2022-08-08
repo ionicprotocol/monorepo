@@ -2,7 +2,7 @@ import { task, types } from "hardhat/config";
 
 task("oracle:update-twap", "Call update on twap oracle to update the last price observation")
   .addParam("pair", "pair address for which to run the update", undefined, types.string)
-  .setAction(async ({ pair: _pair }, { run, ethers }) => {
+  .setAction(async ({ pair: _pair }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
     // @ts-ignore

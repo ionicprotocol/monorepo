@@ -1,5 +1,6 @@
+import { SupportedChains } from "@midas-capital/types";
+
 import { chainSpecificParams } from "../chainConfig";
-import { SupportedChains } from "../enums";
 
 export const COMPTROLLER_ERROR_CODES: Array<string> = [
   "NO_ERROR",

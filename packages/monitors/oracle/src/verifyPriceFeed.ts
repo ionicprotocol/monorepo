@@ -1,4 +1,5 @@
-import { MidasSdk, OracleTypes, SupportedAsset } from "@midas-capital/sdk";
+import { MidasSdk } from "@midas-capital/sdk";
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 import { BigNumber, ethers, utils, Wallet } from "ethers";
 
 import { config } from "./config";
