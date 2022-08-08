@@ -6,6 +6,7 @@ export { default as chainIrms } from "./irms";
 export { default as chainSpecificParams } from "./params";
 export { default as chainDeployedPlugins } from "./plugins";
 export { default as chainRedemptionStrategies } from "./redemptionStrategies";
+export { default as chainFundingStrategies } from "./fundingStrategies";
 export { default as chainLiquidationDefaults } from "./liquidation";
 export { default as chainSupportedAssets } from "./supportedAssets";
 export { default as assetSymbols } from "./assets/assetSymbols";

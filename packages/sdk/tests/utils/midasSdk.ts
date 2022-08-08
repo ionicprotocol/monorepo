@@ -154,6 +154,12 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
     abi: JarvisSynthereumLiquidatorArtifact.abi,
     address: JarvisSynthereumLiquidator.address,
   };
+  const JarvisLiquidatorFunder = await ethers.getContract("JarvisLiquidatorFunder");
+  const JarvisLiquidatorFunderArtifact = await deployments.getArtifact("JarvisLiquidatorFunder");
+  chainDeployment.JarvisLiquidatorFunder = {
+    abi: JarvisLiquidatorFunderArtifact.abi,
+    address: JarvisLiquidatorFunder.address,
+  };
   const CurveLpTokenLiquidatorNoRegistry = await ethers.getContract("CurveLpTokenLiquidatorNoRegistry");
   const CurveLpTokenLiquidatorNoRegistryArtifact = await deployments.getArtifact("CurveLpTokenLiquidatorNoRegistry");
   chainDeployment.CurveLpTokenLiquidatorNoRegistry = {

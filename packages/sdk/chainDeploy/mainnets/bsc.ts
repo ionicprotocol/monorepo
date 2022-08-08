@@ -520,6 +520,19 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(jarvisSynthereumLiquidator.transactionHash);
   console.log("JarvisSynthereumLiquidator: ", jarvisSynthereumLiquidator.address);
 
+  {
+    /// BUSD->jBRL
+    const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {
+      from: deployer,
+      args: [synthereumLiquidityPoolAddress, expirationTime],
+      log: true,
+      waitConfirmations: 1,
+    });
+    if (jarvisLiquidatorFunder.transactionHash)
+      await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
+    console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
+  }
+
   /// EPS
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {

@@ -8,6 +8,19 @@ export default async function liquidateUnhealthyBorrows(midasSdk: MidasSdk, retr
   if (retries >= 10) {
     throw "10 retries fetching liquidations, exiting";
   }
+
+  // console.log(`fns ${JSON.stringify(midasSdk.contracts.FuseSafeLiquidator.interface.functions)}`);
+  //
+  // const method = "justTesting";
+  // const params: FuseSafeLiquidator.InputVarsStruct =
+  //   {
+  //     justAddress: "0xF436D47F962e4AcD96Eb6D87677db91D5f40A204",
+  //   }
+  // ;
+  // const data = midasSdk.contracts.FuseSafeLiquidator.interface.encodeFunctionData(method, [params]);
+  //
+  // console.log(`GOT ENCODED DATA ${data}`);
+
   const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
   let potentialLiquidations: Array<LiquidatablePool> = [];
   try {

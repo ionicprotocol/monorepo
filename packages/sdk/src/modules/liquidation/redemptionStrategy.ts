@@ -1,7 +1,6 @@
 import { BytesLike, Contract, ethers } from "ethers";
 
 import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
-import { IUniswapV2Pair } from "../../../lib/contracts/typechain/IUniswapV2Pair";
 import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
@@ -103,7 +102,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator: {
-      const lpToken = new Contract(token, IUniswapV2Pair__factory.abi, fuse.provider) as IUniswapV2Pair;
+      const lpToken = IUniswapV2Pair__factory.connect(token, fuse.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();

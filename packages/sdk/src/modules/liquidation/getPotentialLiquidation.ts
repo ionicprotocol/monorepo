@@ -1,9 +1,9 @@
-import { BigNumber, constants, utils } from "ethers";
+import {BigNumber, constants, BytesLike, utils} from "ethers";
 
-import { LiquidationKind, LiquidationStrategy } from "../../enums";
-import { MidasBase } from "../../MidasSdk";
+import {LiquidationKind, LiquidationStrategy} from "../../enums";
+import {MidasBase} from "../../MidasSdk";
 
-import { ChainLiquidationConfig, getLiquidationKind } from "./config";
+import {ChainLiquidationConfig, getLiquidationKind} from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
 import { getStrategiesAndDatas } from "./redemptionStrategy";
 import {
@@ -13,7 +13,8 @@ import {
   SCALE_FACTOR_UNDERLYING_DECIMALS,
 } from "./utils";
 
-import { estimateGas } from "./index";
+import {estimateGas} from "./index";
+import {getFundingStrategiesAndDatas} from "./fundingStrategy";
 
 export default async function getPotentialLiquidation(
   fuse: MidasBase,
@@ -96,12 +97,24 @@ export default async function getPotentialLiquidation(
     chainLiquidationConfig.LIQUIDATION_STRATEGY,
     borrower.debt[0].underlyingToken
   );
-  const expectedOutputToken =
+  let debtFundingStrategies: string[] = [];
+  let debtFundingStrategiesData: BytesLike[] = [];
+  let flashSwapFundingToken = borrower.collateral[0].underlyingToken;
+
+  if (liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW) {
+    // chain some liquidation funding strategies
+    const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(fuse, borrower.debt[0].underlyingToken);
+    debtFundingStrategies = fundingStrategiesAndDatas.strategies;
+    debtFundingStrategiesData = fundingStrategiesAndDatas.datas;
+    flashSwapFundingToken = fundingStrategiesAndDatas.flashSwapFundingToken;
+  }
+
+  const collateralLiquidationOutputToken =
     liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW ? borrower.debt[0].underlyingToken : null;
   const strategyAndData = await getStrategiesAndDatas(
     fuse,
     borrower.collateral[0].underlyingToken,
-    expectedOutputToken
+    collateralLiquidationOutputToken
   );
 
   let expectedGasAmount: BigNumber;
@@ -112,7 +125,10 @@ export default async function getPotentialLiquidation(
       exchangeToTokenAddress,
       liquidationAmount,
       strategyAndData,
-      liquidationKind
+      liquidationKind,
+      flashSwapFundingToken,
+      debtFundingStrategies,
+      debtFundingStrategiesData
     );
   } catch {
     expectedGasAmount = BigNumber.from(750000);
@@ -140,6 +156,9 @@ export default async function getPotentialLiquidation(
     exchangeToTokenAddress,
     strategyAndData,
     liquidationAmount,
-    minProfitAmountEth.div(outputPrice).mul(BigNumber.from(10).pow(outputDecimals))
+    minProfitAmountEth.div(outputPrice).mul(BigNumber.from(10).pow(outputDecimals)),
+    flashSwapFundingToken,
+    debtFundingStrategies,
+    debtFundingStrategiesData
   );
 }

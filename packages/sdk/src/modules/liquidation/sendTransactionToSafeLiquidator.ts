@@ -19,11 +19,12 @@ export default async function sendTransactionToSafeLiquidator(
   // Build transaction
   const tx = {
     from: process.env.ETHEREUM_ADMIN_ACCOUNT,
-    to: fuse.contracts.FuseSafeLiquidator.address,
+    to: fuse.contracts.FuseSafeLiquidator.address,  // "0x46113fa3A272b415eA71b415b810761eA2491Bc2",
     value: value,
     data: data,
     nonce: txCount,
   };
+
   // Estimate gas for transaction
   const gasLimit = await fetchGasLimitForTransaction(fuse, method, tx);
   const txRequest: TransactionRequest = {

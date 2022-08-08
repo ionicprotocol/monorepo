@@ -31,13 +31,14 @@ import {
   chainLiquidationDefaults,
   chainOracles,
   chainRedemptionStrategies,
+  chainFundingStrategies,
   chainSpecificAddresses,
   chainSpecificParams,
   chainSupportedAssets,
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
-import { DelegateContractName, RedemptionStrategyContract, SupportedChains } from "../enums";
+import { DelegateContractName, FundingStrategyContract, RedemptionStrategyContract, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -90,6 +91,7 @@ export class MidasBase {
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
+  public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
 
   constructor(
     web3Provider: JsonRpcProvider | Web3Provider,
@@ -105,6 +107,7 @@ export class MidasBase {
     if (!this.chainDeployment) {
       throw new Error(`Chain deployment not found or provided for chainId ${chainId}`);
     }
+
     this.WhitePaperInterestRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
     this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainId);
@@ -170,6 +173,7 @@ export class MidasBase {
     this.supportedAssets = chainSupportedAssets[chainId];
     this.deployedPlugins = chainDeployedPlugins[chainId];
     this.redemptionStrategies = chainRedemptionStrategies[chainId];
+    this.fundingStrategies = chainFundingStrategies[chainId];
   }
 
   async deployPool(
