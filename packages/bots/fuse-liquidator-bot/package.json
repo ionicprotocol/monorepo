@@ -25,6 +25,7 @@
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.0",
     "@midas-capital/sdk": "workspace:*",
+    "@midas-capital/types": "workspace:*",
     "axios": "^0.21.1",
     "dotenv": "^16.0.0",
     "ethers": "^5.6.5",

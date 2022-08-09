@@ -1,8 +1,7 @@
-import { ethers, utils } from "ethers";
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { ethers } from "ethers";
 
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";

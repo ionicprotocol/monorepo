@@ -7,7 +7,7 @@ export { default as verifyTwapPriceFeed } from "./verifyTwapPriceFeed";
 export { updateOracleMonitorData } from "./controllers/index";
 
 export { getCgPrice } from "./utils";
-import { SupportedAsset } from "@midas-capital/sdk";
+import { SupportedAsset } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import pino from "pino";
 

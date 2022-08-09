@@ -1,8 +1,7 @@
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployDiaOracle } from "../helpers/dia";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
@@ -154,6 +153,30 @@ const diaAssets: DiaAsset[] = [
     underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.FTM)!.underlying,
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
     key: "FTM/USD",
+  },
+  {
+    symbol: assetSymbols.multiUSDT,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.multiUSDT)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "USDT/USD",
+  },
+  {
+    symbol: assetSymbols.madUSDT,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.madUSDT)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "USDT/USD",
+  },
+  {
+    symbol: assetSymbols.multiDAI,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.multiDAI)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "DAI/USD",
+  },
+  {
+    symbol: assetSymbols.madDAI,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.madDAI)!.underlying,
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "DAI/USD",
   },
 ];
 

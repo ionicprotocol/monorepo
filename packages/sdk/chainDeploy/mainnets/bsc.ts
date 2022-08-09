@@ -1,12 +1,13 @@
-import { ethers, utils } from "ethers";
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
 import { deployABNBcOracle } from "../helpers/aBNBcOracle";
+import { deployDiaOracle } from "../helpers/dia";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -397,10 +398,30 @@ const curvePools: CurvePoolConfig[] = [
   },
 ];
 
+const diaAssets: DiaAsset[] = [
+  {
+    symbol: assetSymbols.MAI,
+    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.MAI)!.underlying,
+    feed: "0xA6f83D792372487d7986657320e66b62DccfeC67",
+    key: "miMATIC/USD",
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  //// Dia Price Oracle
+  await deployDiaOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    diaAssets,
+    deployConfig,
+    diaNativeFeed: { feed: constants.AddressZero, key: "BNB/USD" },
+  });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({
@@ -520,6 +541,21 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+  //// deploy ankr bnb interest rate model
+  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
+    from: deployer,
+    args: [
+      deployConfig.blocksPerYear,
+      "25600000000000000",
+      "32000000000000000",
+      "800000000000000000",
+      3,
+      "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
+    ],
+    log: true,
+  });
+  if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
+  console.log("AnkrBNBInterestRateModel: ", abirm.address);
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;

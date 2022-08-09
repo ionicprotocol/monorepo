@@ -1,8 +1,7 @@
-import { ethers, providers, utils } from "ethers";
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { ethers, providers } from "ethers";
 
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 import { ChainDeployFnParams } from "../helpers/types";
 

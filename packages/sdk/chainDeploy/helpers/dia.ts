@@ -1,4 +1,4 @@
-import { constants, providers } from "ethers";
+import { providers } from "ethers";
 
 import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol";
 
@@ -26,8 +26,8 @@ export const deployDiaOracle = async ({
       deployConfig.wtoken,
       diaNativeFeed.feed,
       diaNativeFeed.key,
-      constants.AddressZero,
-      constants.AddressZero,
+      mpo.address,
+      deployConfig.stableToken,
     ],
     log: true,
   });

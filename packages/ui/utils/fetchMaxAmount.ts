@@ -1,4 +1,5 @@
-import { FundOperationMode, MidasSdk, NativePricedFuseAsset } from '@midas-capital/sdk';
+import { MidasSdk } from '@midas-capital/sdk';
+import { FundOperationMode, NativePricedFuseAsset } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';

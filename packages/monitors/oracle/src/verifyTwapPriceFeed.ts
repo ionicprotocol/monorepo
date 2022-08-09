@@ -1,4 +1,5 @@
-import { ERC20Abi, MidasSdk, OracleTypes } from "@midas-capital/sdk";
+import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
+import { OracleTypes } from "@midas-capital/types";
 import { BigNumber, Contract, utils, Wallet } from "ethers";
 
 import { config } from "./config";

@@ -1,8 +1,24 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import {
+  ChainAddresses,
+  ChainDeployment,
+  ChainParams,
+  DelegateContractName,
+  DeployedPlugins,
+  InterestRateModel,
+  InterestRateModelConf,
+  IrmConfig,
+  OracleConf,
+  OracleConfig,
+  RedemptionStrategyContract,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumber, constants, Contract, utils } from "ethers";
 
 import Deployments from "../../deployments.json";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
@@ -14,6 +30,7 @@ import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquid
 import { Artifacts, ARTIFACTS } from "../Artifacts";
 import {
   chainDeployedPlugins,
+  chainIrms,
   chainLiquidationDefaults,
   chainOracles,
   chainRedemptionStrategies,
@@ -23,7 +40,6 @@ import {
   irmConfig,
   oracleConfig,
 } from "../chainConfig";
-import { DelegateContractName, RedemptionStrategy, SupportedChains } from "../enums";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -33,21 +49,15 @@ import { withFusePoolLens } from "../modules/FusePoolLens";
 import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
-import {
-  ChainAddresses,
-  ChainDeployment,
-  ChainParams,
-  DeployedPlugins,
-  InterestRateModel,
-  InterestRateModelConf,
-  IrmConfig,
-  OracleConf,
-  OracleConfig,
-  SupportedAsset,
-} from "../types";
 
 import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
-import { CTOKEN_ERROR_CODES, JUMP_RATE_MODEL_CONF, WHITE_PAPER_RATE_MODEL_CONF } from "./config";
+import {
+  ANKR_BNB_INTEREST_RATE_MODEL_CONF,
+  CTOKEN_ERROR_CODES,
+  JUMP_RATE_MODEL_CONF,
+  WHITE_PAPER_RATE_MODEL_CONF,
+} from "./config";
+import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
@@ -66,9 +76,11 @@ export class MidasBase {
     [contractName: string]: Contract;
   };
   public JumpRateModelConf: InterestRateModelConf;
-  public WhitePaperRateModelConf: InterestRateModelConf;
+  public AnkrBNBInterestRateModelConf: InterestRateModelConf;
+  public WhitePaperInterestRateModelConf: InterestRateModelConf;
 
   public availableOracles: Array<string>;
+  public availableIrms: Array<string>;
   public chainId: SupportedChains;
   public chainDeployment: ChainDeployment;
   public oracles: OracleConfig;
@@ -79,7 +91,7 @@ export class MidasBase {
   public deployedPlugins: DeployedPlugins;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
-  public redemptionStrategies: { [token: string]: RedemptionStrategy };
+  public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
 
   constructor(
     web3Provider: JsonRpcProvider | Web3Provider,
@@ -95,8 +107,9 @@ export class MidasBase {
     if (!this.chainDeployment) {
       throw new Error(`Chain deployment not found or provided for chainId ${chainId}`);
     }
-    this.WhitePaperRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
+    this.WhitePaperInterestRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
     this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
+    this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainId);
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -136,7 +149,13 @@ export class MidasBase {
     }
     this.artifacts = ARTIFACTS;
 
-    this.irms = irmConfig(this.chainDeployment, this.artifacts);
+    this.availableIrms = chainIrms[chainId].filter((o) => {
+      if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
+        console.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
+        return false;
+      }
+      return true;
+    });
     this.availableOracles = chainOracles[chainId].filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
         console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
@@ -145,6 +164,7 @@ export class MidasBase {
       return true;
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
+    this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
 
     this.chainSpecificAddresses = chainSpecificAddresses[chainId];
     this.chainSpecificParams = chainSpecificParams[chainId];
@@ -228,7 +248,7 @@ export class MidasBase {
       }
 
       return [poolAddress, implementationAddress, priceOracle, poolId];
-    } catch (error: any) {
+    } catch (error) {
       throw Error("Deployment of new Fuse pool failed: " + (error.message ? error.message : error));
     }
   }
@@ -239,6 +259,7 @@ export class MidasBase {
       JumpRateModel: JumpRateModel,
       DAIInterestRateModelV2: DAIInterestRateModelV2,
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
+      AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 
@@ -318,6 +339,14 @@ export class MidasBase {
       this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
       this.provider.getSigner()
     ) as CErc20PluginRewardsDelegate;
+  }
+
+  getCErc20PluginInstance(address: string) {
+    return new Contract(
+      address,
+      this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
+      this.provider.getSigner()
+    ) as CErc20PluginDelegate;
   }
 }
 

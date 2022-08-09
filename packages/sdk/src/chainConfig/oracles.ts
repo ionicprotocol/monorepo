@@ -1,5 +1,4 @@
-import { OracleTypes, SupportedChains } from "../enums";
-import { ChainOracles } from "../types";
+import { ChainOracles, OracleTypes, SupportedChains } from "@midas-capital/types";
 
 const baseOracles = [OracleTypes.FixedNativePriceOracle, OracleTypes.MasterPriceOracle, OracleTypes.SimplePriceOracle];
 
@@ -34,7 +33,14 @@ const oracles: ChainOracles = {
 
   [SupportedChains.moonbase_alpha]: [...baseOracles],
   [SupportedChains.neon_devnet]: [...baseOracles],
-  [SupportedChains.polygon]: [...baseOracles],
+  [SupportedChains.polygon]: [
+    ...baseOracles,
+    OracleTypes.ChainlinkPriceOracleV2,
+    OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    OracleTypes.UniswapLpTokenPriceOracle,
+    OracleTypes.UniswapTwapPriceOracleV2,
+    OracleTypes.GelatoGUniPriceOracle,
+  ],
 };
 
 export default oracles;

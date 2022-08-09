@@ -1,8 +1,7 @@
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers, utils } from "ethers";
 
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 
 const assets = chainSupportedAssets[SupportedChains.neon_devnet];

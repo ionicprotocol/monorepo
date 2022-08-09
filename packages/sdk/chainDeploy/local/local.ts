@@ -1,11 +1,9 @@
+import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { FixedNativePriceOracle } from "../../lib/contracts/typechain/FixedNativePriceOracle";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams } from "../helpers/types";

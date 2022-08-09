@@ -1,4 +1,4 @@
-import { FusePoolData } from '@midas-capital/sdk';
+import { FusePoolData } from '@midas-capital/types';
 import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -36,7 +36,6 @@ export const useFusePools = (
 
       if (!filter) {
         res = await midasSdk.fetchPoolsManual({
-          verification: false,
           options: {
             from: address,
           },

@@ -1,11 +1,11 @@
+import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, constants, utils } from "ethers";
 
-import { LiquidationStrategy } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig, getLiquidationKind } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
-import { getStrategyAndData } from "./redemptionStrategy";
+import { getStrategiesAndDatas } from "./redemptionStrategy";
 import {
   EncodedLiquidationTx,
   FusePoolUserWithAssets,
@@ -92,10 +92,16 @@ export default async function getPotentialLiquidation(
     return null;
   }
   // Depending on liquidation strategy
-  const strategyAndData = await getStrategyAndData(fuse, borrower.collateral[0].underlyingToken);
   const liquidationKind = getLiquidationKind(
     chainLiquidationConfig.LIQUIDATION_STRATEGY,
     borrower.debt[0].underlyingToken
+  );
+  const expectedOutputToken =
+    liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW ? borrower.debt[0].underlyingToken : null;
+  const strategyAndData = await getStrategiesAndDatas(
+    fuse,
+    borrower.collateral[0].underlyingToken,
+    expectedOutputToken
   );
 
   let expectedGasAmount: BigNumber;

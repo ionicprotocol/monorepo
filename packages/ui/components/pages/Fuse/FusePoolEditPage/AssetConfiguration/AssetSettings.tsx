@@ -15,8 +15,12 @@ import {
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, CTokenErrorCodes, NativePricedFuseAsset } from '@midas-capital/sdk';
-import { BigNumber, ContractFunction, utils } from 'ethers';
+import {
+  ComptrollerErrorCodes,
+  CTokenErrorCodes,
+  NativePricedFuseAsset,
+} from '@midas-capital/types';
+import { BigNumber, ContractFunction, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
@@ -36,7 +40,7 @@ import { useRari } from '@ui/context/RariContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginName } from '@ui/hooks/usePluginName';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -89,6 +93,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { midasSdk, setPendingTxHash } = useRari();
   const errorToast = useErrorToast();
+  const successToast = useSuccessToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
@@ -153,11 +158,13 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
         throw err;
       }
 
-      await comptroller._setCollateralFactor(cTokenAddress, bigCollateralFactor);
-
+      const tx = await comptroller._setCollateralFactor(cTokenAddress, bigCollateralFactor);
+      await tx.wait();
       LogRocket.track('Fuse-UpdateCollateralFactor');
 
       await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated collateral factor!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
@@ -173,16 +180,18 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
 
     try {
-      await testForCTokenErrorAndSend(
+      const tx: ContractTransaction = await testForCTokenErrorAndSend(
         cToken.callStatic._setReserveFactor,
         bigReserveFactor,
         cToken._setReserveFactor,
         ''
       );
-
+      await tx.wait();
       LogRocket.track('Fuse-UpdateReserveFactor');
 
-      queryClient.refetchQueries();
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated reserve factor!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
@@ -198,16 +207,18 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
 
     try {
-      await testForCTokenErrorAndSend(
+      const tx: ContractTransaction = await testForCTokenErrorAndSend(
         cToken.callStatic._setAdminFee,
         bigAdminFee,
         cToken._setAdminFee,
         ''
       );
-
+      await tx.wait();
       LogRocket.track('Fuse-UpdateAdminFee');
 
-      queryClient.refetchQueries();
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated admin fee!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
@@ -220,16 +231,18 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
     const cToken = midasSdk.createCToken(cTokenAddress || '');
 
     try {
-      await testForCTokenErrorAndSend(
+      const tx: ContractTransaction = await testForCTokenErrorAndSend(
         cToken.callStatic._setInterestRateModel,
         interestRateModel,
         cToken._setInterestRateModel,
         ''
       );
-
+      await tx.wait();
       LogRocket.track('Fuse-UpdateInterestRateModel');
 
-      queryClient.refetchQueries();
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated interest rate modal!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
@@ -672,7 +685,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
                         style={{ color: cSelect.txtColor }}
                       >
-                        WhitePaperRateModel
+                        WhitePaperInterestRateModel
                       </option>
                     </Select>
                     <FormErrorMessage marginBottom="-10px">

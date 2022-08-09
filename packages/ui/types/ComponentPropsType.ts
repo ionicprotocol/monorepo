@@ -1,5 +1,5 @@
 import { BoxProps, FlexProps } from '@chakra-ui/react';
-import { NativePricedFuseAsset } from '@midas-capital/sdk';
+import { NativePricedFuseAsset } from '@midas-capital/types';
 import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 

@@ -1,5 +1,7 @@
 import { Contract, Signer } from "ethers";
 
+import { Artifacts, MidasBaseConstructor } from "..";
+import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBInterestRateModel.sol";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
@@ -9,7 +11,6 @@ import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { Artifacts, MidasBaseConstructor } from "../types";
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
@@ -21,6 +22,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createFuseFlywheelCore = this.createContractInstance<FuseFlywheelCore>("FuseFlywheelCore");
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
+    createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
 
     createRewardsDistributor(distributorAddress: string, signer: Signer = this.provider.getSigner()) {
       return new Contract(

@@ -1,11 +1,11 @@
+import { SupportedChains } from "@midas-capital/types";
 import { expect } from "chai";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 
-import { SupportedChains } from "../../src/enums";
+import { MidasBaseConstructor } from "../../src";
 import { MidasBase } from "../../src/MidasSdk/index";
 import { withFusePoolLens } from "../../src/modules/FusePoolLens";
-import { MidasBaseConstructor } from "../../src/types";
 import { mkAddress } from "../helpers";
 
 describe("FusePoolLens", () => {

@@ -1,5 +1,8 @@
-import { SupportedChains } from "../enums";
-import { ChainSupportedAssets as ChainSupportedAssetsType, SupportedAsset } from "../types";
+import {
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 
 import {
   auroraAssets,
@@ -38,5 +41,11 @@ export const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<ty
     acc[key] = assetArrayToMap(value);
     return acc;
   }, {});
+
+export const underlying = function (assets: SupportedAsset[], symbol: string): string {
+  const asset = assets.find((a: SupportedAsset) => a.symbol === symbol);
+  if (!asset) throw new Error(`no such SupportedAsset with symbol ${symbol} in assets ${JSON.stringify(assets)}`);
+  return asset.underlying;
+};
 
 export default ChainSupportedAssets;

@@ -1,16 +1,18 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { DelegateContractName, LiquidationStrategy, OracleTypes, RedemptionStrategy, SupportedChains } from "./enums";
-import { MidasBase } from "./MidasSdk";
-import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
-import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
-import WhitePaperInterestRateModel from "./MidasSdk/irm/WhitePaperInterestRateModel";
-export { Artifacts, Artifact } from "./Artifacts";
+import { LiquidationStrategy, OracleTypes, RedemptionStrategyContract, SupportedChains } from "./enums";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type GConstructor<T> = new (...args: any[]) => T;
-export type MidasBaseConstructor = GConstructor<MidasBase>;
-
+export type Artifact = {
+  abi: Array<object>;
+  bytecode: {
+    object: string;
+    sourceMap: string;
+  };
+  deployedBytecode: {
+    object: string;
+    sourceMap: string;
+  };
+};
 export type TxOptions = Overrides & { from?: string | Promise<string> };
 
 export type MinifiedContracts = {
@@ -69,7 +71,11 @@ export type ChainDeployment = {
 export type OracleConfig = ChainDeployment;
 export type IrmConfig = OracleConfig;
 
-export type InterestRateModelType = JumpRateModel | DAIInterestRateModelV2 | WhitePaperInterestRateModel;
+interface PluginData {
+  market: string;
+  name: string;
+  strategy?: string;
+}
 
 export interface MarketConfig {
   underlying: string;
@@ -123,6 +129,8 @@ export type InterestRateModelParams = {
   multiplierPerYear?: string;
   jumpMultiplierPerYear?: string;
   kink?: string;
+  day?: number;
+  abnbr?: string;
 };
 
 export type InterestRateModelConf = {
@@ -238,11 +246,15 @@ export type ChainLiquidationDefaults = {
 
 export type ChainRedemptionStrategy = {
   [chain in SupportedChains]: {
-    [token: string]: RedemptionStrategy;
+    [token: string]: [RedemptionStrategyContract, string];
   };
 };
 
 export type ChainOracles = {
+  [chain in SupportedChains]: string[];
+};
+
+export type ChainIrms = {
   [chain in SupportedChains]: string[];
 };
 
@@ -257,6 +269,8 @@ export type ChainParams = {
 
 export type ChainAddresses = {
   W_TOKEN: string;
+  STABLE_TOKEN: string;
+  W_BTC_TOKEN: string;
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
   UNISWAP_V2_ROUTER: string;
   UNISWAP_V2_FACTORY: string;

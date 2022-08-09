@@ -51,7 +51,7 @@ jobs:
           YARN_CHECKSUM_BEHAVIOR: update
 
       - name: Build `sdk`
-        run: yarn workspace @midas-capital/sdk build
+        run: yarn build:sdk
 
       - name: Lint `fuse-liquidator-bot`
         run: yarn workspace @midas-capital/fuse-liquidator-bot lint
@@ -202,7 +202,8 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      NODEREAL_API_KEY: '${{ secrets.NODEREAL_API_KEY }}'
+      NODEREAL_BSC_API_KEY: '${{ secrets.NODEREAL_BSC_API_KEY }}'
+      NODEREAL_MATIC_API_KEY: '${{ secrets.NODEREAL_MATIC_API_KEY }}'
       TWAP_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-twap-image.outputs.json).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-liquidator-image.outputs.json).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.build-and-push-oracles-monitor-image.outputs.json).tags[0] }}
@@ -239,7 +240,8 @@ jobs:
       MORALIS_API_KEY: '${{ secrets.MORALIS_API_KEY }}'
       POKT_API_KEY: '${{ secrets.POKT_API_KEY }}'
       GETBLOCK_API_KEY: '${{ secrets.GETBLOCK_API_KEY }}'
-      NODEREAL_API_KEY: '${{ secrets.NODEREAL_API_KEY }}'
+      NODEREAL_BSC_API_KEY: '${{ secrets.NODEREAL_BSC_API_KEY }}'
+      NODEREAL_MATIC_API_KEY: '${{ secrets.NODEREAL_MATIC_API_KEY }}'
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
       TWAP_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.twap-tags).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.liquidator-tags).tags[0] }}

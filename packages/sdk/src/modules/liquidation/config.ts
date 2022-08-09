@@ -1,6 +1,6 @@
+import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
-import { LiquidationKind, LiquidationStrategy } from "../../";
 import { MidasBase } from "../../MidasSdk";
 
 export type ChainLiquidationConfig = {

@@ -1,10 +1,11 @@
+import { SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
+import { deployGelatoGUniPriceOracle } from "../helpers/gelato";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
 import { deployCurveLpOracle } from "../oracles/curveLp";
 import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
@@ -48,10 +49,46 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDC"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-ETH"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDT"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying, // USDC-ETH PCS LP
+      assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying,
     ],
   },
-  plugins: [],
+  plugins: [
+    {
+      // agEUR-jEUR LP
+      strategy: "BeefyERC4626",
+      name: "AGEURJEUR",
+      underlying: assets.find((a) => a.symbol === assetSymbols["AGEUR-JEUR"])!.underlying,
+      otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "10"],
+    },
+    {
+      // jEUR-PAR LP
+      strategy: "BeefyERC4626",
+      name: "JEURPAR",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JEUR-PAR"])!.underlying,
+      otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "10"],
+    },
+    {
+      // jJPY-JPYC LP
+      strategy: "BeefyERC4626",
+      name: "JJPYJPYC",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JJPY-JPYC"])!.underlying,
+      otherParams: ["0x122E09FdD2FF73C8CEa51D432c45A474BAa1518a", "10"],
+    },
+    {
+      // jCAD-CADC LP
+      strategy: "BeefyERC4626",
+      name: "JCADCADC",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JCAD-CADC"])!.underlying,
+      otherParams: ["0xcf9Dd1de1D02158B3d422779bd5184032674A6D1", "10"],
+    },
+    {
+      // jSGD-XSGD LP
+      strategy: "BeefyERC4626",
+      name: "JSGDXSGD",
+      underlying: assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
+      otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
+    },
+  ],
   cgId: chainSpecificParams[SupportedChains.polygon].cgId,
 };
 
@@ -133,6 +170,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.MAI,
+    aggregator: "0xd8d483d813547CfB624b8Dc33a00F2fcbCd2D428",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.MKR,
     aggregator: "0xa070427bF5bA5709f70e98b94Cb2F435a242C46C",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -177,10 +219,223 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0xDE31F8bFBD8c84b5360CFACCa3539B938dd78ae6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.AGEUR,
+    aggregator: "0x9b88d07B2354eF5f4579690356818e07371c7BeD",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JEUR,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.PAR,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.EURT,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JJPY,
+    aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JPYC,
+    aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JCAD,
+    aggregator: "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.CADC,
+    aggregator: "0xACA44ABb8B04D07D883202F99FA5E3c53ed57Fb5",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JSGD,
+    aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.XSGD,
+    aggregator: "0x8CE3cAc0E6635ce04783709ca3CC4F5fc5304299",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JNZD,
+    aggregator: "0xa302a0B8a499fD0f00449df0a490DedE21105955",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.NZDS,
+    aggregator: "0xa302a0B8a499fD0f00449df0a490DedE21105955",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JCHF,
+    aggregator: "0xc76f762CedF0F78a439727861628E0fdfE1e70c2",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JMXN,
+    aggregator: "0x171b16562EA3476F5C61d1b8dad031DbA0768545",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JGBP,
+    aggregator: "0x099a2540848573e94fb1Ca0Fa420b00acbBc845a",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JCNY,
+    aggregator: "0x04bB437Aa63E098236FA47365f0268547f6EAB32",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JAUD,
+    aggregator: "0x062Df9C4efd2030e243ffCc398b652e8b8F95C6f",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JPLN,
+    aggregator: "0xB34BCE11040702f71c11529D00179B2959BcE6C0",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JSEK,
+    aggregator: "0xbd92B4919ae82be8473859295dEF0e778A626302",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JKRW,
+    aggregator: "0x24B820870F726dA9B0D83B0B28a93885061dbF50",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.JPHP,
+    aggregator: "0x218231089Bebb2A31970c3b77E96eCfb3BA006D1",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
-// https://docs.ellipsis.finance/deployment-links
-const curvePools: CurvePoolConfig[] = [];
+// https://polygon.curve.fi/
+const curvePools: CurvePoolConfig[] = [
+  {
+    lpToken: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
+    pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.AGEUR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
+    pool: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
+    pool: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.EURT)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    pool: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JJPY)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.JPYC)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
+    pool: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JCAD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.CADC)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
+    pool: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
+    pool: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.JNZD)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.NZDS)!.underlying,
+    ],
+  },
+];
+
+const gelatoAssets: GelatoGUniAsset[] = [
+  {
+    // USDC/WETH
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+  },
+  {
+    // WBTC/WETH
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WBTC_WETH_005)!.underlying,
+  },
+  {
+    // USDC/PAR
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_PAR_005)!.underlying,
+  },
+  {
+    // WMATIC/USDC
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_USDC_005)!.underlying,
+  },
+  {
+    // USDC/agEUR
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_agEUR_001)!.underlying,
+  },
+  {
+    // WMATIC/WETH
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_WETH_005)!.underlying,
+  },
+  {
+    // WMATIC/AAVE
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_AAVE_03)!.underlying,
+  },
+  {
+    // USDC/MAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_MAI_005)!.underlying,
+  },
+  {
+    // USDC/USDT 0.01 % fee tier
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+  },
+  {
+    // USDC/USDT 0.05 % fee tier
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_005)!.underlying,
+  },
+  {
+    // USDC/DAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_DAI_005)!.underlying,
+  },
+  {
+    // WETH/DAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WETH_DAI_03)!.underlying,
+  },
+];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
@@ -218,14 +473,24 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   //// Curve LP Oracle
-  // await deployCurveLpOracle({
-  //   run,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   deployConfig,
-  //   curvePools,
-  // });
+  await deployCurveLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curvePools,
+  });
+
+  //// Gelato GUni Oracle
+  await deployGelatoGUniPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gelatoAssets,
+  });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,

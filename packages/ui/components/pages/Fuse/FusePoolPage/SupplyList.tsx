@@ -15,12 +15,11 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
-import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/sdk';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/types';
 import { ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
-import { useQueryClient } from 'react-query';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
@@ -183,7 +182,7 @@ const RewardsInfo = ({
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {data.apy.toFixed(2)}%
+          {data.apy > 0 && data.apy.toFixed(2) + '%'}
         </Text>
       )}
     </HStack>
@@ -211,7 +210,6 @@ const AssetSupplyRow = ({
     asset.supplyRatePerBlock,
     getBlockTimePerMinuteByChainId(currentChain.id)
   );
-  const queryClient = useQueryClient();
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -263,8 +261,6 @@ const AssetSupplyRow = ({
     setPendingTxHash(call.hash);
 
     LogRocket.track('Fuse-ToggleCollateral');
-
-    await queryClient.refetchQueries();
   };
 
   return (

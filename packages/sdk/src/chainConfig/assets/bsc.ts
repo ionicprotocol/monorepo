@@ -1,5 +1,4 @@
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 import { assetSymbols } from "./index";
 
@@ -93,10 +92,17 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.TUSD,
-    underlying: "0x14016e85a25aeb13065688cafb43044c2ef86784",
+    underlying: "0x14016E85a25aeb13065688cAFB43044C2ef86784",
     name: "Wrapped TrueUSD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
+    symbol: assetSymbols.MAI,
+    underlying: "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d",
+    name: "Mai Stablecoin",
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
   },
   // Ellipsis
   {

@@ -1,8 +1,8 @@
+import { ChainDeployment } from "@midas-capital/types";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
 import { MidasSdk } from "../../src";
-import { ChainDeployment } from "../../src/types";
 
 let midasSdk: MidasSdk;
 
@@ -104,6 +104,12 @@ export const getLocalDeployments = async (): Promise<ChainDeployment> => {
 
 export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   const chainDeployment: ChainDeployment = {};
+  const AnkrBNBInterestRateModel = await ethers.getContract("AnkrBNBInterestRateModel");
+  const AnkrBNBInterestRateModelArtifact = await deployments.getArtifact("AnkrBNBInterestRateModel");
+  chainDeployment.AnkrBNBInterestRateModel = {
+    abi: AnkrBNBInterestRateModelArtifact.abi,
+    address: AnkrBNBInterestRateModel.address,
+  };
   const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
   const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");
   chainDeployment.WhitePaperInterestRateModel = {

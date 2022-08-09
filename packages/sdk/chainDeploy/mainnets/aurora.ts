@@ -1,4 +1,5 @@
-import { SupportedChains } from "../../src";
+import { SupportedChains } from "@midas-capital/types";
+
 import { chainSpecificParams } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 

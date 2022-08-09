@@ -1,5 +1,6 @@
+import { SupportedChains } from "@midas-capital/types";
+
 import { chainSpecificParams } from "../chainConfig";
-import { SupportedChains } from "../enums";
 
 export const COMPTROLLER_ERROR_CODES: Array<string> = [
   "NO_ERROR",
@@ -62,11 +63,25 @@ export const JUMP_RATE_MODEL_CONF = (chainId: SupportedChains) => {
 
 export const WHITE_PAPER_RATE_MODEL_CONF = (chainId: SupportedChains) => {
   return {
-    interestRateModel: "WhitePaperRateModel",
+    interestRateModel: "WhitePaperInterestRateModel",
     interestRateModelParams: {
       blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
       baseRatePerYear: "20000000000000000",
       multiplierPerYear: "200000000000000000",
+    },
+  };
+};
+
+export const ANKR_BNB_INTEREST_RATE_MODEL_CONF = (chainId: SupportedChains) => {
+  return {
+    interestRateModel: "AnkrBNBInterestRateModel",
+    interestRateModelParams: {
+      blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
+      baseRatePerYear: "25600000000000000",
+      multiplierPerYear: "32000000000000000",
+      kink: "800000000000000000",
+      day: 3, // set day period
+      abnbr: "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
     },
   };
 };

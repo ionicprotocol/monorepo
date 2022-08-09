@@ -15,7 +15,7 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
   .map(([, value]) => value)
   .filter((value) => typeof value === "number");
 
-export enum RedemptionStrategy {
+export enum RedemptionStrategyContract {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
   XBombLiquidator = "XBombLiquidator",
   JarvisSynthereumLiquidator = "JarvisSynthereumLiquidator",
@@ -39,6 +39,13 @@ export enum OracleTypes {
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
+  GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
+}
+
+export enum IrmTypes {
+  JumpRateModel = "JumpRateModel",
+  WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
+  AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
 }
 
 export enum LiquidationStrategy {

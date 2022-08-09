@@ -1,9 +1,9 @@
+import { LiquidationKind } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
-import { LiquidationKind } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
-import { StrategyAndData } from "./redemptionStrategy";
+import { StrategiesAndDatas } from "./redemptionStrategy";
 import { FusePoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
@@ -11,7 +11,7 @@ const estimateGas = async (
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
-  strategyAndData: StrategyAndData,
+  strategiesAndDatas: StrategiesAndDatas,
   liquidationKind: LiquidationKind
 ) => {
   switch (liquidationKind) {
@@ -25,8 +25,8 @@ const estimateGas = async (
         0,
         exchangeToTokenAddress,
         fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategyAndData.strategyAddress,
-        strategyAndData.strategyData,
+        strategiesAndDatas.strategies,
+        strategiesAndDatas.datas,
         {
           gasLimit: 1e9,
           value: liquidationAmount,
@@ -44,8 +44,8 @@ const estimateGas = async (
         0,
         exchangeToTokenAddress,
         fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategyAndData.strategyAddress,
-        strategyAndData.strategyData,
+        strategiesAndDatas.strategies,
+        strategiesAndDatas.datas,
         {
           gasLimit: 1e9,
           from: process.env.ETHEREUM_ADMIN_ACCOUNT,
@@ -61,8 +61,8 @@ const estimateGas = async (
         0,
         exchangeToTokenAddress,
         fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategyAndData.strategyAddress,
-        strategyAndData.strategyData,
+        strategiesAndDatas.strategies,
+        strategiesAndDatas.datas,
         0,
         {
           gasLimit: 1e9,
@@ -79,8 +79,8 @@ const estimateGas = async (
         exchangeToTokenAddress,
         fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
         fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategyAndData.strategyAddress,
-        strategyAndData.strategyData,
+        strategiesAndDatas.strategies,
+        strategiesAndDatas.datas,
         0,
         {
           gasLimit: 1e9,
