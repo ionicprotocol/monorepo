@@ -1,4 +1,4 @@
-import { ChainConfig } from "@midas-capital/types";
+import { ChainConfig, SupportedChains } from "@midas-capital/types";
 
 import deployments from "../../deployments/polygon.json";
 
@@ -12,6 +12,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
+  chainId: SupportedChains.moonbeam,
   chainAddresses,
   assets,
   irms,

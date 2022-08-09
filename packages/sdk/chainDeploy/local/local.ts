@@ -1,14 +1,14 @@
-import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { ganache } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { FixedNativePriceOracle } from "../../lib/contracts/typechain/FixedNativePriceOracle";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams } from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.ganache];
+const assets = ganache.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WETH)!.underlying,

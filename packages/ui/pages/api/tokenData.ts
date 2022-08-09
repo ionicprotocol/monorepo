@@ -18,18 +18,16 @@ import { providerURLForChain } from '@ui/utils/web3Providers';
 const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ganache]: [],
   [SupportedChains.evmos]: [],
-  [SupportedChains.evmos_testnet]: [],
   [SupportedChains.bsc]: [],
   [SupportedChains.chapel]: [],
-  [SupportedChains.moonbase_alpha]: [],
   [SupportedChains.moonbeam]: [],
-  [SupportedChains.aurora]: [],
   [SupportedChains.neon_devnet]: [],
   [SupportedChains.polygon]: [],
 };
 
 const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<typeof assetArrayToMap> } =
   Object.entries(ChainSupportedAssets).reduce((acc, [key, value]) => {
+    // @ts-ignore
     acc[key] = assetArrayToMap(value);
     return acc;
   }, {});

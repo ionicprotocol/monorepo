@@ -290,6 +290,7 @@ export type ChainSupportedAssets = {
 };
 
 export type ChainConfig = {
+  chainId: number;
   chainAddresses: ChainAddresses;
   assets: SupportedAsset[];
   irms: IrmTypes[];

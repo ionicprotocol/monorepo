@@ -3,10 +3,10 @@ import {
   ChainRedemptionStrategy,
   RedemptionStrategyContract,
   SupportedChains,
+  underlying,
 } from "@midas-capital/types";
 
 import { bscAssets, moonbeamAssets } from "./assets";
-import { underlying } from "./supportedAssets";
 
 const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.bsc]: {

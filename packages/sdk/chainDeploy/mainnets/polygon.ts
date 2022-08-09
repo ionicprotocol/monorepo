@@ -1,8 +1,8 @@
+import { polygon } from "@midas-capital/chains";
 import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
@@ -21,7 +21,7 @@ import {
   JarvisLiquidityPool,
 } from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.polygon];
+const assets = polygon.assets;
 const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
@@ -31,7 +31,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "MATIC",
   stableToken: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
   wBTCToken: assets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: polygon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [
@@ -101,7 +101,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.polygon].cgId,
+  cgId: polygon.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
