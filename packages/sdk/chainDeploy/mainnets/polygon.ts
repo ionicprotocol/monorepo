@@ -8,11 +8,18 @@ import {
   ChainlinkFeedBaseCurrency,
   deployChainlinkOracle,
   deployCurveLpOracle,
+  deployJarvisSynthereumLiquidator,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  CurvePoolConfig,
+  GelatoGUniAsset,
+  JarvisLiquidityPool,
+} from "../helpers/types";
 
 const assets = chainSupportedAssets[SupportedChains.polygon];
 const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;
@@ -442,6 +449,41 @@ const gelatoAssets: GelatoGUniAsset[] = [
   },
 ];
 
+const jarvisLiquidityPools: JarvisLiquidityPool[] = [
+  // jAUD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x36572797Cc569A74731E0738Ef56e3b8ce3F309c" },
+  //  jGBP -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x36d6D1d6249fbC6EBd0fC28fd46C846fB69b9074" },
+  //  jCAD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x06440a2DA257233790B5355322dAD82C10F0389A" },
+  //  jCHF -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x8734CF40A402D4191BD4D7a64bEeF12E4c452DeF" },
+  //  jCNY -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x72E7Da7C0dD3C082Dfe8f22343D6AD70286e07bd" },
+  //  jCOP -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x1493607042C5725cEf277A83CFC94caA4fc6278F" },
+  //  jEUR -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x65a7b4Ff684C2d08c115D55a4B089bf4E92F5003" },
+  //  jJPY -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0xAEc757BF73cc1f4609a1459205835Dd40b4e3F29" },
+  //  jKRW -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x7aC6515f4772fcB6EEeF978f60D996B21C56089D" },
+  //  jMXN -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x25E9F976f5020F6BF2d417b231e5f414b7700E31" },
+  //  jNGN -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x63B5891895A57C31d5Ec2a8A5521b6EE67700f9F" },
+  //  jNZD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x4FDA1B4b16f5F2535482b91314018aE5A2fda602" },
+  //  jPHP -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x8aE34663B4622336818e334dC42f92C41eFbfa35" },
+  //  jPLN -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x166e4B3Ec3F81F32f0863B9cD63621181d6bFED5" },
+  //  jSEK -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0xc8442072CF1E131506eaC7df33eA8910e1d5cFDd" },
+  //  jSGD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0xBE813590e1B191120f5df3343368f8a2F579514C" },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -507,6 +549,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("SimplePriceOracle: ", simplePO.address);
 
   //// Liquidator Redemption Strategies
+
+  //// UniswapLpTokenLiquidator
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,
     args: [],
@@ -518,7 +562,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  /// CurveLPLiquidator
+  //// CurveLPLiquidator
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
@@ -530,7 +574,26 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
-  ////
+  //// Gelato GUNI Liquidator
+  const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (gelatoGUniLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(gelatoGUniLiquidator.transactionHash);
+  }
+  console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
+
+  //// JarvisSynthereumLiquidator
+  await deployJarvisSynthereumLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    jarvisLiquidityPools,
+  });
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
