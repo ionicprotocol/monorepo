@@ -1,8 +1,7 @@
 import { providers } from "ethers";
 
-import { GelatoGUniPriceOracle } from "../../lib/contracts/typechain/GelatoGUniPriceOracle";
-
-import { gelatoGUniPriceOracleDeployParams } from "./types";
+import { GelatoGUniPriceOracle } from "../../../lib/contracts/typechain/GelatoGUniPriceOracle";
+import { gelatoGUniPriceOracleDeployParams } from "../types";
 
 export const deployGelatoGUniPriceOracle = async ({
   ethers,
