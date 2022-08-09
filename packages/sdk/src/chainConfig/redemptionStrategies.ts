@@ -30,7 +30,7 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
       underlying(bscAssets, assetSymbols.BOMB),
     ],
     [underlying(bscAssets, assetSymbols.jBRL)]: [
-      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      RedemptionStrategyContract.JarvisLiquidatorFunder,
       underlying(bscAssets, assetSymbols.BUSD),
     ],
     [underlying(bscAssets, assetSymbols["WBNB-BUSD"])]: [

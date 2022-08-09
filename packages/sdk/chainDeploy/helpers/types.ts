@@ -137,6 +137,6 @@ export type JarvisLiquidityPool = {
 };
 
 // future proofing for when we can deploy more than one liq pool liquidator
-export type JarvisSynthereumLiquidatorDeployParams = ChainDeployFnParams & {
+export type JarvisLiquidatorFunderDeployParams = ChainDeployFnParams & {
   jarvisLiquidityPools: JarvisLiquidityPool[];
 };

@@ -8,7 +8,7 @@ import {
   ChainlinkFeedBaseCurrency,
   deployChainlinkOracle,
   deployCurveLpOracle,
-  deployJarvisSynthereumLiquidator,
+  deployJarvisLiquidatorFunder,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
@@ -586,8 +586,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
 
-  //// JarvisSynthereumLiquidator
-  await deployJarvisSynthereumLiquidator({
+  //// JarvisLiquidatorFunder
+  await deployJarvisLiquidatorFunder({
     run,
     ethers,
     getNamedAccounts,

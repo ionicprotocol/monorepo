@@ -127,7 +127,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         outputToken,
       };
     }
-    case RedemptionStrategyContract.JarvisSynthereumLiquidator: {
+    case RedemptionStrategyContract.JarvisLiquidatorFunder: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
     }
     default: {
