@@ -8,6 +8,7 @@
     "packages/bots/apy-tracking",
     "packages/functions",
     "packages/monitors/oracle",
+    "packages/chains",
     "packages/sdk",
     "packages/types",
     "packages/ui"
@@ -31,6 +32,7 @@
     "build:all": "yarn workspaces foreach run build",
     "build:sdk": "yarn build:types && yarn workspace @midas-capital/sdk build",
     "build:types": "yarn workspace @midas-capital/types build",
+    "build:chains": "yarn workspace @midas-capital/chains build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:functions": "yarn workspace @midas-capital/functions build",
