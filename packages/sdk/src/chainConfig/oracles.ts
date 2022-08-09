@@ -1,5 +1,4 @@
-import { OracleTypes, SupportedChains } from "../enums";
-import { ChainOracles } from "../types";
+import { ChainOracles, OracleTypes, SupportedChains } from "@midas-capital/types";
 
 const baseOracles = [OracleTypes.FixedNativePriceOracle, OracleTypes.MasterPriceOracle, OracleTypes.SimplePriceOracle];
 
@@ -40,6 +39,7 @@ const oracles: ChainOracles = {
     OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     OracleTypes.UniswapLpTokenPriceOracle,
     OracleTypes.UniswapTwapPriceOracleV2,
+    OracleTypes.GelatoGUniPriceOracle,
   ],
 };
 

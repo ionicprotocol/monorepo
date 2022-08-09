@@ -1,10 +1,9 @@
 import { TransactionRequest } from "@ethersproject/providers";
+import { FuseAsset, LiquidationKind } from "@midas-capital/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
-import { LiquidationKind } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
-import { FuseAsset } from "../../types";
 
 export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);
 export const SCALE_FACTOR_UNDERLYING_DECIMALS = (asset: FuseAsset) =>

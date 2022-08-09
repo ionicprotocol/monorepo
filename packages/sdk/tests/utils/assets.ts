@@ -1,6 +1,6 @@
+import { MarketConfig } from "@midas-capital/types";
 import { ethers } from "hardhat";
 
-import { MarketConfig } from "../../src";
 import { assetSymbols } from "../../src/chainConfig";
 import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
 

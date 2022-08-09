@@ -1,5 +1,8 @@
-import { SupportedChains } from "../enums";
-import { ChainSupportedAssets as ChainSupportedAssetsType, SupportedAsset } from "../types";
+import {
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 
 import {
   auroraAssets,

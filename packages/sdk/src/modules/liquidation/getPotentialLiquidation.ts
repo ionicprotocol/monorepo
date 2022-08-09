@@ -1,7 +1,7 @@
-import {BigNumber, constants, BytesLike, utils} from "ethers";
+import { BigNumber, constants, BytesLike, utils } from "ethers";
 
-import {LiquidationKind, LiquidationStrategy} from "../../enums";
-import {MidasBase} from "../../MidasSdk";
+import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
+import { MidasBase } from "../../MidasSdk";
 
 import {ChainLiquidationConfig, getLiquidationKind} from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";

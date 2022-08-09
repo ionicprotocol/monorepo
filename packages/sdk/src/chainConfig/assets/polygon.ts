@@ -1,5 +1,4 @@
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
+import { OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 import { assetSymbols } from "./index";
 
@@ -91,14 +90,14 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.GHST,
-    underlying: "0x385eeac5cb85a38a9a07a70c73e0a3271cfb54a7",
+    underlying: "0x385Eeac5cB85A38A9a07A70c73e0a3271CfB54A7",
     name: "Aavegotchi GHST Token (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
     symbol: assetSymbols.GRT,
-    underlying: "0x5fe2b58c013d7601147dcdd68c143a77499f5531",
+    underlying: "0x5fe2B58c013d7601147DcdD68C143A77499f5531",
     name: "Graph Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
@@ -175,7 +174,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.WBTC,
-    underlying: "0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6",
+    underlying: "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6",
     name: "Wrapped BTC (PoS)",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
@@ -260,7 +259,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols["JEUR-EURT"],
-    underlying: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+    underlying: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
     name: "Jarvis JEUR-EURT LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
@@ -411,6 +410,92 @@ export const assets: SupportedAsset[] = [
     name: "StratisX Singapore Dollar (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  // Arrakis Vaults
+  {
+    symbol: assetSymbols["arrarkis_USDC_WETH_005"],
+    underlying: "0xA173340f1E942c2845bcBCe8EBD411022E18EB13",
+    name: "Arrakis Vault V1 USDC/WETH 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_WBTC_WETH_005"],
+    underlying: "0x590217ef04BcB96FF6Da991AB070958b8F9E77f0",
+    name: "Arrakis Vault V1 WBTC/WETH 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_USDC_PAR_005"],
+    underlying: "0xC1DF4E2fd282e39346422e40C403139CD633Aacd",
+    name: "Arrakis Vault V1 USDC/PAR 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_WMATIC_USDC_005"],
+    underlying: "0x4520c823E3a84ddFd3F99CDd01b2f8Bf5372A82a",
+    name: "Arrakis Vault V1 WMATIC/USDC 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_USDC_agEUR_001"],
+    underlying: "0x1644de0A8E54626b54AC77463900FcFFD8B94542",
+    name: "Arrakis Vault V1 USDC/agEUR 0.01",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_WMATIC_WETH_005"],
+    underlying: "0xDC0eCA1D69ab51C2B2171C870A1506499081dA5B",
+    name: "Arrakis Vault V1 WMATIC/WETH 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_WMATIC_AAVE_03"],
+    underlying: "0x3Cc255339a27eFa6c38bEe880F4061AB9b231732",
+    name: "Arrakis Vault V1 WMATIC/AAVE 0.3",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_USDC_MAI_005"],
+    underlying: "0x4Fe4d754d1B2feaAd266332CfE3d3fcaa632c953",
+    name: "Arrakis Vault V1 USDC/MAI 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_USDC_USDT_001"],
+    underlying: "0x2817E729178471DBAC8b1FC190b4fd8e6F3984e3",
+    name: "Arrakis Vault V1 USDC/USDT 0.01",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_USDC_USDT_005"],
+    underlying: "0x869A75D6F7ae09810c9083684cf22e9A618c8B05",
+    name: "Arrakis Vault V1 USDC/USDT 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+
+  {
+    symbol: assetSymbols["arrarkis_USDC_DAI_005"],
+    underlying: "0x2aF769150510Ad9eb37D2e63e1E483114d995cBA",
+    name: "Arrakis Vault V1 USDC/DAI 0.05",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
+  },
+  {
+    symbol: assetSymbols["arrarkis_WETH_DAI_03"],
+    underlying: "0x21F65eA5bf55c48A19b195d5d8CB0f708018Ab6c",
+    name: "Arrakis Vault V1 WETH/DAI 0.3",
+    decimals: 18,
+    oracle: OracleTypes.GelatoGUniPriceOracle,
   },
 ];
 

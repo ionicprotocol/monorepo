@@ -1,7 +1,7 @@
+import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
 import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
-import { RedemptionStrategyContract } from "../../enums";
 import { MidasBase } from "../../MidasSdk";
 
 export type StrategiesAndDatas = {

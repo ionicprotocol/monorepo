@@ -4,3 +4,4 @@ deployments/localhost
 .env
 lib/contracts/out
 lib/contracts/typechain
+cache/hardhat-network-fork/

@@ -1,7 +1,5 @@
+import { ChainSpecificParams, SupportedChains } from "@midas-capital/types";
 import { BigNumber } from "ethers";
-
-import { SupportedChains } from "../enums";
-import { ChainSpecificParams } from "../types";
 
 const chainSpecificParams: ChainSpecificParams = {
   [SupportedChains.ganache]: {

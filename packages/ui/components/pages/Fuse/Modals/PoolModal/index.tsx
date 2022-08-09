@@ -1,5 +1,5 @@
 import { Modal, ModalBody, ModalContent, ModalOverlay } from '@chakra-ui/react';
-import { FundOperationMode } from '@midas-capital/sdk';
+import { FundOperationMode } from '@midas-capital/types';
 import { useEffect, useState } from 'react';
 
 import AmountSelect from '@ui/components/pages/Fuse/Modals/PoolModal/AmountSelect';

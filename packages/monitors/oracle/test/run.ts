@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { SupportedChains } from "@midas-capital/sdk";
+import { SupportedChains } from "@midas-capital/types";
 
 import { setUpSdk, verifyPriceFeed } from "../src";
 

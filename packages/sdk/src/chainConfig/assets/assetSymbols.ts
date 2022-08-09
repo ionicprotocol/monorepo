@@ -140,6 +140,20 @@ enum assetSymbols {
   PAR = "PAR",
   NZDS = "NZDS",
   XSGD = "XSGD",
+
+  // Arrakis Vaults [arrakis_pair_fee_tier]
+  arrarkis_USDC_WETH_005 = "arrarkis_USDC_WETH_005",
+  arrarkis_WBTC_WETH_005 = "arrarkis_WBTC_WETH_005",
+  arrarkis_USDC_PAR_005 = "arrarkis_USDC_PAR_005",
+  arrarkis_WMATIC_USDC_005 = "arrarkis_WMATIC_USDC_005",
+  arrarkis_USDC_agEUR_001 = "arrarkis_USDC_agEUR_001",
+  arrarkis_WMATIC_WETH_005 = "arrarkis_WMATIC_WETH_005",
+  arrarkis_WMATIC_AAVE_03 = "arrarkis_WMATIC_AAVE_03",
+  arrarkis_USDC_MAI_005 = "arrarkis_USDC_MAI_005",
+  arrarkis_USDC_USDT_001 = "arrarkis_USDC_USDT_001",
+  arrarkis_USDC_USDT_005 = "arrarkis_USDC_USDT_005",
+  arrarkis_USDC_DAI_005 = "arrarkis_USDC_DAI_005",
+  arrarkis_WETH_DAI_03 = "arrarkis_WETH_DAI_03",
 }
 
 export default assetSymbols;

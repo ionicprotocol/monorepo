@@ -1,5 +1,4 @@
-import { IrmTypes, SupportedChains } from "../enums";
-import { ChainIrms } from "../types";
+import { ChainIrms, IrmTypes, SupportedChains } from "@midas-capital/types";
 
 const baseIrms = [IrmTypes.WhitePaperInterestRateModel, IrmTypes.JumpRateModel];
 

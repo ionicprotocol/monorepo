@@ -1,5 +1,5 @@
-import {FundingStrategyContract, RedemptionStrategyContract, SupportedChains} from "../enums";
-import { ChainFundingStrategy } from "../types";
+import { FundingStrategyContract, RedemptionStrategyContract, SupportedChains } from "@midas-capital/types";
+import { ChainFundingStrategy } from "@midas-capital/types";
 
 import { assetSymbols, bscAssets } from "./assets";
 import { underlying } from "./supportedAssets";

@@ -1,5 +1,7 @@
 // TODO split up into ABI and Bytecode
 
+import { Artifact } from "@midas-capital/types";
+
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
@@ -28,18 +30,6 @@ import UniswapTwapPriceOracleV2Artifact from "../lib/contracts/out/UniswapTwapPr
 import UniswapTwapPriceOracleV2RootArtifact from "../lib/contracts/out/UniswapTwapPriceOracleV2Root.sol/UniswapTwapPriceOracleV2Root.json";
 import UnitrollerArtifact from "../lib/contracts/out/Unitroller.sol/Unitroller.json";
 import WhitePaperInterestRateModelArtifact from "../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
-
-export type Artifact = {
-  abi: Array<object>;
-  bytecode: {
-    object: string;
-    sourceMap: string;
-  };
-  deployedBytecode: {
-    object: string;
-    sourceMap: string;
-  };
-};
 
 const CErc20Delegate: Artifact = CErc20DelegateArtifact;
 const CErc20Delegator: Artifact = CErc20DelegatorArtifact;

@@ -1,10 +1,9 @@
+import { FundOperationMode, FusePoolData } from "@midas-capital/types";
 import { expect } from "chai";
 import { BigNumber } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { FundOperationMode } from "../../src/enums";
 import MidasSdk from "../../src/MidasSdk";
-import { FusePoolData } from "../../src/types";
 import { setUpPriceOraclePrices } from "../utils";
 import * as assetHelpers from "../utils/assets";
 import { getOrCreateMidas } from "../utils/midasSdk";

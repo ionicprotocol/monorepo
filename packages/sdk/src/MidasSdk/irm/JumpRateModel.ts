@@ -1,9 +1,9 @@
 import { Web3Provider } from "@ethersproject/providers";
+import { InterestRateModel } from "@midas-capital/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
 import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import JumpRateModelArtifact from "../../../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
-import { InterestRateModel } from "../../types";
 import { getContract } from "../utils";
 
 export default class JumpRateModel implements InterestRateModel {
