@@ -2331,6 +2331,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@midas-capital/chains@workspace:*, @midas-capital/chains@workspace:packages/chains":
+  version: 0.0.0-use.local
+  resolution: "@midas-capital/chains@workspace:packages/chains"
+  dependencies:
+    "@midas-capital/types": "workspace:*"
+    eslint: ^8.18.0
+    eslint-plugin-import: ^2.26.0
+    eslint-plugin-prettier: ^4.0.0
+    ethers: ^5.6.9
+    prettier: 2.7.1
+    ts-node: ^10.8.1
+    typescript: ^4.7.4
+    utf-8-validate: ^5.0.9
+  languageName: unknown
+  linkType: soft
+
 "@midas-capital/functions@workspace:packages/functions":
   version: 0.0.0-use.local
   resolution: "@midas-capital/functions@workspace:packages/functions"
@@ -2439,6 +2455,7 @@ __metadata:
   dependencies:
     "@keydonix/uniswap-oracle-sdk": ^1.0.7
     "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
+    "@midas-capital/chains": "workspace:*"
     "@midas-capital/types": "workspace:*"
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13"
     "@nomiclabs/hardhat-waffle": ^2.0.3
