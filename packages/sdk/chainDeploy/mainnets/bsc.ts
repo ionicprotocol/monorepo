@@ -1,8 +1,8 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
+import { chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,

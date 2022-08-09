@@ -1,6 +1,11 @@
-import { ChainRedemptionStrategy, RedemptionStrategyContract, SupportedChains } from "@midas-capital/types";
+import {
+  assetSymbols,
+  ChainRedemptionStrategy,
+  RedemptionStrategyContract,
+  SupportedChains,
+} from "@midas-capital/types";
 
-import { assetSymbols, bscAssets, moonbeamAssets } from "./assets";
+import { bscAssets, moonbeamAssets } from "./assets";
 import { underlying } from "./supportedAssets";
 
 const chainRedemptionStrategies: ChainRedemptionStrategy = {
@@ -82,14 +87,12 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
       underlying(bscAssets, assetSymbols.WBNB),
     ],
   },
-  [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.chapel]: {
     [underlying(bscAssets, assetSymbols["WBNB-BUSD"])]: [
       RedemptionStrategyContract.UniswapLpTokenLiquidator,
       underlying(bscAssets, assetSymbols.WBNB),
     ],
   },
-  [SupportedChains.aurora]: {},
   [SupportedChains.moonbeam]: {
     [underlying(moonbeamAssets, assetSymbols["GLMR-USDC"])]: [
       RedemptionStrategyContract.UniswapLpTokenLiquidator,
@@ -100,7 +103,6 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
       underlying(moonbeamAssets, assetSymbols.WGLMR),
     ],
   },
-  [SupportedChains.evmos_testnet]: {},
   [SupportedChains.evmos]: {
     "0x -- Kinesis": [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
   },

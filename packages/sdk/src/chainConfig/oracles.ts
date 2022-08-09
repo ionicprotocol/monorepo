@@ -12,26 +12,17 @@ const oracles: ChainOracles = {
     OracleTypes.UniswapLpTokenPriceOracle,
     OracleTypes.UniswapTwapPriceOracleV2,
   ],
-  [SupportedChains.evmos_testnet]: [
-    ...baseOracles,
-    OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    OracleTypes.UniswapLpTokenPriceOracle,
-    OracleTypes.UniswapTwapPriceOracleV2,
-  ],
   [SupportedChains.evmos]: [
     ...baseOracles,
     OracleTypes.UniswapLpTokenPriceOracle,
     OracleTypes.UniswapTwapPriceOracleV2,
   ],
-  [SupportedChains.aurora]: [...baseOracles],
   [SupportedChains.moonbeam]: [
     ...baseOracles,
     OracleTypes.FluxPriceOracle,
     OracleTypes.UniswapLpTokenPriceOracle,
     OracleTypes.UniswapTwapPriceOracleV2,
   ],
-
-  [SupportedChains.moonbase_alpha]: [...baseOracles],
   [SupportedChains.neon_devnet]: [...baseOracles],
   [SupportedChains.polygon]: [
     ...baseOracles,

@@ -1,15 +1,11 @@
-import { ChainSpecificAddresses, SupportedChains } from "@midas-capital/types";
+import { assetSymbols, ChainSpecificAddresses, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
-  assetSymbols,
-  auroraAssets,
   bscAssets,
   chapelAssets,
   evmosAssets,
-  evmosTestnetAssets,
   ganacheAssets,
-  moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
   polygonAssets,
@@ -45,16 +41,6 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     W_BTC_TOKEN: underlying(bscAssets, assetSymbols.BTCB),
   },
   // checked
-  [SupportedChains.evmos_testnet]: {
-    W_TOKEN: underlying(evmosTestnetAssets, assetSymbols.WEVMOS),
-    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "",
-    UNISWAP_V2_ROUTER: "0x72bd489d3cF0e9cC36af6e306Ff53E56d0f9EFb4",
-    UNISWAP_V2_FACTORY: "0x81BC50a2df9cE424843e3c17110E1ab1FedCD4b8",
-    PAIR_INIT_HASH: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
-    STABLE_TOKEN: underlying(evmosTestnetAssets, assetSymbols.USDC),
-    W_BTC_TOKEN: "",
-  },
-  // checked
   [SupportedChains.evmos]: {
     W_TOKEN: underlying(evmosAssets, assetSymbols.WEVMOS),
     W_TOKEN_USD_CHAINLINK_PRICE_FEED: "",
@@ -74,26 +60,7 @@ const chainSpecificAddresses: ChainSpecificAddresses = {
     STABLE_TOKEN: underlying(moonbeamAssets, assetSymbols.multiUSDC),
     W_BTC_TOKEN: underlying(moonbeamAssets, assetSymbols.madWBTC),
   },
-  // TODO: check addresses
-  [SupportedChains.moonbase_alpha]: {
-    W_TOKEN: underlying(moonbaseAlphaAssets, assetSymbols.WDEV),
-    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x2514895c72f50D8bd4B4F9b1110F0D6bD2c97526",
-    UNISWAP_V2_ROUTER: "0xD99D1c33F9fC3444f8101754aBC46c52416550D1",
-    UNISWAP_V2_FACTORY: "0x6725F303b657a9451d8BA641348b6761A6CC7a17",
-    PAIR_INIT_HASH: ethers.utils.hexlify("0xd0d4c4cd0848c93cb4fd1f498d7013ee6bfb25783ea21593d5834f5d250ece66"),
-    STABLE_TOKEN: underlying(moonbaseAlphaAssets, assetSymbols.USDC),
-    W_BTC_TOKEN: "",
-  },
-  // TODO: check addresses
-  [SupportedChains.aurora]: {
-    W_TOKEN: underlying(auroraAssets, assetSymbols.WNEAR),
-    W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x5f4ec3df9cbd43714fe2740f5e3616155c5b8419",
-    UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
-    UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
-    PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
-    STABLE_TOKEN: "",
-    W_BTC_TOKEN: "",
-  },
+
   // TODO: change these to the correct addresses!
   [SupportedChains.neon_devnet]: {
     W_TOKEN: underlying(neonDevnetAssets, assetSymbols.WNEON),

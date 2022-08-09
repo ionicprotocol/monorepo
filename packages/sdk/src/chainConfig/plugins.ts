@@ -17,11 +17,8 @@ const chainDeployedPlugins: ChainDeployedPlugins = {
       name: "2brl DotDotLpERC4626",
     },
   },
-  [SupportedChains.evmos_testnet]: {},
   [SupportedChains.evmos]: {},
   [SupportedChains.moonbeam]: {},
-  [SupportedChains.moonbase_alpha]: {},
-  [SupportedChains.aurora]: {},
   [SupportedChains.neon_devnet]: {},
   [SupportedChains.polygon]: {
     "0x6578e774120F6010315784C69C634bF3946AFb0c": {

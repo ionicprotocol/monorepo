@@ -1,15 +1,17 @@
-import { ChainLiquidationDefaults, LiquidationStrategy, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import {
+  assetSymbols,
+  ChainLiquidationDefaults,
+  LiquidationStrategy,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
 import {
-  assetSymbols,
-  auroraAssets,
   bscAssets,
   chapelAssets,
   evmosAssets,
-  evmosTestnetAssets,
   ganacheAssets,
-  moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
   polygonAssets,
@@ -42,32 +44,7 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
     LIQUIDATION_INTERVAL_SECONDS: 60,
   },
-  [SupportedChains.evmos_testnet]: {
-    SUPPORTED_OUTPUT_CURRENCIES: [
-      constants.AddressZero,
-      evmosTestnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
-    ],
-    SUPPORTED_INPUT_CURRENCIES: [
-      constants.AddressZero,
-      evmosTestnetAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
-    ],
-    LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
-    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 30,
-  },
-  [SupportedChains.aurora]: {
-    SUPPORTED_OUTPUT_CURRENCIES: [
-      constants.AddressZero,
-      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!.underlying,
-    ],
-    SUPPORTED_INPUT_CURRENCIES: [
-      constants.AddressZero,
-      auroraAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEAR)!.underlying,
-    ],
-    LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
-    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 30,
-  },
+
   [SupportedChains.evmos]: {
     SUPPORTED_OUTPUT_CURRENCIES: [
       constants.AddressZero,
@@ -80,20 +57,6 @@ const liquidationDefaults: ChainLiquidationDefaults = {
     LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
     MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
     LIQUIDATION_INTERVAL_SECONDS: 30,
-  },
-  // TODO: fix these
-  [SupportedChains.moonbase_alpha]: {
-    SUPPORTED_OUTPUT_CURRENCIES: [
-      constants.AddressZero,
-      moonbaseAlphaAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
-    ],
-    SUPPORTED_INPUT_CURRENCIES: [
-      constants.AddressZero,
-      moonbaseAlphaAssets.find((a: SupportedAsset) => a.symbol === assetSymbols.WDEV)!.underlying,
-    ],
-    LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
-    MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-    LIQUIDATION_INTERVAL_SECONDS: 15,
   },
   [SupportedChains.moonbeam]: {
     SUPPORTED_OUTPUT_CURRENCIES: [

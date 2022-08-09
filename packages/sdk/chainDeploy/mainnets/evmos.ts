@@ -1,6 +1,6 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
+import { chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig, deployDiaOracle } from "../helpers";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 

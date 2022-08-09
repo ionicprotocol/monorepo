@@ -5,13 +5,10 @@ import {
 } from "@midas-capital/types";
 
 import {
-  auroraAssets,
   bscAssets,
   chapelAssets,
   evmosAssets,
-  evmosTestnetAssets,
   ganacheAssets,
-  moonbaseAlphaAssets,
   moonbeamAssets,
   neonDevnetAssets,
   polygonAssets,
@@ -26,12 +23,9 @@ const assetArrayToMap = (assets: SupportedAsset[]): { [key: string]: SupportedAs
 export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.ganache]: ganacheAssets,
   [SupportedChains.evmos]: evmosAssets,
-  [SupportedChains.evmos_testnet]: evmosTestnetAssets,
   [SupportedChains.bsc]: bscAssets,
   [SupportedChains.chapel]: chapelAssets,
-  [SupportedChains.moonbase_alpha]: moonbaseAlphaAssets,
   [SupportedChains.moonbeam]: moonbeamAssets,
-  [SupportedChains.aurora]: auroraAssets,
   [SupportedChains.neon_devnet]: neonDevnetAssets,
   [SupportedChains.polygon]: polygonAssets,
 };
