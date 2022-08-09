@@ -39,6 +39,7 @@ import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
+import { sortAssets } from '@ui/utils/sortAssets';
 
 interface SupplyListProps {
   assets: MarketData[];
@@ -54,12 +55,12 @@ export const SupplyList = ({
   rewards = [],
 }: SupplyListProps) => {
   const suppliedAssets = useMemo(
-    () => assets.filter((asset) => asset.supplyBalance.gt(0)),
+    () => sortAssets(assets).filter((asset) => asset.supplyBalance.gt(0)),
 
     [assets]
   );
   const nonSuppliedAssets = useMemo(
-    () => assets.filter((asset) => asset.supplyBalance.eq(0)),
+    () => sortAssets(assets).filter((asset) => asset.supplyBalance.eq(0)),
     [assets]
   );
 
