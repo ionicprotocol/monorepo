@@ -4,13 +4,13 @@ import { ethers } from "ethers";
 import { assets } from "./assets";
 
 const chainAddresses: ChainAddresses = {
-  W_TOKEN: underlying(assets, assetSymbols.WMATIC),
-  W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0",
-  UNISWAP_V2_ROUTER: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
-  UNISWAP_V2_FACTORY: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
-  PAIR_INIT_HASH: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
-  STABLE_TOKEN: underlying(assets, assetSymbols.USDC),
-  W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
+  W_TOKEN: underlying(assets, assetSymbols.WGLMR),
+  W_TOKEN_USD_CHAINLINK_PRICE_FEED: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
+  UNISWAP_V2_ROUTER: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+  UNISWAP_V2_FACTORY: "0x985BcA32293A7A496300a48081947321177a86FD",
+  PAIR_INIT_HASH: ethers.utils.hexlify("0x00fb7f630766e6a796048ea87d01acd3068e8ff67d078148a3fa3f4a84f69bd5"),
+  STABLE_TOKEN: underlying(assets, assetSymbols.multiUSDC),
+  W_BTC_TOKEN: underlying(assets, assetSymbols.madWBTC),
 };
 
 export default chainAddresses;
