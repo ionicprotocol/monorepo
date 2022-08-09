@@ -1,9 +1,9 @@
+import { assetSymbols } from "@midas-capital/types";
 import { expect } from "chai";
 import { BigNumber, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
-import * as chainConfig from "../../src/chainConfig";
 import MidasSdk from "../../src/MidasSdk";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as assetHelpers from "../utils/assets";
@@ -45,7 +45,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
         ethers,
         BSC_POOLS.ALPACA
       )
-    ).filter((a) => a.symbol === chainConfig.assetSymbols.WBNB);
+    ).filter((a) => a.symbol === assetSymbols.WBNB);
     const baseAssets = (
       await assetHelpers.getAssetsConf(
         poolAddress,
@@ -53,7 +53,7 @@ import { tradeAssetForAsset, wrapNativeToken } from "../utils/setup";
         sdk.irms.JumpRateModel.address,
         ethers
       )
-    ).filter((a) => a.symbol !== chainConfig.assetSymbols.BTCB && a.symbol !== chainConfig.assetSymbols.WBNB);
+    ).filter((a) => a.symbol !== assetSymbols.BTCB && a.symbol !== assetSymbols.WBNB);
 
     const assets = bombAssets.concat(...baseAssets).concat(...alpacaAssets);
 
