@@ -413,11 +413,6 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
-const jarvisLiquidityPools: JarvisLiquidityPool[] = [
-  // jBRL -> BUSD
-  { expirationTime: 40 * 60, liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49" },
-];
-
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -521,7 +516,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     ethers,
     getNamedAccounts,
     deployments,
-    jarvisLiquidityPools,
   });
 
   /// EPS

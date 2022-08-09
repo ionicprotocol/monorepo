@@ -449,6 +449,7 @@ const gelatoAssets: GelatoGUniAsset[] = [
   },
 ];
 
+// TODO move to the liquidator bot
 const jarvisLiquidityPools: JarvisLiquidityPool[] = [
   // jAUD -> USDC
   { expirationTime: 40 * 60, liquidityPoolAddress: "0x36572797Cc569A74731E0738Ef56e3b8ce3F309c" },
@@ -592,7 +593,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     ethers,
     getNamedAccounts,
     deployments,
-    jarvisLiquidityPools,
   });
 
   /// Addresses Provider - set bUSD

@@ -57,7 +57,7 @@ export const configureFuseSafeLiquidator = async ({
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
   for (const address in chainRedemptionStrategies[chainId]) {
-    const [redemptionStrategyType, outputToken] = chainRedemptionStrategies[chainId][address];
+    const [redemptionStrategyType, ] = chainRedemptionStrategies[chainId][address];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
 
     const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);

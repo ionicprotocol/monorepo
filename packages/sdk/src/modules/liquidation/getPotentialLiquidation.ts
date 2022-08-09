@@ -6,7 +6,7 @@ import { MidasBase } from "../../MidasSdk";
 import { ChainLiquidationConfig, getLiquidationKind } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
 import { getFundingStrategiesAndDatas } from "./fundingStrategy";
-import { getStrategiesAndDatas } from "./redemptionStrategy";
+import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
 import {
   EncodedLiquidationTx,
   FusePoolUserWithAssets,
@@ -99,7 +99,7 @@ export default async function getPotentialLiquidation(
   );
   let debtFundingStrategies: string[] = [];
   let debtFundingStrategiesData: BytesLike[] = [];
-  let flashSwapFundingToken = borrower.collateral[0].underlyingToken;
+  let flashSwapFundingToken = borrower.debt[0].underlyingToken;
 
   if (liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW) {
     // chain some liquidation funding strategies
@@ -109,12 +109,10 @@ export default async function getPotentialLiquidation(
     flashSwapFundingToken = fundingStrategiesAndDatas.flashSwapFundingToken;
   }
 
-  const collateralLiquidationOutputToken =
-    liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW ? borrower.debt[0].underlyingToken : null;
-  const strategyAndData = await getStrategiesAndDatas(
+  const strategyAndData = await getRedemptionStrategiesAndDatas(
     fuse,
     borrower.collateral[0].underlyingToken,
-    collateralLiquidationOutputToken
+    flashSwapFundingToken
   );
 
   let expectedGasAmount: BigNumber;

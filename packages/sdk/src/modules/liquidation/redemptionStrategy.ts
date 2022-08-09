@@ -15,7 +15,7 @@ export type StrategyAndData = {
   outputToken: string;
 };
 
-export const getStrategiesAndDatas = async (
+export const getRedemptionStrategiesAndDatas = async (
   fuse: MidasBase,
   inputToken: string,
   expectedOutputToken: string | null

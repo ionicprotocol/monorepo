@@ -136,6 +136,7 @@ export type JarvisLiquidityPool = {
   liquidityPoolAddress: string;
 };
 
+// TODO remove?
 // future proofing for when we can deploy more than one liq pool liquidator
 export type JarvisLiquidatorFunderDeployParams = ChainDeployFnParams & {
   jarvisLiquidityPools: JarvisLiquidityPool[];
