@@ -1,7 +1,7 @@
-import { MidasBase } from "../../MidasSdk";
 import { BytesLike, constants } from "ethers";
 
 import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
+import { MidasBase } from "../../MidasSdk";
 
 export type FundingStrategiesAndDatas = {
   strategies: string[];
@@ -11,9 +11,12 @@ export type FundingStrategiesAndDatas = {
 
 export const getFundingStrategiesAndDatas = async (
   fuse: MidasBase,
-  debtToken: string,
+  debtToken: string
 ): Promise<FundingStrategiesAndDatas> => {
-  const uniswapV2Factory = IUniswapV2Factory__factory.connect(fuse.chainSpecificAddresses.UNISWAP_V2_FACTORY, fuse.provider);
+  const uniswapV2Factory = IUniswapV2Factory__factory.connect(
+    fuse.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+    fuse.provider
+  );
 
   const strategies: string[] = [];
   const datas: BytesLike[] = [];
@@ -43,7 +46,10 @@ export const getFundingStrategiesAndDatas = async (
 
     liquidationFundingToken = outputToken;
 
-    const pair = await uniswapV2Factory.callStatic.getPair(fuse.chainSpecificAddresses.W_TOKEN, liquidationFundingToken);
+    const pair = await uniswapV2Factory.callStatic.getPair(
+      fuse.chainSpecificAddresses.W_TOKEN,
+      liquidationFundingToken
+    );
     if (pair !== constants.AddressZero) {
       // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
       break;
@@ -53,6 +59,6 @@ export const getFundingStrategiesAndDatas = async (
   return {
     strategies,
     datas,
-    flashSwapFundingToken: liquidationFundingToken
+    flashSwapFundingToken: liquidationFundingToken,
   };
 };

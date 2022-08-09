@@ -15,7 +15,7 @@ const estimateGas = async (
   liquidationKind: LiquidationKind,
   flashSwapFundingToken: string,
   debtFundingStrategies: any[],
-  debtFundingStrategiesData: any[],
+  debtFundingStrategiesData: any[]
 ) => {
   switch (liquidationKind) {
     case LiquidationKind.DEFAULT_NATIVE_BORROW:

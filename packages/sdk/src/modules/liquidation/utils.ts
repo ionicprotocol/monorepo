@@ -63,7 +63,7 @@ export const logLiquidation = (
   liquidationAmount: BigNumber,
   liquidationTokenSymbol: string,
   liquidationKind: LiquidationKind,
-  debtFundingStrategies: any[],
+  debtFundingStrategies: any[]
 ) => {
   console.log(
     `Gathered transaction data for safeLiquidate a ${liquidationTokenSymbol} borrow of kind ${liquidationKind}:

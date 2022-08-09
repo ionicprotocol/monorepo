@@ -5,13 +5,13 @@ import {
   ChainParams,
   DelegateContractName,
   DeployedPlugins,
+  FundingStrategyContract,
   InterestRateModel,
   InterestRateModelConf,
   IrmConfig,
   OracleConf,
   OracleConfig,
   RedemptionStrategyContract,
-  FundingStrategyContract,
   SupportedAsset,
   SupportedChains,
 } from "@midas-capital/types";
@@ -31,11 +31,11 @@ import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquid
 import { Artifacts, ARTIFACTS } from "../Artifacts";
 import {
   chainDeployedPlugins,
+  chainFundingStrategies,
   chainIrms,
   chainLiquidationDefaults,
   chainOracles,
   chainRedemptionStrategies,
-  chainFundingStrategies,
   chainSpecificAddresses,
   chainSpecificParams,
   chainSupportedAssets,

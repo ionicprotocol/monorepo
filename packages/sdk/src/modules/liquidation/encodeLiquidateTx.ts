@@ -24,7 +24,7 @@ export default async function encodeLiquidateTx(
     liquidationAmount,
     borrower.debt[0].underlyingSymbol,
     liquidationKind,
-    debtFundingStrategies,
+    debtFundingStrategies
   );
 
   switch (liquidationKind) {
@@ -96,7 +96,7 @@ export default async function encodeLiquidateTx(
             ethToCoinbase: 0,
             debtFundingStrategies,
             debtFundingStrategiesData,
-          }
+          },
         ],
         value: BigNumber.from(0),
       };

@@ -1,10 +1,11 @@
-import { BigNumber, constants, BytesLike, utils } from "ethers";
-
 import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
+import { BigNumber, BytesLike, constants, utils } from "ethers";
+
 import { MidasBase } from "../../MidasSdk";
 
-import {ChainLiquidationConfig, getLiquidationKind} from "./config";
+import { ChainLiquidationConfig, getLiquidationKind } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
+import { getFundingStrategiesAndDatas } from "./fundingStrategy";
 import { getStrategiesAndDatas } from "./redemptionStrategy";
 import {
   EncodedLiquidationTx,
@@ -13,8 +14,7 @@ import {
   SCALE_FACTOR_UNDERLYING_DECIMALS,
 } from "./utils";
 
-import {estimateGas} from "./index";
-import {getFundingStrategiesAndDatas} from "./fundingStrategy";
+import { estimateGas } from "./index";
 
 export default async function getPotentialLiquidation(
   fuse: MidasBase,
