@@ -47,9 +47,15 @@
   },
   "overrides": [
     {
-      "files": ["tasks/**/*.ts", "tests/**/*.ts"], // Or *.test.js
+      "files": [
+        "tasks/**/*.ts",
+        "tests/**/*.ts",
+        "chainDeploy/**/*.ts",
+        "deploy/**/*.ts"
+      ],
       "rules": {
-        "no-console": ["off"]
+        "no-console": ["off"],
+        "@typescript-eslint/no-non-null-assertion": ["off"]
       }
     }
   ]

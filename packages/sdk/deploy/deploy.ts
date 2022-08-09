@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
