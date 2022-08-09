@@ -36,6 +36,7 @@
     "export:moonbeam": "hardhat export --network moonbeam --export ../chains/deployments/moonbeam.json",
     "export:neondevnet": "hardhat export --network neondevnet --export ../chains/deployments/neondevnet.json",
     "export:chapel": "hardhat export --network chapel --export ../chains/deployments/chapel.json",
+    "export:evmos": "hardhat export --network evmostestnet --export ../chains/deployments/evmos.json",
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'chainDeploy/**/*.ts' 'src/**/*.ts' 'deploy/**/*.ts' 'tasks/**/*.ts' 'tests/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",

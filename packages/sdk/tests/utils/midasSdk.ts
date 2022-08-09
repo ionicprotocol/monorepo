@@ -1,4 +1,5 @@
-import { ChainDeployment } from "@midas-capital/types";
+import { bsc, ganache } from "@midas-capital/chains";
+import { ChainConfig, ChainDeployment } from "@midas-capital/types";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
@@ -167,14 +168,20 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
   if (!midasSdk) {
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
+    let chainConfig: ChainConfig;
     if (process.env.INTEGRATION_TEST!) {
-      midasSdk = new MidasSdk(ethers.provider, chainId, null);
+      midasSdk = new MidasSdk(ethers.provider, bsc);
     } else if (chainId === 1337) {
       chainDeployment = await getLocalDeployments();
+      chainConfig = ganache;
+      chainConfig.chainDeployments = chainDeployment;
     } else if (process.env.FORK_CHAIN_ID!) {
       chainDeployment = await getBscForkDeployments();
+      chainConfig = bsc;
+      chainConfig.chainDeployments = chainDeployment;
     }
-    midasSdk = new MidasSdk(ethers.provider, chainId, chainDeployment);
+
+    midasSdk = new MidasSdk(ethers.provider, chainConfig);
     if (chainId === 31337 || chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
       midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;

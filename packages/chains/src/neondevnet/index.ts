@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@midas-capital/types";
 
-import deployments from "../../deployments/polygon.json";
+import deployments from "../../deployments/neondevnet.json";
 
 import chainAddresses from "./addresses";
 import assets from "./assets";
