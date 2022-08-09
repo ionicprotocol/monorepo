@@ -1,9 +1,8 @@
 import { constants } from "ethers";
 
-import { FuseSafeLiquidator } from "../../lib/contracts/typechain";
-import { chainRedemptionStrategies } from "../../src/chainConfig";
-
-import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "./types";
+import { FuseSafeLiquidator } from "../../../lib/contracts/typechain";
+import { chainRedemptionStrategies } from "../../../src/chainConfig";
+import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
 
 export const deployFuseSafeLiquidator = async ({
   ethers,

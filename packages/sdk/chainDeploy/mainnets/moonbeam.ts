@@ -2,11 +2,15 @@ import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployDiaOracle } from "../helpers/dia";
+import {
+  ChainDeployConfig,
+  deployChainlinkOracle,
+  deployDiaOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
 const assets = chainSupportedAssets[SupportedChains.moonbeam];
 
