@@ -130,3 +130,13 @@ export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gelatoAssets: GelatoGUniAsset[];
 };
+
+export type JarvisLiquidityPool = {
+  expirationTime: number;
+  liquidityPoolAddress: string;
+};
+
+// future proofing for when we can deploy more than one liq pool liquidator
+export type JarvisSynthereumLiquidatorDeployParams = ChainDeployFnParams & {
+  jarvisLiquidityPools: JarvisLiquidityPool[];
+};

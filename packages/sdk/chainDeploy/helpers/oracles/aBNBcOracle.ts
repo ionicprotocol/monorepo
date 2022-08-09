@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 
-import { aBNBcDeployParams } from "./types";
+import { aBNBcDeployParams } from "../types";
 
 export const deployABNBcOracle = async ({
   ethers,

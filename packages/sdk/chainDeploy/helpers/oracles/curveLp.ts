@@ -1,6 +1,6 @@
 import { constants, providers } from "ethers";
 
-import { CurveLpFnParams } from "../helpers/types";
+import { CurveLpFnParams } from "../types";
 
 export const deployCurveLpOracle = async ({
   ethers,
