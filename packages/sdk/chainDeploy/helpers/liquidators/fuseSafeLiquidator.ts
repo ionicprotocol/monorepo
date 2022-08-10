@@ -1,8 +1,18 @@
+import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { ChainConfig } from "@midas-capital/types";
 import { constants } from "ethers";
 
 import { FuseSafeLiquidator } from "../../../lib/contracts/typechain";
-import { chainRedemptionStrategies } from "../../../src/chainConfig";
 import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
+
+const chainIdToConfig: { [chainId: number]: ChainConfig } = {
+  [bsc.chainId]: bsc,
+  [polygon.chainId]: polygon,
+  [moonbeam.chainId]: moonbeam,
+  [neondevnet.chainId]: neondevnet,
+  [chapel.chainId]: chapel,
+  [ganache.chainId]: ganache,
+};
 
 export const deployFuseSafeLiquidator = async ({
   ethers,
@@ -56,8 +66,8 @@ export const configureFuseSafeLiquidator = async ({
   const arrayOfTrue: boolean[] = [];
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
-  for (const address in chainRedemptionStrategies[chainId]) {
-    const [redemptionStrategyType] = chainRedemptionStrategies[chainId][address];
+  for (const address in chainIdToConfig[chainId].redemptionStrategies) {
+    const [redemptionStrategyType] = chainIdToConfig[chainId].redemptionStrategies[address];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
 
     const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);
