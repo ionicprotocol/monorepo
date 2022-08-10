@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { ganache } from "@midas-capital/chains";
 import { expect } from "chai";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
@@ -29,7 +29,7 @@ describe("FusePoolLens", () => {
     mockContract = createStubInstance(Contract);
 
     FusePoolLens = withFusePoolLens(MidasBase);
-    fusePoolLens = new FusePoolLens(mockProvider, SupportedChains.ganache, {
+    fusePoolLens = new FusePoolLens(mockProvider, ganache, {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },

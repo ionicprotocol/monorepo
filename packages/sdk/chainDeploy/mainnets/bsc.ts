@@ -1,8 +1,8 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { bsc } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
@@ -17,7 +17,7 @@ import {
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset, JarvisLiquidityPool } from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.bsc];
+const assets = bsc.assets;
 const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
@@ -27,7 +27,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "BNB",
   stableToken: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
   wBTCToken: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: bsc.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [
@@ -281,7 +281,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.bsc].cgId,
+  cgId: bsc.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [

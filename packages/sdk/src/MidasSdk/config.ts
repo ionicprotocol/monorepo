@@ -1,6 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
-
-import { chainSpecificParams } from "../chainConfig";
+import { BigNumber } from "ethers";
 
 export const COMPTROLLER_ERROR_CODES: Array<string> = [
   "NO_ERROR",
@@ -48,11 +46,11 @@ export const CTOKEN_ERROR_CODES: Array<string> = [
   "UTILIZATION_ABOVE_MAX",
 ];
 
-export const JUMP_RATE_MODEL_CONF = (chainId: SupportedChains) => {
+export const JUMP_RATE_MODEL_CONF = (blocksPerYear: BigNumber) => {
   return {
     interestRateModel: "JumpRateModel",
     interestRateModelParams: {
-      blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
+      blocksPerYear: blocksPerYear,
       baseRatePerYear: "20000000000000000",
       multiplierPerYear: "200000000000000000",
       jumpMultiplierPerYear: "2000000000000000000",
@@ -61,22 +59,22 @@ export const JUMP_RATE_MODEL_CONF = (chainId: SupportedChains) => {
   };
 };
 
-export const WHITE_PAPER_RATE_MODEL_CONF = (chainId: SupportedChains) => {
+export const WHITE_PAPER_RATE_MODEL_CONF = (blocksPerYear: BigNumber) => {
   return {
     interestRateModel: "WhitePaperInterestRateModel",
     interestRateModelParams: {
-      blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
+      blocksPerYear: blocksPerYear,
       baseRatePerYear: "20000000000000000",
       multiplierPerYear: "200000000000000000",
     },
   };
 };
 
-export const ANKR_BNB_INTEREST_RATE_MODEL_CONF = (chainId: SupportedChains) => {
+export const ANKR_BNB_INTEREST_RATE_MODEL_CONF = (blocksPerYear: BigNumber) => {
   return {
     interestRateModel: "AnkrBNBInterestRateModel",
     interestRateModelParams: {
-      blocksPerYear: chainSpecificParams[chainId].blocksPerYear,
+      blocksPerYear: blocksPerYear,
       baseRatePerYear: "25600000000000000",
       multiplierPerYear: "32000000000000000",
       kink: "800000000000000000",
