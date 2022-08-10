@@ -1,7 +1,6 @@
 import { TransactionRequest } from "@ethersproject/providers";
-import { BigNumber, Wallet } from "ethers";
-
 import { MidasBase } from "../../MidasSdk";
+import { BigNumber, Wallet } from "ethers";
 
 import { fetchGasLimitForTransaction } from "./utils";
 
@@ -24,7 +23,6 @@ export default async function sendTransactionToSafeLiquidator(
     data: data,
     nonce: txCount,
   };
-
   // Estimate gas for transaction
   const gasLimit = await fetchGasLimitForTransaction(fuse, method, tx);
   const txRequest: TransactionRequest = {
