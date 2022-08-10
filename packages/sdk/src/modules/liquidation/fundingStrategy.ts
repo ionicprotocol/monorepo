@@ -23,51 +23,52 @@ export const getFundingStrategiesAndDatas = async (
   const datas: BytesLike[] = [];
   const tokenPath: string[] = [];
 
-  let flashSwapFundingToken = debtToken;
-  while (flashSwapFundingToken in fuse.fundingStrategies) {
-    const [fundingStrategyContract, outputToken] = fuse.fundingStrategies[flashSwapFundingToken];
-    // console.log(`got funding str ${fundingStrategyContract} and output ${outputToken} for ${flashSwapFundingToken}`);
-
-    // avoid going in an endless loop
-    if (tokenPath.find((p) => p == outputToken)) break;
-    tokenPath.push(outputToken);
-
+  let fundingToken = debtToken;
+  while (fundingToken in fuse.fundingStrategies) {
     // if it can be flash loaned through uniswap, that's enough
-    const pair = await uniswapV2Factory.callStatic.getPair(fuse.chainSpecificAddresses.W_TOKEN, outputToken);
+    const pair = await uniswapV2Factory.callStatic.getPair(fuse.chainSpecificAddresses.W_TOKEN, fundingToken);
     if (pair !== constants.AddressZero) {
       // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
       break;
     }
+
+    // find a funding strategy that can supply us with the needed funding token
+    const [fundingStrategyContract, inputToken] = fuse.fundingStrategies[fundingToken];
+    // console.log(`got funding str ${fundingStrategyContract} and output ${inputToken} for ${flashSwapFundingToken}`);
+
+    // avoid going in an endless loop
+    if (tokenPath.find((p) => p == inputToken)) break;
+    tokenPath.push(inputToken);
 
     const strategyAddress = fuse.chainDeployment[fundingStrategyContract].address;
     let strategyData = "";
     switch (fundingStrategyContract) {
       case FundingStrategyContract.JarvisLiquidatorFunder:
         const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(
-          (p) => p.collateralToken == flashSwapFundingToken && p.syntheticToken == outputToken
+          (p) => p.collateralToken == inputToken && p.syntheticToken == fundingToken
         );
         if (jarvisPool == null) {
           throw new Error(
-            `wrong config for the jarvis funding strategy for ${flashSwapFundingToken} - no such pool with syntheticToken ${outputToken}`
+            `wrong config for the jarvis funding strategy for ${fundingToken} - no such pool with syntheticToken ${inputToken}`
           );
         }
         const poolAddress = jarvisPool.liquidityPoolAddress;
         const expirationTime = jarvisPool.expirationTime;
         strategyData = new ethers.utils.AbiCoder().encode(
           ["address", "address", "uint256"],
-          [flashSwapFundingToken, poolAddress, expirationTime]
+          [fundingToken, poolAddress, expirationTime]
         );
     }
 
     strategies.push(strategyAddress);
     datas.push(strategyData);
 
-    flashSwapFundingToken = outputToken;
+    fundingToken = inputToken;
   }
 
   return {
     strategies,
     datas,
-    flashSwapFundingToken,
+    flashSwapFundingToken: fundingToken,
   };
 };
