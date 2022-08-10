@@ -31,7 +31,7 @@ const mainnet: ChainMetadata = {
 };
 
 const testnet: ChainMetadata = {
-  chainId: SupportedChains.evmos_testnet,
+  chainId: SupportedChains.evmos,
   chainIdHex: '0x2328',
   name: 'Evmos Testnet',
   shortName: 'Evmos Testnet',

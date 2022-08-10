@@ -1,6 +1,6 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { FundingStrategyContract, LiquidationStrategy, OracleTypes, RedemptionStrategyContract, SupportedChains } from "./enums";
+import { IrmTypes, LiquidationStrategy, OracleTypes, RedemptionStrategyContract, FundingStrategyContract, SupportedChains } from "./enums";
 
 export type Artifact = {
   abi: Array<object>;
@@ -235,25 +235,31 @@ export type ChainDeployedPlugins = {
 };
 
 export type ChainLiquidationDefaults = {
-  [chain in SupportedChains]: {
-    SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
-    SUPPORTED_INPUT_CURRENCIES: Array<string>;
-    LIQUIDATION_STRATEGY: LiquidationStrategy;
-    MINIMUM_PROFIT_NATIVE: BigNumber;
-    LIQUIDATION_INTERVAL_SECONDS: number;
-  };
+  [chain in SupportedChains]: LiquidationDefaults;
+};
+
+export type LiquidationDefaults = {
+  SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
+  SUPPORTED_INPUT_CURRENCIES: Array<string>;
+  LIQUIDATION_STRATEGY: LiquidationStrategy;
+  MINIMUM_PROFIT_NATIVE: BigNumber;
+  LIQUIDATION_INTERVAL_SECONDS: number;
+};
+
+export type RedemptionStrategy = {
+  [token: string]: [RedemptionStrategyContract, string];
 };
 
 export type ChainRedemptionStrategy = {
-  [chain in SupportedChains]: {
-    [token: string]: [RedemptionStrategyContract, string];
-  };
+  [chain in SupportedChains]: RedemptionStrategy;
+};
+
+export type FundingStrategy = {
+  [token: string]: [FundingStrategyContract, string];
 };
 
 export type ChainFundingStrategy = {
-  [chain in SupportedChains]: {
-    [token: string]: [FundingStrategyContract, string];
-  };
+  [chain in SupportedChains]: FundingStrategy;
 };
 
 export type ChainOracles = {
@@ -289,4 +295,18 @@ export type ChainSpecificAddresses = {
 
 export type ChainSupportedAssets = {
   [chain in SupportedChains]: SupportedAsset[];
+};
+
+export type ChainConfig = {
+  chainId: number;
+  chainAddresses: ChainAddresses;
+  assets: SupportedAsset[];
+  irms: IrmTypes[];
+  liquidationDefaults: LiquidationDefaults;
+  oracles: OracleTypes[];
+  specificParams: ChainParams;
+  deployedPlugins: DeployedPlugins;
+  redemptionStrategies: RedemptionStrategy;
+  fundingStrategies: FundingStrategy;
+  chainDeployments: ChainDeployment;
 };

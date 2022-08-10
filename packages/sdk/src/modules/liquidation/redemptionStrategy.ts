@@ -101,8 +101,9 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
     case RedemptionStrategyContract.XBombLiquidator: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
-    case RedemptionStrategyContract.UniswapLpTokenLiquidator: {
-      const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
+    case RedemptionStrategyContract.UniswapLpTokenLiquidator:
+    case RedemptionStrategyContract.GelatoGUniLiquidator: {
+        const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();

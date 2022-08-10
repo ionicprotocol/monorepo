@@ -1,8 +1,9 @@
 export {
   Artifact,
   ChainAddresses,
-  ChainLiquidationDefaults,
+  LiquidationDefaults,
   ChainParams,
+  ChainConfig,
   ChainOracles,
   ChainDeployment,
   ChainRedemptionStrategy,
@@ -10,6 +11,7 @@ export {
   ChainSpecificParams,
   ChainDeployedPlugins,
   ChainIrms,
+  ChainLiquidationDefaults,
   ChainSupportedAssets,
   ChainSpecificAddresses,
   FusePool,
@@ -26,8 +28,10 @@ export {
   OracleConf,
   OracleConfig,
   RewardsDistributorConfig,
+  RedemptionStrategy,
 } from "./types";
 export {
+  assetSymbols,
   SupportedChains,
   SupportedChainsArray,
   DelegateContractName,
@@ -41,3 +45,4 @@ export {
   CTokenErrorCodes,
   FundOperationMode,
 } from "./enums";
+export { underlying, assetArrayToMap } from "./utils";

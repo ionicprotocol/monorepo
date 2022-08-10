@@ -12,8 +12,6 @@ export { filterOnlyObjectProperties } from "./MidasSdk/utils";
 
 export { ChainLiquidationConfig } from "./modules/liquidation/config";
 
-export { ChainSupportedAssetsMap } from "./chainConfig/supportedAssets";
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GConstructor<T> = new (...args: any[]) => T;
 export type MidasBaseConstructor = GConstructor<MidasBase>;

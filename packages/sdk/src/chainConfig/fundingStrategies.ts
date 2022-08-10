@@ -1,12 +1,12 @@
 import {
+  assetSymbols,
   ChainFundingStrategy,
   FundingStrategyContract,
-  RedemptionStrategyContract,
   SupportedChains,
+  underlying,
 } from "@midas-capital/types";
 
-import { assetSymbols, bscAssets } from "./assets";
-import { underlying } from "./supportedAssets";
+import {  bscAssets } from "./assets";
 
 const chainFundingStrategies: ChainFundingStrategy = {
   [SupportedChains.bsc]: {
@@ -15,11 +15,8 @@ const chainFundingStrategies: ChainFundingStrategy = {
       underlying(bscAssets, assetSymbols.BUSD),
     ],
   },
-  [SupportedChains.moonbase_alpha]: {},
   [SupportedChains.chapel]: {},
-  [SupportedChains.aurora]: {},
   [SupportedChains.moonbeam]: {},
-  [SupportedChains.evmos_testnet]: {},
   [SupportedChains.evmos]: {},
   [SupportedChains.ganache]: {},
   [SupportedChains.neon_devnet]: {},
