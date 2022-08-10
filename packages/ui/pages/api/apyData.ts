@@ -38,7 +38,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   if (rewardAddress) {
     start = await client
       .from(config.supabaseFlywheelTableName)
-      .select('pricePerShare,created_at')
+      .select('totalAssets')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -50,7 +50,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (start.error || !start.data.length) {
       start = await client
         .from(config.supabaseFlywheelTableName)
-        .select('pricePerShare,created_at')
+        .select('totalAssets')
         .eq('chain', parseInt(chain as string, 10))
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -60,7 +60,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     end = await client
       .from(config.supabaseFlywheelTableName)
-      .select('pricePerShare,created_at')
+      .select('totalAssets,totalSupply')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -70,7 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   } else {
     start = await client
       .from(config.supabasePluginTableName)
-      .select('pricePerShare,created_at')
+      .select('totalAssets')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -80,7 +80,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (start.error || !start.data.length) {
       start = await client
         .from(config.supabasePluginTableName)
-        .select('pricePerShare,created_at')
+        .select('totalAssets')
         .eq('chain', parseInt(chain as string, 10))
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -89,7 +89,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     }
     end = await client
       .from(config.supabasePluginTableName)
-      .select('pricePerShare,created_at')
+      .select('totalAssets,totalSupply')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -99,15 +99,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!start.error && !end.error) {
     if (start.data.length && end.data.length) {
-      const price1 = parseFloat(end.data[0].pricePerShare);
-      const price2 = parseFloat(start.data[0].pricePerShare);
-      const date1 = end.data[0].created_at;
-      const date2 = start.data[0].created_at;
+      const price1 = parseFloat(end.data[0].totalAssets);
+      const price2 = parseFloat(start.data[0].totalAssets);
+      const totalSupply = parseFloat(end.data[0].totalSupply);
 
-      const dateDelta = new Date(date1).getTime() - new Date(date2).getTime(); // time difference in milliseconds
-      const totalTimePeriod = 86400000 * 365; // 1 year in milliseconds
-
-      const apy = (Math.log(price1 / price2) / dateDelta) * totalTimePeriod;
+      const apy = (price1 - price2) / totalSupply;
 
       return res.json({
         apy: apy || 0,
