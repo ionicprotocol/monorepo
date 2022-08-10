@@ -189,6 +189,5 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
       midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
   }
-  // console.log(midasSdk.chainConfig);
   return midasSdk;
 };

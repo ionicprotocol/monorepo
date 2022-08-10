@@ -24,7 +24,6 @@ export const getFundingStrategiesAndDatas = async (
   const tokenPath: string[] = [];
 
   let flashSwapFundingToken = debtToken;
-  // TODO what is preferred first - uniswap FL or a funding strategy conversion?
   while (flashSwapFundingToken in fuse.fundingStrategies) {
     const [fundingStrategyContract, outputToken] = fuse.fundingStrategies[flashSwapFundingToken];
     // console.log(`got funding str ${fundingStrategyContract} and output ${outputToken} for ${flashSwapFundingToken}`);
@@ -41,14 +40,6 @@ export const getFundingStrategiesAndDatas = async (
     }
 
     const strategyAddress = fuse.chainDeployment[fundingStrategyContract].address;
-    // let strategyAddress;
-    // const contract = fuse.chainDeployment[fundingStrategyContract];
-    // if (fundingStrategyContract == "JarvisLiquidatorFunder" && !contract) {
-    //   strategyAddress = "0x3e235670D5198Cca0d2c02656EE42E524EF37961";
-    // } else {
-    //   strategyAddress = contract.address;
-    // }
-
     let strategyData = "";
     switch (fundingStrategyContract) {
       case FundingStrategyContract.JarvisLiquidatorFunder:

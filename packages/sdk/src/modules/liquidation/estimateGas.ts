@@ -74,20 +74,6 @@ const estimateGas = async (
       );
     case LiquidationKind.UNISWAP_TOKEN_BORROW:
       return await fuse.contracts.FuseSafeLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
-        // borrower.account,
-        // liquidationAmount,
-        // borrower.debt[0].cToken,
-        // borrower.collateral[0].cToken,
-        // 0,
-        // exchangeToTokenAddress,
-        // fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        // fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        // strategiesAndDatas.strategies,
-        // strategiesAndDatas.datas,
-        // 0,
-        // flashSwapFundingToken,
-        // debtFundingStrategies,
-        // debtFundingStrategiesData,
         {
           borrower: borrower.account,
           repayAmount: liquidationAmount,
