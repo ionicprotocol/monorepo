@@ -56,12 +56,7 @@ export const getFundingStrategiesAndDatas = async (
   };
 };
 
-function getStrategyData(
-  midasSdk: MidasBase,
-  contract: FundingStrategyContract,
-  inputToken: string,
-  fundingToken: string
-): string {
+function getStrategyData(midasSdk: MidasBase, contract: FundingStrategyContract, inputToken: string, fundingToken: string): string {
   switch (contract) {
     case FundingStrategyContract.JarvisLiquidatorFunder:
       const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
@@ -79,6 +74,9 @@ function getStrategyData(
         [fundingToken, poolAddress, expirationTime]
       );
     case FundingStrategyContract.XBombLiquidatorFunder:
-      return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
+      return new ethers.utils.AbiCoder().encode(
+        ["address"],
+        [inputToken]
+      );
   }
 }
