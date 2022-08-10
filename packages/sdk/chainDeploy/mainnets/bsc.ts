@@ -498,16 +498,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  //// Liquidator Redemption Strategies
-  /// xBOMB->BOMB
-  const xbombLiquidator = await deployments.deploy("XBombLiquidator", {
+  //// Liquidator Redemption and Funding Strategies
+  /// xBOMB<>BOMB
+  const xbombLiquidatorFunder = await deployments.deploy("XBombLiquidatorFunder", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
-  if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
-  console.log("XBombLiquidator: ", xbombLiquidator.address);
+  if (xbombLiquidatorFunder.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
+  console.log("XBombLiquidatorFunder: ", xbombLiquidatorFunder.address);
 
   //// JarvisLiquidatorFunder
   const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {
