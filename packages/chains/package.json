@@ -11,9 +11,17 @@
   "module": "./dist/esm/src/index.js",
   "types": "./dist/cjs/src/index.d.ts",
   "files": [
-    "/dist/",
-    "deployments.json"
+    "/dist/"
   ],
+  "exports": {
+    ".": "./dist/esm/src/index.js",
+    "./polygon": "./dist/esm/src/polygon/index.js",
+    "./polygon/assets": "./dist/esm/src/polygon/assets.js",
+    "./bsc": "./dist/esm/src/bsc/index.js",
+    "./bsc/assets": "./dist/esm/src/bsc/assets.js",
+    "./moonbeam": "./dist/esm/src/moonbeam/index.js",
+    "./moonbeam/assets": "./dist/esm/src/moonbeam/assets.js"
+  },
   "scripts": {
     "build": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
