@@ -28,11 +28,14 @@ jobs:
         with:
           version: nightly
 
-      - name: Install `packages`
+      - name: Install NPM packages
         run: yarn install
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Update forge deps
+        run: yarn workspace @midas-capital/sdk forge update
 
       - name: Build `ui`
         run: yarn build:deploy:ui
