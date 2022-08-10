@@ -14,7 +14,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset, JarvisLiquidityPool } from "../helpers/types";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
 
 const assets = bsc.assets;
 const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;

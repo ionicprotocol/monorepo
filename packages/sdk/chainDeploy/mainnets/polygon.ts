@@ -17,7 +17,6 @@ import {
   ChainlinkAsset,
   CurvePoolConfig,
   GelatoGUniAsset,
-  JarvisLiquidityPool,
 } from "../helpers/types";
 
 const assets = polygon.assets;

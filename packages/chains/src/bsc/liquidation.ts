@@ -1,6 +1,5 @@
 import {
   assetSymbols,
-  JarvisLiquidityPool,
   LiquidationDefaults,
   LiquidationStrategy,
   SupportedAsset,
