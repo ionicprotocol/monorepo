@@ -64,8 +64,8 @@ const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
   }
 };
 
-const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
-  const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[token];
+const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<StrategyAndData> => {
+  const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[inputToken];
   const redemptionStrategyContract = new Contract(
     fuse.chainDeployment[redemptionStrategy].address,
     fuse.chainDeployment[redemptionStrategy].abi,
@@ -84,7 +84,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       const tokens: string[] = [];
       while (true) {
         try {
-          const underlying = await curveLpOracle.callStatic.underlyingTokens(token, tokens.length);
+          const underlying = await curveLpOracle.callStatic.underlyingTokens(inputToken, tokens.length);
           tokens.push(underlying);
         } catch (e) {
           break;
@@ -102,7 +102,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator: {
-      const lpToken = IUniswapV2Pair__factory.connect(token, fuse.provider);
+      const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();
@@ -128,10 +128,21 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       };
     }
     case RedemptionStrategyContract.JarvisLiquidatorFunder: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
+      const strategyData = new ethers.utils.AbiCoder().encode(
+        ["address", "address", "uint256"],
+        [inputToken, getPool(inputToken, outputToken), 60 * 40]
+      );
+
+      return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     default: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
     }
   }
 };
+
+// TODO
+function getPool(inputToken: string, outputToken: string): string {
+  // return chainConfig.jarvisPools[inputToken][outputToken];
+  return "";
+}

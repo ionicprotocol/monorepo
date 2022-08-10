@@ -99,7 +99,7 @@ export default async function getPotentialLiquidation(
   );
   let debtFundingStrategies: string[] = [];
   let debtFundingStrategiesData: BytesLike[] = [];
-  let flashSwapFundingToken = borrower.debt[0].underlyingToken;
+  let flashSwapFundingToken = constants.AddressZero;
 
   if (liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW) {
     // chain some liquidation funding strategies
@@ -109,6 +109,7 @@ export default async function getPotentialLiquidation(
     flashSwapFundingToken = fundingStrategiesAndDatas.flashSwapFundingToken;
   }
 
+  //  chain some collateral redemption strategies
   const strategyAndData = await getRedemptionStrategiesAndDatas(
     fuse,
     borrower.collateral[0].underlyingToken,

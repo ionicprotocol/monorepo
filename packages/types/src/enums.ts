@@ -24,6 +24,7 @@ export enum RedemptionStrategyContract {
 
 export enum FundingStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
+  // TODO  IFundingStrategy  XBombLiquidator = "XBombLiquidator",
 }
 
 export enum DelegateContractName {

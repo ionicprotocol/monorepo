@@ -1,7 +1,8 @@
-import { BytesLike, constants } from "ethers";
+import {BytesLike, constants, ethers} from "ethers";
 
-import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
-import { MidasBase } from "../../MidasSdk";
+import {IUniswapV2Factory__factory} from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
+import {MidasBase} from "../../MidasSdk";
+import {FundingStrategyContract} from "@midas-capital/types";
 
 export type FundingStrategiesAndDatas = {
   strategies: string[];
@@ -22,10 +23,25 @@ export const getFundingStrategiesAndDatas = async (
   const datas: BytesLike[] = [];
   const tokenPath: string[] = [];
 
-  let liquidationFundingToken = debtToken;
-  while (liquidationFundingToken in fuse.fundingStrategies) {
-    const [fundingStrategyContract, outputToken] = fuse.fundingStrategies[liquidationFundingToken];
-    // console.log(`got funding str ${fundingStrategyContract} and output ${outputToken} for ${liquidationFundingToken}`);
+  let flashSwapFundingToken = debtToken;
+  // TODO what is preferred first - uniswap FL or a funding strategy conversion?
+  while (flashSwapFundingToken in fuse.fundingStrategies) {
+    const [fundingStrategyContract, outputToken] = fuse.fundingStrategies[flashSwapFundingToken];
+    // console.log(`got funding str ${fundingStrategyContract} and output ${outputToken} for ${flashSwapFundingToken}`);
+
+    // avoid going in an endless loop
+    if (tokenPath.find((p) => p == outputToken)) break;
+    tokenPath.push(outputToken);
+
+    // if it can be flash loaned through uniswap, that's enough
+    const pair = await uniswapV2Factory.callStatic.getPair(
+      fuse.chainSpecificAddresses.W_TOKEN,
+      outputToken
+    );
+    if (pair !== constants.AddressZero) {
+      // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
+      break;
+    }
 
     const strategyAddress = fuse.chainDeployment[fundingStrategyContract].address;
     // let strategyAddress;
@@ -36,29 +52,30 @@ export const getFundingStrategiesAndDatas = async (
     //   strategyAddress = contract.address;
     // }
 
-    // avoid going in an endless loop
-    if (tokenPath.find((p) => p == outputToken)) break;
-    tokenPath.push(outputToken);
+    let strategyData = "";
+    switch (fundingStrategyContract) {
+      case FundingStrategyContract.JarvisLiquidatorFunder:
+        strategyData = new ethers.utils.AbiCoder().encode(
+          ["address", "address", "uint256"],
+          [flashSwapFundingToken, getPool(flashSwapFundingToken, outputToken), 60 * 40]
+        );
+    }
 
-    const strategyData = constants.AddressZero;
     strategies.push(strategyAddress);
     datas.push(strategyData);
 
-    liquidationFundingToken = outputToken;
-
-    const pair = await uniswapV2Factory.callStatic.getPair(
-      fuse.chainSpecificAddresses.W_TOKEN,
-      liquidationFundingToken
-    );
-    if (pair !== constants.AddressZero) {
-      // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
-      break;
-    }
+    flashSwapFundingToken = outputToken;
   }
 
   return {
     strategies,
     datas,
-    flashSwapFundingToken: liquidationFundingToken,
+    flashSwapFundingToken,
   };
 };
+
+// TODO
+function getPool(inputToken: string, outputToken: string): string {
+  // return chainConfig.jarvisPools[inputToken][outputToken];
+  return "";
+}
