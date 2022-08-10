@@ -4,61 +4,69 @@ import { assets } from "./assets";
 
 const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } = {
   // TODO: group by input token or configure as predefined paths
-  [underlying(assets, assetSymbols.JAUD)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JAUD)
   ],
-  [underlying(assets, assetSymbols.JGBP)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JGBP)
   ],
-  [underlying(assets, assetSymbols.JCAD)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JCAD)
   ],
-  [underlying(assets, assetSymbols.JCHF)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JCHF)
   ],
-  [underlying(assets, assetSymbols.JCNY)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JCNY)
   ],
-  [underlying(assets, assetSymbols.JEUR)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JCOP)
   ],
-  [underlying(assets, assetSymbols.JJPY)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JEUR)
   ],
-  [underlying(assets, assetSymbols.JKRW)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JJPY)
   ],
-  [underlying(assets, assetSymbols.JMXN)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JKRW)
   ],
-  [underlying(assets, assetSymbols.JNZD)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JMXN)
   ],
-  [underlying(assets, assetSymbols.JPHP)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JNGN)
   ],
-  [underlying(assets, assetSymbols.JPLN)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JNZD)
   ],
-  [underlying(assets, assetSymbols.JSEK)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JPHP)
   ],
-  [underlying(assets, assetSymbols.JSGD)]: [
+  [underlying(assets, assetSymbols.USDC)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.USDC)
+    underlying(assets, assetSymbols.JPLN)
+  ],
+  [underlying(assets, assetSymbols.USDC)]: [
+    FundingStrategyContract.JarvisLiquidatorFunder,
+    underlying(assets, assetSymbols.JSEK)
+  ],
+  [underlying(assets, assetSymbols.USDC)]: [
+    FundingStrategyContract.JarvisLiquidatorFunder,
+    underlying(assets, assetSymbols.JSGD)
   ],
 };
 

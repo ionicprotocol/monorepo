@@ -57,13 +57,13 @@ const liquidationDefaults: LiquidationDefaults = {
       syntheticToken: underlying(assets, assetSymbols.JCNY),
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
-    // //  jCOP <-> USDC
-    // {
-    //   expirationTime: 40 * 60,
-    //   liquidityPoolAddress: "0x1493607042C5725cEf277A83CFC94caA4fc6278F",
-    //   syntheticToken: underlying(assets, assetSymbols.JCOP),
-    //   collateralToken: underlying(assets, assetSymbols.USDC),
-    // },
+    //  jCOP <-> USDC
+    {
+      expirationTime: 40 * 60,
+      liquidityPoolAddress: "0x1493607042C5725cEf277A83CFC94caA4fc6278F",
+      syntheticToken: underlying(assets, assetSymbols.JCOP),
+      collateralToken: underlying(assets, assetSymbols.USDC),
+    },
     //  jEUR <-> USDC
     {
       expirationTime: 40 * 60,
@@ -92,13 +92,13 @@ const liquidationDefaults: LiquidationDefaults = {
       syntheticToken: underlying(assets, assetSymbols.JMXN),
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
-    // //  jNGN <-> USDC
-    // {
-    //   expirationTime: 40 * 60,
-    //   liquidityPoolAddress: "0x63B5891895A57C31d5Ec2a8A5521b6EE67700f9F",
-    //   syntheticToken: underlying(assets, assetSymbols.JNGN),
-    //   collateralToken: underlying(assets, assetSymbols.USDC),
-    // },
+    //  jNGN <-> USDC
+    {
+      expirationTime: 40 * 60,
+      liquidityPoolAddress: "0x63B5891895A57C31d5Ec2a8A5521b6EE67700f9F",
+      syntheticToken: underlying(assets, assetSymbols.JNGN),
+      collateralToken: underlying(assets, assetSymbols.USDC),
+    },
     //  jNZD <-> USDC
     {
       expirationTime: 40 * 60,
