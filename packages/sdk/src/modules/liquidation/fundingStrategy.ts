@@ -55,6 +55,11 @@ export const getFundingStrategiesAndDatas = async (
         const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(
           (p) => p.collateralToken == flashSwapFundingToken && p.syntheticToken == outputToken
         );
+        if (jarvisPool == null) {
+          throw new Error(
+            `wrong config for the jarvis funding strategy for ${flashSwapFundingToken} - no such pool with syntheticToken ${outputToken}`
+          );
+        }
         const poolAddress = jarvisPool.liquidityPoolAddress;
         const expirationTime = jarvisPool.expirationTime;
         strategyData = new ethers.utils.AbiCoder().encode(

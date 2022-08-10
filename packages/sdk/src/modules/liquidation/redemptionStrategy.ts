@@ -132,6 +132,11 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == outputToken && p.syntheticToken == inputToken
       );
+      if (jarvisPool == null) {
+        throw new Error(
+          `wrong config for the jarvis redemption strategy for ${inputToken} - no such pool with collateralToken ${outputToken}`
+        );
+      }
       const poolAddress = jarvisPool.liquidityPoolAddress;
       const expirationTime = jarvisPool.expirationTime;
       const strategyData = new ethers.utils.AbiCoder().encode(
