@@ -17,6 +17,7 @@ export enum RedemptionStrategyContract {
   XBombLiquidator = "XBombLiquidator",
   JarvisSynthereumLiquidator = "JarvisSynthereumLiquidator",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
+  GelatoGUniLiquidator = "GelatoGUniLiquidator",
 }
 
 export enum DelegateContractName {

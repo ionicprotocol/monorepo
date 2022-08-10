@@ -6,7 +6,7 @@ import {
   underlying,
 } from "@midas-capital/types";
 
-import { bscAssets, moonbeamAssets } from "./assets";
+import { bscAssets, moonbeamAssets, polygonAssets } from "./assets";
 
 const chainRedemptionStrategies: ChainRedemptionStrategy = {
   [SupportedChains.bsc]: {
@@ -108,7 +108,120 @@ const chainRedemptionStrategies: ChainRedemptionStrategy = {
   },
   [SupportedChains.ganache]: {},
   [SupportedChains.neon_devnet]: {},
-  [SupportedChains.polygon]: {},
+  [SupportedChains.polygon]: {
+    [underlying(polygonAssets, assetSymbols.JAUD)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JCAD)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JCHF)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JCNY)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JEUR)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JCAD)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JGBP)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JJPY)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JKRW)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JSGD)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JMXN)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JNZD)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JPLN)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JSEK)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.JPHP)]: [
+      RedemptionStrategyContract.JarvisSynthereumLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_WETH_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_DAI_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_MAI_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_PAR_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_USDT_001)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_USDT_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_WETH_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_USDC_agEUR_001)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.USDC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_WBTC_WETH_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.WBTC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_WETH_DAI_03)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.WETH),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_WMATIC_AAVE_03)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.WMATIC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_WMATIC_USDC_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.WMATIC),
+    ],
+    [underlying(polygonAssets, assetSymbols.arrarkis_WMATIC_WETH_005)]: [
+      RedemptionStrategyContract.GelatoGUniLiquidator,
+      underlying(polygonAssets, assetSymbols.WMATIC),
+    ],
+  },
 };
 
 export default chainRedemptionStrategies;
