@@ -143,11 +143,11 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
     abi: CurveLpTokenPriceOracleNoRegistryArtifact.abi,
     address: CurveLpTokenPriceOracleNoRegistry.address,
   };
-  const XBombLiquidatorFunder = await ethers.getContract("XBombLiquidatorFunder");
-  const XBombLiquidatorFunderArtifact = await deployments.getArtifact("XBombLiquidatorFunder");
-  chainDeployment.XBombLiquidatorFunder = {
+  const XBombLiquidator = await ethers.getContract("XBombLiquidator");
+  const XBombLiquidatorArtifact = await deployments.getArtifact("XBombLiquidator");
+  chainDeployment.XBombLiquidator = {
     abi: XBombLiquidatorArtifact.abi,
-    address: XBombLiquidatorFunder.address,
+    address: XBombLiquidator.address,
   };
   const JarvisLiquidatorFunder = await ethers.getContract("JarvisLiquidatorFunder");
   const JarvisLiquidatorFunderArtifact = await deployments.getArtifact("JarvisLiquidatorFunder");

@@ -98,7 +98,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         outputToken: preferredOutputToken,
       };
 
-    case RedemptionStrategyContract.XBombLiquidatorFunder: {
+    case RedemptionStrategyContract.XBombLiquidator: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
