@@ -244,6 +244,7 @@ export type LiquidationDefaults = {
   LIQUIDATION_STRATEGY: LiquidationStrategy;
   MINIMUM_PROFIT_NATIVE: BigNumber;
   LIQUIDATION_INTERVAL_SECONDS: number;
+  jarvisPools: Array<JarvisLiquidityPool>;
 };
 
 export type RedemptionStrategy = {
@@ -309,4 +310,11 @@ export type ChainConfig = {
   redemptionStrategies: RedemptionStrategy;
   fundingStrategies: FundingStrategy;
   chainDeployments: ChainDeployment;
+};
+
+export type JarvisLiquidityPool = {
+  expirationTime: number;
+  liquidityPoolAddress: string;
+  syntheticToken: string;
+  collateralToken: string;
 };

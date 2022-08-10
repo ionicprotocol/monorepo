@@ -55,9 +55,12 @@ export const getFundingStrategiesAndDatas = async (
     let strategyData = "";
     switch (fundingStrategyContract) {
       case FundingStrategyContract.JarvisLiquidatorFunder:
+        const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(p => p.collateralToken == flashSwapFundingToken && p.syntheticToken == outputToken);
+        const poolAddress = jarvisPool.liquidityPoolAddress;
+        const expirationTime = jarvisPool.expirationTime;
         strategyData = new ethers.utils.AbiCoder().encode(
           ["address", "address", "uint256"],
-          [flashSwapFundingToken, getPool(flashSwapFundingToken, outputToken), 60 * 40]
+          [flashSwapFundingToken, poolAddress, expirationTime]
         );
     }
 
@@ -73,9 +76,3 @@ export const getFundingStrategiesAndDatas = async (
     flashSwapFundingToken,
   };
 };
-
-// TODO
-function getPool(inputToken: string, outputToken: string): string {
-  // return chainConfig.jarvisPools[inputToken][outputToken];
-  return "";
-}

@@ -24,6 +24,7 @@ export {
   InterestRateModel,
   InterestRateModelConf,
   InterestRateModelParams,
+  JarvisLiquidityPool,
   MarketConfig,
   OracleConf,
   OracleConfig,

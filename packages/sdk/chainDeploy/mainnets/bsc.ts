@@ -10,7 +10,6 @@ import {
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
-  deployJarvisLiquidatorFunder,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
@@ -511,12 +510,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("XBombLiquidator: ", xbombLiquidator.address);
 
   //// JarvisLiquidatorFunder
-  await deployJarvisLiquidatorFunder({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
+  const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
   });
+  if (jarvisLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
+  console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// EPS
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);

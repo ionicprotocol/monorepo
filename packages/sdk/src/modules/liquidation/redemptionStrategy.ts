@@ -129,21 +129,18 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       };
     }
     case RedemptionStrategyContract.JarvisLiquidatorFunder: {
+      const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(p => p.collateralToken == outputToken && p.syntheticToken == inputToken);
+      const poolAddress = jarvisPool.liquidityPoolAddress;
+      const expirationTime = jarvisPool.expirationTime;
       const strategyData = new ethers.utils.AbiCoder().encode(
         ["address", "address", "uint256"],
-        [inputToken, getPool(inputToken, outputToken), 60 * 40]
+        [inputToken, poolAddress, expirationTime]
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     default: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
   }
 };
-
-// TODO
-function getPool(inputToken: string, outputToken: string): string {
-  // return chainConfig.jarvisPools[inputToken][outputToken];
-  return "";
-}

@@ -10,6 +10,7 @@ import oracles from "./oracles";
 import specificParams from "./params";
 import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
+import fundingStrategies from "./fundingStrategies";
 
 const chainConfig: ChainConfig = {
   chainId: SupportedChains.bsc,
@@ -21,6 +22,7 @@ const chainConfig: ChainConfig = {
   specificParams,
   deployedPlugins,
   redemptionStrategies,
+  fundingStrategies,
   chainDeployments: deployments.contracts,
 };
 
