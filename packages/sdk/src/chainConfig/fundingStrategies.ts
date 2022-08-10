@@ -6,7 +6,7 @@ import {
   underlying,
 } from "@midas-capital/types";
 
-import {  bscAssets } from "./assets";
+import { bscAssets } from "./assets";
 
 const chainFundingStrategies: ChainFundingStrategy = {
   [SupportedChains.bsc]: {

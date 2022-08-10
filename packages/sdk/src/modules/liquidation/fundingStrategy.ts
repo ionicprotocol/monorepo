@@ -1,8 +1,8 @@
-import {BytesLike, constants, ethers} from "ethers";
+import { FundingStrategyContract } from "@midas-capital/types";
+import { BytesLike, constants, ethers } from "ethers";
 
-import {IUniswapV2Factory__factory} from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
-import {MidasBase} from "../../MidasSdk";
-import {FundingStrategyContract} from "@midas-capital/types";
+import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
+import { MidasBase } from "../../MidasSdk";
 
 export type FundingStrategiesAndDatas = {
   strategies: string[];
@@ -34,10 +34,7 @@ export const getFundingStrategiesAndDatas = async (
     tokenPath.push(outputToken);
 
     // if it can be flash loaned through uniswap, that's enough
-    const pair = await uniswapV2Factory.callStatic.getPair(
-      fuse.chainSpecificAddresses.W_TOKEN,
-      outputToken
-    );
+    const pair = await uniswapV2Factory.callStatic.getPair(fuse.chainSpecificAddresses.W_TOKEN, outputToken);
     if (pair !== constants.AddressZero) {
       // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
       break;
@@ -55,7 +52,9 @@ export const getFundingStrategiesAndDatas = async (
     let strategyData = "";
     switch (fundingStrategyContract) {
       case FundingStrategyContract.JarvisLiquidatorFunder:
-        const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(p => p.collateralToken == flashSwapFundingToken && p.syntheticToken == outputToken);
+        const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(
+          (p) => p.collateralToken == flashSwapFundingToken && p.syntheticToken == outputToken
+        );
         const poolAddress = jarvisPool.liquidityPoolAddress;
         const expirationTime = jarvisPool.expirationTime;
         strategyData = new ethers.utils.AbiCoder().encode(

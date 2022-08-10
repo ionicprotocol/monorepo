@@ -103,7 +103,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {
-        const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
+      const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();
@@ -129,7 +129,9 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       };
     }
     case RedemptionStrategyContract.JarvisLiquidatorFunder: {
-      const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(p => p.collateralToken == outputToken && p.syntheticToken == inputToken);
+      const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(
+        (p) => p.collateralToken == outputToken && p.syntheticToken == inputToken
+      );
       const poolAddress = jarvisPool.liquidityPoolAddress;
       const expirationTime = jarvisPool.expirationTime;
       const strategyData = new ethers.utils.AbiCoder().encode(
