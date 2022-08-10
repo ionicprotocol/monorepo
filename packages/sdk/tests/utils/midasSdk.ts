@@ -165,7 +165,6 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
 };
 
 export const getOrCreateMidas = async (): Promise<MidasSdk> => {
-  console.log("here also");
   if (!midasSdk) {
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
@@ -190,6 +189,6 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
       midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
   }
-  console.log(midasSdk.chainConfig);
+  // console.log(midasSdk.chainConfig);
   return midasSdk;
 };
