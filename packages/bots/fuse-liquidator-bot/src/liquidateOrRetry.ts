@@ -1,7 +1,6 @@
 import { MidasSdk } from "@midas-capital/sdk";
-import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
 import { sendTransactionToSafeLiquidator } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation";
-
+import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
 import { Wallet } from "ethers";
 
 import { logger } from "./index";

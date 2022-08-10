@@ -1,6 +1,7 @@
 import { TransactionRequest } from "@ethersproject/providers";
-import { MidasBase } from "../../MidasSdk";
 import { BigNumber, Wallet } from "ethers";
+
+import { MidasBase } from "../../MidasSdk";
 
 import { fetchGasLimitForTransaction } from "./utils";
 
