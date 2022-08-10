@@ -1,6 +1,13 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { IrmTypes, LiquidationStrategy, OracleTypes, RedemptionStrategyContract, FundingStrategyContract, SupportedChains } from "./enums";
+import {
+  FundingStrategyContract,
+  IrmTypes,
+  LiquidationStrategy,
+  OracleTypes,
+  RedemptionStrategyContract,
+  SupportedChains,
+} from "./enums";
 
 export type Artifact = {
   abi: Array<object>;

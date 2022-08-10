@@ -1,10 +1,10 @@
 import {
   assetSymbols,
+  JarvisLiquidityPool,
   LiquidationDefaults,
   LiquidationStrategy,
   SupportedAsset,
-  JarvisLiquidityPool,
-  underlying
+  underlying,
 } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
@@ -24,7 +24,12 @@ const liquidationDefaults: LiquidationDefaults = {
   LIQUIDATION_INTERVAL_SECONDS: 40,
   jarvisPools: [
     // jBRL <-> BUSD
-    { expirationTime: 40 * 60, liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49", syntheticToken: underlying(assets, assetSymbols.jBRL), collateralToken: underlying(assets, assetSymbols.BUSD)},
+    {
+      expirationTime: 40 * 60,
+      liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49",
+      syntheticToken: underlying(assets, assetSymbols.jBRL),
+      collateralToken: underlying(assets, assetSymbols.BUSD),
+    },
   ],
 };
 

@@ -1,4 +1,4 @@
-import {assetSymbols, FundingStrategyContract, underlying} from "@midas-capital/types";
+import { assetSymbols, FundingStrategyContract, underlying } from "@midas-capital/types";
 
 import { assets } from "./assets";
 
@@ -10,13 +10,13 @@ const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } 
   // ],
   [underlying(assets, assetSymbols.BUSD)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.jBRL)
+    underlying(assets, assetSymbols.jBRL),
   ],
   // // BOMB
   // [underlying(assets, assetSymbols.BOMB)]: [
   //   FundingStrategyContract.XBombLiquidator,
   //   underlying(assets, assetSymbols.xBOMB)
   // ]
-}
+};
 
 export default fundingStrategies;
