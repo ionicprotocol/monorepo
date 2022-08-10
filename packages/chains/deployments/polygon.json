@@ -24211,7 +24211,7 @@
       ]
     },
     "JumpRateModel": {
-      "address": "0x193E8ffD909c919E406776906F3De68CA202BE61",
+      "address": "0xeA128F2De6D18F61716046D0b4930C353f2aA4E6",
       "abi": [
         {
           "inputs": [
@@ -26736,7 +26736,7 @@
       ]
     },
     "WhitePaperInterestRateModel": {
-      "address": "0xf93c846c5FB6097900e60785886935eea6dd2C5F",
+      "address": "0x1c5DCC70eD61301Ebfd847Ad3573290da223E085",
       "abi": [
         {
           "inputs": [
