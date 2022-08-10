@@ -17,14 +17,19 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
         try {
           const marketContract = new ethers.Contract(strategy, CTOKEN_ABI, provider);
 
-          const [state, rewardToken, totalSupply, underlyingAsset, pluginAddress] =
-            await Promise.all([
-              flywheelContract.callStatic.strategyState(strategy),
-              flywheelContract.callStatic.rewardToken(),
-              marketContract.callStatic.totalSupply(),
-              marketContract.callStatic.underlying(),
-              marketContract.callStatic.plugin(),
-            ]);
+          const [
+            state,
+            rewardToken,
+            totalSupply,
+            underlyingAsset,
+            pluginAddress,
+          ] = await Promise.all([
+            flywheelContract.callStatic.strategyState(strategy),
+            flywheelContract.callStatic.rewardToken(),
+            marketContract.callStatic.totalSupply(),
+            marketContract.callStatic.underlying(),
+            marketContract.callStatic.plugin(),
+          ]);
           // console.log({
           //   state,
           //   rewardToken,
@@ -34,13 +39,11 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
           // });
 
           const index = state['index'];
-          const pricePerShare = !totalSupply.eq('0') ? index / totalSupply : 0;
 
           const { error } = await supabase.from(config.supabaseFlywheelTableName).insert([
             {
               totalAssets: index.toString(),
               totalSupply: totalSupply.toString(),
-              pricePerShare: pricePerShare.toString(),
               rewardAddress: rewardToken.toLowerCase(),
               pluginAddress: pluginAddress.toLowerCase(),
               underlyingAddress: underlyingAsset.toLowerCase(),

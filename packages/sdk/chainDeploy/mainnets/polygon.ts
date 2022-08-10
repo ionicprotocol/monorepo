@@ -401,7 +401,7 @@ const curvePools: CurvePoolConfig[] = [
 const gelatoAssets: GelatoGUniAsset[] = [
   {
     // USDC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_WETH_005)!.underlying,
   },
   {
     // WBTC/WETH
