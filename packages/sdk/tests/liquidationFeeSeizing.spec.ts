@@ -1,4 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
+import { MarketConfig } from "@midas-capital/types";
 import { expect } from "chai";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -12,7 +13,7 @@ import {
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../lib/contracts/typechain";
-import { MarketConfig, MidasSdk } from "../src";
+import { MidasSdk } from "../src";
 
 import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
 import { setupAndLiquidatePool, setupLiquidatablePool } from "./utils/collateral";

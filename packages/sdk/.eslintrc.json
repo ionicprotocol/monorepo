@@ -44,5 +44,19 @@
         "newlines-between": "always"
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "tasks/**/*.ts",
+        "tests/**/*.ts",
+        "chainDeploy/**/*.ts",
+        "deploy/**/*.ts"
+      ],
+      "rules": {
+        "no-console": ["off"],
+        "@typescript-eslint/no-non-null-assertion": ["off"]
+      }
+    }
+  ]
 }

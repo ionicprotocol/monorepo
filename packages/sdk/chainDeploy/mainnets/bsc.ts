@@ -1,19 +1,23 @@
-/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
-
+import { bsc } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedAsset, SupportedChains } from "../../src";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployABNBcOracle } from "../helpers/aBNBcOracle";
-import { deployDiaOracle } from "../helpers/dia";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployABNBcOracle,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployDiaOracle,
+  deployJarvisSynthereumLiquidator,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
-import { deployCurveLpOracle } from "../oracles/curveLp";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset, JarvisLiquidityPool } from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.bsc];
+const assets = bsc.assets;
 const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
@@ -23,7 +27,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "BNB",
   stableToken: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
   wBTCToken: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: bsc.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [
@@ -277,7 +281,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.bsc].cgId,
+  cgId: bsc.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -409,6 +413,11 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+const jarvisLiquidityPools: JarvisLiquidityPool[] = [
+  // jBRL -> BUSD
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49" },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -506,19 +515,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
   console.log("XBombLiquidator: ", xbombLiquidator.address);
 
-  /// jBRL->BUSD
-  // TODO in the addresses provider?
-  const synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
-  const expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
-  const jarvisSynthereumLiquidator = await deployments.deploy("JarvisSynthereumLiquidator", {
-    from: deployer,
-    args: [synthereumLiquidityPoolAddress, expirationTime],
-    log: true,
-    waitConfirmations: 1,
+  //// JarvisSynthereumLiquidator
+  await deployJarvisSynthereumLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    jarvisLiquidityPools,
   });
-  if (jarvisSynthereumLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(jarvisSynthereumLiquidator.transactionHash);
-  console.log("JarvisSynthereumLiquidator: ", jarvisSynthereumLiquidator.address);
 
   /// EPS
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);

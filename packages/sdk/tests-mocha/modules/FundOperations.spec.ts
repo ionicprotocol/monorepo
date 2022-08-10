@@ -1,12 +1,12 @@
+import { ganache } from "@midas-capital/chains";
 import axios from "axios";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import { SupportedChains } from "../../src/enums";
+import { MidasBaseConstructor } from "../../src";
 import { MidasBase } from "../../src/MidasSdk/index";
 import * as utilsFns from "../../src/MidasSdk/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
-import { MidasBaseConstructor } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
@@ -23,7 +23,7 @@ describe("FundOperation", () => {
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
 
     FundOperations = FundOperationsModule.withFundOperations(MidasBase);
-    fundOperations = new FundOperations(mockProvider, SupportedChains.ganache, {
+    fundOperations = new FundOperations(mockProvider, ganache, {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },

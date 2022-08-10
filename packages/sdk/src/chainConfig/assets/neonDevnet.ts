@@ -1,7 +1,4 @@
-import { OracleTypes } from "../../enums";
-import { SupportedAsset } from "../../types";
-
-import { assetSymbols } from "./index";
+import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 export const assets: SupportedAsset[] = [
   {

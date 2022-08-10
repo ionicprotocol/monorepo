@@ -82,7 +82,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
 task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers, run }) => {
+  .setAction(async (taskArgs, { ethers }) => {
     // @ts-ignoreutils/fuseSdk
     const midasSdkModule = await import("../tests/utils/midasSdk");
 
@@ -185,7 +185,7 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
     types.string
   )
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers, run }) => {
+  .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
     const oldErc20Delegate = taskArgs.oldDelegate;
     const oldErc20PluginDelegate = taskArgs.oldPluginDelegate;

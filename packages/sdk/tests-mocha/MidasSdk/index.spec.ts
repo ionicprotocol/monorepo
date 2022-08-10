@@ -1,9 +1,9 @@
+import { ganache } from "@midas-capital/chains";
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../lib/contracts/typechain";
 import { ARTIFACTS } from "../../src/Artifacts";
-import { SupportedChains } from "../../src/enums";
 import { MidasBase } from "../../src/MidasSdk/index";
 import JumpRateModel from "../../src/MidasSdk/irm/JumpRateModel";
 import * as utilsFns from "../../src/MidasSdk/utils";
@@ -37,7 +37,7 @@ describe("Fuse Index", () => {
     (mockProvider as any)._isSigner = true;
     (mockProvider as any).getSigner = (address: string) => address;
     (mockProvider as any).getCode = (address: string) => address;
-    fuseBase = new MidasBase(mockProvider, SupportedChains.ganache, {
+    ganache.chainDeployments = {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
@@ -45,7 +45,8 @@ describe("Fuse Index", () => {
       FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
-    });
+    };
+    fuseBase = new MidasBase(mockProvider, ganache);
     fuseBase.contracts.FusePoolDirectory = mockContract as unknown as FusePoolDirectory;
   });
   afterEach(function () {

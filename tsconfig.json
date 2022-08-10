@@ -23,6 +23,12 @@
       "path": "./packages/sdk"
     },
     {
+      "path": "./packages/types"
+    },
+    {
+      "path": "./packages/chains"
+    },
+    {
       "path": "./packages/ui"
     },
     {

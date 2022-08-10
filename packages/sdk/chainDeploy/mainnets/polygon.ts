@@ -1,16 +1,27 @@
-/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
-
+import { polygon } from "@midas-capital/chains";
+import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { SupportedChains } from "../../src";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig } from "../helpers/types";
-import { deployCurveLpOracle } from "../oracles/curveLp";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployJarvisSynthereumLiquidator,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
+import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  CurvePoolConfig,
+  GelatoGUniAsset,
+  JarvisLiquidityPool,
+} from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.polygon];
+const assets = polygon.assets;
 const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
@@ -20,7 +31,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "MATIC",
   stableToken: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
   wBTCToken: assets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: polygon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [
@@ -90,7 +101,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.polygon].cgId,
+  cgId: polygon.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -330,7 +341,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
 // https://polygon.curve.fi/
 const curvePools: CurvePoolConfig[] = [
   {
-    lpToken: "0x2ffbce9099cbed86984286a54e5932414af4b717",
+    lpToken: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.AGEUR)!.underlying,
@@ -338,40 +349,40 @@ const curvePools: CurvePoolConfig[] = [
     ],
   },
   {
-    lpToken: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
-    pool: "0x0f110c55efe62c16d553a3d3464b77e1853d0e97",
+    lpToken: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
+    pool: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
     ],
   },
   {
-    lpToken: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
-    pool: "0x2c3cc8e698890271c8141be9f6fd6243d56b39f1",
+    lpToken: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
+    pool: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.EURT)!.underlying,
     ],
   },
   {
-    lpToken: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
-    pool: "0xaa91cdd7abb47f821cf07a2d38cc8668deaf1bdc",
+    lpToken: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    pool: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JJPY)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.JPYC)!.underlying,
     ],
   },
   {
-    lpToken: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
-    pool: "0xa69b0d5c0c401bba2d5162138613b5e38584f63f",
+    lpToken: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
+    pool: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JCAD)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.CADC)!.underlying,
     ],
   },
   {
-    lpToken: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
-    pool: "0xef75e9c7097842acc5d0869e1db4e5fddf4bfdda",
+    lpToken: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
+    pool: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
@@ -385,6 +396,92 @@ const curvePools: CurvePoolConfig[] = [
       assets.find((a) => a.symbol === assetSymbols.NZDS)!.underlying,
     ],
   },
+];
+
+const gelatoAssets: GelatoGUniAsset[] = [
+  {
+    // USDC/WETH
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+  },
+  {
+    // WBTC/WETH
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WBTC_WETH_005)!.underlying,
+  },
+  {
+    // USDC/PAR
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_PAR_005)!.underlying,
+  },
+  {
+    // WMATIC/USDC
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_USDC_005)!.underlying,
+  },
+  {
+    // USDC/agEUR
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_agEUR_001)!.underlying,
+  },
+  {
+    // WMATIC/WETH
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_WETH_005)!.underlying,
+  },
+  {
+    // WMATIC/AAVE
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_AAVE_03)!.underlying,
+  },
+  {
+    // USDC/MAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_MAI_005)!.underlying,
+  },
+  {
+    // USDC/USDT 0.01 % fee tier
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+  },
+  {
+    // USDC/USDT 0.05 % fee tier
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_005)!.underlying,
+  },
+  {
+    // USDC/DAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_DAI_005)!.underlying,
+  },
+  {
+    // WETH/DAI
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WETH_DAI_03)!.underlying,
+  },
+];
+
+const jarvisLiquidityPools: JarvisLiquidityPool[] = [
+  // jAUD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x36572797Cc569A74731E0738Ef56e3b8ce3F309c" },
+  //  jGBP -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x36d6D1d6249fbC6EBd0fC28fd46C846fB69b9074" },
+  //  jCAD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x06440a2DA257233790B5355322dAD82C10F0389A" },
+  //  jCHF -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x8734CF40A402D4191BD4D7a64bEeF12E4c452DeF" },
+  //  jCNY -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x72E7Da7C0dD3C082Dfe8f22343D6AD70286e07bd" },
+  //  jCOP -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x1493607042C5725cEf277A83CFC94caA4fc6278F" },
+  //  jEUR -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x65a7b4Ff684C2d08c115D55a4B089bf4E92F5003" },
+  //  jJPY -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0xAEc757BF73cc1f4609a1459205835Dd40b4e3F29" },
+  //  jKRW -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x7aC6515f4772fcB6EEeF978f60D996B21C56089D" },
+  //  jMXN -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x25E9F976f5020F6BF2d417b231e5f414b7700E31" },
+  //  jNGN -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x63B5891895A57C31d5Ec2a8A5521b6EE67700f9F" },
+  //  jNZD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x4FDA1B4b16f5F2535482b91314018aE5A2fda602" },
+  //  jPHP -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x8aE34663B4622336818e334dC42f92C41eFbfa35" },
+  //  jPLN -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0x166e4B3Ec3F81F32f0863B9cD63621181d6bFED5" },
+  //  jSEK -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0xc8442072CF1E131506eaC7df33eA8910e1d5cFDd" },
+  //  jSGD -> USDC
+  { expirationTime: 40 * 60, liquidityPoolAddress: "0xBE813590e1B191120f5df3343368f8a2F579514C" },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -432,6 +529,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     curvePools,
   });
 
+  //// Gelato GUni Oracle
+  await deployGelatoGUniPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    gelatoAssets,
+  });
+
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,
     args: [],
@@ -442,6 +549,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("SimplePriceOracle: ", simplePO.address);
 
   //// Liquidator Redemption Strategies
+
+  //// UniswapLpTokenLiquidator
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,
     args: [],
@@ -453,7 +562,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  /// CurveLPLiquidator
+  //// CurveLPLiquidator
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
@@ -465,7 +574,26 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
-  ////
+  //// Gelato GUNI Liquidator
+  const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (gelatoGUniLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(gelatoGUniLiquidator.transactionHash);
+  }
+  console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
+
+  //// JarvisSynthereumLiquidator
+  await deployJarvisSynthereumLiquidator({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    jarvisLiquidityPools,
+  });
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;

@@ -1,4 +1,4 @@
-import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/sdk';
+import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/types';
 import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';

@@ -8,7 +8,9 @@
     "packages/bots/apy-tracking",
     "packages/functions",
     "packages/monitors/oracle",
+    "packages/chains",
     "packages/sdk",
+    "packages/types",
     "packages/ui"
   ],
   "devDependencies": {
@@ -27,8 +29,9 @@
     "@types/react": "^17.0.15"
   },
   "scripts": {
-    "build:all": "yarn workspaces foreach run build",
-    "build:sdk": "yarn workspace @midas-capital/sdk build",
+    "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @midas-capital/sdk build",
+    "build:types": "yarn workspace @midas-capital/types build",
+    "build:chains": "yarn workspace @midas-capital/chains build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:functions": "yarn workspace @midas-capital/functions build",
@@ -38,7 +41,7 @@
     "build:deploy:twap": "yarn build:sdk && yarn build:twap",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:ui": "yarn build:sdk && yarn build:ui && yarn build:functions",
-    "dev:ui": "yarn workspace @midas-capital/sdk export; yarn build:sdk && yarn workspace @midas-capital/ui dev",
+    "dev:ui": "yarn workspace @midas-capital/sdk export:all; yarn build:sdk && yarn workspace @midas-capital/ui dev",
     "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node"
   }

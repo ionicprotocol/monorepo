@@ -26,6 +26,8 @@ COPY .yarnrc.yml /tmp/build/
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
+COPY packages/types/package.json /tmp/build/packages/types/
+COPY packages/chains/package.json /tmp/build/packages/chains/
 COPY packages/monitors/oracle/package.json /tmp/build/packages/monitors/oracle/
 
 RUN touch /tmp/build/yarn.lock
@@ -36,6 +38,8 @@ RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
+COPY packages/types /tmp/build/packages/types
+COPY packages/chains /tmp/build/packages/chains
 COPY packages/monitors/oracle /tmp/build/packages/monitors/oracle
 
 # ----- build -----

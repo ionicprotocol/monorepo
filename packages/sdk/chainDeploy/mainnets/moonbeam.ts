@@ -1,24 +1,25 @@
-/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
-
+import { moonbeam } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { SupportedChains } from "../../src";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
-import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployDiaOracle } from "../helpers/dia";
+import {
+  ChainDeployConfig,
+  deployChainlinkOracle,
+  deployDiaOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
-const assets = chainSupportedAssets[SupportedChains.moonbeam];
+const assets = moonbeam.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
   nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
-  blocksPerYear: chainSpecificParams[SupportedChains.moonbeam].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
+  blocksPerYear: moonbeam.specificParams.blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -92,7 +93,7 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.GLINT,
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.moonbeam].cgId,
+  cgId: moonbeam.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [

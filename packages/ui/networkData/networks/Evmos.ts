@@ -1,4 +1,4 @@
-import { SupportedChains } from '@midas-capital/sdk';
+import { SupportedChains } from '@midas-capital/types';
 
 import { config } from '@ui/config/index';
 import { ChainMetadata } from '@ui/types/ChainMetaData';
@@ -31,7 +31,7 @@ const mainnet: ChainMetadata = {
 };
 
 const testnet: ChainMetadata = {
-  chainId: SupportedChains.evmos_testnet,
+  chainId: SupportedChains.evmos,
   chainIdHex: '0x2328',
   name: 'Evmos Testnet',
   shortName: 'Evmos Testnet',

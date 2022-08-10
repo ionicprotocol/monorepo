@@ -1,3 +1,4 @@
+import { DelegateContractName } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 export default task("market:create", "Create Market")
@@ -13,8 +14,6 @@ export default task("market:create", "Create Market")
 
     const signer = await hre.ethers.getNamedSigner(namedSigner);
 
-    // @ts-ignore
-    const enumsModule = await import("../../src/enums");
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
@@ -36,7 +35,7 @@ export default task("market:create", "Create Market")
     console.log("Asset config: ", { assetConfig });
 
     console.log(
-      `Creating market for token ${assetConfig.underlying}, pool ${comptroller}, impl: ${enumsModule.DelegateContractName.CErc20Delegate}`
+      `Creating market for token ${assetConfig.underlying}, pool ${comptroller}, impl: ${DelegateContractName.CErc20Delegate}`
     );
 
     const [assetAddress, implementationAddress, interestRateModel, receipt] = await sdk.deployAsset(

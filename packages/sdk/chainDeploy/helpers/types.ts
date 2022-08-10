@@ -1,7 +1,5 @@
-import { BigNumber } from "ethers";
+import { SupportedAsset } from "@midas-capital/types";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
-
-import { SupportedAsset } from "../../src/types";
 
 export enum ChainlinkFeedBaseCurrency {
   ETH,
@@ -63,6 +61,10 @@ export type DiaAsset = {
   key: string;
 };
 
+export type GelatoGUniAsset = {
+  vaultAddress: string;
+};
+
 export type CurvePoolConfig = {
   lpToken: string;
   pool: string;
@@ -122,4 +124,19 @@ export type Erc4626PluginDeployFnParams = ChainDeployFnParams & {
 
 export type aBNBcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
+};
+
+export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  gelatoAssets: GelatoGUniAsset[];
+};
+
+export type JarvisLiquidityPool = {
+  expirationTime: number;
+  liquidityPoolAddress: string;
+};
+
+// future proofing for when we can deploy more than one liq pool liquidator
+export type JarvisSynthereumLiquidatorDeployParams = ChainDeployFnParams & {
+  jarvisLiquidityPools: JarvisLiquidityPool[];
 };

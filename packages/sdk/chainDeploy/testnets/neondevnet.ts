@@ -1,13 +1,10 @@
-/* eslint-disable no-console, @typescript-eslint/no-non-null-assertion */
-
+import { neondevnet } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { ethers, utils } from "ethers";
 
-import { SupportedChains } from "../../src";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { SupportedAsset } from "../../src/types";
 import { ChainDeployConfig } from "../helpers";
 
-const assets = chainSupportedAssets[SupportedChains.neon_devnet];
+const assets = neondevnet.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON).underlying,
@@ -16,7 +13,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "NEON",
   stableToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC).underlying,
   wBTCToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBTC).underlying,
-  blocksPerYear: chainSpecificParams[SupportedChains.neon_devnet].blocksPerYear.toNumber(),
+  blocksPerYear: neondevnet.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -26,8 +23,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
   },
-  // TODO: need to check
-  cgId: chainSpecificParams[SupportedChains.neon_devnet].cgId,
+  cgId: neondevnet.specificParams.cgId,
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {

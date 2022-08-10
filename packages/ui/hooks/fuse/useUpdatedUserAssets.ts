@@ -1,4 +1,4 @@
-import { FundOperationMode } from '@midas-capital/sdk';
+import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery, UseQueryResult } from 'react-query';

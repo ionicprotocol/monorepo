@@ -1,5 +1,9 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { ChainSupportedAssetsMap, SupportedChains } from '@midas-capital/sdk';
+import {
+  assetArrayToMap,
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  SupportedChains,
+} from '@midas-capital/types';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';
@@ -10,6 +14,23 @@ import { SUPPORTED_NETWORKS_REGEX } from '../../constants';
 import { config } from '@ui/config/index';
 import { TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
+
+const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.ganache]: [],
+  [SupportedChains.evmos]: [],
+  [SupportedChains.bsc]: [],
+  [SupportedChains.chapel]: [],
+  [SupportedChains.moonbeam]: [],
+  [SupportedChains.neon_devnet]: [],
+  [SupportedChains.polygon]: [],
+};
+
+const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<typeof assetArrayToMap> } =
+  Object.entries(ChainSupportedAssets).reduce((acc, [key, value]) => {
+    // @ts-ignore
+    acc[key] = assetArrayToMap(value);
+    return acc;
+  }, {});
 
 const querySchema = yup.object().shape({
   chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
