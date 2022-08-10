@@ -1,7 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import BSCAssets from '@midas-capital/chains/bsc/assets';
-import MoonbeamAssets from '@midas-capital/chains/moonbeam/assets';
-import PolygonAssets from '@midas-capital/chains/polygon/assets';
+import { bsc, moonbeam, polygon } from '@midas-capital/chains';
 import {
   assetArrayToMap,
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -18,12 +16,12 @@ import { config } from '@ui/config/index';
 import { TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
 const ChainSupportedAssets: ChainSupportedAssetsType = {
-  [SupportedChains.bsc]: BSCAssets,
-  [SupportedChains.polygon]: PolygonAssets,
+  [SupportedChains.bsc]: bsc.assets,
+  [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: [],
   [SupportedChains.evmos]: [],
   [SupportedChains.chapel]: [],
-  [SupportedChains.moonbeam]: MoonbeamAssets,
+  [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: [],
 };
 
