@@ -42,7 +42,7 @@
     "build:deploy:twap": "yarn build:sdk && yarn build:twap",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:ui": "yarn build:types && yarn build:sdk && yarn build:ui && yarn build:functions",
-    "dev:ui": "yarn workspace @midas-capital/sdk export; yarn build:sdk && yarn workspace @midas-capital/ui dev",
+    "dev:ui": "yarn workspace @midas-capital/sdk export:all; yarn build:sdk && yarn workspace @midas-capital/ui dev",
     "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node"
   }
