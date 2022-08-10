@@ -6,7 +6,7 @@ import AnkrBNBInterestRateModel from "./MidasSdk/irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./MidasSdk/irm/WhitePaperInterestRateModel";
-export { Artifacts } from "./Artifacts";
+export { Artifacts, oracleConfig, irmConfig } from "./Artifacts";
 
 export { filterOnlyObjectProperties } from "./MidasSdk/utils";
 
