@@ -25,5 +25,5 @@ dotenv.config();
       await approveTokensToSafeLiquidator(chainId, provider, tokenAddress);
     }
   }
-  liquidateAndRepeat(chainId, provider);
+  await liquidateAndRepeat(chainId, provider);
 })();

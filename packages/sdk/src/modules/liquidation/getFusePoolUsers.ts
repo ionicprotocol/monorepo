@@ -73,10 +73,8 @@ export default async function getAllFusePoolUsers(
   const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   for (const pool of allPools) {
-    // if (pool.comptroller == "0x31d76A64Bc8BbEffb601fac5884372DEF910F044") {
     const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth, signer);
     fusePoolUsers.push(poolUserParms);
-    // }
   }
   return fusePoolUsers;
 }
