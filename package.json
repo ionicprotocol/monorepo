@@ -44,6 +44,6 @@
     "dev:ui": "yarn workspace @midas-capital/sdk export:ganache; yarn build:sdk && yarn workspace @midas-capital/ui dev",
     "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node",
-    "checkout:lib": "rm -rf packages/sdk/lib/ && git checkout -- packages/sdk/lib/"
+    "checkout:lib": "rm -rf packages/sdk/lib/contracts && git submodule update"
   }
 }
