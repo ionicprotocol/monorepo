@@ -1,7 +1,6 @@
+import { assetSymbols } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { ethers } from "hardhat";
-
-import { assetSymbols } from "../../src/chainConfig";
 
 const WHALE_ACCOUNTS = {
   56: "0x8894E0a0c962CB723c1976a4421c95949bE2D4E3", // binance hot wallet 6

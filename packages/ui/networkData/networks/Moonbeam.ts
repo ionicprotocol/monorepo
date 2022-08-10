@@ -30,36 +30,6 @@ const mainnet: ChainMetadata = {
   },
 };
 
-const testnet: ChainMetadata = {
-  chainId: SupportedChains.moonbase_alpha,
-  chainIdHex: '0x507',
-  name: 'Moonbase Alpha',
-  shortName: 'Moonbase Alpha',
-  img: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg',
-  rpcUrls: { default: 'https://rpc.testnet.moonbeam.network' },
-  enabled: true,
-  supported: config.isDevelopment || config.isTestnetEnabled,
-  blocksPerMin: 5,
-  blockExplorerUrls: {
-    default: { name: 'Moonbeam(Testnet)', url: 'https://moonbase.moonscan.io/' },
-  },
-  nativeCurrency: {
-    symbol: 'DEV',
-    name: 'Moonbase Alpha',
-  },
-  wrappedNativeCurrency: {
-    symbol: 'WDEV',
-    address: '0xA30404AFB4c43D25542687BCF4367F59cc77b5d2',
-    name: 'Moonbase Alpha',
-    decimals: 18,
-    color: '#627EEA',
-    overlayTextColor: '#fff',
-    logoURL: 'https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg',
-    coingeckoId: 'moonbeam',
-  },
-  testnet: true,
-};
-
-const chain = { mainnet, testnet };
+const chain = { mainnet };
 
 export default chain;
