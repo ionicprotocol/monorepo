@@ -12,12 +12,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
-import {
-  ChainDeployFnParams,
-  ChainlinkAsset,
-  CurvePoolConfig,
-  GelatoGUniAsset,
-} from "../helpers/types";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
 
 const assets = polygon.assets;
 const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;
