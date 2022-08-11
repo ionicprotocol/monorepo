@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { InterestRateModelConf, MarketConfig } from '@midas-capital/types';
+import { MarketConfig } from '@midas-capital/types';
 import { constants } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
