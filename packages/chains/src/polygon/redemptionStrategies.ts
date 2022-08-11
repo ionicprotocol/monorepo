@@ -63,55 +63,55 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.JarvisSynthereumLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_WETH_005)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_WETH_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_DAI_005)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_DAI_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_MAI_005)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_MAI_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_PAR_005)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_PAR_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_USDT_001)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_USDT_001)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_USDT_005)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_USDT_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_WETH_005)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_WETH_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_USDC_agEUR_001)]: [
+  [underlying(assets, assetSymbols.arrakis_USDC_agEUR_001)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.USDC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_WBTC_WETH_005)]: [
+  [underlying(assets, assetSymbols.arrakis_WBTC_WETH_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.WBTC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_WETH_DAI_03)]: [
+  [underlying(assets, assetSymbols.arrakis_WETH_DAI_03)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.WETH),
   ],
-  [underlying(assets, assetSymbols.arrarkis_WMATIC_AAVE_03)]: [
+  [underlying(assets, assetSymbols.arrakis_WMATIC_AAVE_03)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.WMATIC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_WMATIC_USDC_005)]: [
+  [underlying(assets, assetSymbols.arrakis_WMATIC_USDC_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.WMATIC),
   ],
-  [underlying(assets, assetSymbols.arrarkis_WMATIC_WETH_005)]: [
+  [underlying(assets, assetSymbols.arrakis_WMATIC_WETH_005)]: [
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.WMATIC),
   ],
