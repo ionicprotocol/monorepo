@@ -75,16 +75,16 @@ export const AddAssetSettings = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      collateralFactor: 50,
-      reserveFactor: 10,
-      adminFee: 5,
+      collateralFactor: COLLATERAL_FACTOR.DEFAULT,
+      reserveFactor: RESERVE_FACTOR.DEFAULT,
+      adminFee: ADMIN_FEE.DEFAULT,
       pluginIndex: -1,
       interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
-  const watchAdminFee = watch('adminFee', 5);
-  const watchReserveFactor = watch('reserveFactor', 10);
+  const watchAdminFee = watch('adminFee', ADMIN_FEE.DEFAULT);
+  const watchReserveFactor = watch('reserveFactor', RESERVE_FACTOR.DEFAULT);
   const watchInterestRateModel = watch(
     'interestRateModel',
     midasSdk.chainDeployment.JumpRateModel.address
