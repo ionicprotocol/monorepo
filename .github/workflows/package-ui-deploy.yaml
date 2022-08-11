@@ -6,7 +6,10 @@ on:
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
       - 'packages/functions/**'
+      - '.github/workflows/package-ui-deploy.yaml'
       - 'yarn.lock'
 
 jobs:
