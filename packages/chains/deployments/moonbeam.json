@@ -380,7 +380,7 @@
       ]
     },
     "AddressesProvider_Implementation": {
-      "address": "0x6fB2260e2eC08503509b7b9c665d40D908F0CEe0",
+      "address": "0xbf868C649b4Fb758B8300353C989F2748508aeBf",
       "abi": [
         {
           "anonymous": false,
@@ -2550,7 +2550,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xacf4B6f025e15F665fE5a9b9593dfE310fdFEfC5",
+      "address": "0xC6e515EE576ECc57c2529ae87DAb7E8B2DB2daEF",
       "abi": [
         {
           "inputs": [],
@@ -2996,42 +2996,10 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "compLikeDelegatee",
-              "type": "address"
-            }
-          ],
-          "name": "_delegateCompLikeTo",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "reduceAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "_reduceReserves",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -4039,7 +4007,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xc79ba572A8Bee474Bd2ee3265BB4D6Bb533cb51c",
+      "address": "0x4572229130d6d8398FAB030cf361e8FC4570950E",
       "abi": [
         {
           "anonymous": false,
@@ -4315,6 +4283,25 @@
           "inputs": [
             {
               "indexed": false,
+              "internalType": "address",
+              "name": "oldImpl",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newImpl",
+              "type": "address"
+            }
+          ],
+          "name": "NewPluginImplementation",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
               "internalType": "uint256",
               "name": "oldReserveFactorMantissa",
               "type": "uint256"
@@ -4493,42 +4480,10 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "compLikeDelegatee",
-              "type": "address"
-            }
-          ],
-          "name": "_delegateCompLikeTo",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "reduceAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "_reduceReserves",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -4626,6 +4581,19 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_plugin",
+              "type": "address"
+            }
+          ],
+          "name": "_updatePlugin",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -5549,7 +5517,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x64C0358f2D44cE9276AD893265f90E771039aE97",
+      "address": "0x925DC80791A307fE8852296d621ab7F124E686c6",
       "abi": [
         {
           "anonymous": false,
@@ -5825,6 +5793,25 @@
           "inputs": [
             {
               "indexed": false,
+              "internalType": "address",
+              "name": "oldImpl",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newImpl",
+              "type": "address"
+            }
+          ],
+          "name": "NewPluginImplementation",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
               "internalType": "uint256",
               "name": "oldReserveFactorMantissa",
               "type": "uint256"
@@ -6003,42 +5990,10 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "compLikeDelegatee",
-              "type": "address"
-            }
-          ],
-          "name": "_delegateCompLikeTo",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "reduceAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "_reduceReserves",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -6136,6 +6091,19 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_plugin",
+              "type": "address"
+            }
+          ],
+          "name": "_updatePlugin",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -7084,7 +7052,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0x546E439B041DB6aF855305B0f6469258d5eEC2c9",
+      "address": "0xD7A552ED51013fb52c35919907A2bCBb94f54EFf",
       "abi": [
         {
           "inputs": [],
@@ -7534,25 +7502,6 @@
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "reduceAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "_reduceReserves",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -10735,6 +10684,1133 @@
         }
       ]
     },
+    "CurveLpTokenLiquidatorNoRegistry": {
+      "address": "0x4ebDb054B77e69de61fd4Ded3C1419d203134EaD",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "wnative",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CurveLpTokenPriceOracleNoRegistry",
+              "name": "_oracle",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "W_NATIVE",
+          "outputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "oracle",
+          "outputs": [
+            {
+              "internalType": "contract CurveLpTokenPriceOracleNoRegistry",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
+    "CurveLpTokenPriceOracleNoRegistry": {
+      "address": "0x315b23e85E1ad004A466f3C89544794Ef3392179",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "error",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "info",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "detail",
+              "type": "uint256"
+            }
+          ],
+          "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "NewAdmin",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingAdmin",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptAdmin",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingAdmin",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "adminHasRights",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "comptrollerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdmin",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdminHasRights",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ICToken",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "_lpTokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "_pools",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[][]",
+              "name": "_poolUnderlyings",
+              "type": "address[][]"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingAdmin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingComptrollerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "poolOf",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "underlying",
+              "type": "address"
+            }
+          ],
+          "name": "price",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_lpToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_pool",
+              "type": "address"
+            },
+            {
+              "internalType": "address[]",
+              "name": "_underlyings",
+              "type": "address[]"
+            }
+          ],
+          "name": "registerPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "underlyingTokens",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        }
+      ]
+    },
+    "CurveLpTokenPriceOracleNoRegistry_Implementation": {
+      "address": "0x988179F81d93347EE157D346Cde1a2ea4590a27B",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "error",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "info",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "detail",
+              "type": "uint256"
+            }
+          ],
+          "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "NewAdmin",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingAdmin",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptAdmin",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingAdmin",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "adminHasRights",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "comptrollerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdmin",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdminHasRights",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ICToken",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "_lpTokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "_pools",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[][]",
+              "name": "_poolUnderlyings",
+              "type": "address[][]"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingAdmin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingComptrollerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "poolOf",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "underlying",
+              "type": "address"
+            }
+          ],
+          "name": "price",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_lpToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_pool",
+              "type": "address"
+            },
+            {
+              "internalType": "address[]",
+              "name": "_underlyings",
+              "type": "address[]"
+            }
+          ],
+          "name": "registerPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "underlyingTokens",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "CurveLpTokenPriceOracleNoRegistry_Proxy": {
+      "address": "0x315b23e85E1ad004A466f3C89544794Ef3392179",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        }
+      ]
+    },
     "DefaultProxyAdmin": {
       "address": "0x806586bC8f8ACd0Fc7B3b736124246fF981E210B",
       "abi": [
@@ -11549,6 +12625,29 @@
         {
           "inputs": [
             {
+              "internalType": "address[]",
+              "name": "oldImplementations",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "newImplementations",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "statuses",
+              "type": "bool[]"
+            }
+          ],
+          "name": "_editPluginImplementationWhitelist",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -11599,6 +12698,25 @@
               "internalType": "bytes",
               "name": "becomeImplementationData",
               "type": "bytes"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "_latestPluginImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -11713,6 +12831,24 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "oldImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "_setLatestPluginImplementation",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "newPendingAdmin",
               "type": "address"
             }
@@ -11748,6 +12884,25 @@
           ],
           "name": "_setPoolLimits",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "cDelegator",
+              "type": "address"
+            }
+          ],
+          "name": "_upgradePluginToLatestImplementation",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -12072,6 +13227,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "latestPluginImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "marketsCounter",
           "outputs": [
@@ -12163,6 +13337,30 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "pluginImplementationWhitelist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -12206,7 +13404,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xeA128F2De6D18F61716046D0b4930C353f2aA4E6",
+      "address": "0x5Ec0A3a19831e95f67fd591668813f3833d4Cf66",
       "abi": [
         {
           "anonymous": false,
@@ -12434,6 +13632,29 @@
         {
           "inputs": [
             {
+              "internalType": "address[]",
+              "name": "oldImplementations",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[]",
+              "name": "newImplementations",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "statuses",
+              "type": "bool[]"
+            }
+          ],
+          "name": "_editPluginImplementationWhitelist",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -12484,6 +13705,25 @@
               "internalType": "bytes",
               "name": "becomeImplementationData",
               "type": "bytes"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "_latestPluginImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -12598,6 +13838,24 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "oldImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "_setLatestPluginImplementation",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "newPendingAdmin",
               "type": "address"
             }
@@ -12633,6 +13891,25 @@
           ],
           "name": "_setPoolLimits",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "cDelegator",
+              "type": "address"
+            }
+          ],
+          "name": "_upgradePluginToLatestImplementation",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -12970,6 +14247,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "latestPluginImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "marketsCounter",
           "outputs": [
@@ -13055,6 +14351,30 @@
               "internalType": "address",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "pluginImplementationWhitelist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -13852,6 +15172,149 @@
               "internalType": "uint224",
               "name": "",
               "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "FuseFlywheelDynamicRewardsPlugin_GLINT": {
+      "address": "0xc26ef49C30b633eD8D70BA5AEB1bA4697E321ee5",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_flywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_cycleLength",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "FlywheelError",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "name": "NewRewardsCycle",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "flywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "name": "getAccruedRewards",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsCycle",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardsCycleLength",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -14852,6 +16315,57 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "getVerifiedPoolsOfWhitelistedAccount",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "bool",
               "name": "_enforceDeployerWhitelist",
               "type": "bool"
@@ -15039,7 +16553,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xc1656c9992cCff3D6F47CBc59837A433171f3921",
+      "address": "0x2042FE5Fa3D58af48BB310374769857871B70428",
       "abi": [
         {
           "anonymous": false,
@@ -15642,6 +17156,57 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "getVerifiedPoolsOfWhitelistedAccount",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "bool",
               "name": "_enforceDeployerWhitelist",
               "type": "bool"
@@ -15957,7 +17522,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x089177a608191681dD0d7Ea7a30a718440a1fE3c",
+      "address": "0xE63f65bE570b521dF3FE4fc720e4Cfa32248E883",
       "abi": [
         {
           "anonymous": false,
@@ -16821,7 +18386,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x563F55f2Db3B7b683D4f51d9c250eD5dA87b6000",
+      "address": "0x75448e678E852C5cfC80537EE2641D1fA51aa3b7",
       "abi": [
         {
           "anonymous": false,
@@ -17288,6 +18853,34 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "BeamSwapCall",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -17854,7 +19447,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x9eB228C023865b6b09F6A3767b5eabAFf76951a2",
+      "address": "0x98194d68c255391B2670C288AD28c8A0B30a84C1",
       "abi": [
         {
           "anonymous": false,
@@ -17899,6 +19492,34 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "BeamSwapCall",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -18597,7 +20218,7 @@
       ]
     },
     "InitializableClones": {
-      "address": "0xAE744AbBa4C3AEa0E8Da73C77e6E41c88c2F5DC4",
+      "address": "0x99E3b7627EE2F36CCb0C8048F3EdEB6E63B93A64",
       "abi": [
         {
           "anonymous": false,
@@ -19266,7 +20887,7 @@
       ]
     },
     "MasterPriceOracle_Implementation": {
-      "address": "0x76cb85ef92F1b5F827fE792c46F288e71546719C",
+      "address": "0xDd4b4965516c5aadE56c794Cb0e30555f2da306f",
       "abi": [
         {
           "anonymous": false,
@@ -20441,7 +22062,7 @@
       ]
     },
     "UniswapLpTokenLiquidator": {
-      "address": "0x5757A812E36B1fd749eEEA4f8DA8EAD840c5aD4E",
+      "address": "0x1D47e11065979F10DA22bF8048c46e0f734F7928",
       "abi": [
         {
           "inputs": [
@@ -20547,7 +22168,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2": {
-      "address": "0x7be93F957095C2Cf64777e359f291167AEbCcb31",
+      "address": "0x4A1eab0473FE8465d5913A83a25aa062d8e564EF",
       "abi": [
         {
           "anonymous": false,
@@ -20683,7 +22304,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0xB01730c205a62CBa045bA64f0eb82D3dCcbF63A8",
+      "address": "0xAB70a11D0D4522D2CBEE5099D3fB09FbA9914D4a",
       "abi": [
         {
           "inputs": [
