@@ -1,4 +1,4 @@
-import { providers } from "ethers";
+import { constants, providers } from "ethers";
 
 import { DiaPriceOracle } from "../../../lib/contracts/typechain/DiaPriceOracle.sol";
 import { DiaDeployFnParams } from "../types";
@@ -25,8 +25,8 @@ export const deployDiaOracle = async ({
       deployConfig.wtoken,
       diaNativeFeed.feed,
       diaNativeFeed.key,
-      mpo.address,
-      deployConfig.stableToken,
+      diaNativeFeed.feed === constants.AddressZero ? mpo.address : constants.AddressZero,
+      diaNativeFeed.feed === constants.AddressZero ? deployConfig.stableToken : constants.AddressZero,
     ],
     log: true,
   });

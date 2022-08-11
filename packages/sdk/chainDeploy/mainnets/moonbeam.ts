@@ -5,12 +5,19 @@ import { ethers } from "ethers";
 import {
   ChainDeployConfig,
   deployChainlinkOracle,
+  deployCurveLpOracle,
   deployDiaOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  ChainlinkFeedBaseCurrency,
+  CurvePoolConfig,
+  DiaAsset,
+} from "../helpers/types";
 
 const assets = moonbeam.assets;
 
@@ -114,6 +121,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.stDOT,
+    aggregator: "0x1466b4bD0C4B6B8e1164991909961e0EE6a66d8c",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.ETH,
     aggregator: "0x9ce2388a1696e22F870341C3FC1E89710C7569B5",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -184,6 +196,27 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+// https://moonbeam.curve.fi/
+const curvePools: CurvePoolConfig[] = [
+  {
+    lpToken: "0xace58a26b8db90498ef0330fdc9c2655db0c45e2",
+    pool: "0xace58a26b8db90498ef0330fdc9c2655db0c45e2",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.madDAI)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.madUSDC)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.madUSDT)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
+    pool: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.stDOT)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.xcDOT)!.underlying,
+    ],
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -213,6 +246,30 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// Uniswap Lp Oracle
   await deployUniswapLpOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
+
+  //// Curve LP Oracle
+  await deployCurveLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curvePools,
+  });
+
+  // Liquidators
+
+  //// CurveLPLiquidator
+  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
+  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
+    from: deployer,
+    args: [deployConfig.wtoken, curveOracle.address],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenLiquidatorNoRegistry.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
+  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
   //// Uniswap Lp token liquidator
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {

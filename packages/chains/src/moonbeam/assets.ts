@@ -19,7 +19,14 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.xcDOT,
     underlying: "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080",
     name: "ERC20 DOT",
-    decimals: 18,
+    decimals: 10,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
+    symbol: assetSymbols.stDOT,
+    underlying: "0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108",
+    name: "Staked ERC20 DOT",
+    decimals: 10,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },
   {
@@ -140,6 +147,20 @@ export const assets: SupportedAsset[] = [
     name: "BeamSwap GLMR-madUSDC LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["xcDOT-stDOT"],
+    underlying: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
+    name: "Curve.fi xcDOT-stDOT LP Token",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+  },
+  {
+    symbol: assetSymbols["3pool"],
+    underlying: "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2",
+    name: "Curve.fi (nomad) DAI/USDT/USDC LP Token",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
   },
 ];
 

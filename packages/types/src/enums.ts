@@ -195,7 +195,9 @@ export enum assetSymbols {
   "GLMR-madUSDC" = "GLMR-madUSDC",
   DOT = "DOT",
   xcDOT = "xcDOT",
-  KSM = "KSM",
+  stDOT = "stDOT",
+  xcKSM = "xcKSM",
+  stKSM = "stKSM",
   madWBTC = "madWBTC",
   madUSDC = "madUSDC",
   multiUSDC = "multiUSDC",
@@ -203,6 +205,8 @@ export enum assetSymbols {
   multiUSDT = "multiUSDT",
   madDAI = "madDAI",
   multiDAI = "multiDAI",
+  "3pool" = "3pool",
+  "xcDOT-stDOT" = "xcDOT-stDOT",
 
   // moonbase
   WDEV = "WDEV",
