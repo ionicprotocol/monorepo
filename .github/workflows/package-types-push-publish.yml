@@ -1,0 +1,40 @@
+name: Types/Push - Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/types/**'
+      - 'yarn.lock'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+          token: '${{ secrets.ACCESS_TOKEN }}'
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - name: Install `packages`
+        run: yarn install
+        env:
+          YARN_CHECKSUM_BEHAVIOR: update
+
+      - name: Build `types`
+        run: yarn build:types
+
+      - name: Lint `types`
+        run: yarn workspace @midas-capital/types lint
+
+      - uses: JS-DevTools/npm-publish@v1
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
+          access: 'public'
+          package: './packages/types/package.json'
