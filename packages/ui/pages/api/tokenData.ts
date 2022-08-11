@@ -1,4 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { bsc, moonbeam, polygon } from '@midas-capital/chains';
 import {
   assetArrayToMap,
   ChainSupportedAssets as ChainSupportedAssetsType,
@@ -14,15 +15,14 @@ import { SUPPORTED_NETWORKS_REGEX } from '../../constants';
 import { config } from '@ui/config/index';
 import { TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
-
 const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.bsc]: bsc.assets,
+  [SupportedChains.polygon]: polygon.assets,
   [SupportedChains.ganache]: [],
   [SupportedChains.evmos]: [],
-  [SupportedChains.bsc]: [],
   [SupportedChains.chapel]: [],
-  [SupportedChains.moonbeam]: [],
+  [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: [],
-  [SupportedChains.polygon]: [],
 };
 
 const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<typeof assetArrayToMap> } =
