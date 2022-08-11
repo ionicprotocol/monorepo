@@ -26,12 +26,16 @@ export const getRedemptionStrategiesAndDatas = async (
 
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
+    // chain redemptions as long as it is redeemable and is not the needed output token
     while (tokenToRedeem != expectedOutputToken && tokenToRedeem in fuse.redemptionStrategies) {
       const { strategyAddress, strategyData, outputToken } = (await getStrategyAndData(
         fuse,
         tokenToRedeem
       )) as StrategyAndData;
 
+      // avoid going in an endless loop
+      // it is not mission critical to reach the expected output token,
+      // so just break instead of throwing
       if (tokenPath.find((p) => p == outputToken)) break;
 
       tokenPath.push(outputToken);
