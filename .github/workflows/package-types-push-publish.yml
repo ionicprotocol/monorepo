@@ -19,11 +19,6 @@ jobs:
           submodules: recursive
           token: '${{ secrets.ACCESS_TOKEN }}'
 
-      - name: Install Foundry
-        uses: onbjerg/foundry-toolchain@v1
-        with:
-          version: nightly
-
       - uses: actions/setup-node@v2
         with:
           node-version: 16
