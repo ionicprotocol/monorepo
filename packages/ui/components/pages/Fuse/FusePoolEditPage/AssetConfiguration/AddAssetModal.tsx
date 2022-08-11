@@ -26,6 +26,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -57,8 +58,9 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   useEffect(() => {
     const availableAssets = supportedAssets.filter(
       (asset) =>
-        asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
-        asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())
+        (asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
+          asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())) &&
+        !config.hideAssets.includes(asset.underlying.toLowerCase())
     );
     setAvailableAssets(availableAssets);
   }, [nameOrAddress, supportedAssets]);
