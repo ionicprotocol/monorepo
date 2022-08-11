@@ -506,7 +506,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     log: true,
     waitConfirmations: 1,
   });
-  if (xbombLiquidatorFunder.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
+  if (xbombLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
   console.log("XBombLiquidatorFunder: ", xbombLiquidatorFunder.address);
 
   //// JarvisLiquidatorFunder
