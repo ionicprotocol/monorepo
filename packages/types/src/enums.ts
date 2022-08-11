@@ -254,8 +254,6 @@ export enum assetSymbols {
   JPHP = "JPHP",
   JPYC = "JPYC",
   JSEK = "JSEK",
-  JCOP = "JCOP",
-  JNGN = "JNGN",
   PAR = "PAR",
   NZDS = "NZDS",
   XSGD = "XSGD",

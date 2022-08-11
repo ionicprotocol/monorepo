@@ -5,19 +5,15 @@ import { assets } from "./assets";
 const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } = {
   // TODO: don't add hard assets as the output from a funding strategy?
   // TODO: extract to predefined chained paths
-  // [underlying(assets, assetSymbols.jBRL)]: [
-  //   FundingStrategyContract.JarvisLiquidatorFunder,
-  //   underlying(assets, assetSymbols.BUSD)
-  // ],
-  [underlying(assets, assetSymbols.BUSD)]: [
+  [underlying(assets, assetSymbols.jBRL)]: [
     FundingStrategyContract.JarvisLiquidatorFunder,
-    underlying(assets, assetSymbols.jBRL),
+    underlying(assets, assetSymbols.BUSD),
   ],
-  // // BOMB
-  // [underlying(assets, assetSymbols.BOMB)]: [
-  //   FundingStrategyContract.XBombLiquidator,
-  //   underlying(assets, assetSymbols.xBOMB)
-  // ]
+  // BOMB
+  [underlying(assets, assetSymbols.xBOMB)]: [
+    FundingStrategyContract.XBombLiquidator,
+    underlying(assets, assetSymbols.BOMB)
+  ]
 };
 
 export default fundingStrategies;
