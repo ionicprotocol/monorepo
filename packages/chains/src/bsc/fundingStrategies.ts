@@ -12,7 +12,7 @@ const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } 
   ],
   // BOMB
   [underlying(assets, assetSymbols.xBOMB)]: [
-    FundingStrategyContract.XBombLiquidatorFunder,
+    FundingStrategyContract.XBombLiquidator,
     underlying(assets, assetSymbols.BOMB),
   ],
 };
