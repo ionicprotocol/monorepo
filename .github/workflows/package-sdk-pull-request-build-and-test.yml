@@ -7,6 +7,9 @@ on:
       - development
     paths:
       - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-pull-request-build-and-test.yml'
       - 'yarn.lock'
   pull_request:
     branches:
@@ -14,6 +17,9 @@ on:
       - development
     paths:
       - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-pull-request-build-and-test.yml'
       - 'yarn.lock'
 
 jobs:

@@ -6,6 +6,9 @@ on:
       - main
     paths:
       - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-push-publish.yml'
       - 'yarn.lock'
 jobs:
   # build-and-test-local:

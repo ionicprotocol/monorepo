@@ -1,5 +1,5 @@
-import { bsc, ganache } from "@midas-capital/chains";
-import { ChainConfig, ChainDeployment } from "@midas-capital/types";
+import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
@@ -169,25 +169,43 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
     let chainConfig: ChainConfig;
+
+    // for integration tests, always use live BSC deployments and config
     if (process.env.INTEGRATION_TEST!) {
-      midasSdk = new MidasSdk(ethers.provider, bsc);
-    } else if (chainId === 1337) {
-      chainDeployment = await getLocalDeployments();
-      chainConfig = ganache;
-      chainConfig.chainDeployments = chainDeployment;
-    } else if (chainId === 56) {
-      chainConfig = bsc;
-      if (process.env.FORK_CHAIN_ID!) {
-        chainDeployment = await getBscForkDeployments();
-        chainConfig.chainDeployments = chainDeployment;
-      }
+      return new MidasSdk(ethers.provider, bsc);
     }
 
+    switch (chainId) {
+      case SupportedChains.ganache:
+        chainDeployment = await getLocalDeployments();
+        chainConfig = ganache;
+        chainConfig.chainDeployments = chainDeployment;
+        break;
+      case SupportedChains.bsc:
+        chainConfig = bsc;
+        if (process.env.FORK_CHAIN_ID!) {
+          chainDeployment = await getBscForkDeployments();
+          chainConfig.chainDeployments = chainDeployment;
+        }
+        break;
+      case SupportedChains.moonbeam:
+        chainConfig = moonbeam;
+        break;
+      case SupportedChains.neon_devnet:
+        chainConfig = neondevnet;
+        break;
+      case SupportedChains.polygon:
+        chainConfig = polygon;
+        break;
+    }
     midasSdk = new MidasSdk(ethers.provider, chainConfig);
+
+    // patch WETH for local deployment
     if (chainId === 31337 || chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
       midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;
     }
   }
+
   return midasSdk;
 };

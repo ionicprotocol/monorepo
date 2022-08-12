@@ -7,6 +7,7 @@ on:
     paths:
       - 'packages/chains/**'
       - 'packages/types/**'
+      - '.github/workflows/package-chains-push-publish.yml'
       - 'yarn.lock'
 jobs:
   release:
@@ -29,6 +30,9 @@ jobs:
 
       - name: Build `chains`
         run: yarn build:chains
+
+      - name: Lint-Fix `chains`
+        run: yarn workspace @midas-capital/chains lint-fix
 
       - name: Lint `chains`
         run: yarn workspace @midas-capital/chains lint
