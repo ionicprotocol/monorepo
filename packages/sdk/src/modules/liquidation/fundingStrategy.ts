@@ -25,19 +25,21 @@ export const getFundingStrategiesAndDatas = async (
 
   let fundingToken = debtToken;
   while (fundingToken in midasSdk.fundingStrategies) {
-    // if it can be flash loaned through uniswap, that's enough
+    // if we can supply the funding token with flash loan on uniswap, that's enough
     const pair = await uniswapV2Factory.callStatic.getPair(midasSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
     if (pair !== constants.AddressZero) {
       // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
       break;
     }
 
-    // find a funding strategy that can supply us with the needed funding token
+    // chain the funding strategy that can give us the needed funding token
     const [fundingStrategyContract, inputToken] = midasSdk.fundingStrategies[fundingToken];
-    // console.log(`got funding str ${fundingStrategyContract} and output ${inputToken} for ${flashSwapFundingToken}`);
+    // console.log(`got funding str ${fundingStrategyContract} and output ${inputToken} for ${fundingToken}`);
 
     // avoid going in an endless loop
-    if (tokenPath.find((p) => p == inputToken)) break;
+    if (tokenPath.find((p) => p == inputToken)) {
+      throw new Error(`circular path in the chain of funding for ${debtToken}: ${JSON.stringify(tokenPath)} already includes ${inputToken}`);
+    }
     tokenPath.push(inputToken);
 
     const strategyAddress = midasSdk.chainDeployment[fundingStrategyContract].address;
@@ -46,6 +48,7 @@ export const getFundingStrategiesAndDatas = async (
     strategies.push(strategyAddress);
     datas.push(strategyData);
 
+    // the new input token on the chain is the next funding token that we should find a way to supply it
     fundingToken = inputToken;
   }
 
@@ -78,7 +81,7 @@ function getStrategyData(
         ["address", "address", "uint256"],
         [fundingToken, poolAddress, expirationTime]
       );
-    case FundingStrategyContract.XBombLiquidatorFunder:
-      return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
+    // case FundingStrategyContract.XBombLiquidatorFunder:
+    //   return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
   }
 }
