@@ -12,10 +12,10 @@ export const deployIRMs = async ({
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      "20000000000000000", // baseRatePerYear
-      "180000000000000000", // multiplierPerYear
-      "4000000000000000000", //jumpMultiplierPerYear
-      "800000000000000000", // kink
+      "20000000000000000", // baseRatePerYear         0.02
+      "180000000000000000", // multiplierPerYear      0.18
+      "4000000000000000000", //jumpMultiplierPerYear  4
+      "800000000000000000", // kink                   0.8
     ],
     log: true,
   });
