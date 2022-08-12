@@ -54,10 +54,12 @@ export const useFusePools = (
       const hidePools = config.hidePools
         ? JSON.parse(config.hidePools)[currentChain.id.toString()]
           ? JSON.parse(config.hidePools)[currentChain.id.toString()]
-          : []
-        : [];
+          : ''
+        : '';
 
-      res.map((pool) => pool && !hidePools.includes(pool.id.toString()) && data.push(pool));
+      res.map(
+        (pool) => pool && !hidePools.split(',').includes(pool.id.toString()) && data.push(pool)
+      );
 
       return data;
     },

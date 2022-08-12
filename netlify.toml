@@ -22,7 +22,7 @@ ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
 FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
 MIN_BORROW_USD="100"
-HIDE_POOLS="{'56':['2','4','5'],'97':['2','6','11','17','20','21','22','23']}"
+HIDE_POOLS="{'56':'2,4,5','97':'2,6,11,17,20,21,22,23'}"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -34,7 +34,7 @@ ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
 FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
 MIN_BORROW_USD="100"
-HIDE_POOLS="{'56':['2','4','5'],'97':['2','6','11','17','20','21','22','23']}"
+HIDE_POOLS="{'56':'2,4,5','97':'2,6,11,17,20,21,22,23'}"
 
 [functions]
 directory = "./packages/functions/netlify/functions"
