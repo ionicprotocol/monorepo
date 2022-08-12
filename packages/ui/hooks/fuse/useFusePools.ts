@@ -3,6 +3,7 @@ import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 
 const poolSort = (pools: FusePoolData[]) => {
@@ -50,7 +51,13 @@ export const useFusePools = (
       if (!res || !res.length) return undefined;
 
       const data: FusePoolData[] = [];
-      res.map((pool) => pool && data.push(pool));
+      const hidePools = config.hidePools
+        ? JSON.parse(config.hidePools)[currentChain.id.toString()]
+          ? JSON.parse(config.hidePools)[currentChain.id.toString()]
+          : []
+        : [];
+
+      res.map((pool) => pool && !hidePools.includes(pool.id.toString()) && data.push(pool));
 
       return data;
     },
