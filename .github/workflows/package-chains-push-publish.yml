@@ -7,6 +7,7 @@ on:
     paths:
       - 'packages/chains/**'
       - 'packages/types/**'
+      - '.github/workflows/package-chains-push-publish.yml'
       - 'yarn.lock'
 jobs:
   release:
