@@ -36,12 +36,10 @@ export const deployFuseSafeLiquidator = async ({
             deployConfig.uniswap.pairInitHashCode ?? "0x",
           ],
         },
-        // onUpgrade: {
-        //   methodName: "_becomeImplementation",
-        //   args: [
-        //     new ethers.utils.AbiCoder().encode(),
-        //   ],
-        // },
+        onUpgrade: {
+          methodName: "_becomeImplementation",
+          args: [new ethers.utils.AbiCoder().encode(["uint8"], [deployConfig.uniswap.flashSwapFee])],
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,

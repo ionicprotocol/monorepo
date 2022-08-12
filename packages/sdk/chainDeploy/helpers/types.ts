@@ -20,6 +20,7 @@ export type ChainDeployConfig = {
     hardcoded: { name: string; symbol: string; address: string }[];
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
+    flashSwapFee: number;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;

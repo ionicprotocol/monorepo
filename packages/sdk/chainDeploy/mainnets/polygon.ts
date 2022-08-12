@@ -56,6 +56,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDT"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying,
     ],
+    flashSwapFee: 30,
   },
   plugins: [
     {
