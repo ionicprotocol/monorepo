@@ -81,7 +81,7 @@ function getStrategyData(
         ["address", "address", "uint256"],
         [fundingToken, poolAddress, expirationTime]
       );
-    // case FundingStrategyContract.XBombLiquidatorFunder:
-    //   return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
+    case FundingStrategyContract.XBombLiquidatorFunder:
+      return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
   }
 }

@@ -14,7 +14,7 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
 
 export enum RedemptionStrategyContract {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
-  XBombLiquidator = "XBombLiquidator",
+  XBombLiquidatorFunder = "XBombLiquidatorFunder",
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
@@ -22,7 +22,7 @@ export enum RedemptionStrategyContract {
 
 export enum FundingStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
-  // TODO  IFundingStrategy  XBombLiquidator = "XBombLiquidator",
+  XBombLiquidatorFunder = "XBombLiquidatorFunder",
 }
 
 export enum DelegateContractName {
