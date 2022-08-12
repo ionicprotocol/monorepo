@@ -31,6 +31,9 @@ jobs:
       - name: Build `chains`
         run: yarn build:chains
 
+      - name: Lint-Fix `chains`
+        run: yarn workspace @midas-capital/chains lint-fix
+
       - name: Lint `chains`
         run: yarn workspace @midas-capital/chains lint
 
