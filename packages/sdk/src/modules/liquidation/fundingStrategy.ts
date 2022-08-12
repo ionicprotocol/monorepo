@@ -38,7 +38,11 @@ export const getFundingStrategiesAndDatas = async (
 
     // avoid going in an endless loop
     if (tokenPath.find((p) => p == inputToken)) {
-      throw new Error(`circular path in the chain of funding for ${debtToken}: ${JSON.stringify(tokenPath)} already includes ${inputToken}`);
+      throw new Error(
+        `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
+          tokenPath
+        )} already includes ${inputToken}`
+      );
     }
     tokenPath.push(inputToken);
 
