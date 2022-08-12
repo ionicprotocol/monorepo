@@ -10,7 +10,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { InterestRateModelConf, MarketConfig } from '@midas-capital/types';
+import { MarketConfig } from '@midas-capital/types';
 import { constants } from 'ethers';
 import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
@@ -75,16 +75,16 @@ export const AddAssetSettings = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      collateralFactor: 50,
-      reserveFactor: 10,
-      adminFee: 5,
+      collateralFactor: COLLATERAL_FACTOR.DEFAULT,
+      reserveFactor: RESERVE_FACTOR.DEFAULT,
+      adminFee: ADMIN_FEE.DEFAULT,
       pluginIndex: -1,
       interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
-  const watchAdminFee = watch('adminFee', 5);
-  const watchReserveFactor = watch('reserveFactor', 10);
+  const watchAdminFee = watch('adminFee', ADMIN_FEE.DEFAULT);
+  const watchReserveFactor = watch('reserveFactor', RESERVE_FACTOR.DEFAULT);
   const watchInterestRateModel = watch(
     'interestRateModel',
     midasSdk.chainDeployment.JumpRateModel.address
@@ -122,11 +122,6 @@ export const AddAssetSettings = ({
 
     setIsDeploying(true);
 
-    // TODO do we need this?!  IRM is defined in MarketConfig, does every market needs it's own IRM?
-    const irmConfig: InterestRateModelConf = {
-      interestRateModel: interestRateModel,
-    };
-
     const marketConfig: MarketConfig = {
       underlying: tokenData.address,
       comptroller: comptrollerAddress,
@@ -142,7 +137,7 @@ export const AddAssetSettings = ({
     };
 
     try {
-      await midasSdk.deployAsset(irmConfig, marketConfig, { from: address });
+      await midasSdk.deployAsset(marketConfig, { from: address });
 
       LogRocket.track('Fuse-DeployAsset');
 

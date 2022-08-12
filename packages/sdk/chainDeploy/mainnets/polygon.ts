@@ -394,51 +394,51 @@ const curvePools: CurvePoolConfig[] = [
 const gelatoAssets: GelatoGUniAsset[] = [
   {
     // USDC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_WETH_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_WETH_005)!.underlying,
   },
   {
     // WBTC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WBTC_WETH_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WBTC_WETH_005)!.underlying,
   },
   {
     // USDC/PAR
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_PAR_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_PAR_005)!.underlying,
   },
   {
     // WMATIC/USDC
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_USDC_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_USDC_005)!.underlying,
   },
   {
     // USDC/agEUR
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_agEUR_001)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_agEUR_001)!.underlying,
   },
   {
     // WMATIC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_WETH_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_WETH_005)!.underlying,
   },
   {
     // WMATIC/AAVE
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_AAVE_03)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_AAVE_03)!.underlying,
   },
   {
     // USDC/MAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_MAI_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_MAI_005)!.underlying,
   },
   {
     // USDC/USDT 0.01 % fee tier
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_USDT_001)!.underlying,
   },
   {
     // USDC/USDT 0.05 % fee tier
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_USDT_005)!.underlying,
   },
   {
     // USDC/DAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_DAI_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_DAI_005)!.underlying,
   },
   {
     // WETH/DAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WETH_DAI_03)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WETH_DAI_03)!.underlying,
   },
 ];
 

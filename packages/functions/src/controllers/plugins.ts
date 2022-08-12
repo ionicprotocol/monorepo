@@ -19,13 +19,10 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
         ]);
         // console.log({ totalSupply, totalAssets, underlyingAsset });
 
-        const pricePerShare = !totalSupply.eq('0') ? totalAssets / totalSupply : 0;
-
         const { error } = await supabase.from(config.supabasePluginTableName).insert([
           {
             totalSupply: totalSupply.toString(),
             totalAssets: totalAssets.toString(),
-            pricePerShare: pricePerShare.toString(),
             pluginAddress: plugin.toLowerCase(),
             underlyingAddress: underlyingAsset.toLowerCase(),
             chain: chainId,
