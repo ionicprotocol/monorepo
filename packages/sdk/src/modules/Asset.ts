@@ -13,11 +13,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 
-    async deployAsset(
-      irmConf: InterestRateModelConf,
-      config: MarketConfig,
-      options: any
-    ): Promise<[string, string, string, TransactionReceipt]> {
+    async deployAsset(config: MarketConfig, options: any): Promise<[string, string, TransactionReceipt]> {
       //1. Validate configuration
       await this.#validateConfiguration(config);
 
@@ -25,7 +21,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       try {
         const [assetAddress, implementationAddress, receipt] = await this.#deployMarket(config, options);
 
-        return [assetAddress, implementationAddress, irmConf.interestRateModel!, receipt];
+        return [assetAddress, implementationAddress, receipt];
       } catch (error: any) {
         console.error("Raw Error", error);
         throw Error("Deployment of asset to Fuse pool failed: " + (error.message ? error.message : error));

@@ -1,6 +1,7 @@
 import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/types';
 import { useQuery } from 'react-query';
 
+import { config } from '@ui/config/index';
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
@@ -33,8 +34,14 @@ export const useFusePoolData = (poolId: string) => {
 
       const res = await midasSdk.fetchFusePoolData(poolId, address);
       const assetsWithPrice: MarketData[] = [];
-      if (res.assets && res.assets.length !== 0) {
-        res.assets.map((asset) => {
+      const assets = res.assets.filter(
+        (asset) => !config.hideAssets.includes(asset.underlyingToken.toLowerCase())
+      );
+      const underlyingTokens = res.underlyingTokens.filter(
+        (token) => !config.hideAssets.includes(token.toLowerCase())
+      );
+      if (assets && assets.length !== 0) {
+        assets.map((asset) => {
           assetsWithPrice.push({
             ...asset,
             supplyBalanceFiat: asset.supplyBalanceNative * usdPrice,
@@ -47,6 +54,7 @@ export const useFusePoolData = (poolId: string) => {
       }
       const adaptedFusePoolData: PoolData = {
         ...res,
+        underlyingTokens,
         assets: assetsWithPrice,
         totalLiquidityFiat: res.totalLiquidityNative * usdPrice,
         totalAvailableLiquidityFiat: res.totalAvailableLiquidityNative * usdPrice,
