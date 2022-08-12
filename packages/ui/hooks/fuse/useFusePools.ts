@@ -57,9 +57,28 @@ export const useFusePools = (
           : ''
         : '';
 
-      res.map(
-        (pool) => pool && !hidePools.split(',').includes(pool.id.toString()) && data.push(pool)
-      );
+      res.map((pool) => {
+        if (pool && !hidePools.split(',').includes(pool.id.toString())) {
+          const underlyingTokens: string[] = [];
+          const underlyingSymbols: string[] = [];
+          pool.underlyingTokens.map((token, index) => {
+            if (!config.hideAssets.includes(token.toLowerCase())) {
+              underlyingTokens.push(token);
+              underlyingSymbols.push(pool.underlyingSymbols[index]);
+            }
+          });
+          const assets = pool.assets.filter(
+            (asset) => !config.hideAssets.includes(asset.underlyingToken.toLowerCase())
+          );
+
+          data.push({
+            ...pool,
+            assets,
+            underlyingTokens,
+            underlyingSymbols,
+          });
+        }
+      });
 
       return data;
     },
