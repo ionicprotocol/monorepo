@@ -38,11 +38,9 @@ export default task("market:create", "Create Market")
       `Creating market for token ${assetConfig.underlying}, pool ${comptroller}, impl: ${DelegateContractName.CErc20Delegate}`
     );
 
-    const [assetAddress, implementationAddress, interestRateModel, receipt] = await sdk.deployAsset(
-      sdk.JumpRateModelConf,
-      assetConfig,
-      { from: signer.address }
-    );
+    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConfig, {
+      from: signer.address,
+    });
 
     console.log("CToken: ", assetAddress);
   });
