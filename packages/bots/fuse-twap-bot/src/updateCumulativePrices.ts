@@ -4,7 +4,7 @@ import { Wallet } from "ethers";
 
 import { fetchGasLimitForTransaction, getPriceOracle } from "./utils";
 
-import { logger } from "./index";
+import { config, logger } from "./index";
 
 export default async function updateCumulativePrices(
   pairs: Array<string>,
@@ -12,7 +12,7 @@ export default async function updateCumulativePrices(
   midasSdk: MidasSdk
 ) {
   const rootPriceOracleContract = await getPriceOracle(midasSdk);
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
+  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
 
   // Create update transaction
   let method: string;
@@ -30,11 +30,11 @@ export default async function updateCumulativePrices(
 
   // Build transaction
   const tx = {
-    from: process.env.ETHEREUM_ADMIN_ACCOUNT,
+    from: config.adminAccount,
     to: rootPriceOracleContract.address,
     value: 0,
     data: data,
-    nonce: useNonce ? useNonce : await midasSdk.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!),
+    nonce: useNonce ? useNonce : await midasSdk.provider.getTransactionCount(config.adminAccount),
   };
 
   let txRequest: TransactionRequest = {
