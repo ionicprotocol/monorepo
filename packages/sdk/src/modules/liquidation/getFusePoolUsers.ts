@@ -68,15 +68,19 @@ async function getFusePoolUsers(
 export default async function getAllFusePoolUsers(
   fuse: MidasBase,
   maxHealth: BigNumber,
-  signer: Wallet
+  signer: Wallet,
+  exlcudedComptrollers: Array<string>
 ): Promise<PublicPoolUserWithData[]> {
   const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   for (const pool of allPools) {
-    if (pool.comptroller !== "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5") {
+    if (!exlcudedComptrollers.includes(pool.comptroller)) {
+      console.log("included: ", pool.comptroller);
       const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth, signer);
       fusePoolUsers.push(poolUserParms);
     }
+    // if (pool.comptroller !== "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5") {
   }
+  // }
   return fusePoolUsers;
 }
