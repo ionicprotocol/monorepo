@@ -6,6 +6,7 @@ import {
   ChainParams,
   DelegateContractName,
   DeployedPlugins,
+  FundingStrategyContract,
   InterestRateModel,
   InterestRateModelConf,
   IrmConfig,
@@ -80,6 +81,7 @@ export class MidasBase {
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
+  public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
 
   constructor(web3Provider: JsonRpcProvider | Web3Provider, chainConfig: ChainConfig) {
     this.provider = web3Provider;
@@ -151,6 +153,7 @@ export class MidasBase {
     this.supportedAssets = chainConfig.assets;
     this.deployedPlugins = chainConfig.deployedPlugins;
     this.redemptionStrategies = chainConfig.redemptionStrategies;
+    this.fundingStrategies = chainConfig.fundingStrategies;
   }
 
   async deployPool(

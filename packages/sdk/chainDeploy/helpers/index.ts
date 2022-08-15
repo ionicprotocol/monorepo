@@ -7,4 +7,3 @@ export { deployABNBcOracle } from "./oracles/aBNBcOracle";
 export { deployChainlinkOracle } from "./oracles/chainlink";
 export { deployDiaOracle } from "./oracles/dia";
 export { deployGelatoGUniPriceOracle } from "./oracles/gelato";
-export { deployJarvisSynthereumLiquidator } from "./liquidators/jarvisSynthereum";

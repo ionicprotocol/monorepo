@@ -11,15 +11,15 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     "ignored",
   ],
   [underlying(assets, assetSymbols.BOMB)]: [
-    RedemptionStrategyContract.XBombLiquidator,
+    RedemptionStrategyContract.XBombLiquidatorFunder,
     underlying(assets, assetSymbols.xBOMB),
   ],
   [underlying(assets, assetSymbols.xBOMB)]: [
-    RedemptionStrategyContract.XBombLiquidator,
+    RedemptionStrategyContract.XBombLiquidatorFunder,
     underlying(assets, assetSymbols.BOMB),
   ],
   [underlying(assets, assetSymbols.jBRL)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.BUSD),
   ],
   [underlying(assets, assetSymbols["WBNB-BUSD"])]: [

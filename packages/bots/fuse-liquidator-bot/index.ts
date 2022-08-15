@@ -17,5 +17,5 @@ dotenv.config();
 
   logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
   await approveTokensToSafeLiquidator(config.chainId, provider);
-  liquidateAndRepeat(config.chainId, provider);
+  await liquidateAndRepeat(config.chainId, provider);
 })();

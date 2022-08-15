@@ -4,63 +4,63 @@ import { assets } from "./assets";
 
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
   [underlying(assets, assetSymbols.JAUD)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JCAD)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JCHF)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JCNY)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JEUR)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JCAD)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JGBP)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JJPY)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JKRW)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JSGD)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JMXN)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JNZD)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JPLN)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JSEK)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.JPHP)]: [
-    RedemptionStrategyContract.JarvisSynthereumLiquidator,
+    RedemptionStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols.arrakis_USDC_WETH_005)]: [

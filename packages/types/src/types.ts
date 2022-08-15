@@ -1,6 +1,13 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { IrmTypes, LiquidationStrategy, OracleTypes, RedemptionStrategyContract, SupportedChains } from "./enums";
+import {
+  FundingStrategyContract,
+  IrmTypes,
+  LiquidationStrategy,
+  OracleTypes,
+  RedemptionStrategyContract,
+  SupportedChains,
+} from "./enums";
 
 export type Artifact = {
   abi: Array<object>;
@@ -212,10 +219,15 @@ export type LiquidationDefaults = {
   LIQUIDATION_STRATEGY: LiquidationStrategy;
   MINIMUM_PROFIT_NATIVE: BigNumber;
   LIQUIDATION_INTERVAL_SECONDS: number;
+  jarvisPools: Array<JarvisLiquidityPool>;
 };
 
 export type RedemptionStrategy = {
   [token: string]: [RedemptionStrategyContract, string];
+};
+
+export type FundingStrategy = {
+  [token: string]: [FundingStrategyContract, string];
 };
 
 export type ChainParams = {
@@ -247,5 +259,13 @@ export type ChainConfig = {
   specificParams: ChainParams;
   deployedPlugins: DeployedPlugins;
   redemptionStrategies: RedemptionStrategy;
+  fundingStrategies: FundingStrategy;
   chainDeployments: ChainDeployment;
+};
+
+export type JarvisLiquidityPool = {
+  expirationTime: number;
+  liquidityPoolAddress: string;
+  syntheticToken: string;
+  collateralToken: string;
 };

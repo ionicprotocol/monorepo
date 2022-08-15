@@ -143,17 +143,17 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
     abi: CurveLpTokenPriceOracleNoRegistryArtifact.abi,
     address: CurveLpTokenPriceOracleNoRegistry.address,
   };
-  const XBombLiquidator = await ethers.getContract("XBombLiquidator");
-  const XBombLiquidatorArtifact = await deployments.getArtifact("XBombLiquidator");
-  chainDeployment.XBombLiquidator = {
-    abi: XBombLiquidatorArtifact.abi,
-    address: XBombLiquidator.address,
+  const XBombLiquidatorFunder = await ethers.getContract("XBombLiquidatorFunder");
+  const XBombLiquidatorFunderArtifact = await deployments.getArtifact("XBombLiquidatorFunder");
+  chainDeployment.XBombLiquidatorFunder = {
+    abi: XBombLiquidatorFunderArtifact.abi,
+    address: XBombLiquidatorFunder.address,
   };
-  const JarvisSynthereumLiquidator = await ethers.getContract("JarvisSynthereumLiquidator");
-  const JarvisSynthereumLiquidatorArtifact = await deployments.getArtifact("JarvisSynthereumLiquidator");
-  chainDeployment.JarvisSynthereumLiquidator = {
-    abi: JarvisSynthereumLiquidatorArtifact.abi,
-    address: JarvisSynthereumLiquidator.address,
+  const JarvisLiquidatorFunder = await ethers.getContract("JarvisLiquidatorFunder");
+  const JarvisLiquidatorFunderArtifact = await deployments.getArtifact("JarvisLiquidatorFunder");
+  chainDeployment.JarvisLiquidatorFunder = {
+    abi: JarvisLiquidatorFunderArtifact.abi,
+    address: JarvisLiquidatorFunder.address,
   };
   const CurveLpTokenLiquidatorNoRegistry = await ethers.getContract("CurveLpTokenLiquidatorNoRegistry");
   const CurveLpTokenLiquidatorNoRegistryArtifact = await deployments.getArtifact("CurveLpTokenLiquidatorNoRegistry");

@@ -2,7 +2,6 @@ import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
 import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
-import { IUniswapV2Pair } from "../../../lib/contracts/typechain/IUniswapV2Pair";
 import { MidasBase } from "../../MidasSdk";
 
 export type StrategiesAndDatas = {
@@ -16,7 +15,7 @@ export type StrategyAndData = {
   outputToken: string;
 };
 
-export const getStrategiesAndDatas = async (
+export const getRedemptionStrategiesAndDatas = async (
   fuse: MidasBase,
   inputToken: string,
   expectedOutputToken: string | null
@@ -27,12 +26,16 @@ export const getStrategiesAndDatas = async (
 
   if (expectedOutputToken) {
     let tokenToRedeem = inputToken;
+    // chain redemptions as long as it is redeemable and is not the needed output token
     while (tokenToRedeem != expectedOutputToken && tokenToRedeem in fuse.redemptionStrategies) {
       const { strategyAddress, strategyData, outputToken } = (await getStrategyAndData(
         fuse,
         tokenToRedeem
       )) as StrategyAndData;
 
+      // avoid going in an endless loop
+      // it is not mission critical to reach the expected output token,
+      // so just break instead of throwing
       if (tokenPath.find((p) => p == outputToken)) break;
 
       tokenPath.push(outputToken);
@@ -65,8 +68,8 @@ const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
   }
 };
 
-const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<StrategyAndData> => {
-  const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[token];
+const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<StrategyAndData> => {
+  const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[inputToken];
   const redemptionStrategyContract = new Contract(
     fuse.chainDeployment[redemptionStrategy].address,
     fuse.chainDeployment[redemptionStrategy].abi,
@@ -85,7 +88,7 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
       const tokens: string[] = [];
       while (true) {
         try {
-          const underlying = await curveLpOracle.callStatic.underlyingTokens(token, tokens.length);
+          const underlying = await curveLpOracle.callStatic.underlyingTokens(inputToken, tokens.length);
           tokens.push(underlying);
         } catch (e) {
           break;
@@ -99,12 +102,12 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         outputToken: preferredOutputToken,
       };
 
-    case RedemptionStrategyContract.XBombLiquidator: {
+    case RedemptionStrategyContract.XBombLiquidatorFunder: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {
-      const lpToken = new Contract(token, IUniswapV2Pair__factory.abi, fuse.provider) as IUniswapV2Pair;
+      const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
 
       const token0 = await lpToken.callStatic.token0();
       const token1 = await lpToken.callStatic.token1();
@@ -129,11 +132,26 @@ const getStrategyAndData = async (fuse: MidasBase, token: string): Promise<Strat
         outputToken,
       };
     }
-    case RedemptionStrategyContract.JarvisSynthereumLiquidator: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
+    case RedemptionStrategyContract.JarvisLiquidatorFunder: {
+      const jarvisPool = fuse.chainConfig.liquidationDefaults.jarvisPools.find(
+        (p) => p.collateralToken == outputToken && p.syntheticToken == inputToken
+      );
+      if (jarvisPool == null) {
+        throw new Error(
+          `wrong config for the jarvis redemption strategy for ${inputToken} - no such pool with collateralToken ${outputToken}`
+        );
+      }
+      const poolAddress = jarvisPool.liquidityPoolAddress;
+      const expirationTime = jarvisPool.expirationTime;
+      const strategyData = new ethers.utils.AbiCoder().encode(
+        ["address", "address", "uint256"],
+        [inputToken, poolAddress, expirationTime]
+      );
+
+      return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     default: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken: outputToken };
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
   }
 };
