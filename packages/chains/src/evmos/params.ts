@@ -1,5 +1,7 @@
-import { ChainParams } from "@midas-capital/types";
+import { assetSymbols, ChainParams } from "@midas-capital/types";
 import { BigNumber } from "ethers";
+
+import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((10 * 24 * 365 * 60).toString()),
@@ -17,9 +19,9 @@ const specificParams: ChainParams = {
     },
     wrappedNativeCurrency: {
       name: "Wrapped EVMOS",
-      symbol: "WEVMOS",
+      symbol: assetSymbols.WBNB,
+      address: chainAddresses.W_TOKEN,
       decimals: 18,
-      address: "0xA30404AFB4c43D25542687BCF4367F59cc77b5d2",
       color: "#000",
       overlayTextColor: "#fff",
       logoURL: "/images/evmos.png",
