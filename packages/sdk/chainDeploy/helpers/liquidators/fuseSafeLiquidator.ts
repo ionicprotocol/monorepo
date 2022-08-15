@@ -34,14 +34,13 @@ export const deployFuseSafeLiquidator = async ({
             deployConfig.stableToken ?? constants.AddressZero,
             deployConfig.wBTCToken ?? constants.AddressZero,
             deployConfig.uniswap.pairInitHashCode ?? "0x",
+            deployConfig.uniswap.flashSwapFee,
           ],
         },
-        // onUpgrade: {
-        //   methodName: "_becomeImplementation",
-        //   args: [
-        //     new ethers.utils.AbiCoder().encode(),
-        //   ],
-        // },
+        onUpgrade: {
+          methodName: "_becomeImplementation",
+          args: [new ethers.utils.AbiCoder().encode(["uint8"], [deployConfig.uniswap.flashSwapFee])],
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
@@ -67,7 +66,7 @@ export const configureFuseSafeLiquidator = async ({
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
 
   for (const address in chainIdToConfig[chainId].redemptionStrategies) {
-    const [redemptionStrategyType, outputToken] = chainIdToConfig[chainId].redemptionStrategies[address];
+    const [redemptionStrategyType] = chainIdToConfig[chainId].redemptionStrategies[address];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
 
     const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);

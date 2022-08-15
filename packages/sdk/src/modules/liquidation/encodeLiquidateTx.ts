@@ -13,14 +13,18 @@ export default async function encodeLiquidateTx(
   exchangeToTokenAddress: string,
   strategiesAndDatas: StrategiesAndDatas,
   liquidationAmount: BigNumber,
-  minProfitAmountScaled: BigNumber
+  minProfitAmountScaled: BigNumber,
+  flashSwapFundingToken: string,
+  debtFundingStrategies: any[],
+  debtFundingStrategiesData: any[]
 ): Promise<EncodedLiquidationTx> {
   logLiquidation(
     borrower,
     exchangeToTokenAddress,
     liquidationAmount,
     borrower.debt[0].underlyingSymbol,
-    liquidationKind
+    liquidationKind,
+    debtFundingStrategies
   );
 
   switch (liquidationKind) {
@@ -77,17 +81,22 @@ export default async function encodeLiquidateTx(
       return {
         method: "safeLiquidateToTokensWithFlashLoan",
         args: [
-          borrower.account,
-          liquidationAmount,
-          borrower.debt[0].cToken,
-          borrower.collateral[0].cToken,
-          0,
-          exchangeToTokenAddress,
-          fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-          fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-          strategiesAndDatas.strategies,
-          strategiesAndDatas.datas,
-          0,
+          {
+            borrower: borrower.account,
+            repayAmount: liquidationAmount,
+            cErc20: borrower.debt[0].cToken,
+            cTokenCollateral: borrower.collateral[0].cToken,
+            minProfitAmount: 0,
+            exchangeProfitTo: exchangeToTokenAddress,
+            flashSwapFundingToken,
+            uniswapV2RouterForBorrow: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+            uniswapV2RouterForCollateral: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+            redemptionStrategies: strategiesAndDatas.strategies,
+            strategyData: strategiesAndDatas.datas,
+            ethToCoinbase: 0,
+            debtFundingStrategies,
+            debtFundingStrategiesData,
+          },
         ],
         value: BigNumber.from(0),
       };

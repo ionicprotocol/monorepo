@@ -15,6 +15,7 @@ const liquidationDefaults: LiquidationDefaults = {
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 60,
+  jarvisPools: [],
 };
 
 export default liquidationDefaults;

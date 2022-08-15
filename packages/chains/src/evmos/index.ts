@@ -4,6 +4,7 @@ import deployments from "../../deployments/evmos.json";
 
 import chainAddresses from "./addresses";
 import assets from "./assets";
+import fundingStrategies from "./fundingStrategies";
 import irms from "./irms";
 import liquidationDefaults from "./liquidation";
 import oracles from "./oracles";
@@ -21,6 +22,7 @@ const chainConfig: ChainConfig = {
   specificParams,
   deployedPlugins,
   redemptionStrategies,
+  fundingStrategies,
   chainDeployments: deployments.contracts,
 };
 

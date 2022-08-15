@@ -53,6 +53,7 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
       },
     ],
+    flashSwapFee: 30,
   },
   plugins: [
     {

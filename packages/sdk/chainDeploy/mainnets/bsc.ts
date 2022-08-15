@@ -10,12 +10,11 @@ import {
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
-  deployJarvisSynthereumLiquidator,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset, JarvisLiquidityPool } from "../helpers/types";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
 
 const assets = bsc.assets;
 const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
@@ -61,6 +60,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying, // BOMB-BTC PCS LP
       assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying, // BTCB-ETH PCS LP
     ],
+    flashSwapFee: 25,
   },
   plugins: [
     {
@@ -413,11 +413,6 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
-const jarvisLiquidityPools: JarvisLiquidityPool[] = [
-  // jBRL -> BUSD
-  { expirationTime: 40 * 60, liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49" },
-];
-
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -504,25 +499,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  //// Liquidator Redemption Strategies
-  /// xBOMB->BOMB
-  const xbombLiquidator = await deployments.deploy("XBombLiquidator", {
+  //// Liquidator Redemption and Funding Strategies
+  /// xBOMB<>BOMB
+  const xbombLiquidatorFunder = await deployments.deploy("XBombLiquidatorFunder", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
-  if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
-  console.log("XBombLiquidator: ", xbombLiquidator.address);
+  if (xbombLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
+  console.log("XBombLiquidatorFunder: ", xbombLiquidatorFunder.address);
 
-  //// JarvisSynthereumLiquidator
-  await deployJarvisSynthereumLiquidator({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    jarvisLiquidityPools,
+  //// JarvisLiquidatorFunder
+  const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
   });
+  if (jarvisLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
+  console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// EPS
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
