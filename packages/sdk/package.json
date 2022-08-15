@@ -12,8 +12,7 @@
   "types": "./dist/cjs/src/index.d.ts",
   "files": [
     "/dist/",
-    "/artifacts",
-    "deployments.json"
+    "/artifacts"
   ],
   "scripts": {
     "build": "npm run build:forge && npm run typechain && npm run build:sdk",

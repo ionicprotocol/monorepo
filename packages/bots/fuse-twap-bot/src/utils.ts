@@ -2,6 +2,8 @@ import { TransactionRequest } from "@ethersproject/providers";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ethers, Wallet } from "ethers";
 
+import { config } from "./index";
+
 export async function fetchGasLimitForTransaction(midasSdk: MidasSdk, method: string, tx: TransactionRequest) {
   try {
     return await midasSdk.provider.estimateGas(tx);
@@ -12,6 +14,6 @@ export async function fetchGasLimitForTransaction(midasSdk: MidasSdk, method: st
 
 export async function getPriceOracle(midasSdk: MidasSdk) {
   const uniswapTwap = midasSdk.chainDeployment.UniswapTwapPriceOracleV2Root;
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
+  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
   return new ethers.Contract(uniswapTwap.address, uniswapTwap.abi, signer);
 }

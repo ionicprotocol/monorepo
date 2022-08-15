@@ -106,30 +106,6 @@ export type RewardsDistributorConfig = {
   rewardToken: string;
 };
 
-export type OracleConf = {
-  anchorPeriod?: any;
-  tokenConfigs?: any;
-  canAdminOverwrite?: any;
-  isPublic?: any;
-  maxSecondsBeforePriceIsStale?: any;
-  chainlinkPriceOracle?: any;
-  secondaryPriceOracle?: any;
-  reporter?: any;
-  anchorMantissa?: any;
-  isSecure?: any;
-  useRootOracle?: any;
-  underlyings?: any;
-  sushiswap?: any;
-  oracles?: any;
-  admin?: any;
-  rootOracle?: any;
-  uniswapV2Factory?: any;
-  baseToken?: any;
-  uniswapV3Factory?: any;
-  feeTier?: any;
-  defaultOracle?: any;
-};
-
 export type InterestRateModelParams = {
   blocksPerYear?: BigNumber;
   baseRatePerYear?: string;
@@ -237,14 +213,6 @@ export type DeployedPlugins = {
   [pluginAddress: string]: PluginData;
 };
 
-export type ChainDeployedPlugins = {
-  [chain in SupportedChains]: DeployedPlugins;
-};
-
-export type ChainLiquidationDefaults = {
-  [chain in SupportedChains]: LiquidationDefaults;
-};
-
 export type LiquidationDefaults = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
   SUPPORTED_INPUT_CURRENCIES: Array<string>;
@@ -258,28 +226,8 @@ export type RedemptionStrategy = {
   [token: string]: [RedemptionStrategyContract, string];
 };
 
-export type ChainRedemptionStrategy = {
-  [chain in SupportedChains]: RedemptionStrategy;
-};
-
 export type FundingStrategy = {
   [token: string]: [FundingStrategyContract, string];
-};
-
-export type ChainFundingStrategy = {
-  [chain in SupportedChains]: FundingStrategy;
-};
-
-export type ChainOracles = {
-  [chain in SupportedChains]: string[];
-};
-
-export type ChainIrms = {
-  [chain in SupportedChains]: string[];
-};
-
-export type ChainSpecificParams = {
-  [chain in SupportedChains]: ChainParams;
 };
 
 export type ChainParams = {
@@ -295,10 +243,6 @@ export type ChainAddresses = {
   UNISWAP_V2_ROUTER: string;
   UNISWAP_V2_FACTORY: string;
   PAIR_INIT_HASH: string;
-};
-
-export type ChainSpecificAddresses = {
-  [chain in SupportedChains]: ChainAddresses;
 };
 
 export type ChainSupportedAssets = {

@@ -4,16 +4,15 @@ import { BigNumber, utils } from "ethers";
 
 import { getPriceOracle } from "./utils";
 
-import { logger, updateCumulativePrices } from "./index";
+import { config, logger, updateCumulativePrices } from "./index";
 
 export default async function tryUpdateCumulativePrices(
   midasSdk: MidasSdk,
   lastTransaction: TransactionResponse | null,
   lastTransactionSent: number | null
 ): Promise<[TransactionResponse | null, number]> {
-  const supportedPairs = process.env.SUPPORTED_PAIRS!.split(",");
   // Check if last TX sent is still pending; if so, wait until it has been 5 minutes since sending, after which we will overwrite it (i.e., same nonce)
-
+  const supportedPairs = config.supportedParis.split(",");
   const rootPriceOracleContract = await getPriceOracle(midasSdk);
   let useNonce: boolean | number = false;
 
@@ -21,15 +20,12 @@ export default async function tryUpdateCumulativePrices(
     try {
       lastTransaction = await midasSdk.provider.getTransaction(lastTransaction.hash);
     } catch (e) {
-      console.log(e);
+      logger.error(e);
     }
 
     if (lastTransaction && lastTransaction.blockNumber === null) {
       // Transaction found and block not yet mined
-      if (
-        lastTransactionSent! <
-        new Date().getTime() / 1000 - parseInt(process.env.SPEED_UP_TRANSACTION_AFTER_SECONDS || "120")
-      )
+      if (lastTransactionSent! < new Date().getTime() / 1000 - config.speedupTxAfterSeconds)
         useNonce = lastTransaction.nonce;
       else return [null, 0];
     } else {
@@ -47,12 +43,9 @@ export default async function tryUpdateCumulativePrices(
     const parts = supportedPairs[i].split("|");
     pairs[i] = parts[0];
     baseTokens[i] = parts[1];
-    minPeriods[i] =
-      parts[2] !== undefined ? BigNumber.from(parts[2]) : BigNumber.from(process.env.DEFAULT_MIN_PERIOD || "1800");
+    minPeriods[i] = parts[2] !== undefined ? BigNumber.from(parts[2]) : config.defaultMinPeriod;
 
-    deviationThresholds[i] = utils.parseEther(
-      parts[3] !== undefined ? parts[3] : process.env.DEFAULT_DEVIATION_THRESHOLD || "0.05"
-    );
+    deviationThresholds[i] = utils.parseEther(parts[3] !== undefined ? parts[3] : config.defaultDeviationThreshold);
   }
 
   // Get workable pairs and validate
@@ -67,14 +60,13 @@ export default async function tryUpdateCumulativePrices(
   const workableSince: {
     [key: string]: number | undefined;
   } = {};
-  if (parseInt(process.env.REDUNDANCY_DELAY_SECONDS || "0") > 0) {
+  if (config.redundancyDelaySeconds > 0) {
     let redundancyDelayPassed = false;
 
     for (let i = 0; i < workable.length; i++) {
       if (workable[i]) {
         const epochNow = new Date().getTime() / 1000;
-        if (workableSince[pairs[i]]! < epochNow - parseInt(process.env.REDUNDANCY_DELAY_SECONDS || "0"))
-          redundancyDelayPassed = true;
+        if (workableSince[pairs[i]]! < epochNow - config.redundancyDelaySeconds) redundancyDelayPassed = true;
         else if (workableSince[pairs[i]] === undefined) workableSince[pairs[i]] = epochNow;
       } else {
         workableSince[pairs[i]] = undefined;

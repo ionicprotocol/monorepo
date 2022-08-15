@@ -6,6 +6,8 @@ export { default as liquidateAndRepeat } from "./liquidateAndRepeat";
 
 export { default as setUpSdk } from "./setUpSdk";
 
+export { default as config } from "./config";
+
 import pino from "pino";
 
 export const logger = pino({
