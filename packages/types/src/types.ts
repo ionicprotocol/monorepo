@@ -1,6 +1,13 @@
 import { BigNumber, BigNumberish, Overrides, providers } from "ethers";
 
-import { IrmTypes, LiquidationStrategy, OracleTypes, RedemptionStrategyContract, SupportedChains } from "./enums";
+import {
+  FundingStrategyContract,
+  IrmTypes,
+  LiquidationStrategy,
+  OracleTypes,
+  RedemptionStrategyContract,
+  SupportedChains,
+} from "./enums";
 
 export type Artifact = {
   abi: Array<object>;
@@ -97,30 +104,6 @@ export interface MarketConfig {
 export type RewardsDistributorConfig = {
   rewardsDistributor: string;
   rewardToken: string;
-};
-
-export type OracleConf = {
-  anchorPeriod?: any;
-  tokenConfigs?: any;
-  canAdminOverwrite?: any;
-  isPublic?: any;
-  maxSecondsBeforePriceIsStale?: any;
-  chainlinkPriceOracle?: any;
-  secondaryPriceOracle?: any;
-  reporter?: any;
-  anchorMantissa?: any;
-  isSecure?: any;
-  useRootOracle?: any;
-  underlyings?: any;
-  sushiswap?: any;
-  oracles?: any;
-  admin?: any;
-  rootOracle?: any;
-  uniswapV2Factory?: any;
-  baseToken?: any;
-  uniswapV3Factory?: any;
-  feeTier?: any;
-  defaultOracle?: any;
 };
 
 export type InterestRateModelParams = {
@@ -230,40 +213,21 @@ export type DeployedPlugins = {
   [pluginAddress: string]: PluginData;
 };
 
-export type ChainDeployedPlugins = {
-  [chain in SupportedChains]: DeployedPlugins;
-};
-
-export type ChainLiquidationDefaults = {
-  [chain in SupportedChains]: LiquidationDefaults;
-};
-
 export type LiquidationDefaults = {
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
   SUPPORTED_INPUT_CURRENCIES: Array<string>;
   LIQUIDATION_STRATEGY: LiquidationStrategy;
   MINIMUM_PROFIT_NATIVE: BigNumber;
   LIQUIDATION_INTERVAL_SECONDS: number;
+  jarvisPools: Array<JarvisLiquidityPool>;
 };
 
 export type RedemptionStrategy = {
   [token: string]: [RedemptionStrategyContract, string];
 };
 
-export type ChainRedemptionStrategy = {
-  [chain in SupportedChains]: RedemptionStrategy;
-};
-
-export type ChainOracles = {
-  [chain in SupportedChains]: string[];
-};
-
-export type ChainIrms = {
-  [chain in SupportedChains]: string[];
-};
-
-export type ChainSpecificParams = {
-  [chain in SupportedChains]: ChainParams;
+export type FundingStrategy = {
+  [token: string]: [FundingStrategyContract, string];
 };
 
 export type ChainParams = {
@@ -281,10 +245,6 @@ export type ChainAddresses = {
   PAIR_INIT_HASH: string;
 };
 
-export type ChainSpecificAddresses = {
-  [chain in SupportedChains]: ChainAddresses;
-};
-
 export type ChainSupportedAssets = {
   [chain in SupportedChains]: SupportedAsset[];
 };
@@ -299,5 +259,13 @@ export type ChainConfig = {
   specificParams: ChainParams;
   deployedPlugins: DeployedPlugins;
   redemptionStrategies: RedemptionStrategy;
+  fundingStrategies: FundingStrategy;
   chainDeployments: ChainDeployment;
+};
+
+export type JarvisLiquidityPool = {
+  expirationTime: number;
+  liquidityPoolAddress: string;
+  syntheticToken: string;
+  collateralToken: string;
 };

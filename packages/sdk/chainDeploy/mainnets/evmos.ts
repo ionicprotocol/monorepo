@@ -20,6 +20,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2RouterAddress: "",
     uniswapV2FactoryAddress: "",
     uniswapOracleInitialDeployTokens: [],
+    flashSwapFee: 0,
   },
   cgId: "evmos",
 };

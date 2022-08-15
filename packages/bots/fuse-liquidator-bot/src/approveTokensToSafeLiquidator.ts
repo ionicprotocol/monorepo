@@ -1,23 +1,30 @@
 import { JsonRpcProvider, TransactionRequest, TransactionResponse } from "@ethersproject/providers";
-import { ERC20Abi } from "@midas-capital/sdk";
-import { BigNumber, constants, Contract, Wallet } from "ethers";
+import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
+import { LiquidationStrategy } from "@midas-capital/types";
+import { BigNumber, constants, Contract, logger, Wallet } from "ethers";
 
 import { fetchGasLimitForTransaction } from "./utils";
 
-import { setUpSdk } from "./index";
+import { config, setUpSdk } from "./index";
 
-export default async function approveTokensToSafeLiquidator(
-  chainId: number,
-  provider: JsonRpcProvider,
-  erc20Address: string
-) {
+export default async function approveTokensToSafeLiquidator(chainId: number, provider: JsonRpcProvider) {
   const midasSdk = setUpSdk(chainId, provider);
+  if (midasSdk.liquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT) {
+    for (const tokenAddress of midasSdk.liquidationConfig.SUPPORTED_OUTPUT_CURRENCIES) {
+      logger.info(`Sending approve transaction for ${tokenAddress}`);
+      await approveTokenToSafeLiquidator(midasSdk, tokenAddress);
+      logger.info(`Approve transaction for ${tokenAddress} sent`);
+    }
+  }
+}
+
+async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: string) {
   // Build data
-  const signer = new Wallet(process.env.ETHEREUM_ADMIN_PRIVATE_KEY!, midasSdk.provider);
+  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
   let token = new Contract(erc20Address, ERC20Abi, signer);
 
   token = await token.connect(signer);
-  const txCount = await midasSdk.provider.getTransactionCount(process.env.ETHEREUM_ADMIN_ACCOUNT!);
+  const txCount = await midasSdk.provider.getTransactionCount(config.adminAccount);
 
   const data = token.interface.encodeFunctionData("approve", [
     midasSdk.contracts.FuseSafeLiquidator.address,
@@ -26,7 +33,7 @@ export default async function approveTokensToSafeLiquidator(
 
   // Build transaction
   const tx = {
-    from: process.env.ETHEREUM_ADMIN_ACCOUNT,
+    from: config.adminAccount,
     to: erc20Address,
     value: BigNumber.from(0),
     data: data,
@@ -39,7 +46,7 @@ export default async function approveTokensToSafeLiquidator(
   };
 
   if (process.env.NODE_ENV !== "production")
-    console.log("Signing and sending approval transaction for: " + erc20Address);
+    logger.info("Signing and sending approval transaction for: " + erc20Address);
 
   // send transaction
   let sentTx: TransactionResponse;
@@ -49,6 +56,6 @@ export default async function approveTokensToSafeLiquidator(
   } catch (error) {
     throw "Error sending " + erc20Address + " approval transaction: " + error;
   }
-  console.log("Successfully sent approval transaction for: " + erc20Address);
+  logger.info("Successfully sent approval transaction for: " + erc20Address);
   return sentTx;
 }

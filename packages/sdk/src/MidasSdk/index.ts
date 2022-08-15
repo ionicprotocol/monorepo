@@ -6,10 +6,10 @@ import {
   ChainParams,
   DelegateContractName,
   DeployedPlugins,
+  FundingStrategyContract,
   InterestRateModel,
   InterestRateModelConf,
   IrmConfig,
-  OracleConf,
   OracleConfig,
   RedemptionStrategyContract,
   SupportedAsset,
@@ -49,7 +49,7 @@ import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import { getComptrollerFactory, getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -81,6 +81,7 @@ export class MidasBase {
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
+  public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
 
   constructor(web3Provider: JsonRpcProvider | Web3Provider, chainConfig: ChainConfig) {
     this.provider = web3Provider;
@@ -152,6 +153,7 @@ export class MidasBase {
     this.supportedAssets = chainConfig.assets;
     this.deployedPlugins = chainConfig.deployedPlugins;
     this.redemptionStrategies = chainConfig.redemptionStrategies;
+    this.fundingStrategies = chainConfig.fundingStrategies;
   }
 
   async deployPool(
@@ -160,19 +162,12 @@ export class MidasBase {
     closeFactor: BigNumber,
     liquidationIncentive: BigNumber,
     priceOracle: string, // Contract address
-    priceOracleConf: OracleConf,
     options: { from: string }, // We might need to add sender as argument. Getting address from options will collide with the override arguments in ethers contract method calls. It doesn't take address.
     whitelist: string[] // An array of whitelisted addresses
   ): Promise<[string, string, string, number?]> {
     try {
       // Deploy Comptroller implementation if necessary
-      let implementationAddress = this.chainDeployment.Comptroller.address;
-
-      if (!implementationAddress) {
-        const comptrollerFactory = getComptrollerFactory(this.provider.getSigner(options.from));
-        const deployedComptroller = await comptrollerFactory.deploy();
-        implementationAddress = deployedComptroller.address;
-      }
+      const implementationAddress = this.chainDeployment.Comptroller.address;
 
       // Register new pool with FusePoolDirectory
       const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));

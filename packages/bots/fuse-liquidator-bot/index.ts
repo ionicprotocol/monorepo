@@ -1,15 +1,12 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { SupportedChains } from "@midas-capital/types";
 import dotenv from "dotenv";
 
-import { approveTokensToSafeLiquidator, liquidateAndRepeat, logger } from "./src";
+import { approveTokensToSafeLiquidator, config, liquidateAndRepeat, logger } from "./src";
 
 dotenv.config();
 
 (async function runBot() {
-  const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
-  const provider = new JsonRpcProvider(process.env.WEB3_HTTP_PROVIDER_URL);
-
+  const provider = new JsonRpcProvider(config.rpcUrl);
   try {
     await provider.getNetwork();
   } catch (e) {
@@ -18,12 +15,7 @@ dotenv.config();
     await runBot();
   }
 
-  logger.info(`Starting liquidation bot on chain: ${chainId}`);
-  if (process.env.LIQUIDATION_STRATEGY === "") {
-    for (const tokenAddress of process.env.SUPPORTED_OUTPUT_CURRENCIES!.split(",")) {
-      // approve tokens
-      await approveTokensToSafeLiquidator(chainId, provider, tokenAddress);
-    }
-  }
-  liquidateAndRepeat(chainId, provider);
+  logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
+  await approveTokensToSafeLiquidator(config.chainId, provider);
+  await liquidateAndRepeat(config.chainId, provider);
 })();

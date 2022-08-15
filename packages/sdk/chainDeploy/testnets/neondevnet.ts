@@ -22,6 +22,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
+    flashSwapFee: 30,
   },
   cgId: neondevnet.specificParams.cgId,
 };

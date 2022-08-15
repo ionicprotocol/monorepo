@@ -24,6 +24,7 @@ export const deployConfig: ChainDeployConfig = {
     hardcoded: [],
     uniswapData: [],
     uniswapOracleInitialDeployTokens: [],
+    flashSwapFee: 0,
   },
   plugins: [
     {

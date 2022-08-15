@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/sdk",
   "repository": "git://github.com:midas-protocol/monorepo.git",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -12,8 +12,7 @@
   "types": "./dist/cjs/src/index.d.ts",
   "files": [
     "/dist/",
-    "/artifacts",
-    "deployments.json"
+    "/artifacts"
   ],
   "scripts": {
     "build": "npm run build:forge && npm run typechain && npm run build:sdk",

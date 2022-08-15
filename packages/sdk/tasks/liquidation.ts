@@ -7,7 +7,7 @@ import { FuseSafeLiquidator } from "../lib/contracts/typechain/FuseSafeLiquidato
 
 export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam(
-    "comptrollers",
+    "excludedComptrollers",
     "Supported comptrollers for which to search for liquidations",
     undefined,
     types.string
@@ -18,9 +18,11 @@ export default task("get-liquidations", "Get potential liquidations")
     const midasSdkModule = await import("../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const wallet = hre.ethers.Wallet.fromMnemonic(process.env.MNEMONIC);
+
+    const excludedComptrollers = taskArgs.excludedComptrollers.split(",");
     const liquidations = await sdk.getPotentialLiquidations(
       wallet,
-      [],
+      excludedComptrollers,
       hre.ethers.utils.parseEther(taskArgs.maxHealth)
     );
     liquidations.map((l) => {

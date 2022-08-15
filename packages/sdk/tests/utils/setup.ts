@@ -165,7 +165,7 @@ export const liquidateAndVerify = async (
   console.log(`Ratio Before: ${ratioBefore}`);
   const wallet = Wallet.fromMnemonic(process.env.MNEMONIC);
 
-  const liquidations = await sdk.getPotentialLiquidations(wallet, [poolAddress]);
+  const liquidations = await sdk.getPotentialLiquidations(wallet, []);
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];
