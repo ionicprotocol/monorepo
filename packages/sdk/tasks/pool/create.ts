@@ -35,7 +35,6 @@ task("pool:create", "Create pool if does not exist")
         parseUnits(taskArgs.closeFactor, 16),
         parseEther((Number(taskArgs.liquidationIncentive) / 100 + 1).toString()),
         taskArgs.priceOracle,
-        {},
         { from: signer.address },
         whitelist
       );
