@@ -75,7 +75,6 @@ export default async function getAllFusePoolUsers(
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   for (const pool of allPools) {
     if (!exlcudedComptrollers.includes(pool.comptroller)) {
-      console.log("included: ", pool.comptroller);
       const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth, signer);
       fusePoolUsers.push(poolUserParms);
     }
