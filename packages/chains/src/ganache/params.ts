@@ -1,6 +1,8 @@
 import { assetSymbols, ChainParams } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
+import chainAddresses from "./addresses";
+
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((5 * 24 * 365 * 60).toString()),
   cgId: "ethereum",
@@ -17,7 +19,7 @@ const specificParams: ChainParams = {
     },
     wrappedNativeCurrency: {
       symbol: assetSymbols.WETH,
-      address: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
+      address: chainAddresses.W_TOKEN,
       name: "Ganache",
       decimals: 18,
       color: "#627EEA",

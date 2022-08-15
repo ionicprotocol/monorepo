@@ -1,7 +1,7 @@
 import { assetSymbols, ChainParams } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
-import assets from "./assets";
+import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((20 * 24 * 365 * 60).toString()),
@@ -18,8 +18,8 @@ const specificParams: ChainParams = {
       name: "BSC",
     },
     wrappedNativeCurrency: {
-      symbol: "WBNB",
-      address: assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying,
+      symbol: assetSymbols.WBNB,
+      address: chainAddresses.W_TOKEN,
       name: "BSC",
       decimals: 18,
       color: "#627EEA",
