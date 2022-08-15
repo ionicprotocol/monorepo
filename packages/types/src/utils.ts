@@ -1,4 +1,4 @@
-import { SupportedAsset } from "./types";
+import { SupportedAsset } from "./chain";
 
 export const underlying = function (assets: SupportedAsset[], symbol: string): string {
   const asset = assets.find((a: SupportedAsset) => a.symbol === symbol);

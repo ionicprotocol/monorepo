@@ -1,28 +1,4 @@
 export {
-  Artifact,
-  ChainAddresses,
-  LiquidationDefaults,
-  ChainParams,
-  ChainConfig,
-  ChainDeployment,
-  ChainSupportedAssets,
-  FusePool,
-  FusePoolData,
-  NativePricedFuseAsset,
-  FuseAsset,
-  SupportedAsset,
-  DeployedPlugins,
-  IrmConfig,
-  InterestRateModel,
-  InterestRateModelConf,
-  InterestRateModelParams,
-  JarvisLiquidityPool,
-  MarketConfig,
-  OracleConfig,
-  RewardsDistributorConfig,
-  RedemptionStrategy,
-} from "./types";
-export {
   assetSymbols,
   SupportedChains,
   SupportedChainsArray,
@@ -38,3 +14,30 @@ export {
   FundOperationMode,
 } from "./enums";
 export { underlying, assetArrayToMap } from "./utils";
+export { FundingStrategy, JarvisLiquidityPool, LiquidationDefaults, RedemptionStrategy } from "./liquidation";
+export {
+  ChainAddresses,
+  ChainConfig,
+  ChainDeployment,
+  ChainParams,
+  SupportedAsset,
+  ChainSupportedAssets,
+} from "./chain";
+export { FusePool, FusePoolData, NativePricedFuseAsset, FuseAsset } from "./fuse";
+export {
+  DeployedPlugins,
+  IrmConfig,
+  InterestRateModelConf,
+  InterestRateModelParams,
+  MarketConfig,
+  OracleConfig,
+  RewardsDistributorConfig,
+} from "./config";
+export {
+  Artifact,
+  TxOptions,
+  MinifiedCompoundContracts,
+  MinifiedContracts,
+  MinifiedOraclesContracts,
+  InterestRateModel,
+} from "./artifact";
