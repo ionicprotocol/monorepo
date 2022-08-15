@@ -34,6 +34,7 @@ export const deployFuseSafeLiquidator = async ({
             deployConfig.stableToken ?? constants.AddressZero,
             deployConfig.wBTCToken ?? constants.AddressZero,
             deployConfig.uniswap.pairInitHashCode ?? "0x",
+            deployConfig.uniswap.flashSwapFee
           ],
         },
         onUpgrade: {
