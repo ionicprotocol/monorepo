@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-import { ankrBNBDocs, defaultDocs, ellipsisDocs, pancakeSwapDocs } from "../common";
+import { ankrBNBDocs, defaultDocs, ellipsisDocs, jarvisDocs, pancakeSwapDocs } from "../common";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
@@ -227,7 +227,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic Brazilian Real",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `You can acquire this asset on the <a href="https://v1-app.jarvis.exchange/" target="_blank" style="color: #BCAC83; cursor="pointer">Jarvis Network</a> website`,
+    extraDocs: jarvisDocs("v1"),
   },
   {
     symbol: assetSymbols.BRZ,

@@ -49,4 +49,15 @@ export const curveFinancePolygonDocs = (
   `;
 };
 
-export const jarvisBsc = `You can acquire this asset on the <a href="https://v1-app.jarvis.exchange/">Jarvis Network</a> website`;
+export const jarvisDocs = (v: string) => {
+  return `You can acquire this asset on the <a href="https://${v}-app.jarvis.exchange/" target="_blank" style="color: #BCAC83; cursor="pointer">Jarvis Network</a> website`;
+};
+
+export const arrakisDocs = (networkName: string, chainId: number, vaultAddress: string) => {
+  return `To acquire this Arrakis Vault token: <p> 1. Make sure you are connected to ${networkName} Network on your browser wallet </p>
+  <p> 2. Head to the <a href="https://beta.arrakis.finance/vaults/${chainId}/${vaultAddress}/add" target="_blank" style="color: #BCAC83; cursor="pointer">Arrakis Finance Vault</a> and
+  deposit the desired amount of token pairs. <b>NOTE:</b> you might have to convert between tokens and/or have to approve Arrakis to spend them. </p>
+  <p> 3. Click on "Deposit & Stake". This will credit your wallet with the Arrakis Vault Tokens</p>
+  <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
