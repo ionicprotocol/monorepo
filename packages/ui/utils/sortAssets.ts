@@ -4,12 +4,12 @@ import { MarketData } from '@ui/hooks/useFusePoolData';
 
 export const sortAssets = (assets: MarketData[]) => {
   return assets.sort((a, b) => {
-    return b.underlyingSymbol.toLowerCase() > a.underlyingSymbol.toLowerCase() ? -1 : 1;
+    return a.underlyingSymbol.localeCompare(b.underlyingSymbol);
   });
 };
 
 export const sortSupportedAssets = (assets: SupportedAsset[]) => {
   return assets.sort((a, b) => {
-    return b.symbol.toLowerCase() > a.symbol.toLowerCase() ? -1 : 1;
+    return a.symbol.localeCompare(b.symbol);
   });
 };
