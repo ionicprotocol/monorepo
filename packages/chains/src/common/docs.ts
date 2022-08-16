@@ -17,7 +17,7 @@ export const ankrBNBDocs = (variant: string) => {
   can acquire ${variant} by depositing BNB`;
 };
 
-export const pcsDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
+export const pancakeSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
   return `<p>You can acquire these Pancakeswap LP tokens <a href="https://pancakeswap.finance/add/${token0}/${token1}" target="_blank" style="color: #BCAC83; cursor="pointer">here</a>.
   Ensure that the tokens are correct, and tap "Add Liquidity". <b>NOTE:</b> you might have to convert between 
   tokens and/or have to approve Pancakeswap to spend them. Finally, click on supply.</p>
