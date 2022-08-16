@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { utils } from 'ethers';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -27,6 +27,7 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { sortAssets } from '@ui/utils/sortAssets';
 
 interface BorrowListProps {
   assets: MarketData[];
@@ -35,12 +36,17 @@ interface BorrowListProps {
 }
 export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: BorrowListProps) => {
   const [isShow, setIsShow] = useState(false);
-  const borrowedAssets = assets.filter(
-    (asset) => asset.borrowBalanceNative > 1 && !asset.isBorrowPaused
+  const borrowedAssets = useMemo(
+    () =>
+      sortAssets(assets).filter((asset) => asset.borrowBalanceNative > 1 && !asset.isBorrowPaused),
+    [assets]
   );
-  const nonBorrowedAssets = assets.filter(
-    (asset) => asset.borrowBalanceNative < 1 && !asset.isBorrowPaused
+  const nonBorrowedAssets = useMemo(
+    () =>
+      sortAssets(assets).filter((asset) => asset.borrowBalanceNative < 1 && !asset.isBorrowPaused),
+    [assets]
   );
+
   const unBorrowableAssets = assets.filter((asset) => asset.isBorrowPaused);
 
   // eslint-disable-next-line no-console
