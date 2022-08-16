@@ -227,7 +227,7 @@ const assets: SupportedAsset[] = [
     name: "Jarvis Synthetic Brazilian Real",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `You can acquire this asset on the <a href="https://v1-app.jarvis.exchange/" target="_blank" style="color: #BCAC83">Jarvis Network</a> website`,
+    extraDocs: `You can acquire this asset on the <a href="https://v1-app.jarvis.exchange/" target="_blank" style="color: #BCAC83; cursor="pointer">Jarvis Network</a> website`,
   },
   {
     symbol: assetSymbols.BRZ,
@@ -235,7 +235,7 @@ const assets: SupportedAsset[] = [
     name: "BRZ Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83">https://www.brztoken.io</> or other centralised exchanges`,
+    extraDocs: `You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges`,
   },
   {
     symbol: assetSymbols["WBNB-BUSD"],
