@@ -2,11 +2,9 @@ import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types"
 
 import { ankrBNBDocs, defaultDocs, ellipsisDocs, pcsDocs } from "../common";
 
-import specificParams from "./params";
-
-const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
-const BTCB = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
+export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+export const BTCB = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
 const DAI = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
 const ETH = "0x2170Ed0880ac9A755fd29B2688956BD959F933F8";
 const BETH = "0x250632378E573c6Be1AC2f97Fcdf00515d0Aa91B";
@@ -40,14 +38,14 @@ const USDC_ETH = "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0";
 const CAKE_WBNB = "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0";
 const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
 
-export const assets: SupportedAsset[] = [
+const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.WBNB,
     underlying: WBNB,
     name: "Wrapped Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, WBNB),
+    extraDocs: defaultDocs("https://bscscan.com", WBNB),
   },
   {
     symbol: assetSymbols.BUSD,
@@ -55,7 +53,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance USD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, BUSD),
+    extraDocs: defaultDocs("https://bscscan.com", BUSD),
   },
   {
     symbol: assetSymbols.BTCB,
@@ -63,7 +61,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance BTC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, BTCB),
+    extraDocs: defaultDocs("https://bscscan.com", BTCB),
   },
   {
     symbol: assetSymbols.DAI,
@@ -71,7 +69,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance DAI",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, DAI),
+    extraDocs: defaultDocs("https://bscscan.com", DAI),
   },
   {
     symbol: assetSymbols.ETH,
@@ -79,7 +77,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, ETH),
+    extraDocs: defaultDocs("https://bscscan.com", ETH),
   },
   // CZ
   {
@@ -88,7 +86,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance Beacon ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, BETH),
+    extraDocs: defaultDocs("https://bscscan.com", BETH),
   },
   {
     symbol: assetSymbols.CAKE,
@@ -96,7 +94,7 @@ export const assets: SupportedAsset[] = [
     name: "PancakeSwap Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, CAKE),
+    extraDocs: defaultDocs("https://bscscan.com", CAKE),
   },
   //
   {
@@ -105,7 +103,7 @@ export const assets: SupportedAsset[] = [
     name: "AUTOv2",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, AUTO),
+    extraDocs: defaultDocs("https://bscscan.com", AUTO),
   },
   {
     symbol: assetSymbols.BIFI,
@@ -113,7 +111,7 @@ export const assets: SupportedAsset[] = [
     name: "beefy.finance",
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     decimals: 18,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, BIFI),
+    extraDocs: defaultDocs("https://bscscan.com", BIFI),
   },
   {
     symbol: assetSymbols.ALPACA,
@@ -121,7 +119,7 @@ export const assets: SupportedAsset[] = [
     name: "AlpacaToken",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, ALPACA),
+    extraDocs: defaultDocs("https://bscscan.com", ALPACA),
   },
   // stables
   {
@@ -130,7 +128,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance-Peg USD Coin",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, USDC),
+    extraDocs: defaultDocs("https://bscscan.com", USDC),
   },
   {
     symbol: assetSymbols.USDT,
@@ -138,7 +136,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance-Peg BSC-USD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, USDT),
+    extraDocs: defaultDocs("https://bscscan.com", USDT),
   },
   {
     symbol: assetSymbols.TUSD,
@@ -146,7 +144,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped TrueUSD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, TUSD),
+    extraDocs: defaultDocs("https://bscscan.com", TUSD),
   },
   {
     symbol: assetSymbols.MAI,
@@ -154,7 +152,7 @@ export const assets: SupportedAsset[] = [
     name: "Mai Stablecoin",
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, MAI),
+    extraDocs: defaultDocs("https://bscscan.com", MAI),
   },
   // Ellipsis
   {
@@ -197,7 +195,7 @@ export const assets: SupportedAsset[] = [
     name: "BOMB",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs(specificParams.metadata.blockExplorerUrls.default.url, BOMB),
+    extraDocs: defaultDocs("https://bscscan.com", BOMB),
   },
   {
     symbol: assetSymbols.xBOMB,

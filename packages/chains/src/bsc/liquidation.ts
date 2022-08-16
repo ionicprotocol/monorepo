@@ -1,23 +1,11 @@
-import {
-  assetSymbols,
-  LiquidationDefaults,
-  LiquidationStrategy,
-  SupportedAsset,
-  underlying,
-} from "@midas-capital/types";
+import { assetSymbols, LiquidationDefaults, LiquidationStrategy, underlying } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
-import { assets } from "./assets";
+import assets, { WBNB } from "./assets";
 
 const liquidationDefaults: LiquidationDefaults = {
-  SUPPORTED_OUTPUT_CURRENCIES: [
-    constants.AddressZero,
-    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-  ],
-  SUPPORTED_INPUT_CURRENCIES: [
-    constants.AddressZero,
-    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-  ],
+  SUPPORTED_OUTPUT_CURRENCIES: [constants.AddressZero, WBNB],
+  SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, WBNB],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 40,
