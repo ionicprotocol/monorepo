@@ -1,17 +1,22 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { bsc } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { constants, ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployABNBcOracle } from "../helpers/aBNBcOracle";
-import { deployDiaOracle } from "../helpers/dia";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployABNBcOracle,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployDiaOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
-import { deployCurveLpOracle } from "../oracles/curveLp";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
-const assets = chainSupportedAssets[SupportedChains.bsc];
+const assets = bsc.assets;
 const wbnb = assets.find((a) => a.symbol === assetSymbols.WBNB)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
@@ -21,7 +26,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "BNB",
   stableToken: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
   wBTCToken: assets.find((a) => a.symbol === assetSymbols.BTCB)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: bsc.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [
@@ -55,6 +60,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["BTCB-BOMB"])!.underlying, // BOMB-BTC PCS LP
       assets.find((a) => a.symbol === assetSymbols["BTCB-ETH"])!.underlying, // BTCB-ETH PCS LP
     ],
+    flashSwapFee: 25,
   },
   plugins: [
     {
@@ -275,7 +281,7 @@ export const deployConfig: ChainDeployConfig = {
       name: "AUTOv2",
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.bsc].cgId,
+  cgId: bsc.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -493,30 +499,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  //// Liquidator Redemption Strategies
-  /// xBOMB->BOMB
-  const xbombLiquidator = await deployments.deploy("XBombLiquidator", {
+  //// Liquidator Redemption and Funding Strategies
+  /// xBOMB<>BOMB
+  const xbombLiquidatorFunder = await deployments.deploy("XBombLiquidatorFunder", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
-  if (xbombLiquidator.transactionHash) await ethers.provider.waitForTransaction(xbombLiquidator.transactionHash);
-  console.log("XBombLiquidator: ", xbombLiquidator.address);
+  if (xbombLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(xbombLiquidatorFunder.transactionHash);
+  console.log("XBombLiquidatorFunder: ", xbombLiquidatorFunder.address);
 
-  /// jBRL->BUSD
-  // TODO in the addresses provider?
-  const synthereumLiquidityPoolAddress = "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49";
-  const expirationTime = 40 * 60; // period in which the liquidation tx is valid to be included in a block, in seconds
-  const jarvisSynthereumLiquidator = await deployments.deploy("JarvisSynthereumLiquidator", {
+  //// JarvisLiquidatorFunder
+  const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {
     from: deployer,
-    args: [synthereumLiquidityPoolAddress, expirationTime],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
-  if (jarvisSynthereumLiquidator.transactionHash)
-    await ethers.provider.waitForTransaction(jarvisSynthereumLiquidator.transactionHash);
-  console.log("JarvisSynthereumLiquidator: ", jarvisSynthereumLiquidator.address);
+  if (jarvisLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
+  console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// EPS
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);

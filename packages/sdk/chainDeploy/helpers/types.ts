@@ -20,6 +20,7 @@ export type ChainDeployConfig = {
     hardcoded: { name: string; symbol: string; address: string }[];
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
+    flashSwapFee: number;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;
@@ -99,9 +100,9 @@ export type ChainlinkDeployFnParams = ChainDeployFnParams & {
 };
 
 export type DiaDeployFnParams = ChainDeployFnParams & {
-  diaNativeFeed: Omit<DiaAsset, "symbol" | "underlying">;
   diaAssets: DiaAsset[];
   deployConfig: ChainDeployConfig;
+  diaNativeFeed?: Omit<DiaAsset, "symbol" | "underlying">;
 };
 
 export type UniswapDeployFnParams = ChainDeployFnParams & {

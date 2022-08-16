@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { ganache } from "@midas-capital/chains";
 import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
@@ -37,7 +37,7 @@ describe("Fuse Index", () => {
     (mockProvider as any)._isSigner = true;
     (mockProvider as any).getSigner = (address: string) => address;
     (mockProvider as any).getCode = (address: string) => address;
-    fuseBase = new MidasBase(mockProvider, SupportedChains.ganache, {
+    ganache.chainDeployments = {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
@@ -45,14 +45,14 @@ describe("Fuse Index", () => {
       FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
-    });
+    };
+    fuseBase = new MidasBase(mockProvider, ganache);
     fuseBase.contracts.FusePoolDirectory = mockContract as unknown as FusePoolDirectory;
   });
   afterEach(function () {
     restore();
   });
   describe("#deployPool", () => {
-    let getComptrollerFactoryStub: SinonStub<[signer?: Signer], ContractFactory>;
     let getPoolAddressStub: SinonStub<
       [
         from: string,
@@ -68,8 +68,6 @@ describe("Fuse Index", () => {
     let mockUnitroller: SinonStubbedInstance<Contract>;
     let mockComptroller: SinonStubbedInstance<Contract>;
     beforeEach(() => {
-      getComptrollerFactoryStub = stub(utilsFns, "getComptrollerFactory");
-      getComptrollerFactoryStub.returns(mockFactory);
       getPoolAddressStub = stub(utilsFns, "getPoolAddress").returns(mkAddress("0xbeef"));
 
       mockUnitroller = createStubInstance(Contract);
@@ -91,11 +89,9 @@ describe("Fuse Index", () => {
         constants.One,
         constants.One,
         mkAddress("0xa"),
-        {},
         { from: mkAddress("0xabc") },
         [mkAddress("0xbbb")]
       );
-      expect(getComptrollerFactoryStub).callCount(0);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),
@@ -127,7 +123,6 @@ describe("Fuse Index", () => {
         constants.One,
         constants.One,
         mkAddress("0xa"),
-        {},
         { from: mkAddress("0xabc") },
         [mkAddress("0xbbb")]
       );
@@ -146,21 +141,19 @@ describe("Fuse Index", () => {
     });
 
     it("should deploy a pool when comptroller is not deployed", async () => {
-      fuseBase.chainDeployment.Comptroller = { abi: [], address: undefined };
+      fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
       await fuseBase.deployPool(
         "Test",
         false,
         constants.One,
         constants.One,
         mkAddress("0xa"),
-        {},
         { from: mkAddress("0xabc") },
         [mkAddress("0xbbb")]
       );
-      expect(getComptrollerFactoryStub).have.been.calledOnce;
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
-        mkAddress("0x123"),
+        mkAddress("0xccc"),
         new utils.AbiCoder().encode(["address"], [mkAddress("0xfcc")]),
         false,
         constants.One,

@@ -1,12 +1,12 @@
 export { default as approveTokensToSafeLiquidator } from "./approveTokensToSafeLiquidator";
 
-export { default as sendTransactionToSafeLiquidator } from "./sendTransactionToSafeLiquidator";
-
-export { default as liquidateUnhealthyBorrows } from "./liquidateUnhealthyBorrows";
+export { default as liquidateOrRetry } from "./liquidateOrRetry";
 
 export { default as liquidateAndRepeat } from "./liquidateAndRepeat";
 
 export { default as setUpSdk } from "./setUpSdk";
+
+export { default as config } from "./config";
 
 import pino from "pino";
 

@@ -62,13 +62,15 @@ export const logLiquidation = (
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
   liquidationTokenSymbol: string,
-  liquidationKind: LiquidationKind
+  liquidationKind: LiquidationKind,
+  debtFundingStrategies: any[]
 ) => {
   console.log(
     `Gathered transaction data for safeLiquidate a ${liquidationTokenSymbol} borrow of kind ${liquidationKind}:
          - Liquidation Amount: ${utils.formatEther(liquidationAmount)}
          - Underlying Collateral Token: ${borrower.collateral[0].underlyingSymbol}
          - Underlying Debt Token: ${borrower.debt[0].underlyingSymbol}
+         - Funding the liquidation with: ${debtFundingStrategies}
          - Exchanging liquidated tokens to: ${exchangeToTokenAddress}
          `
   );

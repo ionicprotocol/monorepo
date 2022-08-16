@@ -1,14 +1,15 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {
   ChainAddresses,
+  ChainConfig,
   ChainDeployment,
   ChainParams,
   DelegateContractName,
   DeployedPlugins,
+  FundingStrategyContract,
   InterestRateModel,
   InterestRateModelConf,
   IrmConfig,
-  OracleConf,
   OracleConfig,
   RedemptionStrategyContract,
   SupportedAsset,
@@ -16,7 +17,6 @@ import {
 } from "@midas-capital/types";
 import { BigNumber, constants, Contract, utils } from "ethers";
 
-import Deployments from "../../deployments.json";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
@@ -27,19 +27,7 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
-import { Artifacts, ARTIFACTS } from "../Artifacts";
-import {
-  chainDeployedPlugins,
-  chainIrms,
-  chainLiquidationDefaults,
-  chainOracles,
-  chainRedemptionStrategies,
-  chainSpecificAddresses,
-  chainSpecificParams,
-  chainSupportedAssets,
-  irmConfig,
-  oracleConfig,
-} from "../chainConfig";
+import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -61,7 +49,7 @@ import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
-import { getComptrollerFactory, getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -79,6 +67,7 @@ export class MidasBase {
   public AnkrBNBInterestRateModelConf: InterestRateModelConf;
   public WhitePaperInterestRateModelConf: InterestRateModelConf;
 
+  public chainConfig: ChainConfig;
   public availableOracles: Array<string>;
   public availableIrms: Array<string>;
   public chainId: SupportedChains;
@@ -92,24 +81,16 @@ export class MidasBase {
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
+  public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
 
-  constructor(
-    web3Provider: JsonRpcProvider | Web3Provider,
-    chainId: SupportedChains,
-    chainDeployment?: ChainDeployment
-  ) {
+  constructor(web3Provider: JsonRpcProvider | Web3Provider, chainConfig: ChainConfig) {
     this.provider = web3Provider;
-    this.chainId = chainId;
-    this.chainDeployment =
-      chainDeployment ??
-      (Deployments[chainId.toString()] &&
-        Deployments[chainId.toString()][Object.keys(Deployments[chainId.toString()])[0]]?.contracts);
-    if (!this.chainDeployment) {
-      throw new Error(`Chain deployment not found or provided for chainId ${chainId}`);
-    }
-    this.WhitePaperInterestRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainId);
-    this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainId);
-    this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainId);
+    this.chainConfig = chainConfig;
+    this.chainId = chainConfig.chainId;
+    this.chainDeployment = chainConfig.chainDeployments;
+    this.WhitePaperInterestRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainConfig.specificParams.blocksPerYear);
+    this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainConfig.specificParams.blocksPerYear);
+    this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainConfig.specificParams.blocksPerYear);
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -149,14 +130,14 @@ export class MidasBase {
     }
     this.artifacts = ARTIFACTS;
 
-    this.availableIrms = chainIrms[chainId].filter((o) => {
+    this.availableIrms = chainConfig.irms.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
         console.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
     });
-    this.availableOracles = chainOracles[chainId].filter((o) => {
+    this.availableOracles = chainConfig.oracles.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
         console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
         return false;
@@ -166,12 +147,13 @@ export class MidasBase {
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
     this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
 
-    this.chainSpecificAddresses = chainSpecificAddresses[chainId];
-    this.chainSpecificParams = chainSpecificParams[chainId];
-    this.liquidationConfig = chainLiquidationDefaults[chainId];
-    this.supportedAssets = chainSupportedAssets[chainId];
-    this.deployedPlugins = chainDeployedPlugins[chainId];
-    this.redemptionStrategies = chainRedemptionStrategies[chainId];
+    this.chainSpecificAddresses = chainConfig.chainAddresses;
+    this.chainSpecificParams = chainConfig.specificParams;
+    this.liquidationConfig = chainConfig.liquidationDefaults;
+    this.supportedAssets = chainConfig.assets;
+    this.deployedPlugins = chainConfig.deployedPlugins;
+    this.redemptionStrategies = chainConfig.redemptionStrategies;
+    this.fundingStrategies = chainConfig.fundingStrategies;
   }
 
   async deployPool(
@@ -180,19 +162,12 @@ export class MidasBase {
     closeFactor: BigNumber,
     liquidationIncentive: BigNumber,
     priceOracle: string, // Contract address
-    priceOracleConf: OracleConf,
     options: { from: string }, // We might need to add sender as argument. Getting address from options will collide with the override arguments in ethers contract method calls. It doesn't take address.
     whitelist: string[] // An array of whitelisted addresses
   ): Promise<[string, string, string, number?]> {
     try {
       // Deploy Comptroller implementation if necessary
-      let implementationAddress = this.chainDeployment.Comptroller.address;
-
-      if (!implementationAddress) {
-        const comptrollerFactory = getComptrollerFactory(this.provider.getSigner(options.from));
-        const deployedComptroller = await comptrollerFactory.deploy();
-        implementationAddress = deployedComptroller.address;
-      }
+      const implementationAddress = this.chainDeployment.Comptroller.address;
 
       // Register new pool with FusePoolDirectory
       const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));

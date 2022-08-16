@@ -108,8 +108,6 @@ export const CreatePoolConfiguration = () => {
     // 8% -> 108 * (1e18 / 100)
     const bigLiquidationIncentive = utils.parseUnits((liquidationIncentive + 100).toString(), 16);
 
-    const reporter = null;
-
     try {
       const deployResult = await midasSdk.deployPool(
         name,
@@ -117,7 +115,6 @@ export const CreatePoolConfiguration = () => {
         bigCloseFactor,
         bigLiquidationIncentive,
         oracle,
-        { reporter },
         { from: address },
         whitelist
       );

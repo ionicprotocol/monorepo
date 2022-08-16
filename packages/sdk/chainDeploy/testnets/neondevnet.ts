@@ -1,10 +1,10 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { neondevnet } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { ethers, utils } from "ethers";
 
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
 import { ChainDeployConfig } from "../helpers";
 
-const assets = chainSupportedAssets[SupportedChains.neon_devnet];
+const assets = neondevnet.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WNEON).underlying,
@@ -13,7 +13,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "NEON",
   stableToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC).underlying,
   wBTCToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBTC).underlying,
-  blocksPerYear: chainSpecificParams[SupportedChains.neon_devnet].blocksPerYear.toNumber(),
+  blocksPerYear: neondevnet.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -22,9 +22,9 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
+    flashSwapFee: 30,
   },
-  // TODO: need to check
-  cgId: chainSpecificParams[SupportedChains.neon_devnet].cgId,
+  cgId: neondevnet.specificParams.cgId,
 };
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {

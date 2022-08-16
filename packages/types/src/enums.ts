@@ -2,11 +2,8 @@ export enum SupportedChains {
   bsc = 56,
   chapel = 97,
   ganache = 1337,
-  aurora = 1313161555,
   evmos = 9001,
-  evmos_testnet = 9000,
   moonbeam = 1284,
-  moonbase_alpha = 1287,
   neon_devnet = 245022926,
   polygon = 137,
 }
@@ -17,9 +14,15 @@ export const SupportedChainsArray = Object.entries(SupportedChains)
 
 export enum RedemptionStrategyContract {
   CurveLpTokenLiquidatorNoRegistry = "CurveLpTokenLiquidatorNoRegistry",
-  XBombLiquidator = "XBombLiquidator",
-  JarvisSynthereumLiquidator = "JarvisSynthereumLiquidator",
+  XBombLiquidatorFunder = "XBombLiquidatorFunder",
+  JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
+  GelatoGUniLiquidator = "GelatoGUniLiquidator",
+}
+
+export enum FundingStrategyContract {
+  JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
+  XBombLiquidatorFunder = "XBombLiquidatorFunder",
 }
 
 export enum DelegateContractName {
@@ -111,3 +114,167 @@ export enum FundOperationMode {
   BORROW,
   REPAY,
 }
+
+export enum assetSymbols {
+  // agnostic
+  WETH = "WETH",
+  DAI = "DAI",
+  ETH = "ETH",
+  AUTO = "AUTO",
+  BIFI = "BIFI",
+  USDC = "USDC",
+  USDT = "USDT",
+  UST = "UST",
+  TUSD = "TUSD",
+  FRAX = "FRAX",
+  FTM = "FTM",
+  WBTC = "WBTC",
+  BAL = "BAL",
+  BTC = "BTC",
+  LINK = "LINK",
+  AAVE = "AAVE",
+  ALCX = "ALCX",
+  AVAX = "AVAX",
+  AXS = "AXS",
+  CRV = "CRV",
+  CVX = "CVX",
+  FXS = "FXS",
+  GHST = "GHST",
+  GRT = "GRT",
+  MAI = "MAI",
+  MIM = "MIM",
+  MKR = "MKR",
+  RAI = "RAI",
+  SNX = "SNX",
+  SOL = "SOL",
+  SUSHI = "SUSHI",
+  YFI = "YFI",
+
+  // bsc
+  WBNB = "WBNB",
+  BNB = "BNB",
+  BUSD = "BUSD",
+  BTCB = "BTCB",
+  BETH = "BETH",
+  CAKE = "CAKE",
+  ALPACA = "ALPACA",
+  "3EPS" = "3EPS",
+  val3EPS = "val3EPS",
+  valdai3EPS = "valdai3EPS",
+  "2brl" = "2brl",
+  jBRL = "jBRL",
+  BRZ = "BRZ",
+  BOMB = "BOMB",
+  xBOMB = "xBOMB",
+  aBNBc = "aBNBc",
+  SAFEMOON = "SAFEMOON",
+  "WBNB-DAI" = "WBNB-DAI",
+  "WBNB-BUSD" = "WBNB-BUSD",
+  "WBNB-USDT" = "WBNB-USDT",
+  "WBNB-USDC" = "WBNB-USDC",
+  "WBNB-ETH" = "WBNB-ETH",
+
+  "BUSD-USDT" = "BUSD-USDT",
+  "BUSD-BTCB" = "BUSD-BTCB",
+  "USDC-BUSD" = "USDC-BUSD",
+  "USDC-ETH" = "USDC-ETH",
+
+  "BTCB-BOMB" = "BTCB-BOMB",
+  "BTCB-ETH" = "BTCB-ETH",
+
+  "CAKE-WBNB" = "CAKE-WBNB",
+
+  // evmos
+  saddleOptFraxUSD = "saddleOptFraxUSD",
+  saddleOptUSD = "saddleOptUSD",
+  WEVMOS = "WEVMOS",
+  ATOM = "ATOM",
+
+  // moonbeam
+  GLMR = "GLMR",
+  WGLMR = "WGLMR",
+  GLINT = "GLINT",
+  "GLMR-USDC" = "GLMR-USDC",
+  "GLMR-GLINT" = "GLMR-GLINT",
+  "WGLMR-xcDOT" = "WGLMR-xcDOT",
+  "GLMR-madUSDC" = "GLMR-madUSDC",
+  DOT = "DOT",
+  xcDOT = "xcDOT",
+  stDOT = "stDOT",
+  xcKSM = "xcKSM",
+  stKSM = "stKSM",
+  madWBTC = "madWBTC",
+  madUSDC = "madUSDC",
+  multiUSDC = "multiUSDC",
+  madUSDT = "madUSDT",
+  multiUSDT = "multiUSDT",
+  madDAI = "madDAI",
+  multiDAI = "multiDAI",
+  "3pool" = "3pool",
+  "xcDOT-stDOT" = "xcDOT-stDOT",
+
+  // moonbase
+  WDEV = "WDEV",
+
+  // local
+  TOUCH = "TOUCH",
+  TRIBE = "TRIBE",
+
+  // aurora
+  WNEAR = "WNEAR",
+
+  // neon
+  WNEON = "WNEON",
+
+  // polygon
+  WMATIC = "WMATIC",
+  oBNB = "oBNB",
+  "WMATIC-USDC" = "WMATIC-USDC",
+  "WMATIC-ETH" = "WMATIC-ETH",
+  "WMATIC-USDT" = "WMATIC-USDT",
+  "WETH-WBTC" = "WETH-WBTC",
+  "AGEUR-JEUR" = "AGEUR-JEUR",
+  "JEUR-PAR" = "JEUR-PAR",
+  "JEUR-EURT" = "JEUR-EURT",
+  "JJPY-JPYC" = "JJPY-JPYC",
+  "JCAD-CADC" = "JCAD-CADC",
+  "JSGD-XSGD" = "JSGD-XSGD",
+  "JNZD-NZDS" = "JNZD-NZDS",
+  AGEUR = "AGEUR",
+  EURT = "EURT",
+  CADC = "CADC",
+  JSGD = "JSGD",
+  JJPY = "JJPY",
+  JAUD = "JAUD",
+  JCAD = "JCAD",
+  JNZD = "JNZD",
+  JCHF = "JCHF",
+  JCNY = "JCNY",
+  JEUR = "JEUR",
+  JKRW = "JKRW",
+  JMXN = "JMXN",
+  JGBP = "JGBP",
+  JPLN = "JPLN",
+  JPHP = "JPHP",
+  JPYC = "JPYC",
+  JSEK = "JSEK",
+  PAR = "PAR",
+  NZDS = "NZDS",
+  XSGD = "XSGD",
+
+  // Arrakis Vaults [arrakis_pair_fee_tier]
+  arrakis_USDC_WETH_005 = "arrakis_USDC_WETH_005",
+  arrakis_WBTC_WETH_005 = "arrakis_WBTC_WETH_005",
+  arrakis_USDC_PAR_005 = "arrakis_USDC_PAR_005",
+  arrakis_WMATIC_USDC_005 = "arrakis_WMATIC_USDC_005",
+  arrakis_USDC_agEUR_001 = "arrakis_USDC_agEUR_001",
+  arrakis_WMATIC_WETH_005 = "arrakis_WMATIC_WETH_005",
+  arrakis_WMATIC_AAVE_03 = "arrakis_WMATIC_AAVE_03",
+  arrakis_USDC_MAI_005 = "arrakis_USDC_MAI_005",
+  arrakis_USDC_USDT_001 = "arrakis_USDC_USDT_001",
+  arrakis_USDC_USDT_005 = "arrakis_USDC_USDT_005",
+  arrakis_USDC_DAI_005 = "arrakis_USDC_DAI_005",
+  arrakis_WETH_DAI_03 = "arrakis_WETH_DAI_03",
+}
+
+export default assetSymbols;

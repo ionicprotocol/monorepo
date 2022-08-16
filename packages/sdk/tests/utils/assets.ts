@@ -1,8 +1,6 @@
-import { MarketConfig } from "@midas-capital/types";
+import { bsc, chapel, ganache } from "@midas-capital/chains";
+import { assetSymbols, MarketConfig } from "@midas-capital/types";
 import { ethers } from "hardhat";
-
-import { assetSymbols } from "../../src/chainConfig";
-import { bscAssets, chapelAssets, ganacheAssets } from "../../src/chainConfig/assets";
 
 import { getOrCreateMidas } from "./midasSdk";
 
@@ -49,10 +47,10 @@ export const getAssetsConf = async (
 };
 
 export const getChapelAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
-  const btc = chapelAssets.find((b) => b.symbol === assetSymbols.BTCB);
-  const busd = chapelAssets.find((b) => b.symbol === assetSymbols.BUSD);
-  const wbnb = chapelAssets.find((b) => b.symbol === assetSymbols.WBNB);
-  const safemoon = chapelAssets.find((b) => b.symbol === assetSymbols.SAFEMOON);
+  const btc = chapel.assets.find((b) => b.symbol === assetSymbols.BTCB);
+  const busd = chapel.assets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = chapel.assets.find((b) => b.symbol === assetSymbols.WBNB);
+  const safemoon = chapel.assets.find((b) => b.symbol === assetSymbols.SAFEMOON);
   const assets = [btc, busd, safemoon, wbnb];
 
   return assets.map((a) => {
@@ -72,9 +70,9 @@ export const getChapelAssetsConf = async (comptroller, fuseFeeDistributor, inter
 };
 
 export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, interestRateModelAddress) => {
-  const weth = ganacheAssets.find((b) => b.symbol === assetSymbols.WETH);
-  const tribe = ganacheAssets.find((b) => b.symbol === assetSymbols.TRIBE);
-  const touch = ganacheAssets.find((b) => b.symbol === assetSymbols.TOUCH);
+  const weth = ganache.assets.find((b) => b.symbol === assetSymbols.WETH);
+  const tribe = ganache.assets.find((b) => b.symbol === assetSymbols.TRIBE);
+  const touch = ganache.assets.find((b) => b.symbol === assetSymbols.TOUCH);
 
   const assets = [weth, tribe, touch];
 
@@ -101,10 +99,10 @@ export const getLocalAssetsConf = async (comptroller, fuseFeeDistributor, intere
 };
 
 export const getBaseBscAssetsConf = (comptroller, fuseFeeDistributor, interestRateModelAddress): MarketConfig[] => {
-  const btc = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
-  const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
-  const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
-  const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
+  const btc = bsc.assets.find((b) => b.symbol === assetSymbols.BTCB);
+  const busd = bsc.assets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = bsc.assets.find((b) => b.symbol === assetSymbols.WBNB);
+  const eth = bsc.assets.find((b) => b.symbol === assetSymbols.ETH);
   const assets = [btc, busd, eth, wbnb];
 
   return assets.map((a) => {
@@ -128,10 +126,10 @@ export const getAlpacaPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const eth = bscAssets.find((b) => b.symbol === assetSymbols.ETH);
-  const usdc = bscAssets.find((b) => b.symbol === assetSymbols.USDC);
-  const busd = bscAssets.find((b) => b.symbol === assetSymbols.BUSD);
-  const wbnb = bscAssets.find((b) => b.symbol === assetSymbols.WBNB);
+  const eth = bsc.assets.find((b) => b.symbol === assetSymbols.ETH);
+  const usdc = bsc.assets.find((b) => b.symbol === assetSymbols.USDC);
+  const busd = bsc.assets.find((b) => b.symbol === assetSymbols.BUSD);
+  const wbnb = bsc.assets.find((b) => b.symbol === assetSymbols.WBNB);
 
   const assets = [eth, usdc, busd, wbnb];
 
@@ -158,8 +156,8 @@ export const getJarvisPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const jBRL = bscAssets.find((b) => b.symbol === assetSymbols.jBRL);
-  const twoBRL = bscAssets.find((b) => b.symbol === assetSymbols["2brl"]);
+  const jBRL = bsc.assets.find((b) => b.symbol === assetSymbols.jBRL);
+  const twoBRL = bsc.assets.find((b) => b.symbol === assetSymbols["2brl"]);
   const assets = [jBRL, twoBRL];
 
   const assetConfigs = [{}, { plugin: undefined }];
@@ -188,9 +186,9 @@ export const getBombPoolAssets = async (
 ): Promise<MarketConfig[]> => {
   const sdk = await getOrCreateMidas();
 
-  const btcb = bscAssets.find((b) => b.symbol === assetSymbols.BTCB);
-  const bomb = bscAssets.find((b) => b.symbol === assetSymbols.BOMB);
-  const bombbtcb = bscAssets.find((b) => b.symbol === assetSymbols["BTCB-BOMB"]);
+  const btcb = bsc.assets.find((b) => b.symbol === assetSymbols.BTCB);
+  const bomb = bsc.assets.find((b) => b.symbol === assetSymbols.BOMB);
+  const bombbtcb = bsc.assets.find((b) => b.symbol === assetSymbols["BTCB-BOMB"]);
 
   const assets = [btcb, bomb, bombbtcb];
 
@@ -217,9 +215,9 @@ export const getEllipsisPoolAssets = async (
   fuseFeeDistributor,
   interestRateModelAddress
 ): Promise<MarketConfig[]> => {
-  const val3EPS = bscAssets.find((b) => b.symbol === assetSymbols.val3EPS);
-  const valdai3EPS = bscAssets.find((b) => b.symbol === assetSymbols.valdai3EPS);
-  const threeEPS = bscAssets.find((b) => b.symbol === assetSymbols["3EPS"]);
+  const val3EPS = bsc.assets.find((b) => b.symbol === assetSymbols.val3EPS);
+  const valdai3EPS = bsc.assets.find((b) => b.symbol === assetSymbols.valdai3EPS);
+  const threeEPS = bsc.assets.find((b) => b.symbol === assetSymbols["3EPS"]);
 
   const assets = [val3EPS, threeEPS, valdai3EPS];
 

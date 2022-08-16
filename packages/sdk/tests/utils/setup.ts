@@ -1,3 +1,4 @@
+import { bsc } from "@midas-capital/chains";
 import { expect } from "chai";
 import { constants, providers, Wallet } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
@@ -18,7 +19,7 @@ export const resetPriceOracle = async (erc20One, erc20Two) => {
 
   if (chainId !== 31337 && chainId !== 1337) {
     const { deployer } = await ethers.getNamedSigners();
-    const sdk = new MidasSdk(ethers.provider, Number(chainId));
+    const sdk = new MidasSdk(ethers.provider, bsc);
     const mpo = (await ethers.getContractAt(
       "MasterPriceOracle",
       sdk.oracles.MasterPriceOracle.address,
@@ -164,7 +165,7 @@ export const liquidateAndVerify = async (
   console.log(`Ratio Before: ${ratioBefore}`);
   const wallet = Wallet.fromMnemonic(process.env.MNEMONIC);
 
-  const liquidations = await sdk.getPotentialLiquidations(wallet, [poolAddress]);
+  const liquidations = await sdk.getPotentialLiquidations(wallet, []);
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];

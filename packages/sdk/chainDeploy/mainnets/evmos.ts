@@ -1,17 +1,16 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { evmos } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig } from "../helpers";
-import { deployDiaOracle } from "../helpers/dia";
+import { ChainDeployConfig, deployDiaOracle } from "../helpers";
 import { ChainDeployFnParams, DiaAsset } from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.evmos];
+const assets = evmos.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WEVMOS)!.underlying,
   nativeTokenName: "EMVOS",
   nativeTokenSymbol: "PHO",
-  blocksPerYear: chainSpecificParams[SupportedChains.evmos].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute,
+  blocksPerYear: evmos.specificParams.blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute,
   stableToken: "",
   wBTCToken: "",
   uniswap: {
@@ -21,6 +20,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2RouterAddress: "",
     uniswapV2FactoryAddress: "",
     uniswapOracleInitialDeployTokens: [],
+    flashSwapFee: 0,
   },
   cgId: "evmos",
 };

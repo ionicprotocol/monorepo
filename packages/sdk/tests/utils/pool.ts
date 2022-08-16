@@ -52,7 +52,6 @@ export async function createPool({
     bigCloseFactor,
     bigLiquidationIncentive,
     priceOracleAddress,
-    {},
     { from: signer.address },
     whitelist
   );
@@ -76,11 +75,9 @@ export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAd
   const deployed: DeployedAsset[] = [];
   for (const assetConf of assets) {
     console.log("Deploying asset: ", assetConf.name);
-    const [assetAddress, implementationAddress, interestRateModel, receipt] = await sdk.deployAsset(
-      sdk.JumpRateModelConf,
-      assetConf,
-      { from: signer.address }
-    );
+    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConf, {
+      from: signer.address,
+    });
     if (receipt.status !== 1) {
       throw `Failed to deploy asset: ${receipt.logs}`;
     }
@@ -91,7 +88,7 @@ export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAd
       underlying: assetConf.underlying,
       assetAddress,
       implementationAddress,
-      interestRateModel,
+      interestRateModel: assetConf.interestRateModel,
       receipt,
     });
   }

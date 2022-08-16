@@ -7,6 +7,9 @@ on:
       - development
     paths:
       - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-pull-request-build-and-test.yml'
       - 'yarn.lock'
   pull_request:
     branches:
@@ -14,6 +17,9 @@ on:
       - development
     paths:
       - 'packages/sdk/**'
+      - 'packages/chains/**'
+      - 'packages/types/**'
+      - '.github/workflows/package-sdk-pull-request-build-and-test.yml'
       - 'yarn.lock'
 
 jobs:
@@ -43,8 +49,8 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Update forge deps
-        run: yarn workspace @midas-capital/sdk forge update
+      - name: Checkout correct submodule contents
+        run: yarn checkout:lib
 
       - name: Build SDK
         run: yarn build:sdk
@@ -86,8 +92,8 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Update forge deps
-        run: yarn workspace @midas-capital/sdk forge update
+      - name: Checkout correct submodule contents
+        run: yarn checkout:lib
 
       - name: Build SDK
         run: yarn build:sdk

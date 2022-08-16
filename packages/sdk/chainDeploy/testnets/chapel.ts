@@ -1,12 +1,17 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { chapel } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployChainlinkOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { ChainlinkAsset } from "../helpers/types";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
-const assets = chainSupportedAssets[SupportedChains.chapel];
+const assets = chapel.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
@@ -15,7 +20,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "TBNB",
   stableToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
   wBTCToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BTCB)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: chapel.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [
       {
@@ -48,6 +53,7 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
       },
     ],
+    flashSwapFee: 30,
   },
   plugins: [
     {
@@ -57,7 +63,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: [],
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.chapel].cgId,
+  cgId: chapel.specificParams.cgId,
 };
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }): Promise<void> => {

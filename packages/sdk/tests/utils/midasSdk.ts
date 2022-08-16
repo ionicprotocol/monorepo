@@ -1,4 +1,5 @@
-import { ChainDeployment } from "@midas-capital/types";
+import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
@@ -142,17 +143,17 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
     abi: CurveLpTokenPriceOracleNoRegistryArtifact.abi,
     address: CurveLpTokenPriceOracleNoRegistry.address,
   };
-  const XBombLiquidator = await ethers.getContract("XBombLiquidator");
-  const XBombLiquidatorArtifact = await deployments.getArtifact("XBombLiquidator");
-  chainDeployment.XBombLiquidator = {
-    abi: XBombLiquidatorArtifact.abi,
-    address: XBombLiquidator.address,
+  const XBombLiquidatorFunder = await ethers.getContract("XBombLiquidatorFunder");
+  const XBombLiquidatorFunderArtifact = await deployments.getArtifact("XBombLiquidatorFunder");
+  chainDeployment.XBombLiquidatorFunder = {
+    abi: XBombLiquidatorFunderArtifact.abi,
+    address: XBombLiquidatorFunder.address,
   };
-  const JarvisSynthereumLiquidator = await ethers.getContract("JarvisSynthereumLiquidator");
-  const JarvisSynthereumLiquidatorArtifact = await deployments.getArtifact("JarvisSynthereumLiquidator");
-  chainDeployment.JarvisSynthereumLiquidator = {
-    abi: JarvisSynthereumLiquidatorArtifact.abi,
-    address: JarvisSynthereumLiquidator.address,
+  const JarvisLiquidatorFunder = await ethers.getContract("JarvisLiquidatorFunder");
+  const JarvisLiquidatorFunderArtifact = await deployments.getArtifact("JarvisLiquidatorFunder");
+  chainDeployment.JarvisLiquidatorFunder = {
+    abi: JarvisLiquidatorFunderArtifact.abi,
+    address: JarvisLiquidatorFunder.address,
   };
   const CurveLpTokenLiquidatorNoRegistry = await ethers.getContract("CurveLpTokenLiquidatorNoRegistry");
   const CurveLpTokenLiquidatorNoRegistryArtifact = await deployments.getArtifact("CurveLpTokenLiquidatorNoRegistry");
@@ -167,14 +168,39 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
   if (!midasSdk) {
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
+    let chainConfig: ChainConfig;
+
+    // for integration tests, always use live BSC deployments and config
     if (process.env.INTEGRATION_TEST!) {
-      midasSdk = new MidasSdk(ethers.provider, chainId, null);
-    } else if (chainId === 1337) {
-      chainDeployment = await getLocalDeployments();
-    } else if (process.env.FORK_CHAIN_ID!) {
-      chainDeployment = await getBscForkDeployments();
+      return new MidasSdk(ethers.provider, bsc);
     }
-    midasSdk = new MidasSdk(ethers.provider, chainId, chainDeployment);
+
+    switch (chainId) {
+      case SupportedChains.ganache:
+        chainDeployment = await getLocalDeployments();
+        chainConfig = ganache;
+        chainConfig.chainDeployments = chainDeployment;
+        break;
+      case SupportedChains.bsc:
+        chainConfig = bsc;
+        if (process.env.FORK_CHAIN_ID!) {
+          chainDeployment = await getBscForkDeployments();
+          chainConfig.chainDeployments = chainDeployment;
+        }
+        break;
+      case SupportedChains.moonbeam:
+        chainConfig = moonbeam;
+        break;
+      case SupportedChains.neon_devnet:
+        chainConfig = neondevnet;
+        break;
+      case SupportedChains.polygon:
+        chainConfig = polygon;
+        break;
+    }
+    midasSdk = new MidasSdk(ethers.provider, chainConfig);
+
+    // patch WETH for local deployment
     if (chainId === 31337 || chainId === 1337) {
       const weth = (await ethers.getContract("WETH")) as WETH;
       midasSdk.chainSpecificAddresses.W_TOKEN = weth.address;

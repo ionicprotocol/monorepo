@@ -1,4 +1,4 @@
-import { SupportedChains } from "@midas-capital/types";
+import { ganache } from "@midas-capital/chains";
 import { BigNumber, Contract, providers } from "ethers";
 import { createStubInstance, SinonStubbedInstance, stub } from "sinon";
 
@@ -42,7 +42,7 @@ describe("FusePools", () => {
 
     FusePools = withFusePools(MidasBase);
 
-    fusePools = new FusePools(mockProvider, SupportedChains.ganache, {
+    ganache.chainDeployments = {
       Comptroller: { abi: [], address: mkAddress("0xabc") },
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
@@ -54,7 +54,9 @@ describe("FusePools", () => {
       CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
       CErc20PluginDelegate: { abi: [], address: mkAddress("0xabc") },
       CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
-    });
+    };
+
+    fusePools = new FusePools(mockProvider, ganache);
 
     mockFusePoolLensContract = createStubInstance(Contract);
     Object.defineProperty(mockFusePoolLensContract, "callStatic", {

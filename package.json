@@ -8,6 +8,7 @@
     "packages/bots/apy-tracking",
     "packages/functions",
     "packages/monitors/oracle",
+    "packages/chains",
     "packages/sdk",
     "packages/types",
     "packages/ui"
@@ -15,9 +16,9 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.32.0",
-    "@typescript-eslint/parser": "^5.32.0",
-    "netlify-cli": "^10.15.0",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "netlify-cli": "^10.17.4",
     "typescript": "^4.7.4"
   },
   "dependencies": {
@@ -28,9 +29,9 @@
     "@types/react": "^17.0.15"
   },
   "scripts": {
-    "build:all": "yarn workspaces foreach run build",
-    "build:sdk": "yarn build:types && yarn workspace @midas-capital/sdk build",
+    "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @midas-capital/sdk build",
     "build:types": "yarn workspace @midas-capital/types build",
+    "build:chains": "yarn build:types && yarn workspace @midas-capital/chains build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:functions": "yarn workspace @midas-capital/functions build",
@@ -39,9 +40,10 @@
     "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
     "build:deploy:twap": "yarn build:sdk && yarn build:twap",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
-    "build:deploy:ui": "yarn build:types && yarn build:sdk && yarn build:ui && yarn build:functions",
-    "dev:ui": "yarn workspace @midas-capital/sdk export; yarn build:sdk && yarn workspace @midas-capital/ui dev",
+    "build:deploy:ui": "yarn build:sdk && yarn build:ui && yarn build:functions",
+    "dev:ui": "yarn workspace @midas-capital/sdk export:ganache; yarn build:sdk && yarn workspace @midas-capital/ui dev",
     "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
-    "dev:node": "yarn workspace @midas-capital/sdk hardhat node"
+    "dev:node": "yarn workspace @midas-capital/sdk hardhat node",
+    "checkout:lib": "rm -rf packages/sdk/lib/contracts && git submodule update --recursive"
   }
 }

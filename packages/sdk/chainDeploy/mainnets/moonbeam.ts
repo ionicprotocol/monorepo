@@ -1,21 +1,32 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { moonbeam } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployDiaOracle } from "../helpers/dia";
+import {
+  ChainDeployConfig,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployDiaOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, DiaAsset } from "../helpers/types";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  ChainlinkFeedBaseCurrency,
+  CurvePoolConfig,
+  DiaAsset,
+} from "../helpers/types";
 
-const assets = chainSupportedAssets[SupportedChains.moonbeam];
+const assets = moonbeam.assets;
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
   nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
-  blocksPerYear: chainSpecificParams[SupportedChains.moonbeam].blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
+  blocksPerYear: moonbeam.specificParams.blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
     hardcoded: [],
     uniswapData: [],
@@ -35,6 +46,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["WGLMR-xcDOT"])!.underlying, // WGLMR-xcDOT
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying, // GLMR-madUSDC
     ],
+    flashSwapFee: 30,
   },
   plugins: [
     {
@@ -89,7 +101,7 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.GLINT,
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.moonbeam].cgId,
+  cgId: moonbeam.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -106,6 +118,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.xcDOT,
+    aggregator: "0x1466b4bD0C4B6B8e1164991909961e0EE6a66d8c",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.stDOT,
     aggregator: "0x1466b4bD0C4B6B8e1164991909961e0EE6a66d8c",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
@@ -180,6 +197,27 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+// https://moonbeam.curve.fi/
+const curvePools: CurvePoolConfig[] = [
+  {
+    lpToken: "0xace58a26b8db90498ef0330fdc9c2655db0c45e2",
+    pool: "0xace58a26b8db90498ef0330fdc9c2655db0c45e2",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.madDAI)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.madUSDC)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.madUSDT)!.underlying,
+    ],
+  },
+  {
+    lpToken: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
+    pool: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.stDOT)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.xcDOT)!.underlying,
+    ],
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
@@ -209,6 +247,30 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// Uniswap Lp Oracle
   await deployUniswapLpOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
+
+  //// Curve LP Oracle
+  await deployCurveLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curvePools,
+  });
+
+  // Liquidators
+
+  //// CurveLPLiquidator
+  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
+  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
+    from: deployer,
+    args: [deployConfig.wtoken, curveOracle.address],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenLiquidatorNoRegistry.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
+  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
   //// Uniswap Lp token liquidator
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {

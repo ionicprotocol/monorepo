@@ -1,15 +1,20 @@
-import { SupportedChains } from "@midas-capital/types";
+import { polygon } from "@midas-capital/chains";
+import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { assetSymbols, chainSpecificParams, chainSupportedAssets } from "../../src/chainConfig";
-import { ChainDeployConfig, ChainlinkFeedBaseCurrency, deployChainlinkOracle, deployUniswapOracle } from "../helpers";
-import { deployGelatoGUniPriceOracle } from "../helpers/gelato";
+import {
+  ChainDeployConfig,
+  ChainlinkFeedBaseCurrency,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployUniswapLpOracle,
+  deployUniswapOracle,
+} from "../helpers";
+import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
-import { deployCurveLpOracle } from "../oracles/curveLp";
-import { deployUniswapLpOracle } from "../oracles/uniswapLp";
 
-const assets = chainSupportedAssets[SupportedChains.polygon];
+const assets = polygon.assets;
 const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;
 
 export const deployConfig: ChainDeployConfig = {
@@ -19,7 +24,7 @@ export const deployConfig: ChainDeployConfig = {
   nativeTokenSymbol: "MATIC",
   stableToken: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
   wBTCToken: assets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
-  blocksPerYear: 20 * 24 * 365 * 60,
+  blocksPerYear: polygon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
     uniswapData: [
@@ -51,6 +56,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["WMATIC-USDT"])!.underlying,
       assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying,
     ],
+    flashSwapFee: 30,
   },
   plugins: [
     {
@@ -89,7 +95,7 @@ export const deployConfig: ChainDeployConfig = {
       otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
     },
   ],
-  cgId: chainSpecificParams[SupportedChains.polygon].cgId,
+  cgId: polygon.specificParams.cgId,
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -389,51 +395,51 @@ const curvePools: CurvePoolConfig[] = [
 const gelatoAssets: GelatoGUniAsset[] = [
   {
     // USDC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_WETH_005)!.underlying,
   },
   {
     // WBTC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WBTC_WETH_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WBTC_WETH_005)!.underlying,
   },
   {
     // USDC/PAR
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_PAR_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_PAR_005)!.underlying,
   },
   {
     // WMATIC/USDC
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_USDC_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_USDC_005)!.underlying,
   },
   {
     // USDC/agEUR
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_agEUR_001)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_agEUR_001)!.underlying,
   },
   {
     // WMATIC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_WETH_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_WETH_005)!.underlying,
   },
   {
     // WMATIC/AAVE
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WMATIC_AAVE_03)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_AAVE_03)!.underlying,
   },
   {
     // USDC/MAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_MAI_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_MAI_005)!.underlying,
   },
   {
     // USDC/USDT 0.01 % fee tier
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_001)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_USDT_001)!.underlying,
   },
   {
     // USDC/USDT 0.05 % fee tier
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_USDT_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_USDT_005)!.underlying,
   },
   {
     // USDC/DAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_USDC_DAI_005)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_DAI_005)!.underlying,
   },
   {
     // WETH/DAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrarkis_WETH_DAI_03)!.underlying,
+    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WETH_DAI_03)!.underlying,
   },
 ];
 
@@ -502,6 +508,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("SimplePriceOracle: ", simplePO.address);
 
   //// Liquidator Redemption Strategies
+
+  //// UniswapLpTokenLiquidator
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,
     args: [],
@@ -513,7 +521,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  /// CurveLPLiquidator
+  //// CurveLPLiquidator
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
@@ -525,7 +533,28 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
-  ////
+  //// Gelato GUNI Liquidator
+  const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (gelatoGUniLiquidator.transactionHash) {
+    await ethers.provider.waitForTransaction(gelatoGUniLiquidator.transactionHash);
+  }
+  console.log("GelatoGUniLiquidator: ", gelatoGUniLiquidator.address);
+
+  //// JarvisLiquidatorFunder
+  const jarvisLiquidatorFunder = await deployments.deploy("JarvisLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (jarvisLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
+  console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;

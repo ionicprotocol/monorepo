@@ -1,7 +1,6 @@
 import { SupportedChains } from '@midas-capital/types';
 
 import BSC from '@ui/networkData/networks/BSC';
-import Evmos from '@ui/networkData/networks/Evmos';
 import Ganache from '@ui/networkData/networks/Ganache';
 import Moonbeam from '@ui/networkData/networks/Moonbeam';
 import NeonDevnet from '@ui/networkData/networks/NeonDevnet';
@@ -12,9 +11,7 @@ export const NETWORK_DATA: Record<string, ChainMetadata> = {
   [SupportedChains.ganache]: Ganache.testnet,
   [SupportedChains.bsc]: BSC.mainnet,
   [SupportedChains.chapel]: BSC.testnet,
-  [SupportedChains.evmos_testnet]: Evmos.testnet,
   [SupportedChains.moonbeam]: Moonbeam.mainnet,
-  [SupportedChains.moonbase_alpha]: Moonbeam.testnet,
   [SupportedChains.neon_devnet]: NeonDevnet.devnet,
   [SupportedChains.polygon]: Polygon.mainnet,
 };
@@ -23,9 +20,7 @@ export const WRAPPED_NATIVE_TOKEN_DATA: Record<number, ChainMetadata['wrappedNat
   [SupportedChains.ganache]: Ganache.testnet.wrappedNativeCurrency,
   [SupportedChains.bsc]: BSC.mainnet.wrappedNativeCurrency,
   [SupportedChains.chapel]: BSC.testnet.wrappedNativeCurrency,
-  [SupportedChains.evmos_testnet]: Evmos.testnet.wrappedNativeCurrency,
   [SupportedChains.moonbeam]: Moonbeam.mainnet.wrappedNativeCurrency,
-  [SupportedChains.moonbase_alpha]: Moonbeam.testnet.wrappedNativeCurrency,
   [SupportedChains.neon_devnet]: NeonDevnet.devnet.wrappedNativeCurrency,
   [SupportedChains.polygon]: Polygon.mainnet.wrappedNativeCurrency,
 };

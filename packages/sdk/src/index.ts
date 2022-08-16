@@ -6,13 +6,11 @@ import AnkrBNBInterestRateModel from "./MidasSdk/irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./MidasSdk/irm/WhitePaperInterestRateModel";
-export { Artifacts } from "./Artifacts";
+export { Artifacts, oracleConfig, irmConfig } from "./Artifacts";
 
 export { filterOnlyObjectProperties } from "./MidasSdk/utils";
 
 export { ChainLiquidationConfig } from "./modules/liquidation/config";
-
-export { ChainSupportedAssetsMap } from "./chainConfig/supportedAssets";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type GConstructor<T> = new (...args: any[]) => T;
