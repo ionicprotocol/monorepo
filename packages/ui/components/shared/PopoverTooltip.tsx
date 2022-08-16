@@ -40,7 +40,7 @@ export const PopoverTooltip = ({
       </style>
       <Popover placement="top" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
-        <PopoverContent>
+        <PopoverContent onClick={(e) => e.stopPropagation()} style={{}}>
           <PopoverArrow />
           {header && <PopoverHeader>{header}</PopoverHeader>}
           {body && <PopoverBody>{body}</PopoverBody>}
