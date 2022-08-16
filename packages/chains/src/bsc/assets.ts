@@ -7,6 +7,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
+    extraDocs: "",
   },
   {
     symbol: assetSymbols.BUSD,

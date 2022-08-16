@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQueries, useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
-import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { chainIdToConfig } from '@ui/types/ChainMetaData';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
 
@@ -13,9 +13,10 @@ export const fetchTokenData = async (
   chainId: number | undefined
 ): Promise<TokenData> => {
   let data;
-
   if (chainId) {
-    if (address !== WRAPPED_NATIVE_TOKEN_DATA[chainId].address) {
+    const wrappedNativeCurrencyConfig =
+      chainIdToConfig[chainId].specificParams.metadata.wrappedNativeCurrency;
+    if (address !== wrappedNativeCurrencyConfig.address) {
       const tokenData = await axios.post('/api/tokenData', {
         address: address,
         chain: chainId,
@@ -26,7 +27,7 @@ export const fetchTokenData = async (
         address: address,
       };
     } else {
-      data = WRAPPED_NATIVE_TOKEN_DATA[chainId];
+      data = wrappedNativeCurrencyConfig;
     }
   }
 

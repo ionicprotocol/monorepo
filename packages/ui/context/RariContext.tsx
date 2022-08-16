@@ -18,9 +18,10 @@ import { Chain } from 'wagmi';
 
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
-import { getScanUrlByChainId, WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
+import { getScanUrlByChainId } from '@ui/networkData/index';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { initFuseWithProviders } from '@ui/utils/web3Providers';
+
 export interface RariContextData {
   midasSdk: MidasSdk;
   scanUrl: string | null;
@@ -88,7 +89,7 @@ export const RariProvider = ({
 
   const mounted = useRef(false);
 
-  const coingeckoId = WRAPPED_NATIVE_TOKEN_DATA[currentChain.id].coingeckoId;
+  const coingeckoId = midasSdk.chainSpecificParams.cgId;
 
   useEffect(() => {
     mounted.current = true;
