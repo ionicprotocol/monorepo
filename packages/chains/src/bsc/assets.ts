@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-import { ankrBNBDocs, defaultDocs, ellipsisDocs, pcsDocs } from "../common";
+import { ankrBNBDocs, defaultDocs, ellipsisDocs, pancakeSwapDocs } from "../common";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
@@ -218,7 +218,7 @@ const assets: SupportedAsset[] = [
     name: "BOMB-BTC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(BTCB, BOMB, "BOMB-BTC", BTCB_BOMB),
+    extraDocs: pancakeSwapDocs(BTCB, BOMB, "BOMB-BTC", BTCB_BOMB),
   },
   // Jarvis
   {
@@ -243,7 +243,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-BUSD PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(WBNB, BUSD, "WBNB-BUSD", WBNB_BUSD),
+    extraDocs: pancakeSwapDocs(WBNB, BUSD, "WBNB-BUSD", WBNB_BUSD),
   },
   {
     symbol: assetSymbols["WBNB-DAI"],
@@ -251,7 +251,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-DAI PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(WBNB, DAI, "WBNB-DAI", WBNB_DAI),
+    extraDocs: pancakeSwapDocs(WBNB, DAI, "WBNB-DAI", WBNB_DAI),
   },
   {
     symbol: assetSymbols["WBNB-USDC"],
@@ -259,7 +259,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-USDC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(WBNB, USDC, "WBNB-USDC", WBNB_USDC),
+    extraDocs: pancakeSwapDocs(WBNB, USDC, "WBNB-USDC", WBNB_USDC),
   },
   {
     symbol: assetSymbols["WBNB-USDT"],
@@ -267,7 +267,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-USDT PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(WBNB, USDT, "WBNB-USDT", WBNB_USDT),
+    extraDocs: pancakeSwapDocs(WBNB, USDT, "WBNB-USDT", WBNB_USDT),
   },
   {
     symbol: assetSymbols["WBNB-ETH"],
@@ -275,7 +275,7 @@ const assets: SupportedAsset[] = [
     name: "WBNB-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(WBNB, ETH, "WBNB-ETH", WBNB_ETH),
+    extraDocs: pancakeSwapDocs(WBNB, ETH, "WBNB-ETH", WBNB_ETH),
   },
   {
     symbol: assetSymbols["BUSD-USDT"],
@@ -283,7 +283,7 @@ const assets: SupportedAsset[] = [
     name: "BUSD-USDT PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(BUSD, USDT, "BUSD-USDT", BUSD_USDT),
+    extraDocs: pancakeSwapDocs(BUSD, USDT, "BUSD-USDT", BUSD_USDT),
   },
   {
     symbol: assetSymbols["BUSD-BTCB"],
@@ -291,7 +291,7 @@ const assets: SupportedAsset[] = [
     name: "BUSD-BTCB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(BUSD, BTCB, "BUSD-BTCB", BUSD_BTCB),
+    extraDocs: pancakeSwapDocs(BUSD, BTCB, "BUSD-BTCB", BUSD_BTCB),
   },
   {
     symbol: assetSymbols["USDC-BUSD"],
@@ -299,7 +299,7 @@ const assets: SupportedAsset[] = [
     name: "USDC-BUSD PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(USDC, BUSD, "USDC-BUSD", USDC_BUSD),
+    extraDocs: pancakeSwapDocs(USDC, BUSD, "USDC-BUSD", USDC_BUSD),
   },
   {
     symbol: assetSymbols["USDC-ETH"],
@@ -307,7 +307,7 @@ const assets: SupportedAsset[] = [
     name: "USDC-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(USDC, ETH, "USDC-ETH", USDC_ETH),
+    extraDocs: pancakeSwapDocs(USDC, ETH, "USDC-ETH", USDC_ETH),
   },
   {
     symbol: assetSymbols["CAKE-WBNB"],
@@ -315,7 +315,7 @@ const assets: SupportedAsset[] = [
     name: "CAKE-WBNB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(CAKE, WBNB, "CAKE-WBNB", CAKE_WBNB),
+    extraDocs: pancakeSwapDocs(CAKE, WBNB, "CAKE-WBNB", CAKE_WBNB),
   },
   {
     symbol: assetSymbols["BTCB-ETH"],
@@ -323,7 +323,7 @@ const assets: SupportedAsset[] = [
     name: "BTCB-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: pcsDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH),
+    extraDocs: pancakeSwapDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH),
   },
 ];
 

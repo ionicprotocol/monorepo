@@ -1,1 +1,8 @@
-export { defaultDocs, ellipsisDocs, pcsDocs, ankrBNBDocs } from "./docs";
+export {
+  defaultDocs,
+  ellipsisDocs,
+  pancakeSwapDocs,
+  quickSwapDocs,
+  ankrBNBDocs,
+  curveFinancePolygonDocs,
+} from "./docs";
