@@ -1,5 +1,7 @@
 export {
   arrakisDocs,
+  beamSwapDocs,
+  beamSwapStableDocs,
   defaultDocs,
   ellipsisDocs,
   pancakeSwapDocs,

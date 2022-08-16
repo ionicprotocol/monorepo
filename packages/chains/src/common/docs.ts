@@ -35,6 +35,22 @@ export const quickSwapDocs = (token0: string, token1: string, poolName: string, 
   `;
 };
 
+export const beamSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
+  return `<p> 1. Head to <a href="https://app.beamswap.io/exchange/add/${token0}/${token1}">BeamSwap</a> and supply the desired liquidity pairs.
+  <b>NOTE:</b> you might have to convert between tokens and/or have to approve BeamSwap to spend them.</p> 
+  <p> 2. You will get back <a href="https://moonbeam.moonscan.com/address/${tokenAddress}">BeamSwap ${poolName} LP tokens</a> in your wallet.</p>  
+  <p> 3. Come back here and hit "MAX" to deposit them all in this pool. </p>
+  `;
+};
+
+export const beamSwapStableDocs = (poolName: string, tokenAddress: string) => {
+  return `<p> 1. Head to <a href="https://app.beamswap.io/exchange/add/multi/${poolName}">BeamSwap</a> and supply the desired liquidity pairs.
+  <b>NOTE:</b> you might have to convert between tokens and/or have to approve BeamSwap to spend them.</p> 
+  <p> 2. You will get back <a href="https://moonbeam.moonscan.com/address/${tokenAddress}">BeamSwap ${poolName} Stable LP tokens</a> in your wallet.</p>  
+  <p> 3. Come back here and hit "MAX" to deposit them all in this pool. </p>
+  `;
+};
+
 export const curveFinancePolygonDocs = (
   poolNumber: number,
   poolName: string,
