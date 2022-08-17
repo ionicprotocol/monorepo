@@ -47,3 +47,6 @@ schedule = "@hourly"
 
 [functions."moonbeam-save-price"]
 schedule = "@hourly"
+
+[functions."polygon-save-price"]
+schedule = "@hourly"

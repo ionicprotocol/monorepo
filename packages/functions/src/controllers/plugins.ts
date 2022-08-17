@@ -1,23 +1,22 @@
 import { ethers } from 'ethers';
-import PLUGINS_ABI from '../abi/plugins.json';
+import ERC4626_ABI from '../abi/ERC4626.json';
 import { plugins } from '../assets';
 import { config, supabase, SupportedChains } from '../config';
 
 const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-    const supportedPlugins = plugins[chainId];
+    const deployedPlugins = plugins[chainId];
 
-    for (const plugin of supportedPlugins) {
+    for (const plugin of deployedPlugins) {
       try {
-        const marketContract = new ethers.Contract(plugin, PLUGINS_ABI, provider);
+        const pluginContract = new ethers.Contract(plugin, ERC4626_ABI, provider);
 
         const [totalSupply, totalAssets, underlyingAsset] = await Promise.all([
-          marketContract.callStatic.totalSupply(),
-          marketContract.callStatic.totalAssets(),
-          marketContract.callStatic.asset(),
+          pluginContract.callStatic.totalSupply(), // Total Amount of Vault Shares
+          pluginContract.callStatic.totalAssets(), // Total Amount of Underlying Managed by the Vault
+          pluginContract.callStatic.asset(), // Market Underlying
         ]);
-        // console.log({ totalSupply, totalAssets, underlyingAsset });
 
         const { error } = await supabase.from(config.supabasePluginTableName).insert([
           {

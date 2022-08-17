@@ -1,4 +1,4 @@
-import { FusePoolData, NativePricedFuseAsset } from "@midas-capital/types";
+import { FusePoolData, NativePricedFuseAsset, SupportedAsset } from "@midas-capital/types";
 import { BigNumberish, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
@@ -126,6 +126,12 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
           suppliedForUtilization += asset.totalSupplyNative;
           borrowedForUtilization += asset.totalBorrowNative;
         }
+
+        const supportedAsset = this.supportedAssets.find(
+          (_asset: SupportedAsset) => _asset.underlying === asset.underlyingToken
+        );
+
+        asset.extraDocs = supportedAsset ? supportedAsset.extraDocs : "";
       }
 
       if (suppliedForUtilization !== 0) {

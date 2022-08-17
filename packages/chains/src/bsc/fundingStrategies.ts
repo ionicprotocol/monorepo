@@ -1,6 +1,6 @@
 import { assetSymbols, FundingStrategyContract, underlying } from "@midas-capital/types";
 
-import { assets } from "./assets";
+import assets from "./assets";
 
 const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } = {
   // TODO: extract to predefined chained paths

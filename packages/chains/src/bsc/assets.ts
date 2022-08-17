@@ -1,258 +1,330 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-export const assets: SupportedAsset[] = [
+import { ankrBNBDocs, defaultDocs, ellipsisDocs, jarvisDocs, pancakeSwapDocs } from "../common";
+
+export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
+export const BTCB = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
+const DAI = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
+const ETH = "0x2170Ed0880ac9A755fd29B2688956BD959F933F8";
+const BETH = "0x250632378E573c6Be1AC2f97Fcdf00515d0Aa91B";
+const CAKE = "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82";
+const AUTO = "0xa184088a740c695E156F91f5cC086a06bb78b827";
+const BIFI = "0xCa3F508B8e4Dd382eE878A314789373D80A5190A";
+const ALPACA = "0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F";
+const USDC = "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d";
+const USDT = "0x55d398326f99059fF775485246999027B3197955";
+const TUSD = "0x14016E85a25aeb13065688cAFB43044C2ef86784";
+const MAI = "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d";
+const threeEPS = "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452";
+const twoBRL = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
+const val3EPS = "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5";
+const valdai3EPS = "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC";
+const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
+const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
+const aBNBc = "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A";
+const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
+const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
+const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
+const WBNB_BUSD = "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16";
+const WBNB_DAI = "0xc7c3cCCE4FA25700fD5574DA7E200ae28BBd36A3";
+const WBNB_USDC = "0xd99c7F6C65857AC913a8f880A4cb84032AB2FC5b";
+const WBNB_USDT = "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE";
+const WBNB_ETH = "0x74E4716E431f45807DCF19f284c7aA99F18a4fbc";
+const BUSD_USDT = "0x7EFaEf62fDdCCa950418312c6C91Aef321375A00";
+const BUSD_BTCB = "0xF45cd219aEF8618A92BAa7aD848364a158a24F33";
+const USDC_BUSD = "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1";
+const USDC_ETH = "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0";
+const CAKE_WBNB = "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0";
+const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
+
+const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.WBNB,
-    underlying: "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    underlying: WBNB,
     name: "Wrapped Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: "",
+    extraDocs: defaultDocs("https://bscscan.com", WBNB),
   },
   {
     symbol: assetSymbols.BUSD,
-    underlying: "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
+    underlying: BUSD,
     name: "Binance USD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", BUSD),
   },
   {
     symbol: assetSymbols.BTCB,
-    underlying: "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c",
+    underlying: BTCB,
     name: "Binance BTC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", BTCB),
   },
   {
     symbol: assetSymbols.DAI,
-    underlying: "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3",
+    underlying: DAI,
     name: "Binance DAI",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", DAI),
   },
   {
     symbol: assetSymbols.ETH,
-    underlying: "0x2170Ed0880ac9A755fd29B2688956BD959F933F8",
+    underlying: ETH,
     name: "Binance ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", ETH),
   },
   // CZ
   {
     symbol: assetSymbols.BETH,
-    underlying: "0x250632378E573c6Be1AC2f97Fcdf00515d0Aa91B",
+    underlying: BETH,
     name: "Binance Beacon ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", BETH),
   },
   {
     symbol: assetSymbols.CAKE,
-    underlying: "0x0E09FaBB73Bd3Ade0a17ECC321fD13a19e81cE82",
+    underlying: CAKE,
     name: "PancakeSwap Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", CAKE),
   },
   //
   {
     symbol: assetSymbols.AUTO,
-    underlying: "0xa184088a740c695E156F91f5cC086a06bb78b827",
+    underlying: AUTO,
     name: "AUTOv2",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", AUTO),
   },
   {
     symbol: assetSymbols.BIFI,
-    underlying: "0xCa3F508B8e4Dd382eE878A314789373D80A5190A",
+    underlying: BIFI,
     name: "beefy.finance",
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     decimals: 18,
+    extraDocs: defaultDocs("https://bscscan.com", BIFI),
   },
   {
     symbol: assetSymbols.ALPACA,
-    underlying: "0x8F0528cE5eF7B51152A59745bEfDD91D97091d2F",
+    underlying: ALPACA,
     name: "AlpacaToken",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", ALPACA),
   },
   // stables
   {
     symbol: assetSymbols.USDC,
-    underlying: "0x8AC76a51cc950d9822D68b83fE1Ad97B32Cd580d",
+    underlying: USDC,
     name: "Binance-Peg USD Coin",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", USDC),
   },
   {
     symbol: assetSymbols.USDT,
-    underlying: "0x55d398326f99059fF775485246999027B3197955",
+    underlying: USDT,
     name: "Binance-Peg BSC-USD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", USDT),
   },
   {
     symbol: assetSymbols.TUSD,
-    underlying: "0x14016E85a25aeb13065688cAFB43044C2ef86784",
+    underlying: TUSD,
     name: "Wrapped TrueUSD",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", TUSD),
   },
   {
     symbol: assetSymbols.MAI,
-    underlying: "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d",
+    underlying: MAI,
     name: "Mai Stablecoin",
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: defaultDocs("https://bscscan.com", MAI),
   },
   // Ellipsis
   {
     symbol: assetSymbols["3EPS"],
-    underlying: "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452",
+    underlying: threeEPS,
     name: "Ellipsis.finance 3EPS (BUSD/USDC/USDT)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0x160caed03795365f3a589f10c379ffa7d75d4e76", "3EPS", threeEPS),
   },
   {
     symbol: assetSymbols.val3EPS,
-    underlying: "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5",
+    underlying: val3EPS,
     name: "Ellipsis.finance val3EPS (BUSD/USDC/USDT)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d", "val3EPS", val3EPS),
   },
   {
     symbol: assetSymbols.valdai3EPS,
-    underlying: "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC",
+    underlying: valdai3EPS,
     name: "Ellipsis.finance valdai3EPS (DAI, val3EPS)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5", "valdai3EPS", valdai3EPS),
   },
 
   {
     symbol: assetSymbols["2brl"],
-    underlying: "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9",
+    underlying: twoBRL,
     name: "Ellipsis.finance 2BRL (BRZ, jBRL)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3", "2brl", twoBRL),
   },
   // Bomb
   {
     symbol: assetSymbols.BOMB,
-    underlying: "0x522348779DCb2911539e76A1042aA922F9C47Ee3",
+    underlying: BOMB,
     name: "BOMB",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", BOMB),
   },
   {
     symbol: assetSymbols.xBOMB,
-    underlying: "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b",
+    underlying: xBOMB,
     name: "xBOMB",
     decimals: 18,
     disabled: true,
   },
   {
     symbol: assetSymbols.aBNBc,
-    underlying: "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A",
+    underlying: aBNBc,
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
     disabled: true,
+    extraDocs: ankrBNBDocs("aBNBc"),
   },
   {
     symbol: assetSymbols["BTCB-BOMB"],
-    underlying: "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6",
+    underlying: BTCB_BOMB,
     name: "BOMB-BTC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(BTCB, BOMB, "BOMB-BTC", BTCB_BOMB),
   },
   // Jarvis
   {
     symbol: assetSymbols.jBRL,
-    underlying: "0x316622977073BBC3dF32E7d2A9B3c77596a0a603",
+    underlying: jBRL,
     name: "Jarvis Synthetic Brazilian Real",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
   },
   {
     symbol: assetSymbols.BRZ,
-    underlying: "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb",
+    underlying: BRZ,
     name: "BRZ Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`,
   },
   {
     symbol: assetSymbols["WBNB-BUSD"],
-    underlying: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
+    underlying: WBNB_BUSD,
     name: "WBNB-BUSD PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(WBNB, BUSD, "WBNB-BUSD", WBNB_BUSD),
   },
   {
     symbol: assetSymbols["WBNB-DAI"],
-    underlying: "0xc7c3cCCE4FA25700fD5574DA7E200ae28BBd36A3",
+    underlying: WBNB_DAI,
     name: "WBNB-DAI PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(WBNB, DAI, "WBNB-DAI", WBNB_DAI),
   },
   {
     symbol: assetSymbols["WBNB-USDC"],
-    underlying: "0xd99c7F6C65857AC913a8f880A4cb84032AB2FC5b",
+    underlying: WBNB_USDC,
     name: "WBNB-USDC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(WBNB, USDC, "WBNB-USDC", WBNB_USDC),
   },
   {
     symbol: assetSymbols["WBNB-USDT"],
-    underlying: "0x16b9a82891338f9bA80E2D6970FddA79D1eb0daE",
+    underlying: WBNB_USDT,
     name: "WBNB-USDT PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(WBNB, USDT, "WBNB-USDT", WBNB_USDT),
   },
   {
     symbol: assetSymbols["WBNB-ETH"],
-    underlying: "0x74E4716E431f45807DCF19f284c7aA99F18a4fbc",
+    underlying: WBNB_ETH,
     name: "WBNB-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(WBNB, ETH, "WBNB-ETH", WBNB_ETH),
   },
   {
     symbol: assetSymbols["BUSD-USDT"],
-    underlying: "0x7EFaEf62fDdCCa950418312c6C91Aef321375A00",
+    underlying: BUSD_USDT,
     name: "BUSD-USDT PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(BUSD, USDT, "BUSD-USDT", BUSD_USDT),
   },
   {
     symbol: assetSymbols["BUSD-BTCB"],
-    underlying: "0xF45cd219aEF8618A92BAa7aD848364a158a24F33",
+    underlying: BUSD_BTCB,
     name: "BUSD-BTCB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(BUSD, BTCB, "BUSD-BTCB", BUSD_BTCB),
   },
   {
     symbol: assetSymbols["USDC-BUSD"],
-    underlying: "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1",
+    underlying: USDC_BUSD,
     name: "USDC-BUSD PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(USDC, BUSD, "USDC-BUSD", USDC_BUSD),
   },
   {
     symbol: assetSymbols["USDC-ETH"],
-    underlying: "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0",
+    underlying: USDC_ETH,
     name: "USDC-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(USDC, ETH, "USDC-ETH", USDC_ETH),
   },
   {
     symbol: assetSymbols["CAKE-WBNB"],
-    underlying: "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0",
+    underlying: CAKE_WBNB,
     name: "CAKE-WBNB PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(CAKE, WBNB, "CAKE-WBNB", CAKE_WBNB),
   },
   {
     symbol: assetSymbols["BTCB-ETH"],
-    underlying: "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D",
+    underlying: BTCB_ETH,
     name: "BTCB-ETH PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: pancakeSwapDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH),
   },
 ];
 
