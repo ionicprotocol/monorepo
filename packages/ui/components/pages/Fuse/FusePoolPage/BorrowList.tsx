@@ -15,11 +15,11 @@ import {
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { utils } from 'ethers';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
@@ -27,6 +27,7 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { sortAssets } from '@ui/utils/sortAssets';
 
 interface BorrowListProps {
   assets: MarketData[];
@@ -35,12 +36,17 @@ interface BorrowListProps {
 }
 export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: BorrowListProps) => {
   const [isShow, setIsShow] = useState(false);
-  const borrowedAssets = assets.filter(
-    (asset) => asset.borrowBalanceNative > 1 && !asset.isBorrowPaused
+  const borrowedAssets = useMemo(
+    () =>
+      sortAssets(assets).filter((asset) => asset.borrowBalanceNative > 1 && !asset.isBorrowPaused),
+    [assets]
   );
-  const nonBorrowedAssets = assets.filter(
-    (asset) => asset.borrowBalanceNative < 1 && !asset.isBorrowPaused
+  const nonBorrowedAssets = useMemo(
+    () =>
+      sortAssets(assets).filter((asset) => asset.borrowBalanceNative < 1 && !asset.isBorrowPaused),
+    [assets]
   );
+
   const unBorrowableAssets = assets.filter((asset) => asset.isBorrowPaused);
 
   // eslint-disable-next-line no-console
@@ -211,18 +217,23 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
         <Td verticalAlign={'middle'}>
           <HStack width={isMobile ? '8%' : '6%'}>
             <CTokenIcon size="sm" address={asset.underlyingToken} />
-            <Text fontWeight="bold" fontSize={{ base: '2.8vw', sm: '0.9rem' }} ml={2}>
-              {tokenData?.symbol ?? asset.underlyingSymbol}
-            </Text>
+            <PopoverTooltip
+              placement="top-start"
+              body={<div dangerouslySetInnerHTML={{ __html: asset.extraDocs || '' }} />}
+            >
+              <Text fontWeight="bold" fontSize={{ base: '2.8vw', sm: '0.9rem' }} ml={2}>
+                {tokenData?.symbol ?? asset.underlyingSymbol}
+              </Text>
+            </PopoverTooltip>
           </HStack>
         </Td>
 
         {isMobile ? null : tokenData?.symbol !== undefined ? (
           asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() ? (
             <Td maxW={'30px'}>
-              <SimpleTooltip label={asset?.underlyingSymbol ?? ''}>
+              <PopoverTooltip body={asset?.underlyingSymbol ?? ''}>
                 <QuestionIcon />
-              </SimpleTooltip>
+              </PopoverTooltip>
             </Td>
           ) : (
             <Td></Td>
@@ -242,8 +253,9 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
                 {borrowAPR.toFixed(3)}%
               </Text>
 
-              <SimpleTooltip
-                label={
+              <PopoverTooltip
+                placement="top-start"
+                body={
                   "Total Value Lent (TVL) measures how much of this asset has been supplied in total. TVL does not account for how much of the lent assets have been borrowed, use 'liquidity' to determine the total unborrowed assets lent."
                 }
               >
@@ -254,7 +266,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
                 >
                   {shortUsdFormatter(asset.totalSupplyFiat)} TVL
                 </Text>
-              </SimpleTooltip>
+              </PopoverTooltip>
             </VStack>
           </Td>
         )}
@@ -275,8 +287,8 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
         </Td>
 
         <Td verticalAlign={'top'}>
-          <SimpleTooltip
-            label={
+          <PopoverTooltip
+            body={
               'Liquidity is the amount of this asset that is available to borrow (unborrowed). To see how much has been supplied and borrowed in total, navigate to the Pool Info tab.'
             }
             placement="top-end"
@@ -297,7 +309,7 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
                 {tokenData?.symbol}
               </Text>
             </VStack>
-          </SimpleTooltip>
+          </PopoverTooltip>
         </Td>
       </Tr>
     </>

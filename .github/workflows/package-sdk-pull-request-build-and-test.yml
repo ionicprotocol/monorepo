@@ -49,9 +49,6 @@ jobs:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
 
-      - name: Checkout correct submodule contents
-        run: yarn checkout:lib
-
       - name: Build SDK
         run: yarn build:sdk
 
@@ -91,9 +88,6 @@ jobs:
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
-
-      - name: Checkout correct submodule contents
-        run: yarn checkout:lib
 
       - name: Build SDK
         run: yarn build:sdk

@@ -50,8 +50,8 @@ export const deployFuseSafeLiquidator = async ({
   console.log("FuseSafeLiquidator: ", fsl.address);
 
   const fuseSafeLiquidator = (await ethers.getContract("FuseSafeLiquidator", deployer)) as FuseSafeLiquidator;
-  const newOwner = await fuseSafeLiquidator.callStatic.owner();
-  console.log(`FuseSafeLiquidator owner is ${newOwner}`);
+  const fslOwner = await fuseSafeLiquidator.callStatic.owner();
+  console.log(`FuseSafeLiquidator owner is ${fslOwner}`);
 };
 
 export const configureFuseSafeLiquidator = async ({
@@ -72,6 +72,17 @@ export const configureFuseSafeLiquidator = async ({
     const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);
     if (!whitelistedAlready) {
       strategies.push(redemptionStrategy.address);
+      arrayOfTrue.push(true);
+    }
+  }
+
+  for (const address in chainIdToConfig[chainId].fundingStrategies) {
+    const [fundingStrategyType] = chainIdToConfig[chainId].fundingStrategies[address];
+    const fundingStrategy = await ethers.getContract(fundingStrategyType, deployer);
+
+    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(fundingStrategy.address);
+    if (!whitelistedAlready) {
+      strategies.push(fundingStrategy.address);
       arrayOfTrue.push(true);
     }
   }

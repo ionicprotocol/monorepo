@@ -12,8 +12,8 @@ const estimateGas = async (
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
   strategiesAndDatas: StrategiesAndDatas,
+  flashSwapPair: string,
   liquidationKind: LiquidationKind,
-  flashSwapFundingToken: string,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
 ) => {
@@ -85,8 +85,8 @@ const estimateGas = async (
           uniswapV2RouterForCollateral: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
           redemptionStrategies: strategiesAndDatas.strategies,
           strategyData: strategiesAndDatas.datas,
+          flashSwapPair,
           ethToCoinbase: 0,
-          flashSwapFundingToken,
           debtFundingStrategies,
           debtFundingStrategiesData,
         },

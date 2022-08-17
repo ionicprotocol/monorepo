@@ -558,9 +558,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  const tx = await addressesProvider.setAddress("bUSD", assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const busdAddress = assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying;
+  const busdAddressAp = await addressesProvider.callStatic.getAddress("bUSD");
+  if (busdAddressAp !== busdAddress) {
+    const tx = await addressesProvider.setAddress("bUSD", busdAddress);
+    await tx.wait();
+    console.log("setAddress bUSD: ", tx.hash);
+  }
   ////
 
   console.log(`total gas used for deployments ${deployments.getGasUsed()}`);

@@ -44,9 +44,12 @@ export const deployChainlinkOracle = async ({
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const chainLinkv2Address = await addressesProvider.callStatic.getAddress("ChainlinkPriceOracleV2");
+  if (chainLinkv2Address !== chainLinkv2.address) {
+    tx = await addressesProvider.setAddress("ChainlinkPriceOracleV2", chainLinkv2.address);
+    await tx.wait();
+    console.log("setAddress ChainlinkPriceOracleV2: ", tx.hash);
+  }
 
   return { cpo: cpo, chainLinkv2: chainLinkv2 };
 };

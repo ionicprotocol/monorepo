@@ -460,26 +460,63 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
   /// EXTERNAL ADDRESSES
-  tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
+  if (uniswapV2FactoryAddress !== chainDeployParams.uniswap.uniswapV2FactoryAddress) {
+    tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
+    await tx.wait();
+    console.log("setAddress IUniswapV2Factory: ", tx.hash);
+  }
 
-  tx = await addressesProvider.setAddress("wtoken", chainDeployParams.wtoken);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const uniswapV2RouterAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Router02");
+  if (uniswapV2RouterAddress !== chainDeployParams.uniswap.uniswapV2RouterAddress) {
+    tx = await addressesProvider.setAddress("IUniswapV2Router02", chainDeployParams.uniswap.uniswapV2RouterAddress);
+    await tx.wait();
+    console.log("setAddress IUniswapV2Router02: ", tx.hash);
+  }
+
+  const wtokenAddress = await addressesProvider.callStatic.getAddress("wtoken");
+  if (wtokenAddress !== chainDeployParams.wtoken) {
+    tx = await addressesProvider.setAddress("wtoken", chainDeployParams.wtoken);
+    await tx.wait();
+    console.log("setAddress wtoken: ", tx.hash);
+  }
+
+  const wBTCTokenAddress = await addressesProvider.callStatic.getAddress("wBTCToken");
+  if (wBTCTokenAddress !== chainDeployParams.wBTCToken) {
+    tx = await addressesProvider.setAddress("wBTCToken", chainDeployParams.wBTCToken);
+    await tx.wait();
+    console.log("setAddress wBTCToken: ", tx.hash);
+  }
 
   /// SYSTEM ADDRESSES
-  tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const masterPOAddress = await addressesProvider.callStatic.getAddress("MasterPriceOracle");
+  if (masterPOAddress !== masterPO.address) {
+    tx = await addressesProvider.setAddress("MasterPriceOracle", masterPO.address);
+    await tx.wait();
+    console.log("setAddress MasterPriceOracle: ", tx.hash);
+  }
 
-  tx = await addressesProvider.setAddress("FusePoolDirectory", fpd.address);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const fpdAddress = await addressesProvider.callStatic.getAddress("FusePoolDirectory");
+  if (fpdAddress !== fpd.address) {
+    tx = await addressesProvider.setAddress("FusePoolDirectory", fpd.address);
+    await tx.wait();
+    console.log("setAddress FusePoolDirectory: ", tx.hash);
+  }
 
-  tx = await addressesProvider.setAddress("FuseFeeDistributor", ffd.address);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const ffdAddress = await addressesProvider.callStatic.getAddress("FuseFeeDistributor");
+  if (ffdAddress !== ffd.address) {
+    tx = await addressesProvider.setAddress("FuseFeeDistributor", ffd.address);
+    await tx.wait();
+    console.log("setAddress FuseFeeDistributor: ", tx.hash);
+  }
+
+  const fsl = await ethers.getContract("FuseSafeLiquidator", deployer);
+  const fslAddress = await addressesProvider.callStatic.getAddress("FuseSafeLiquidator");
+  if (fslAddress !== fsl.address) {
+    tx = await addressesProvider.setAddress("FuseSafeLiquidator", fsl.address);
+    await tx.wait();
+    console.log("setAddress FuseSafeLiquidator: ", tx.hash);
+  }
 };
 
 func.tags = ["prod"];
