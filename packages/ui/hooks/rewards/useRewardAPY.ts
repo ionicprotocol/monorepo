@@ -192,13 +192,13 @@ export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForR
   return cTokensMap ?? {};
 };
 
-// Fetches price from pool oracle then from Rari DAO MasterPriceOracle if fail
+// Fetches price from pool oracle then from Midas DAO MasterPriceOracle if fail
 export const getPriceFromOracles = async (
   tokenAddress: string,
   comptroller: string,
   midasSdk: MidasSdk
 ) => {
-  // Rari MPO
+  // Midas MPO
   const masterPriceOracle = midasSdk.createMasterPriceOracle();
 
   // Pool's MPO
