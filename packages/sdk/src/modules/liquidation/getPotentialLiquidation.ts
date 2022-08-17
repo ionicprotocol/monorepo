@@ -1,6 +1,7 @@
 import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
+import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
 import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig, getLiquidationKind } from "./config";
@@ -110,11 +111,39 @@ export default async function getPotentialLiquidation(
   }
 
   //  chain some collateral redemption strategies
-  const strategyAndData = await getRedemptionStrategiesAndDatas(
+  const [strategyAndData, tokenPath] = await getRedemptionStrategiesAndDatas(
     fuse,
     borrower.collateral[0].underlyingToken,
     flashSwapFundingToken
   );
+
+  let flashSwapPair;
+  const uniswapV2Factory = IUniswapV2Factory__factory.connect(
+    fuse.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+    fuse.provider
+  );
+
+  if (flashSwapFundingToken != fuse.chainConfig.chainAddresses.W_TOKEN) {
+    flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+      flashSwapFundingToken,
+      fuse.chainConfig.chainAddresses.W_TOKEN
+    );
+  } else {
+    // flashSwapFundingToken is the W_TOKEN
+    flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+      flashSwapFundingToken,
+      fuse.chainConfig.chainAddresses.STABLE_TOKEN
+    );
+    if (tokenPath.indexOf(flashSwapPair) > 0) {
+      // in case the Uniswap pair LP token is on the path of redemptions, we should use
+      // another pair because reentrancy checks prevent us from using the pair
+      // when inside the execution of a flash swap from the same pair
+      flashSwapPair = await uniswapV2Factory.callStatic.getPair(
+        flashSwapFundingToken,
+        fuse.chainConfig.chainAddresses.W_BTC_TOKEN
+      );
+    }
+  }
 
   let expectedGasAmount: BigNumber;
   try {
@@ -124,8 +153,8 @@ export default async function getPotentialLiquidation(
       exchangeToTokenAddress,
       liquidationAmount,
       strategyAndData,
+      flashSwapPair,
       liquidationKind,
-      flashSwapFundingToken,
       debtFundingStrategies,
       debtFundingStrategiesData
     );
@@ -155,8 +184,8 @@ export default async function getPotentialLiquidation(
     exchangeToTokenAddress,
     strategyAndData,
     liquidationAmount,
+    flashSwapPair,
     minProfitAmountEth.div(outputPrice).mul(BigNumber.from(10).pow(outputDecimals)),
-    flashSwapFundingToken,
     debtFundingStrategies,
     debtFundingStrategiesData
   );

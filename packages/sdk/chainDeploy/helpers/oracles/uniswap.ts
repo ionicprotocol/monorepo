@@ -90,7 +90,10 @@ export const deployUniswapOracle = async ({
   }
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  const tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
-  await tx.wait();
-  console.log("setAddress: ", tx.hash);
+  const uniTwapOracleFactoryAddress = await addressesProvider.callStatic.getAddress("UniswapTwapPriceOracleV2Factory");
+  if (uniTwapOracleFactoryAddress !== uniTwapOracleFactory.address) {
+    const tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
+    await tx.wait();
+    console.log("setAddress UniswapTwapPriceOracleV2Factory: ", tx.hash);
+  }
 };
