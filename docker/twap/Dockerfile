@@ -1,6 +1,6 @@
 FROM node:16.13-alpine as base
 
-FROM ghcr.io/foundry-rs/foundry:nightly-4604a420c5e23d206ec949219171cb3701e54e28 as foundry
+FROM ghcr.io/foundry-rs/foundry:nightly-ccb9aa595019ea6fa60abe2d78710a56ea2a6efa as foundry
 
 
 FROM node as build
@@ -23,6 +23,10 @@ ARG TEMP_DEPS_DIR
 # with that same directory structure. build.sh does this.
 COPY .yarn /tmp/build/.yarn/
 COPY .yarnrc.yml /tmp/build/
+
+# required for the checkout process of forge
+COPY .gitmodules .gitmodules
+COPY .git .git
 
 COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
