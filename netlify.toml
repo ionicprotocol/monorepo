@@ -11,6 +11,7 @@ YARN_CHECKSUM_BEHAVIOR = "update"
 SUPABASE_URL="https://xdjnvsfkwtkwfuayzmtm.supabase.co"
 SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
 SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
+SUPABASE_NATIVE_PRICES_TABLE_NAME="native-prices"
 
 [context.branch-deploy.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -50,3 +51,10 @@ schedule = "@hourly"
 
 [functions."polygon-save-price"]
 schedule = "@hourly"
+
+[functions."save-native-prices"]
+# Every 5 Minutes
+schedule = "*/5 * * * *"
+
+
+
