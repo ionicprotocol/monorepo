@@ -1,6 +1,7 @@
 import { LiquidationKind } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
+import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain";
 import { MidasBase } from "../../MidasSdk";
 
 import { StrategiesAndDatas } from "./redemptionStrategy";
@@ -12,8 +13,8 @@ const estimateGas = async (
   exchangeToTokenAddress: string,
   liquidationAmount: BigNumber,
   strategiesAndDatas: StrategiesAndDatas,
+  flashSwapPair: string,
   liquidationKind: LiquidationKind,
-  flashSwapFundingToken: string,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
 ) => {
@@ -85,8 +86,8 @@ const estimateGas = async (
           uniswapV2RouterForCollateral: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
           redemptionStrategies: strategiesAndDatas.strategies,
           strategyData: strategiesAndDatas.datas,
+          flashSwapPair,
           ethToCoinbase: 0,
-          flashSwapFundingToken,
           debtFundingStrategies,
           debtFundingStrategiesData,
         },

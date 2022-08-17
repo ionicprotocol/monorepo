@@ -19,7 +19,7 @@ export const getRedemptionStrategiesAndDatas = async (
   fuse: MidasBase,
   inputToken: string,
   expectedOutputToken: string | null
-): Promise<StrategiesAndDatas> => {
+): Promise<[StrategiesAndDatas, string[]]> => {
   const strategies: string[] = [];
   const datas: BytesLike[] = [];
   const tokenPath: string[] = [];
@@ -46,10 +46,13 @@ export const getRedemptionStrategiesAndDatas = async (
     }
   }
 
-  return {
-    strategies,
-    datas,
-  };
+  return [
+    {
+      strategies,
+      datas,
+    },
+    tokenPath,
+  ];
 };
 
 const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
