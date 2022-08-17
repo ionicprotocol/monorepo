@@ -15,7 +15,11 @@
       "@ui/networkData/*": ["ui/networkData/*"],
       "@ui/styles/*": ["ui/styles/*"],
       "@ui/images/*": ["ui/public/images/*"],
-      "@ui/icons/*": ["ui/public/icons/*"]
+      "@ui/icons/*": ["ui/public/icons/*"],
+      "@chains/polygon/*": ["chains/src/polygon/*"],
+      "@chains/bsc/*": ["chains/src/bsc/*"],
+      "@chains/moonbeam/*": ["chains/src/moonbeam/*"],
+      "@chains/chapel/*": ["chains/src/chapel/*"]
     }
   },
   "references": [

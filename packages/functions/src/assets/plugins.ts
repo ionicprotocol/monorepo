@@ -1,12 +1,14 @@
-import { bsc, polygon, moonbeam } from '@midas-capital/chains';
-import { ChainConfig } from '@midas-capital/types';
+import bscDeployedPlugins from '@chains/bsc/plugins';
+import moonbeamDeployedPlugins from '@chains/moonbeam/plugins';
+import polygonDeployedPlugins from '@chains/polygon/plugins';
+import { DeployedPlugins } from '@midas-capital/types';
 
-function chainConfigToPluginArray(config: ChainConfig): string[] {
-  return Object.keys(config.deployedPlugins).map((address) => address.toLocaleLowerCase());
+function deployedPluginsToPluginArray(deployedPlugins: DeployedPlugins): string[] {
+  return Object.keys(deployedPlugins).map((address) => address.toLocaleLowerCase());
 }
 
-export const bscPlugins = chainConfigToPluginArray(bsc);
+export const bscPlugins = deployedPluginsToPluginArray(bscDeployedPlugins);
 
-export const polygonPlugins = chainConfigToPluginArray(polygon);
+export const polygonPlugins = deployedPluginsToPluginArray(polygonDeployedPlugins);
 
-export const moonbeamPlugins = chainConfigToPluginArray(moonbeam);
+export const moonbeamPlugins = deployedPluginsToPluginArray(moonbeamDeployedPlugins);
