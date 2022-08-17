@@ -19,6 +19,7 @@ import { useMemo, useState } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -217,9 +218,14 @@ const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowPro
         <Td verticalAlign={'middle'}>
           <HStack width={isMobile ? '8%' : '6%'}>
             <CTokenIcon size="sm" address={asset.underlyingToken} />
-            <Text fontWeight="bold" fontSize={{ base: '2.8vw', sm: '0.9rem' }} ml={2}>
-              {tokenData?.symbol ?? asset.underlyingSymbol}
-            </Text>
+            <PopoverTooltip
+              placement="top-start"
+              body={<div dangerouslySetInnerHTML={{ __html: asset.extraDocs || '' }} />}
+            >
+              <Text fontWeight="bold" fontSize={{ base: '2.8vw', sm: '0.9rem' }} ml={2}>
+                {tokenData?.symbol ?? asset.underlyingSymbol}
+              </Text>
+            </PopoverTooltip>
           </HStack>
         </Td>
 
