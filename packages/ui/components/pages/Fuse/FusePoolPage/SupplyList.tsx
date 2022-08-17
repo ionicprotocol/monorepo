@@ -26,7 +26,6 @@ import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButt
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useRari } from '@ui/context/RariContext';
@@ -305,10 +304,9 @@ const AssetSupplyRow = ({
                   {tokenData?.symbol ?? asset.underlyingSymbol}
                 </Text>
               </PopoverTooltip>
-
-              <SimpleTooltip
+              <PopoverTooltip
                 placement="top-start"
-                label={
+                body={
                   'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
                 }
               >
@@ -319,21 +317,21 @@ const AssetSupplyRow = ({
                 >
                   {utils.formatUnits(asset.collateralFactor, 16)}% LTV
                 </Text>
-              </SimpleTooltip>
+              </PopoverTooltip>
             </VStack>
 
             <HStack ml={2}>
               {asset.underlyingSymbol &&
                 tokenData?.symbol &&
                 asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() && (
-                  <SimpleTooltip label={asset.underlyingSymbol}>
+                  <PopoverTooltip body={asset.underlyingSymbol}>
                     <QuestionIcon />
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 )}
               <Box>
-                <SimpleTooltip
+                <PopoverTooltip
                   placement="top-start"
-                  label={`${scanUrl}/address/${asset.underlyingToken}`}
+                  body={`${scanUrl}/address/${asset.underlyingToken}`}
                 >
                   <Button
                     minWidth={6}
@@ -348,7 +346,7 @@ const AssetSupplyRow = ({
                   >
                     <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
                   </Button>
-                </SimpleTooltip>
+                </PopoverTooltip>
               </Box>
 
               {asset.plugin && (
