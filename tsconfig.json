@@ -18,7 +18,8 @@
       "@ui/icons/*": ["ui/public/icons/*"],
       "@chains/polygon/*": ["chains/src/polygon/*"],
       "@chains/bsc/*": ["chains/src/bsc/*"],
-      "@chains/moonbeam/*": ["chains/src/moonbeam/*"]
+      "@chains/moonbeam/*": ["chains/src/moonbeam/*"],
+      "@chains/chapel/*": ["chains/src/chapel/*"]
     }
   },
   "references": [
