@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
-import FLYWHEEL_ABI from '../abi/flywheel.json';
-import CTOKEN_ABI from '../abi/ctoken.json';
+import CTOKEN_ABI from '../abi/CToken.json';
+import FLYWHEEL_ABI from '../abi/FlywheelCore.json';
 import { flywheels } from '../assets';
 import { config, supabase, SupportedChains } from '../config';
 
@@ -17,19 +17,14 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
         try {
           const marketContract = new ethers.Contract(strategy, CTOKEN_ABI, provider);
 
-          const [
-            state,
-            rewardToken,
-            totalSupply,
-            underlyingAsset,
-            pluginAddress,
-          ] = await Promise.all([
-            flywheelContract.callStatic.strategyState(strategy),
-            flywheelContract.callStatic.rewardToken(),
-            marketContract.callStatic.totalSupply(),
-            marketContract.callStatic.underlying(),
-            marketContract.callStatic.plugin(),
-          ]);
+          const [state, rewardToken, totalSupply, underlyingAsset, pluginAddress] =
+            await Promise.all([
+              flywheelContract.callStatic.strategyState(strategy),
+              flywheelContract.callStatic.rewardToken(),
+              marketContract.callStatic.totalSupply(),
+              marketContract.callStatic.underlying(),
+              marketContract.callStatic.plugin(),
+            ]);
           // console.log({
           //   state,
           //   rewardToken,
