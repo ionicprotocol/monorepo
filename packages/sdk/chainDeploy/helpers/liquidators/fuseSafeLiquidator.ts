@@ -77,12 +77,12 @@ export const configureFuseSafeLiquidator = async ({
   }
 
   for (const address in chainIdToConfig[chainId].fundingStrategies) {
-    const [redemptionStrategyType] = chainIdToConfig[chainId].fundingStrategies[address];
-    const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
+    const [fundingStrategyType] = chainIdToConfig[chainId].fundingStrategies[address];
+    const fundingStrategy = await ethers.getContract(fundingStrategyType, deployer);
 
-    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);
+    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(fundingStrategy.address);
     if (!whitelistedAlready) {
-      strategies.push(redemptionStrategy.address);
+      strategies.push(fundingStrategy.address);
       arrayOfTrue.push(true);
     }
   }

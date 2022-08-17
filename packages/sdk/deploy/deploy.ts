@@ -509,6 +509,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseFeeDistributor: ", tx.hash);
   }
+
+  const fsl = await ethers.getContract("FuseSafeLiquidator", deployer);
+  const fslAddress = await addressesProvider.callStatic.getAddress("FuseSafeLiquidator");
+  if (fslAddress !== fsl.address) {
+    tx = await addressesProvider.setAddress("FuseSafeLiquidator", fsl.address);
+    await tx.wait();
+    console.log("setAddress FuseSafeLiquidator: ", tx.hash);
+  }
 };
 
 func.tags = ["prod"];

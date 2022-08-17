@@ -135,7 +135,7 @@ export default async function getPotentialLiquidation(
       fuse.chainConfig.chainAddresses.STABLE_TOKEN
     );
     if (tokenPath.indexOf(flashSwapPair) > 0) {
-      // in case the Uniswap pair LP token is the path of redemptions, we should use
+      // in case the Uniswap pair LP token is on the path of redemptions, we should use
       // another pair because reentrancy checks prevent us from using the pair
       // when inside the execution of a flash swap from the same pair
       flashSwapPair = await uniswapV2Factory.callStatic.getPair(
