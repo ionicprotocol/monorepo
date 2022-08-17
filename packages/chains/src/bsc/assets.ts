@@ -235,7 +235,8 @@ const assets: SupportedAsset[] = [
     name: "BRZ Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges`,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`,
   },
   {
     symbol: assetSymbols["WBNB-BUSD"],
