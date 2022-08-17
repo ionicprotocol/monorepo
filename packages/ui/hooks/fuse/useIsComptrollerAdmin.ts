@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const useIsComptrollerAdmin = (comptrollerAddress?: string): boolean => {
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
 
   const { data } = useQuery(
     ['isComptrollerAdmin', comptrollerAddress],

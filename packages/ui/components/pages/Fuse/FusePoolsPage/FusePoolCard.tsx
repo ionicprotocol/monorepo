@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { config } from '@ui/config/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
@@ -32,7 +32,7 @@ const PoolCard = ({ data }: PoolCardProps) => {
   const { cCard } = useColors();
 
   const router = useRouter();
-  const { setLoading, currentChain, coingeckoId } = useRari();
+  const { setLoading, currentChain, coingeckoId } = useMidas();
 
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (

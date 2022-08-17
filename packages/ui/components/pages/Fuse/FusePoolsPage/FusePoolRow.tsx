@@ -22,7 +22,7 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { config } from '@ui/config/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
@@ -58,7 +58,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
     setShowDetails((previous) => !previous);
   }, [setShowDetails]);
 
-  const { midasSdk, scanUrl, setLoading, currentChain, coingeckoId } = useRari();
+  const { midasSdk, scanUrl, setLoading, currentChain, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return (
     <VStack

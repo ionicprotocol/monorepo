@@ -31,7 +31,7 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
@@ -64,7 +64,7 @@ export const CreatePoolConfiguration = () => {
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
-  const { midasSdk, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useMidas();
   const router = useRouter();
 
   const [isCreating, setIsCreating] = useState(false);

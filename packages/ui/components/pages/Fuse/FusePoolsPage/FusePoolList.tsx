@@ -26,7 +26,7 @@ import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolRow';
 import { AlertHero } from '@ui/components/shared/Alert';
 import { config } from '@ui/config/index';
 import { POOLS_PER_PAGE } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useFusePools } from '@ui/hooks/fuse/useFusePools';
 import usePoolSorting from '@ui/hooks/fuse/usePoolSorting';
 import { useColors } from '@ui/hooks/useColors';
@@ -46,7 +46,7 @@ const FusePoolList = () => {
   const [poolsUserNotSupplied, setPoolsUserNotSupplied] = useState<FusePoolData[]>();
   const filteredPools = usePoolSorting(filteredPoolsList, sortBy);
 
-  const { viewMode } = useRari();
+  const { viewMode } = useMidas();
   const { cPage, cOutlineBtn } = useColors();
 
   const { pages, pagesCount, currentPage, setCurrentPage } = usePagination({

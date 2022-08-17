@@ -2,7 +2,7 @@ import { MidasSdk } from '@midas-capital/sdk';
 import { utils } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 export const fetchFuseNumberTVL = async (midasSdk: MidasSdk, usdPrice: number) => {
@@ -13,7 +13,7 @@ export const fetchFuseNumberTVL = async (midasSdk: MidasSdk, usdPrice: number) =
 };
 
 export const useFuseTVL = () => {
-  const { midasSdk, coingeckoId } = useRari();
+  const { midasSdk, coingeckoId } = useMidas();
   const { data: usdPrice, isLoading, error } = useUSDPrice(coingeckoId);
 
   return useQuery(['fuseTVL', midasSdk.chainId, usdPrice, isLoading, error], async () => {

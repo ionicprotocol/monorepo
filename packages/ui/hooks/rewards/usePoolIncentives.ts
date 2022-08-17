@@ -2,7 +2,7 @@ import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useIncentivesWithRates } from '@ui/hooks/rewards/useRewardAPY';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import {
@@ -14,7 +14,7 @@ import {
 } from '@ui/types/ComponentPropsType';
 
 export function usePoolIncentives(comptroller?: string): IncentivesData {
-  const { midasSdk, currentChain } = useRari();
+  const { midasSdk, currentChain } = useMidas();
 
   // 1. Make Call to FusePoolLens
   const { data } = useQuery(['PoolIncentives', currentChain.id, comptroller], async () => {
@@ -97,7 +97,7 @@ export function usePoolIncentives(comptroller?: string): IncentivesData {
 }
 
 export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyingMap => {
-  const { midasSdk, currentChain } = useRari();
+  const { midasSdk, currentChain } = useMidas();
 
   const { data: cTokensUnderlying } = useQuery(
     ['CTokensUnderlying', currentChain.id, cTokenAddresses?.join(',')],

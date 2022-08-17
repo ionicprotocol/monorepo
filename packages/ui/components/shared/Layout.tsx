@@ -4,12 +4,12 @@ import { ReactNode } from 'react';
 import { Banner } from '@ui/components/shared/Banner';
 import { Column } from '@ui/components/shared/Flex';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { loading } = useRari();
+  const { loading } = useMidas();
   const { cPage } = useColors();
   const isMobile = useIsSmallScreen();
 

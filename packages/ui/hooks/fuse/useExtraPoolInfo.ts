@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const useExtraPoolInfo = (comptrollerAddress: string) => {
-  const { midasSdk, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useMidas();
 
   const { data } = useQuery(
     ['ExtraPoolInfo', currentChain.id, comptrollerAddress],

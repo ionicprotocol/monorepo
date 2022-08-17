@@ -5,7 +5,7 @@ import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { FuseIRMDemoChartOptions } from '@ui/utils/chartOptions';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
@@ -17,7 +17,7 @@ interface IRMChartProps {
 }
 const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChartProps) => {
   const { cChart } = useColors();
-  const { midasSdk, currentChain } = useRari();
+  const { midasSdk, currentChain } = useMidas();
   const { data, isLoading, error } = useQuery(
     ['irmCurve', interestRateModelAddress, adminFee, reserveFactor],
     async () => {

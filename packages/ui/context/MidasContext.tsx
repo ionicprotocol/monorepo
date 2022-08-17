@@ -22,7 +22,7 @@ import { getScanUrlByChainId } from '@ui/networkData/index';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { initFuseWithProviders } from '@ui/utils/web3Providers';
 
-export interface RariContextData {
+export interface MidasContextData {
   midasSdk: MidasSdk;
   scanUrl: string | null;
   viewMode: string;
@@ -45,9 +45,9 @@ export interface RariContextData {
   coingeckoId: string;
 }
 
-export const RariContext = createContext<RariContextData | undefined>(undefined);
+export const MidasContext = createContext<MidasContextData | undefined>(undefined);
 
-interface RariProviderProps {
+interface MidasProviderProps {
   children: ReactNode;
   currentChain: Chain & {
     id: number;
@@ -58,14 +58,14 @@ interface RariProviderProps {
   address: string;
   disconnect: () => void;
 }
-export const RariProvider = ({
+export const MidasProvider = ({
   children,
   currentChain,
   chains,
   signerProvider,
   address,
   disconnect,
-}: RariProviderProps) => {
+}: MidasProviderProps) => {
   const midasSdk = useMemo(() => {
     return initFuseWithProviders(signerProvider as Web3Provider, currentChain.id);
   }, [signerProvider, currentChain.id]);
@@ -209,15 +209,15 @@ export const RariProvider = ({
     coingeckoId,
   ]);
 
-  return <RariContext.Provider value={value}>{children}</RariContext.Provider>;
+  return <MidasContext.Provider value={value}>{children}</MidasContext.Provider>;
 };
 
 // Hook
-export function useRari() {
-  const context = useContext(RariContext);
+export function useMidas() {
+  const context = useContext(MidasContext);
 
   if (context === undefined) {
-    throw new Error(`useRari must be used within a RariProvider`);
+    throw new Error(`useMidas must be used within a MidasProvider`);
   }
 
   return context;

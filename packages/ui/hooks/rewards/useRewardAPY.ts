@@ -6,7 +6,7 @@ import { BigNumber, utils } from 'ethers';
 import { useQuery } from 'react-query';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
@@ -33,7 +33,7 @@ export const useIncentivesWithRates = (
   rewardTokenAddrs: string[],
   comptroller: string
 ) => {
-  const { currentChain, midasSdk } = useRari();
+  const { currentChain, midasSdk } = useMidas();
   // this is what we return
   const incentivesWithRates: CTokenRewardsDistributorIncentivesWithRatesMap = {};
 
@@ -145,7 +145,7 @@ const constructMantissa = (
 };
 
 export const useCTokensDataForRewards = (cTokenAddrs: string[]): CTokensDataForRewardsMap => {
-  const { midasSdk } = useRari();
+  const { midasSdk } = useMidas();
   const { data: cTokensMap } = useQuery(['CTokensDataForRewards', ...cTokenAddrs], async () => {
     const _map: CTokensDataForRewardsMap = {};
     await Promise.all(
@@ -221,7 +221,7 @@ export const useAssetPricesInEth = (
   tokenAddresses: string[],
   comptroller: string
 ): TokenPrices | undefined => {
-  const { midasSdk, coingeckoId } = useRari();
+  const { midasSdk, coingeckoId } = useMidas();
 
   midasSdk.createMasterPriceOracle();
 

@@ -4,12 +4,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
 
-import { AssetDetails } from './AssetDetails';
-import PoolDetails from './PoolDetails';
-
 import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
+import { AssetDetails } from '@ui/components/pages/Fuse/FusePoolPage/AssetDetails';
 import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
+import PoolDetails from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails';
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStat';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
@@ -17,7 +16,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Column } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
@@ -25,7 +24,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
 
 const FusePoolPage = memo(() => {
-  const { setLoading } = useRari();
+  const { setLoading } = useMidas();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;

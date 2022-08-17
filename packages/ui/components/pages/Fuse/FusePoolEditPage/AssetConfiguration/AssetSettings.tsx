@@ -36,7 +36,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginName } from '@ui/hooks/usePluginName';
@@ -91,7 +91,7 @@ interface AssetSettingsProps {
 
 export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { midasSdk, setPendingTxHash } = useRari();
+  const { midasSdk, setPendingTxHash } = useMidas();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();

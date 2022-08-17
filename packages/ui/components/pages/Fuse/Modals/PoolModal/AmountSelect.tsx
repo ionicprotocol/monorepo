@@ -35,7 +35,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
 import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
@@ -69,7 +69,7 @@ const AmountSelect = ({
 }: AmountSelectProps) => {
   const asset = assets[index];
 
-  const { midasSdk, setPendingTxHash, address } = useRari();
+  const { midasSdk, setPendingTxHash, address } = useMidas();
 
   const errorToast = useErrorToast();
 
@@ -524,7 +524,7 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const {
     midasSdk,
     currentChain: { id: chainId },
-  } = useRari();
+  } = useMidas();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
 
   // Define the old and new asset (same asset different numerical values)
@@ -671,7 +671,7 @@ const TokenNameAndMaxButton = ({
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
 }) => {
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
 
   const errorToast = useErrorToast();
 

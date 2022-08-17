@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
-  const { midasSdk } = useRari();
+  const { midasSdk } = useMidas();
 
   const { data } = useQuery(
     ['CTokenData', cTokenAddress, comptrollerAddress],

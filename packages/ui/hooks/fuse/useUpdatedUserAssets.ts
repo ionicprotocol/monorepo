@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery, UseQueryResult } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
@@ -20,7 +20,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
   assets,
   amount,
 }: UseUpdatedUserAssetsResult<T>) => {
-  const { midasSdk, currentChain, coingeckoId } = useRari();
+  const { midasSdk, currentChain, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const { data: updatedAssets }: UseQueryResult<MarketData[]> = useQuery(
