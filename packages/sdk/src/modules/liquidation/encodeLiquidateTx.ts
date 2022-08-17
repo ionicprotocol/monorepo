@@ -13,8 +13,8 @@ export default async function encodeLiquidateTx(
   exchangeToTokenAddress: string,
   strategiesAndDatas: StrategiesAndDatas,
   liquidationAmount: BigNumber,
+  flashSwapPair: string,
   minProfitAmountScaled: BigNumber,
-  flashSwapFundingToken: string,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
 ): Promise<EncodedLiquidationTx> {
@@ -87,8 +87,8 @@ export default async function encodeLiquidateTx(
             cErc20: borrower.debt[0].cToken,
             cTokenCollateral: borrower.collateral[0].cToken,
             minProfitAmount: 0,
+            flashSwapPair,
             exchangeProfitTo: exchangeToTokenAddress,
-            flashSwapFundingToken,
             uniswapV2RouterForBorrow: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
             uniswapV2RouterForCollateral: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
             redemptionStrategies: strategiesAndDatas.strategies,
