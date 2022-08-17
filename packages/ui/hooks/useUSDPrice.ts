@@ -1,16 +1,9 @@
 import axios from 'axios';
 import { useQuery } from 'react-query';
 
-async function getUSDPriceOf(cgIds: string[]): Promise<number[]> {
-  const { data } = await axios.get(
-    `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${cgIds.join(',')}`
-  );
-  return cgIds.map((cgId) => (data[cgId] ? data[cgId].usd : 1));
-}
-
-export function useUSDPrice(coingeckoIds: string[]) {
+export function useUSDPrice(coingeckoId: string) {
   return useQuery(
-    ['useUSDPrice', ...coingeckoIds],
+    ['useUSDPrice', coingeckoId],
     async () => {
       let usdPrice: number;
 
@@ -29,6 +22,6 @@ export function useUSDPrice(coingeckoIds: string[]) {
 
       return usdPrice;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!coingeckoIds && coingeckoIds.length > 0 }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!coingeckoId }
   );
 }
