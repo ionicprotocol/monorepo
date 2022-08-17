@@ -289,9 +289,23 @@ const AssetSupplyRow = ({
           <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
             <CTokenIcon size="sm" address={asset.underlyingToken} />
             <VStack alignItems={'flex-start'} ml={2}>
-              <Text fontWeight="bold" textAlign={'left'} fontSize={{ base: '2.8vw', sm: '0.9rem' }}>
-                {tokenData?.symbol ?? asset.underlyingSymbol}
-              </Text>
+              <PopoverTooltip
+                placement="top-start"
+                body={
+                  <div
+                    dangerouslySetInnerHTML={{ __html: asset.extraDocs || asset.underlyingSymbol }}
+                  />
+                }
+              >
+                <Text
+                  fontWeight="bold"
+                  textAlign={'left'}
+                  fontSize={{ base: '2.8vw', sm: '0.9rem' }}
+                >
+                  {tokenData?.symbol ?? asset.underlyingSymbol}
+                </Text>
+              </PopoverTooltip>
+
               <SimpleTooltip
                 placement="top-start"
                 label={

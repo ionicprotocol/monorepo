@@ -42,6 +42,8 @@ export interface NativePricedFuseAsset extends FuseAsset {
 
   liquidityNative: number;
   utilization: number;
+
+  extraDocs?: string;
 }
 
 export interface FusePoolData {

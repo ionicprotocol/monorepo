@@ -8,7 +8,7 @@ export const PopoverStyleConfig: ComponentStyleConfig = {
       borderRadius: 0,
     },
     content: {
-      borderRadius: 0,
+      borderRadius: 8,
       backgroundColor: mode('whiteBg', 'raisinBlack')(props),
       borderWidth: 1,
       borderColor: mode('ecru', 'ecru')(props),
