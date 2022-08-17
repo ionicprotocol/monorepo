@@ -1,7 +1,7 @@
 import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
-import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain";
+import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
 import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig, getLiquidationKind } from "./config";
