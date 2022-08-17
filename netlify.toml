@@ -49,6 +49,12 @@ schedule = "@hourly"
 [functions."moonbeam-save-price"]
 schedule = "@hourly"
 
+[functions."polygon-save-price"]
+schedule = "@hourly"
+
 [functions."save-native-prices"]
 # Every 5 Minutes
 schedule = "*/5 * * * *"
+
+
+
