@@ -291,7 +291,11 @@ const AssetSupplyRow = ({
             <VStack alignItems={'flex-start'} ml={2}>
               <PopoverTooltip
                 placement="top-start"
-                body={<div dangerouslySetInnerHTML={{ __html: asset.extraDocs || '' }} />}
+                body={
+                  <div
+                    dangerouslySetInnerHTML={{ __html: asset.extraDocs || asset.underlyingSymbol }}
+                  />
+                }
               >
                 <Text
                   fontWeight="bold"

@@ -59,7 +59,8 @@ export const assets: SupportedAsset[] = [
     name: "Staked ERC20 DOT",
     decimals: 10,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `You can get stDOT by staking your xcDOT on <a href="https://polkadot.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a>`,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>You can get stDOT by staking your xcDOT on <a href="https://polkadot.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a></p>`,
   },
   {
     symbol: assetSymbols.ETH,

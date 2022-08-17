@@ -533,7 +533,8 @@ export const assets: SupportedAsset[] = [
     name: "NZD Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `Learn more on how to acquire NZDS at <a href="https://www.techemynt.com/#buy_nzds" target="_blank" style="color: #BCAC83; cursor="pointer">Techemynt</a>`,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>Learn more on how to acquire NZDS at <a href="https://www.techemynt.com/#buy_nzds" target="_blank" style="color: #BCAC83; cursor="pointer">Techemynt</a></p>`,
   },
   {
     symbol: assetSymbols.XSGD,
@@ -541,7 +542,8 @@ export const assets: SupportedAsset[] = [
     name: "StratisX Singapore Dollar (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: `Learn more on how to acquire NZDS at <a href="https://www.straitsx.com/sg/xsgd" target="_blank" style="color: #BCAC83; cursor="pointer">Stratis X</a>`,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>Learn more on how to acquire NZDS at <a href="https://www.straitsx.com/sg/xsgd" target="_blank" style="color: #BCAC83; cursor="pointer">Stratis X</a></p>`,
   },
   // Arrakis Vaults
   {
