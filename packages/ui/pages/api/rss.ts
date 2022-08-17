@@ -1,3 +1,4 @@
+// Deprecated
 import { BigNumber } from '@ethersproject/bignumber';
 import axios from 'axios';
 import { median, variance } from 'mathjs';
