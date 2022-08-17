@@ -5,3 +5,5 @@ export const bscFlywheels = [
 ];
 
 export const moonbeamFlywheels = ['0xF57b2bD963F61C556F89e6dCb590A758eAd2F37B'];
+
+export const polygonFlywheels = [];
