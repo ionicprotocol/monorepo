@@ -9,16 +9,16 @@ import { getSupportedChains } from '@ui/networkData/index';
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) => {
   return {
     id: data.chainId,
-    name: data.name,
-    network: data.name,
+    name: data.specificParams.metadata.name,
+    network: data.specificParams.metadata.name,
     nativeCurrency: {
-      name: data.nativeCurrency.name,
-      symbol: data.nativeCurrency.symbol,
+      name: data.specificParams.metadata.nativeCurrency.name,
+      symbol: data.specificParams.metadata.nativeCurrency.symbol,
       decimals: 18,
     },
-    rpcUrls: data.rpcUrls,
-    blockExplorers: data.blockExplorerUrls,
-    testnet: data.testnet,
+    rpcUrls: data.specificParams.metadata.rpcUrls,
+    blockExplorers: data.specificParams.metadata.blockExplorerUrls,
+    testnet: data.specificParams.metadata.testnet,
   };
 });
 

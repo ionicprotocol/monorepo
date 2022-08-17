@@ -16,17 +16,15 @@ import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 import { FilterButton } from '@ui/components/shared/Button';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { getChainMetadata } from '@ui/networkData/index';
+import { getChainConfig } from '@ui/networkData/index';
+import { supportedChainIdToConfig } from '@ui/types/ChainMetaData';
 
 const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { chain, chains } = useNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
 
-  const supportedChains = useMemo(
-    () => chains?.map((chain) => getChainMetadata(chain.id)),
-    [chains]
-  );
+  const supportedChains = useMemo(() => chains?.map((chain) => getChainConfig(chain.id)), [chains]);
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
@@ -68,7 +66,7 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                       key={chainMetadata.chainId}
                       h={'12'}
                       justifyContent={'flex-start'}
-                      disabled={!chainMetadata.enabled}
+                      disabled={!supportedChainIdToConfig[chainMetadata.chainId].enabled}
                       onClick={() => {
                         switchNetworkAsync(chainMetadata.chainId).then(() => {
                           router.push(
@@ -87,11 +85,11 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                         h={'8'}
                         mr={'4'}
                         borderRadius={'50%'}
-                        src={chainMetadata.img}
+                        src={chainMetadata.specificParams.metadata.img}
                         alt=""
                       ></Image>
-                      {chainMetadata.name}
-                      {chainMetadata.enabled ? '' : ' (Soon)'}
+                      {chainMetadata.specificParams.metadata.name}
+                      {supportedChainIdToConfig[chainMetadata.chainId].enabled ? '' : ' (Soon)'}
                     </FilterButton>
                   )
               )}

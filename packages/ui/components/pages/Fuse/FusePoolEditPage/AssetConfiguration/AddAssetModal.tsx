@@ -31,6 +31,7 @@ import { useRari } from '@ui/context/RariContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { sortSupportedAssets } from '@ui/utils/sortAssets';
 
 interface AddAssetProps {
   comptrollerAddress: string;
@@ -62,7 +63,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
           asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())) &&
         !config.hideAssets.includes(asset.underlying.toLowerCase())
     );
-    setAvailableAssets(availableAssets);
+    setAvailableAssets(sortSupportedAssets(availableAssets));
   }, [nameOrAddress, supportedAssets]);
 
   useEffect(() => {

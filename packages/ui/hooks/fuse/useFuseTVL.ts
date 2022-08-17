@@ -4,11 +4,10 @@ import { useQuery } from 'react-query';
 
 import { useRari } from '@ui/context/RariContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { WRAPPED_NATIVE_TOKEN_DATA } from '@ui/networkData/index';
 
 export const fetchFuseNumberTVL = async (midasSdk: MidasSdk, usdPrice: number) => {
   const tvlNative = await midasSdk.getTotalValueLocked(false);
-  const { decimals } = WRAPPED_NATIVE_TOKEN_DATA[midasSdk.chainId];
+  const decimals = midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
   return Number(utils.formatUnits(tvlNative, decimals)) * usdPrice;
 };

@@ -51,8 +51,14 @@ export const useFusePools = (
       if (!res || !res.length) return undefined;
 
       const data: FusePoolData[] = [];
+      const hidePools = config.hidePools
+        ? JSON.parse(config.hidePools)[currentChain.id.toString()]
+          ? JSON.parse(config.hidePools)[currentChain.id.toString()]
+          : ''
+        : '';
+
       res.map((pool) => {
-        if (pool) {
+        if (pool && !hidePools.split(',').includes(pool.id.toString())) {
           const underlyingTokens: string[] = [];
           const underlyingSymbols: string[] = [];
           pool.underlyingTokens.map((token, index) => {
