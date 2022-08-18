@@ -16,8 +16,16 @@ type CONFIG = {
   supabasePluginTableName: string;
   supabaseFlywheelTableName: string;
   hideAssets: string[];
-  hidePools: string;
+  hidePools: { [x: string]: string[] };
 };
+
+const hidePoolsArr = process.env.HIDE_POOLS ? process.env.HIDE_POOLS.split('|') : [];
+const hidePools = hidePoolsArr.reduce((obj: { [x: string]: string[] }, str) => {
+  const hidePool = str.split('-');
+  obj[hidePool[0]] = hidePool[1].split(',');
+
+  return obj;
+}, {});
 
 const config: CONFIG = {
   isRssScoreEnabled: process.env.FEATURE_RSS === 'true',
@@ -38,7 +46,7 @@ const config: CONFIG = {
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabaseFlywheelTableName: process.env.SUPABASE_FLYWHEEL_TABLE_NAME ?? '',
-  hidePools: process.env.HIDE_POOLS || '',
+  hidePools: hidePools,
   hideAssets: process.env.HIDE_ASSETS ? process.env.HIDE_ASSETS.toLowerCase().split(',') : [],
 };
 
