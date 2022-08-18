@@ -1,13 +1,13 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '../context/RariContext';
-import { convertIRMtoCurve } from '../utils/convertIRMtoCurve';
+import { useMidas } from '@ui/context/MidasContext';
+import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useChartData(market: string) {
   const {
     midasSdk,
     currentChain: { id: currentChainId },
-  } = useRari();
+  } = useMidas();
   return useQuery(
     ['useChartData', currentChainId, market],
     async () => {

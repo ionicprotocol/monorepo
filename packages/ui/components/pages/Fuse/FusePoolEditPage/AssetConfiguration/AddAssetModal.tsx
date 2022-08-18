@@ -27,7 +27,7 @@ import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/Ass
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { config } from '@ui/config/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -41,7 +41,7 @@ interface AddAssetProps {
 }
 
 const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
-  const { midasSdk } = useRari();
+  const { midasSdk } = useMidas();
 
   const supportedAssets = useMemo(() => {
     return midasSdk.supportedAssets.filter((asset) => !asset.disabled);

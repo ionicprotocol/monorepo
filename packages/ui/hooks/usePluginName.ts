@@ -1,9 +1,9 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const usePluginName = (pluginAddress?: string) => {
-  const { midasSdk, currentChain } = useRari();
+  const { midasSdk, currentChain } = useMidas();
 
   return useQuery(
     ['usePluginName', pluginAddress, currentChain.id],

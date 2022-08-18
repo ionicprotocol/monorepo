@@ -13,7 +13,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
@@ -47,7 +47,7 @@ function MaxBorrowSlider({
   );
 
   const [sliderValue, setSliderValue] = useState(borrowedPercent);
-  const { coingeckoId } = useRari();
+  const { coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);

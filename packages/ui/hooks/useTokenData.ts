@@ -3,7 +3,7 @@ import { ethers } from 'ethers';
 import { useMemo } from 'react';
 import { useQueries, useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
@@ -37,7 +37,7 @@ export const fetchTokenData = async (
 export const useTokenData = (address: string | undefined) => {
   const {
     currentChain: { id },
-  } = useRari();
+  } = useMidas();
   const validAddress = useMemo(() => {
     if (address) {
       try {
@@ -59,7 +59,7 @@ export const useTokenData = (address: string | undefined) => {
 };
 
 export const useTokensDataAsMap = (addresses: string[] = []): TokensDataMap => {
-  const { currentChain } = useRari();
+  const { currentChain } = useMidas();
 
   const tokensData = useQueries(
     addresses.map((address: string) => {

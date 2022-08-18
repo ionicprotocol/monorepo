@@ -1,11 +1,11 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '../context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
   const {
     currentChain: { id: currentChainId },
-  } = useRari();
+  } = useMidas();
   return useQuery(
     ['useApy', currentChainId, underlyingAddress, pluginAddress, rewardAddress],
     async () => {

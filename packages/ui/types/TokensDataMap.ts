@@ -1,5 +1,4 @@
-// From Rari API `tokenData` route
-export type RariApiTokenData = {
+export type MidasApiTokenData = {
   symbol: string;
   name: string;
   decimals: number;
@@ -9,4 +8,4 @@ export type RariApiTokenData = {
   logoURL: string;
 };
 
-export type TokensDataMap = { [address: string]: RariApiTokenData };
+export type TokensDataMap = { [address: string]: MidasApiTokenData };

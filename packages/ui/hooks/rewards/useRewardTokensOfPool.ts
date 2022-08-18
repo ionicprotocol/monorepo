@@ -1,13 +1,13 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const useRewardTokensOfPool = (poolAddress?: string) => {
   const {
     midasSdk,
     currentChain: { id },
     address,
-  } = useRari();
+  } = useMidas();
 
   const { data } = useQuery(
     ['useRewardTokensOfPool', id, poolAddress],
