@@ -13,6 +13,18 @@ const deployedPlugins: DeployedPlugins = {
     market: "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba",
     name: "2brl DotDotLpERC4626",
   },
+  "0x9dB349BbfF9E177dB4bd3134ff93876688b77835": {
+    market: "0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C",
+    name: "val3EPS DotDotLpERC4626",
+  },
+  "0xBb6729e250Ff6b1BB2917bC65817731E98157B1F": {
+    market: "0x7479dd29b9256aB74c9bf84d6f9CE6e30014d248",
+    name: "valdai3EPS DotDotLpERC4626",
+  },
+  "0xcc1602fBeceb5C4C53DA29B60342822C753652E8": {
+    market: "0x6f9B6ccD027d1c6Ed09ee215B9Ca5B85a57C6eA1",
+    name: "3EPS DotDotLpERC4626",
+  },
 };
 
 export default deployedPlugins;
