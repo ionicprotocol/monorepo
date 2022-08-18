@@ -523,12 +523,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
-
-  // testing
-  oldImplementations.push("1");
-  if (oldImplementations.find((addr) => addr !== constants.AddressZero)) {
-    await run("markets:all:upgrade");
-  }
 };
 
 func.tags = ["prod"];
