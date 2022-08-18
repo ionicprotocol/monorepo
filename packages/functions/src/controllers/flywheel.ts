@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import CTOKEN_ABI from '../abi/CToken.json';
 import FLYWHEEL_ABI from '../abi/FlywheelCore.json';
-import { functonsAlert } from '../alert';
+import { functionsAlert } from '../alert';
 import { flywheels } from '../assets';
 import { config, supabase, SupportedChains } from '../config';
 
@@ -57,7 +57,7 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
       }
     }
   } catch (err) {
-    await functonsAlert("Saving Flywheel's plugin", err as string);
+    await functionsAlert("Saving Flywheel's plugin", err as string);
     console.error(err);
   }
 };
