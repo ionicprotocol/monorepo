@@ -7,7 +7,7 @@
     "resolveJsonModule":true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "outDir": "./netlify"
+    "outDir": "./dist"
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
