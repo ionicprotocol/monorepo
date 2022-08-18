@@ -179,11 +179,11 @@ const RewardsInfo = ({
             🔌
           </span>
         )}
-        {!(data && data.apy > 0.005) && <ApyInformTooltip />}
+        {(!data || data.apy <= 0) && <ApyInformTooltip />}
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {data.apy > 0.005 && data.apy.toFixed(2) + '%'}
+          {data.apy > 0 && data.apy.toFixed(2) + '%'}
         </Text>
       )}
     </HStack>
@@ -414,7 +414,7 @@ const AssetSupplyRow = ({
                       <HStack mr={2}>
                         <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
                         <TokenWithLabel address={info.rewardToken} size="2xs" />
-                        {!(info.formattedAPR && info.formattedAPR.gt(0)) && <ApyInformTooltip />}
+                        {(!info.formattedAPR || info.formattedAPR.lte(0)) && <ApyInformTooltip />}
                       </HStack>
                       {info.formattedAPR && (
                         <Text
