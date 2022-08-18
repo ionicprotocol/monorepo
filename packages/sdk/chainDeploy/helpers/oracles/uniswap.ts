@@ -1,6 +1,7 @@
 import { constants } from "ethers";
 
 import { AddressesProvider } from "../../../lib/contracts/typechain/AddressesProvider";
+import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
 import { UniswapTwapPriceOracleV2Factory } from "../../../lib/contracts/typechain/UniswapTwapPriceOracleV2Factory";
 import { UniswapDeployFnParams } from "../types";
 
@@ -73,9 +74,11 @@ export const deployUniswapOracle = async ({
       );
       console.log(oldBaseTokenOracle, "oldBaseTokenOracle updated?");
 
-      const uniswapV2Factory = new ethers.Contract(deployConfig.uniswap.uniswapV2FactoryAddress, [
-        "getPair(address tokenA, address tokenB) returns (address pair)",
-      ]);
+      const uniswapV2Factory = IUniswapV2Factory__factory.connect(
+        deployConfig.uniswap.uniswapV2FactoryAddress,
+        ethers.provider
+      );
+
       const pair = await uniswapV2Factory.getPair(tokenPair.baseToken, tokenPair.token);
       run("oracle:update-twap", { pair });
     }
