@@ -29,7 +29,7 @@ const DETAILS = [
   },
   {
     strategyName: assetSymbols.valdai3EPS,
-    underlying: UNDERLYINGS.valdai3EPS,
+    underlying: UNDERLYINGS[assetSymbols.valdai3EPS],
     deployedPlugin: "0xBb6729e250Ff6b1BB2917bC65817731E98157B1F",
   },
 ];
