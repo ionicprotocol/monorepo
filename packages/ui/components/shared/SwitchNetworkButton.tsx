@@ -3,7 +3,7 @@ import { ChainConfig } from '@midas-capital/types';
 import React, { LegacyRef, useEffect, useState } from 'react';
 
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { getChainConfig } from '@ui/networkData/index';
 
@@ -12,7 +12,7 @@ const SwitchNetworkButton: React.FC = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = useIsSmallScreen();
-  const { networkBtnElement, currentChain } = useRari();
+  const { networkBtnElement, currentChain } = useMidas();
 
   useEffect(() => {
     setChainConfig(getChainConfig(currentChain.id));

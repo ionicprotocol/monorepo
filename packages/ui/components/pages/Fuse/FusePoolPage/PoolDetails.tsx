@@ -19,7 +19,7 @@ import { useQueryClient } from 'react-query';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -41,8 +41,8 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
   const poolId = router.query.poolId as string;
   const data = useExtraPoolInfo(comptrollerAddress || '');
   const { hasCopied, onCopy } = useClipboard(data?.admin ?? '');
-  const { setLoading, currentChain, setPendingTxHash } = useRari();
-  const { midasSdk } = useRari();
+  const { setLoading, currentChain, setPendingTxHash } = useMidas();
+  const { midasSdk } = useMidas();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 

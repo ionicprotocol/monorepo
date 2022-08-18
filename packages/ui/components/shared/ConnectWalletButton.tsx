@@ -3,7 +3,7 @@ import React, { LegacyRef } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import AccountModal from '@ui/components/shared/AccountModal';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -12,7 +12,7 @@ const ConnectWalletButton: React.FC = () => {
 
   const isMobile = useIsSmallScreen();
 
-  const { pendingTxHashes, accountBtnElement, address } = useRari();
+  const { pendingTxHashes, accountBtnElement, address } = useMidas();
 
   return (
     <Button

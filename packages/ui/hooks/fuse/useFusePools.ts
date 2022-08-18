@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 const poolSort = (pools: FusePoolData[]) => {
   return pools.sort((a, b) => {
@@ -25,7 +25,7 @@ const poolSort = (pools: FusePoolData[]) => {
 export const useFusePools = (
   filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null
 ) => {
-  const { midasSdk, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useMidas();
 
   const isCreatedPools = filter === 'created-pools';
   const isAllPools = filter === '';
@@ -51,14 +51,13 @@ export const useFusePools = (
       if (!res || !res.length) return undefined;
 
       const data: FusePoolData[] = [];
-      const hidePools = config.hidePools
-        ? JSON.parse(config.hidePools)[currentChain.id.toString()]
-          ? JSON.parse(config.hidePools)[currentChain.id.toString()]
-          : ''
-        : '';
+
+      type configKey = keyof typeof config;
+
+      const hidePools = (config[`hidePools${currentChain.id}` as configKey] as string[]) || [];
 
       res.map((pool) => {
-        if (pool && !hidePools.split(',').includes(pool.id.toString())) {
+        if (pool && !hidePools.includes(pool.id.toString())) {
           const underlyingTokens: string[] = [];
           const underlyingSymbols: string[] = [];
           pool.underlyingTokens.map((token, index) => {

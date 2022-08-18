@@ -1,11 +1,10 @@
 import { extendTheme } from '@chakra-ui/react';
 
-import { LinkStyleConfig } from './components/Link';
-
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
 import { ButtonStyleConfig } from '@ui/theme/components/Button';
 import { IconButtonStyleConfig } from '@ui/theme/components/IconButton';
 import { InputConfigStyle } from '@ui/theme/components/Input';
+import { LinkStyleConfig } from '@ui/theme/components/Link';
 import { ModalStyleConfig } from '@ui/theme/components/Modal';
 import { PopoverStyleConfig } from '@ui/theme/components/Popover';
 import { SelectConfigStyle } from '@ui/theme/components/Select';

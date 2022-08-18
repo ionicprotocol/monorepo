@@ -28,7 +28,7 @@ import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
@@ -204,7 +204,7 @@ const AssetSupplyRow = ({
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
   const asset = assets[index];
-  const { midasSdk, scanUrl, currentChain, setPendingTxHash } = useRari();
+  const { midasSdk, scanUrl, currentChain, setPendingTxHash } = useMidas();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const supplyAPY = midasSdk.ratePerBlockToAPY(
     asset.supplyRatePerBlock,

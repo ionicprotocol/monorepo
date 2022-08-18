@@ -2,7 +2,7 @@ import { ERC20Abi, MidasSdk } from '@midas-capital/sdk';
 import { BigNumber, Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
@@ -24,7 +24,7 @@ export const fetchTokenBalance = async (
 };
 
 export function useTokenBalance(tokenAddress: string, customAddress?: string) {
-  const { midasSdk, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useMidas();
 
   const addressToCheck = customAddress ?? address;
 

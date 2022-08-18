@@ -20,7 +20,7 @@ import { Dispatch, useEffect, useState } from 'react';
 import { MdViewList, MdViewModule } from 'react-icons/md';
 
 import { FilterButton, FilterIconButton } from '@ui/components/shared/Button';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
@@ -44,7 +44,7 @@ export const FuseDashNav = () => {
   });
 
   const [viewMode, setViewMode] = useState<string>('');
-  const { setViewMode: _setViewMode, currentChain } = useRari();
+  const { setViewMode: _setViewMode, currentChain } = useMidas();
   const { cPage, cInput } = useColors();
 
   const debouncedSearchTerm = useDebounce(searchText, 400);
@@ -162,7 +162,7 @@ const PoolButtons = ({
   const isUnverifiedPoolSelected = searchText === 'unverified-pools';
   const router = useRouter();
   const isMobile = useIsSmallScreen();
-  const { setLoading, currentChain } = useRari();
+  const { setLoading, currentChain } = useMidas();
 
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">

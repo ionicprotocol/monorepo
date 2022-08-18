@@ -16,7 +16,8 @@ type CONFIG = {
   supabasePluginTableName: string;
   supabaseFlywheelTableName: string;
   hideAssets: string[];
-  hidePools: string;
+  hidePools56: string[];
+  hidePools97: string[];
 };
 
 const config: CONFIG = {
@@ -38,7 +39,8 @@ const config: CONFIG = {
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabaseFlywheelTableName: process.env.SUPABASE_FLYWHEEL_TABLE_NAME ?? '',
-  hidePools: process.env.HIDE_POOLS || '',
+  hidePools56: process.env.HIDE_POOLS_56 ? process.env.HIDE_POOLS_56.split(',') : [],
+  hidePools97: process.env.HIDE_POOLS_97 ? process.env.HIDE_POOLS_97.split(',') : [],
   hideAssets: process.env.HIDE_ASSETS ? process.env.HIDE_ASSETS.toLowerCase().split(',') : [],
 };
 

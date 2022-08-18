@@ -2,7 +2,7 @@ import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-c
 import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 export interface MarketData extends NativePricedFuseAsset {
@@ -24,7 +24,7 @@ export interface PoolData extends SDKFusePoolData {
 }
 
 export const useFusePoolData = (poolId: string) => {
-  const { midasSdk, address, coingeckoId } = useRari();
+  const { midasSdk, address, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   return useQuery<PoolData | null>(

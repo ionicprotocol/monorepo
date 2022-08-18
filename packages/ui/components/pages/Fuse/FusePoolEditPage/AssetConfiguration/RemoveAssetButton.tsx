@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { useQueryClient } from 'react-query';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -17,7 +17,7 @@ const RemoveAssetButton = ({
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
 }) => {
-  const { midasSdk } = useRari();
+  const { midasSdk } = useMidas();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
