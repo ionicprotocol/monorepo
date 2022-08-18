@@ -27,12 +27,12 @@ import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { DOT_DOT_FINANCE, URL_MIDAS_DOCS } from '@ui/constants/index';
+import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
-import { usePluginName } from '@ui/hooks/usePluginName';
+import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -179,7 +179,7 @@ const RewardsInfo = ({
             🔌
           </span>
         )}
-        {(!data || data.apy <= 0) && <ApyInformTooltip />}
+        {(!data || data.apy <= 0) && <ApyInformTooltip pluginAddress={pluginAddress} />}
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
@@ -222,7 +222,7 @@ const AssetSupplyRow = ({
     [asset.cToken, rewards]
   );
 
-  const { data: pluginName } = usePluginName(asset.plugin);
+  const { data: pluginInfo } = usePluginInfo(asset.plugin);
 
   const onToggleCollateral = async () => {
     const comptroller = midasSdk.createComptroller(comptrollerAddress);
@@ -356,7 +356,7 @@ const AssetSupplyRow = ({
                     placement="top-start"
                     body={
                       <>
-                        This market is using the <b>{pluginName}</b> ERC4626 Strategy.
+                        This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
                         <br />
                         Read more about it{' '}
                         <ChakraLink
@@ -414,7 +414,6 @@ const AssetSupplyRow = ({
                       <HStack mr={2}>
                         <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
                         <TokenWithLabel address={info.rewardToken} size="2xs" />
-                        {(!info.formattedAPR || info.formattedAPR.lte(0)) && <ApyInformTooltip />}
                       </HStack>
                       {info.formattedAPR && (
                         <Text
@@ -485,23 +484,30 @@ const errorCodeToMessage = (errorCode: number) => {
   }
 };
 
-const ApyInformTooltip = () => {
+const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
+  const { data: pluginInfo } = usePluginInfo(pluginAddress);
+
   return (
     <PopoverTooltip
       body={
         <>
-          APY calculations are currently being improved, please check{' '}
-          <ChakraLink
-            href={DOT_DOT_FINANCE}
-            isExternal
-            variant={'color'}
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            Dot Dot Finance <ExternalLinkIcon mx="2px" />
-          </ChakraLink>{' '}
-          for indicative APYs of the underlying strategy .
+          APY calculations are currently being improved
+          {pluginInfo?.docsUrl && (
+            <>
+              , please check{' '}
+              <ChakraLink
+                href={pluginInfo?.docsUrl}
+                isExternal
+                variant={'color'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
+              </ChakraLink>{' '}
+              for indicative APYs of the underlying strategy .
+            </>
+          )}
         </>
       }
     >
