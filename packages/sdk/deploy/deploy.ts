@@ -461,14 +461,20 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
   /// EXTERNAL ADDRESSES
   const uniswapV2FactoryAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Factory");
-  if (uniswapV2FactoryAddress !== chainDeployParams.uniswap.uniswapV2FactoryAddress) {
+  if (
+    uniswapV2FactoryAddress !== chainDeployParams.uniswap.uniswapV2FactoryAddress &&
+    chainDeployParams.uniswap.uniswapV2FactoryAddress
+  ) {
     tx = await addressesProvider.setAddress("IUniswapV2Factory", chainDeployParams.uniswap.uniswapV2FactoryAddress);
     await tx.wait();
     console.log("setAddress IUniswapV2Factory: ", tx.hash);
   }
 
   const uniswapV2RouterAddress = await addressesProvider.callStatic.getAddress("IUniswapV2Router02");
-  if (uniswapV2RouterAddress !== chainDeployParams.uniswap.uniswapV2RouterAddress) {
+  if (
+    uniswapV2RouterAddress !== chainDeployParams.uniswap.uniswapV2RouterAddress &&
+    chainDeployParams.uniswap.uniswapV2RouterAddress
+  ) {
     tx = await addressesProvider.setAddress("IUniswapV2Router02", chainDeployParams.uniswap.uniswapV2RouterAddress);
     await tx.wait();
     console.log("setAddress IUniswapV2Router02: ", tx.hash);
@@ -482,7 +488,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   const wBTCTokenAddress = await addressesProvider.callStatic.getAddress("wBTCToken");
-  if (wBTCTokenAddress !== chainDeployParams.wBTCToken) {
+  if (wBTCTokenAddress !== chainDeployParams.wBTCToken && chainDeployParams.wBTCToken) {
     tx = await addressesProvider.setAddress("wBTCToken", chainDeployParams.wBTCToken);
     await tx.wait();
     console.log("setAddress wBTCToken: ", tx.hash);
