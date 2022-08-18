@@ -380,7 +380,7 @@
       ]
     },
     "AddressesProvider_Implementation": {
-      "address": "0x3426Bc2976A7116852402D073583F474a025D922",
+      "address": "0xA9c7610d450650F680E4ee849f1953710487BAA9",
       "abi": [
         {
           "anonymous": false,
@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x02dd6F8Ef96eAF85fA52B6eaB208c325Dfa9FB18",
+      "address": "0xF1aE534b1Bec3934A9Ca7568F03256ED01C85794",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x92c68738Eb169f00d548455eD01bcbe8bBA68293",
+      "address": "0x3A394Cf08A3AE57F8E38379013d783E2c871ACBe",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xC6024c9C1d8f9fEc651E9DDe35e0790DbD238f76",
+      "address": "0x4F80367B0d6daE5a0E4F81FdCb21a5F5edE85314",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0x6AA09c97C81C28477E579f65f997f5b599049610",
+      "address": "0xCf227FcfC241b517B2152eAF07Fe660C77554A85",
       "abi": [
         {
           "inputs": [],
@@ -6674,7 +6674,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xB0FF6cE274f24e7Ce9ee29dF707B3a2A7686a78a",
+      "address": "0xA68cf6aB01Cb0a54b23b1950f57300c3EC6Cea41",
       "abi": [
         {
           "inputs": [
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xD1e952b3445fCd316E13FE0878cb7C659561FCA2",
+      "address": "0x295BF08680c79d24801719dC3Da58D8a90Ea1642",
       "abi": [
         {
           "inputs": [
@@ -9062,7 +9062,7 @@
       ]
     },
     "FixedNativePriceOracle": {
-      "address": "0x98502cC48Cca423bCB5D828Ec56785d1327C4d73",
+      "address": "0x2d89ff22d1DA1b5330912c54E90FF81279D73E19",
       "abi": [
         {
           "inputs": [
@@ -10235,7 +10235,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x0C6a06e4616F866cBD9D85547110779BFAE24d5E",
+      "address": "0x5c31fd794243A04Ff5ceA95a5D060A3f90A2C7E3",
       "abi": [
         {
           "anonymous": false,
@@ -11387,7 +11387,7 @@
       ]
     },
     "FuseFlywheelLensRouter": {
-      "address": "0x6A3a2EaBC0358AcA52972dCB33D66dc2910c288B",
+      "address": "0x970533836c4BF475EEEc0d49cDfde97051B35D89",
       "abi": [
         {
           "inputs": [
@@ -12759,7 +12759,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x3FE7a130E7E809D965A6b1eEc30cF9158A2F316b",
+      "address": "0x130ceB7C0f1Af9C30c63C29D704610c30456EA75",
       "abi": [
         {
           "anonymous": false,
@@ -13728,7 +13728,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x5E7D7A85EFF16F7A8f3d67859ae7033011E51afE",
+      "address": "0x4544D7078DFc3B07191bF0aA9f4e0f79803f9338",
       "abi": [
         {
           "anonymous": false,
@@ -14592,7 +14592,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x2e938643208099649c2007F7571EA6F55e4A9e2a",
+      "address": "0x8cb1b8fE835d8Ab6C172617fB69F5FC4F0C8Cc7a",
       "abi": [
         {
           "anonymous": false,
@@ -17379,6 +17379,11 @@
                   "type": "address"
                 },
                 {
+                  "internalType": "contract IUniswapV2Pair",
+                  "name": "flashSwapPair",
+                  "type": "address"
+                },
+                {
                   "internalType": "uint256",
                   "name": "minProfitAmount",
                   "type": "uint256"
@@ -17386,11 +17391,6 @@
                 {
                   "internalType": "address",
                   "name": "exchangeProfitTo",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "flashSwapFundingToken",
                   "type": "address"
                 },
                 {
@@ -17510,7 +17510,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0xa5783CEC67EBFE9Be9cCF2882b3b6e3E194CEBad",
+      "address": "0x939E6846386401db2437114724D2b28417b3682d",
       "abi": [
         {
           "anonymous": false,
@@ -18097,6 +18097,11 @@
                   "type": "address"
                 },
                 {
+                  "internalType": "contract IUniswapV2Pair",
+                  "name": "flashSwapPair",
+                  "type": "address"
+                },
+                {
                   "internalType": "uint256",
                   "name": "minProfitAmount",
                   "type": "uint256"
@@ -18104,11 +18109,6 @@
                 {
                   "internalType": "address",
                   "name": "exchangeProfitTo",
-                  "type": "address"
-                },
-                {
-                  "internalType": "address",
-                  "name": "flashSwapFundingToken",
                   "type": "address"
                 },
                 {
@@ -18360,7 +18360,7 @@
       ]
     },
     "InitializableClones": {
-      "address": "0x627ACF74583778abbDe9d73Cca7F9a1Ad9c4c196",
+      "address": "0x11Edf13606A9743c67559544B34Ba349DffEF634",
       "abi": [
         {
           "anonymous": false,
@@ -18402,7 +18402,7 @@
       ]
     },
     "JumpRateModel": {
-      "address": "0xa0699D39F2542e4E94e52958686FdDa6904C1dB5",
+      "address": "0xf00e8be01b32eCb592cAe1bA7Cac4f581d671Dcd",
       "abi": [
         {
           "inputs": [
@@ -19029,7 +19029,7 @@
       ]
     },
     "MasterPriceOracle_Implementation": {
-      "address": "0x792635851B4487d68eFdAD3C4Ab4F8E5360c33FD",
+      "address": "0xdDCe51cdDB930ef019B086D9A9E0b0801e7c3970",
       "abi": [
         {
           "anonymous": false,
@@ -20172,7 +20172,7 @@
       ]
     },
     "RewardsDistributorDelegate": {
-      "address": "0x9b8bBF32c12Bd36c1FD4fEdb9915d13D6FB8A117",
+      "address": "0x3B9D2Af79bb9d63d1796b3d2EC1Ed2034EA9a906",
       "abi": [
         {
           "anonymous": false,
@@ -21068,7 +21068,7 @@
       ]
     },
     "UniswapLpTokenLiquidator": {
-      "address": "0xa55BE05F7C5393626ddC5aC1bad1C7cDf0806692",
+      "address": "0x6f2928475E15D49B2467126146A866b509789946",
       "abi": [
         {
           "inputs": [
@@ -21107,7 +21107,7 @@
       ]
     },
     "UniswapLpTokenPriceOracle": {
-      "address": "0xe512E99b073d92e4d6e8C866dbEBA29E60691C88",
+      "address": "0xFD8EC6e37182CA30FE51FC4381E5f2F3B58B677A",
       "abi": [
         {
           "inputs": [
@@ -21174,7 +21174,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2": {
-      "address": "0x7bE4d9Fed08E6AFAc50Ce0458e9077eF9adB8794",
+      "address": "0xCCC61892Ea823e04F06Ee8b170C10C427b45BaA9",
       "abi": [
         {
           "anonymous": false,
@@ -21310,7 +21310,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0x20A9D49e0F42CA68A2015d49C4b3eEbBe2b55f51",
+      "address": "0xf9E5b3616950f2681Cff5fA0d739Eb9aCFAB9648",
       "abi": [
         {
           "inputs": [
@@ -21423,7 +21423,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Root": {
-      "address": "0xd559a3042E044833C221a4e8167ab55E7D5d3610",
+      "address": "0xDF8d9323E1e8eB7C7d3282eF4f6B1454578aE394",
       "abi": [
         {
           "inputs": [
@@ -21649,7 +21649,7 @@
       ]
     },
     "WhitePaperInterestRateModel": {
-      "address": "0x5B9b746415a2054c1494C6aa68eF0F40BC0dba1e",
+      "address": "0xFe44E528caF2F391dEBA6fd5beaa5d530b6bf8A3",
       "abi": [
         {
           "inputs": [

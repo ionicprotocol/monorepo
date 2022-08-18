@@ -14,8 +14,9 @@ export default async function liquidateOrRetry(midasSdk: MidasSdk, retries = 0) 
   try {
     potentialLiquidations = await midasSdk.getPotentialLiquidations(signer);
   } catch (error) {
-    const msg = "Error sending sendTransactionToSafeLiquidator transaction: " + error;
+    const msg = "Error getting potential liquidations transaction: " + error;
     logger.error(msg);
+    console.error(error);
     retries += 1;
     await new Promise((resolve) => setTimeout(resolve, (retries + 1) * 5000));
     await liquidateOrRetry(midasSdk, retries);
