@@ -5,6 +5,7 @@ import { UniswapTwapPriceOracleV2Factory } from "../../../lib/contracts/typechai
 import { UniswapDeployFnParams } from "../types";
 
 export const deployUniswapOracle = async ({
+  run,
   ethers,
   getNamedAccounts,
   deployments,
@@ -71,6 +72,12 @@ export const deployUniswapOracle = async ({
         tokenPair.baseToken
       );
       console.log(oldBaseTokenOracle, "oldBaseTokenOracle updated?");
+
+      const uniswapV2Factory = new ethers.Contract(deployConfig.uniswap.uniswapV2FactoryAddress, [
+        "getPair(address tokenA, address tokenB) returns (address pair)",
+      ]);
+      const pair = await uniswapV2Factory.getPair(tokenPair.baseToken, tokenPair.token);
+      run("oracle:update-twap", { pair });
     }
 
     const underlyingOracle = await mpo.callStatic.oracles(tokenPair.token);

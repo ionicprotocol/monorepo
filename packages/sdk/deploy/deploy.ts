@@ -523,6 +523,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
+
+  // Hardhat tasks
+  await run("markets:all:upgrade");
 };
 
 func.tags = ["prod"];
