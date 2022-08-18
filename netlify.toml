@@ -12,6 +12,8 @@ SUPABASE_URL="https://xdjnvsfkwtkwfuayzmtm.supabase.co"
 SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
 SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 SUPABASE_NATIVE_PRICES_TABLE_NAME="native-prices"
+ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
+MIN_BORROW_USD="100"
 
 [context.branch-deploy.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -19,10 +21,9 @@ EVMOS = "true"
 BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
-ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
 FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
-MIN_BORROW_USD="100"
+HIDE_ASSETS="0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9,0x6Ba38f006aFe746B9A0d465e53aB4182147AC3D7"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -30,10 +31,9 @@ EVMOS = "false"
 BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
-ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 FEATURE_RSS="false"
 FEATURE_CREATE_POOL="0x304aE8f9300e09c8B33bb1a8AE1c14A6253a5F4D"
-MIN_BORROW_USD="100"
+HIDE_ASSETS="0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9,0x6Ba38f006aFe746B9A0d465e53aB4182147AC3D7"
 
 [functions]
 directory = "./packages/functions/netlify/functions"
