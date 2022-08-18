@@ -365,6 +365,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("Comptroller AutoImplementation already set");
   }
 
+  if (oldImplementations.length) {
+    await run("markets:all:upgrade");
+  }
+
   await deployments.deploy("InitializableClones", {
     from: deployer,
     args: [],
