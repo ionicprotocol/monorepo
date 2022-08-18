@@ -14,6 +14,7 @@ SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 SUPABASE_NATIVE_PRICES_TABLE_NAME="native-prices"
 ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
 MIN_BORROW_USD="100"
+FUNCTIONS_ALERT_WEBHOOK_URL='https://discord.com/api/webhooks/1009764740186259456/DPvitzelL3UNrxh13plhIXqW__XyFtQix_i_103XMM7UtnjtsW6I1RjnfbLMIFlcM0QS'
 
 [context.branch-deploy.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"

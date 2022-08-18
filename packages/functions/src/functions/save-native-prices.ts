@@ -1,6 +1,7 @@
 import { bsc, moonbeam, polygon } from '@midas-capital/chains';
 import { Handler } from '@netlify/functions';
 import axios from 'axios';
+import { functonsAlert } from '../alert';
 import { config, supabase } from '../config';
 
 const NATIVE_ASSETS = {
@@ -28,6 +29,7 @@ const handler: Handler = async () => {
 
   const { error } = await supabase.from(config.supabaseNativePricesTableName).upsert(upserts);
   if (error) {
+    await functonsAlert('Saving Native Prices', error.message);
     throw `Error occurred during saving native prices:  ${error.message}`;
   } else {
     console.log(`Successfully updated native prices for: ${chainIds.join(', ')}`);
