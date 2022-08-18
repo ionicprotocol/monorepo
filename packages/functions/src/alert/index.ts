@@ -11,13 +11,13 @@ export const functionsAlert = async (title: string, description: string) => {
       username: 'Functions Notifier',
       embeds: [
         {
-          title: title,
-          description: description,
+          title,
+          description,
           color: hexToDecimal('#ff0000'),
         },
       ],
     });
   } catch (e) {
-    console.log(e);
+    console.error(e);
   }
 };
