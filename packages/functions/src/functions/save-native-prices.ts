@@ -30,6 +30,8 @@ const handler: Handler = async () => {
 
     const { error } = await supabase.from(config.supabaseNativePricesTableName).upsert(upserts);
     if (error) {
+      console.error(error);
+      console.log({ upserts });
       throw `Error occurred during saving native prices:  ${error.message}`;
     }
 
