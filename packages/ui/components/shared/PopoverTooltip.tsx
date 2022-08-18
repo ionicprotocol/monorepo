@@ -49,6 +49,7 @@ export const PopoverTooltip = ({
           style={{ cursor: 'default' }}
           width="auto"
           maxWidth="300px"
+          textAlign="start"
         >
           <PopoverArrow />
           {header && <PopoverHeader>{header}</PopoverHeader>}

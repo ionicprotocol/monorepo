@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, InfoOutlineIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -27,7 +27,7 @@ import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { URL_MIDAS_DOCS } from '@ui/constants/index';
+import { DOT_DOT_FINANCE, URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
@@ -179,10 +179,11 @@ const RewardsInfo = ({
             🔌
           </span>
         )}
+        {!(data && data.apy > 0.005) && <ApyInformTooltip />}
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {data.apy > 0 && data.apy.toFixed(2) + '%'}
+          {data.apy > 0.005 && data.apy.toFixed(2) + '%'}
         </Text>
       )}
     </HStack>
@@ -413,6 +414,7 @@ const AssetSupplyRow = ({
                       <HStack mr={2}>
                         <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
                         <TokenWithLabel address={info.rewardToken} size="2xs" />
+                        {!(info.formattedAPR && info.formattedAPR.gt(0)) && <ApyInformTooltip />}
                       </HStack>
                       {info.formattedAPR && (
                         <Text
@@ -481,4 +483,31 @@ const errorCodeToMessage = (errorCode: number) => {
       return 'Something went wrong. Please try again later.';
     // 'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
   }
+};
+
+const ApyInformTooltip = () => {
+  return (
+    <PopoverTooltip
+      body={
+        <>
+          APY calculations are currently being improved, please check{' '}
+          <ChakraLink
+            href={DOT_DOT_FINANCE}
+            isExternal
+            variant={'color'}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            Dot Dot Finance <ExternalLinkIcon mx="2px" />
+          </ChakraLink>{' '}
+          for indicative APYs of the underlying strategy .
+        </>
+      }
+    >
+      <Box marginTop="-2px !important">
+        <InfoOutlineIcon />
+      </Box>
+    </PopoverTooltip>
+  );
 };

@@ -53,3 +53,5 @@ export enum UserAction {
   NO_ACTION,
   WAITING_FOR_TRANSACTIONS,
 }
+
+export const DOT_DOT_FINANCE = 'https://dotdot.finance/#/stake';
