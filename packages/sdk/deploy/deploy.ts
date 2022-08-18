@@ -365,10 +365,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("Comptroller AutoImplementation already set");
   }
 
-  if (oldImplementations.length) {
-    await run("markets:all:upgrade");
-  }
-
   await deployments.deploy("InitializableClones", {
     from: deployer,
     args: [],
@@ -526,6 +522,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     tx = await addressesProvider.setAddress("FuseSafeLiquidator", fsl.address);
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
+  }
+
+  // testing
+  oldImplementations.push("1");
+  if (oldImplementations.find((addr) => addr !== constants.AddressZero)) {
+    await run("markets:all:upgrade");
   }
 };
 
