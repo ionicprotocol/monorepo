@@ -11,6 +11,7 @@ on:
       - 'packages/functions/**'
       - '.github/workflows/package-ui-deploy.yaml'
       - 'yarn.lock'
+      - 'netlify.toml'
 
 jobs:
   deploy:

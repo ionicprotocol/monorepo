@@ -1,4 +1,3 @@
-// Deprecated
 // TODO
 import { BigNumber } from '@ethersproject/bignumber';
 import axios from 'axios';

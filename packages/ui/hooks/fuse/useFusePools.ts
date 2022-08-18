@@ -52,7 +52,9 @@ export const useFusePools = (
 
       const data: FusePoolData[] = [];
 
-      const hidePools = config.hidePools[currentChain.id] || [];
+      type configKey = keyof typeof config;
+
+      const hidePools = (config[`hidePools${currentChain.id}` as configKey] as string[]) || [];
 
       res.map((pool) => {
         if (pool && !hidePools.includes(pool.id.toString())) {

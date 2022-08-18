@@ -85,29 +85,31 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
                   }
                   // if user changed network from the network, then routerChainId will be changed
                   if (!isIdle && !switchedChain) {
-                    router
-                      .push(
-                        {
-                          pathname: `/[chainId]`,
-                          query: { chainId: chain.id.toString(), sortBy: 'supply' },
-                        },
-                        undefined,
-                        { shallow: true }
-                      )
-                      .then(() => {
-                        setSwitchedChain(undefined);
-                      });
+                    router.isReady &&
+                      router
+                        .push(
+                          {
+                            pathname: `/[chainId]`,
+                            query: { chainId: chain.id.toString(), sortBy: 'supply' },
+                          },
+                          undefined,
+                          { shallow: true }
+                        )
+                        .then(() => {
+                          setSwitchedChain(undefined);
+                        });
                   }
                 }
               } else {
-                router.push(
-                  {
-                    pathname: `/[chainId]`,
-                    query: { chainId: chain.id.toString(), sortBy: 'supply' },
-                  },
-                  undefined,
-                  { shallow: true }
-                );
+                router.isReady &&
+                  router.push(
+                    {
+                      pathname: `/[chainId]`,
+                      query: { chainId: chain.id.toString(), sortBy: 'supply' },
+                    },
+                    undefined,
+                    { shallow: true }
+                  );
                 warningToast({
                   title: `Wrong Chain ID`,
                   description: (
@@ -118,14 +120,15 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
                 });
               }
             } else {
-              router.push(
-                {
-                  pathname: `/[chainId]`,
-                  query: { chainId: chain.id.toString(), sortBy: 'supply' },
-                },
-                undefined,
-                { shallow: true }
-              );
+              router.isReady &&
+                router.push(
+                  {
+                    pathname: `/[chainId]`,
+                    query: { chainId: chain.id.toString(), sortBy: 'supply' },
+                  },
+                  undefined,
+                  { shallow: true }
+                );
             }
           }
         } else {

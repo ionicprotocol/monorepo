@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import ERC4626_ABI from '../abi/ERC4626.json';
+import { functionsAlert } from '../alert';
 import { plugins } from '../assets';
 import { config, supabase, SupportedChains } from '../config';
 
@@ -37,6 +38,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
       }
     }
   } catch (err) {
+    await functionsAlert("Saving Flywheel's plugin", err as string);
     console.error(err);
   }
 };
