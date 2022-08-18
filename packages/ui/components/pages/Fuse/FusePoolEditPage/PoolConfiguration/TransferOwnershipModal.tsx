@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -26,7 +26,7 @@ const TransferOwnershipModal = ({
   onClose: () => void;
   comptrollerAddress: string;
 }) => {
-  const { midasSdk } = useRari();
+  const { midasSdk } = useMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isTransferring, setIsTransferring] = useState<boolean>(false);

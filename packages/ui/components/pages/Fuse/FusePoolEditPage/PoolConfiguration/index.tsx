@@ -33,7 +33,7 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -51,7 +51,7 @@ const PoolConfiguration = ({
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
   const { cSwitch } = useColors();
 
   const queryClient = useQueryClient();

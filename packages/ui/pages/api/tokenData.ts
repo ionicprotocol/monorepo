@@ -10,9 +10,8 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';
 import * as yup from 'yup';
 
-import { SUPPORTED_NETWORKS_REGEX } from '../../constants';
-
 import { config } from '@ui/config/index';
+import { SUPPORTED_NETWORKS_REGEX } from '@ui/constants/index';
 import { TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
 const ChainSupportedAssets: ChainSupportedAssetsType = {

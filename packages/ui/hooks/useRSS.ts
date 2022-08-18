@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Contract } from 'ethers';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
@@ -25,7 +25,7 @@ export const letterScore = (totalScore: number) => {
 // Quite ridiculous to fetch usd prices and pool data in frontend to just pass it to the backend...
 
 export const usePoolRSS = (poolId: string | number) => {
-  const { midasSdk, currentChain, coingeckoId } = useRari();
+  const { midasSdk, currentChain, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const { data: poolData } = useFusePoolData(poolId.toString());
 

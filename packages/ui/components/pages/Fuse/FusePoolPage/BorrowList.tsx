@@ -20,7 +20,7 @@ import { useMemo, useState } from 'react';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
@@ -173,7 +173,7 @@ interface AssetBorrowRowProps {
 
 const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
   const asset = assets[index];
-  const { currentChain, midasSdk } = useRari();
+  const { currentChain, midasSdk } = useMidas();
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 

@@ -3,14 +3,14 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 
 import FusePoolsPage from '@ui/components/pages/Fuse/FusePoolsPage';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export async function getInitialProps() {
   return {};
 }
 
 const FusePage: NextPage = () => {
-  const { setLoading } = useRari();
+  const { setLoading } = useMidas();
 
   useEffect(() => {
     setLoading(false);

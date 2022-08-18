@@ -2,9 +2,8 @@ import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 
-import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '../../constants';
-
 import { config } from '@ui/config/index';
+import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 
 const querySchema = yup.object().shape({
   chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),

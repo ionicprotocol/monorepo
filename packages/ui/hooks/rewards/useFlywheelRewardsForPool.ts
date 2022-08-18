@@ -1,14 +1,14 @@
 import LogRocket from 'logrocket';
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 export const useFlywheelRewardsForPool = (poolAddress?: string) => {
   const {
     midasSdk,
     currentChain: { id: chainId },
     address,
-  } = useRari();
+  } = useMidas();
 
   return useQuery(
     ['useFlywheelRewardsForPool', chainId, poolAddress],

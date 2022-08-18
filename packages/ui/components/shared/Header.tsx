@@ -49,8 +49,8 @@ export const Header = ({
 
             <Portal>
               <MenuList color="#FFF" minWidth="110px">
-                <SubMenuItem name="Snapshot" link="https://vote.rari.capital/" />
-                <SubMenuItem name="Forums" link="https://forums.rari.capital/" />
+                <SubMenuItem name="Snapshot" link="https://vote.midas.capital/" />
+                <SubMenuItem name="Forums" link="https://forums.midas.capital/" />
               </MenuList>
             </Portal>
           </Menu>

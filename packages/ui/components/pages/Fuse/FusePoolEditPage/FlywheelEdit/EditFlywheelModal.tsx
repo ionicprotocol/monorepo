@@ -29,7 +29,7 @@ import { FilterButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, PoolData } from '@ui/hooks/useFusePoolData';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -43,7 +43,7 @@ import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
-  const { midasSdk } = useRari();
+  const { midasSdk } = useMidas();
 
   return useQuery(
     ['useRewardsInfo', flywheelAddress, marketAddress],
@@ -68,7 +68,7 @@ const EditFlywheelModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
 
   const { data: tokenData } = useTokenData(flywheel.rewardToken);
   const isAdmin = address === flywheel.owner;

@@ -1,10 +1,10 @@
 import { useQuery } from 'react-query';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheel = (flywheelAddress?: string) => {
-  const { midasSdk, currentChain } = useRari();
+  const { midasSdk, currentChain } = useMidas();
 
   return useQuery(
     ['useFlywheel', currentChain.id, flywheelAddress],

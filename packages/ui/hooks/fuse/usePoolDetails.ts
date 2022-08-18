@@ -1,14 +1,14 @@
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useMemo } from 'react';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
   const {
     midasSdk,
     currentChain: { id: chainId },
-  } = useRari();
+  } = useMidas();
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
 
   return useMemo(() => {

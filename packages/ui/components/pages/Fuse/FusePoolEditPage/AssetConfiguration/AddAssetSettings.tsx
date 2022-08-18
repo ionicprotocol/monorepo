@@ -24,7 +24,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
@@ -58,7 +58,7 @@ export const AddAssetSettings = ({
   poolName: string;
   tokenData: TokenData;
 }) => {
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();

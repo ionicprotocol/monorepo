@@ -4,7 +4,7 @@ import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 const poolSort = (pools: FusePoolData[]) => {
   return pools.sort((a, b) => {
@@ -25,7 +25,7 @@ const poolSort = (pools: FusePoolData[]) => {
 export const useFusePools = (
   filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null
 ) => {
-  const { midasSdk, currentChain, address } = useRari();
+  const { midasSdk, currentChain, address } = useMidas();
 
   const isCreatedPools = filter === 'created-pools';
   const isAllPools = filter === '';

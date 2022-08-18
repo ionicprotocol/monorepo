@@ -22,7 +22,7 @@ import React, { useMemo, useState } from 'react';
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
@@ -36,7 +36,7 @@ const steps = [
 ];
 
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();

@@ -14,7 +14,7 @@ import { AdminAlert } from '@ui/components/shared/Alert';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -30,7 +30,7 @@ const FusePoolEditPage = memo(() => {
     onClose: closeAddAssetModal,
   } = useDisclosure();
 
-  const { setLoading, coingeckoId } = useRari();
+  const { setLoading, coingeckoId } = useMidas();
   const router = useRouter();
   const poolId = router.query.poolId as string;
   const { data } = useFusePoolData(poolId);

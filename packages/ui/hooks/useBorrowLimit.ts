@@ -2,14 +2,14 @@ import { NativePricedFuseAsset } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 export const useBorrowLimit = <T extends NativePricedFuseAsset>(
   assets: T[],
   options?: { ignoreIsEnabledCheckFor?: string }
 ): number => {
-  const { coingeckoId } = useRari();
+  const { coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return useMemo(() => {
     if (!usdPrice) return 0;

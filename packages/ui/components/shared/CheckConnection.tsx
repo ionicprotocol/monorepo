@@ -6,7 +6,7 @@ import { Chain, useAccount, useDisconnect, useNetwork, useSigner, useSwitchNetwo
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
-import { RariProvider } from '@ui/context/RariContext';
+import { MidasProvider } from '@ui/context/MidasContext';
 import { useWarningToast } from '@ui/hooks/useToast';
 import { isSupportedChainId } from '@ui/networkData/index';
 
@@ -161,7 +161,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   // Everything Fine
   else if (chain && address && signerData?.provider && signerChainId === chain.id) {
     return (
-      <RariProvider
+      <MidasProvider
         currentChain={chain}
         chains={chains}
         signerProvider={signerData.provider}
@@ -169,7 +169,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
         disconnect={disconnect}
       >
         {children}
-      </RariProvider>
+      </MidasProvider>
     );
     // !accountData?.address || !signerData?.provider
   } else {

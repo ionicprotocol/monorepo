@@ -9,7 +9,7 @@ const ErrorPage: React.FC<FallbackProps> = ({ error }) => {
         <Heading>Whoops! Looks like something went wrong!</Heading>
         <Text>
           You can either reload the page, or report this error to us on our{' '}
-          <Link isExternal href="https://github.com/Rari-Capital/rari-dApp">
+          <Link isExternal href="https://github.com/Midas-Protocol/monorepo">
             <u>GitHub</u>
             <ExternalLinkIcon mx="2px" />
           </Link>

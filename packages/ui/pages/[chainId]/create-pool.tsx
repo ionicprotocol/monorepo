@@ -3,10 +3,10 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 
 import FusePoolCreate from '@ui/components/pages/Fuse/FusePoolCreatePage';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 
 const FusePoolCreatePage: NextPage = () => {
-  const { setLoading } = useRari();
+  const { setLoading } = useMidas();
   useEffect(() => {
     setLoading(false);
   }, [setLoading]);

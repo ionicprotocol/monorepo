@@ -18,7 +18,7 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useRari } from '@ui/context/RariContext';
+import { useMidas } from '@ui/context/MidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
@@ -76,7 +76,7 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchRewards: any;
 }) => {
-  const { midasSdk, address } = useRari();
+  const { midasSdk, address } = useMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
