@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, PostgrestResponse } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 
@@ -15,6 +15,27 @@ const querySchema = yup.object().shape({
   rewardAddress: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid reward asset address'),
 });
 
+interface SupabaseRow {
+  created_at: Date;
+}
+
+interface MarketState extends SupabaseRow {
+  totalAssets: string;
+  totalSupply: string;
+  chain: number;
+}
+
+interface PluginState extends MarketState {
+  underlyingAddress: string;
+  pluginAddress: string;
+}
+
+interface FlywheelState extends MarketState {
+  underlyingAddress: string;
+  rewardAddress: string;
+  pluginAddress: string;
+}
+
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     querySchema.validateSync(req.query);
@@ -30,14 +51,14 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const { underlyingAddress, pluginAddress, rewardAddress, chain, days = '7' } = req.query;
 
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
-  let start, end;
+  let start: PostgrestResponse<MarketState>, end: PostgrestResponse<MarketState>;
   const dateLimit = new Date();
   dateLimit.setDate(dateLimit.getDate() - parseInt(days as string, 10));
 
   if (rewardAddress) {
     start = await client
-      .from(config.supabaseFlywheelTableName)
-      .select('totalAssets')
+      .from<FlywheelState>(config.supabaseFlywheelTableName)
+      .select('totalAssets,totalSupply,created_at')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -48,8 +69,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
     if (start.error || !start.data.length) {
       start = await client
-        .from(config.supabaseFlywheelTableName)
-        .select('totalAssets')
+        .from<FlywheelState>(config.supabaseFlywheelTableName)
+        .select('totalAssets,totalSupply,created_at')
         .eq('chain', parseInt(chain as string, 10))
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -58,8 +79,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .limit(1);
     }
     end = await client
-      .from(config.supabaseFlywheelTableName)
-      .select('totalAssets,totalSupply')
+      .from<FlywheelState>(config.supabaseFlywheelTableName)
+      .select('totalAssets,totalSupply,created_at')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('rewardAddress', (rewardAddress as string).toLowerCase())
@@ -68,8 +89,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .limit(1);
   } else {
     start = await client
-      .from(config.supabasePluginTableName)
-      .select('totalAssets')
+      .from<PluginState>(config.supabasePluginTableName)
+      .select('totalAssets,totalSupply,created_at')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -78,8 +99,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       .limit(1);
     if (start.error || !start.data.length) {
       start = await client
-        .from(config.supabasePluginTableName)
-        .select('totalAssets')
+        .from<PluginState>(config.supabasePluginTableName)
+        .select('totalAssets,totalSupply,created_at')
         .eq('chain', parseInt(chain as string, 10))
         .eq('pluginAddress', (pluginAddress as string).toLowerCase())
         .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -87,8 +108,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         .limit(1);
     }
     end = await client
-      .from(config.supabasePluginTableName)
-      .select('totalAssets,totalSupply')
+      .from<PluginState>(config.supabasePluginTableName)
+      .select('totalAssets,totalSupply,created_at')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -97,26 +118,32 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   if (!start.error && !end.error) {
-    if (start.data.length && end.data.length) {
-      const price1 = parseFloat(end.data[0].totalAssets);
-      const price2 = parseFloat(start.data[0].totalAssets);
-      const totalSupply = parseFloat(end.data[0].totalSupply);
+    const pricePerShare2 = pricePerShare(end);
+    const pricePerShare1 = pricePerShare(start);
 
-      const apy = (price1 - price2) / totalSupply;
-
-      return res.json({
-        apy: apy || 0,
-      });
-    } else {
-      return res.status(400).send({
-        error: 'Invalid request or not enough apy feeds',
-      });
+    let apy = 0;
+    if (pricePerShare1 > 0 && pricePerShare2 > 0) {
+      const date1 = end.data[0].created_at;
+      const date2 = start.data[0].created_at;
+      const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
+      apy = (Math.log(pricePerShare2 / pricePerShare1) / dateDelta) * 86400000 * 365;
     }
+
+    return res.json({
+      apy,
+    });
   } else {
     return res.status(500).send({
       error: start.error?.message ?? end.error?.message,
     });
   }
 };
+
+function pricePerShare(response: PostgrestResponse<MarketState>) {
+  if (!response.data || response.data.length === 0) {
+    return 0;
+  }
+  return parseFloat(response.data[0].totalAssets) / parseFloat(response.data[0].totalSupply);
+}
 
 export default handler;
