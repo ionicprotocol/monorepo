@@ -126,7 +126,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const date1 = end.data[0].created_at;
       const date2 = start.data[0].created_at;
       const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
-      apy = (Math.log(pricePerShare2 / pricePerShare1) / dateDelta) * 86400000 * 365;
+      // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
+      const millisecondsInADay = 86_400_000;
+      apy = (Math.log(pricePerShare2 / pricePerShare1) / dateDelta) * millisecondsInADay * 365;
     }
 
     return res.json({
