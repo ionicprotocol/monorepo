@@ -39,7 +39,7 @@ const handler: Handler = async () => {
       body: JSON.stringify({ message: 'done' }),
     };
   } catch (exception: any) {
-    await functionsAlert('Failed: `save-native-prices`', exception.toString());
+    console.error(exception);
     return {
       statusCode: 500,
       body: JSON.stringify({ message: 'error' }),
