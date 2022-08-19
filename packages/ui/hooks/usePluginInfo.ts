@@ -2,15 +2,18 @@ import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 
-export const usePluginName = (pluginAddress?: string) => {
-  const { midasSdk, currentChain } = useMidas();
+export const usePluginInfo = (pluginAddress?: string) => {
+  const { midasSdk } = useMidas();
 
   return useQuery(
-    ['usePluginName', pluginAddress, currentChain.id],
+    ['usePluginInfo', pluginAddress, midasSdk.chainId],
     () => {
       return pluginAddress && midasSdk.deployedPlugins[pluginAddress]
-        ? midasSdk.deployedPlugins[pluginAddress].name
-        : `Unnamed (${pluginAddress})`;
+        ? midasSdk.deployedPlugins[pluginAddress]
+        : {
+            name: `Unnamed (${pluginAddress})`,
+            market: '',
+          };
     },
     {
       cacheTime: Infinity,

@@ -42,10 +42,11 @@ export type InterestRateModelConf = {
   interestRateModelParams?: InterestRateModelParams;
 };
 
-interface PluginData {
+export interface PluginData {
   market: string;
   name: string;
   strategy?: string;
+  docsUrl?: string;
 }
 
 export type DeployedPlugins = {
