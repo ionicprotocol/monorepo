@@ -505,7 +505,7 @@ const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
               >
                 {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
               </ChakraLink>{' '}
-              for indicative APYs of the underlying strategy .
+              for indicative APYs of the underlying strategy.
             </>
           )}
         </>
