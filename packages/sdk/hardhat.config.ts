@@ -27,6 +27,10 @@ import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
 
+import "./tasks/one-time/dot-dot-bsc-plugins";
+import "./tasks/one-time/jarvis-polygon-plugins";
+import "./tasks/one-time/arrakis-polygon-plugins";
+
 dotEnvConfig();
 
 const urlOverride = process.env.ETH_PROVIDER_URL;

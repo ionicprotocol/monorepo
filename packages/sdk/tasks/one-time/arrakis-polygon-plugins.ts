@@ -2,7 +2,7 @@ import { polygon } from "@midas-capital/chains";
 import { assetSymbols } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
-const COMPTROLLER = "0x65305b46116cc5182eDf3CE2E784a659f14F8Fa1";
+const COMPTROLLER = "0xF1ABd146B4620D2AE67F34EA39532367F73bbbd2";
 const mimoFlywheelAddress = "0x7D28F081711f43Ad98ba0cB7C65af6268f27fdA7";
 const guniPool = "0x528330fF7c358FE1bAe348D23849CCed8edA5917";
 const mimoAddress = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
@@ -17,7 +17,7 @@ const DETAILS = [
   {
     strategyName: assetSymbols.arrakis_USDC_PAR_005,
     underlying: UNDERLYINGS[assetSymbols.arrakis_USDC_PAR_005],
-    deployedPlugin: "0x0fC2e118ad2a047084a02adB094e92246Ce93a03",
+    deployedPlugin: "0x00522B12FB53803041AF948eCfB5CC81477CEB04",
   },
 ];
 
@@ -36,19 +36,21 @@ task("arrakis:polygon:deploy-plugins", "deploy Arrakis plugins for Arrakis pool 
       const marketAddress = await sdk
         .createComptroller(COMPTROLLER, signer)
         .callStatic.cTokensByUnderlying(detail.underlying);
+      const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
+      console.log(await cToken.callStatic.implementation());
 
-      const deployArgs = [detail.underlying, mimoFlywheelAddress, guniPool, marketAddress, [mimoAddress]];
+      // const deployArgs = [detail.underlying, mimoFlywheelAddress, guniPool, marketAddress, [mimoAddress]];
 
-      const pluginDeployment = await hre.deployments.deploy(
-        "ArrakisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
-        {
-          contract: "ArrakisERC4626",
-          from: signer.address,
-          args: deployArgs,
-          log: true,
-        }
-      );
-      console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
+      // const pluginDeployment = await hre.deployments.deploy(
+      //   "ArrakisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
+      //   {
+      //     contract: "ArrakisERC4626",
+      //     from: signer.address,
+      //     args: deployArgs,
+      //     log: true,
+      //   }
+      // );
+      // console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
     }
   });
 
@@ -61,7 +63,12 @@ task("arrakis:polygon:whitelist-plugins", "whitelist arrakis plugins for Arrakis
 
       // setting the whitelist for the first time for this plugin
       await hre.run("plugin:whitelist", {
-        oldImplementation: detail.deployedPlugin,
+        oldImplementation: "0x607Fdef05a19456b93d9c989B892c7CB7cCCeC59",
+        newImplementation: "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
+        admin: taskArgs.signer,
+      });
+      await hre.run("plugin:whitelist", {
+        oldImplementation: "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
         newImplementation: detail.deployedPlugin,
         admin: taskArgs.signer,
       });
@@ -78,7 +85,7 @@ task("arrakis:polygon:upgrade-implementations", "upgrade all markets of the poly
       await hre.run("market:upgrade", {
         comptroller: COMPTROLLER,
         underlying: detail.underlying, // FYI it's expecting the underlying here
-        implementationAddress: polygonCErc20DelegateImplementation,
+        implementationAddress: "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
         pluginAddress: detail.deployedPlugin,
         signer: taskArgs.signer,
       });
@@ -129,15 +136,15 @@ task("arrakis:polygon:set-flywheels", "set plugin for each market")
     }
   });
 
-// task("arrakis:polygon:set-plugins", "set plugin for each market")
-//   .addParam("signer", "Named account to use for tx", "deployer", types.string)
-//   .setAction(async (taskArgs, hre) => {
-//     for (const detail of DETAILS) {
-//       await hre.run("market:set-plugin", {
-//         comptrollerAddress: COMPTROLLER,
-//         underlying: detail.underlying, // FYI it's expecting the underlying here
-//         pluginAddress: detail.deployedPlugin,
-//         signer: taskArgs.signer,
-//       });
-//     }
-//   });
+task("arrakis:polygon:set-plugins", "set plugin for each market")
+  .addParam("signer", "Named account to use for tx", "deployer", types.string)
+  .setAction(async (taskArgs, hre) => {
+    for (const detail of DETAILS) {
+      await hre.run("market:set-plugin", {
+        comptrollerAddress: COMPTROLLER,
+        underlying: detail.underlying, // FYI it's expecting the underlying here
+        pluginAddress: detail.deployedPlugin,
+        signer: taskArgs.signer,
+      });
+    }
+  });
