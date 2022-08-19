@@ -39,7 +39,7 @@ import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/inde
 import { useMidas } from '@ui/context/MidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
-import { usePluginName } from '@ui/hooks/usePluginName';
+import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -122,7 +122,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
     midasSdk.chainDeployment.JumpRateModel.address
   );
 
-  const { data: pluginName } = usePluginName(selectedAsset.plugin);
+  const { data: pluginInfo } = usePluginInfo(selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {
@@ -626,7 +626,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 </HStack>
               </Box>
               <Spacer />
-              <Text mt={{ base: 2, sm: 0 }}>{pluginName}</Text>
+              <Text mt={{ base: 2, sm: 0 }}>{pluginInfo?.name}</Text>
             </Flex>
           </ConfigRow>
 

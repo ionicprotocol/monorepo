@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, InfoOutlineIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -32,7 +32,7 @@ import { useMidas } from '@ui/context/MidasContext';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
-import { usePluginName } from '@ui/hooks/usePluginName';
+import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -179,6 +179,7 @@ const RewardsInfo = ({
             🔌
           </span>
         )}
+        {(!data || data.apy <= 0) && <ApyInformTooltip pluginAddress={pluginAddress} />}
       </HStack>
       {data && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
@@ -221,7 +222,7 @@ const AssetSupplyRow = ({
     [asset.cToken, rewards]
   );
 
-  const { data: pluginName } = usePluginName(asset.plugin);
+  const { data: pluginInfo } = usePluginInfo(asset.plugin);
 
   const onToggleCollateral = async () => {
     const comptroller = midasSdk.createComptroller(comptrollerAddress);
@@ -355,7 +356,7 @@ const AssetSupplyRow = ({
                     placement="top-start"
                     body={
                       <>
-                        This market is using the <b>{pluginName}</b> ERC4626 Strategy.
+                        This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
                         <br />
                         Read more about it{' '}
                         <ChakraLink
@@ -481,4 +482,38 @@ const errorCodeToMessage = (errorCode: number) => {
       return 'Something went wrong. Please try again later.';
     // 'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
   }
+};
+
+const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
+  const { data: pluginInfo } = usePluginInfo(pluginAddress);
+
+  return (
+    <PopoverTooltip
+      body={
+        <>
+          APY calculations are currently being improved
+          {pluginInfo?.docsUrl && (
+            <>
+              , please check{' '}
+              <ChakraLink
+                href={pluginInfo?.docsUrl}
+                isExternal
+                variant={'color'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
+              </ChakraLink>{' '}
+              for indicative APYs of the underlying strategy.
+            </>
+          )}
+        </>
+      }
+    >
+      <Box marginTop="-2px !important">
+        <InfoOutlineIcon />
+      </Box>
+    </PopoverTooltip>
+  );
 };
