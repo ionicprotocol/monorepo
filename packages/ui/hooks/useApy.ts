@@ -1,12 +1,14 @@
 import { useQuery } from 'react-query';
 
+import { APYResult } from '../pages/api/apyData';
+
 import { useMidas } from '@ui/context/MidasContext';
 
 export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
   const {
     currentChain: { id: currentChainId },
   } = useMidas();
-  return useQuery(
+  return useQuery<APYResult>(
     ['useApy', currentChainId, underlyingAddress, pluginAddress, rewardAddress],
     async () => {
       return await fetch(

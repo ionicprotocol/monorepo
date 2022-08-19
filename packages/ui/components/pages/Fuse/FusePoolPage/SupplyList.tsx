@@ -4,6 +4,7 @@ import {
   Button,
   Link as ChakraLink,
   HStack,
+  Skeleton,
   Switch,
   Table,
   TableCaption,
@@ -164,7 +165,11 @@ const RewardsInfo = ({
   pluginAddress: string;
   rewardAddress?: string;
 }) => {
-  const { data } = useApy(underlyingAddress, pluginAddress, rewardAddress);
+  const { data: apyResponse, isLoading: apyLoading } = useApy(
+    underlyingAddress,
+    pluginAddress,
+    rewardAddress
+  );
 
   const { cCard } = useColors();
 
@@ -179,12 +184,19 @@ const RewardsInfo = ({
             🔌
           </span>
         )}
-        {(!data || data.apy <= 0) && <ApyInformTooltip pluginAddress={pluginAddress} />}
+        {!apyLoading && apyResponse && apyResponse.apy === undefined && (
+          <ApyInformTooltip pluginAddress={pluginAddress} />
+        )}
       </HStack>
-      {data && (
+      {!apyLoading && apyResponse && apyResponse.apy && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {data.apy > 0 && data.apy.toFixed(2) + '%'}
+          {apyResponse.apy > 0 && apyResponse.apy.toFixed(2) + '%'}
         </Text>
+      )}
+      {apyLoading && (
+        <Skeleton height={'1em'} ml={1}>
+          0.00%
+        </Skeleton>
       )}
     </HStack>
   );
@@ -491,10 +503,10 @@ const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
     <PopoverTooltip
       body={
         <>
-          APY calculations are currently being improved
-          {pluginInfo?.docsUrl && (
+          We do not have enough data to give you an APY yet. <br /> <br />
+          {pluginInfo?.docsUrl ? (
             <>
-              , please check{' '}
+              Please check{' '}
               <ChakraLink
                 href={pluginInfo?.docsUrl}
                 isExternal
@@ -505,8 +517,10 @@ const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
               >
                 {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
               </ChakraLink>{' '}
-              for indicative APYs of the underlying strategy.
+              for indicative APYs of the underlying strategy for now.
             </>
+          ) : (
+            <>Please check back later</>
           )}
         </>
       }
