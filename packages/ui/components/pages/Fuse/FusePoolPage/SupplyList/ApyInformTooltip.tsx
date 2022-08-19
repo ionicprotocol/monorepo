@@ -11,10 +11,10 @@ export const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) =
     <PopoverTooltip
       body={
         <>
-          APY calculations are currently being improved
-          {pluginInfo?.docsUrl && (
+          We do not have enough data to give you an APY yet. <br /> <br />
+          {pluginInfo?.docsUrl ? (
             <>
-              , please check{' '}
+              Please check{' '}
               <ChakraLink
                 href={pluginInfo?.docsUrl}
                 isExternal
@@ -25,8 +25,10 @@ export const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) =
               >
                 {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
               </ChakraLink>{' '}
-              for indicative APYs of the underlying strategy.
+              for indicative APYs of the underlying strategy for now.
             </>
+          ) : (
+            <>Please check back later</>
           )}
         </>
       }

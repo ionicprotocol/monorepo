@@ -1,4 +1,4 @@
-import { HStack, Text } from '@chakra-ui/react';
+import { HStack, Skeleton, Text } from '@chakra-ui/react';
 
 import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/ApyInformTooltip';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -14,7 +14,11 @@ export const RewardsInfo = ({
   pluginAddress: string;
   rewardAddress?: string;
 }) => {
-  const { data } = useApy(underlyingAddress, pluginAddress, rewardAddress);
+  const { data: apyResponse, isLoading: apyLoading } = useApy(
+    underlyingAddress,
+    pluginAddress,
+    rewardAddress
+  );
 
   const { cCard } = useColors();
 
@@ -29,12 +33,19 @@ export const RewardsInfo = ({
             🔌
           </span>
         )}
-        {(!data || data.apy <= 0) && <ApyInformTooltip pluginAddress={pluginAddress} />}
+        {!apyLoading && apyResponse && apyResponse.apy === undefined && (
+          <ApyInformTooltip pluginAddress={pluginAddress} />
+        )}
       </HStack>
-      {data && (
+      {!apyLoading && apyResponse && apyResponse.apy && (
         <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {data.apy > 0 && data.apy.toFixed(2) + '%'}
+          {apyResponse.apy > 0 && apyResponse.apy.toFixed(2) + '%'}
         </Text>
+      )}
+      {apyLoading && (
+        <Skeleton height={'1em'} ml={1}>
+          0.00%
+        </Skeleton>
       )}
     </HStack>
   );
