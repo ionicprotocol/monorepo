@@ -24,9 +24,9 @@ import React, { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useQueryClient } from 'react-query';
 
-import { ConfigRow } from '@ui/components/pages/Fuse/ConfigRow';
-import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage';
+import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
+import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';

@@ -4,12 +4,12 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
 
-import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
 import AssetConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration';
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
 import AddAssetModal from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal';
 import FlywheelEdit from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit';
 import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
+import FuseNavbar from '@ui/components/pages/Layout/FuseNavbar';
 import { AdminAlert } from '@ui/components/shared/Alert';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';

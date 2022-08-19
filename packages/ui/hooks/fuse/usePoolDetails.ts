@@ -2,7 +2,7 @@ import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useMemo } from 'react';
 
 import { useMidas } from '@ui/context/MidasContext';
-import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
   const {

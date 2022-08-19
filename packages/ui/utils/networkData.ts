@@ -1,16 +1,16 @@
 import { ChainConfig, SupportedChains } from '@midas-capital/types';
 import { BigNumber } from 'ethers';
 
+import { MINUTES_PER_YEAR } from '@ui/constants/index';
 import { chainIdToConfig, supportedChainIdToConfig } from '@ui/types/ChainMetaData';
 
-const MINUTES_PER_YEAR = 24 * 365 * 60;
-
 export const isSupportedChainId = (chainId: number) => {
-  return Object.keys(chainIdToConfig).includes(chainId.toString());
+  return getSupportedChainIds().includes(chainId);
 };
 
 export function getSupportedChainIds(): number[] {
   const supportedChains = getSupportedChains();
+
   return supportedChains.map((chain) => chain.chainId);
 }
 
@@ -21,22 +21,21 @@ export function getSupportedChains(): ChainConfig[] {
 }
 
 export function getChainConfig(chainId: number): ChainConfig | undefined {
-  return Object.values(chainIdToConfig).find((networkData) => networkData.chainId === chainId);
+  return chainIdToConfig[chainId];
 }
 
 export function getScanUrlByChainId(chainId: number | SupportedChains): string | null {
-  const chain = Object.values(chainIdToConfig).filter(
-    (chainMetadata) => chainMetadata.chainId === chainId
-  );
+  const chain = chainIdToConfig[chainId];
 
-  return chain.length !== 0 && chain[0].specificParams.metadata.blockExplorerUrls.default
-    ? chain[0].specificParams.metadata.blockExplorerUrls.default.url
+  return chain && chain.specificParams.metadata.blockExplorerUrls.default
+    ? chain.specificParams.metadata.blockExplorerUrls.default.url
     : null;
 }
 
 export function getBlockTimePerMinuteByChainId(chainId: number): number {
-  const chain = Object.values(chainIdToConfig).filter(
-    (chainMetadata) => chainMetadata.chainId === chainId
-  );
-  return chain[0].specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber();
+  const chain = chainIdToConfig[chainId];
+
+  return chain
+    ? chain.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber()
+    : 0;
 }

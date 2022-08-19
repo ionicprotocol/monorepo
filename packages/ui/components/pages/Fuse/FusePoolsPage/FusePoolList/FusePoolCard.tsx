@@ -18,6 +18,7 @@ interface PoolCardProps {
   data: FusePoolData;
   isMostSupplied?: boolean;
 }
+
 const PoolCard = ({ data }: PoolCardProps) => {
   const { data: rss, error: rssError } = usePoolRSS(data.id);
   const rssScore = !rssError && rss ? letterScore(rss.totalScore) : '?';
