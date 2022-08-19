@@ -3,7 +3,7 @@ import { assetSymbols } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 const COMPTROLLER = "0x65305b46116cc5182eDf3CE2E784a659f14F8Fa1";
-const mimoFlywheelAddress = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
+const mimoFlywheelAddress = "0x7D28F081711f43Ad98ba0cB7C65af6268f27fdA7";
 const guniPool = "0x528330fF7c358FE1bAe348D23849CCed8edA5917";
 const mimoAddress = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const polygonCErc20DelegateImplementation = "0x607Fdef05a19456b93d9c989B892c7CB7cCCeC59";
@@ -17,7 +17,7 @@ const DETAILS = [
   {
     strategyName: assetSymbols.arrakis_USDC_PAR_005,
     underlying: UNDERLYINGS[assetSymbols.arrakis_USDC_PAR_005],
-    deployedPlugin: "0xcc1602fBeceb5C4C53DA29B60342822C753652E8",
+    deployedPlugin: "0x0fC2e118ad2a047084a02adB094e92246Ce93a03",
   },
 ];
 
