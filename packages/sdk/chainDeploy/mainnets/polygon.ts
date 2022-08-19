@@ -1,6 +1,6 @@
 import { polygon } from "@midas-capital/chains";
 import { assetSymbols, SupportedChains } from "@midas-capital/types";
-import { ethers } from "ethers";
+import { ethers, utils } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import {
@@ -11,6 +11,7 @@ import {
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
 
@@ -93,6 +94,28 @@ export const deployConfig: ChainDeployConfig = {
       name: "JSGDXSGD",
       underlying: assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
       otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
+    },
+    {
+      // PAR/USDC
+      strategy: "ArrakisERC4626",
+      name: "PARUSDC",
+      underlying: assets.find((a) => a.symbol === assetSymbols["arrakis_USDC_PAR_005"])!.underlying,
+      otherParams: [
+        "0x528330fF7c358FE1bAe348D23849CCed8edA5917", // arrakis mimo pool
+        "", // rewardsDestination
+        new utils.AbiCoder().encode(
+          ["address[]"],
+          [["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"]] // mimo token
+        ),
+      ],
+      flywheelIndices: [0],
+    },
+  ],
+  dynamicFlywheels: [
+    {
+      rewardToken: "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC",
+      cycleLength: 1,
+      name: "mimo",
     },
   ],
   cgId: polygon.specificParams.cgId,
@@ -532,6 +555,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
+
+  // Plugins & Rewards
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 
   //// Gelato GUNI Liquidator
   const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {
