@@ -55,12 +55,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<APYResult>) => 
   }
 
   if (req.query.rewardAddress) {
-    const rewardResult = await rewardTokenAPY(validatedQuery);
-    console.log({ rewardResult });
     return res.json(await rewardTokenAPY(validatedQuery));
   } else {
-    const underlyingResult = await underlyingTokenAPY(validatedQuery);
-    console.log({ underlyingResult });
     return res.json(await underlyingTokenAPY(validatedQuery));
   }
 };
