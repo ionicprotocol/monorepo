@@ -6,7 +6,7 @@ const COMPTROLLER = "0xF1ABd146B4620D2AE67F34EA39532367F73bbbd2";
 const mimoFlywheelAddress = "0x7D28F081711f43Ad98ba0cB7C65af6268f27fdA7";
 const guniPool = "0x528330fF7c358FE1bAe348D23849CCed8edA5917";
 const mimoAddress = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
-const polygonCErc20DelegateImplementation = "0x607Fdef05a19456b93d9c989B892c7CB7cCCeC59";
+const polygonCErc20DelegateImplementation = "0x791EFCb631a50777e3d07DE5f1566d372430b1E6";
 
 const UNDERLYINGS = {
   [assetSymbols.arrakis_USDC_PAR_005]: polygon.assets.find((a) => a.symbol === assetSymbols.arrakis_USDC_PAR_005)!
@@ -39,7 +39,9 @@ task("arrakis:polygon:deploy-plugins", "deploy Arrakis plugins for Arrakis pool 
       const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
       console.log(await cToken.callStatic.implementation());
 
-      // const deployArgs = [detail.underlying, mimoFlywheelAddress, guniPool, marketAddress, [mimoAddress]];
+      console.log({ marketAddress });
+
+      const deployArgs = [detail.underlying, mimoFlywheelAddress, guniPool, marketAddress, [mimoAddress]];
 
       // const pluginDeployment = await hre.deployments.deploy(
       //   "ArrakisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
@@ -100,7 +102,6 @@ task("arrakis:polygon:set-flywheels", "set plugin for each market")
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const mimoFlywheel = sdk.createFuseFlywheelCore(mimoFlywheelAddress);
-    // const epxFlywheel = sdk.createFuseFlywheelCore(epxFlywheelAddress);
 
     for (const detail of DETAILS) {
       const marketAddress = await sdk
