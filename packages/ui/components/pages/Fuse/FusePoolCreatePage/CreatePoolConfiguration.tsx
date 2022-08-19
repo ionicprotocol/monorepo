@@ -1,4 +1,4 @@
-import { AddIcon, QuestionIcon } from '@chakra-ui/icons';
+import { QuestionIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -7,25 +7,23 @@ import {
   FormErrorMessage,
   FormLabel,
   Heading,
-  IconButton,
   Input,
   Select,
   Spinner,
   Switch,
   Text,
 } from '@chakra-ui/react';
-import { isAddress } from '@ethersproject/address';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import { memo, ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
-import FusePageLayout from '@ui/components/pages/Fuse/FusePageLayout';
+import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRow';
+import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
 import DashboardBox from '@ui/components/shared/DashboardBox';
-import { Center, Column, Row } from '@ui/components/shared/Flex';
-import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
+import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
@@ -36,19 +34,6 @@ import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { shortAddress } from '@ui/utils/shortAddress';
-
-const FusePoolCreatePage = memo(() => {
-  return (
-    <PageTransitionLayout>
-      <FusePageLayout>
-        <CreatePoolConfiguration />
-      </FusePageLayout>
-    </PageTransitionLayout>
-  );
-});
-
-export default FusePoolCreatePage;
 
 type FormData = {
   name: string;
@@ -394,101 +379,5 @@ export const CreatePoolConfiguration = () => {
         </Button>
       </Center>
     </Box>
-  );
-};
-
-const OptionRow = ({ children, ...others }: { children: ReactNode; [key: string]: ReactNode }) => {
-  return (
-    <Row
-      mainAxisAlignment="space-between"
-      crossAxisAlignment="center"
-      width="100%"
-      p={4}
-      overflowX="auto"
-      {...others}
-    >
-      {children}
-    </Row>
-  );
-};
-
-export const WhitelistInfo = ({
-  value,
-  onChange,
-  addToWhitelist,
-  removeFromWhitelist,
-}: {
-  value: string[];
-  onChange: (v: string[]) => void;
-  addToWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
-  removeFromWhitelist: (v: string, onChange: (v: string[]) => void) => Promise<void>;
-}) => {
-  const [_whitelistInput, _setWhitelistInput] = useState('');
-
-  const errorToast = useErrorToast();
-  const { cSolidBtn } = useColors();
-
-  const add = () => {
-    if (isAddress(_whitelistInput) && !value.includes(_whitelistInput)) {
-      addToWhitelist(_whitelistInput, onChange);
-      // value.push(_whitelistInput);
-      // onChange(value);
-      _setWhitelistInput('');
-    } else {
-      errorToast({
-        description:
-          'This is not a valid ethereum address (or you have already entered this address)',
-      });
-    }
-  };
-
-  const remove = (user: string) => {
-    removeFromWhitelist(user, onChange);
-    // value.splice(value.indexOf(user), 1);
-    // onChange(value);
-  };
-
-  return (
-    <>
-      <OptionRow my={0} mb={4}>
-        <Input
-          type="text"
-          value={_whitelistInput}
-          onChange={(event) => _setWhitelistInput(event.target.value)}
-          placeholder="0x0000000000000000000000000000000000000000"
-        />
-        <IconButton
-          flexShrink={0}
-          aria-label="add"
-          icon={<AddIcon />}
-          width={35}
-          ml={2}
-          bg={cSolidBtn.primary.bgColor}
-          color={cSolidBtn.primary.txtColor}
-          onClick={add}
-          _hover={{ bg: cSolidBtn.primary.hoverBgColor, color: cSolidBtn.primary.hoverTxtColor }}
-          _active={{}}
-        />
-      </OptionRow>
-      {value && value.length > 0 && (
-        <Text mb={4} ml={4} width="100%">
-          <b>Already added: </b>
-          {value.map((user, index, array) => (
-            <SimpleTooltip key={user} label={'Click to remove it'} width="auto">
-              <Text
-                className="underline-on-hover"
-                onClick={() => remove(user)}
-                width="fit-content"
-                cursor="pointer"
-                as="span"
-              >
-                {shortAddress(user, 8, 6)}
-                {array.length - 1 === index ? null : <>,&nbsp;</>}
-              </Text>
-            </SimpleTooltip>
-          ))}
-        </Text>
-      )}
-    </>
   );
 };

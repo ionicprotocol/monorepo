@@ -4,7 +4,6 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
 
-import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
 import { AssetDetails } from '@ui/components/pages/Fuse/FusePoolPage/AssetDetails';
 import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
@@ -12,6 +11,7 @@ import PoolDetails from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
+import FuseNavbar from '@ui/components/pages/Layout/FuseNavbar';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
