@@ -49,9 +49,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise
       price = utils.parseEther("1").mul(40_000).mul(5);
     } else if (a.symbol === assetSymbols.WETH) {
       price = utils.parseEther("1").mul(2_000).mul(5);
-    } else if (a.symbol === assetSymbols.DAI) {
-      price = utils.parseEther("1").mul(5);
-    } else if (a.symbol === assetSymbols.BAL) {
+    } else if (a.symbol === assetSymbols.AAVE) {
       price = utils.parseEther("1").mul(10).mul(5);
     } else if (a.symbol === assetSymbols.USDC) {
       price = utils.parseEther("1").mul(5);
