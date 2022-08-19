@@ -26,6 +26,7 @@ import "./tasks/sendTestTokens";
 import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
+import "./tasks/one-time/arrakis-polygon-plugins";
 
 dotEnvConfig();
 
