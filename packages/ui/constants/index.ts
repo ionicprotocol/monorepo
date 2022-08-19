@@ -53,3 +53,5 @@ export enum UserAction {
   NO_ACTION,
   WAITING_FOR_TRANSACTIONS,
 }
+
+export const MINUTES_PER_YEAR = 24 * 365 * 60;

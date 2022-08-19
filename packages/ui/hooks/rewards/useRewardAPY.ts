@@ -9,7 +9,6 @@ import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useTokensDataAsMap } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import {
   CTokenDataForRewards,
   CTokenIncentivesMap,
@@ -19,6 +18,7 @@ import {
   TokenPrices,
 } from '@ui/types/ComponentPropsType';
 import { bigDiv, bigMul, toFixedNoRound } from '@ui/utils/formatNumber';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 // ( ( rewardSupplySpeed * rewardEthPrice ) / ( underlyingTotalSupply * underlyingEthPrice / 1e18 / 1e18 ) )
 // (

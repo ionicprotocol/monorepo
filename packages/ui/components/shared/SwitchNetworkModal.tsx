@@ -16,8 +16,8 @@ import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 import { FilterButton } from '@ui/components/shared/Button';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { getChainConfig } from '@ui/networkData/index';
 import { supportedChainIdToConfig } from '@ui/types/ChainMetaData';
+import { getChainConfig } from '@ui/utils/networkData';
 
 const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { chain, chains } = useNetwork();

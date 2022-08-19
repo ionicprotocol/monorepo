@@ -1,6 +1,6 @@
 import { SupportedAsset } from '@midas-capital/types';
 
-import { MarketData } from '@ui/hooks/useFusePoolData';
+import { MarketData } from '@ui/types/TokensDataMap';
 
 export const sortAssets = (assets: MarketData[]) => {
   return assets.sort((a, b) => {
