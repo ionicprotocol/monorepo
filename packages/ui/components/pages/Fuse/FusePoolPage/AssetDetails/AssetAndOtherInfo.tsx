@@ -1,65 +1,22 @@
-import { Box, Grid, Heading, Select, Skeleton, Spinner, Stack, Text } from '@chakra-ui/react';
+import { Box, Grid, Heading, Select, Spinner, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useState } from 'react';
 
-import { MidasBox } from '@ui/components/shared/Box';
+import { AssetOption } from '@ui/components/pages/Fuse/FusePoolPage/AssetDetails/AssetOption';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
-import { MarketData, useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { MarketData } from '@ui/types/TokensDataMap';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
-export const AssetDetails = ({ data }: { data: ReturnType<typeof useFusePoolData>['data'] }) => {
-  return (
-    <MidasBox height={{ base: 'auto', md: '450px' }}>
-      {data ? (
-        data.assets.length > 0 ? (
-          <AssetAndOtherInfo assets={data.assets} />
-        ) : (
-          <Center height="100%">{'There are no assets in this pool.'}</Center>
-        )
-      ) : (
-        <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%" pb={3}>
-          <Heading
-            size="sm"
-            px={4}
-            py={5}
-            display="flex"
-            width="100%"
-            justifyContent="space-between"
-          >
-            <Text>{`Asset Details`}</Text>
-            <Skeleton display="inline" w="100px"></Skeleton>
-          </Heading>
-          <Stack width="100%" height="100%" mx="auto">
-            <Skeleton height="50%" />
-            <Skeleton height="50%" />
-          </Stack>
-        </Column>
-      )}
-    </MidasBox>
-  );
-};
-
-const AssetOption = ({ asset }: { asset: MarketData }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
-  const { cPage } = useColors();
-
-  return (
-    <option value={asset.cToken} key={asset.cToken} style={{ color: cPage.primary.txtColor }}>
-      {tokenData?.symbol ?? asset.underlyingSymbol}
-    </option>
-  );
-};
-
-const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
+export const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets.length > 3 ? assets[2] : assets[0]);
   const { data: selectedTokenData } = useTokenData(selectedAsset.underlyingToken);
   const selectedAssetUtilization =

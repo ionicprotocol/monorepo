@@ -4,8 +4,8 @@ import { useMemo } from 'react';
 import { useQuery, UseQueryResult } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
-import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { MarketData } from '@ui/types/TokensDataMap';
 
 // TODO Write proper tests and fix `Native` naming issue for values in Fiat USD.
 interface UseUpdatedUserAssetsResult<T> {

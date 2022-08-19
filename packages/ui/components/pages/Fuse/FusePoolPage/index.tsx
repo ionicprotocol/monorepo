@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Divider, Flex, Grid, Heading, HStack, Skeleton } from '@chakra-ui/react';
+import { AvatarGroup, Flex, Grid, Heading, HStack, Skeleton } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -9,19 +9,18 @@ import { AssetDetails } from '@ui/components/pages/Fuse/FusePoolPage/AssetDetail
 import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
 import PoolDetails from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails';
-import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStat';
+import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
-import { Column } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
+import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { useMidas } from '@ui/context/MidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
-import { midUsdFormatter } from '@ui/utils/bigUtils';
 
 const FusePoolPage = memo(() => {
   const { setLoading } = useMidas();
@@ -84,29 +83,7 @@ const FusePoolPage = memo(() => {
 
           {rewardTokens.length > 0 && <RewardsBanner tokens={rewardTokens} />}
 
-          <Grid
-            templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
-            gap={4}
-            w="100%"
-            my={4}
-          >
-            <PoolStat
-              label="Total Supply"
-              value={data ? midUsdFormatter(data.totalSuppliedFiat) : undefined}
-            />
-            <PoolStat
-              label="Total Borrow"
-              value={data ? midUsdFormatter(data?.totalBorrowedFiat) : undefined}
-            />
-            <PoolStat
-              label="Liquidity"
-              value={data ? midUsdFormatter(data?.totalAvailableLiquidityFiat) : undefined}
-            />
-            <PoolStat
-              label="Utilization"
-              value={data ? data.utilization.toFixed(2) + '%' : undefined}
-            />
-          </Grid>
+          <PoolStats poolData={data} />
 
           {data && data.assets.some((asset) => asset.membership) && (
             <CollateralRatioBar
@@ -164,15 +141,3 @@ const FusePoolPage = memo(() => {
 });
 
 export default FusePoolPage;
-
-const TableSkeleton = ({ tableHeading }: { tableHeading: string }) => (
-  <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" height="100%" pb={1}>
-    <Heading size="md" fontWeight="normal" fontSize="18px" px={4} py={3}>
-      {tableHeading}: <Skeleton display="inline">Loading</Skeleton>
-    </Heading>
-
-    <Divider color="#F4F6F9" />
-
-    <Skeleton w="100%" h="40" />
-  </Column>
-);

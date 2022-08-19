@@ -1,27 +1,9 @@
-import { NativePricedFuseAsset, FusePoolData as SDKFusePoolData } from '@midas-capital/types';
 import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-
-export interface MarketData extends NativePricedFuseAsset {
-  supplyBalanceFiat: number;
-  borrowBalanceFiat: number;
-  totalSupplyFiat: number;
-  totalBorrowFiat: number;
-  liquidityFiat: number;
-}
-
-export interface PoolData extends SDKFusePoolData {
-  assets: MarketData[];
-  totalLiquidityFiat: number;
-  totalAvailableLiquidityFiat: number;
-  totalSuppliedFiat: number;
-  totalBorrowedFiat: number;
-  totalSupplyBalanceFiat: number;
-  totalBorrowBalanceFiat: number;
-}
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string) => {
   const { midasSdk, address, coingeckoId } = useMidas();

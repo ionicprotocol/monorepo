@@ -3,7 +3,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useEffect, useState } from 'react';
 
 import AmountSelect from '@ui/components/pages/Fuse/Modals/PoolModal/AmountSelect';
-import { MarketData } from '@ui/hooks/useFusePoolData';
+import { MarketData } from '@ui/types/TokensDataMap';
 
 interface PoolModalProps {
   isOpen: boolean;
