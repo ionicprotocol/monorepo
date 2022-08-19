@@ -6,7 +6,6 @@ const COMPTROLLER = "0xF1ABd146B4620D2AE67F34EA39532367F73bbbd2";
 const mimoFlywheelAddress = "0x7D28F081711f43Ad98ba0cB7C65af6268f27fdA7";
 const guniPool = "0x528330fF7c358FE1bAe348D23849CCed8edA5917";
 const mimoAddress = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
-const polygonCErc20DelegateImplementation = "0x791EFCb631a50777e3d07DE5f1566d372430b1E6";
 
 const UNDERLYINGS = {
   [assetSymbols.arrakis_USDC_PAR_005]: polygon.assets.find((a) => a.symbol === assetSymbols.arrakis_USDC_PAR_005)!
@@ -43,16 +42,16 @@ task("arrakis:polygon:deploy-plugins", "deploy Arrakis plugins for Arrakis pool 
 
       const deployArgs = [detail.underlying, mimoFlywheelAddress, guniPool, marketAddress, [mimoAddress]];
 
-      // const pluginDeployment = await hre.deployments.deploy(
-      //   "ArrakisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
-      //   {
-      //     contract: "ArrakisERC4626",
-      //     from: signer.address,
-      //     args: deployArgs,
-      //     log: true,
-      //   }
-      // );
-      // console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
+      const pluginDeployment = await hre.deployments.deploy(
+        "ArrakisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
+        {
+          contract: "ArrakisERC4626",
+          from: signer.address,
+          args: deployArgs,
+          log: true,
+        }
+      );
+      console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
     }
   });
 
@@ -65,17 +64,16 @@ task("arrakis:polygon:whitelist-plugins", "whitelist arrakis plugins for Arrakis
 
       // setting the whitelist for the first time for this plugin
       await hre.run("plugin:whitelist", {
-        oldImplementation: "0x607Fdef05a19456b93d9c989B892c7CB7cCCeC59",
-        newImplementation: "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
-        admin: taskArgs.signer,
-      });
-      await hre.run("plugin:whitelist", {
-        oldImplementation: "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
+        oldImplementation: detail.deployedPlugin,
         newImplementation: detail.deployedPlugin,
         admin: taskArgs.signer,
       });
     }
   });
+
+// STEP 2.5: set the whitelist for the upgrade from CErc20Delegate to CErc20PluginRewardsDelegate
+// run:
+// yarn workspace @midas-capital/sdk hardhat market:updatewhitelist --old-plugin-rewards-delegate <current market CErc20 implementation> --network polygon
 
 // STEP 3: upgrade markets to the new implementation
 task("arrakis:polygon:upgrade-implementations", "upgrade all markets of the polygon pool to handle plugins")
@@ -83,11 +81,14 @@ task("arrakis:polygon:upgrade-implementations", "upgrade all markets of the poly
   .setAction(async (taskArgs, hre) => {
     for (const detail of DETAILS) {
       console.log(`upgrading market for: ${detail.strategyName} ...`);
+      // @ts-ignore
+      const midasSdkModule = await import("../../tests/utils/midasSdk");
+      const sdk = await midasSdkModule.getOrCreateMidas();
 
       await hre.run("market:upgrade", {
         comptroller: COMPTROLLER,
         underlying: detail.underlying, // FYI it's expecting the underlying here
-        implementationAddress: "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
+        implementationAddress: sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
         pluginAddress: detail.deployedPlugin,
         signer: taskArgs.signer,
       });
@@ -134,18 +135,5 @@ task("arrakis:polygon:set-flywheels", "set plugin for each market")
         console.log("already added");
         console.log(e);
       }
-    }
-  });
-
-task("arrakis:polygon:set-plugins", "set plugin for each market")
-  .addParam("signer", "Named account to use for tx", "deployer", types.string)
-  .setAction(async (taskArgs, hre) => {
-    for (const detail of DETAILS) {
-      await hre.run("market:set-plugin", {
-        comptrollerAddress: COMPTROLLER,
-        underlying: detail.underlying, // FYI it's expecting the underlying here
-        pluginAddress: detail.deployedPlugin,
-        signer: taskArgs.signer,
-      });
     }
   });
