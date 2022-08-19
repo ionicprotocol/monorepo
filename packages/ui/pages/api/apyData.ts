@@ -16,7 +16,7 @@ const querySchema = yup.object().shape({
 });
 
 type Query = yup.InferType<typeof querySchema>;
-type APYResult = { apy: number } | { apy: undefined; error: string } | { error: string };
+export type APYResult = { apy: number } | { apy?: undefined; error: string };
 
 interface SupabaseRow {
   created_at: Date;
