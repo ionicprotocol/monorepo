@@ -21,8 +21,8 @@ import {
 import { FusePoolData } from '@midas-capital/types';
 import { useEffect, useState } from 'react';
 
-import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolCard';
-import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolRow';
+import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolCard';
+import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow';
 import { AlertHero } from '@ui/components/shared/Alert';
 import { config } from '@ui/config/index';
 import { POOLS_PER_PAGE } from '@ui/constants/index';

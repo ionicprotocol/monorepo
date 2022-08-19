@@ -12,7 +12,6 @@
       "@ui/types/*": ["ui/types/*"],
       "@ui/utils/*": ["ui/utils/*"],
       "@ui/theme/*": ["ui/theme/*"],
-      "@ui/networkData/*": ["ui/networkData/*"],
       "@ui/styles/*": ["ui/styles/*"],
       "@ui/images/*": ["ui/public/images/*"],
       "@ui/icons/*": ["ui/public/icons/*"],

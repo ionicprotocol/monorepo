@@ -4,7 +4,7 @@ import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
-import { getSupportedChains } from '@ui/networkData/index';
+import { getSupportedChains } from '@ui/utils/networkData';
 
 const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) => {
   return {

@@ -4,7 +4,6 @@ import {
   Link,
   Skeleton,
   Table,
-  TableRowProps,
   Tbody,
   Td,
   Tr,
@@ -17,6 +16,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 import { useQueryClient } from 'react-query';
 
+import { StatRow } from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails/StatRow';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { useMidas } from '@ui/context/MidasContext';
@@ -185,46 +185,6 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
         )}
       </Column>
     </MidasBox>
-  );
-};
-
-const StatRow = ({
-  statATitle,
-  statA,
-  statBTitle,
-  statB,
-  ...tableRowProps
-}: {
-  statATitle: string;
-  statA: string;
-  statBTitle: string;
-  statB: string;
-} & TableRowProps) => {
-  const { cCard } = useColors();
-  return (
-    <Tr borderTopWidth={'1px'} borderColor={cCard.dividerColor} {...tableRowProps}>
-      <Td
-        fontSize={{ base: '3vw', sm: '0.9rem' }}
-        wordBreak={'break-all'}
-        width={'50%'}
-        lineHeight={1.5}
-        textAlign="left"
-        border="none"
-      >
-        {statATitle}: <b>{statA}</b>
-      </Td>
-
-      <Td
-        fontSize={{ base: '3vw', sm: '0.9rem' }}
-        wordBreak={'break-all'}
-        width={'50%'}
-        lineHeight={1.5}
-        textAlign="left"
-        border="none"
-      >
-        {statBTitle}: <b>{statB}</b>
-      </Td>
-    </Tr>
   );
 };
 
