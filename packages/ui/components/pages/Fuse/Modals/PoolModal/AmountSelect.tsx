@@ -43,11 +43,11 @@ import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AmountSelectProps {
   assets: MarketData[];

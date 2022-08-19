@@ -25,8 +25,8 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sortAssets';
 
 interface BorrowListProps {

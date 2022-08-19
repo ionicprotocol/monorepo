@@ -36,8 +36,8 @@ import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sortAssets';
 
 interface SupplyListProps {
