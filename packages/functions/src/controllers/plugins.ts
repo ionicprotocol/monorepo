@@ -19,6 +19,11 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           pluginContract.callStatic.asset(), // Market Underlying
         ]);
 
+        // Don't save anything if the plugin is empty
+        if (totalSupply.eq(0)) {
+          return;
+        }
+
         const { error } = await supabase.from(config.supabasePluginTableName).insert([
           {
             totalSupply: totalSupply.toString(),
@@ -28,6 +33,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
             chain: chainId,
           },
         ]);
+
         if (error) {
           throw `Error occurred during saving data for plugin ${plugin}:  ${error.message}`;
         } else {
