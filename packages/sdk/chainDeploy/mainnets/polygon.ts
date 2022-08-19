@@ -59,63 +59,12 @@ export const deployConfig: ChainDeployConfig = {
     ],
     flashSwapFee: 30,
   },
-  plugins: [
-    {
-      // agEUR-jEUR LP
-      strategy: "BeefyERC4626",
-      name: "AGEURJEUR",
-      underlying: assets.find((a) => a.symbol === assetSymbols["AGEUR-JEUR"])!.underlying,
-      otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "10"],
-    },
-    {
-      // jEUR-PAR LP
-      strategy: "BeefyERC4626",
-      name: "JEURPAR",
-      underlying: assets.find((a) => a.symbol === assetSymbols["JEUR-PAR"])!.underlying,
-      otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "10"],
-    },
-    {
-      // jJPY-JPYC LP
-      strategy: "BeefyERC4626",
-      name: "JJPYJPYC",
-      underlying: assets.find((a) => a.symbol === assetSymbols["JJPY-JPYC"])!.underlying,
-      otherParams: ["0x122E09FdD2FF73C8CEa51D432c45A474BAa1518a", "10"],
-    },
-    {
-      // jCAD-CADC LP
-      strategy: "BeefyERC4626",
-      name: "JCADCADC",
-      underlying: assets.find((a) => a.symbol === assetSymbols["JCAD-CADC"])!.underlying,
-      otherParams: ["0xcf9Dd1de1D02158B3d422779bd5184032674A6D1", "10"],
-    },
-    {
-      // jSGD-XSGD LP
-      strategy: "BeefyERC4626",
-      name: "JSGDXSGD",
-      underlying: assets.find((a) => a.symbol === assetSymbols["JSGD-XSGD"])!.underlying,
-      otherParams: ["0x18DAdac6d0AAF37BaAAC811F6338427B46815a81", "10"],
-    },
-    {
-      // PAR/USDC
-      strategy: "ArrakisERC4626",
-      name: "PARUSDC",
-      underlying: assets.find((a) => a.symbol === assetSymbols["arrakis_USDC_PAR_005"])!.underlying,
-      otherParams: [
-        "0x528330fF7c358FE1bAe348D23849CCed8edA5917", // arrakis mimo pool
-        "", // rewardsDestination
-        new utils.AbiCoder().encode(
-          ["address[]"],
-          [["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"]] // mimo token
-        ),
-      ],
-      flywheelIndices: [0],
-    },
-  ],
+  plugins: [],
   dynamicFlywheels: [
     {
       rewardToken: "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC",
       cycleLength: 1,
-      name: "mimo",
+      name: "MIMO",
     },
   ],
   cgId: polygon.specificParams.cgId,
