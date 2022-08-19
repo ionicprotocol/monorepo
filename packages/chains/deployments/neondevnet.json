@@ -3,7 +3,7 @@
   "chainId": "245022926",
   "contracts": {
     "AddressesProvider": {
-      "address": "0x78A09a6985E82149fc06A58f60cf2bb1a2A705AB",
+      "address": "0xC4b1512c1eeDd272e0F68737aCd7a1F11F3cA0eF",
       "abi": [
         {
           "anonymous": false,
@@ -380,7 +380,7 @@
       ]
     },
     "AddressesProvider_Implementation": {
-      "address": "0x684A2C52bE294F70114d829da3B5C42Bb7eA2267",
+      "address": "0xc5bAf7e60C60b564E785C91913E3d21D3171364d",
       "abi": [
         {
           "anonymous": false,
@@ -613,7 +613,7 @@
       ]
     },
     "AddressesProvider_Proxy": {
-      "address": "0x78A09a6985E82149fc06A58f60cf2bb1a2A705AB",
+      "address": "0xC4b1512c1eeDd272e0F68737aCd7a1F11F3cA0eF",
       "abi": [
         {
           "inputs": [
@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xA4ccDFA2B7fc4D54A17E5a111575fF73Ab600D8c",
+      "address": "0xcb2F225E233712Fff2cE72c8F0FFbc431e8E8eA1",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x7E35Df344F7A11515b6E2506737E2aE1EAc3F61D",
+      "address": "0x83434A67aE6D89dD40e7E84599A6358641b412a0",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x79C227f417e226759bB8aD874Af7b636361d5b3e",
+      "address": "0x8C163C00371c5723dCCA0F868B371f3C934c07d6",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0xB22Fb94b0da976c2c16E2F9a581dB9282E204c01",
+      "address": "0xa497554e02C81451139dE61278543eB3c9dEed4A",
       "abi": [
         {
           "inputs": [],
@@ -6674,7 +6674,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xF2F2724999a7Bb8D401A01C32392d9298d0E19a7",
+      "address": "0x1216d03CaAB312e8D5D91cEec634b563Ee3cEFfA",
       "abi": [
         {
           "inputs": [
@@ -8683,7 +8683,7 @@
       ]
     },
     "DefaultProxyAdmin": {
-      "address": "0x40445cED5A5e8C6F3b819E990D72438D91ad94C9",
+      "address": "0xf46108f83D7A77545c50F8fB38786e891c79c6ae",
       "abi": [
         {
           "inputs": [
@@ -8848,7 +8848,7 @@
       ]
     },
     "FixedNativePriceOracle": {
-      "address": "0x0F24aE5CC20bbDbf185160E657D1E384311a2029",
+      "address": "0x131e74fB9E778A61Cc86dCff4c5C7B40B63f42Ea",
       "abi": [
         {
           "inputs": [
@@ -8891,7 +8891,7 @@
       ]
     },
     "FuseFeeDistributor": {
-      "address": "0xc9227dAF9F1bdDBc4623a6E17432913D4e4a8D8F",
+      "address": "0x211Bcae5B2700480D37b4F7C7347c934002d954B",
       "abi": [
         {
           "anonymous": false,
@@ -10021,7 +10021,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x54F5Ac971a241fCE737BC9e611EB4746BB0b7Ae4",
+      "address": "0x57337C27121D041D8CBbCA4Bd5aF3d23b3604A30",
       "abi": [
         {
           "anonymous": false,
@@ -11024,7 +11024,7 @@
       ]
     },
     "FuseFeeDistributor_Proxy": {
-      "address": "0xc9227dAF9F1bdDBc4623a6E17432913D4e4a8D8F",
+      "address": "0x211Bcae5B2700480D37b4F7C7347c934002d954B",
       "abi": [
         {
           "inputs": [
@@ -11173,7 +11173,7 @@
       ]
     },
     "FuseFlywheelLensRouter": {
-      "address": "0x521d098CECA71B2284E46B74E1228fe1a4BCEbD7",
+      "address": "0x250FA21b88E9DFbc28Cb9e79937e0dcdd633707E",
       "abi": [
         {
           "inputs": [
@@ -11309,7 +11309,7 @@
       ]
     },
     "FusePoolDirectory": {
-      "address": "0x6f32BC5dcdac9341856fe43CFd1d984ba2e4D911",
+      "address": "0x996CC326D2C5F6CCb9ddBb7dBb7cea8AFB5b7Fe8",
       "abi": [
         {
           "anonymous": false,
@@ -11977,6 +11977,57 @@
             }
           ],
           "name": "getPublicPoolsByVerification",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "getVerifiedPoolsOfWhitelistedAccount",
           "outputs": [
             {
               "internalType": "uint256[]",
@@ -12209,7 +12260,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xD67488307AF22289e8a98902186Cb24892d83a62",
+      "address": "0x4fdA22E16aA6268288b2af78F321Ca67B0d6166D",
       "abi": [
         {
           "anonymous": false,
@@ -12812,6 +12863,57 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "getVerifiedPoolsOfWhitelistedAccount",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "bool",
               "name": "_enforceDeployerWhitelist",
               "type": "bool"
@@ -12978,7 +13080,7 @@
       ]
     },
     "FusePoolDirectory_Proxy": {
-      "address": "0x6f32BC5dcdac9341856fe43CFd1d984ba2e4D911",
+      "address": "0x996CC326D2C5F6CCb9ddBb7dBb7cea8AFB5b7Fe8",
       "abi": [
         {
           "inputs": [
@@ -13127,7 +13229,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x519d71A2e3b1ac33158761d50a5c8364B5344a60",
+      "address": "0xBfDC32529cb8Db430d9a1fb05C8bDfFa6fDf6b95",
       "abi": [
         {
           "anonymous": false,
@@ -13991,7 +14093,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0xe9FFE6FaB3F47b573646ccfBd615865dF939d5FF",
+      "address": "0xe31B75686dFC7C353F4014C7a1757b22f387939d",
       "abi": [
         {
           "anonymous": false,
@@ -14290,7 +14392,7 @@
       ]
     },
     "FuseSafeLiquidator": {
-      "address": "0x6578e774120F6010315784C69C634bF3946AFb0c",
+      "address": "0x2566D1E6E01D69E6736C19a00012e9137E375285",
       "abi": [
         {
           "anonymous": false,
@@ -14605,6 +14707,58 @@
         {
           "inputs": [
             {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "contract IFundsConversionStrategy",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convertCustomFunds",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flashSwapFee",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address",
               "name": "_wtoken",
               "type": "address"
@@ -14628,6 +14782,11 @@
               "internalType": "bytes",
               "name": "_uniswapPairInitHashCode",
               "type": "bytes"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_flashSwapFee",
+              "type": "uint8"
             }
           ],
           "name": "initialize",
@@ -14921,59 +15080,81 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "repayAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "contract ICErc20",
-              "name": "cErc20",
-              "type": "address"
-            },
-            {
-              "internalType": "contract ICToken",
-              "name": "cTokenCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "minProfitAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "exchangeProfitTo",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IUniswapV2Router02",
-              "name": "uniswapV2RouterForBorrow",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IUniswapV2Router02",
-              "name": "uniswapV2RouterForCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IRedemptionStrategy[]",
-              "name": "redemptionStrategies",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "strategyData",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "ethToCoinbase",
-              "type": "uint256"
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "borrower",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "repayAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract ICErc20",
+                  "name": "cErc20",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract ICToken",
+                  "name": "cTokenCollateral",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IUniswapV2Pair",
+                  "name": "flashSwapPair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minProfitAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "exchangeProfitTo",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IUniswapV2Router02",
+                  "name": "uniswapV2RouterForBorrow",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IUniswapV2Router02",
+                  "name": "uniswapV2RouterForCollateral",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IRedemptionStrategy[]",
+                  "name": "redemptionStrategies",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "bytes[]",
+                  "name": "strategyData",
+                  "type": "bytes[]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "ethToCoinbase",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract IFundsConversionStrategy[]",
+                  "name": "debtFundingStrategies",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "bytes[]",
+                  "name": "debtFundingStrategiesData",
+                  "type": "bytes[]"
+                }
+              ],
+              "internalType": "struct FuseSafeLiquidator.LiquidateToTokensWithFlashSwapVars",
+              "name": "vars",
+              "type": "tuple"
             }
           ],
           "name": "safeLiquidateToTokensWithFlashLoan",
@@ -15052,7 +15233,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0xF2E300d287a48fFEA4568De7d1A415dF51e18b47",
+      "address": "0x87e88514EFcc9430C730B73c1310588f98DcC7aE",
       "abi": [
         {
           "anonymous": false,
@@ -15244,6 +15425,58 @@
         {
           "inputs": [
             {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "contract IFundsConversionStrategy",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convertCustomFunds",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flashSwapFee",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address",
               "name": "_wtoken",
               "type": "address"
@@ -15267,6 +15500,11 @@
               "internalType": "bytes",
               "name": "_uniswapPairInitHashCode",
               "type": "bytes"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_flashSwapFee",
+              "type": "uint8"
             }
           ],
           "name": "initialize",
@@ -15560,59 +15798,81 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "repayAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "contract ICErc20",
-              "name": "cErc20",
-              "type": "address"
-            },
-            {
-              "internalType": "contract ICToken",
-              "name": "cTokenCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "minProfitAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "address",
-              "name": "exchangeProfitTo",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IUniswapV2Router02",
-              "name": "uniswapV2RouterForBorrow",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IUniswapV2Router02",
-              "name": "uniswapV2RouterForCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "contract IRedemptionStrategy[]",
-              "name": "redemptionStrategies",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "strategyData",
-              "type": "bytes[]"
-            },
-            {
-              "internalType": "uint256",
-              "name": "ethToCoinbase",
-              "type": "uint256"
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "borrower",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "repayAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract ICErc20",
+                  "name": "cErc20",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract ICToken",
+                  "name": "cTokenCollateral",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IUniswapV2Pair",
+                  "name": "flashSwapPair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minProfitAmount",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address",
+                  "name": "exchangeProfitTo",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IUniswapV2Router02",
+                  "name": "uniswapV2RouterForBorrow",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IUniswapV2Router02",
+                  "name": "uniswapV2RouterForCollateral",
+                  "type": "address"
+                },
+                {
+                  "internalType": "contract IRedemptionStrategy[]",
+                  "name": "redemptionStrategies",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "bytes[]",
+                  "name": "strategyData",
+                  "type": "bytes[]"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "ethToCoinbase",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract IFundsConversionStrategy[]",
+                  "name": "debtFundingStrategies",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "bytes[]",
+                  "name": "debtFundingStrategiesData",
+                  "type": "bytes[]"
+                }
+              ],
+              "internalType": "struct FuseSafeLiquidator.LiquidateToTokensWithFlashSwapVars",
+              "name": "vars",
+              "type": "tuple"
             }
           ],
           "name": "safeLiquidateToTokensWithFlashLoan",
@@ -15674,7 +15934,7 @@
       ]
     },
     "FuseSafeLiquidator_Proxy": {
-      "address": "0x6578e774120F6010315784C69C634bF3946AFb0c",
+      "address": "0x2566D1E6E01D69E6736C19a00012e9137E375285",
       "abi": [
         {
           "inputs": [
@@ -15823,7 +16083,7 @@
       ]
     },
     "InitializableClones": {
-      "address": "0x8A72FAc2f28FA7e24Dd302459f7F1859c7aF6229",
+      "address": "0x0624e204Cbd1EAEc42549746d540D4F4Ec152903",
       "abi": [
         {
           "anonymous": false,
@@ -15865,7 +16125,7 @@
       ]
     },
     "JumpRateModel": {
-      "address": "0xd1C256afEC90193D5B10fECe8a2232872A9B4D5E",
+      "address": "0x3c1CF82E6EA332C4C469a0DF31d27F94649735d8",
       "abi": [
         {
           "inputs": [
@@ -16102,7 +16362,7 @@
       ]
     },
     "MasterPriceOracle": {
-      "address": "0x5d0A36439363c022E7d61742Ba1945E421129ae0",
+      "address": "0xD02717e487056abCce76880E252DDe09C6eC9D00",
       "abi": [
         {
           "anonymous": false,
@@ -16492,7 +16752,7 @@
       ]
     },
     "MasterPriceOracle_Implementation": {
-      "address": "0x0656e171639EF8b70cF33D486A8584A425357795",
+      "address": "0xBe72255FF135589332Cf2b6014B5437335b173Ae",
       "abi": [
         {
           "anonymous": false,
@@ -16764,7 +17024,7 @@
       ]
     },
     "MasterPriceOracle_Proxy": {
-      "address": "0x5d0A36439363c022E7d61742Ba1945E421129ae0",
+      "address": "0xD02717e487056abCce76880E252DDe09C6eC9D00",
       "abi": [
         {
           "inputs": [
@@ -16913,7 +17173,7 @@
       ]
     },
     "RewardsDistributorDelegate": {
-      "address": "0x2789FE49265f414b98B995192C87D76224e313c3",
+      "address": "0x5B20878590346aBb375C70791CAd7fe2ecd92141",
       "abi": [
         {
           "anonymous": false,
@@ -17667,7 +17927,7 @@
       ]
     },
     "SimplePriceOracle": {
-      "address": "0x74bA0D32B7430a2aad36e48B7aAD57bf233bDDa6",
+      "address": "0xCEAF05e6F9196D0177C6c61C29114FD30430beff",
       "abi": [
         {
           "anonymous": false,
@@ -17809,7 +18069,7 @@
       ]
     },
     "WhitePaperInterestRateModel": {
-      "address": "0x02C0DcC1d6f6Ef78Bae902C986BBDCDC92bd3511",
+      "address": "0x6B190cA7304BCddc05a4f6d3296a631e51BD6B8a",
       "abi": [
         {
           "inputs": [
