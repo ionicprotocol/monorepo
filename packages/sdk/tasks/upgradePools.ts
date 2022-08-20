@@ -1,18 +1,15 @@
-import {constants, Contract} from "ethers";
+import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
+
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 
 export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
-  .addParam("oldImplementation", "The address of the old comptroller implementation",
-    undefined,
-    types.string)
-  .addParam("newImplementation", "The address of the new comptroller implementation",
-    undefined,
-    types.string)
+  .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)
+  .addParam("newImplementation", "The address of the new comptroller implementation", undefined, types.string)
   .addFlag("setLatest", "Set the new implementation as the latest for the autoimplementations")
-  .setAction(async ({oldImplementation, newImplementation, setLatest}, {ethers}) => {
+  .setAction(async ({ oldImplementation, newImplementation, setLatest }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
@@ -38,27 +35,24 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
 
     if (setLatest) {
-      const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(oldImplementation);
+      const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(
+        oldImplementation
+      );
       if (
         latestComptrollerImplementation === constants.AddressZero ||
         latestComptrollerImplementation !== newImplementation
       ) {
-        tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
-          oldImplementation,
-          newImplementation
-        );
+        tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
         await tx.wait();
-        console.log(
-          `Set the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`
-        );
+        console.log(`Set the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
       } else {
         console.log(`No change in the latest Comptroller implementation ${newImplementation}`);
       }
     }
   });
 
-task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on")
-  .setAction(async (taskArgs, {ethers}) => {
+task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on").setAction(
+  async (taskArgs, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
@@ -92,7 +86,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
           console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);
-          let tx = await comptroller.enterMarkets([]);
+          const tx = await comptroller.enterMarkets([]);
           await tx.wait();
           const implAfter = await comptroller.callStatic.comptrollerImplementation();
           console.log(`Comptroller implementation after ${implAfter}`);
@@ -101,4 +95,5 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         console.log(`autoimplementations for the pool is off`);
       }
     }
-  });
+  }
+);

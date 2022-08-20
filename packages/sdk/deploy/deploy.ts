@@ -172,19 +172,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   /// LATEST IMPLEMENTATIONS
   // Comptroller
   if (oldComptroller) {
-    const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(oldComptroller.address);
+    const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(
+      oldComptroller.address
+    );
     if (
       latestComptrollerImplementation === constants.AddressZero ||
       latestComptrollerImplementation !== comptroller.address
     ) {
-      tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
-        oldComptroller.address,
-        comptroller.address
-      );
+      tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldComptroller.address, comptroller.address);
       await tx.wait();
-      console.log(
-        `Set the latest Comptroller implementation for ${oldComptroller.address} to ${comptroller.address}`
-      );
+      console.log(`Set the latest Comptroller implementation for ${oldComptroller.address} to ${comptroller.address}`);
     } else {
       console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
     }
