@@ -70,6 +70,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   await tx.wait();
   console.log("FuseFeeDistributor pool limits set", tx.hash);
 
+  const oldComptroller = await ethers.getContractOrNull("Comptroller");
+
   const comp = await deployments.deploy("Comptroller", {
     contract: "Comptroller.sol:Comptroller",
     from: deployer,
@@ -151,36 +153,41 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const fusePoolDirectory = await ethers.getContract("FusePoolDirectory", deployer);
 
   const comptroller = await ethers.getContract("Comptroller", deployer);
-  const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(
-    constants.AddressZero,
-    comptroller.address
-  );
-  console.log("whitelisted: ", whitelisted);
+  const oldComptrollerImplementations = [constants.AddressZero];
+  const newComptrollerImplementations = [comptroller.address];
+  const comptrollerArrayOfTrue = [true];
+  if (oldComptroller) {
+    oldComptrollerImplementations.push(oldComptroller.address);
+    newComptrollerImplementations.push(comptroller.address);
+    comptrollerArrayOfTrue.push(true);
+  }
   tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
-    [constants.AddressZero],
-    [comptroller.address],
-    [true]
+    oldComptrollerImplementations,
+    newComptrollerImplementations,
+    comptrollerArrayOfTrue
   );
   await tx.wait();
   console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
 
   /// LATEST IMPLEMENTATIONS
   // Comptroller
-  const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(comptroller.address);
-  if (
-    latestComptrollerImplementation === constants.AddressZero ||
-    latestComptrollerImplementation !== comptroller.address
-  ) {
-    tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
-      latestComptrollerImplementation,
-      comptroller.address
-    );
-    await tx.wait();
-    console.log(
-      `Set the latest Comptroller implementation from ${latestComptrollerImplementation} to ${comptroller.address}`
-    );
-  } else {
-    console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
+  if (oldComptroller) {
+    const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(oldComptroller.address);
+    if (
+      latestComptrollerImplementation === constants.AddressZero ||
+      latestComptrollerImplementation !== comptroller.address
+    ) {
+      tx = await fuseFeeDistributor._setLatestComptrollerImplementation(
+        oldComptroller.address,
+        comptroller.address
+      );
+      await tx.wait();
+      console.log(
+        `Set the latest Comptroller implementation for ${oldComptroller.address} to ${comptroller.address}`
+      );
+    } else {
+      console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
+    }
   }
 
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
