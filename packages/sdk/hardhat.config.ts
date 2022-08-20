@@ -26,6 +26,7 @@ import "./tasks/sendTestTokens";
 import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
+import "./tasks/upgradePools";
 
 import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-plugins";
