@@ -39,12 +39,7 @@ import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
 import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
-import {
-  ANKR_BNB_INTEREST_RATE_MODEL_CONF,
-  CTOKEN_ERROR_CODES,
-  JUMP_RATE_MODEL_CONF,
-  WHITE_PAPER_RATE_MODEL_CONF,
-} from "./config";
+import { CTOKEN_ERROR_CODES } from "./config";
 import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
@@ -63,10 +58,6 @@ export class MidasBase {
     FuseSafeLiquidator: FuseSafeLiquidator;
     [contractName: string]: Contract;
   };
-  public JumpRateModelConf: InterestRateModelConf;
-  public AnkrBNBInterestRateModelConf: InterestRateModelConf;
-  public WhitePaperInterestRateModelConf: InterestRateModelConf;
-
   public chainConfig: ChainConfig;
   public availableOracles: Array<string>;
   public availableIrms: Array<string>;
@@ -88,9 +79,6 @@ export class MidasBase {
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
     this.chainDeployment = chainConfig.chainDeployments;
-    this.WhitePaperInterestRateModelConf = WHITE_PAPER_RATE_MODEL_CONF(chainConfig.specificParams.blocksPerYear);
-    this.JumpRateModelConf = JUMP_RATE_MODEL_CONF(chainConfig.specificParams.blocksPerYear);
-    this.AnkrBNBInterestRateModelConf = ANKR_BNB_INTEREST_RATE_MODEL_CONF(chainConfig.specificParams.blocksPerYear);
 
     this.contracts = {
       FusePoolDirectory: new Contract(
