@@ -58,5 +58,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     if (receipt.status != ethers.constants.One.toNumber()) {
       throw `Failed set implementation to ${implementationAddress}`;
     }
-    console.log(`Implementation successfully set to ${implementationAddress} with plugin ${pluginAddress}`);
+    console.log(
+      `Implementation successfully set to ${implementationAddress} with plugin ${await cTokenInstance.callStatic.plugin()}`
+    );
   });

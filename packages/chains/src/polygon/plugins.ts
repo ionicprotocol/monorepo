@@ -36,6 +36,10 @@ const deployedPlugins: DeployedPlugins = {
     name: "Beefy jNZD-NZDS Vault",
     docsUrl: "https://app.beefy.com/vault/jarvis-2nzd",
   },
+  "0x00522B12FB53803041AF948eCfB5CC81477CEB04": {
+    market: "0xa5A14c3814d358230a56e8f011B8fc97A508E890",
+    name: "Arrakis PAR-USDC Vault",
+  },
 };
 
 export default deployedPlugins;
