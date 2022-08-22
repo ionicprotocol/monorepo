@@ -5,7 +5,7 @@ import React, { LegacyRef, useEffect, useState } from 'react';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { useMidas } from '@ui/context/MidasContext';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
-import { getChainConfig } from '@ui/networkData/index';
+import { getChainConfig } from '@ui/utils/networkData';
 
 const SwitchNetworkButton: React.FC = () => {
   const [chainMetadata, setChainConfig] = useState<ChainConfig | undefined>();

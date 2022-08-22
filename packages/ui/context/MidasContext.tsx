@@ -18,8 +18,8 @@ import { Chain } from 'wagmi';
 
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
-import { getScanUrlByChainId } from '@ui/networkData/index';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { initFuseWithProviders } from '@ui/utils/web3Providers';
 
 export interface MidasContextData {

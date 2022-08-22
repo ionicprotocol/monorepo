@@ -29,10 +29,10 @@ import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/usePoolIncentives';
 import { useColors } from '@ui/hooks/useColors';
-import { PoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { Flywheel } from '@ui/types/ComponentPropsType';
+import { PoolData } from '@ui/types/TokensDataMap';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const FlywheelEdit = ({ pool }: { pool: PoolData }) => {

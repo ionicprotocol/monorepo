@@ -1,6 +1,6 @@
 import { Flex } from '@chakra-ui/react';
 
-import FuseNavbar from '@ui/components/pages/Fuse/FuseNavbar';
+import FuseNavbar from '@ui/components/pages/Layout/FuseNavbar';
 import { useColors } from '@ui/hooks/useColors';
 import { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 

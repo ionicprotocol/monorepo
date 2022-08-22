@@ -8,7 +8,7 @@ import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { MidasProvider } from '@ui/context/MidasContext';
 import { useWarningToast } from '@ui/hooks/useToast';
-import { isSupportedChainId } from '@ui/networkData/index';
+import { isSupportedChainId } from '@ui/utils/networkData';
 
 const CheckConnection = ({ children }: { children: ReactNode }) => {
   const { chain, chains } = useNetwork();

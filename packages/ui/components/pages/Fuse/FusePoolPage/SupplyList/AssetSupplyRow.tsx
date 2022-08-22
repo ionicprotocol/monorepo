@@ -1,27 +1,23 @@
-import { ExternalLinkIcon, InfoOutlineIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Link as ChakraLink,
   HStack,
-  Skeleton,
   Switch,
-  Table,
-  TableCaption,
-  Tbody,
   Td,
   Text,
-  Thead,
   Tr,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { ComptrollerErrorCodes, FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode } from '@midas-capital/types';
 import { ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useMemo } from 'react';
 
+import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/RewardsInfo';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -30,177 +26,15 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
-import { MarketData } from '@ui/hooks/useFusePoolData';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { getBlockTimePerMinuteByChainId } from '@ui/networkData/index';
+import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
-import { sortAssets } from '@ui/utils/sortAssets';
-
-interface SupplyListProps {
-  assets: MarketData[];
-  supplyBalanceFiat: number;
-  comptrollerAddress: string;
-  rewards?: FlywheelMarketRewardsInfo[];
-}
-
-export const SupplyList = ({
-  assets,
-  supplyBalanceFiat,
-  comptrollerAddress,
-  rewards = [],
-}: SupplyListProps) => {
-  const suppliedAssets = useMemo(
-    () => sortAssets(assets).filter((asset) => asset.supplyBalance.gt(0)),
-
-    [assets]
-  );
-  const nonSuppliedAssets = useMemo(
-    () => sortAssets(assets).filter((asset) => asset.supplyBalance.eq(0)),
-    [assets]
-  );
-
-  const isMobile = useIsMobile();
-  const { cCard } = useColors();
-
-  return (
-    <Box overflowX="auto">
-      <Table variant={'unstyled'} size={'sm'}>
-        <TableCaption
-          mt="0"
-          placement="top"
-          textAlign={'left'}
-          fontSize={{ base: '3.8vw', sm: 'lg' }}
-        >
-          Your Supply Balance: {smallUsdFormatter(supplyBalanceFiat)}
-        </TableCaption>
-        <Thead>
-          {assets.length > 0 ? (
-            <Tr>
-              <Td fontWeight={'bold'} fontSize={{ base: '2.9vw', sm: '0.9rem' }}>
-                Asset/LTV
-              </Td>
-
-              <Td></Td>
-
-              {isMobile ? null : (
-                <Td
-                  fontWeight={'bold'}
-                  fontSize={{ base: '2.9vw', sm: '0.9rem' }}
-                  textAlign={'right'}
-                >
-                  APY/Reward
-                </Td>
-              )}
-
-              <Td
-                isNumeric
-                fontWeight={'bold'}
-                textAlign={'right'}
-                fontSize={{ base: '2.9vw', sm: '0.9rem' }}
-              >
-                Balance
-              </Td>
-
-              <Td fontWeight={'bold'} textAlign="center" fontSize={{ base: '2.9vw', sm: '0.9rem' }}>
-                Collateral
-              </Td>
-            </Tr>
-          ) : null}
-        </Thead>
-        <Tbody>
-          {assets.length > 0 ? (
-            <>
-              {suppliedAssets.map((asset, index) => {
-                return (
-                  <AssetSupplyRow
-                    comptrollerAddress={comptrollerAddress}
-                    key={asset.underlyingToken}
-                    assets={suppliedAssets}
-                    index={index}
-                    rewards={rewards}
-                  />
-                );
-              })}
-
-              {suppliedAssets.length > 0 && nonSuppliedAssets.length > 0 && (
-                <Tr borderWidth={1} borderColor={cCard.dividerColor}></Tr>
-              )}
-
-              {nonSuppliedAssets.map((asset, index) => {
-                return (
-                  <AssetSupplyRow
-                    comptrollerAddress={comptrollerAddress}
-                    key={asset.underlyingToken}
-                    assets={nonSuppliedAssets}
-                    index={index}
-                    rewards={rewards}
-                  />
-                );
-              })}
-            </>
-          ) : (
-            <Tr>
-              <Td py={8} fontSize="md" textAlign="center">
-                There are no assets in this pool.
-              </Td>
-            </Tr>
-          )}
-        </Tbody>
-      </Table>
-    </Box>
-  );
-};
-
-const RewardsInfo = ({
-  underlyingAddress,
-  pluginAddress,
-  rewardAddress,
-}: {
-  underlyingAddress: string;
-  pluginAddress: string;
-  rewardAddress?: string;
-}) => {
-  const { data: apyResponse, isLoading: apyLoading } = useApy(
-    underlyingAddress,
-    pluginAddress,
-    rewardAddress
-  );
-
-  const { cCard } = useColors();
-
-  return (
-    <HStack key={rewardAddress} justifyContent={'flex-end'} spacing={0}>
-      <HStack mr={2}>
-        <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-        {rewardAddress ? (
-          <TokenWithLabel address={rewardAddress} size="2xs" />
-        ) : (
-          <span role="img" aria-label="plugin">
-            🔌
-          </span>
-        )}
-        {!apyLoading && apyResponse && apyResponse.apy === undefined && (
-          <ApyInformTooltip pluginAddress={pluginAddress} />
-        )}
-      </HStack>
-      {!apyLoading && apyResponse && apyResponse.apy && (
-        <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {apyResponse.apy > 0 && apyResponse.apy.toFixed(2) + '%'}
-        </Text>
-      )}
-      {apyLoading && (
-        <Skeleton height={'1em'} ml={1}>
-          0.00%
-        </Skeleton>
-      )}
-    </HStack>
-  );
-};
+import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AssetSupplyRowProps {
   assets: MarketData[];
@@ -208,7 +42,7 @@ interface AssetSupplyRowProps {
   comptrollerAddress: string;
   rewards: FlywheelMarketRewardsInfo[];
 }
-const AssetSupplyRow = ({
+export const AssetSupplyRow = ({
   assets,
   index,
   comptrollerAddress,
@@ -481,53 +315,5 @@ const AssetSupplyRow = ({
         </Td>
       </Tr>
     </>
-  );
-};
-
-const errorCodeToMessage = (errorCode: number) => {
-  switch (errorCode) {
-    case ComptrollerErrorCodes.NO_ERROR:
-      return undefined;
-    case ComptrollerErrorCodes.NONZERO_BORROW_BALANCE:
-      return 'You have to repay all your borrowed assets before you can disable any assets as collateral.';
-    default:
-      return 'Something went wrong. Please try again later.';
-    // 'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
-  }
-};
-
-const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
-  const { data: pluginInfo } = usePluginInfo(pluginAddress);
-
-  return (
-    <PopoverTooltip
-      body={
-        <>
-          We do not have enough data to give you an APY yet. <br /> <br />
-          {pluginInfo?.docsUrl ? (
-            <>
-              Please check{' '}
-              <ChakraLink
-                href={pluginInfo?.docsUrl}
-                isExternal
-                variant={'color'}
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
-              </ChakraLink>{' '}
-              for indicative APYs of the underlying strategy for now.
-            </>
-          ) : (
-            <>Please check back later</>
-          )}
-        </>
-      }
-    >
-      <Box marginTop="-2px !important">
-        <InfoOutlineIcon />
-      </Box>
-    </PopoverTooltip>
   );
 };

@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
-import { MarketData } from '@ui/hooks/useFusePoolData';
+import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 interface CollateralRatioBarProps {
