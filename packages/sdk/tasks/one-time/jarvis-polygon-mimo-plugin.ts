@@ -3,9 +3,9 @@ import { assetSymbols } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 const COMPTROLLER = "0xF1ABd146B4620D2AE67F34EA39532367F73bbbd2";
-const mimoFlywheelAddress = "0x7D28F081711f43Ad98ba0cB7C65af6268f27fdA7";
-const guniPool = "0x528330fF7c358FE1bAe348D23849CCed8edA5917";
-const mimoAddress = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
+const mimoFlywheelAddress = "0x6c44d119536CE433dC8bed943B7A1BC7EFCD56F4";
+const vault = "0x2BC39d179FAfC32B7796DDA3b936e491C87D245b";
+const jrtMimoSep22Address = "0xAFC780bb79E308990c7387AB8338160bA8071B67";
 
 const UNDERLYINGS = {
   [assetSymbols["JEUR-PAR"]]: polygon.assets.find((a) => a.symbol === assetSymbols["JEUR-PAR"])!.underlying,
@@ -39,7 +39,7 @@ task("jarvis:polygon:deploy-plugins", "deploy Jarvis plugins for Jarvis pool on 
 
       console.log({ marketAddress });
 
-      const deployArgs = [detail.underlying, mimoFlywheelAddress, guniPool, marketAddress, [mimoAddress]];
+      const deployArgs = [detail.underlying, mimoFlywheelAddress, vault, marketAddress, [jrtMimoSep22Address]];
 
       const pluginDeployment = await hre.deployments.deploy(
         "JarvisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
@@ -112,7 +112,7 @@ task("jarvis:polygon:set-flywheels", "set plugin for each market")
       // Step 4: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)
       const mimoRewards = await mimoFlywheel.callStatic.flywheelRewards();
       console.log({ mimoRewards });
-      const approveMIMOTx = await cToken["approve(address,address)"](mimoAddress, mimoRewards);
+      const approveMIMOTx = await cToken["approve(address,address)"](jrtMimoSep22Address, mimoRewards);
       const approveReceiptMIMO = await approveMIMOTx.wait();
       console.log("ctoken approved MIMO rewards for MIMO", approveReceiptMIMO.status, approveMIMOTx.hash);
 
