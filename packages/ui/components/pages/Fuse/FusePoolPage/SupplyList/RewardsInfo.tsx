@@ -38,8 +38,13 @@ export const RewardsInfo = ({
         )}
       </HStack>
       {!apyLoading && apyResponse && apyResponse.apy && (
-        <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-          {apyResponse.apy > 0 && apyResponse.apy.toFixed(2) + '%'}
+        <Text
+          color={cCard.txtColor}
+          title={apyResponse.apy.toString()}
+          fontSize={{ base: '2.8vw', sm: '0.8rem' }}
+          ml={1}
+        >
+          {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
         </Text>
       )}
       {apyLoading && (
