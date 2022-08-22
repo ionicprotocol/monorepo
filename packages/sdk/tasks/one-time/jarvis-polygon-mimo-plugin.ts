@@ -15,7 +15,7 @@ const DETAILS = [
   {
     strategyName: assetSymbols["JEUR-PAR"],
     underlying: UNDERLYINGS[assetSymbols["JEUR-PAR"]],
-    deployedPlugin: "0x00522B12FB53803041AF948eCfB5CC81477CEB04",
+    deployedPlugin: "0x57eB88582696581B95A46D46c52F8c33d5ef7373",
   },
 ];
 
@@ -39,7 +39,7 @@ task("jarvis:polygon:deploy-plugins", "deploy Jarvis plugins for Jarvis pool on 
 
       console.log({ marketAddress });
 
-      const deployArgs = [detail.underlying, mimoFlywheelAddress, vault, marketAddress, [jrtMimoSep22Address]];
+      const deployArgs = [detail.underlying, mimoFlywheelAddress, vault, 0, marketAddress, [jrtMimoSep22Address]];
 
       const pluginDeployment = await hre.deployments.deploy(
         "JarvisERC4626_" + detail.strategyName + "_" + COMPTROLLER,
