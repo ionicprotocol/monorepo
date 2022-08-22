@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x791EFCb631a50777e3d07DE5f1566d372430b1E6",
+      "address": "0x563C29Ae91E03E0A3c86eaeaBff4be2a9eFDa317",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xaD15576853499309E375a4a58A8D5ea2249508a6",
+      "address": "0x923A0AeF3e5F7CCA75f8E54016cF2fB4B851bD44",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x161747c473f6c3e6A423683f35846061065Fc3e5",
+      "address": "0xf836906A35e71683349a3f2afb0A34FBe388ac45",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0x6f60d39c319bB55E4418285C5252dF1F53CbdF90",
+      "address": "0x1B42629b396801d2f23ccC333dca313bFDE05445",
       "abi": [
         {
           "inputs": [],
@@ -19301,7 +19301,7 @@
       ]
     },
     "JumpRateModel_MIMO_2_004_4_08": {
-      "address": "0x01BBE11e0212eF4B3DDa71e5F715eed4Db0C84eC",
+      "address": "0x3ff1EA7C407B8a30Aee765E183aD2Bea612de659",
       "abi": [
         {
           "inputs": [
