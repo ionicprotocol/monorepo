@@ -66,6 +66,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<APYResult>) => 
  * @returns
  */
 async function rewardTokenAPY(query: Query): Promise<APYResult> {
+  // TODO https://github.com/Midas-Protocol/monorepo/issues/543
+  return { error: 'Not yet supported.' };
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
   const dateLimit = new Date();
   dateLimit.setDate(dateLimit.getDate() - parseInt('7', 10));
