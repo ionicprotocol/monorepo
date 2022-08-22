@@ -12,10 +12,10 @@ export const deployIRMs = async ({
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear         0.02
-      ethers.utils.parseEther("0.18").toString(), // multiplierPerYear      0.18
-      ethers.utils.parseEther("4").toString(), //jumpMultiplierPerYear  4
-      ethers.utils.parseEther("0.8").toString(), // kink                   0.8
+      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear   0.02
+      ethers.utils.parseEther("0.18").toString(), // multiplierPerYear 0.18
+      ethers.utils.parseEther("4").toString(), //jumpMultiplierPerYear 4
+      ethers.utils.parseEther("0.8").toString(), // kink               0.8
     ],
     log: true,
   });
@@ -36,4 +36,27 @@ export const deployIRMs = async ({
   if (wprm.transactionHash) await ethers.provider.waitForTransaction(wprm.transactionHash);
   console.log("WhitePaperInterestRateModel: ", wprm.address);
   ////
+};
+
+export const deployMIMOIrm = async ({
+  ethers,
+  getNamedAccounts,
+  deployments,
+  deployConfig,
+}: IrmDeployFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
+  const jrm = await deployments.deploy("JumpRateModel_MIMO_2_004_4_08", {
+    contract: "JumpRateModel",
+    from: deployer,
+    args: [
+      deployConfig.blocksPerYear,
+      ethers.utils.parseEther("2").toString(), // baseRatePerYear      0.02
+      ethers.utils.parseEther("0.04").toString(), // multiplierPerYear 0.18
+      ethers.utils.parseEther("4").toString(), //jumpMultiplierPerYear 4
+      ethers.utils.parseEther("0.8").toString(), // kink               0.8
+    ],
+    log: true,
+  });
+  if (jrm.transactionHash) await ethers.provider.waitForTransaction(jrm.transactionHash);
+  console.log("JumpRateModel_MIMO_2_004_4_08: ", jrm.address);
 };

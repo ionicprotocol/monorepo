@@ -13,7 +13,7 @@ export default task("irm:set", "Set new IRM to ctoken")
     console.log(pool.id, pool.name);
     for (const asset of pool.assets) {
       const cToken = new ethers.Contract(asset.cToken, sdk.chainDeployment.CErc20Delegate.abi, deployer);
-      const tx = await cToken._setInterestRateModel("0x7a0b2548B74078f2f07ff8B82cb6efdeB780F6eE");
+      const tx = await cToken._setInterestRateModel("0x01BBE11e0212eF4B3DDa71e5F715eed4Db0C84eC");
       await tx.wait();
       console.log(`Set IRM of ${await cToken.callStatic.underlying()} to ${_irm}`);
     }
