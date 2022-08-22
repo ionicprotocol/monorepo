@@ -26,16 +26,13 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
               marketContract.callStatic.underlying(),
               marketContract.callStatic.plugin(),
             ]);
-          // console.log({
-          //   state,
-          //   rewardToken,
-          //   totalSupply,
-          //   underlyingAsset,
-          //   pluginAddress,
-          // });
+
+          // Don't save anything if the market is empty
+          if (totalSupply.eq(0)) {
+            return;
+          }
 
           const index = state['index'];
-
           const { error } = await supabase.from(config.supabaseFlywheelTableName).insert([
             {
               totalAssets: index.toString(),
