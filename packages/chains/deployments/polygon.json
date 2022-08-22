@@ -19300,8 +19300,8 @@
         }
       ]
     },
-    "JumpRateModel_MIMO_002_018_4_04": {
-      "address": "0x7a0b2548B74078f2f07ff8B82cb6efdeB780F6eE",
+    "JumpRateModel_MIMO_2_004_4_08": {
+      "address": "0x01BBE11e0212eF4B3DDa71e5F715eed4Db0C84eC",
       "abi": [
         {
           "inputs": [

@@ -9,11 +9,14 @@ export default task("irm:set", "Set new IRM to ctoken")
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
+    const pool = await sdk.fetchFusePoolData("3", undefined);
+    console.log(pool.id, pool.name);
+    for (const asset of pool.assets) {
+      const cToken = new ethers.Contract(asset.cToken, sdk.chainDeployment.CErc20Delegate.abi, deployer);
+      const tx = await cToken._setInterestRateModel("0x7a0b2548B74078f2f07ff8B82cb6efdeB780F6eE");
+      await tx.wait();
+      console.log(`Set IRM of ${await cToken.callStatic.underlying()} to ${_irm}`);
+    }
 
-    const cToken = new ethers.Contract(_ctoken, sdk.chainDeployment.CErc20Delegate.abi, deployer);
     // const interestRateModel = await ethers.getContractAt(_irm, await sdk.irms[_irm].address, deployer);
-
-    const tx = await cToken._setInterestRateModel(sdk.irms[_irm].address);
-    await tx.wait();
-    console.log(`Set IRM of ${await cToken.callStatic.underlying()} to ${_irm}`);
   });

@@ -12,10 +12,10 @@ export const deployIRMs = async ({
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      "20000000000000000", // baseRatePerYear         0.02
-      "180000000000000000", // multiplierPerYear      0.18
-      "4000000000000000000", //jumpMultiplierPerYear  4
-      "800000000000000000", // kink                   0.8
+      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear         0.02
+      ethers.utils.parseEther("0.18").toString(), // multiplierPerYear      0.18
+      ethers.utils.parseEther("4").toString(), //jumpMultiplierPerYear  4
+      ethers.utils.parseEther("0.8").toString(), // kink                   0.8
     ],
     log: true,
   });
@@ -28,8 +28,8 @@ export const deployIRMs = async ({
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      "20000000000000000", // baseRatePerYear
-      "100000000000000000", // multiplierPerYear
+      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear
+      ethers.utils.parseEther("0.1").toString(), // multiplierPerYear
     ],
     log: true,
   });

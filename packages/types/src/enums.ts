@@ -49,7 +49,6 @@ export enum IrmTypes {
   JumpRateModel = "JumpRateModel",
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
-  JumpRateModel_MIMO_002_018_4_04 = "JumpRateModel_MIMO_002_018_4_04",
 }
 
 export enum LiquidationStrategy {
