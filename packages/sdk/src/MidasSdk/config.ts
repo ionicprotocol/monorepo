@@ -1,5 +1,3 @@
-import { BigNumber } from "ethers";
-
 export const COMPTROLLER_ERROR_CODES: Array<string> = [
   "NO_ERROR",
   "UNAUTHORIZED",
@@ -45,41 +43,3 @@ export const CTOKEN_ERROR_CODES: Array<string> = [
   "TOKEN_TRANSFER_OUT_FAILED",
   "UTILIZATION_ABOVE_MAX",
 ];
-
-export const JUMP_RATE_MODEL_CONF = (blocksPerYear: BigNumber) => {
-  return {
-    interestRateModel: "JumpRateModel",
-    interestRateModelParams: {
-      blocksPerYear: blocksPerYear,
-      baseRatePerYear: "20000000000000000",
-      multiplierPerYear: "200000000000000000",
-      jumpMultiplierPerYear: "2000000000000000000",
-      kink: "900000000000000000",
-    },
-  };
-};
-
-export const WHITE_PAPER_RATE_MODEL_CONF = (blocksPerYear: BigNumber) => {
-  return {
-    interestRateModel: "WhitePaperInterestRateModel",
-    interestRateModelParams: {
-      blocksPerYear: blocksPerYear,
-      baseRatePerYear: "20000000000000000",
-      multiplierPerYear: "200000000000000000",
-    },
-  };
-};
-
-export const ANKR_BNB_INTEREST_RATE_MODEL_CONF = (blocksPerYear: BigNumber) => {
-  return {
-    interestRateModel: "AnkrBNBInterestRateModel",
-    interestRateModelParams: {
-      blocksPerYear: blocksPerYear,
-      baseRatePerYear: "25600000000000000",
-      multiplierPerYear: "32000000000000000",
-      kink: "800000000000000000",
-      day: 3, // set day period
-      abnbr: "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
-    },
-  };
-};
