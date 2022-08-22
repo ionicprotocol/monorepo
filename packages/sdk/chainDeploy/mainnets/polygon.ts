@@ -12,6 +12,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployMIMOIrm } from "../helpers/irms";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
 
@@ -514,6 +515,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+
+  // custom IRMs
+  await deployMIMOIrm({ run, ethers, getNamedAccounts, deployments, deployConfig });
 
   //// Gelato GUNI Liquidator
   const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {
