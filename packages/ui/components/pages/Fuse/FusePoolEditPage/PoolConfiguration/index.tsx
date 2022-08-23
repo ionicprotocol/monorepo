@@ -16,6 +16,7 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
+import { Web3Provider } from '@ethersproject/providers';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import { BigNumber, Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -187,7 +188,7 @@ const PoolConfiguration = ({
     const unitroller = new Contract(
       comptrollerAddress,
       midasSdk.artifacts.Unitroller.abi,
-      midasSdk.provider.getSigner()
+      midasSdk.provider as Web3Provider
     );
 
     try {
@@ -298,7 +299,7 @@ const PoolConfiguration = ({
       const FusePoolDirectory = new Contract(
         midasSdk.chainDeployment.FusePoolDirectory.address,
         midasSdk.chainDeployment.FusePoolDirectory.abi,
-        midasSdk.provider.getSigner()
+        midasSdk.provider as Web3Provider
       );
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
