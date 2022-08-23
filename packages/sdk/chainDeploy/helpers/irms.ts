@@ -50,7 +50,7 @@ export const deployMIMOIrm = async ({
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      ethers.utils.parseEther("2").toString(), // baseRatePerYear      2
+      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear   0.02
       ethers.utils.parseEther("0.04").toString(), // multiplierPerYear 0.04
       ethers.utils.parseEther("4").toString(), //jumpMultiplierPerYear 4
       ethers.utils.parseEther("0.8").toString(), // kink               0.8
