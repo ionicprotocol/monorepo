@@ -1,8 +1,8 @@
-import { RedemptionStrategyContract } from "@midas-capital/types";
-import { BytesLike, Contract, ethers } from "ethers";
+import {RedemptionStrategyContract} from "@midas-capital/types";
+import {BytesLike, Contract, ethers} from "ethers";
 
-import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
-import { MidasBase } from "../../MidasSdk";
+import {IUniswapV2Pair__factory} from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
+import {MidasBase} from "../../MidasSdk";
 
 export type StrategiesAndDatas = {
   strategies: string[];
@@ -149,6 +149,26 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       const strategyData = new ethers.utils.AbiCoder().encode(
         ["address", "address", "uint256"],
         [inputToken, poolAddress, expirationTime]
+      );
+
+      return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
+    }
+    case RedemptionStrategyContract.CurveSwapLiquidator: {
+      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
+        (p) => p.coins.find(c => c == inputToken) && p.coins.find(c => c == outputToken)
+      );
+      if (curvePool == null) {
+        throw new Error(
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with ${outputToken}`
+        );
+      }
+
+      const i = curvePool.coins.indexOf(inputToken);
+      const j = curvePool.coins.indexOf(outputToken);
+
+      const strategyData = new ethers.utils.AbiCoder().encode(
+        ["address", "int128", "int128", "address"],
+        [curvePool.poolAddress, i, j, outputToken]
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };

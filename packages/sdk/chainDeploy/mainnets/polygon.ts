@@ -506,6 +506,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
+  // CurveSwapLiquidator
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [deployConfig.wtoken],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (curveSwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
     ethers,

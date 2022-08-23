@@ -16,6 +16,7 @@ const liquidationDefaults: LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 30,
   jarvisPools: [],
+  curveSwapPools: [],
 };
 
 export default liquidationDefaults;
