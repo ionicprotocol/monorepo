@@ -20,6 +20,7 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
@@ -111,7 +112,7 @@ const EditFlywheelModal = ({
     const token = new Contract(
       flywheel.rewardToken,
       midasSdk.artifacts.EIP20Interface.abi,
-      midasSdk.provider.getSigner()
+      midasSdk.provider as Web3Provider
     );
 
     setTransactionPending(true);
