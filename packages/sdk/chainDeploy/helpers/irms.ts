@@ -45,7 +45,7 @@ export const deployMIMOIrm = async ({
   deployConfig,
 }: IrmDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const jrm = await deployments.deploy("JumpRateModel_MIMO_2_004_4_08", {
+  const jrm = await deployments.deploy("JumpRateModel_MIMO_002_004_4_08", {
     contract: "JumpRateModel",
     from: deployer,
     args: [
@@ -58,5 +58,5 @@ export const deployMIMOIrm = async ({
     log: true,
   });
   if (jrm.transactionHash) await ethers.provider.waitForTransaction(jrm.transactionHash);
-  console.log("JumpRateModel_MIMO_2_004_4_08: ", jrm.address);
+  console.log("JumpRateModel_MIMO_002_004_4_08: ", jrm.address);
 };

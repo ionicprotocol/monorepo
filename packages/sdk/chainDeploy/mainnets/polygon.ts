@@ -1,6 +1,6 @@
 import { polygon } from "@midas-capital/chains";
-import { assetSymbols, SupportedChains } from "@midas-capital/types";
-import { ethers, utils } from "ethers";
+import { assetSymbols } from "@midas-capital/types";
+import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import {

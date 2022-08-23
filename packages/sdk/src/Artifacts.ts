@@ -47,7 +47,7 @@ const FuseFlywheelDynamicRewards: Artifact = FuseFlywheelDynamicRewardsArtifacts
 const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
-const JumpRateModel_MIMO_2_004_4_08: Artifact = JumpRateModelArtifact;
+const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -78,7 +78,7 @@ const ARTIFACTS = {
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
-  JumpRateModel_MIMO_2_004_4_08,
+  JumpRateModel_MIMO_002_004_4_08,
   AnkrBNBInterestRateModel,
   MasterPriceOracle,
   FixedNativePriceOracle,
@@ -113,7 +113,7 @@ export {
   FlywheelStaticRewards,
   FuseFlywheelCore,
   JumpRateModel,
-  JumpRateModel_MIMO_2_004_4_08,
+  JumpRateModel_MIMO_002_004_4_08,
   AnkrBNBInterestRateModel,
   MasterPriceOracle,
   RewardsDistributorDelegate,
