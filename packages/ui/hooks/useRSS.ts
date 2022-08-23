@@ -1,3 +1,4 @@
+import { Web3Provider } from '@ethersproject/providers';
 import axios from 'axios';
 import { Contract } from 'ethers';
 import { useQuery } from 'react-query';
@@ -41,7 +42,7 @@ export const usePoolRSS = (poolId: string | number) => {
       const contract = new Contract(
         poolData.comptroller,
         midasSdk.chainDeployment.Comptroller.abi,
-        midasSdk.provider.getSigner()
+        midasSdk.provider as Web3Provider
       );
       const liquidationIncentiveMantissa = await contract.liquidationIncentiveMantissa();
       const res = await axios.post('/api/rss', {

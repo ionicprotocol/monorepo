@@ -1,43 +1,64 @@
 import { useToast, UseToastOptions } from '@chakra-ui/react';
+import { useMemo } from 'react';
 
-const useSuccessToast = (options: UseToastOptions = {}) =>
-  useToast({
-    title: 'Success!',
-    status: 'success',
-    duration: 5000,
-    isClosable: true,
-    position: 'top-right',
-    ...options,
-  });
+const useSuccessToast = (options?: UseToastOptions) => {
+  const allOptions = useMemo(() => {
+    options = options ? options : {};
+    return {
+      title: 'Success!',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+      position: 'top-right',
+      ...options,
+    } as UseToastOptions;
+  }, [options]);
+  return useToast(allOptions);
+};
 
-const useErrorToast = (options: UseToastOptions = {}) =>
-  useToast({
-    title: 'Error!',
-    status: 'error',
-    duration: 10000,
-    isClosable: true,
-    position: 'top-right',
-    ...options,
-  });
+const useErrorToast = (options?: UseToastOptions) => {
+  const allOptions = useMemo(() => {
+    options = options ? options : {};
+    return {
+      title: 'Error!',
+      status: 'error',
+      duration: 10000,
+      isClosable: true,
+      position: 'top-right',
+      ...options,
+    } as UseToastOptions;
+  }, [options]);
+  return useToast(allOptions);
+};
 
-const useWarningToast = (options: UseToastOptions = {}) =>
-  useToast({
-    title: 'Warning!',
-    status: 'warning',
-    duration: 10000,
-    isClosable: true,
-    position: 'top-right',
-    ...options,
-  });
+const useWarningToast = (options?: UseToastOptions) => {
+  const allOptions = useMemo(() => {
+    options = options ? options : {};
+    return {
+      title: 'Warning!',
+      status: 'warning',
+      duration: 10000,
+      isClosable: true,
+      position: 'top-right',
+      ...options,
+    } as UseToastOptions;
+  }, [options]);
+  return useToast(allOptions);
+};
 
-const useInfoToast = (options: UseToastOptions = {}) =>
-  useToast({
-    title: 'Info!',
-    status: 'info',
-    duration: 5000,
-    isClosable: true,
-    position: 'top-right',
-    ...options,
-  });
+const useInfoToast = (options?: UseToastOptions) => {
+  const allOptions = useMemo(() => {
+    options = options ? options : {};
+    return {
+      title: 'Info!',
+      status: 'info',
+      duration: 5000,
+      isClosable: true,
+      position: 'top-right',
+      ...options,
+    } as UseToastOptions;
+  }, [options]);
+  return useToast(allOptions);
+};
 
 export { useSuccessToast, useErrorToast, useWarningToast, useInfoToast };
