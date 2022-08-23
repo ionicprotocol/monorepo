@@ -277,7 +277,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [deployConfig.wtoken],
     log: true,
-    waitConfirmations: 1
+    waitConfirmations: 1,
   });
   if (curveSwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);

@@ -11,7 +11,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
     underlying(assets, assetSymbols.WGLMR),
   ],
-  [underlying(assets, assetSymbols.xcDOT)]: [RedemptionStrategyContract.CurveSwapLiquidator, underlying(assets, assetSymbols.stDOT)],
+  [underlying(assets, assetSymbols.xcDOT)]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.stDOT),
+  ],
 };
 
 export default redemptionStrategies;

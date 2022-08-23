@@ -538,7 +538,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [deployConfig.wtoken],
     log: true,
-    waitConfirmations: 1
+    waitConfirmations: 1,
   });
   if (curveSwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
@@ -597,10 +597,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // set CurveSwapLiquidator
   const curveSwapLiquidatorAddress = await addressesProvider.callStatic.getAddress("CurveSwapLiquidator");
   if (curveSwapLiquidatorAddress !== curveSwapLiquidator.address) {
-    const tx = await addressesProvider.setAddress(
-      "CurveSwapLiquidator",
-      curveSwapLiquidator.address
-    );
+    const tx = await addressesProvider.setAddress("CurveSwapLiquidator", curveSwapLiquidator.address);
     await tx.wait();
     console.log("setAddress CurveSwapLiquidator: ", tx.hash);
   }

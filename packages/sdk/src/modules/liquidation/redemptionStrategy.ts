@@ -1,8 +1,8 @@
-import {RedemptionStrategyContract} from "@midas-capital/types";
-import {BytesLike, Contract, ethers} from "ethers";
+import { RedemptionStrategyContract } from "@midas-capital/types";
+import { BytesLike, Contract, ethers } from "ethers";
 
-import {IUniswapV2Pair__factory} from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
-import {MidasBase} from "../../MidasSdk";
+import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
+import { MidasBase } from "../../MidasSdk";
 
 export type StrategiesAndDatas = {
   strategies: string[];
@@ -155,7 +155,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
       const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
-        (p) => p.coins.find(c => c == inputToken) && p.coins.find(c => c == outputToken)
+        (p) => p.coins.find((c) => c == inputToken) && p.coins.find((c) => c == outputToken)
       );
       if (curvePool == null) {
         throw new Error(

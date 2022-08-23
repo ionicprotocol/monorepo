@@ -24,7 +24,7 @@ const liquidationDefaults: LiquidationDefaults = {
       coins: [
         "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d", // MAI
         "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5", // val3EPS
-      ]
+      ],
     },
   ],
 };
