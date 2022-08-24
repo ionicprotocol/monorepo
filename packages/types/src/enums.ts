@@ -18,6 +18,7 @@ export enum RedemptionStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
+  CurveSwapLiquidator = "CurveSwapLiquidator",
 }
 
 export enum FundingStrategyContract {
@@ -49,7 +50,7 @@ export enum IrmTypes {
   JumpRateModel = "JumpRateModel",
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
-  JumpRateModel_MIMO_002_018_4_04 = "JumpRateModel_MIMO_002_018_4_04",
+  JumpRateModel_MIMO_2_004_4_08 = "JumpRateModel_MIMO_2_004_4_08",
 }
 
 export enum LiquidationStrategy {

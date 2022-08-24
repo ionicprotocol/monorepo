@@ -387,7 +387,7 @@ const curvePools: CurvePoolConfig[] = [
   {
     // valdai3EPS metapool
     lpToken: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
-    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
+    pool: "0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
@@ -534,6 +534,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [deployConfig.wtoken],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
   ////
 
   // Plugins & Rewards
@@ -571,6 +581,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     console.log("setAddress bUSD: ", tx.hash);
   }
 
+  // set CurveLpTokenLiquidatorNoRegistry
   const curveLpTokenLiquidatorNoRegistryAddress = await addressesProvider.callStatic.getAddress(
     "CurveLpTokenLiquidatorNoRegistry"
   );
@@ -581,6 +592,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     );
     await tx.wait();
     console.log("setAddress CurveLpTokenLiquidatorNoRegistry: ", tx.hash);
+  }
+
+  // set CurveSwapLiquidator
+  const curveSwapLiquidatorAddress = await addressesProvider.callStatic.getAddress("CurveSwapLiquidator");
+  if (curveSwapLiquidatorAddress !== curveSwapLiquidator.address) {
+    const tx = await addressesProvider.setAddress("CurveSwapLiquidator", curveSwapLiquidator.address);
+    await tx.wait();
+    console.log("setAddress CurveSwapLiquidator: ", tx.hash);
   }
   ////
 
