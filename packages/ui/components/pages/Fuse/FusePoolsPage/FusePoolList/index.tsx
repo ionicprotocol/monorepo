@@ -227,117 +227,125 @@ const FusePoolList = () => {
         ))}
       {viewMode === 'list' && !isMobile && (
         <Grid mt={8} w={'100%'} mx="auto" gap={4}>
-          <HStack px={6} alignItems={'flex-end'}>
-            <VStack flex={5}>
-              <Text fontWeight="bold" textAlign="center">
-                Pool Name
-              </Text>
-            </VStack>
-            <VStack flex={3}></VStack>
-            {config.isRssScoreEnabled && (
-              <VStack flex={2}>
-                <Text fontWeight="bold" textAlign="center">
-                  Risk Score
-                </Text>
-              </VStack>
-            )}
-            <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
-              <Text fontWeight="bold" textAlign="center">
-                Assets
-              </Text>
-            </VStack>
-            <VStack flex={2}>
-              <Text fontWeight="bold" textAlign="center">
-                Total Supplied
-              </Text>
-            </VStack>
-            <VStack flex={2}>
-              <Text fontWeight="bold" textAlign="center">
-                Total Borrowed
-              </Text>
-            </VStack>
-            <VStack flex={1}></VStack>
-          </HStack>
           {!isLoading ? (
             <>
-              {poolsUserSupplied && poolsUserSupplied.length !== 0 && (
+              {filteredPools.length > 0 ? (
                 <>
-                  {poolsUserSupplied.map((pool: FusePoolData, index: number) => (
-                    <PoolRow data={pool} key={index} />
-                  ))}
-                  <Divider
-                    width={'100%'}
-                    height={4}
-                    mb={4}
-                    borderBottomWidth={2}
-                    borderStyle="dashed"
-                    opacity="1"
-                    borderColor={cPage.primary.borderColor}
-                  />
-                </>
-              )}
-              {currentPools && currentPools.length !== 0 && (
-                <>
-                  {currentPools.map((pool: FusePoolData, index: number) => (
-                    <PoolRow data={pool} key={index} />
-                  ))}
-                  <Stack my={12} width="100%">
-                    <Pagination
-                      pagesCount={pagesCount}
-                      currentPage={currentPage}
-                      onPageChange={handlePageChange}
-                    >
-                      <PaginationContainer align="center" justify="center" w="full">
-                        <PaginationPrevious mr={4} fontSize="lg" height={10}>
-                          <Text>Previous</Text>
-                        </PaginationPrevious>
-                        <PaginationPageGroup
-                          isInline
-                          align="center"
-                          separator={
-                            <PaginationSeparator
-                              variant="outline"
-                              bg={cOutlineBtn.primary.bgColor}
-                              jumpSize={3}
-                              fontSize="lg"
-                              width={10}
-                              height={10}
-                            />
-                          }
+                  <HStack px={6} alignItems={'flex-end'}>
+                    <VStack flex={5}>
+                      <Text fontWeight="bold" textAlign="center">
+                        Pool Name
+                      </Text>
+                    </VStack>
+                    <VStack flex={3}></VStack>
+                    {config.isRssScoreEnabled && (
+                      <VStack flex={2}>
+                        <Text fontWeight="bold" textAlign="center">
+                          Risk Score
+                        </Text>
+                      </VStack>
+                    )}
+                    <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
+                      <Text fontWeight="bold" textAlign="center">
+                        Assets
+                      </Text>
+                    </VStack>
+                    <VStack flex={2}>
+                      <Text fontWeight="bold" textAlign="center">
+                        Total Supplied
+                      </Text>
+                    </VStack>
+                    <VStack flex={2}>
+                      <Text fontWeight="bold" textAlign="center">
+                        Total Borrowed
+                      </Text>
+                    </VStack>
+                    <VStack flex={1}></VStack>
+                  </HStack>
+
+                  {poolsUserSupplied && poolsUserSupplied.length !== 0 && (
+                    <>
+                      {poolsUserSupplied.map((pool: FusePoolData, index: number) => (
+                        <PoolRow data={pool} key={index} />
+                      ))}
+                      <Divider
+                        width={'100%'}
+                        height={4}
+                        mb={4}
+                        borderBottomWidth={2}
+                        borderStyle="dashed"
+                        opacity="1"
+                        borderColor={cPage.primary.borderColor}
+                      />
+                    </>
+                  )}
+                  {currentPools && currentPools.length !== 0 && (
+                    <>
+                      {currentPools.map((pool: FusePoolData, index: number) => (
+                        <PoolRow data={pool} key={index} />
+                      ))}
+                      <Stack my={12} width="100%">
+                        <Pagination
+                          pagesCount={pagesCount}
+                          currentPage={currentPage}
+                          onPageChange={handlePageChange}
                         >
-                          {pages.map((page: number) => (
-                            <PaginationPage
-                              variant="outline"
-                              bg={
-                                page === currentPage
-                                  ? cOutlineBtn.primary.selectedBgColor
-                                  : undefined
+                          <PaginationContainer align="center" justify="center" w="full">
+                            <PaginationPrevious mr={4} fontSize="lg" height={10}>
+                              <Text>Previous</Text>
+                            </PaginationPrevious>
+                            <PaginationPageGroup
+                              isInline
+                              align="center"
+                              separator={
+                                <PaginationSeparator
+                                  variant="outline"
+                                  bg={cOutlineBtn.primary.bgColor}
+                                  jumpSize={3}
+                                  fontSize="lg"
+                                  width={10}
+                                  height={10}
+                                />
                               }
-                              color={
-                                page === currentPage
-                                  ? cOutlineBtn.primary.selectedTxtColor
-                                  : undefined
-                              }
-                              key={`pagination_page_${page}`}
-                              page={page}
-                              fontSize="lg"
-                              width={10}
-                              pt={4}
-                            />
-                          ))}
-                        </PaginationPageGroup>
-                        <PaginationNext ml={4} fontSize="lg" height={10}>
-                          <Text>Next</Text>
-                        </PaginationNext>
-                      </PaginationContainer>
-                    </Pagination>
-                  </Stack>
+                            >
+                              {pages.map((page: number) => (
+                                <PaginationPage
+                                  variant="outline"
+                                  bg={
+                                    page === currentPage
+                                      ? cOutlineBtn.primary.selectedBgColor
+                                      : undefined
+                                  }
+                                  color={
+                                    page === currentPage
+                                      ? cOutlineBtn.primary.selectedTxtColor
+                                      : undefined
+                                  }
+                                  key={`pagination_page_${page}`}
+                                  page={page}
+                                  fontSize="lg"
+                                  width={10}
+                                  pt={4}
+                                />
+                              ))}
+                            </PaginationPageGroup>
+                            <PaginationNext ml={4} fontSize="lg" height={10}>
+                              <Text>Next</Text>
+                            </PaginationNext>
+                          </PaginationContainer>
+                        </Pagination>
+                      </Stack>
+                    </>
+                  )}
                 </>
-              )}
-              {filteredPools.length === 0 && (
-                <Text width="100%" textAlign="center" fontWeight="bold" fontSize={24} my={24}>
-                  No pools found
-                </Text>
+              ) : (
+                <>
+                  {filteredPools.length === 0 && (
+                    <Text width="100%" textAlign="center" fontWeight="bold" fontSize={24} my={24}>
+                      No pools found
+                    </Text>
+                  )}
+                </>
               )}
             </>
           ) : (

@@ -45,12 +45,12 @@ export const deployMIMOIrm = async ({
   deployConfig,
 }: IrmDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  const jrm = await deployments.deploy("JumpRateModel_MIMO_2_004_4_08", {
+  const jrm = await deployments.deploy("JumpRateModel_MIMO_002_004_4_08", {
     contract: "JumpRateModel",
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      ethers.utils.parseEther("2").toString(), // baseRatePerYear      2
+      ethers.utils.parseEther("0.02").toString(), // baseRatePerYear   0.02
       ethers.utils.parseEther("0.04").toString(), // multiplierPerYear 0.04
       ethers.utils.parseEther("4").toString(), //jumpMultiplierPerYear 4
       ethers.utils.parseEther("0.8").toString(), // kink               0.8
@@ -58,5 +58,5 @@ export const deployMIMOIrm = async ({
     log: true,
   });
   if (jrm.transactionHash) await ethers.provider.waitForTransaction(jrm.transactionHash);
-  console.log("JumpRateModel_MIMO_2_004_4_08: ", jrm.address);
+  console.log("JumpRateModel_MIMO_002_004_4_08: ", jrm.address);
 };

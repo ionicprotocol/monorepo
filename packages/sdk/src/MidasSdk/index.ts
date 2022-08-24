@@ -223,7 +223,7 @@ export class MidasBase {
       DAIInterestRateModelV2: DAIInterestRateModelV2,
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
-      JumpRateModel_MIMO_2_004_4_08: JumpRateModel,
+      JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 

@@ -1,6 +1,6 @@
 import { polygon } from "@midas-capital/chains";
-import { assetSymbols, SupportedChains } from "@midas-capital/types";
-import { ethers, utils } from "ethers";
+import { assetSymbols } from "@midas-capital/types";
+import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import {
@@ -66,6 +66,11 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC",
       cycleLength: 1,
       name: "MIMO",
+    },
+    {
+      rewardToken: "0xAFC780bb79E308990c7387AB8338160bA8071B67",
+      cycleLength: 1,
+      name: "JRT_MIMO_SEP22",
     },
   ],
   cgId: polygon.specificParams.cgId,
