@@ -387,7 +387,7 @@ const curvePools: CurvePoolConfig[] = [
   {
     // valdai3EPS metapool
     lpToken: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
-    pool: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d",
+    pool: "0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5",
     underlyings: [
       assets.find((a) => a.symbol === assetSymbols.DAI)!.underlying,
       assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
