@@ -153,6 +153,26 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
+    case RedemptionStrategyContract.CurveSwapLiquidator: {
+      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
+        (p) => p.coins.find((c) => c == inputToken) && p.coins.find((c) => c == outputToken)
+      );
+      if (curvePool == null) {
+        throw new Error(
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with ${outputToken}`
+        );
+      }
+
+      const i = curvePool.coins.indexOf(inputToken);
+      const j = curvePool.coins.indexOf(outputToken);
+
+      const strategyData = new ethers.utils.AbiCoder().encode(
+        ["address", "int128", "int128", "address"],
+        [curvePool.poolAddress, i, j, outputToken]
+      );
+
+      return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
+    }
     default: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
