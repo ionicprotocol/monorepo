@@ -15,7 +15,7 @@ import {
   SupportedAsset,
   SupportedChains,
 } from "@midas-capital/types";
-import { BigNumber, constants, Contract, utils } from "ethers";
+import { BigNumber, constants, Contract, Signer, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
@@ -46,9 +46,13 @@ import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
+export type SupportedProvider = JsonRpcProvider | Web3Provider;
+export type SignerOrProvider = Signer | SupportedProvider;
+
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
-  public provider: JsonRpcProvider | Web3Provider;
+  public _provider: SupportedProvider;
+  public _signer: Signer | null;
 
   public contracts: {
     FuseFeeDistributor: FuseFeeDistributor;
@@ -74,8 +78,32 @@ export class MidasBase {
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
   public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
 
-  constructor(web3Provider: JsonRpcProvider | Web3Provider, chainConfig: ChainConfig) {
-    this.provider = web3Provider;
+  public get provider(): SupportedProvider {
+    return this._provider;
+  }
+
+  public set provider(newProvider: SupportedProvider) {
+    this._provider = newProvider;
+  }
+
+  public get signer() {
+    if (!this._signer) {
+      throw new Error("No Signer available.");
+    }
+    return this._signer;
+  }
+
+  public set signer(signer: Signer) {
+    this._signer = signer;
+  }
+
+  constructor(provider: SupportedProvider, chainConfig: ChainConfig) {
+    this._provider = provider;
+    this._signer = provider.getSigner ? provider.getSigner() : null;
+    console.log({
+      provider: this._provider,
+      signer: this._signer,
+    });
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
     this.chainDeployment = chainConfig.chainDeployments;
@@ -158,7 +186,7 @@ export class MidasBase {
       const implementationAddress = this.chainDeployment.Comptroller.address;
 
       // Register new pool with FusePoolDirectory
-      const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
+      const contract = this.contracts.FusePoolDirectory.connect(this.signer);
 
       const deployTx = await contract.deployPool(
         poolName,
@@ -194,7 +222,7 @@ export class MidasBase {
       );
 
       // Accept admin status via Unitroller
-      const unitroller = getPoolUnitroller(poolAddress, this.provider.getSigner(options.from));
+      const unitroller = getPoolUnitroller(poolAddress, this.signer);
       const acceptTx = await unitroller._acceptAdmin();
       const acceptReceipt = await acceptTx.wait();
       console.log("Accepted admin status for admin:", acceptReceipt.status);
@@ -202,7 +230,7 @@ export class MidasBase {
       // Whitelist
       console.log("enforceWhitelist: ", enforceWhitelist);
       if (enforceWhitelist) {
-        const comptroller = getPoolComptroller(poolAddress, this.provider.getSigner(options.from));
+        const comptroller = getPoolComptroller(poolAddress, this.signer);
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
@@ -285,31 +313,31 @@ export class MidasBase {
     return irmName;
   };
 
-  getComptrollerInstance(address: string, options: { from: string }) {
-    return new Contract(address, this.artifacts.Comptroller.abi, this.provider.getSigner(options.from)) as Comptroller;
+  getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.Comptroller.abi, signerOrProvider) as Comptroller;
   }
 
-  getCTokenInstance(address: string) {
+  getCTokenInstance(address: string, signerOrProvider = this.provider) {
     return new Contract(
       address,
       this.chainDeployment[DelegateContractName.CErc20Delegate].abi,
-      this.provider.getSigner()
+      signerOrProvider
     ) as CErc20Delegate;
   }
 
-  getCErc20PluginRewardsInstance(address: string) {
+  getCErc20PluginRewardsInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(
       address,
       this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
-      this.provider.getSigner()
+      signerOrProvider
     ) as CErc20PluginRewardsDelegate;
   }
 
-  getCErc20PluginInstance(address: string) {
+  getCErc20PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(
       address,
       this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
-      this.provider.getSigner()
+      signerOrProvider
     ) as CErc20PluginDelegate;
   }
 }

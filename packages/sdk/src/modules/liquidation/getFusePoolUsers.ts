@@ -1,4 +1,4 @@
-import { BigNumber, ethers, Wallet } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
@@ -37,14 +37,11 @@ function getPositionHealth(totalBorrow: BigNumber, totalCollateral: BigNumber): 
 async function getFusePoolUsers(
   fuse: MidasBase,
   comptroller: string,
-  maxHealth: BigNumber,
-  signer: Wallet
+  maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: FusePoolUserStruct[] = [];
-  const comptrollerInstance: Comptroller = fuse.getComptrollerInstance(comptroller, {
-    from: signer.address,
-  });
-  const users = await comptrollerInstance.getAllBorrowers();
+  const comptrollerInstance: Comptroller = fuse.getComptrollerInstance(comptroller);
+  const users = await comptrollerInstance.callStatic.getAllBorrowers();
   for (const user of users) {
     const assets = await fuse.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
       from: user,
@@ -68,15 +65,15 @@ async function getFusePoolUsers(
 export default async function getAllFusePoolUsers(
   fuse: MidasBase,
   maxHealth: BigNumber,
-  signer: Wallet,
-  exlcudedComptrollers: Array<string>
+
+  excludedComptrollers: Array<string>
 ): Promise<PublicPoolUserWithData[]> {
   const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   for (const pool of allPools) {
-    if (!exlcudedComptrollers.includes(pool.comptroller)) {
-      const poolUserParms: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth, signer);
-      fusePoolUsers.push(poolUserParms);
+    if (!excludedComptrollers.includes(pool.comptroller)) {
+      const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth);
+      fusePoolUsers.push(poolUserParams);
     }
     // if (pool.comptroller !== "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5") {
   }

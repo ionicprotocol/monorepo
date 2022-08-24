@@ -105,8 +105,8 @@ task("pools:create", "Create pool if does not exist")
           from: signer.address,
         });
         console.log("Deployed static rewards for: ", await fwTokenInstance.symbol());
-        await sdk.setFlywheelRewards(flywheelCoreInstance.address, fwStaticRewards.address, { from: signer.address });
-        await sdk.addFlywheelCoreToComptroller(flywheelCoreInstance.address, poolAddress, { from: signer.address });
+        await sdk.setFlywheelRewards(flywheelCoreInstance.address, fwStaticRewards.address);
+        await sdk.addFlywheelCoreToComptroller(flywheelCoreInstance.address, poolAddress);
 
         // Funding Static Rewards
         await fwTokenInstance.transfer(fwStaticRewards.address, hre.ethers.utils.parseUnits("100", 18), {
@@ -114,18 +114,11 @@ task("pools:create", "Create pool if does not exist")
         });
 
         // Setup Rewards, enable and set RewardInfo
-        await sdk.addMarketForRewardsToFlywheelCore(flywheelCoreInstance.address, flywheelMarket.address, {
-          from: signer.address,
+        await sdk.addMarketForRewardsToFlywheelCore(flywheelCoreInstance.address, flywheelMarket.address);
+        await sdk.setStaticRewardInfo(fwStaticRewards.address, flywheelMarket.address, {
+          rewardsEndTimestamp: 0,
+          rewardsPerSecond: hre.ethers.utils.parseUnits("0.000001", 18),
         });
-        await sdk.setStaticRewardInfo(
-          fwStaticRewards.address,
-          flywheelMarket.address,
-          {
-            rewardsEndTimestamp: 0,
-            rewardsPerSecond: hre.ethers.utils.parseUnits("0.000001", 18),
-          },
-          { from: signer.address }
-        );
         console.log(
           `Added static rewards for market ${await flywheelMarket.symbol()}, token rewards: ${await fwTokenInstance.symbol()}`
         );

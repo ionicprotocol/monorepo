@@ -36,11 +36,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       amount: BigNumber,
       options: { from: string }
     ) {
-      const token = getContract(
-        underlyingTokenAddress,
-        this.artifacts.EIP20Interface.abi,
-        this.provider.getSigner(options.from)
-      );
+      const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
 
       const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
       if (!hasApprovedEnough) {
@@ -52,16 +48,12 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
         const comptrollerInstance = getContract(
           comptrollerAddress,
           this.artifacts.Comptroller.abi,
-          this.provider.getSigner(options.from)
+          this.signer
         ) as Comptroller;
 
         await comptrollerInstance.enterMarkets([cTokenAddress]);
       }
-      const cToken = getContract(
-        cTokenAddress,
-        this.artifacts.CErc20Delegate.abi,
-        this.provider.getSigner(options.from)
-      ) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.mint(amount)) as BigNumber;
 
@@ -83,22 +75,14 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     ) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
 
-      const token = getContract(
-        underlyingTokenAddress,
-        this.artifacts.EIP20Interface.abi,
-        this.provider.getSigner(options.from)
-      );
+      const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
 
       const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
       if (!hasApprovedEnough) {
         const approveTx = await token.approve(cTokenAddress, max);
         await approveTx.wait();
       }
-      const cToken = getContract(
-        cTokenAddress,
-        this.artifacts.CErc20Delegate.abi,
-        this.provider.getSigner(options.from)
-      ) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
 
@@ -113,11 +97,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async borrow(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
-      const cToken = getContract(
-        cTokenAddress,
-        this.artifacts.CErc20Delegate.abi,
-        this.provider.getSigner(options.from)
-      ) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.borrow(amount)) as BigNumber;
 
@@ -131,11 +111,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async withdraw(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
-      const cToken = getContract(
-        cTokenAddress,
-        this.artifacts.CErc20Delegate.abi,
-        this.provider.getSigner(options.from)
-      ) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
 
