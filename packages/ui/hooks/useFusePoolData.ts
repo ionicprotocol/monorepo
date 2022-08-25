@@ -14,7 +14,7 @@ export const useFusePoolData = (poolId: string) => {
     async () => {
       if (!usdPrice) return null;
 
-      const res = await midasSdk.fetchFusePoolData(poolId, address);
+      const res = await midasSdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];
       const assets = res.assets.filter(
         (asset) => !config.hideAssets.includes(asset.underlyingToken.toLowerCase())

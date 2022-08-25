@@ -37,9 +37,7 @@ export const useFusePools = (
 
       if (!filter) {
         res = await midasSdk.fetchPoolsManual({
-          options: {
-            from: address,
-          },
+          from: address,
         });
       } else {
         res = await midasSdk.fetchPools({
