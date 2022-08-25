@@ -6,21 +6,21 @@ const deployedPlugins: DeployedPlugins = {
     name: "Bomb",
     apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb",
     strategyDocsUrl:
-      "https://app.gitbook.com/s/66NW0CnbA4sgMbZnOH21/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
   },
   "0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854": {
     market: "0x4cF3D3ca995beEeEd83f67A5C0456A13e038f7b8",
     name: "BTCB-BOMB",
     apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb-btcb",
     strategyDocsUrl:
-      "https://app.gitbook.com/s/66NW0CnbA4sgMbZnOH21/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
   },
   "0x3c29e9b0CfE6FfF97f373eAbEADE9475FaC3bd4e": {
     market: "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba",
     name: "2brl DotDotLpERC4626",
     apyDocsUrl: "https://dotdot.finance/#/stake",
     strategyDocsUrl:
-      "https://app.gitbook.com/s/66NW0CnbA4sgMbZnOH21/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
   },
   "0x9dB349BbfF9E177dB4bd3134ff93876688b77835": {
     market: "0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C",
