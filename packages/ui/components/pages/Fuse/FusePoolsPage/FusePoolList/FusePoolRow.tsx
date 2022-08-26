@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Spinner,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -144,15 +145,39 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
         </VStack>
 
         <VStack flex={2}>
-          <Text fontWeight="bold" textAlign="center">
-            {usdPrice && smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
-          </Text>
+          {usdPrice ? (
+            <SimpleTooltip
+              label={(data.totalSuppliedNative * usdPrice).toString()}
+              isDisabled={data.totalSuppliedNative * usdPrice === 0}
+            >
+              <Text fontWeight="bold" textAlign="center">
+                {smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
+                {data.totalSuppliedNative * usdPrice > 0 &&
+                  data.totalSuppliedNative * usdPrice < 0.01 &&
+                  '+'}
+              </Text>
+            </SimpleTooltip>
+          ) : (
+            <Spinner />
+          )}
         </VStack>
 
         <VStack flex={2}>
-          <Text fontWeight="bold" textAlign="center">
-            {usdPrice && smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
-          </Text>
+          {usdPrice ? (
+            <SimpleTooltip
+              label={(data.totalBorrowedNative * usdPrice).toString()}
+              isDisabled={data.totalBorrowedNative * usdPrice === 0}
+            >
+              <Text fontWeight="bold" textAlign="center">
+                {smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
+                {data.totalBorrowedNative * usdPrice > 0 &&
+                  data.totalBorrowedNative * usdPrice < 0.01 &&
+                  '+'}
+              </Text>
+            </SimpleTooltip>
+          ) : (
+            <Spinner />
+          )}
         </VStack>
 
         <VStack flex={1}>

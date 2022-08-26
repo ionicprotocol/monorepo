@@ -1,7 +1,20 @@
-import { Box, Button, Table, TableCaption, Tbody, Td, Thead, Tr } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  HStack,
+  Table,
+  TableCaption,
+  Tbody,
+  Td,
+  Text,
+  Thead,
+  Tr,
+} from '@chakra-ui/react';
 import { useMemo, useState } from 'react';
 
 import { AssetBorrowRow } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList/AssetBorrowRow';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -42,7 +55,18 @@ export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: Bo
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
         >
-          Your Borrow Balance: {smallUsdFormatter(borrowBalanceFiat)}
+          <HStack>
+            <Text>Your Borrow Balance:</Text>
+            <SimpleTooltip
+              label={borrowBalanceFiat.toString()}
+              isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
+            >
+              <Text>
+                {smallUsdFormatter(borrowBalanceFiat)}
+                {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+          </HStack>
         </TableCaption>
         <Thead>
           {assets.length > 0 ? (
