@@ -55,3 +55,6 @@ export enum UserAction {
 }
 
 export const MINUTES_PER_YEAR = 24 * 365 * 60;
+
+export const UP_LIMIT = 0.005;
+export const DOWN_LIMIT = 0;
