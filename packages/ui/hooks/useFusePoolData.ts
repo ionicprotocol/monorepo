@@ -10,7 +10,7 @@ export const useFusePoolData = (poolId: string) => {
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   return useQuery<PoolData | null>(
-    ['useFusePoolData', poolId, address, usdPrice],
+    ['useFusePoolData', poolId, address],
     async () => {
       if (!usdPrice) return null;
 
