@@ -2,8 +2,8 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { CErc20Delegate } from "../lib/contracts/typechain/CErc20Delegate";
+import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 
@@ -91,11 +91,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-      const comptroller = (await ethers.getContractAt(
-        "Comptroller",
-        pool.comptroller,
-        signer
-      )) as Comptroller;
+      const comptroller = (await ethers.getContractAt("Comptroller", pool.comptroller, signer)) as Comptroller;
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 

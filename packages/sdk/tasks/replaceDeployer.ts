@@ -1,23 +1,22 @@
-import { task, types } from "hardhat/config";
 import { providers } from "ethers";
+import { task, types } from "hardhat/config";
 
-import { TransparentUpgradeableProxy } from "../lib/contracts/typechain/TransparentUpgradeableProxy";
-import { OwnableUpgradeable } from "../lib/contracts/typechain/OwnableUpgradeable";
-import { SafeOwnableUpgradeable } from "../lib/contracts/typechain/SafeOwnableUpgradeable";
-import { FuseFlywheelCore } from "../lib/contracts/typechain/FuseFlywheelCore";
-import { MidasERC4626 } from "../lib/contracts/typechain/MidasERC4626";
-import { Unitroller } from "../lib/contracts/typechain/Unitroller";
 import { CErc20PluginDelegate } from "../lib/contracts/typechain/CErc20PluginDelegate";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 import { DiaPriceOracle } from "../lib/contracts/typechain/DiaPriceOracle.sol/DiaPriceOracle";
+import { FuseFlywheelCore } from "../lib/contracts/typechain/FuseFlywheelCore";
+import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 import { MasterPriceOracle } from "../lib/contracts/typechain/MasterPriceOracle";
+import { MidasERC4626 } from "../lib/contracts/typechain/MidasERC4626";
+import { OwnableUpgradeable } from "../lib/contracts/typechain/OwnableUpgradeable";
+import { SafeOwnableUpgradeable } from "../lib/contracts/typechain/SafeOwnableUpgradeable";
+import { TransparentUpgradeableProxy } from "../lib/contracts/typechain/TransparentUpgradeableProxy";
+import { Unitroller } from "../lib/contracts/typechain/Unitroller";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
   .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
   .setAction(async ({ currentDeployer, newDeployer }, { ethers }) => {
-
     let tx: providers.TransactionResponse;
 
     const deployer = await ethers.getSigner(currentDeployer);
@@ -45,7 +44,10 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         await tx.wait();
         console.log(`fpd._setPendingOwner tx mined ${tx.hash}`);
 
-        const curveOracle = (await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer)) as SafeOwnableUpgradeable;
+        const curveOracle = (await ethers.getContract(
+          "CurveLpTokenPriceOracleNoRegistry",
+          deployer
+        )) as SafeOwnableUpgradeable;
         tx = await curveOracle._setPendingOwner(newDeployer);
         await tx.wait();
         console.log(`curveOracle._setPendingOwner tx mined ${tx.hash}`);
@@ -93,7 +95,10 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         await tx.wait();
         console.log(`ap.changeAdmin tx mined ${tx.hash}`);
 
-        const curveOracle = (await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer)) as TransparentUpgradeableProxy;
+        const curveOracle = (await ethers.getContract(
+          "CurveLpTokenPriceOracleNoRegistry",
+          deployer
+        )) as TransparentUpgradeableProxy;
         tx = await curveOracle.changeAdmin(newDeployer);
         await tx.wait();
         console.log(`curveOracle.changeAdmin tx mined ${tx.hash}`);
@@ -117,11 +122,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       for (let i = 0; i < pools.length; i++) {
         const pool = pools[i];
         console.log("pool name", pool.name);
-        const comptroller = (await ethers.getContractAt(
-          "Comptroller",
-          pool.comptroller,
-          deployer
-        )) as Comptroller;
+        const comptroller = (await ethers.getContractAt("Comptroller", pool.comptroller, deployer)) as Comptroller;
         const admin = await comptroller.callStatic.admin();
         console.log("pool admin", admin);
 
@@ -158,7 +159,11 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         const markets = await comptroller.callStatic.getAllMarkets();
         for (let j = 0; j < markets.length; j++) {
           const market = markets[j];
-          const cTokenInstance = (await ethers.getContractAt("CErc20PluginDelegate", market, deployer)) as CErc20PluginDelegate;
+          const cTokenInstance = (await ethers.getContractAt(
+            "CErc20PluginDelegate",
+            market,
+            deployer
+          )) as CErc20PluginDelegate;
 
           console.log("market", {
             cToken: market,
@@ -171,7 +176,11 @@ export default task("system:admin:change", "Changes the system admin to a new ad
             const pluginAddress = await cTokenInstance.callStatic.plugin();
             {
               // Ownable - transferOwnership(address newOwner)
-              const midasERC4626 = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+              const midasERC4626 = (await ethers.getContractAt(
+                "MidasERC4626",
+                pluginAddress,
+                deployer
+              )) as MidasERC4626;
               tx = await midasERC4626.transferOwnership(newDeployer);
               await tx.wait();
               console.log(`midasERC4626.transferOwnership tx mined ${tx.hash}`);
@@ -186,7 +195,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
 task("system:admin:accept", "Accepts the pending admin/owner roles as the new admin/owner")
   .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
-  .setAction(async ( { newDeployer }, { ethers } ) => {
+  .setAction(async ({ newDeployer }, { ethers }) => {
     let tx: providers.TransactionResponse;
 
     const deployer = await ethers.getSigner(newDeployer);
@@ -196,11 +205,7 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-      const comptroller = (await ethers.getContractAt(
-        "Comptroller",
-        pool.comptroller,
-        deployer
-      )) as Comptroller;
+      const comptroller = (await ethers.getContractAt("Comptroller", pool.comptroller, deployer)) as Comptroller;
 
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
@@ -235,7 +240,10 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
       await tx.wait();
       console.log(`fpd._acceptOwner tx mined ${tx.hash}`);
 
-      const curveOracle = (await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer)) as SafeOwnableUpgradeable;
+      const curveOracle = (await ethers.getContract(
+        "CurveLpTokenPriceOracleNoRegistry",
+        deployer
+      )) as SafeOwnableUpgradeable;
       tx = await curveOracle._acceptOwner();
       await tx.wait();
       console.log(`curveOracle._acceptOwner tx mined ${tx.hash}`);
