@@ -368,13 +368,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   } else {
     console.log("Comptroller AutoImplementation already set");
   }
-
-  await deployments.deploy("InitializableClones", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
   ////
 
   ////
