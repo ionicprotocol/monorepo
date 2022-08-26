@@ -1,14 +1,14 @@
 import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
-import { useSupportedAssets } from '@ui/hooks/useSupportedAssets';
+import { useSupportedUnderlyings } from '@ui/hooks/useSupportedAssets';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string) => {
   const { midasSdk, address, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
-  const { data: supportedUnderlyings } = useSupportedAssets();
+  const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
   return useQuery<PoolData | null>(
     ['useFusePoolData', poolId, address, usdPrice, supportedUnderlyings],

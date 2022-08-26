@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 
-export function useSupportedAssets() {
+export function useSupportedUnderlyings() {
   const { midasSdk } = useMidas();
 
   return useQuery(

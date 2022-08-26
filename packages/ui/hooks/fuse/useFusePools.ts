@@ -5,7 +5,7 @@ import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { useSupportedAssets } from '@ui/hooks/useSupportedAssets';
+import { useSupportedUnderlyings } from '@ui/hooks/useSupportedAssets';
 
 const poolSort = (pools: FusePoolData[]) => {
   return pools.sort((a, b) => {
@@ -27,7 +27,7 @@ export const useFusePools = (
   filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null
 ) => {
   const { midasSdk, currentChain, address } = useMidas();
-  const { data: supportedUnderlyings } = useSupportedAssets();
+  const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
   const isCreatedPools = filter === 'created-pools';
   const isAllPools = filter === '';
