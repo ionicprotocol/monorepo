@@ -8,9 +8,9 @@ import { FuseFlywheelCore } from "../lib/contracts/typechain/FuseFlywheelCore";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 import { MasterPriceOracle } from "../lib/contracts/typechain/MasterPriceOracle";
 import { MidasERC4626 } from "../lib/contracts/typechain/MidasERC4626";
+import { Ownable } from "../lib/contracts/typechain/Ownable";
 import { OwnableUpgradeable } from "../lib/contracts/typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "../lib/contracts/typechain/SafeOwnableUpgradeable";
-import { Ownable } from "../lib/contracts/typechain/Ownable";
 import { Unitroller } from "../lib/contracts/typechain/Unitroller";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
@@ -21,7 +21,8 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
     const deployer = await ethers.getSigner(currentDeployer);
 
-    if (newDeployer !== "hardcode it here") { // hardcode it here
+    // hardcode it here
+    if (newDeployer !== "hardcode it here") {
       throw new Error(`wrong new deployer`);
     } else {
       {
