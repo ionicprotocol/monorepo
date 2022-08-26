@@ -223,11 +223,21 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   </Text>
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold" textAlign="center">
-                    {isMostSupplied && usdPrice
-                      ? data && smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)
-                      : '$0.00'}
-                  </Text>
+                  {usdPrice ? (
+                    <SimpleTooltip
+                      label={(data.totalBorrowBalanceNative * usdPrice).toString()}
+                      isDisabled={data.totalBorrowBalanceNative * usdPrice === 0}
+                    >
+                      <Text fontWeight="bold" textAlign="center">
+                        {smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)}
+                        {data.totalBorrowBalanceNative * usdPrice > 0 &&
+                          data.totalBorrowBalanceNative * usdPrice < 0.01 &&
+                          '+'}
+                      </Text>
+                    </SimpleTooltip>
+                  ) : (
+                    <Spinner />
+                  )}
                 </Row>
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
@@ -237,11 +247,21 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   </Text>
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold" textAlign="center">
-                    {isMostSupplied && usdPrice
-                      ? data && smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)
-                      : '$0.00'}
-                  </Text>
+                  {usdPrice ? (
+                    <SimpleTooltip
+                      label={(data.totalSupplyBalanceNative * usdPrice).toString()}
+                      isDisabled={data.totalSupplyBalanceNative * usdPrice === 0}
+                    >
+                      <Text fontWeight="bold" textAlign="center">
+                        {smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)}
+                        {data.totalSupplyBalanceNative * usdPrice > 0 &&
+                          data.totalSupplyBalanceNative * usdPrice < 0.01 &&
+                          '+'}
+                      </Text>
+                    </SimpleTooltip>
+                  ) : (
+                    <Spinner />
+                  )}
                 </Row>
               </Column>
             </Row>
