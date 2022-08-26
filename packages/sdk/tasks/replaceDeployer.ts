@@ -10,7 +10,7 @@ import { MasterPriceOracle } from "../lib/contracts/typechain/MasterPriceOracle"
 import { MidasERC4626 } from "../lib/contracts/typechain/MidasERC4626";
 import { OwnableUpgradeable } from "../lib/contracts/typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "../lib/contracts/typechain/SafeOwnableUpgradeable";
-import { TransparentUpgradeableProxy } from "../lib/contracts/typechain/TransparentUpgradeableProxy";
+import { Ownable } from "../lib/contracts/typechain/Ownable";
 import { Unitroller } from "../lib/contracts/typechain/Unitroller";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
@@ -21,7 +21,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
     const deployer = await ethers.getSigner(currentDeployer);
 
-    if (newDeployer !== "hardcode it here") {
+    if (newDeployer !== "hardcode it here") { // hardcode it here
       throw new Error(`wrong new deployer`);
     } else {
       {
@@ -54,54 +54,11 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       }
 
       {
-        // TransparentUpgradeableProxy - changeAdmin(address newAdmin)
-        const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as TransparentUpgradeableProxy;
-        tx = await ffd.changeAdmin(newDeployer);
+        // DefaultProxyAdmin / TransparentUpgradeableProxy
+        const dpa = (await ethers.getContract("DefaultProxyAdmin", deployer)) as Ownable;
+        tx = await dpa.transferOwnership(newDeployer);
         await tx.wait();
-        console.log(`ffd.changeAdmin tx mined ${tx.hash}`);
-
-        const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as TransparentUpgradeableProxy;
-        tx = await fpd.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`fpd.changeAdmin tx mined ${tx.hash}`);
-
-        const fpl = (await ethers.getContract("FusePoolLens", deployer)) as TransparentUpgradeableProxy;
-        tx = await fpl.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`fpl.changeAdmin tx mined ${tx.hash}`);
-
-        const fpls = (await ethers.getContract("FusePoolLensSecondary", deployer)) as TransparentUpgradeableProxy;
-        tx = await fpls.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`fpls.changeAdmin tx mined ${tx.hash}`);
-
-        const fsl = (await ethers.getContract("FuseSafeLiquidator", deployer)) as TransparentUpgradeableProxy;
-        tx = await fsl.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`fsl.changeAdmin tx mined ${tx.hash}`);
-
-        const fflr = (await ethers.getContract("FuseFlywheelLensRouter", deployer)) as TransparentUpgradeableProxy;
-        tx = await fflr.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`fflr.changeAdmin tx mined ${tx.hash}`);
-
-        const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as TransparentUpgradeableProxy;
-        tx = await mpo.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`mpo.changeAdmin tx mined ${tx.hash}`);
-
-        const ap = (await ethers.getContract("AddressesProvider", deployer)) as TransparentUpgradeableProxy;
-        tx = await ap.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`ap.changeAdmin tx mined ${tx.hash}`);
-
-        const curveOracle = (await ethers.getContract(
-          "CurveLpTokenPriceOracleNoRegistry",
-          deployer
-        )) as TransparentUpgradeableProxy;
-        tx = await curveOracle.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`curveOracle.changeAdmin tx mined ${tx.hash}`);
+        console.log(`dpa.transferOwnership tx mined ${tx.hash}`);
       }
 
       {
