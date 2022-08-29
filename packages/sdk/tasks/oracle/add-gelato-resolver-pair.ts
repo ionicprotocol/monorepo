@@ -1,5 +1,6 @@
 import { ethers } from "hardhat";
 import { task, types } from "hardhat/config";
+
 import { UniswapOracleV2ResolverPairParams } from "../../chainDeploy";
 
 const uniswapTwapPriceOracleV2Resolver = "";
@@ -12,7 +13,7 @@ const twapOracleV2ResolverPairs: UniswapOracleV2ResolverPairParams[] = [
     deviationThreshold: 50000000000000000,
   },
   {
-    pair: "0xd47BeC28365a82C0C006f3afd617012B02b129D6", // CLEAR/WGLMR
+    pair: "0xd47BeC28365a82C0C006f3afd617012B02b129D6", // CELR/WGLMR
     baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
     minPeriod: 1800,
     deviationThreshold: 50000000000000000,
