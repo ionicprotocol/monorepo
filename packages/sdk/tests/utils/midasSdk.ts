@@ -161,6 +161,12 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
     abi: CurveLpTokenLiquidatorNoRegistryArtifact.abi,
     address: CurveLpTokenLiquidatorNoRegistry.address,
   };
+  const CurveSwapLiquidator = await ethers.getContract("CurveSwapLiquidator");
+  const CurveSwapLiquidatorArtifact = await deployments.getArtifact("CurveSwapLiquidator");
+  chainDeployment.CurveSwapLiquidator = {
+    abi: CurveSwapLiquidatorArtifact.abi,
+    address: CurveSwapLiquidator.address,
+  };
   return await getCommonDeployments(chainDeployment);
 };
 

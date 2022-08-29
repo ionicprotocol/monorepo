@@ -10,6 +10,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     "ignored",
   ],
+  [underlying(assets, assetSymbols.MAI)]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.val3EPS),
+  ],
   [underlying(assets, assetSymbols.BOMB)]: [
     RedemptionStrategyContract.XBombLiquidatorFunder,
     underlying(assets, assetSymbols.xBOMB),

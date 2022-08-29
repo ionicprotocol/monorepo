@@ -135,6 +135,7 @@ const liquidationDefaults: LiquidationDefaults = {
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
   ],
+  curveSwapPools: [],
 };
 
 export default liquidationDefaults;
