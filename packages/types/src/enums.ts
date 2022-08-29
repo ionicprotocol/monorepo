@@ -279,10 +279,10 @@ export enum assetSymbols {
   arrakis_WETH_DAI_03 = "arrakis_WETH_DAI_03",
 
   // Stella
-  STELLA_GLMR = "STELLA_GLMR",
-  CLEAR_GLMR = "CLEAR_GLMR",
+  "STELLA-GLMR" = "STELLA-GLMR",
+  "CELR-GLMR" = "CELR-GLMR",
   STELLA = "STELLA",
-  CLEAR = "CLEAR",
+  CELR = "CELR",
 }
 
 export default assetSymbols;

@@ -45,8 +45,8 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["USDC-ETH"])!.underlying, // USDC-ETH
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["WGLMR-xcDOT"])!.underlying, // WGLMR-xcDOT
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying, // GLMR-madUSDC
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["STELLA_GLMR"])!.underlying, // STELLA-GLMR
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["CLEAR_GLMR"])!.underlying, // CLEAR-GLMR
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["STELLA-GLMR"])!.underlying, // STELLA-GLMR
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["CELR-GLMR"])!.underlying, // CELR-GLMR
     ],
     flashSwapFee: 30,
   },

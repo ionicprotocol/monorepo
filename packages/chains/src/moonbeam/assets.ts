@@ -1,6 +1,7 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
 import { beamSwapDocs, beamSwapStableDocs, defaultDocs } from "../common";
+import { stellaSwapDocs } from "../common/docs";
 
 const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
 const xcDOT = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
@@ -19,6 +20,7 @@ const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
 const GLINT = "0xcd3B51D98478D53F4515A306bE565c6EebeF1D58";
 const FTM = "0xC19281F22A075E0F10351cd5D6Ea9f0AC63d4327";
 const STELLA = "0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2";
+const CELR = "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283";
 
 // StellaSwap
 const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
@@ -29,7 +31,7 @@ const GLMR_madUSDC = "0x9bFcf685e641206115dadc0C9ab17181e1d4975c";
 const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
 const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
 const STELLA_GLMR = "0x7F5Ac0FC127bcf1eAf54E3cd01b00300a0861a62";
-const CLEAR_GLMR = "0xd47BeC28365a82C0C006f3afd617012B02b129D6";
+const CELR_GLMR = "0xd47BeC28365a82C0C006f3afd617012B02b129D6";
 
 export const assets: SupportedAsset[] = [
   {
@@ -218,20 +220,20 @@ export const assets: SupportedAsset[] = [
     extraDocs: beamSwapStableDocs("nomad3pool", threePool),
   },
   {
-    symbol: assetSymbols["STELLA_GLMR"],
+    symbol: assetSymbols["STELLA-GLMR"],
     underlying: STELLA_GLMR,
     name: "Stella Swap STELLA/GLMR LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: "",
+    extraDocs: stellaSwapDocs("ETH", STELLA, "STELLA-GLMR", STELLA_GLMR),
   },
   {
-    symbol: assetSymbols["CLEAR_GLMR"],
-    underlying: CLEAR_GLMR,
-    name: "Stella Swap CLEAR/GLMR LP Token",
+    symbol: assetSymbols["CELR-GLMR"],
+    underlying: CELR_GLMR,
+    name: "Stella Swap CELR/GLMR LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: "",
+    extraDocs: stellaSwapDocs("ETH", CELR, "CELR-GLMR", CELR_GLMR),
   },
   {
     symbol: assetSymbols.STELLA,
@@ -239,7 +241,7 @@ export const assets: SupportedAsset[] = [
     name: "Stellaswap Token",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: "",
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", STELLA),
   },
 ];
 
