@@ -131,3 +131,10 @@ export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gelatoAssets: GelatoGUniAsset[];
 };
+
+export type UniswapOracleV2ResolverPairParams = {
+  pair: string;
+  baseToken: string;
+  minPeriod: number;
+  deviationThreshold: number;
+};
