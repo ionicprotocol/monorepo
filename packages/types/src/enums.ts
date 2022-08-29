@@ -277,6 +277,12 @@ export enum assetSymbols {
   arrakis_USDC_USDT_005 = "arrakis_USDC_USDT_005",
   arrakis_USDC_DAI_005 = "arrakis_USDC_DAI_005",
   arrakis_WETH_DAI_03 = "arrakis_WETH_DAI_03",
+
+  // Stella
+  STELLA_GLMR = "STELLA_GLMR",
+  CLEAR_GLMR = "CLEAR_GLMR",
+  STELLA = "STELLA",
+  CLEAR = "CLEAR",
 }
 
 export default assetSymbols;

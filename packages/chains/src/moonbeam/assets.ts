@@ -18,15 +18,18 @@ const FRAX = "0x322E86852e492a7Ee17f28a78c663da38FB33bfb";
 const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
 const GLINT = "0xcd3B51D98478D53F4515A306bE565c6EebeF1D58";
 const FTM = "0xC19281F22A075E0F10351cd5D6Ea9f0AC63d4327";
+const STELLA = "0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2";
 
-// BeamSwap
-const GLMR_USDC = "0xb929914B89584b4081C7966AC6287636F7EfD053";
-const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57";
-const USDC_ETH = "0x6BA3071760d46040FB4dc7B627C9f68efAca3000";
-const WGLMR_xcDOT = "0xd8FbdeF502770832E90a6352b275f20F38269b74";
-const GLMR_madUSDC = "0x6Ba38f006aFe746B9A0d465e53aB4182147AC3D7";
+// StellaSwap
+const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
+const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57"; // not supported on stella
+const USDC_ETH = "0x0Aa48bF937ee8F41f1a52D225EF5A6F6961e39FA";
+const WGLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
+const GLMR_madUSDC = "0x9bFcf685e641206115dadc0C9ab17181e1d4975c";
 const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
 const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
+const STELLA_GLMR = "0x7F5Ac0FC127bcf1eAf54E3cd01b00300a0861a62";
+const CLEAR_GLMR = "0xd47BeC28365a82C0C006f3afd617012B02b129D6";
 
 export const assets: SupportedAsset[] = [
   {
@@ -213,6 +216,30 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: beamSwapStableDocs("nomad3pool", threePool),
+  },
+  {
+    symbol: assetSymbols["STELLA_GLMR"],
+    underlying: STELLA_GLMR,
+    name: "Stella Swap STELLA/GLMR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: "",
+  },
+  {
+    symbol: assetSymbols["CLEAR_GLMR"],
+    underlying: CLEAR_GLMR,
+    name: "Stella Swap CLEAR/GLMR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: "",
+  },
+  {
+    symbol: assetSymbols.STELLA,
+    underlying: STELLA,
+    name: "Stellaswap Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: "",
   },
 ];
 
