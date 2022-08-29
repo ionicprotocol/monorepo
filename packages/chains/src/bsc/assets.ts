@@ -209,7 +209,6 @@ const assets: SupportedAsset[] = [
     underlying: aBNBc,
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
-    disabled: true,
     extraDocs: ankrBNBDocs("aBNBc"),
   },
   {
