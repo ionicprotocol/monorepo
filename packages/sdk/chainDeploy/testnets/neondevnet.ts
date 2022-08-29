@@ -38,6 +38,14 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise
   });
   console.log("SimplePriceOracle: ", simplePO.address);
 
+  const pyth = await deployments.deploy("Pyth", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("Pyth: ", pyth.address);
+
   const _assets = assets.filter((a) => a.symbol !== assetSymbols.WNEON);
 
   const masterPriceOracle = await ethers.getContract("MasterPriceOracle", deployer);

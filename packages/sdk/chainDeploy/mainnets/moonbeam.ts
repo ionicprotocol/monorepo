@@ -292,6 +292,19 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
+  //// deploy uniswap twap price oracle v2 resolver
+
+  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
+    from: deployer,
+    args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (twapPriceOracleResolver.transactionHash) {
+    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
+  }
+  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
+
   ////
 
   // Plugins & Rewards
