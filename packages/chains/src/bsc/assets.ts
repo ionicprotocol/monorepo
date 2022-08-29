@@ -209,6 +209,7 @@ const assets: SupportedAsset[] = [
     underlying: aBNBc,
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
+    oracle: OracleTypes.AnkrBNBcPriceOracle,
     extraDocs: ankrBNBDocs("aBNBc"),
   },
   {
