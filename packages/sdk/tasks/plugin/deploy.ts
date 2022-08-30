@@ -32,4 +32,5 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
     if (deployment.transactionHash) await hre.ethers.provider.waitForTransaction(deployment.transactionHash);
 
     console.log("ERC4626 Strategy: ", deployment.address);
+    return deployment.address;
   });
