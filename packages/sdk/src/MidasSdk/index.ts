@@ -99,10 +99,7 @@ export class MidasBase {
   constructor(provider: SupportedProvider, chainConfig: ChainConfig) {
     this._provider = provider;
     this._signer = provider.getSigner ? provider.getSigner() : null;
-    console.log({
-      provider: this._provider,
-      signer: this._signer,
-    });
+
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
     this.chainDeployment = chainConfig.chainDeployments;
