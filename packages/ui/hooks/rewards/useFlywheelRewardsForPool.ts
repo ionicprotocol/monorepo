@@ -7,7 +7,6 @@ export const useFlywheelRewardsForPool = (poolAddress?: string) => {
   const {
     midasSdk,
     currentChain: { id: chainId },
-    address,
   } = useMidas();
 
   return useQuery(
@@ -16,15 +15,11 @@ export const useFlywheelRewardsForPool = (poolAddress?: string) => {
       if (!poolAddress) return undefined;
       try {
         // Try with APRs first
-        return await midasSdk.getFlywheelMarketRewardsByPoolWithAPR(poolAddress, {
-          from: address,
-        });
+        return await midasSdk.getFlywheelMarketRewardsByPoolWithAPR(poolAddress);
       } catch (error) {
         LogRocket.captureException(new Error(`Unable to get Rewards with APRs for ${poolAddress}`));
         // Fallback to rewards without APRs
-        return midasSdk.getFlywheelMarketRewardsByPool(poolAddress, {
-          from: address,
-        });
+        return midasSdk.getFlywheelMarketRewardsByPool(poolAddress);
       }
     },
     { enabled: !!poolAddress, initialData: [] }

@@ -97,9 +97,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
 
       try {
         setActiveStep(3);
-        const tx = await midasSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address, {
-          from: address,
-        });
+        const tx = await midasSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
         await tx.wait();
         successToast({
           description: 'Rewards Added to Flywheel',
@@ -111,9 +109,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
 
       try {
         setActiveStep(4);
-        const tx = await midasSdk.addFlywheelCoreToComptroller(fwCore.address, comptrollerAddress, {
-          from: address,
-        });
+        const tx = await midasSdk.addFlywheelCoreToComptroller(fwCore.address, comptrollerAddress);
         await tx.wait();
         successToast({
           description: 'Flywheel added to Pool',

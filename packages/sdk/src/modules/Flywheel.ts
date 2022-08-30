@@ -1,4 +1,4 @@
-import { BigNumber, constants, Contract, ContractFactory } from "ethers";
+import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "ethers";
 
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
 import { FuseFlywheelCore__factory } from "../../lib/contracts/typechain/factories/FuseFlywheelCore__factory";
@@ -174,10 +174,13 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         .filter((value, index, self) => self.indexOf(value) === index); // Unique Array;
     }
 
-    async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
+    async getFlywheelMarketRewardsByPoolWithAPR(
+      pool: string,
+      overrides?: CallOverrides
+    ): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
         this.contracts.FuseFlywheelLensRouter as FuseFlywheelLensRouter
-      ).callStatic.getMarketRewardsInfo(pool);
+      ).callStatic.getMarketRewardsInfo(pool, overrides);
 
       const adaptedMarketRewards = marketRewards.map((marketReward) => ({
         underlyingPrice: marketReward.underlyingPrice,

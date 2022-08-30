@@ -101,7 +101,7 @@ export const assetInPool = async (
   underlyingSymbol: string,
   address?: string
 ): Promise<NativePricedFuseAsset> => {
-  const fetchedAssetsInPool: FusePoolData = await sdk.fetchFusePoolData(poolId, address);
+  const fetchedAssetsInPool: FusePoolData = await sdk.fetchFusePoolData(poolId, { from: address });
   return fetchedAssetsInPool.assets.filter((a) => a.underlyingSymbol === underlyingSymbol)[0];
 };
 
@@ -120,7 +120,7 @@ export const getPoolByName = async (name: string, sdk: MidasSdk, address?: strin
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
       const poolIndex = await getPoolIndex(publicPools[j].comptroller, sdk);
-      return await sdk.fetchFusePoolData(poolIndex.toString(), address);
+      return await sdk.fetchFusePoolData(poolIndex.toString(), { from: address });
     }
   }
   return null;
