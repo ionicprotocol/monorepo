@@ -10,8 +10,6 @@ const ChainIdCoingeckoIdMapping = Object.entries(ChainConfigs)
     return acc;
   }, {});
 
-console.log({ ChainIdCoingeckoIdMapping });
-
 const ChainIdNativeSymbolMapping = Object.entries(ChainConfigs)
   .map(([, config]): [string, string] => [
     config.chainId.toString(),
@@ -23,8 +21,6 @@ const ChainIdNativeSymbolMapping = Object.entries(ChainConfigs)
     return acc;
   }, {});
 
-console.log({ ChainIdNativeSymbolMapping });
-
 interface Price {
   value: number;
   symbol: string;
@@ -33,7 +29,6 @@ interface Price {
 // TODO Make currency agnostic
 async function getUSDPriceOf(chainIds: string[]): Promise<Record<string, Price>> {
   const cgIds = chainIds.map((id) => ChainIdCoingeckoIdMapping[id]);
-  console.log({ cgIds });
 
   const { data } = await axios.get(
     `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${cgIds.join(',')}`
