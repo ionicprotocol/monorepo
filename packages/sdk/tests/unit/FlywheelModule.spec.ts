@@ -72,15 +72,15 @@ describe("FlywheelModule", function () {
       from: deployer.address,
     });
 
-    await sdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address, { from: deployer.address });
+    await sdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
     expect(await fwCore.flywheelRewards()).to.eq(fwStaticRewards.address);
-    await sdk.addFlywheelCoreToComptroller(fwCore.address, poolAAddress, { from: deployer.address });
-    const wheels = await sdk.getFlywheelsByPool(poolAAddress, { from: alice.address });
+    await sdk.addFlywheelCoreToComptroller(fwCore.address, poolAAddress);
+    const wheels = await sdk.getFlywheelsByPool(poolAAddress);
     expect(wheels.length).to.eq(1);
     expect(wheels[0].address).to.eq(fwCore.address);
 
-    expect((await sdk.getFlywheelsByPool(poolAAddress, { from: alice.address }))[0].address).to.eq(fwCore.address);
-    expect((await sdk.getFlywheelsByPool(poolBAddress, { from: alice.address })).length).to.eq(0);
+    expect((await sdk.getFlywheelsByPool(poolAAddress))[0].address).to.eq(fwCore.address);
+    expect((await sdk.getFlywheelsByPool(poolBAddress)).length).to.eq(0);
 
     // Funding FlywheelStaticRewards
     await rewardToken.transfer(fwStaticRewards.address, ethers.utils.parseUnits("100", 18), { from: deployer.address });
@@ -96,26 +96,19 @@ describe("FlywheelModule", function () {
     const rewardsPerSecond = ethers.utils.parseUnits("0.0001", 18);
     const rewardsEndTimestamp = 0;
 
-    await sdk.addMarketForRewardsToFlywheelCore(fwCore.address, market.address, { from: deployer.address });
+    await sdk.addMarketForRewardsToFlywheelCore(fwCore.address, market.address);
 
-    await sdk.setStaticRewardInfo(
-      fwStaticRewards.address,
-      market.address,
-      {
-        rewardsEndTimestamp: 0,
-        rewardsPerSecond,
-      },
-      { from: deployer.address }
-    );
+    await sdk.setStaticRewardInfo(fwStaticRewards.address, market.address, {
+      rewardsEndTimestamp: 0,
+      rewardsPerSecond,
+    });
 
     // Check if Rewards are correctly set
     const infoForMarket = await sdk.getFlywheelRewardsInfoForMarket(fwCore.address, market.address);
     expect(infoForMarket.rewardsPerSecond).to.eq(rewardsPerSecond);
     expect(infoForMarket.rewardsEndTimestamp).to.eq(rewardsEndTimestamp);
 
-    const marketRewardsPoolA = await sdk.getFlywheelMarketRewardsByPool(poolAAddress, {
-      from: alice.address,
-    });
+    const marketRewardsPoolA = await sdk.getFlywheelMarketRewardsByPool(poolAAddress);
     const marketReward = marketRewardsPoolA.find((r) => r.market === market.address);
 
     expect(marketReward.rewardsInfo.length).to.eq(1);
