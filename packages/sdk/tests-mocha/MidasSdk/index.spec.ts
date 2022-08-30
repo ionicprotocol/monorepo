@@ -15,7 +15,7 @@ const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [con
 describe("Fuse Index", () => {
   let fuseBase: MidasBase;
   let mockContract: SinonStubbedInstance<Contract>;
-  let mockFactory: SinonStubbedInstance<ContractFactory>;
+
   beforeEach(() => {
     mockContract = createStubInstance(Contract);
     mockContract.connect.returns(mockContract);
@@ -28,14 +28,13 @@ describe("Fuse Index", () => {
       wait: () => Promise.resolve(mockReceipt),
     });
 
-    mockFactory = createStubInstance(ContractFactory, {
-      deploy: stub().resolves({ address: mkAddress("0x123") }),
-    });
-
     const mockProvider = createStubInstance(providers.Web3Provider);
+    const mockSigner = createStubInstance(Signer);
+    (mockSigner as any).getAddress = () => Promise.resolve(mkAddress("0xabcd"));
+
     (mockProvider as any)._isProvider = true;
     (mockProvider as any)._isSigner = true;
-    (mockProvider as any).getSigner = () => mkAddress("0xabcd");
+    (mockProvider as any).getSigner = () => mockSigner;
     (mockProvider as any).getCode = (address: string) => address;
     ganache.chainDeployments = {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
@@ -95,7 +94,7 @@ describe("Fuse Index", () => {
       );
 
       expect(getPoolAddressStub).to.be.calledOnceWithExactly(
-        mkAddress("0xabc"),
+        mkAddress("0xabcd"),
         "Test",
         2,
         mkAddress("0xfcc"),
