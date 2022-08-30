@@ -230,7 +230,7 @@ export const AssetSupplyRow = ({
           </Row>
         </Td>
 
-        <Td px={1}>
+        <Td cursor={'pointer'} onClick={openModal} px={1}>
           <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
         </Td>
 
