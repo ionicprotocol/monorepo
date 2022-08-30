@@ -8,7 +8,6 @@ import {
   DeployedPlugins,
   FundingStrategyContract,
   InterestRateModel,
-  InterestRateModelConf,
   IrmConfig,
   OracleConfig,
   RedemptionStrategyContract,
@@ -107,6 +106,14 @@ export class MidasBase {
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
     this.chainDeployment = chainConfig.chainDeployments;
+    this.chainSpecificAddresses = chainConfig.chainAddresses;
+    this.chainSpecificParams = chainConfig.specificParams;
+    this.liquidationConfig = chainConfig.liquidationDefaults;
+    this.supportedAssets = chainConfig.assets;
+    this.deployedPlugins = chainConfig.deployedPlugins;
+    this.redemptionStrategies = chainConfig.redemptionStrategies;
+    this.fundingStrategies = chainConfig.fundingStrategies;
+    this.artifacts = ARTIFACTS;
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -135,6 +142,7 @@ export class MidasBase {
         this.provider
       ) as FuseFeeDistributor,
     };
+
     if (this.chainDeployment.FuseFlywheelLensRouter) {
       this.contracts["FuseFlywheelLensRouter"] = new Contract(
         this.chainDeployment.FuseFlywheelLensRouter?.address || constants.AddressZero,
@@ -144,7 +152,6 @@ export class MidasBase {
     } else {
       console.warn(`FuseFlywheelLensRouter not deployed to chain ${this.chainId}`);
     }
-    this.artifacts = ARTIFACTS;
 
     this.availableIrms = chainConfig.irms.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
@@ -162,14 +169,43 @@ export class MidasBase {
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
     this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
+  }
 
-    this.chainSpecificAddresses = chainConfig.chainAddresses;
-    this.chainSpecificParams = chainConfig.specificParams;
-    this.liquidationConfig = chainConfig.liquidationDefaults;
-    this.supportedAssets = chainConfig.assets;
-    this.deployedPlugins = chainConfig.deployedPlugins;
-    this.redemptionStrategies = chainConfig.redemptionStrategies;
-    this.fundingStrategies = chainConfig.fundingStrategies;
+  setSigner(signer: Signer) {
+    this._provider = signer.provider as SupportedProvider;
+    this._signer = signer;
+
+    this.initStaticContracts();
+  }
+
+  initStaticContracts() {
+    this.contracts = {
+      FusePoolDirectory: new Contract(
+        this.chainDeployment.FusePoolDirectory.address,
+        this.chainDeployment.FusePoolDirectory.abi,
+        this.provider
+      ) as FusePoolDirectory,
+      FusePoolLens: new Contract(
+        this.chainDeployment.FusePoolLens.address,
+        this.chainDeployment.FusePoolLens.abi,
+        this.provider
+      ) as FusePoolLens,
+      FusePoolLensSecondary: new Contract(
+        this.chainDeployment.FusePoolLensSecondary.address,
+        this.chainDeployment.FusePoolLensSecondary.abi,
+        this.provider
+      ) as FusePoolLensSecondary,
+      FuseSafeLiquidator: new Contract(
+        this.chainDeployment.FuseSafeLiquidator.address,
+        this.chainDeployment.FuseSafeLiquidator.abi,
+        this.provider
+      ) as FuseSafeLiquidator,
+      FuseFeeDistributor: new Contract(
+        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FuseFeeDistributor.abi,
+        this.provider
+      ) as FuseFeeDistributor,
+    };
   }
 
   async deployPool(
