@@ -66,6 +66,7 @@ const FuseStatsBar = () => {
             flexDir="column"
             h={{ base: '10rem', lg: '15rem' }}
             w={{ base: '100%', lg: '50%' }}
+            px={{ lg: '10vw' }}
             alignItems="center"
             justifyContent="center"
             position="relative"
