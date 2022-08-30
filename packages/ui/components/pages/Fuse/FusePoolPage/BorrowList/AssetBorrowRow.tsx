@@ -6,6 +6,8 @@ import { utils } from 'ethers';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
@@ -122,35 +124,64 @@ export const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorro
 
         <Td isNumeric verticalAlign={'top'}>
           <VStack alignItems={'flex-end'}>
-            <Text color={cCard.txtColor} fontWeight={'bold'} fontSize={{ base: '2.8vw', sm: 'md' }}>
-              {smallUsdFormatter(asset.borrowBalanceFiat)}
-            </Text>
-
-            <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
-              {smallUsdFormatter(
-                Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals))
-              ).replace('$', '')}{' '}
-              {tokenData?.symbol ?? asset.underlyingSymbol}
-            </Text>
+            <SimpleTooltip
+              label={asset.borrowBalanceFiat.toString()}
+              isDisabled={
+                asset.borrowBalanceFiat === DOWN_LIMIT || asset.borrowBalanceFiat >= UP_LIMIT
+              }
+            >
+              <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+                {smallUsdFormatter(asset.borrowBalanceFiat)}
+                {asset.borrowBalanceFiat > DOWN_LIMIT && asset.borrowBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+            <SimpleTooltip
+              label={utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)}
+              isDisabled={
+                Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) ===
+                  DOWN_LIMIT ||
+                Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) >= UP_LIMIT
+              }
+            >
+              <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
+                {smallUsdFormatter(
+                  Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals))
+                ).replace('$', '')}
+                {Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) >
+                  DOWN_LIMIT &&
+                  Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) <
+                    UP_LIMIT &&
+                  '+'}{' '}
+                {tokenData?.symbol ?? asset.underlyingSymbol}
+              </Text>
+            </SimpleTooltip>
           </VStack>
         </Td>
 
         <Td verticalAlign={'top'}>
           <PopoverTooltip
             body={
-              'Liquidity is the amount of this asset that is available to borrow (unborrowed). To see how much has been supplied and borrowed in total, navigate to the Pool Info tab.'
+              <>
+                {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && (
+                  <>
+                    <div>{asset.liquidityFiat.toString()}</div>
+                    <br />
+                  </>
+                )}
+                <div>
+                  Liquidity is the amount of this asset that is available to borrow (unborrowed). To
+                  see how much has been supplied and borrowed in total, navigate to the Pool Info
+                  tab.
+                </div>
+              </>
             }
             placement="top-end"
           >
             <VStack alignItems={'flex-end'}>
-              <Text
-                color={cCard.txtColor}
-                fontWeight={'bold'}
-                fontSize={{ base: '2.8vw', sm: 'md' }}
-              >
-                {shortUsdFormatter(asset.liquidityFiat)}
+              <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+                {smallUsdFormatter(asset.liquidityFiat)}
+                {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && '+'}
               </Text>
-
               <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
                 {shortUsdFormatter(
                   Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals))

@@ -1,13 +1,14 @@
 import { useQuery } from 'react-query';
 
-import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
+import { useSupportedUnderlyings } from '@ui/hooks/useSupportedAssets';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string) => {
   const { midasSdk, address, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
   return useQuery<PoolData | null>(
     ['useFusePoolData', poolId, address],
@@ -16,11 +17,11 @@ export const useFusePoolData = (poolId: string) => {
 
       const res = await midasSdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];
-      const assets = res.assets.filter(
-        (asset) => !config.hideAssets.includes(asset.underlyingToken.toLowerCase())
+      const assets = res.assets.filter((asset) =>
+        supportedUnderlyings?.includes(asset.underlyingToken)
       );
-      const underlyingTokens = res.underlyingTokens.filter(
-        (token) => !config.hideAssets.includes(token.toLowerCase())
+      const underlyingTokens = res.underlyingTokens.filter((token) =>
+        supportedUnderlyings?.includes(token)
       );
       if (assets && assets.length !== 0) {
         assets.map((asset) => {
@@ -48,6 +49,10 @@ export const useFusePoolData = (poolId: string) => {
 
       return adaptedFusePoolData;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!poolId && !!usdPrice && !!address }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolId && !!usdPrice && !!address && !!supportedUnderlyings,
+    }
   );
 };
