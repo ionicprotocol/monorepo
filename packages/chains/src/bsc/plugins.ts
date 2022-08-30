@@ -26,16 +26,22 @@ const deployedPlugins: DeployedPlugins = {
     market: "0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C",
     name: "val3EPS DotDotLpERC4626",
     apyDocsUrl: "https://dotdot.finance/#/stake",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
   },
   "0xBb6729e250Ff6b1BB2917bC65817731E98157B1F": {
     market: "0x7479dd29b9256aB74c9bf84d6f9CE6e30014d248",
     name: "valdai3EPS DotDotLpERC4626",
     apyDocsUrl: "https://dotdot.finance/#/stake",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
   },
   "0xcc1602fBeceb5C4C53DA29B60342822C753652E8": {
     market: "0x6f9B6ccD027d1c6Ed09ee215B9Ca5B85a57C6eA1",
     name: "3EPS DotDotLpERC4626",
     apyDocsUrl: "https://dotdot.finance/#/stake",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
   },
 };
 
