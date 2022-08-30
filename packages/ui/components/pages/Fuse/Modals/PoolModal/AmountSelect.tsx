@@ -372,10 +372,13 @@ const AmountSelect = ({
               <DashboardBox p={4} width="100%" mt={4}>
                 <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                   <Text fontWeight="bold">Enable As Collateral:</Text>
-                  <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
+                  <SwitchCSS
+                    symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                    color={cSwitch.bgColor}
+                  />
                   <Switch
                     h="20px"
-                    className={'switch-' + asset.underlyingSymbol}
+                    className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                     isChecked={enableAsCollateral}
                     onChange={() => {
                       setEnableAsCollateral((past) => !past);

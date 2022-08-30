@@ -326,10 +326,13 @@ export const AssetSupplyRow = ({
 
         <Td verticalAlign={'middle'}>
           <Row mainAxisAlignment={'center'} crossAxisAlignment="center">
-            <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
+            <SwitchCSS
+              symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+              color={cSwitch.bgColor}
+            />
             <Switch
               isChecked={asset.membership}
-              className={'switch-' + asset.underlyingSymbol}
+              className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
               onChange={onToggleCollateral}
               size={isMobile ? 'sm' : 'md'}
               cursor={'pointer'}
