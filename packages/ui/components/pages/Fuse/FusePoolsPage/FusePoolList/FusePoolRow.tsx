@@ -8,6 +8,7 @@ import {
   Heading,
   HStack,
   IconButton,
+  Spinner,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -144,15 +145,39 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
         </VStack>
 
         <VStack flex={2}>
-          <Text fontWeight="bold" textAlign="center">
-            {usdPrice && smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
-          </Text>
+          {usdPrice ? (
+            <SimpleTooltip
+              label={(data.totalSuppliedNative * usdPrice).toString()}
+              isDisabled={data.totalSuppliedNative * usdPrice === 0}
+            >
+              <Text fontWeight="bold" textAlign="center">
+                {smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
+                {data.totalSuppliedNative * usdPrice > 0 &&
+                  data.totalSuppliedNative * usdPrice < 0.01 &&
+                  '+'}
+              </Text>
+            </SimpleTooltip>
+          ) : (
+            <Spinner />
+          )}
         </VStack>
 
         <VStack flex={2}>
-          <Text fontWeight="bold" textAlign="center">
-            {usdPrice && smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
-          </Text>
+          {usdPrice ? (
+            <SimpleTooltip
+              label={(data.totalBorrowedNative * usdPrice).toString()}
+              isDisabled={data.totalBorrowedNative * usdPrice === 0}
+            >
+              <Text fontWeight="bold" textAlign="center">
+                {smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
+                {data.totalBorrowedNative * usdPrice > 0 &&
+                  data.totalBorrowedNative * usdPrice < 0.01 &&
+                  '+'}
+              </Text>
+            </SimpleTooltip>
+          ) : (
+            <Spinner />
+          )}
         </VStack>
 
         <VStack flex={1}>
@@ -198,11 +223,21 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   </Text>
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold" textAlign="center">
-                    {isMostSupplied && usdPrice
-                      ? data && smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)
-                      : '$0.00'}
-                  </Text>
+                  {usdPrice ? (
+                    <SimpleTooltip
+                      label={(data.totalBorrowBalanceNative * usdPrice).toString()}
+                      isDisabled={data.totalBorrowBalanceNative * usdPrice === 0}
+                    >
+                      <Text fontWeight="bold" textAlign="center">
+                        {smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)}
+                        {data.totalBorrowBalanceNative * usdPrice > 0 &&
+                          data.totalBorrowBalanceNative * usdPrice < 0.01 &&
+                          '+'}
+                      </Text>
+                    </SimpleTooltip>
+                  ) : (
+                    <Spinner />
+                  )}
                 </Row>
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
@@ -212,11 +247,21 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   </Text>
                 </Row>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold" textAlign="center">
-                    {isMostSupplied && usdPrice
-                      ? data && smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)
-                      : '$0.00'}
-                  </Text>
+                  {usdPrice ? (
+                    <SimpleTooltip
+                      label={(data.totalSupplyBalanceNative * usdPrice).toString()}
+                      isDisabled={data.totalSupplyBalanceNative * usdPrice === 0}
+                    >
+                      <Text fontWeight="bold" textAlign="center">
+                        {smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)}
+                        {data.totalSupplyBalanceNative * usdPrice > 0 &&
+                          data.totalSupplyBalanceNative * usdPrice < 0.01 &&
+                          '+'}
+                      </Text>
+                    </SimpleTooltip>
+                  ) : (
+                    <Spinner />
+                  )}
                 </Row>
               </Column>
             </Row>

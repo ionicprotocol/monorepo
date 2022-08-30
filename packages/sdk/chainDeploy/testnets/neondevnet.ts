@@ -17,9 +17,9 @@ export const deployConfig: ChainDeployConfig = {
   uniswap: {
     hardcoded: [],
     uniswapData: [],
-    pairInitHashCode: ethers.utils.hexlify("0xecba335299a6693cb2ebc4782e74669b84290b6378ea3a3873c7231a8d7d1074"),
-    uniswapV2RouterAddress: "0x9Ac64Cc6e4415144C455BD8E4837Fea55603e5c3",
-    uniswapV2FactoryAddress: "0xB7926C0430Afb07AA7DEfDE6DA862aE0Bde767bc",
+    pairInitHashCode: ethers.utils.hexlify("0x5e60a73d5771bebe13c2aec4784c2f5bd78d04e8e89e164a5299407beb2d324a"),
+    uniswapV2RouterAddress: "0xBD9EbFe0E6e909E56f1Fd3346D0118B7Db49Ca15",
+    uniswapV2FactoryAddress: "0xBD9EbFe0E6e909E56f1Fd3346D0118B7Db49Ca15",
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
     flashSwapFee: 30,
@@ -37,6 +37,14 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise
     waitConfirmations: 1,
   });
   console.log("SimplePriceOracle: ", simplePO.address);
+
+  const pyth = await deployments.deploy("Pyth", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("Pyth: ", pyth.address);
 
   const _assets = assets.filter((a) => a.symbol !== assetSymbols.WNEON);
 

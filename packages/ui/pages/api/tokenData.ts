@@ -1,10 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
-import { bsc, moonbeam, polygon } from '@midas-capital/chains';
-import {
-  assetArrayToMap,
-  ChainSupportedAssets as ChainSupportedAssetsType,
-  SupportedChains,
-} from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import { Contract, utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { erc20ABI } from 'wagmi';
@@ -14,79 +9,59 @@ import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX } from '@ui/constants/index';
 import { TokenDataResponse } from '@ui/types/ComponentPropsType';
 import { providerURLForChain } from '@ui/utils/web3Providers';
-const ChainSupportedAssets: ChainSupportedAssetsType = {
-  [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.ganache]: [],
-  [SupportedChains.evmos]: [],
-  [SupportedChains.chapel]: [],
-  [SupportedChains.moonbeam]: moonbeam.assets,
-  [SupportedChains.neon_devnet]: [],
-};
-
-const ChainSupportedAssetsMap: { [key in SupportedChains]?: ReturnType<typeof assetArrayToMap> } =
-  Object.entries(ChainSupportedAssets).reduce((acc, [key, value]) => {
-    // @ts-ignore
-    acc[key] = assetArrayToMap(value);
-    return acc;
-  }, {});
 
 const querySchema = yup.object().shape({
   chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
-  address: yup
-    .string()
-    .matches(/^0x[a-fA-F0-9]{40}$/, 'Not a valid Wallet address')
-    .required(),
+  addresses: yup.array().of(
+    yup
+      .string()
+      .matches(/^0x[a-fA-F0-9]{40}$/, 'Not a valid Wallet address')
+      .required()
+  ),
 });
 
-const handler = async (request: NextApiRequest, response: NextApiResponse<TokenDataResponse>) => {
+const handler = async (request: NextApiRequest, response: NextApiResponse<TokenDataResponse[]>) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Cache-Control', 'max-age=86400, s-maxage=86400');
 
   querySchema.validateSync(request.body);
 
-  const { chain, address: rawAddress }: { chain: SupportedChains; address: string } = request.body;
-  const address = utils.getAddress(rawAddress);
-  const tokenContract = new Contract(
-    address,
-    erc20ABI,
-    new JsonRpcProvider(providerURLForChain(Number(chain)))
-  );
+  const { chain, addresses: rawAddresses }: { chain: SupportedChains; addresses: string[] } =
+    request.body;
+  const addresses = rawAddresses.map((addr) => {
+    return utils.getAddress(addr);
+  });
+  const tokenContracts = addresses.map((addr) => {
+    return new Contract(addr, erc20ABI, new JsonRpcProvider(providerURLForChain(Number(chain))));
+  });
 
-  let basicTokenInfo: Partial<TokenDataResponse> = { address };
+  const basicTokenInfos: Partial<TokenDataResponse>[] = [];
 
-  const hardcodedAsset = (ChainSupportedAssetsMap[chain] || {})[address];
-  if (hardcodedAsset) {
-    basicTokenInfo.address = hardcodedAsset.underlying;
-    basicTokenInfo.symbol = hardcodedAsset.symbol;
-    basicTokenInfo.decimals = hardcodedAsset.decimals;
-    basicTokenInfo.name = hardcodedAsset.name;
-  } else {
-    try {
-      const [name, symbol, decimals] = await Promise.all([
-        tokenContract.callStatic.name().catch(() => undefined),
-        tokenContract.callStatic.symbol(),
-        tokenContract.callStatic.decimals().catch(() => 18),
-      ]);
-      basicTokenInfo = {
-        ...basicTokenInfo,
-        name: name ? name : symbol,
-        symbol,
-        decimals,
-      };
-    } catch {
-      console.warn(`Unable to fetch token data from contract: ${address} on chain:${chain}`);
-    }
+  try {
+    const res = await Promise.all(
+      tokenContracts.map((contract) =>
+        Promise.all([
+          contract.callStatic.name().catch(() => undefined),
+          contract.callStatic.symbol(),
+          contract.callStatic.decimals().catch(() => 18),
+        ])
+      )
+    );
+
+    res.map((data, i) => {
+      basicTokenInfos.push({
+        name: data[0] || data[1],
+        symbol: data[1],
+        decimals: data[2],
+        address: addresses[i],
+        logoURL: config.iconServerURL + '/token/96x96/' + data[1].toLowerCase() + '.png',
+      });
+    });
+  } catch {
+    console.warn(`Unable to fetch token data from contract: ${addresses} on chain:${chain}`);
   }
 
-  if (!basicTokenInfo.logoURL) {
-    if (basicTokenInfo.symbol) {
-      basicTokenInfo.logoURL =
-        config.iconServerURL + '/token/96x96/' + basicTokenInfo.symbol.toLowerCase() + '.png';
-    }
-  }
-
-  response.json(basicTokenInfo as TokenDataResponse);
+  response.json(basicTokenInfos as TokenDataResponse[]);
 };
 
 export default handler;

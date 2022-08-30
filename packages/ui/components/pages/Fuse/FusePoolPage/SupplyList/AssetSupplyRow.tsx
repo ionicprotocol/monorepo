@@ -23,8 +23,9 @@ import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButt
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { URL_MIDAS_DOCS } from '@ui/constants/index';
+import { DOWN_LIMIT, UP_LIMIT, URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
@@ -291,13 +292,35 @@ export const AssetSupplyRow = ({
           verticalAlign={'top'}
         >
           <VStack alignItems="flex-end">
-            <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
-              {smallUsdFormatter(asset.supplyBalanceFiat)}
-            </Text>
-            <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
-              {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}{' '}
-              {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}
-            </Text>
+            <SimpleTooltip
+              label={asset.supplyBalanceFiat.toString()}
+              isDisabled={
+                asset.supplyBalanceFiat === DOWN_LIMIT || asset.supplyBalanceFiat >= UP_LIMIT
+              }
+            >
+              <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+                {smallUsdFormatter(asset.supplyBalanceFiat)}
+                {asset.supplyBalanceFiat > DOWN_LIMIT && asset.supplyBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+            <SimpleTooltip
+              label={utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)}
+              isDisabled={
+                Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) ===
+                  DOWN_LIMIT ||
+                Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) >= UP_LIMIT
+              }
+            >
+              <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
+                {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}
+                {Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) >
+                  DOWN_LIMIT &&
+                  Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) <
+                    UP_LIMIT &&
+                  '+'}{' '}
+                {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}
+              </Text>
+            </SimpleTooltip>
           </VStack>
         </Td>
 
