@@ -230,10 +230,10 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       const addressOfSigner = await this.signer.getAddress();
       return (await flywheelCoreFactory.deploy(
         rewardTokenAddress,
-        options.rewardsAddress || constants.AddressZero,
-        options.boosterAddress || constants.AddressZero,
-        options.ownerAddress || addressOfSigner,
-        options.authorityAddress || constants.AddressZero
+        options?.rewardsAddress || constants.AddressZero,
+        options?.boosterAddress || constants.AddressZero,
+        options?.ownerAddress || addressOfSigner,
+        options?.authorityAddress || constants.AddressZero
       )) as FuseFlywheelCore;
     }
 
@@ -252,8 +252,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       const addressOfSigner = await this.signer.getAddress();
       return (await fwStaticRewardsFactory.deploy(
         flywheelCoreAddress,
-        options.ownerAddress || addressOfSigner,
-        options.authorityAddress || constants.AddressZero
+        options?.ownerAddress || addressOfSigner,
+        options?.authorityAddress || constants.AddressZero
       )) as FlywheelStaticRewards;
     }
 

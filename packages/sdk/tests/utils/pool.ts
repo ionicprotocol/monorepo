@@ -52,7 +52,6 @@ export async function createPool({
     bigCloseFactor,
     bigLiquidationIncentive,
     priceOracleAddress,
-    { from: signer.address },
     whitelist
   );
 }

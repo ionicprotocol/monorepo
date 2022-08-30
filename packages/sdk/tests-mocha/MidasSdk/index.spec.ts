@@ -83,15 +83,7 @@ describe("Fuse Index", () => {
     });
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool(
-        "Test",
-        false,
-        constants.One,
-        constants.One,
-        mkAddress("0xa"),
-        { from: mkAddress("0xabc") },
-        [mkAddress("0xbbb")]
-      );
+      await fuseBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),
@@ -117,15 +109,7 @@ describe("Fuse Index", () => {
 
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is true", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool(
-        "Test",
-        true,
-        constants.One,
-        constants.One,
-        mkAddress("0xa"),
-        { from: mkAddress("0xabc") },
-        [mkAddress("0xbbb")]
-      );
+      await fuseBase.deployPool("Test", true, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
 
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
@@ -142,15 +126,7 @@ describe("Fuse Index", () => {
 
     it("should deploy a pool when comptroller is not deployed", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool(
-        "Test",
-        false,
-        constants.One,
-        constants.One,
-        mkAddress("0xa"),
-        { from: mkAddress("0xabc") },
-        [mkAddress("0xbbb")]
-      );
+      await fuseBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),

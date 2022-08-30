@@ -14,7 +14,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
   .addParam("contractName", "Name of the contract of the plugin", undefined, types.string)
   .addParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .addParam("fwAddresses", "Flywheel address, one for each reward token", undefined, types.string)
-  .addParam("rewardTokens", "Reards tokens", undefined, types.string)
+  .addParam("rewardTokens", "Reward tokens", undefined, types.string)
   .setAction(async (taskArgs, hre) => {
     const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
     // @ts-ignore
@@ -100,7 +100,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
       }
       // Step 3: add Flywheels to market
       try {
-        await sdk.addFlywheelCoreToComptroller(flywheel.address, comptroller, { from: signer.address });
+        await sdk.addFlywheelCoreToComptroller(flywheel.address, comptroller);
         console.log(`FW ${flywheel.address} added to comptroller`);
       } catch (e) {
         console.log("already added");

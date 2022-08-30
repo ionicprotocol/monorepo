@@ -36,7 +36,7 @@ const steps = [
 ];
 
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
-  const { midasSdk, address } = useMidas();
+  const { midasSdk } = useMidas();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -64,9 +64,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       try {
         setActiveStep(1);
 
-        fwCore = await midasSdk.deployFlywheelCore(rewardTokenData.address, {
-          from: address,
-        });
+        fwCore = await midasSdk.deployFlywheelCore(rewardTokenData.address);
         await fwCore.deployTransaction.wait();
         successToast({
           description: 'Flywheel Core Deployed',
@@ -79,9 +77,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       let fwStaticRewards: FlywheelStaticRewards;
       try {
         setActiveStep(2);
-        fwStaticRewards = await midasSdk.deployFlywheelStaticRewards(fwCore.address, {
-          from: address,
-        });
+        fwStaticRewards = await midasSdk.deployFlywheelStaticRewards(fwCore.address);
         await fwStaticRewards.deployTransaction.wait();
         successToast({
           description: 'Flywheel Rewards Deployed',
