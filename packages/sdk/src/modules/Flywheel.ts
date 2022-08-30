@@ -215,8 +215,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     /** WRITE */
     async deployFlywheelCore(
       rewardTokenAddress: string,
-      options: {
-        from: string;
+      options?: {
         rewardsAddress?: string;
         boosterAddress?: string;
         ownerAddress?: string;
@@ -228,19 +227,19 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         this.artifacts.FuseFlywheelCore.bytecode,
         this.signer
       ) as FuseFlywheelCore__factory;
+      const addressOfSigner = await this.signer.getAddress();
       return (await flywheelCoreFactory.deploy(
         rewardTokenAddress,
         options.rewardsAddress || constants.AddressZero,
         options.boosterAddress || constants.AddressZero,
-        options.ownerAddress || options.from,
+        options.ownerAddress || addressOfSigner,
         options.authorityAddress || constants.AddressZero
       )) as FuseFlywheelCore;
     }
 
     async deployFlywheelStaticRewards(
       flywheelCoreAddress: string,
-      options: {
-        from: string;
+      options?: {
         ownerAddress?: string;
         authorityAddress?: string;
       }
@@ -250,10 +249,10 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         this.artifacts.FlywheelStaticRewards.bytecode,
         this.signer
       ) as FlywheelStaticRewards__factory;
-
+      const addressOfSigner = await this.signer.getAddress();
       return (await fwStaticRewardsFactory.deploy(
         flywheelCoreAddress,
-        options.ownerAddress || options.from,
+        options.ownerAddress || addressOfSigner,
         options.authorityAddress || constants.AddressZero
       )) as FlywheelStaticRewards;
     }

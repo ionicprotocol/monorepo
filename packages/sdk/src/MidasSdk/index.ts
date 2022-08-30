@@ -37,7 +37,6 @@ import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
-import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
 import { CTOKEN_ERROR_CODES } from "./config";
 import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
@@ -211,7 +210,6 @@ export class MidasBase {
     closeFactor: BigNumber,
     liquidationIncentive: BigNumber,
     priceOracle: string, // Contract address
-    options: { from: string }, // We might need to add sender as argument. Getting address from options will collide with the override arguments in ethers contract method calls. It doesn't take address.
     whitelist: string[] // An array of whitelisted addresses
   ): Promise<[string, string, string, number?]> {
     try {
@@ -246,8 +244,9 @@ export class MidasBase {
       }
       const existingPools = await contract.callStatic.getAllPools();
       // Compute Unitroller address
+      const addressOfSigner = await this.signer.getAddress();
       const poolAddress = getPoolAddress(
-        options.from,
+        addressOfSigner,
         poolName,
         existingPools.length,
         this.chainDeployment.FuseFeeDistributor.address,
@@ -323,16 +322,6 @@ export class MidasBase {
     }
 
     return oracle;
-  }
-
-  async checkCardinality(uniswapV3Pool: string) {
-    const uniswapV3PoolContract = new Contract(uniswapV3Pool, uniswapV3PoolAbiSlim);
-    return (await uniswapV3PoolContract.methods.slot0().call()).observationCardinalityNext < 64;
-  }
-
-  async primeUniswapV3Oracle(uniswapV3Pool, options) {
-    const uniswapV3PoolContract = new Contract(uniswapV3Pool, uniswapV3PoolAbiSlim);
-    await uniswapV3PoolContract.methods.increaseObservationCardinalityNext(64).send(options);
   }
 
   identifyInterestRateModelName = (irmAddress: string): string | null => {

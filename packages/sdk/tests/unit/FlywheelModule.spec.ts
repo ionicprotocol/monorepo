@@ -65,12 +65,8 @@ describe("FlywheelModule", function () {
     const market = erc20OneCToken;
 
     // Setup FuseFlywheelCore with FlywheelStaticRewards
-    const fwCore = await sdk.deployFlywheelCore(rewardToken.address, {
-      from: deployer.address,
-    });
-    const fwStaticRewards = await sdk.deployFlywheelStaticRewards(fwCore.address, {
-      from: deployer.address,
-    });
+    const fwCore = await sdk.deployFlywheelCore(rewardToken.address);
+    const fwStaticRewards = await sdk.deployFlywheelStaticRewards(fwCore.address);
 
     await sdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
     expect(await fwCore.flywheelRewards()).to.eq(fwStaticRewards.address);
