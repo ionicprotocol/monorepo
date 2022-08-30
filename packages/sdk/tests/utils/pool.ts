@@ -75,9 +75,7 @@ export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAd
   const deployed: DeployedAsset[] = [];
   for (const assetConf of assets) {
     console.log("Deploying asset: ", assetConf.name);
-    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConf, {
-      from: signer.address,
-    });
+    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConf);
     if (receipt.status !== 1) {
       throw `Failed to deploy asset: ${receipt.logs}`;
     }
