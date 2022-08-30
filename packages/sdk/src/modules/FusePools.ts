@@ -163,9 +163,9 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       }
 
       const poolData = await Promise.all(
-        res.map((pool, i) => {
-          return this.fetchFusePoolData(i.toString(), overrides).catch((error) => {
-            console.error(`Pool ID ${i} wasn't able to be fetched from FusePoolLens without error.`, error);
+        res.map((_, poolId) => {
+          return this.fetchFusePoolData(poolId.toString(), overrides).catch((error) => {
+            console.error(`Pool ID ${poolId} wasn't able to be fetched from FusePoolLens without error.`, error);
             return null;
           });
         })

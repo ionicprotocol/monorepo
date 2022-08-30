@@ -35,7 +35,7 @@ describe("Fuse Index", () => {
     const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
     (mockProvider as any)._isSigner = true;
-    (mockProvider as any).getSigner = (address: string) => address;
+    (mockProvider as any).getSigner = () => mkAddress("0xabcd");
     (mockProvider as any).getCode = (address: string) => address;
     ganache.chainDeployments = {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
