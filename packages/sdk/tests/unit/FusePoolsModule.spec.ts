@@ -30,7 +30,7 @@ describe("FusePoolsModule", function () {
       sdk.irms.JumpRateModel.address,
       ethers
     );
-    await poolHelpers.deployAssets(assets, deployer);
+    await poolHelpers.deployAssets(assets);
   });
 
   describe("fetch pools", async function () {
