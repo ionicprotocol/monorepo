@@ -41,6 +41,7 @@ import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
+import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -87,6 +88,8 @@ const AmountSelect = ({
   const { cCard, cSwitch } = useColors();
   const [borrowableAmount, setBorrowableAmount] = useState<number>(0);
   const [borrowedAmount, setBorrowedAmount] = useState<number>(0);
+
+  const { data: myBalance } = useTokenBalance(asset.underlyingToken);
 
   useEffect(() => {
     const func = async () => {
@@ -309,7 +312,12 @@ const AmountSelect = ({
                 setUserEnteredAmount={_setUserEnteredAmount}
                 setAmount={_setAmount}
               />
-
+              <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
+                <Text mr={2}>Wallet Balance:</Text>
+                <Text>
+                  {myBalance ? utils.formatUnits(myBalance) : 0} {asset.underlyingSymbol}
+                </Text>
+              </Row>
               <DashboardBox width="100%" height="70px" mt={3}>
                 <Row
                   width="100%"
@@ -350,10 +358,13 @@ const AmountSelect = ({
               <DashboardBox p={4} width="100%" mt={4}>
                 <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                   <Text fontWeight="bold">Enable As Collateral:</Text>
-                  <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
+                  <SwitchCSS
+                    symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                    color={cSwitch.bgColor}
+                  />
                   <Switch
                     h="20px"
-                    className={'switch-' + asset.underlyingSymbol}
+                    className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                     isChecked={enableAsCollateral}
                     onChange={() => {
                       setEnableAsCollateral((past) => !past);

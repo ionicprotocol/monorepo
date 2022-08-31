@@ -1,8 +1,10 @@
-import { Box, Table, TableCaption, Tbody, Td, Thead, Tr } from '@chakra-ui/react';
+import { Box, HStack, Table, TableCaption, Tbody, Td, Text, Thead, Tr } from '@chakra-ui/react';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useMemo } from 'react';
 
 import { AssetSupplyRow } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/AssetSupplyRow';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -44,7 +46,18 @@ export const SupplyList = ({
           textAlign={'left'}
           fontSize={{ base: '3.8vw', sm: 'lg' }}
         >
-          Your Supply Balance: {smallUsdFormatter(supplyBalanceFiat)}
+          <HStack>
+            <Text>Your Supply Balance:</Text>
+            <SimpleTooltip
+              label={supplyBalanceFiat.toString()}
+              isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
+            >
+              <Text>
+                {smallUsdFormatter(supplyBalanceFiat)}
+                {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+          </HStack>
         </TableCaption>
         <Thead>
           {assets.length > 0 ? (
