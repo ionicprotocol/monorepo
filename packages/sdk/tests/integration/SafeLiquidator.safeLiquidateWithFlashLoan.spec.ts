@@ -93,6 +93,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
 
     // Supply 0.1 tokenOne from other account
     const supply1Amount = "1";
+    sdk.setSigner(alice);
     const btcbSuply = await sdk.supply(
       deployedErc20One.assetAddress,
       erc20One.underlying,
@@ -108,6 +109,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     );
 
     const supply2Amount = "8500";
+    sdk.setSigner(bob);
     const busdSupply = await sdk.supply(
       deployedErc20Two.assetAddress,
       erc20Two.underlying,
@@ -123,6 +125,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     );
 
     const borrowAmount = "0.2";
+    sdk.setSigner(bob);
     const btcbBorrow = await sdk.borrow(deployedErc20One.assetAddress, ethers.utils.parseEther(borrowAmount), {
       from: bob.address,
     });
