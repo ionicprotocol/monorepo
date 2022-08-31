@@ -236,9 +236,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await midasSdk.withdraw(asset.cToken, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.withdraw(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode);

@@ -155,7 +155,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       };
     }
 
-    async fetchPoolsManual(overrides?: CallOverrides): Promise<(FusePoolData | null)[] | undefined> {
+    async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(FusePoolData | null)[] | undefined> {
       const res = await this.contracts.FusePoolDirectory.callStatic.getAllPools(overrides);
 
       if (!res.length) {

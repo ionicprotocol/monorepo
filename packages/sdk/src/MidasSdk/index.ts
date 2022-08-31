@@ -14,6 +14,7 @@ import {
   SupportedAsset,
   SupportedChains,
 } from "@midas-capital/types";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, constants, Contract, Signer, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
@@ -45,7 +46,8 @@ import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
-export type SignerOrProvider = Signer | SupportedProvider;
+export type SupportedSigners = Signer | SignerWithAddress;
+export type SignerOrProvider = SupportedSigners | SupportedProvider;
 
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -95,9 +97,16 @@ export class MidasBase {
     this._signer = signer;
   }
 
-  constructor(provider: SupportedProvider, chainConfig: ChainConfig) {
-    this._provider = provider;
-    this._signer = provider.getSigner ? provider.getSigner() : null;
+  constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig) {
+    if (SignerWithAddress.isSigner(signerOrProvider) || Signer.isSigner(signerOrProvider)) {
+      this._provider = signerOrProvider.provider as any;
+      this._signer = signerOrProvider;
+    } else if (JsonRpcProvider.isProvider(signerOrProvider) || Web3Provider.isProvider(signerOrProvider)) {
+      this._provider = signerOrProvider;
+      this._signer = signerOrProvider.getSigner ? signerOrProvider.getSigner() : null;
+    } else {
+      throw Error("Signer or Provider not compatible");
+    }
 
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
