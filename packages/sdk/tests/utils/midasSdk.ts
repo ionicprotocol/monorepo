@@ -1,10 +1,12 @@
+import { JsonRpcProvider } from "@ethersproject/providers";
 import { bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
 import { MidasSdk } from "../../src";
+import { SignerOrProvider } from "../MidasSdk";
 
 let midasSdk: MidasSdk;
 
@@ -171,19 +173,22 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   return await getCommonDeployments(chainDeployment);
 };
 
-export const getOrCreateMidas = async (namedSigner?: string): Promise<MidasSdk> => {
+export const getOrCreateMidas = async (signerOrProviderOrSignerName?: SignerOrProvider | string): Promise<MidasSdk> => {
   if (!midasSdk) {
     let signer;
-    if (namedSigner) {
-      signer = await ethers.getNamedSigner("deployer");
-    } else {
-      signer = await ethers.getSigners()[0];
-    }
-    // INFO: In test this can still be undefined, not sure why
-    // falls back to ethers.provider, we used this as default before this
-    if (!signer) {
+    if (!signerOrProviderOrSignerName) {
       signer = ethers.provider;
+    } else {
+      if (typeof signerOrProviderOrSignerName === "string") {
+        signer = await ethers.getNamedSigner(signerOrProviderOrSignerName);
+      }
+      if (JsonRpcProvider.isProvider(signerOrProviderOrSignerName) || Signer.isSigner(signerOrProviderOrSignerName)) {
+        signer = signerOrProviderOrSignerName;
+      } else {
+        signer = await ethers.getSigners()[0];
+      }
     }
+
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
     let chainConfig: ChainConfig;

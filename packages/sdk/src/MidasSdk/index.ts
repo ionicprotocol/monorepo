@@ -97,6 +97,8 @@ export class MidasBase {
   }
 
   constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig) {
+    if (!signerOrProvider) throw Error("No Provider or Signer");
+
     if (SignerWithAddress.isSigner(signerOrProvider) || Signer.isSigner(signerOrProvider)) {
       this._provider = signerOrProvider.provider as any;
       this._signer = signerOrProvider;
