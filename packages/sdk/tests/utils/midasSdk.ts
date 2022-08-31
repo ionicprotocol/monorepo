@@ -173,11 +173,16 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
 
 export const getOrCreateMidas = async (namedSigner?: string): Promise<MidasSdk> => {
   if (!midasSdk) {
-    let signer: SignerWithAddress;
+    let signer;
     if (namedSigner) {
       signer = await ethers.getNamedSigner("deployer");
     } else {
       signer = await ethers.getSigners()[0];
+    }
+    // INFO: In test this can still be undefined, not sure why
+    // falls back to ethers.provider, we used this as default before this
+    if (!signer) {
+      signer = ethers.provider;
     }
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;

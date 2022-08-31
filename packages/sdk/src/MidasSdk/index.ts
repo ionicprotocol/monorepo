@@ -104,6 +104,7 @@ export class MidasBase {
       this._provider = signerOrProvider;
       this._signer = signerOrProvider.getSigner ? signerOrProvider.getSigner() : null;
     } else {
+      console.warn("Incompatible Provider or Signer: ", signerOrProvider);
       throw Error("Signer or Provider not compatible");
     }
 
