@@ -354,9 +354,7 @@ describe("FundOperation", () => {
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(3), {
-        from: mkAddress("0xd2c"),
-      });
+      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(3));
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
@@ -371,9 +369,7 @@ describe("FundOperation", () => {
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(5), {
-        from: mkAddress("0xd2c"),
-      });
+      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(5));
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);

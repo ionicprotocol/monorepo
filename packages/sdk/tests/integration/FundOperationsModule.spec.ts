@@ -95,7 +95,7 @@ describe("FundOperationsModule", function () {
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const resp = await sdk.withdraw(asset.cToken, utils.parseUnits("2", 18), { from: deployer.address });
+    const resp = await sdk.withdraw(asset.cToken, utils.parseUnits("2", 18));
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);

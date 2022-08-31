@@ -38,7 +38,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     ) {
       const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
 
-      const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
+      const hasApprovedEnough = (await token.callStatic.allowance(this.signer, cTokenAddress)).gte(amount);
       if (!hasApprovedEnough) {
         const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
         const approveTx = await token.approve(cTokenAddress, max);
@@ -110,7 +110,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { tx, errorCode: null };
     }
 
-    async withdraw(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
+    async withdraw(cTokenAddress: string, amount: BigNumber) {
       const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;

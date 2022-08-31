@@ -18,7 +18,7 @@ export type LensPoolsWithData = [
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
-    async fetchFusePoolData(poolId: string, overrides?: CallOverrides): Promise<FusePoolData> {
+    async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData> {
       const {
         comptroller,
         name: _unfiliteredName,

@@ -98,12 +98,8 @@ task("pools:create", "Create pool if does not exist")
         } else {
           flywheelMarket = marketOne;
         }
-        const flywheelCoreInstance = await sdk.deployFlywheelCore(fwTokenInstance.address, {
-          from: signer.address,
-        });
-        const fwStaticRewards = await sdk.deployFlywheelStaticRewards(flywheelCoreInstance.address, {
-          from: signer.address,
-        });
+        const flywheelCoreInstance = await sdk.deployFlywheelCore(fwTokenInstance.address);
+        const fwStaticRewards = await sdk.deployFlywheelStaticRewards(flywheelCoreInstance.address);
         console.log("Deployed static rewards for: ", await fwTokenInstance.symbol());
         await sdk.setFlywheelRewards(flywheelCoreInstance.address, fwStaticRewards.address);
         await sdk.addFlywheelCoreToComptroller(flywheelCoreInstance.address, poolAddress);

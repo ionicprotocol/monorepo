@@ -1,5 +1,5 @@
 import { ganache } from "@midas-capital/chains";
-import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
+import { constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../lib/contracts/typechain";

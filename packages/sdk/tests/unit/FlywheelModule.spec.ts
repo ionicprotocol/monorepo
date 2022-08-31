@@ -79,7 +79,7 @@ describe("FlywheelModule", function () {
     expect((await sdk.getFlywheelsByPool(poolBAddress)).length).to.eq(0);
 
     // Funding FlywheelStaticRewards
-    await rewardToken.transfer(fwStaticRewards.address, ethers.utils.parseUnits("100", 18), { from: deployer.address });
+    await rewardToken.connect(deployer).transfer(fwStaticRewards.address, ethers.utils.parseUnits("100", 18));
     expect(await rewardToken.balanceOf(fwStaticRewards.address)).to.not.eq(0);
 
     await collateralHelpers.addCollateral(poolAAddress, alice, await market.callStatic.symbol(), "100", true);
