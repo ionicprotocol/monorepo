@@ -34,7 +34,7 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
-import { DEFAULT_DECIMALS, DOWN_LIMIT, UP_LIMIT, UserAction } from '@ui/constants/index';
+import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -313,24 +313,10 @@ const AmountSelect = ({
                 setAmount={_setAmount}
               />
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                <Text mr={2}>Balance:</Text>
-                <SimpleTooltip
-                  label={myBalance ? utils.formatUnits(myBalance) : ''}
-                  isDisabled={!myBalance}
-                >
-                  <Text fontWeight="bold">
-                    {myBalance
-                      ? toFixedNoRound(utils.formatUnits(myBalance), 2) +
-                        `${
-                          Number(utils.formatUnits(myBalance)) > DOWN_LIMIT &&
-                          Number(utils.formatUnits(myBalance)) < UP_LIMIT
-                            ? '+'
-                            : ''
-                        }`
-                      : 0}{' '}
-                    {asset.underlyingSymbol}
-                  </Text>
-                </SimpleTooltip>
+                <Text mr={2}>Wallet Balance:</Text>
+                <Text>
+                  {myBalance ? utils.formatUnits(myBalance) : 0} {asset.underlyingSymbol}
+                </Text>
               </Row>
               <DashboardBox width="100%" height="70px" mt={3}>
                 <Row
@@ -372,10 +358,13 @@ const AmountSelect = ({
               <DashboardBox p={4} width="100%" mt={4}>
                 <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                   <Text fontWeight="bold">Enable As Collateral:</Text>
-                  <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
+                  <SwitchCSS
+                    symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                    color={cSwitch.bgColor}
+                  />
                   <Switch
                     h="20px"
-                    className={'switch-' + asset.underlyingSymbol}
+                    className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                     isChecked={enableAsCollateral}
                     onChange={() => {
                       setEnableAsCollateral((past) => !past);

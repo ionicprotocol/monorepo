@@ -18,9 +18,9 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
 
   async init(interestRateModelAddress: string, assetAddress: string, provider: Web3Provider): Promise<void> {
     const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBINterestRateModelartifact.abi, provider);
-    this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.baseRatePerBlock());
-    this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.multiplierPerBlock());
-    this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getJumpMultiplierPerBlock());
+    this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getMultiplierPerBlock());
+    this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
+    this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getBaseRatePerBlock());
     this.kink = BigNumber.from(await jumpRateModelContract.callStatic.kink());
     const cTokenContract = getContract(assetAddress, CTokenInterfaceArtifact.abi, provider);
     this.reserveFactorMantissa = BigNumber.from(await cTokenContract.callStatic.reserveFactorMantissa());
@@ -41,11 +41,10 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
     provider: Web3Provider
   ): Promise<void> {
     const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBINterestRateModelartifact.abi, provider);
-    this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.baseRatePerBlock());
-    this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.multiplierPerBlock());
-    this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getJumpMultiplierPerBlock());
+    this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getMultiplierPerBlock());
+    this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
+    this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getBaseRatePerBlock());
     this.kink = BigNumber.from(await jumpRateModelContract.callStatic.kink());
-
     this.reserveFactorMantissa = BigNumber.from(reserveFactorMantissa);
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(adminFeeMantissa));
     this.reserveFactorMantissa = this.reserveFactorMantissa.add(BigNumber.from(fuseFeeMantissa));
@@ -81,12 +80,16 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
       !this.jumpMultiplierPerBlock
     )
       throw new Error("Interest rate model class not initialized.");
+    const normalRate = utilizationRate
+      .mul(this.multiplierPerBlock)
+      .div(utils.parseEther("1"))
+      .add(this.baseRatePerBlock);
+
     if (utilizationRate.lte(this.kink)) {
-      return utilizationRate.mul(this.multiplierPerBlock).div(utils.parseEther("1")).add(this.baseRatePerBlock);
+      return normalRate;
     } else {
-      const normalRate = this.kink.mul(this.multiplierPerBlock).div(utils.parseEther("1")).add(this.baseRatePerBlock);
       const excessUtil = utilizationRate.sub(this.kink);
-      return excessUtil.mul(this.jumpMultiplierPerBlock).div(utils.parseEther("1")).add(normalRate);
+      return excessUtil.mul(this.jumpMultiplierPerBlock).div(utils.parseEther("1")).mul(100).add(normalRate);
     }
   }
 
