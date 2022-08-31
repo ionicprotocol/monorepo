@@ -27,6 +27,7 @@ import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
 import "./tasks/upgradePools";
+import "./tasks/replaceDeployer";
 
 import "./tasks/one-time/dot-dot-bsc-plugins";
 // import "./tasks/one-time/jarvis-polygon-plugins";

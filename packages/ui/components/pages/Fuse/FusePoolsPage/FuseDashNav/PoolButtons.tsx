@@ -60,6 +60,7 @@ export const PoolButtons = ({
             justifyContent="center"
             mx={4}
             mt={2}
+            hidden
           >
             <FilterButton
               isSelected={isAllPoolSelected}
@@ -98,6 +99,7 @@ export const PoolButtons = ({
           gap={2}
           mt={2}
           mr={2}
+          hidden
         >
           <FilterButton
             isSelected={isAllPoolSelected}
