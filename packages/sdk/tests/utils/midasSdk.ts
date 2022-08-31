@@ -6,7 +6,6 @@ import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
 import { MidasSdk } from "../../src";
-import { SignerOrProvider } from "../MidasSdk";
 
 let midasSdk: MidasSdk;
 
@@ -173,7 +172,7 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   return await getCommonDeployments(chainDeployment);
 };
 
-export const getOrCreateMidas = async (signerOrProviderOrSignerName?: SignerOrProvider | string): Promise<MidasSdk> => {
+export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | string): Promise<MidasSdk> => {
   if (!midasSdk) {
     let signer;
     if (!signerOrProviderOrSignerName) {
