@@ -82,10 +82,6 @@ export class MidasBase {
     return this._provider;
   }
 
-  public set provider(newProvider: SupportedProvider) {
-    this._provider = newProvider;
-  }
-
   public get signer() {
     if (!this._signer) {
       throw new Error("No Signer available.");
@@ -93,8 +89,11 @@ export class MidasBase {
     return this._signer;
   }
 
-  public set signer(signer: Signer) {
+  setSigner(signer: Signer) {
+    this._provider = signer.provider as SupportedProvider;
     this._signer = signer;
+
+    this.initStaticContracts();
   }
 
   constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig) {
@@ -174,13 +173,6 @@ export class MidasBase {
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
     this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
-  }
-
-  setSigner(signer: Signer) {
-    this._provider = signer.provider as SupportedProvider;
-    this._signer = signer;
-
-    this.initStaticContracts();
   }
 
   initStaticContracts() {

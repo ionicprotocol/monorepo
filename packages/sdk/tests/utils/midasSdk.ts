@@ -1,5 +1,5 @@
-import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { Provider } from "@ethersproject/providers";
+import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
 import { deployments, ethers } from "hardhat";
 
@@ -205,9 +205,8 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
         chainConfig = polygon;
         break;
     }
-    const [deployer] = await ethers.getSigners();
 
-    midasSdk = new MidasSdk(deployer, chainConfig);
+    midasSdk = new MidasSdk(ethers.provider, chainConfig);
 
     // patch WETH for local deployment
     if (chainId === 31337 || chainId === 1337) {

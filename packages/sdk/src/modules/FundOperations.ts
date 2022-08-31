@@ -37,8 +37,9 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       options: { from: string }
     ) {
       const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
+      const currentSignerAddress = await this.signer.getAddress();
 
-      const hasApprovedEnough = (await token.callStatic.allowance(this.signer, cTokenAddress)).gte(amount);
+      const hasApprovedEnough = (await token.callStatic.allowance(currentSignerAddress, cTokenAddress)).gte(amount);
       if (!hasApprovedEnough) {
         const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
         const approveTx = await token.approve(cTokenAddress, max);
