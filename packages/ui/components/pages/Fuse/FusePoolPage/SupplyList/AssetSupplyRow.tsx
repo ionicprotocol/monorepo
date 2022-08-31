@@ -271,11 +271,7 @@ export const AssetSupplyRow = ({
                 {supplyAPY.toFixed(2)}%
               </Text>
               {asset.underlyingSymbol === assetSymbols.aBNBc && (
-                <Text
-                  color={cCard.txtColor}
-                  fontWeight="bold"
-                  fontSize={{ base: '2.8vw', sm: 'md' }}
-                >
+                <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: 'md' }}>
                   + {Number(aBNBcApr).toFixed(2)}%
                 </Text>
               )}
