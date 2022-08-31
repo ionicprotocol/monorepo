@@ -1,6 +1,6 @@
-import { Provider } from "@ethersproject/providers";
-import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
@@ -171,15 +171,21 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   return await getCommonDeployments(chainDeployment);
 };
 
-export const getOrCreateMidas = async (): Promise<MidasSdk> => {
+export const getOrCreateMidas = async (namedSigner?: string): Promise<MidasSdk> => {
   if (!midasSdk) {
+    let signer: SignerWithAddress;
+    if (namedSigner) {
+      signer = await ethers.getNamedSigner("deployer");
+    } else {
+      signer = await ethers.getSigners()[0];
+    }
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
     let chainConfig: ChainConfig;
 
     // for integration tests, always use live BSC deployments and config
     if (process.env.INTEGRATION_TEST!) {
-      return new MidasSdk(ethers.provider, bsc);
+      return new MidasSdk(signer, bsc);
     }
 
     switch (chainId) {
@@ -206,7 +212,7 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
         break;
     }
 
-    midasSdk = new MidasSdk(ethers.provider, chainConfig);
+    midasSdk = new MidasSdk(signer, chainConfig);
 
     // patch WETH for local deployment
     if (chainId === 31337 || chainId === 1337) {

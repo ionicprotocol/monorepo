@@ -1,6 +1,6 @@
 import { ganache } from "@midas-capital/chains";
 import axios from "axios";
-import { BigNumber, Contract, providers } from "ethers";
+import { BigNumber, Contract, providers, Signer } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { MidasBaseConstructor } from "../../src";
@@ -16,11 +16,16 @@ describe("FundOperation", () => {
   let axiosStub: SinonStub;
 
   beforeEach(() => {
+    const mockSigner = createStubInstance(Signer);
+    (mockSigner as any).getAddress = () => Promise.resolve(mkAddress("0xabcd"));
+
     const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
-    (mockProvider as any)._isSigner = true;
-    (mockProvider as any).getSigner = () => mkAddress("0xabcd");
+    (mockProvider as any)._isSigner = false;
+    (mockProvider as any).getSigner = () => mockSigner;
+    (mockProvider as any).getCode = (address: string) => address;
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
+    (mockProvider as any).provider = mockProvider;
 
     FundOperations = FundOperationsModule.withFundOperations(MidasBase);
     fundOperations = new FundOperations(mockProvider, ganache, {

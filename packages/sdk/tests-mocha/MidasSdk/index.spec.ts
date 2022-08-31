@@ -1,5 +1,5 @@
 import { ganache } from "@midas-capital/chains";
-import { constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
+import { BigNumber, constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../lib/contracts/typechain";
@@ -28,14 +28,15 @@ describe("Fuse Index", () => {
       wait: () => Promise.resolve(mockReceipt),
     });
 
-    const mockProvider = createStubInstance(providers.Web3Provider);
     const mockSigner = createStubInstance(Signer);
     (mockSigner as any).getAddress = () => Promise.resolve(mkAddress("0xabcd"));
 
+    const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
-    (mockProvider as any)._isSigner = true;
+    (mockProvider as any)._isSigner = false;
     (mockProvider as any).getSigner = () => mockSigner;
     (mockProvider as any).getCode = (address: string) => address;
+    (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
     ganache.chainDeployments = {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },

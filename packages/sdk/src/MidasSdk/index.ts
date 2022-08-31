@@ -52,7 +52,7 @@ export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public _provider: SupportedProvider;
-  public _signer: Signer | null;
+  public _signer: SupportedSigners | null;
 
   public contracts: {
     FuseFeeDistributor: FuseFeeDistributor;
