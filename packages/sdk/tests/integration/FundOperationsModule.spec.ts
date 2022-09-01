@@ -44,8 +44,7 @@ describe("FundOperationsModule", function () {
       asset.underlyingToken,
       assetsInPool.comptroller,
       true,
-      utils.parseUnits("3", 18),
-      { from: deployer.address }
+      utils.parseUnits("3", 18)
     );
     tx = res.tx;
     rec = await tx.wait();
@@ -65,13 +64,12 @@ describe("FundOperationsModule", function () {
       asset.underlyingToken,
       assetsInPool.comptroller,
       true,
-      utils.parseUnits("3", 18),
-      { from: deployer.address }
+      utils.parseUnits("3", 18)
     );
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const resp = await sdk.borrow(asset.cToken, utils.parseUnits("2", 18), { from: deployer.address });
+    const resp = await sdk.borrow(asset.cToken, utils.parseUnits("2", 18));
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
@@ -89,13 +87,12 @@ describe("FundOperationsModule", function () {
       asset.underlyingToken,
       assetsInPool.comptroller,
       true,
-      utils.parseUnits("3", 18),
-      { from: deployer.address }
+      utils.parseUnits("3", 18)
     );
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const resp = await sdk.withdraw(asset.cToken, utils.parseUnits("2", 18), { from: deployer.address });
+    const resp = await sdk.withdraw(asset.cToken, utils.parseUnits("2", 18));
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
@@ -113,23 +110,20 @@ describe("FundOperationsModule", function () {
       asset.underlyingToken,
       assetsInPool.comptroller,
       true,
-      utils.parseUnits("5", 18),
-      { from: deployer.address }
+      utils.parseUnits("5", 18)
     );
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
 
-    res = await sdk.borrow(asset.cToken, utils.parseUnits("3", 18), { from: deployer.address });
+    res = await sdk.borrow(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
 
     const assetBeforeRepay = await poolHelpers.assetInPool(poolId, sdk, "WETH", deployer.address);
 
-    res = await sdk.repay(asset.cToken, asset.underlyingToken, false, utils.parseUnits("2", 18), {
-      from: deployer.address,
-    });
+    res = await sdk.repay(asset.cToken, asset.underlyingToken, false, utils.parseUnits("2", 18));
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);

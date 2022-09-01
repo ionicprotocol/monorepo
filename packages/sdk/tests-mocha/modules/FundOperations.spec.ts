@@ -1,6 +1,6 @@
 import { ganache } from "@midas-capital/chains";
 import axios from "axios";
-import { BigNumber, Contract, providers } from "ethers";
+import { BigNumber, Contract, providers, Signer } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { MidasBaseConstructor } from "../../src";
@@ -11,27 +11,23 @@ import { expect } from "../globalTestHook";
 import { mkAddress } from "../helpers";
 
 describe("FundOperation", () => {
-  let FundOperations: MidasBaseConstructor;
-  let fundOperations: any;
+  const FundOperations = FundOperationsModule.withFundOperations(MidasBase);
+  let fundOperations: InstanceType<typeof FundOperations>;
   let axiosStub: SinonStub;
 
   beforeEach(() => {
+    const mockSigner = createStubInstance(Signer);
+    (mockSigner as any).getAddress = () => Promise.resolve(mkAddress("0xabcd"));
+
     const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
-    (mockProvider as any)._isSigner = true;
-    (mockProvider as any).getSigner = (address: string) => address;
+    (mockProvider as any)._isSigner = false;
+    (mockProvider as any).getSigner = () => mockSigner;
+    (mockProvider as any).getCode = (address: string) => address;
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
+    (mockProvider as any).provider = mockProvider;
 
-    FundOperations = FundOperationsModule.withFundOperations(MidasBase);
-    fundOperations = new FundOperations(mockProvider, ganache, {
-      FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
-      FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
-      FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
-      FuseSafeLiquidator: { abi: [], address: mkAddress("0xecc") },
-      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-      JumpRateModel: { abi: [], address: mkAddress("0xaac") },
-      WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
-    });
+    fundOperations = new FundOperations(mockProvider, ganache);
   });
 
   describe("fetchGasForCall", () => {
@@ -95,10 +91,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         true,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(enterMarketStub).to.be.calledOnce;
@@ -120,10 +113,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(tx).to.be.eq("txId");
@@ -144,10 +134,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(maxApproveStub).to.be.calledOnce;
@@ -170,10 +157,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(tx).to.be.undefined;
@@ -213,10 +197,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xeee"),
         true,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(tx).to.be.eq("txId");
@@ -236,10 +217,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xeee"),
         false,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(tx).to.be.eq("txId");
@@ -259,10 +237,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(maxApproveStub).to.be.calledOnce;
@@ -283,10 +258,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xeee"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(tx).to.be.undefined;
@@ -311,9 +283,7 @@ describe("FundOperation", () => {
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), BigNumber.from(3), {
-        from: mkAddress("0xd2c"),
-      });
+      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), BigNumber.from(3));
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
@@ -328,9 +298,7 @@ describe("FundOperation", () => {
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), BigNumber.from(5), {
-        from: mkAddress("0xd2c"),
-      });
+      const { tx, errorCode } = await fundOperations.borrow(mkAddress("0xabc"), BigNumber.from(5));
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);
@@ -354,9 +322,7 @@ describe("FundOperation", () => {
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(3), {
-        from: mkAddress("0xd2c"),
-      });
+      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(3));
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
@@ -371,9 +337,7 @@ describe("FundOperation", () => {
 
       stub(utilsFns, "getContract").returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(5), {
-        from: mkAddress("0xd2c"),
-      });
+      const { tx, errorCode } = await fundOperations.withdraw(mkAddress("0xabc"), BigNumber.from(5));
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);

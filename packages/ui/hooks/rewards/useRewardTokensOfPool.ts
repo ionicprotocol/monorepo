@@ -6,7 +6,6 @@ export const useRewardTokensOfPool = (poolAddress?: string) => {
   const {
     midasSdk,
     currentChain: { id },
-    address,
   } = useMidas();
 
   const { data } = useQuery(
@@ -14,9 +13,7 @@ export const useRewardTokensOfPool = (poolAddress?: string) => {
     async () => {
       if (!poolAddress) return undefined;
 
-      const rewards = await midasSdk.getFlywheelMarketRewardsByPool(poolAddress, {
-        from: address,
-      });
+      const rewards = await midasSdk.getFlywheelMarketRewardsByPool(poolAddress);
 
       return rewards
         .flatMap((r) => r.rewardsInfo)
