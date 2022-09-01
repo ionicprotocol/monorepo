@@ -8,14 +8,14 @@ import {
   DeployedPlugins,
   FundingStrategyContract,
   InterestRateModel,
-  InterestRateModelConf,
   IrmConfig,
   OracleConfig,
   RedemptionStrategyContract,
   SupportedAsset,
   SupportedChains,
 } from "@midas-capital/types";
-import { BigNumber, constants, Contract, utils } from "ethers";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { BigNumber, constants, Contract, Signer, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
@@ -38,7 +38,6 @@ import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
-import uniswapV3PoolAbiSlim from "./abi/UniswapV3Pool.slim.json";
 import { CTOKEN_ERROR_CODES } from "./config";
 import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
@@ -46,9 +45,23 @@ import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
+export type SupportedProvider = JsonRpcProvider | Web3Provider;
+export type SupportedSigners = Signer | SignerWithAddress;
+export type SignerOrProvider = SupportedSigners | SupportedProvider;
+
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
-  public provider: JsonRpcProvider | Web3Provider;
+  public _provider: SupportedProvider;
+  public _signer: SupportedSigners | null;
+  static isSupportedProvider(provider): provider is SupportedProvider {
+    return SignerWithAddress.isSigner(provider) || Signer.isSigner(provider);
+  }
+  static isSupportedSigner(signer): signer is SupportedSigners {
+    return SignerWithAddress.isSigner(signer) || Signer.isSigner(signer);
+  }
+  static isSupportedSignerOrProvider(signerOrProvider): signerOrProvider is SignerOrProvider {
+    return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
+  }
 
   public contracts: {
     FuseFeeDistributor: FuseFeeDistributor;
@@ -74,11 +87,50 @@ export class MidasBase {
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
   public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
 
-  constructor(web3Provider: JsonRpcProvider | Web3Provider, chainConfig: ChainConfig) {
-    this.provider = web3Provider;
+  public get provider(): SupportedProvider {
+    return this._provider;
+  }
+
+  public get signer() {
+    if (!this._signer) {
+      throw new Error("No Signer available.");
+    }
+    return this._signer;
+  }
+
+  setSigner(signer: Signer) {
+    this._provider = signer.provider as SupportedProvider;
+    this._signer = signer;
+
+    this.initStaticContracts();
+    return this;
+  }
+
+  constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig) {
+    if (!signerOrProvider) throw Error("No Provider or Signer");
+
+    if (SignerWithAddress.isSigner(signerOrProvider) || Signer.isSigner(signerOrProvider)) {
+      this._provider = signerOrProvider.provider as any;
+      this._signer = signerOrProvider;
+    } else if (JsonRpcProvider.isProvider(signerOrProvider) || Web3Provider.isProvider(signerOrProvider)) {
+      this._provider = signerOrProvider;
+      this._signer = signerOrProvider.getSigner ? signerOrProvider.getSigner() : null;
+    } else {
+      console.warn("Incompatible Provider or Signer: ", signerOrProvider);
+      throw Error("Signer or Provider not compatible");
+    }
+
     this.chainConfig = chainConfig;
     this.chainId = chainConfig.chainId;
     this.chainDeployment = chainConfig.chainDeployments;
+    this.chainSpecificAddresses = chainConfig.chainAddresses;
+    this.chainSpecificParams = chainConfig.specificParams;
+    this.liquidationConfig = chainConfig.liquidationDefaults;
+    this.supportedAssets = chainConfig.assets;
+    this.deployedPlugins = chainConfig.deployedPlugins;
+    this.redemptionStrategies = chainConfig.redemptionStrategies;
+    this.fundingStrategies = chainConfig.fundingStrategies;
+    this.artifacts = ARTIFACTS;
 
     this.contracts = {
       FusePoolDirectory: new Contract(
@@ -107,6 +159,7 @@ export class MidasBase {
         this.provider
       ) as FuseFeeDistributor,
     };
+
     if (this.chainDeployment.FuseFlywheelLensRouter) {
       this.contracts["FuseFlywheelLensRouter"] = new Contract(
         this.chainDeployment.FuseFlywheelLensRouter?.address || constants.AddressZero,
@@ -116,7 +169,6 @@ export class MidasBase {
     } else {
       console.warn(`FuseFlywheelLensRouter not deployed to chain ${this.chainId}`);
     }
-    this.artifacts = ARTIFACTS;
 
     this.availableIrms = chainConfig.irms.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
@@ -134,14 +186,36 @@ export class MidasBase {
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
     this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
+  }
 
-    this.chainSpecificAddresses = chainConfig.chainAddresses;
-    this.chainSpecificParams = chainConfig.specificParams;
-    this.liquidationConfig = chainConfig.liquidationDefaults;
-    this.supportedAssets = chainConfig.assets;
-    this.deployedPlugins = chainConfig.deployedPlugins;
-    this.redemptionStrategies = chainConfig.redemptionStrategies;
-    this.fundingStrategies = chainConfig.fundingStrategies;
+  initStaticContracts() {
+    this.contracts = {
+      FusePoolDirectory: new Contract(
+        this.chainDeployment.FusePoolDirectory.address,
+        this.chainDeployment.FusePoolDirectory.abi,
+        this.provider
+      ) as FusePoolDirectory,
+      FusePoolLens: new Contract(
+        this.chainDeployment.FusePoolLens.address,
+        this.chainDeployment.FusePoolLens.abi,
+        this.provider
+      ) as FusePoolLens,
+      FusePoolLensSecondary: new Contract(
+        this.chainDeployment.FusePoolLensSecondary.address,
+        this.chainDeployment.FusePoolLensSecondary.abi,
+        this.provider
+      ) as FusePoolLensSecondary,
+      FuseSafeLiquidator: new Contract(
+        this.chainDeployment.FuseSafeLiquidator.address,
+        this.chainDeployment.FuseSafeLiquidator.abi,
+        this.provider
+      ) as FuseSafeLiquidator,
+      FuseFeeDistributor: new Contract(
+        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FuseFeeDistributor.abi,
+        this.provider
+      ) as FuseFeeDistributor,
+    };
   }
 
   async deployPool(
@@ -150,7 +224,6 @@ export class MidasBase {
     closeFactor: BigNumber,
     liquidationIncentive: BigNumber,
     priceOracle: string, // Contract address
-    options: { from: string }, // We might need to add sender as argument. Getting address from options will collide with the override arguments in ethers contract method calls. It doesn't take address.
     whitelist: string[] // An array of whitelisted addresses
   ): Promise<[string, string, string, number?]> {
     try {
@@ -158,7 +231,7 @@ export class MidasBase {
       const implementationAddress = this.chainDeployment.Comptroller.address;
 
       // Register new pool with FusePoolDirectory
-      const contract = this.contracts.FusePoolDirectory.connect(this.provider.getSigner(options.from));
+      const contract = this.contracts.FusePoolDirectory.connect(this.signer);
 
       const deployTx = await contract.deployPool(
         poolName,
@@ -185,8 +258,9 @@ export class MidasBase {
       }
       const existingPools = await contract.callStatic.getAllPools();
       // Compute Unitroller address
+      const addressOfSigner = await this.signer.getAddress();
       const poolAddress = getPoolAddress(
-        options.from,
+        addressOfSigner,
         poolName,
         existingPools.length,
         this.chainDeployment.FuseFeeDistributor.address,
@@ -194,7 +268,7 @@ export class MidasBase {
       );
 
       // Accept admin status via Unitroller
-      const unitroller = getPoolUnitroller(poolAddress, this.provider.getSigner(options.from));
+      const unitroller = getPoolUnitroller(poolAddress, this.signer);
       const acceptTx = await unitroller._acceptAdmin();
       const acceptReceipt = await acceptTx.wait();
       console.log("Accepted admin status for admin:", acceptReceipt.status);
@@ -202,7 +276,7 @@ export class MidasBase {
       // Whitelist
       console.log("enforceWhitelist: ", enforceWhitelist);
       if (enforceWhitelist) {
-        const comptroller = getPoolComptroller(poolAddress, this.provider.getSigner(options.from));
+        const comptroller = getPoolComptroller(poolAddress, this.signer);
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
@@ -264,16 +338,6 @@ export class MidasBase {
     return oracle;
   }
 
-  async checkCardinality(uniswapV3Pool: string) {
-    const uniswapV3PoolContract = new Contract(uniswapV3Pool, uniswapV3PoolAbiSlim);
-    return (await uniswapV3PoolContract.methods.slot0().call()).observationCardinalityNext < 64;
-  }
-
-  async primeUniswapV3Oracle(uniswapV3Pool, options) {
-    const uniswapV3PoolContract = new Contract(uniswapV3Pool, uniswapV3PoolAbiSlim);
-    await uniswapV3PoolContract.methods.increaseObservationCardinalityNext(64).send(options);
-  }
-
   identifyInterestRateModelName = (irmAddress: string): string | null => {
     let irmName: string | null = null;
     for (const [name, irm] of Object.entries(this.irms)) {
@@ -285,31 +349,31 @@ export class MidasBase {
     return irmName;
   };
 
-  getComptrollerInstance(address: string, options: { from: string }) {
-    return new Contract(address, this.artifacts.Comptroller.abi, this.provider.getSigner(options.from)) as Comptroller;
+  getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.Comptroller.abi, signerOrProvider) as Comptroller;
   }
 
-  getCTokenInstance(address: string) {
+  getCTokenInstance(address: string, signerOrProvider = this.provider) {
     return new Contract(
       address,
       this.chainDeployment[DelegateContractName.CErc20Delegate].abi,
-      this.provider.getSigner()
+      signerOrProvider
     ) as CErc20Delegate;
   }
 
-  getCErc20PluginRewardsInstance(address: string) {
+  getCErc20PluginRewardsInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(
       address,
       this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
-      this.provider.getSigner()
+      signerOrProvider
     ) as CErc20PluginRewardsDelegate;
   }
 
-  getCErc20PluginInstance(address: string) {
+  getCErc20PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(
       address,
       this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
-      this.provider.getSigner()
+      signerOrProvider
     ) as CErc20PluginDelegate;
   }
 }

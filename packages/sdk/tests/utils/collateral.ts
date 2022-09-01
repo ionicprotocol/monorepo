@@ -17,7 +17,7 @@ export async function getAsset(
   underlyingSymbol: string
 ): Promise<NativePricedFuseAsset> {
   const poolId = (await getPoolIndex(poolAddress, sdk)).toString();
-  const assetsInPool = await sdk.fetchFusePoolData(poolId, undefined);
+  const assetsInPool = await sdk.fetchFusePoolData(poolId);
   return assetsInPool.assets.filter((a) => a.underlyingSymbol === underlyingSymbol)[0];
 }
 
