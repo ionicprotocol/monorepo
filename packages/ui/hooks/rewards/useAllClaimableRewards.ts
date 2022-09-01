@@ -8,10 +8,7 @@ export const useAllClaimableRewards = () => {
 
   return useQuery<FlywheelClaimableRewards[] | undefined>(
     ['useAllClaimableRewards', midasSdk.chainId, address],
-    () =>
-      midasSdk.getFlywheelClaimableRewards(address, {
-        from: address,
-      }),
+    () => midasSdk.getFlywheelClaimableRewards(address),
     { enabled: !!address }
   );
 };

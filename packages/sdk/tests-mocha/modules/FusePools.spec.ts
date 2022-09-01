@@ -37,7 +37,7 @@ describe("FusePools", () => {
     const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
     (mockProvider as any)._isSigner = true;
-    (mockProvider as any).getSigner = (address: string) => address;
+    (mockProvider as any).getSigner = () => mkAddress("0xabcd");
     (mockProvider as any).getCode = (address: string) => address;
 
     FusePools = withFusePools(MidasBase);
@@ -70,16 +70,15 @@ describe("FusePools", () => {
     fusePools.contracts.FusePoolLens = mockFusePoolLensContract;
 
     mockFusePoolDirectoryContract = createStubInstance(Contract);
-    mockFusePoolDirectoryContract.pools = stub().resolves({
-      comptroller: "_comptroller",
-      name: "R1",
-      creator: mkAddress("0xabd"),
-      blockPosted: BigNumber.from(1),
-      timestampPosted: BigNumber.from(2),
-    });
-
     Object.defineProperty(mockFusePoolDirectoryContract, "callStatic", {
       value: {
+        pools: stub().resolves({
+          comptroller: "_comptroller",
+          name: "R1",
+          creator: mkAddress("0xabd"),
+          blockPosted: BigNumber.from(1),
+          timestampPosted: BigNumber.from(2),
+        }),
         getPublicPoolsByVerification: stub().resolves([[12]]),
         getAllPools: stub().resolves(["0"]),
       },
@@ -113,7 +112,7 @@ describe("FusePools", () => {
   });
 
   it("fetchFusePoolData", async () => {
-    const res = await fusePools.fetchFusePoolData("123", mkAddress("0xadb"));
+    const res = await fusePools.fetchFusePoolData("123");
     expect(res.id).to.be.eq(123);
     expect(res.name).to.be.eq("  ");
     expect(res.creator).to.be.eq(mkAddress("0xabd"));
@@ -122,9 +121,7 @@ describe("FusePools", () => {
   });
 
   it("fetchPoolsManual", async () => {
-    const poolData = await fusePools.fetchPoolsManual({
-      options: { from: mkAddress("0xacd") },
-    });
+    const poolData = await fusePools.fetchPoolsManual();
     expect(poolData[0].id).to.be.eq(0);
   });
 

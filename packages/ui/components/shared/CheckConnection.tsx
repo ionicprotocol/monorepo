@@ -23,8 +23,8 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
   const toastIdRef = useRef<ToastId | undefined>();
   const warningToast = useWarningToast();
   const [switchedChain, setSwitchedChain] = useState<Chain | undefined>();
-
   const [signerChainId, setSignerChainId] = useState<number | undefined>();
+
   useEffect(() => {
     const func = async () => {
       if (typeof signerData?.getChainId === 'function') {
@@ -74,7 +74,7 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
             }
             // if URL contains routerChainId
             if (routerChainId) {
-              // if inputed URL contains one of supported chains
+              // if current URL contains one of supported chains
               if (isSupportedChainId(Number(routerChainId))) {
                 // if active chain id is different from router chain id
                 if (chain.id.toString() !== routerChainId) {
@@ -174,7 +174,6 @@ const CheckConnection = ({ children }: { children: ReactNode }) => {
         {children}
       </MidasProvider>
     );
-    // !accountData?.address || !signerData?.provider
   } else {
     return null;
   }

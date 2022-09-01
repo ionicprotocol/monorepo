@@ -58,7 +58,7 @@ export const AddAssetSettings = ({
   poolName: string;
   tokenData: TokenData;
 }) => {
-  const { midasSdk, address } = useMidas();
+  const { midasSdk } = useMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
@@ -137,7 +137,7 @@ export const AddAssetSettings = ({
     };
 
     try {
-      await midasSdk.deployAsset(marketConfig, { from: address });
+      await midasSdk.deployAsset(marketConfig);
 
       LogRocket.track('Fuse-DeployAsset');
 

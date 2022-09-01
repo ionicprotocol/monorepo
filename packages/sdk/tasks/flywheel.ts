@@ -28,9 +28,7 @@ task("flywheel:addStrategyForRewards", "Create pool if does not exist")
     const midasSdkModule = await import("../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const addTx = await sdk.addStrategyForRewardsToFlywheelCore(flywheelAddress, strategyAddress, {
-      from: signer.address,
-    });
+    const addTx = await sdk.addStrategyForRewardsToFlywheelCore(flywheelAddress, strategyAddress);
     console.log(addTx);
 
     const receipt = await addTx.wait();
@@ -68,9 +66,7 @@ task("flywheel:addToPool", "Create pool if does not exist")
     const sdk = await midasSdkModule.getOrCreateMidas();
     console.log({ sdk });
 
-    const addTx = await sdk.addFlywheelCoreToComptroller(flywheelAddress, poolAddress, {
-      from: signer.address,
-    });
+    const addTx = await sdk.addFlywheelCoreToComptroller(flywheelAddress, poolAddress);
     console.log({ addTx });
 
     const receipt = await addTx.wait();
