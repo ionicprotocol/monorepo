@@ -7613,7 +7613,7 @@
       ]
     },
     "AnkrBNBInterestRateModel": {
-      "address": "0x312752Db2BCe2780dA87E7691aDb2d7B83ADfb47",
+      "address": "0xC24cB0dd08d11Ce4B0B711d12c86e71922F04D02",
       "abi": [
         {
           "inputs": [
@@ -7624,12 +7624,12 @@
             },
             {
               "internalType": "uint256",
-              "name": "baseRatePerYear",
+              "name": "_baseRateMultiplier",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "_multiplierPerYear",
+              "name": "_jumpMultiplierPerYear",
               "type": "uint256"
             },
             {
@@ -7657,13 +7657,13 @@
             {
               "indexed": false,
               "internalType": "uint256",
-              "name": "baseRatePerBlock",
+              "name": "blocksPerYear",
               "type": "uint256"
             },
             {
               "indexed": false,
               "internalType": "uint256",
-              "name": "jumpMultiplierPerBlock",
+              "name": "baseRateMultiplier",
               "type": "uint256"
             },
             {
@@ -7691,7 +7691,7 @@
         },
         {
           "inputs": [],
-          "name": "baseRatePerBlock",
+          "name": "baseRateMultiplier",
           "outputs": [
             {
               "internalType": "uint256",
@@ -7729,6 +7729,32 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getAnkrRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getBaseRatePerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "uint256",
@@ -7758,8 +7784,37 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "getBorrowRatePostKink",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
-          "name": "getJumpMultiplierPerBlock",
+          "name": "getMultiplierPerBlock",
           "outputs": [
             {
               "internalType": "uint256",
@@ -7819,7 +7874,7 @@
         },
         {
           "inputs": [],
-          "name": "kink",
+          "name": "jumpMultiplierPerBlock",
           "outputs": [
             {
               "internalType": "uint256",
@@ -7832,7 +7887,7 @@
         },
         {
           "inputs": [],
-          "name": "multiplierPerBlock",
+          "name": "kink",
           "outputs": [
             {
               "internalType": "uint256",
@@ -16618,7 +16673,7 @@
       ]
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x59988d4C43c8AfD3Ebe110C12944B6f71fc0b537",
+      "address": "0x99908B157fdb6F75898aE1de60E5fb9EeB421178",
       "abi": [
         {
           "anonymous": false,
@@ -19596,7 +19651,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x5483b14Fc8B4349ba4FB7513B14e9b89A2D24f87",
+      "address": "0xd49dB0711285c8b26d1B91c6042b12796428D640",
       "abi": [
         {
           "anonymous": false,
@@ -24647,7 +24702,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x53045712a6B20cc6aCF34549a4a14F320DF5DDf0",
+      "address": "0xB46b0F8eDDB31EbCb6147edf01470Ee0a4671c3D",
       "abi": [
         {
           "anonymous": false,
@@ -30139,48 +30194,6 @@
         }
       ]
     },
-    "InitializableClones": {
-      "address": "0x0344805288fca6e4b911C42741cA215B227ebE7f",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "name": "Deployed",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "master",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initializer",
-              "type": "bytes"
-            }
-          ],
-          "name": "clone",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
     "JarvisLiquidatorFunder": {
       "address": "0x190D6BbC18c34c2aF19EEA1cd9Ad566E56DaE83C",
       "abi": [
@@ -30279,87 +30292,6 @@
             }
           ],
           "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
-    "JarvisSynthereumLiquidator": {
-      "address": "0xC2a3D9A2D516E0c03a12b16934e057895A7fFb91",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract ISynthereumLiquidityPool",
-              "name": "_pool",
-              "type": "address"
-            },
-            {
-              "internalType": "uint64",
-              "name": "_txExpirationPeriod",
-              "type": "uint64"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "pool",
-          "outputs": [
-            {
-              "internalType": "contract ISynthereumLiquidityPool",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "inputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "inputAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "strategyData",
-              "type": "bytes"
-            }
-          ],
-          "name": "redeem",
-          "outputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "outputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "outputAmount",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "txExpirationPeriod",
-          "outputs": [
-            {
-              "internalType": "uint64",
-              "name": "",
-              "type": "uint64"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         }
       ]
@@ -33074,45 +33006,6 @@
             }
           ],
           "stateMutability": "pure",
-          "type": "function"
-        }
-      ]
-    },
-    "XBombLiquidator": {
-      "address": "0xe8A115C3a1dB17B2E681bff274c12bafFe2c4670",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "inputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "inputAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "strategyData",
-              "type": "bytes"
-            }
-          ],
-          "name": "redeem",
-          "outputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "outputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "outputAmount",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
