@@ -226,11 +226,22 @@ export default task("system:admin:change", "Changes the system admin to a new ad
   });
 
 task("system:admin:accept", "Accepts the pending admin/owner roles as the new admin/owner")
+  .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
   .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
-  .setAction(async ({ newDeployer }, { ethers }) => {
+  .setAction(async ({  currentDeployer: currentDeployerAddress, newDeployer }, { ethers }) => {
     let tx: providers.TransactionResponse;
 
+    const currentDeployer = await ethers.getSigner(currentDeployerAddress);
     const deployer = await ethers.getSigner(newDeployer);
+
+    const newDeployerBalance = await deployer.getBalance();
+    const oldDeployerBalance = await currentDeployer.getBalance();
+
+    if (newDeployerBalance.isZero()) {
+      tx = await currentDeployer.sendTransaction({to: deployer.address, value: oldDeployerBalance.div(2) });
+      await tx.wait();
+      console.log(`funding the new deployer tx mined ${tx.hash}`);
+    }
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
     const pools = await fusePoolDirectory.callStatic.getAllPools();
@@ -261,22 +272,38 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
 
     {
       // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
-      const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as SafeOwnableUpgradeable;
-      tx = await ffd._acceptOwner();
-      await tx.wait();
-      console.log(`ffd._acceptOwner tx mined ${tx.hash}`);
+      {
+        const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as SafeOwnableUpgradeable;
+        const pendingOwner = await ffd.callStatic.pendingOwner();
+        if (pendingOwner == newDeployer) {
+          tx = await ffd._acceptOwner();
+          await tx.wait();
+          console.log(`ffd._acceptOwner tx mined ${tx.hash}`);
+        }
+      }
 
-      const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as SafeOwnableUpgradeable;
-      tx = await fpd._acceptOwner();
-      await tx.wait();
-      console.log(`fpd._acceptOwner tx mined ${tx.hash}`);
+      {
+        const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as SafeOwnableUpgradeable;
+        const pendingOwner = await fpd.callStatic.pendingOwner();
+        if (pendingOwner == newDeployer) {
+          tx = await fpd._acceptOwner();
+          await tx.wait();
+          console.log(`fpd._acceptOwner tx mined ${tx.hash}`);
+        }
+      }
 
-      const curveOracle = (await ethers.getContract(
+      const curveOracle = (await ethers.getContractOrNull(
         "CurveLpTokenPriceOracleNoRegistry",
         deployer
       )) as SafeOwnableUpgradeable;
-      tx = await curveOracle._acceptOwner();
-      await tx.wait();
-      console.log(`curveOracle._acceptOwner tx mined ${tx.hash}`);
+
+      if (curveOracle) {
+        const pendingOwner = await curveOracle.callStatic.pendingOwner();
+        if (pendingOwner == newDeployer) {
+          tx = await curveOracle._acceptOwner();
+          await tx.wait();
+          console.log(`curveOracle._acceptOwner tx mined ${tx.hash}`);
+        }
+      }
     }
   });
