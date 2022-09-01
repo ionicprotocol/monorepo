@@ -1,3 +1,4 @@
+import { neondevnet } from '@midas-capital/chains';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 
@@ -5,6 +6,9 @@ export function useUSDPrice(coingeckoId: string) {
   return useQuery(
     ['useUSDPrice', coingeckoId],
     async () => {
+      // set neon price hardcoded as 0.05 for now
+      if (coingeckoId === neondevnet.specificParams.cgId) return 0.05;
+
       let usdPrice: number;
 
       try {
