@@ -10140,7 +10140,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xd8194852630a148615623Bcae07bab808cC86aa6",
+      "address": "0xA2d90C33833694b554bc1c19C8A57D3D1417E2B6",
       "abi": [
         {
           "anonymous": false,
@@ -12461,7 +12461,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xEb777221103C8D37B13fF8aA467d80c020Edeb80",
+      "address": "0xcA7B11ffFE1CE2c28E4Fdd4c6593c93A3C09321e",
       "abi": [
         {
           "anonymous": false,
@@ -17950,48 +17950,6 @@
         {
           "stateMutability": "payable",
           "type": "receive"
-        }
-      ]
-    },
-    "InitializableClones": {
-      "address": "0x11Edf13606A9743c67559544B34Ba349DffEF634",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "name": "Deployed",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "master",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initializer",
-              "type": "bytes"
-            }
-          ],
-          "name": "clone",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
         }
       ]
     },
