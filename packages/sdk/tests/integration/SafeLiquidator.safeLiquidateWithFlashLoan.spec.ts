@@ -93,42 +93,45 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
 
     // Supply 0.1 tokenOne from other account
     const supply1Amount = "1";
-    sdk.setSigner(alice);
-    const btcbSuply = await sdk.supply(
-      deployedErc20One.assetAddress,
-      erc20One.underlying,
-      poolAddress,
-      true,
-      ethers.utils.parseEther(supply1Amount),
-      {
-        from: alice.address,
-      }
-    );
+
+    const btcbSuply = await sdk
+      .setSigner(alice)
+      .supply(
+        deployedErc20One.assetAddress,
+        erc20One.underlying,
+        poolAddress,
+        true,
+        ethers.utils.parseEther(supply1Amount),
+        {
+          from: alice.address,
+        }
+      );
     console.log(
       `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSuply.errorCode}`
     );
 
     const supply2Amount = "8500";
-    sdk.setSigner(bob);
-    const busdSupply = await sdk.supply(
-      deployedErc20Two.assetAddress,
-      erc20Two.underlying,
-      poolAddress,
-      true,
-      ethers.utils.parseEther(supply2Amount),
-      {
-        from: bob.address,
-      }
-    );
+    const busdSupply = await sdk
+      .setSigner(bob)
+      .supply(
+        deployedErc20Two.assetAddress,
+        erc20Two.underlying,
+        poolAddress,
+        true,
+        ethers.utils.parseEther(supply2Amount),
+        {
+          from: bob.address,
+        }
+      );
     console.log(
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`
     );
 
     const borrowAmount = "0.2";
-    sdk.setSigner(bob);
-    const btcbBorrow = await sdk.borrow(deployedErc20One.assetAddress, ethers.utils.parseEther(borrowAmount), {
-      from: bob.address,
-    });
+
+    const btcbBorrow = await sdk
+      .setSigner(bob)
+      .borrow(deployedErc20One.assetAddress, ethers.utils.parseEther(borrowAmount));
     console.log(
       `Borrowed ${borrowAmount} ${erc20One.symbol} collateral from ${bob.address}, ERROR: ${btcbBorrow.errorCode}`
     );
