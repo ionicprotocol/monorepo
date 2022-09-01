@@ -7,6 +7,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { createClient, WagmiConfig } from 'wagmi';
 
+import { MultiMidasProvider } from '../context/MultiMidasContext';
+
 import CheckConnection from '@ui/components/shared/CheckConnection';
 import Layout from '@ui/components/shared/Layout';
 import { config } from '@ui/config/index';
@@ -30,12 +32,14 @@ function MidasDapp({ Component, pageProps }: AppProps) {
     <ChakraProvider theme={theme}>
       <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
-          {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
-          <CheckConnection>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </CheckConnection>
+          <MultiMidasProvider>
+            {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
+            <CheckConnection>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </CheckConnection>
+          </MultiMidasProvider>
         </QueryClientProvider>
       </WagmiConfig>
     </ChakraProvider>

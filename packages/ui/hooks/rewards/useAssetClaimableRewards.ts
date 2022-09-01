@@ -14,10 +14,7 @@ export const useAssetClaimableRewards = ({
 
   return useQuery<FlywheelClaimableRewards[] | undefined>(
     ['useAssetClaimableRewards', poolAddress, assetAddress, address],
-    () =>
-      midasSdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address, {
-        from: address,
-      }),
+    () => midasSdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address),
     { enabled: !!poolAddress && !!address }
   );
 };

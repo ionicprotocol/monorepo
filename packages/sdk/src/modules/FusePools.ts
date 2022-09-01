@@ -1,5 +1,5 @@
 import { FusePoolData, NativePricedFuseAsset, SupportedAsset } from "@midas-capital/types";
-import { BigNumberish, utils } from "ethers";
+import { BigNumberish, CallOverrides, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
@@ -18,16 +18,16 @@ export type LensPoolsWithData = [
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
-    async fetchFusePoolData(poolId: string, address?: string): Promise<FusePoolData> {
+    async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData> {
       const {
         comptroller,
         name: _unfiliteredName,
         creator,
         blockPosted,
         timestampPosted,
-      } = await this.contracts.FusePoolDirectory.pools(Number(poolId));
+      } = await this.contracts.FusePoolDirectory.callStatic.pools(Number(poolId), overrides);
 
-      const rawData = await this.contracts.FusePoolLens.callStatic.getPoolSummary(comptroller);
+      const rawData = await this.contracts.FusePoolLens.callStatic.getPoolSummary(comptroller, overrides);
 
       const underlyingTokens = rawData[2];
       const underlyingSymbols = rawData[3];
@@ -36,9 +36,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       const name = filterPoolName(_unfiliteredName);
 
       const assets: NativePricedFuseAsset[] = (
-        await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller, {
-          from: address,
-        })
+        await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
       ).map(filterOnlyObjectProperties);
 
       let totalLiquidityNative = 0;
@@ -53,11 +51,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
       const promises: Promise<any>[] = [];
 
-      const comptrollerContract = getContract(
-        comptroller,
-        this.chainDeployment.Comptroller.abi,
-        this.provider.getSigner()
-      );
+      const comptrollerContract = getContract(comptroller, this.chainDeployment.Comptroller.abi, this.provider);
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
@@ -161,17 +155,17 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       };
     }
 
-    async fetchPoolsManual({ options }: { options: { from: string } }): Promise<(FusePoolData | null)[] | undefined> {
-      const res = await this.contracts.FusePoolDirectory.callStatic.getAllPools();
+    async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(FusePoolData | null)[] | undefined> {
+      const res = await this.contracts.FusePoolDirectory.callStatic.getAllPools(overrides);
 
       if (!res.length) {
         return undefined;
       }
 
       const poolData = await Promise.all(
-        res.map((pool, i) => {
-          return this.fetchFusePoolData(i.toString(), options.from).catch((error) => {
-            console.error(`Pool ID ${i} wasn't able to be fetched from FusePoolLens without error.`, error);
+        res.map((_, poolId) => {
+          return this.fetchFusePoolData(poolId.toString(), overrides).catch((error) => {
+            console.error(`Pool ID ${poolId} wasn't able to be fetched from FusePoolLens without error.`, error);
             return null;
           });
         })
@@ -209,7 +203,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         responses.map(async (poolData) => {
           return await Promise.all(
             poolData[0].map((_id) => {
-              return this.fetchFusePoolData(_id.toString(), options.from);
+              return this.fetchFusePoolData(_id.toString());
             })
           );
         })

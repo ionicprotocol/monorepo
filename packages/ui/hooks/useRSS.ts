@@ -31,7 +31,7 @@ export const usePoolRSS = (poolId: string | number) => {
   const { data: poolData } = useFusePoolData(poolId.toString());
 
   return useQuery(
-    [`usePoolRSS`, currentChain.id, poolId, usdPrice, poolData],
+    [`usePoolRSS`, currentChain.id, poolId],
     async () => {
       if (!usdPrice || !poolData) return undefined;
 
