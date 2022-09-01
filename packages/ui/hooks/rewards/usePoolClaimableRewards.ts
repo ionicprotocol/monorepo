@@ -8,10 +8,7 @@ export const usePoolClaimableRewards = ({ poolAddress }: { poolAddress: string }
 
   return useQuery<FlywheelClaimableRewards[] | undefined>(
     ['usePoolClaimableRewards', poolAddress, address],
-    () =>
-      midasSdk.getFlywheelClaimableRewardsForPool(poolAddress, address, {
-        from: address,
-      }),
+    () => midasSdk.getFlywheelClaimableRewardsForPool(poolAddress, address),
     { enabled: !!poolAddress && !!address }
   );
 };

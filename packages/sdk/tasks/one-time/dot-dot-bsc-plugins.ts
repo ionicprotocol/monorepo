@@ -7,7 +7,7 @@ const dddFlywheelAddress = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
 const epxFlywheelAddress = "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4";
 const lpDepositor = "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af";
 const dddAddress = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
-const epxAddress = "0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71";
+const epxAddress = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
 const bscCErc20DelegateImplementation = "0x1bE825C12608369f28aA5C894a87de76857eAf9b";
 
 const UNDERLYINGS = {
@@ -148,10 +148,10 @@ task("dotdot:bsc:set-flywheels", "set plugin for each market")
       }
       try {
         //   Step 6: add Flywheels to market
-        await sdk.addFlywheelCoreToComptroller(dddFlywheelAddress, COMPTROLLER, { from: signer.address });
+        await sdk.addFlywheelCoreToComptroller(dddFlywheelAddress, COMPTROLLER);
 
         console.log("dddFWC added to comptroller");
-        await sdk.addFlywheelCoreToComptroller(epxFlywheelAddress, COMPTROLLER, { from: signer.address });
+        await sdk.addFlywheelCoreToComptroller(epxFlywheelAddress, COMPTROLLER);
         console.log("epxFWC added to comptroller");
       } catch (e) {
         console.log("already added");

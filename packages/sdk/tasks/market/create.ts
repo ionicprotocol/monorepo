@@ -4,15 +4,13 @@ import { task, types } from "hardhat/config";
 export default task("market:create", "Create Market")
   .addParam("comptroller", "Address of the pool", undefined, types.string)
   .addParam("underlying", "Underlying asset address", undefined, types.string)
-  .addParam("signer", "Signer name", "deployer", types.string)
+  .addParam("signer", "Signer name", "deployer", types.string) // TODO if you want custom signer, we need to rework `getOrCreateMidas` to take the signer
   .addOptionalParam("implementation", "Address of the implementation to use", undefined, types.string)
   .addOptionalParam("strategyCode", "If using strategy, pass its code", undefined, types.string)
   .addOptionalParam("strategyAddress", "Override the strategy address", undefined, types.string)
 
   .setAction(async (taskArgs, hre) => {
-    const { comptroller, underlying, signer: namedSigner } = taskArgs;
-
-    const signer = await hre.ethers.getNamedSigner(namedSigner);
+    const { comptroller, underlying } = taskArgs;
 
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
@@ -38,9 +36,7 @@ export default task("market:create", "Create Market")
       `Creating market for token ${assetConfig.underlying}, pool ${comptroller}, impl: ${DelegateContractName.CErc20Delegate}`
     );
 
-    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConfig, {
-      from: signer.address,
-    });
+    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConfig);
 
     console.log("CToken: ", assetAddress);
   });
