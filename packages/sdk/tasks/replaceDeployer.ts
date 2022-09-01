@@ -28,9 +28,14 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       {
         // OwnableUpgradeable - transferOwnership(newDeployer)
         const fsl = (await ethers.getContract("FuseSafeLiquidator", deployer)) as OwnableUpgradeable;
-        tx = await fsl.transferOwnership(newDeployer);
-        await tx.wait();
-        console.log(`fsl.transferOwnership tx mined ${tx.hash}`);
+        const currentOwnerFSL = await fsl.callStatic.owner();
+        console.log(`current FSL owner ${currentOwnerFSL}`);
+
+        if (currentOwnerFSL != newDeployer) {
+          tx = await fsl.transferOwnership(newDeployer);
+          await tx.wait();
+          console.log(`fsl.transferOwnership tx mined ${tx.hash}`);
+        }
       }
 
       {
