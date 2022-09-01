@@ -254,7 +254,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
       const feeData = await ethers.provider.getFeeData();
       let feePerGas;
-      let chainId = ethers.provider.network.chainId;
+      const chainId = ethers.provider.network.chainId;
       if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas && chainId != 137) {
         transaction.maxFeePerGas = feeData.maxFeePerGas;
         transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas; //.div(2);
@@ -263,7 +263,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         transaction.gasPrice = feeData.gasPrice;
         feePerGas = transaction.gasPrice;
       }
-      transaction.value = oldDeployerBalance.sub(feePerGas.mul(transaction.gasLimit))
+      transaction.value = oldDeployerBalance.sub(feePerGas.mul(transaction.gasLimit));
 
       tx = await deployer.sendTransaction(transaction);
       await tx.wait();
