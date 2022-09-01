@@ -32,10 +32,12 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         const currentOwnerFSL = await fsl.callStatic.owner();
         console.log(`current FSL owner ${currentOwnerFSL}`);
 
-        if (currentOwnerFSL != newDeployer) {
+        if (currentOwnerFSL == currentDeployer) {
           tx = await fsl.transferOwnership(newDeployer);
           await tx.wait();
           console.log(`fsl.transferOwnership tx mined ${tx.hash}`);
+        } else if (currentOwnerFSL != newDeployer) {
+          console.error(`unknown  owner ${currentOwnerFSL}`);
         }
 
         const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
