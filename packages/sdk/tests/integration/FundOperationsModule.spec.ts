@@ -71,7 +71,7 @@ describe("FundOperationsModule", function () {
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
-    const resp = await sdk.borrow(asset.cToken, utils.parseUnits("2", 18), { from: deployer.address });
+    const resp = await sdk.borrow(asset.cToken, utils.parseUnits("2", 18));
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
@@ -120,7 +120,7 @@ describe("FundOperationsModule", function () {
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
 
-    res = await sdk.borrow(asset.cToken, utils.parseUnits("3", 18), { from: deployer.address });
+    res = await sdk.borrow(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);

@@ -225,9 +225,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.BORROW) {
-        const resp = await midasSdk.borrow(asset.cToken, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.borrow(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode);

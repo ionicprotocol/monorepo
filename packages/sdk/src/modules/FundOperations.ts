@@ -97,7 +97,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { tx, errorCode: null };
     }
 
-    async borrow(cTokenAddress: string, amount: BigNumber, options: { from: string }) {
+    async borrow(cTokenAddress: string, amount: BigNumber) {
       const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.borrow(amount)) as BigNumber;
