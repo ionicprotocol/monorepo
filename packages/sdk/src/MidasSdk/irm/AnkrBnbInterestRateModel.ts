@@ -81,6 +81,7 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
     )
       throw new Error("Interest rate model class not initialized.");
     const normalRate = utilizationRate
+      .div(100)
       .mul(this.multiplierPerBlock)
       .div(utils.parseEther("1"))
       .add(this.baseRatePerBlock);
@@ -89,7 +90,7 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
       return normalRate;
     } else {
       const excessUtil = utilizationRate.sub(this.kink);
-      return excessUtil.mul(this.jumpMultiplierPerBlock).div(utils.parseEther("1")).mul(100).add(normalRate);
+      return excessUtil.mul(this.jumpMultiplierPerBlock).div(utils.parseEther("1")).add(normalRate);
     }
   }
 
