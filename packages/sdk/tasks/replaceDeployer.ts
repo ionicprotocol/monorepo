@@ -36,22 +36,52 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       {
         // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
         const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as SafeOwnableUpgradeable;
-        tx = await ffd._setPendingOwner(newDeployer);
-        await tx.wait();
-        console.log(`ffd._setPendingOwner tx mined ${tx.hash}`);
+        const currentOwnerFFD = await ffd.callStatic.owner();
+        console.log(`current FFD owner ${currentOwnerFFD}`);
+        if (currentOwnerFFD == currentDeployer) {
+          const currentPendingOwner = await ffd.callStatic.pendingOwner();
+          if (currentPendingOwner != newDeployer) {
+            tx = await ffd._setPendingOwner(newDeployer);
+            await tx.wait();
+            console.log(`ffd._setPendingOwner tx mined ${tx.hash}`);
+          }
+        } else if (currentOwnerFFD != newDeployer) {
+          console.error(`unknown owner ${currentOwnerFFD}`);
+        }
 
         const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as SafeOwnableUpgradeable;
-        tx = await fpd._setPendingOwner(newDeployer);
-        await tx.wait();
-        console.log(`fpd._setPendingOwner tx mined ${tx.hash}`);
+        const currentOwnerFPD = await fpd.callStatic.owner();
+        console.log(`current FPD owner ${currentOwnerFPD}`);
+        if (currentOwnerFPD == currentDeployer) {
+          const currentPendingOwner = await fpd.callStatic.pendingOwner();
+          if (currentPendingOwner != newDeployer) {
+            tx = await fpd._setPendingOwner(newDeployer);
+            await tx.wait();
+            console.log(`fpd._setPendingOwner tx mined ${tx.hash}`);
+          }
+        } else if (currentOwnerFPD != newDeployer) {
+          console.error(`unknown owner ${currentOwnerFPD}`);
+        }
 
-        const curveOracle = (await ethers.getContract(
+        const curveOracle = (await ethers.getContractOrNull(
           "CurveLpTokenPriceOracleNoRegistry",
           deployer
         )) as SafeOwnableUpgradeable;
-        tx = await curveOracle._setPendingOwner(newDeployer);
-        await tx.wait();
-        console.log(`curveOracle._setPendingOwner tx mined ${tx.hash}`);
+
+        if (curveOracle) {
+          const currentOwnerCurveOracle = await curveOracle.callStatic.owner();
+          console.log(`current curve oracle owner ${currentOwnerCurveOracle}`);
+          if (currentOwnerCurveOracle == currentDeployer) {
+            const currentPendingOwner = await curveOracle.callStatic.pendingOwner();
+            if (currentPendingOwner != newDeployer) {
+              tx = await curveOracle._setPendingOwner(newDeployer);
+              await tx.wait();
+              console.log(`curveOracle._setPendingOwner tx mined ${tx.hash}`);
+            }
+          } else if (currentOwnerCurveOracle != newDeployer) {
+            console.error(`unknown  owner ${currentOwnerCurveOracle}`);
+          }
+        }
       }
 
       {
@@ -64,10 +94,18 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
       {
         // custom
-        const dpo = (await ethers.getContract("DiaPriceOracle", deployer)) as DiaPriceOracle;
-        tx = await dpo.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`dpo.changeAdmin tx mined ${tx.hash}`);
+        const dpo = (await ethers.getContractOrNull("DiaPriceOracle", deployer)) as DiaPriceOracle;
+        if (dpo) {
+          const currentOwnerDpo = await dpo.callStatic.admin();
+          console.log(`current DPO admin ${currentOwnerDpo}`);
+          if (currentOwnerDpo == currentDeployer) {
+            tx = await dpo.changeAdmin(newDeployer);
+            await tx.wait();
+            console.log(`dpo.changeAdmin tx mined ${tx.hash}`);
+          } else if (currentOwnerDpo != newDeployer) {
+            console.error(`unknown  owner ${currentOwnerDpo}`);
+          }
+        }
 
         const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
         tx = await mpo.changeAdmin(newDeployer);
@@ -80,44 +118,50 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       for (let i = 0; i < pools.length; i++) {
         const pool = pools[i];
         console.log("pool name", pool.name);
-        const comptroller = (await ethers.getContractAt("Comptroller", pool.comptroller, deployer)) as Comptroller;
-        const admin = await comptroller.callStatic.admin();
+        const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
+        const admin = await unitroller.callStatic.admin();
         console.log("pool admin", admin);
+        console.log("pool comptroller", pool.comptroller);
 
         if (admin === currentDeployer) {
           {
             // Unitroller - _setPendingAdmin/_acceptAdmin
-            const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
-            const currentAdmin = unitroller.callStatic.admin();
-            if (currentAdmin == currentDeployer) {
+            const pendingAdmin = await unitroller.callStatic.pendingAdmin();
+            if (pendingAdmin != newDeployer) {
               tx = await unitroller._setPendingAdmin(newDeployer);
               await tx.wait();
               console.log(`unitroller._setPendingAdmin tx mined ${tx.hash}`);
             }
           }
-        } else {
-          console.log(`pool admin is no the current deployer`);
+        } else if (admin != newDeployer) {
+          console.error(`unknown pool admin ${admin}`);
         }
 
+        const comptroller = (await ethers.getContractAt("Comptroller.sol:Comptroller", pool.comptroller, deployer)) as Comptroller;
         const flywheels = await comptroller.callStatic.getRewardsDistributors();
-        for (const flywheelAddress in flywheels) {
-          // TODO adapt to MidasFlywheelCore
+        for (let k = 0; k < flywheels.length; k++) {
+          const flywheelAddress = flywheels[k];
           {
             // Auth
             const ffc = (await ethers.getContractAt("FuseFlywheelCore", flywheelAddress, deployer)) as FuseFlywheelCore;
-            tx = await ffc.setAuthority(newDeployer);
-            await tx.wait();
-            console.log(`ffc.setAuthority tx mined ${tx.hash}`);
 
-            tx = await ffc.setOwner(newDeployer);
-            await tx.wait();
-            console.log(`ffc.setOwner tx mined ${tx.hash}`);
+            const currentOwnerFFC = await ffc.callStatic.owner();
+            console.log(`current owner ${currentOwnerFFC} of FFC ${ffc.address}`);
+
+            if (currentOwnerFFC == currentDeployer) {
+              tx = await ffc.setOwner(newDeployer);
+              await tx.wait();
+              console.log(`ffc.setOwner tx mined ${tx.hash}`);
+            } else if (currentOwnerFFC != newDeployer) {
+              console.error(`unknown flywheel owner ${currentOwnerFFC}`);
+            }
           }
         }
 
         const markets = await comptroller.callStatic.getAllMarkets();
         for (let j = 0; j < markets.length; j++) {
           const market = markets[j];
+          console.log(`market ${market}`);
           const cTokenInstance = (await ethers.getContractAt(
             "CErc20PluginDelegate",
             market,
@@ -125,27 +169,39 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           )) as CErc20PluginDelegate;
 
           console.log("market", {
-            cToken: market,
             cTokenName: await cTokenInstance.callStatic.name(),
             cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
             implementation: await cTokenInstance.callStatic.implementation(),
           });
 
+          let pluginAddress;
           try {
-            const pluginAddress = await cTokenInstance.callStatic.plugin();
-            {
-              // Ownable - transferOwnership(address newOwner)
-              const midasERC4626 = (await ethers.getContractAt(
-                "MidasERC4626",
-                pluginAddress,
-                deployer
-              )) as MidasERC4626;
+            pluginAddress = await cTokenInstance.callStatic.plugin();
+          } catch (pluginError) {
+            console.log(`most probably the market has no plugin`);
+          }
+          if (pluginAddress) {
+            // Ownable - transferOwnership(address newOwner)
+            const midasERC4626 = (await ethers.getContractAt(
+              "MidasERC4626",
+              pluginAddress,
+              deployer
+            )) as MidasERC4626;
+
+            let currentOwner;
+            try {
+              currentOwner = await midasERC4626.callStatic.owner();
+            } catch (pluginError) {
+              console.log(`most probably the market has no plugin`);
+            }
+
+            if (currentOwner == currentDeployer) {
               tx = await midasERC4626.transferOwnership(newDeployer);
               await tx.wait();
               console.log(`midasERC4626.transferOwnership tx mined ${tx.hash}`);
+            } else if (currentOwner != newDeployer) {
+              console.error(`unknown plugin owner ${currentOwner} for ${pluginAddress}`);
             }
-          } catch (pluginError) {
-            console.log(`most probably the market has no plugin`, pluginError);
           }
         }
       }
@@ -164,18 +220,17 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-      const comptroller = (await ethers.getContractAt("Comptroller", pool.comptroller, deployer)) as Comptroller;
+      const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
 
-      const admin = await comptroller.callStatic.admin();
+      const admin = await unitroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const pendingAdmin = await comptroller.callStatic.pendingAdmin();
+      const pendingAdmin = await unitroller.callStatic.pendingAdmin();
       console.log("pool pending admin", pendingAdmin);
 
       if (pendingAdmin === newDeployer) {
         {
           // Unitroller - _setPendingAdmin/_acceptAdmin
-          const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
           tx = await unitroller._acceptAdmin();
           await tx.wait();
           console.log(`unitroller._acceptAdmin tx mined ${tx.hash}`);
