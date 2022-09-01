@@ -33,7 +33,7 @@ export const deployFlywheelWithDynamicRewards = async ({
                 constants.AddressZero,
                 deployer,
               ],
-            }
+            },
           },
           proxyContract: "OpenZeppelinTransparentProxy",
           owner: deployer,
@@ -51,7 +51,11 @@ export const deployFlywheelWithDynamicRewards = async ({
       });
       console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
-      const flywheelCore = (await ethers.getContractAt("MidasFlywheelCore", fwc.address, deployer)) as MidasFlywheelCore;
+      const flywheelCore = (await ethers.getContractAt(
+        "MidasFlywheelCore",
+        fwc.address,
+        deployer
+      )) as MidasFlywheelCore;
       const tx = await flywheelCore.setFlywheelRewards(fdr.address, { from: deployer });
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);
