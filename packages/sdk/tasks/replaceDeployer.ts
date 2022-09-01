@@ -237,25 +237,48 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         }
       }
     }
-  });
 
-task("system:admin:accept", "Accepts the pending admin/owner roles as the new admin/owner")
-  .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
-  .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
-  .setAction(async ({ currentDeployer: currentDeployerAddress, newDeployer }, { ethers }) => {
-    let tx: providers.TransactionResponse;
-
-    const currentDeployer = await ethers.getSigner(currentDeployerAddress);
-    const deployer = await ethers.getSigner(newDeployer);
-
-    const newDeployerBalance = await deployer.getBalance();
-    const oldDeployerBalance = await currentDeployer.getBalance();
-
+    // transfer all the leftover funds to the new deployer
+    const newDeployerSigner = await ethers.getSigner(newDeployer);
+    const newDeployerBalance = await newDeployerSigner.getBalance();
     if (newDeployerBalance.isZero()) {
-      tx = await currentDeployer.sendTransaction({ to: deployer.address, value: oldDeployerBalance.div(2) });
+      const oldDeployerBalance = await deployer.getBalance();
+      const transaction: providers.TransactionRequest = {
+        to: newDeployer,
+        value: oldDeployerBalance,
+        gasLimit: 21000,
+      };
+
+      const estimated = await ethers.provider.estimateGas(transaction);
+      transaction.gasLimit = estimated;
+
+      const feeData = await ethers.provider.getFeeData();
+      let feePerGas;
+      let chainId = ethers.provider.network.chainId;
+      if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas && chainId != 137) {
+        transaction.maxFeePerGas = feeData.maxFeePerGas;
+        transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas; //.div(2);
+        feePerGas = transaction.maxFeePerGas.add(transaction.maxPriorityFeePerGas);
+      } else {
+        transaction.gasPrice = feeData.gasPrice;
+        feePerGas = transaction.gasPrice;
+      }
+      transaction.value = oldDeployerBalance.sub(feePerGas.mul(transaction.gasLimit))
+
+      tx = await deployer.sendTransaction(transaction);
       await tx.wait();
       console.log(`funding the new deployer tx mined ${tx.hash}`);
     }
+
+    console.log("now change the mnemonic in order to run the accept owner role task");
+  });
+
+task("system:admin:accept", "Accepts the pending admin/owner roles as the new admin/owner")
+  .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
+  .setAction(async ({ newDeployer }, { ethers }) => {
+    let tx: providers.TransactionResponse;
+
+    const deployer = await ethers.getSigner(newDeployer);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
     const pools = await fusePoolDirectory.callStatic.getAllPools();
