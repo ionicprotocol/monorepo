@@ -101,6 +101,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 
         const flywheels = await comptroller.callStatic.getRewardsDistributors();
         for (const flywheelAddress in flywheels) {
+          // TODO adapt to MidasFlywheelCore
           {
             // Auth
             const ffc = (await ethers.getContractAt("FuseFlywheelCore", flywheelAddress, deployer)) as FuseFlywheelCore;

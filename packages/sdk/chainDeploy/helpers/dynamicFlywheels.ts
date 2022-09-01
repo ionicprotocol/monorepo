@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 
 import { FuseFlywheelDeployFnParams } from "..";
-import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
+import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
 
 export const deployFlywheelWithDynamicRewards = async ({
   ethers,
@@ -16,23 +16,31 @@ export const deployFlywheelWithDynamicRewards = async ({
   for (const config of deployConfig.dynamicFlywheels) {
     if (config) {
       console.log(
-        `Deploying FuseFlywheelCore & FuseFlywheelDynamicRewardsPlugin for ${config.rewardToken} reward token`
+        `Deploying MidasFlywheelCore & FuseFlywheelDynamicRewardsPlugin for ${config.rewardToken} reward token`
       );
-      //// FuseFlywheelCore with Dynamic Rewards
-      const fwc = await deployments.deploy(`FuseFlywheelCore_${config.name}`, {
-        contract: "FuseFlywheelCore",
+      //// MidasFlywheelCore with Dynamic Rewards
+      const fwc = await deployments.deploy(`MidasFlywheelCore_${config.name}`, {
+        contract: "MidasFlywheelCore",
         from: deployer,
-        args: [
-          config.rewardToken,
-          "0x0000000000000000000000000000000000000009", // need to initialize to address that does NOT have balance, otherwise this fails (i.e. AddressZero)
-          constants.AddressZero,
-          deployer,
-          constants.AddressZero,
-        ],
         log: true,
+        proxy: {
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [
+                config.rewardToken,
+                "0x0000000000000000000000000000000000000009", // need to initialize to address that does NOT have balance, otherwise this fails (i.e. AddressZero)
+                constants.AddressZero,
+                deployer,
+              ],
+            }
+          },
+          proxyContract: "OpenZeppelinTransparentProxy",
+          owner: deployer,
+        },
         waitConfirmations: 1,
       });
-      console.log("FuseFlywheelCore: ", fwc.address);
+      console.log("MidasFlywheelCore: ", fwc.address);
 
       const fdr = await deployments.deploy(`FuseFlywheelDynamicRewardsPlugin_${config.name}`, {
         contract: "FuseFlywheelDynamicRewardsPlugin",
@@ -43,7 +51,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       });
       console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
-      const flywheelCore = (await ethers.getContractAt("FuseFlywheelCore", fwc.address, deployer)) as FuseFlywheelCore;
+      const flywheelCore = (await ethers.getContractAt("MidasFlywheelCore", fwc.address, deployer)) as MidasFlywheelCore;
       const tx = await flywheelCore.setFlywheelRewards(fdr.address, { from: deployer });
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);
