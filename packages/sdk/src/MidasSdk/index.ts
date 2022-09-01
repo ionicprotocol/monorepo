@@ -53,6 +53,15 @@ export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public _provider: SupportedProvider;
   public _signer: SupportedSigners | null;
+  static isSupportedProvider(provider): provider is SupportedProvider {
+    return SignerWithAddress.isSigner(provider) || Signer.isSigner(provider);
+  }
+  static isSupportedSigner(signer): signer is SupportedSigners {
+    return SignerWithAddress.isSigner(signer) || Signer.isSigner(signer);
+  }
+  static isSupportedSignerOrProvider(signerOrProvider): signerOrProvider is SignerOrProvider {
+    return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
+  }
 
   public contracts: {
     FuseFeeDistributor: FuseFeeDistributor;
@@ -94,6 +103,7 @@ export class MidasBase {
     this._signer = signer;
 
     this.initStaticContracts();
+    return this;
   }
 
   constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig) {
