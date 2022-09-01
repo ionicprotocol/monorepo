@@ -92,9 +92,15 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       {
         // DefaultProxyAdmin / TransparentUpgradeableProxy
         const dpa = (await ethers.getContract("DefaultProxyAdmin", deployer)) as Ownable;
-        tx = await dpa.transferOwnership(newDeployer);
-        await tx.wait();
-        console.log(`dpa.transferOwnership tx mined ${tx.hash}`);
+        const currentOwnerDPA = await dpa.callStatic.owner();
+        console.log(`current dpa owner ${currentOwnerDPA}`);
+        if (currentOwnerDPA == currentDeployer) {
+          tx = await dpa.transferOwnership(newDeployer);
+          await tx.wait();
+          console.log(`dpa.transferOwnership tx mined ${tx.hash}`);
+        } else if (currentOwnerDPA != newDeployer) {
+          console.error(`unknown  owner ${currentOwnerDPA}`);
+        }
       }
 
       {
@@ -113,9 +119,15 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         }
 
         const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
-        tx = await mpo.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`mpo.changeAdmin tx mined ${tx.hash}`);
+        const currentAdminMPO = await mpo.callStatic.admin();
+        console.log(`current MPO admin ${currentAdminMPO}`);
+        if (currentAdminMPO == currentDeployer) {
+          tx = await mpo.changeAdmin(newDeployer);
+          await tx.wait();
+          console.log(`mpo.changeAdmin tx mined ${tx.hash}`);
+        } else if (currentAdminMPO != newDeployer) {
+          console.error(`unknown  admin ${currentAdminMPO}`);
+        }
       }
 
       const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
