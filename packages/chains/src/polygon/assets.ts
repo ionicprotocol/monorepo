@@ -94,7 +94,7 @@ export const assets: SupportedAsset[] = [
     name: "Alchemix Token (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", ALCX),
   },
   {
     symbol: assetSymbols.BAL,
@@ -102,7 +102,7 @@ export const assets: SupportedAsset[] = [
     name: "Balancer (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", BAL),
   },
   {
     symbol: assetSymbols.oBNB,
@@ -110,7 +110,7 @@ export const assets: SupportedAsset[] = [
     name: "Orbit Bridge BNB",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", oBNB),
   },
   {
     symbol: assetSymbols.BUSD,
@@ -118,7 +118,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance USD (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", BUSD),
   },
   {
     symbol: assetSymbols.CRV,
@@ -126,7 +126,7 @@ export const assets: SupportedAsset[] = [
     name: "CRV (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", CRV),
   },
   {
     symbol: assetSymbols.CVX,
@@ -134,7 +134,7 @@ export const assets: SupportedAsset[] = [
     name: "CVX (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", CVX),
   },
 
   {
@@ -143,7 +143,7 @@ export const assets: SupportedAsset[] = [
     name: "Dai Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", DAI),
   },
   {
     symbol: assetSymbols.WETH,
@@ -151,7 +151,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", WETH),
   },
   {
     symbol: assetSymbols.FRAX,
@@ -159,7 +159,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", FRAX),
   },
   {
     symbol: assetSymbols.FTM,
@@ -167,7 +167,7 @@ export const assets: SupportedAsset[] = [
     name: "Fantom",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", FTM),
   },
   {
     symbol: assetSymbols.FXS,
@@ -175,7 +175,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax Share",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", FXS),
   },
   {
     symbol: assetSymbols.GHST,
@@ -183,7 +183,7 @@ export const assets: SupportedAsset[] = [
     name: "Aavegotchi GHST Token (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", GHST),
   },
   {
     symbol: assetSymbols.GRT,
@@ -191,7 +191,7 @@ export const assets: SupportedAsset[] = [
     name: "Graph Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", GRT),
   },
   {
     symbol: assetSymbols.LINK,
@@ -199,7 +199,7 @@ export const assets: SupportedAsset[] = [
     name: "ChainLink Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", LINK),
   },
   {
     symbol: assetSymbols.MAI,
@@ -207,7 +207,7 @@ export const assets: SupportedAsset[] = [
     name: "miMATIC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", MAI),
   },
   {
     symbol: assetSymbols.MKR,
@@ -215,7 +215,7 @@ export const assets: SupportedAsset[] = [
     name: "Maker DAO",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", MKR),
   },
   {
     symbol: assetSymbols.RAI,
@@ -223,7 +223,7 @@ export const assets: SupportedAsset[] = [
     name: "Rai Reflex Index (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", RAI),
   },
   {
     symbol: assetSymbols.SNX,
@@ -231,7 +231,7 @@ export const assets: SupportedAsset[] = [
     name: "Synthetix Network Token (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", SNX),
   },
   {
     symbol: assetSymbols.SOL,
@@ -239,7 +239,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped SOL (Wormhole)",
     decimals: 9,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", SOL),
   },
   {
     symbol: assetSymbols.SUSHI,
@@ -247,7 +247,7 @@ export const assets: SupportedAsset[] = [
     name: "SushiToken (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", SUSHI),
   },
   {
     symbol: assetSymbols.YFI,
@@ -255,7 +255,7 @@ export const assets: SupportedAsset[] = [
     name: "yearn.finance (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", YFI),
   },
   {
     symbol: assetSymbols.USDC,
@@ -263,7 +263,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin (PoS)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", USDC),
   },
   {
     symbol: assetSymbols.USDT,
@@ -271,7 +271,7 @@ export const assets: SupportedAsset[] = [
     name: "Tether USD (PoS)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", USDT),
   },
   {
     symbol: assetSymbols.WBTC,
@@ -279,7 +279,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC (PoS)",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", WBTC),
   },
   {
     symbol: assetSymbols.WMATIC,
@@ -287,7 +287,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Matic",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    extraDocs: defaultDocs("https://polygonscan.com", WMATIC),
   },
   // QuickSwap LPs
   {
