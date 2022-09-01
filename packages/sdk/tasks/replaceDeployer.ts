@@ -22,57 +22,101 @@ export default task("system:admin:change", "Changes the system admin to a new ad
     const deployer = await ethers.getSigner(currentDeployer);
 
     // hardcode it here
-    if (newDeployer !== "hardcode it here") {
+    if (newDeployer !== "0x85165a9a25B6a3e9DCA240d2dA0f7019561233Bc") {
       throw new Error(`wrong new deployer`);
     } else {
       {
         // OwnableUpgradeable - transferOwnership(newDeployer)
         const fsl = (await ethers.getContract("FuseSafeLiquidator", deployer)) as OwnableUpgradeable;
-        tx = await fsl.transferOwnership(newDeployer);
-        await tx.wait();
-        console.log(`fsl.transferOwnership tx mined ${tx.hash}`);
+        const currentOwnerFSL = await fsl.callStatic.owner();
+        console.log(`current FSL owner ${currentOwnerFSL}`);
+
+        if (currentOwnerFSL == currentDeployer) {
+          tx = await fsl.transferOwnership(newDeployer);
+          await tx.wait();
+          console.log(`fsl.transferOwnership tx mined ${tx.hash}`);
+        } else if (currentOwnerFSL != newDeployer) {
+           console.error(`unknown  owner ${currentOwnerFSL}`);
+        }
       }
 
       {
         // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
         const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as SafeOwnableUpgradeable;
-        tx = await ffd._setPendingOwner(newDeployer);
-        await tx.wait();
-        console.log(`ffd._setPendingOwner tx mined ${tx.hash}`);
+        const currentOwnerFFD = await ffd.callStatic.owner();
+        console.log(`current FFD owner ${currentOwnerFFD}`);
+        if (currentOwnerFFD == currentDeployer) {
+          tx = await ffd._setPendingOwner(newDeployer);
+          await tx.wait();
+          console.log(`ffd._setPendingOwner tx mined ${tx.hash}`);
+        } else if (currentOwnerFFD != newDeployer) {
+          console.error(`unknown owner ${currentOwnerFFD}`);
+        }
 
         const fpd = (await ethers.getContract("FusePoolDirectory", deployer)) as SafeOwnableUpgradeable;
-        tx = await fpd._setPendingOwner(newDeployer);
-        await tx.wait();
-        console.log(`fpd._setPendingOwner tx mined ${tx.hash}`);
+        const currentOwnerFPD = await fpd.callStatic.owner();
+        console.log(`current FPD owner ${currentOwnerFPD}`);
+        if (currentOwnerFPD == currentDeployer) {
+          tx = await fpd._setPendingOwner(newDeployer);
+          await tx.wait();
+          console.log(`fpd._setPendingOwner tx mined ${tx.hash}`);
+        } else if (currentOwnerFPD != newDeployer) {
+          console.error(`unknown owner ${currentOwnerFPD}`);
+        }
 
         const curveOracle = (await ethers.getContract(
           "CurveLpTokenPriceOracleNoRegistry",
           deployer
         )) as SafeOwnableUpgradeable;
-        tx = await curveOracle._setPendingOwner(newDeployer);
-        await tx.wait();
-        console.log(`curveOracle._setPendingOwner tx mined ${tx.hash}`);
+        const currentOwnerCurveOracle = await curveOracle.callStatic.owner();
+        console.log(`current curve oracle owner ${currentOwnerCurveOracle}`);
+        if (currentOwnerCurveOracle == currentDeployer) {
+          tx = await curveOracle._setPendingOwner(newDeployer);
+          await tx.wait();
+          console.log(`curveOracle._setPendingOwner tx mined ${tx.hash}`);
+        } else if (currentOwnerCurveOracle != newDeployer) {
+          console.error(`unknown  owner ${currentOwnerCurveOracle}`);
+        }
       }
 
       {
         // DefaultProxyAdmin / TransparentUpgradeableProxy
         const dpa = (await ethers.getContract("DefaultProxyAdmin", deployer)) as Ownable;
-        tx = await dpa.transferOwnership(newDeployer);
-        await tx.wait();
-        console.log(`dpa.transferOwnership tx mined ${tx.hash}`);
+        const currentOwnerDpa = await dpa.callStatic.owner();
+        console.log(`current DPA owner ${currentOwnerDpa}`);
+        if (currentOwnerDpa == currentDeployer) {
+          tx = await dpa.transferOwnership(newDeployer);
+          await tx.wait();
+          console.log(`dpa.transferOwnership tx mined ${tx.hash}`);
+        } else if (currentOwnerDpa != newDeployer) {
+          console.error(`unknown owner ${currentOwnerDpa}`);
+        }
       }
 
       {
         // custom
         const dpo = (await ethers.getContract("DiaPriceOracle", deployer)) as DiaPriceOracle;
-        tx = await dpo.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`dpo.changeAdmin tx mined ${tx.hash}`);
+        const currentOwnerDpo = await dpo.callStatic.admin();
+        console.log(`current DPO admin ${currentOwnerDpo}`);
+        if (currentOwnerDpo == currentDeployer) {
+          tx = await dpo.changeAdmin(newDeployer);
+          await tx.wait();
+          console.log(`dpo.changeAdmin tx mined ${tx.hash}`);
+        } else if (currentOwnerDpo != newDeployer) {
+          console.error(`unknown  owner ${currentOwnerDpo}`);
+        }
 
         const mpo = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
-        tx = await mpo.changeAdmin(newDeployer);
-        await tx.wait();
-        console.log(`mpo.changeAdmin tx mined ${tx.hash}`);
+        const currentOwnerMpo = await mpo.callStatic.admin();
+        console.log(`current MPO admin ${currentOwnerMpo}`);
+        if (currentOwnerMpo == currentDeployer) {
+          tx = await mpo.changeAdmin(newDeployer);
+          await tx.wait();
+          console.log(`mpo.changeAdmin tx mined ${tx.hash}`);
+        } else if (currentOwnerMpo != newDeployer) {
+          console.error(`unknown  owner ${currentOwnerMpo}`);
+        }
+
       }
 
       const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
@@ -104,6 +148,10 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           {
             // Auth
             const ffc = (await ethers.getContractAt("FuseFlywheelCore", flywheelAddress, deployer)) as FuseFlywheelCore;
+
+            const currentOwnerFFC = await ffc.callStatic.owner();
+            console.log(`current owner ${currentOwnerFFC} of FFC ${ffc.address}`);
+
             tx = await ffc.setAuthority(newDeployer);
             await tx.wait();
             console.log(`ffc.setAuthority tx mined ${tx.hash}`);
