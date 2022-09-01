@@ -64,9 +64,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const FuseSafeLiquidator = await ethers.getContract("FuseSafeLiquidator");
   const FuseSafeLiquidatorArtifact = await deployments.getArtifact("FuseSafeLiquidator");
   chainDeployment.FuseSafeLiquidator = { abi: FuseSafeLiquidatorArtifact.abi, address: FuseSafeLiquidator.address };
-  const InitializableClones = await ethers.getContract("InitializableClones");
-  const InitializableClonesArtifact = await deployments.getArtifact("InitializableClones");
-  chainDeployment.InitializableClones = { abi: InitializableClonesArtifact.abi, address: InitializableClones.address };
   const JumpRateModel = await ethers.getContract("JumpRateModel");
   const JumpRateModelArtifact = await deployments.getArtifact("JumpRateModel");
   chainDeployment.JumpRateModel = { abi: JumpRateModelArtifact.abi, address: JumpRateModel.address };

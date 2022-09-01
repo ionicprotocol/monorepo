@@ -560,9 +560,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
-      "25600000000000000",
-      "32000000000000000",
-      "800000000000000000",
+      "500000000000000000",
+      "3000000000000000000",
+      "850000000000000000",
       3,
       "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
     ],
