@@ -91,7 +91,11 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-      const comptroller = (await ethers.getContractAt("Comptroller", pool.comptroller, signer)) as Comptroller;
+      const comptroller = (await ethers.getContractAt(
+        "Comptroller.sol:Comptroller",
+        pool.comptroller,
+        signer
+      )) as Comptroller;
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 

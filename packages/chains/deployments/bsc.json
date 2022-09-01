@@ -7613,7 +7613,7 @@
       ]
     },
     "AnkrBNBInterestRateModel": {
-      "address": "0xC24cB0dd08d11Ce4B0B711d12c86e71922F04D02",
+      "address": "0x4516267a7d644c374d39dE7ed67D7677231b91dE",
       "abi": [
         {
           "inputs": [
@@ -13950,7 +13950,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x3ba761cB2e4233f8951c501fA6c8C6ac89754f8C",
+      "address": "0xC39Fa556a8d1319555359C90a11Cf5715a5b0019",
       "abi": [
         {
           "inputs": [
@@ -17325,7 +17325,7 @@
       ]
     },
     "DiaPriceOracle": {
-      "address": "0x6505e15Ed6709E87Eea756a93f09359d8c175e25",
+      "address": "0xE622c2967E2885ED04436075889C88696328aBE8",
       "abi": [
         {
           "inputs": [

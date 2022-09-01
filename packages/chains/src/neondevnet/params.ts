@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((5 * 24 * 365 * 60).toString()),
-  cgId: "solana",
+  cgId: "neon",
   metadata: {
     chainIdHex: "0xE9AC0CE",
     name: "Neon Devnet",
