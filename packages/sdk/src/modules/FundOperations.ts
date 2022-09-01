@@ -33,8 +33,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       underlyingTokenAddress: string,
       comptrollerAddress: string,
       enableAsCollateral: boolean,
-      amount: BigNumber,
-      options: { from: string }
+      amount: BigNumber
     ) {
       const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
       const currentSignerAddress = await this.signer.getAddress();
@@ -67,18 +66,13 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { tx, errorCode: null };
     }
 
-    async repay(
-      cTokenAddress: string,
-      underlyingTokenAddress: string,
-      isRepayingMax: boolean,
-      amount: BigNumber,
-      options: { from: string }
-    ) {
+    async repay(cTokenAddress: string, underlyingTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
 
       const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
 
-      const hasApprovedEnough = (await token.callStatic.allowance(options.from, cTokenAddress)).gte(amount);
+      const currentSignerAddress = await this.signer.getAddress();
+      const hasApprovedEnough = (await token.callStatic.allowance(currentSignerAddress, cTokenAddress)).gte(amount);
       if (!hasApprovedEnough) {
         const approveTx = await token.approve(cTokenAddress, max);
         await approveTx.wait();

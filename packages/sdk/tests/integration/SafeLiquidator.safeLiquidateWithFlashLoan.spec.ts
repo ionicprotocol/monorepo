@@ -101,10 +101,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
         erc20One.underlying,
         poolAddress,
         true,
-        ethers.utils.parseEther(supply1Amount),
-        {
-          from: alice.address,
-        }
+        ethers.utils.parseEther(supply1Amount)
       );
     console.log(
       `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSuply.errorCode}`
@@ -118,10 +115,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
         erc20Two.underlying,
         poolAddress,
         true,
-        ethers.utils.parseEther(supply2Amount),
-        {
-          from: bob.address,
-        }
+        ethers.utils.parseEther(supply2Amount)
       );
     console.log(
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`

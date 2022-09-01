@@ -199,8 +199,7 @@ const AmountSelect = ({
           asset.underlyingToken,
           comptrollerAddress,
           enableAsCollateral,
-          amount,
-          { from: address }
+          amount
         );
 
         if (resp.errorCode !== null) {
@@ -214,8 +213,7 @@ const AmountSelect = ({
           asset.cToken,
           asset.underlyingToken,
           isRepayingMax,
-          amount,
-          { from: address }
+          amount
         );
 
         if (resp.errorCode !== null) {

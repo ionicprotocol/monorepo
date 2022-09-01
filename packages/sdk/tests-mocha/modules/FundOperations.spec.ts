@@ -91,10 +91,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         true,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(enterMarketStub).to.be.calledOnce;
@@ -116,10 +113,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(tx).to.be.eq("txId");
@@ -140,10 +134,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(maxApproveStub).to.be.calledOnce;
@@ -166,10 +157,7 @@ describe("FundOperation", () => {
         mkAddress("0xeee"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(tx).to.be.undefined;
@@ -209,10 +197,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xeee"),
         true,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(tx).to.be.eq("txId");
@@ -232,10 +217,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xeee"),
         false,
-        BigNumber.from(3),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(3)
       );
 
       expect(tx).to.be.eq("txId");
@@ -255,10 +237,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xdbc"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(maxApproveStub).to.be.calledOnce;
@@ -279,10 +258,7 @@ describe("FundOperation", () => {
         mkAddress("0xabc"),
         mkAddress("0xeee"),
         false,
-        BigNumber.from(5),
-        {
-          from: mkAddress("0xd2c"),
-        }
+        BigNumber.from(5)
       );
 
       expect(tx).to.be.undefined;
