@@ -1,6 +1,7 @@
 import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
+import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
 import { CErc20PluginDelegate } from "../lib/contracts/typechain/CErc20PluginDelegate";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { DiaPriceOracle } from "../lib/contracts/typechain/DiaPriceOracle.sol/DiaPriceOracle";
@@ -35,6 +36,17 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           tx = await fsl.transferOwnership(newDeployer);
           await tx.wait();
           console.log(`fsl.transferOwnership tx mined ${tx.hash}`);
+        }
+
+        const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+        const currentOwnerAp = await ap.callStatic.owner();
+        console.log(`current AP owner ${currentOwnerAp}`);
+        if (currentOwnerAp == currentDeployer) {
+          tx = await ap.transferOwnership(newDeployer);
+          await tx.wait();
+          console.log(`ap.transferOwnership tx mined ${tx.hash}`);
+        } else if (currentOwnerAp != newDeployer) {
+          console.error(`unknown  owner ${currentOwnerAp}`);
         }
       }
 
@@ -154,7 +166,11 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           console.error(`unknown pool admin ${admin}`);
         }
 
-        const comptroller = (await ethers.getContractAt("Comptroller.sol:Comptroller", pool.comptroller, deployer)) as Comptroller;
+        const comptroller = (await ethers.getContractAt(
+          "Comptroller.sol:Comptroller",
+          pool.comptroller,
+          deployer
+        )) as Comptroller;
         const flywheels = await comptroller.callStatic.getRewardsDistributors();
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
@@ -199,11 +215,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           }
           if (pluginAddress) {
             // Ownable - transferOwnership(address newOwner)
-            const midasERC4626 = (await ethers.getContractAt(
-              "MidasERC4626",
-              pluginAddress,
-              deployer
-            )) as MidasERC4626;
+            const midasERC4626 = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
 
             let currentOwner;
             try {
@@ -228,7 +240,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
 task("system:admin:accept", "Accepts the pending admin/owner roles as the new admin/owner")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
   .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
-  .setAction(async ({  currentDeployer: currentDeployerAddress, newDeployer }, { ethers }) => {
+  .setAction(async ({ currentDeployer: currentDeployerAddress, newDeployer }, { ethers }) => {
     let tx: providers.TransactionResponse;
 
     const currentDeployer = await ethers.getSigner(currentDeployerAddress);
@@ -238,7 +250,7 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     const oldDeployerBalance = await currentDeployer.getBalance();
 
     if (newDeployerBalance.isZero()) {
-      tx = await currentDeployer.sendTransaction({to: deployer.address, value: oldDeployerBalance.div(2) });
+      tx = await currentDeployer.sendTransaction({ to: deployer.address, value: oldDeployerBalance.div(2) });
       await tx.wait();
       console.log(`funding the new deployer tx mined ${tx.hash}`);
     }
