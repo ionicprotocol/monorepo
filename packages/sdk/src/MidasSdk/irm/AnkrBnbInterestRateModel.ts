@@ -84,8 +84,7 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
     const normalRate = utilizationRate
       .mul(this.multiplierPerBlock)
       .div(utils.parseEther("1"))
-      .add(this.baseRatePerBlock)
-      .div(100);
+      .add(this.baseRatePerBlock);
 
     if (utilizationRate.lte(this.kink)) {
       return normalRate;
