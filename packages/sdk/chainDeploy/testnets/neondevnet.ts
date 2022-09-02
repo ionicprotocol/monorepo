@@ -20,7 +20,7 @@ export const deployConfig: ChainDeployConfig = {
     hardcoded: [],
     uniswapData: [],
     pairInitHashCode: ethers.utils.hexlify("0x5e60a73d5771bebe13c2aec4784c2f5bd78d04e8e89e164a5299407beb2d324a"),
-    uniswapV2RouterAddress: "0xBD9EbFe0E6e909E56f1Fd3346D0118B7Db49Ca15",
+    uniswapV2RouterAddress: "0x53172f5CF9fB7D7123A2521a26eC8DB2707045E2",
     uniswapV2FactoryAddress: "0xBD9EbFe0E6e909E56f1Fd3346D0118B7Db49Ca15",
     uniswapOracleLpTokens: [],
     uniswapOracleInitialDeployTokens: [],
