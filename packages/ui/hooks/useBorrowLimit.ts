@@ -22,7 +22,7 @@ export const useBorrowLimit = <T extends NativePricedFuseAsset>(
       if (options?.ignoreIsEnabledCheckFor === asset.cToken || asset.membership) {
         _maxBorrow +=
           asset.supplyBalanceNative *
-          parseFloat(utils.formatUnits(asset.collateralFactor, asset.underlyingDecimals)) *
+          parseFloat(utils.formatUnits(asset.collateralFactor, 18)) *
           usdPrice;
       }
     }
