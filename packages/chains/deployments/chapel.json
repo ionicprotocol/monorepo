@@ -6674,7 +6674,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xA68cf6aB01Cb0a54b23b1950f57300c3EC6Cea41",
+      "address": "0xC9d0E2752716c0A2577db71402b78a9d335B1310",
       "abi": [
         {
           "inputs": [
@@ -10140,7 +10140,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xA2d90C33833694b554bc1c19C8A57D3D1417E2B6",
+      "address": "0x4Ec7e50E1a4eA877E8075bC463e3e959608f6308",
       "abi": [
         {
           "anonymous": false,
@@ -12461,7 +12461,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xcA7B11ffFE1CE2c28E4Fdd4c6593c93A3C09321e",
+      "address": "0x750cec6bB47E814ab052Dc8607203569B48636A8",
       "abi": [
         {
           "anonymous": false,
