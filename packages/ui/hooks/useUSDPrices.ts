@@ -39,6 +39,13 @@ async function getUSDPriceOf(chainIds: string[]): Promise<Record<string, Price>>
       if (data[cgId])
         return [ChainIdCoingeckoIdMapping[cgId], { value: data[cgId].usd, symbol: '$' }];
       console.warn("No price data in response for '${cgId}', setting to 1");
+      if (cgId === ChainConfigs.neondevnet.specificParams.cgId) {
+        return [
+          ChainIdCoingeckoIdMapping[cgId],
+          { value: 0.05, symbol: ChainIdNativeSymbolMapping[ChainIdCoingeckoIdMapping[cgId]] },
+        ];
+      }
+
       return [
         ChainIdCoingeckoIdMapping[cgId],
         { value: 1, symbol: ChainIdNativeSymbolMapping[ChainIdCoingeckoIdMapping[cgId]] },

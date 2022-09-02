@@ -544,17 +544,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
-  ////
-
-  // Plugins & Rewards
-  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
-    ethers,
-    getNamedAccounts,
-    deployments,
-    run,
-    deployConfig,
-  });
-  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
     from: deployer,
@@ -570,6 +559,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
   console.log("AnkrBNBInterestRateModel: ", abirm.address);
+
+  // Plugins & Rewards
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
