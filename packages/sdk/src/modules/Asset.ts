@@ -139,8 +139,8 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           supplyBalance,
           totalSupply,
           supplyBalanceNative:
-            Number(utils.formatUnits(supplyBalance, 18)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+            Number(utils.formatUnits(supplyBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
@@ -155,8 +155,8 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           supplyBalance,
           totalSupply,
           supplyBalanceNative:
-            Number(utils.formatUnits(supplyBalance, 18)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+            Number(utils.formatUnits(supplyBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
@@ -171,8 +171,8 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           borrowBalance,
           totalBorrow,
           borrowBalanceNative:
-            Number(utils.formatUnits(borrowBalance, 18)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+            Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
           borrowRatePerBlock: interestRateModel.getBorrowRate(
             assetToBeUpdated.totalSupply.gt(constants.Zero)
               ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
@@ -193,7 +193,8 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           borrowBalance,
           totalBorrow,
           borrowBalanceNative:
-            Number(utils.formatUnits(borrowBalance)) * Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+            Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
           borrowRatePerBlock,
         };
       }
