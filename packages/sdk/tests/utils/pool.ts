@@ -52,7 +52,6 @@ export async function createPool({
     bigCloseFactor,
     bigLiquidationIncentive,
     priceOracleAddress,
-    { from: signer.address },
     whitelist
   );
 }
@@ -75,9 +74,7 @@ export async function deployAssets(assets: MarketConfig[], signer?: SignerWithAd
   const deployed: DeployedAsset[] = [];
   for (const assetConf of assets) {
     console.log("Deploying asset: ", assetConf.name);
-    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConf, {
-      from: signer.address,
-    });
+    const [assetAddress, implementationAddress, receipt] = await sdk.deployAsset(assetConf);
     if (receipt.status !== 1) {
       throw `Failed to deploy asset: ${receipt.logs}`;
     }
@@ -101,7 +98,7 @@ export const assetInPool = async (
   underlyingSymbol: string,
   address?: string
 ): Promise<NativePricedFuseAsset> => {
-  const fetchedAssetsInPool: FusePoolData = await sdk.fetchFusePoolData(poolId, address);
+  const fetchedAssetsInPool: FusePoolData = await sdk.fetchFusePoolData(poolId, { from: address });
   return fetchedAssetsInPool.assets.filter((a) => a.underlyingSymbol === underlyingSymbol)[0];
 };
 
@@ -120,7 +117,7 @@ export const getPoolByName = async (name: string, sdk: MidasSdk, address?: strin
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
       const poolIndex = await getPoolIndex(publicPools[j].comptroller, sdk);
-      return await sdk.fetchFusePoolData(poolIndex.toString(), address);
+      return await sdk.fetchFusePoolData(poolIndex.toString(), { from: address });
     }
   }
   return null;

@@ -16082,48 +16082,6 @@
         }
       ]
     },
-    "InitializableClones": {
-      "address": "0x0624e204Cbd1EAEc42549746d540D4F4Ec152903",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "name": "Deployed",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "master",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initializer",
-              "type": "bytes"
-            }
-          ],
-          "name": "clone",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
     "JumpRateModel": {
       "address": "0x3c1CF82E6EA332C4C469a0DF31d27F94649735d8",
       "abi": [

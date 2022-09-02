@@ -13,17 +13,17 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
   return class PoolAsset extends Base {
     public COMPTROLLER_ERROR_CODES: Array<string> = COMPTROLLER_ERROR_CODES;
 
-    async deployAsset(config: MarketConfig, options: any): Promise<[string, string, TransactionReceipt]> {
+    async deployAsset(config: MarketConfig): Promise<[string, string, TransactionReceipt]> {
       //1. Validate configuration
       await this.#validateConfiguration(config);
 
       //2. Deploy new asset to existing pool via SDK
       try {
-        const [assetAddress, implementationAddress, receipt] = await this.#deployMarket(config, options);
+        const [assetAddress, implementationAddress, receipt] = await this.#deployMarket(config);
 
         return [assetAddress, implementationAddress, receipt];
       } catch (error: any) {
-        console.error("Raw Error", error);
+        console.error("deployAsset raw error:", error);
         throw Error("Deployment of asset to Fuse pool failed: " + (error.message ? error.message : error));
       }
     }
@@ -56,14 +56,14 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       }
     }
 
-    async #deployMarket(config: MarketConfig, options: any): Promise<[string, string, TransactionReceipt]> {
+    async #deployMarket(config: MarketConfig): Promise<[string, string, TransactionReceipt]> {
       const abiCoder = new utils.AbiCoder();
 
       const reserveFactorBN = utils.parseUnits((config.reserveFactor / 100).toString());
       const adminFeeBN = utils.parseUnits((config.adminFee / 100).toString());
       const collateralFactorBN = utils.parseUnits((config.collateralFactor / 100).toString());
 
-      const comptroller = this.getComptrollerInstance(config.comptroller, options);
+      const comptroller = this.getComptrollerInstance(config.comptroller, this.signer);
 
       // Use Default CErc20Delegate
       const implementationAddress = this.chainDeployment.CErc20Delegate.address;

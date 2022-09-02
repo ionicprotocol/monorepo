@@ -205,8 +205,7 @@ const AmountSelect = ({
           asset.underlyingToken,
           comptrollerAddress,
           enableAsCollateral,
-          amount,
-          { from: address }
+          amount
         );
 
         if (resp.errorCode !== null) {
@@ -220,8 +219,7 @@ const AmountSelect = ({
           asset.cToken,
           asset.underlyingToken,
           isRepayingMax,
-          amount,
-          { from: address }
+          amount
         );
 
         if (resp.errorCode !== null) {
@@ -231,9 +229,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.BORROW) {
-        const resp = await midasSdk.borrow(asset.cToken, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.borrow(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode, minBorrowUsd);
@@ -242,9 +238,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await midasSdk.withdraw(asset.cToken, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.withdraw(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode, minBorrowUsd);

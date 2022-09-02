@@ -128,7 +128,7 @@ task("arrakis:polygon:set-flywheels", "set plugin for each market")
       }
       try {
         //   Step 6: add Flywheels to market
-        await sdk.addFlywheelCoreToComptroller(mimoFlywheelAddress, COMPTROLLER, { from: signer.address });
+        await sdk.addFlywheelCoreToComptroller(mimoFlywheelAddress, COMPTROLLER);
 
         console.log("mimoFWC added to comptroller");
       } catch (e) {

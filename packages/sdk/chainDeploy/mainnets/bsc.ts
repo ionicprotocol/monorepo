@@ -544,7 +544,21 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
-  ////
+  //// deploy ankr bnb interest rate model
+  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
+    from: deployer,
+    args: [
+      deployConfig.blocksPerYear,
+      "5000000000000000",
+      "3000000000000000000",
+      "850000000000000000",
+      3,
+      "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
+    ],
+    log: true,
+  });
+  if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
+  console.log("AnkrBNBInterestRateModel: ", abirm.address);
 
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
@@ -555,21 +569,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
-  //// deploy ankr bnb interest rate model
-  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
-    from: deployer,
-    args: [
-      deployConfig.blocksPerYear,
-      "500000000000000000",
-      "3000000000000000000",
-      "850000000000000000",
-      3,
-      "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
-    ],
-    log: true,
-  });
-  if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
-  console.log("AnkrBNBInterestRateModel: ", abirm.address);
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;

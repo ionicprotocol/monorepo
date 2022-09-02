@@ -6674,7 +6674,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xA68cf6aB01Cb0a54b23b1950f57300c3EC6Cea41",
+      "address": "0xC9d0E2752716c0A2577db71402b78a9d335B1310",
       "abi": [
         {
           "inputs": [
@@ -10140,7 +10140,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xd8194852630a148615623Bcae07bab808cC86aa6",
+      "address": "0x4Ec7e50E1a4eA877E8075bC463e3e959608f6308",
       "abi": [
         {
           "anonymous": false,
@@ -12461,7 +12461,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xEb777221103C8D37B13fF8aA467d80c020Edeb80",
+      "address": "0x750cec6bB47E814ab052Dc8607203569B48636A8",
       "abi": [
         {
           "anonymous": false,
@@ -17950,48 +17950,6 @@
         {
           "stateMutability": "payable",
           "type": "receive"
-        }
-      ]
-    },
-    "InitializableClones": {
-      "address": "0x11Edf13606A9743c67559544B34Ba349DffEF634",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "name": "Deployed",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "master",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initializer",
-              "type": "bytes"
-            }
-          ],
-          "name": "clone",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
         }
       ]
     },
