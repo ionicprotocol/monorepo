@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { FundOperationMode, InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
+import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
@@ -140,7 +140,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           totalSupply,
           supplyBalanceNative:
             Number(utils.formatUnits(supplyBalance, assetToBeUpdated.underlyingDecimals)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
@@ -156,7 +156,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           totalSupply,
           supplyBalanceNative:
             Number(utils.formatUnits(supplyBalance, assetToBeUpdated.underlyingDecimals)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
               ? assetToBeUpdated.totalBorrow.mul(constants.WeiPerEther).div(totalSupply)
@@ -172,7 +172,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           totalBorrow,
           borrowBalanceNative:
             Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           borrowRatePerBlock: interestRateModel.getBorrowRate(
             assetToBeUpdated.totalSupply.gt(constants.Zero)
               ? totalBorrow.mul(constants.WeiPerEther).div(assetToBeUpdated.totalSupply)
@@ -194,7 +194,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           totalBorrow,
           borrowBalanceNative:
             Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
+            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           borrowRatePerBlock,
         };
       }
