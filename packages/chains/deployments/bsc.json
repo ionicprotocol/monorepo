@@ -7613,7 +7613,7 @@
       ]
     },
     "AnkrBNBInterestRateModel": {
-      "address": "0xC24cB0dd08d11Ce4B0B711d12c86e71922F04D02",
+      "address": "0xe321fc396BFB31DE3CDff981F180B0F9bd77Df53",
       "abi": [
         {
           "inputs": [
@@ -13950,7 +13950,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x3ba761cB2e4233f8951c501fA6c8C6ac89754f8C",
+      "address": "0x3d3A9288D8614Ac0930C6Ed38eEa43511A3DAB18",
       "abi": [
         {
           "inputs": [
@@ -16673,7 +16673,7 @@
       ]
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x99908B157fdb6F75898aE1de60E5fb9EeB421178",
+      "address": "0x6b459108523CB748418a34039C985CB2868FBA6A",
       "abi": [
         {
           "anonymous": false,
@@ -17325,7 +17325,7 @@
       ]
     },
     "DiaPriceOracle": {
-      "address": "0x6505e15Ed6709E87Eea756a93f09359d8c175e25",
+      "address": "0x46FB169FD5900821Fc3B775504AfAcEfd642fa63",
       "abi": [
         {
           "inputs": [
@@ -19651,7 +19651,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xd49dB0711285c8b26d1B91c6042b12796428D640",
+      "address": "0xCa73Ef910569cfaEe8781BCF7D3dD59B9B9Bf40D",
       "abi": [
         {
           "anonymous": false,
@@ -20695,7 +20695,7 @@
       ]
     },
     "FuseFlywheelCore_AUTOv2": {
-      "address": "0x9b3A8d972B27f17B19Ed5945ab7a8779fC07C17B",
+      "address": "0xd9F8F2C42333A92770b60a7020517099A55ed9B6",
       "abi": [
         {
           "inputs": [
@@ -21319,7 +21319,7 @@
       ]
     },
     "FuseFlywheelCore_DDD": {
-      "address": "0x56631033eFF01DEe2FB7Cf6eFFa87B8c9b07F1AA",
+      "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB",
       "abi": [
         {
           "inputs": [
@@ -21943,7 +21943,7 @@
       ]
     },
     "FuseFlywheelCore_EPX": {
-      "address": "0x0e6125EC80522E47b9efcce57d5429468D30dEA7",
+      "address": "0x7bFD233Ac34cBfE9eF6F4c2f5fE0b5f21bd79C77",
       "abi": [
         {
           "inputs": [
@@ -22567,7 +22567,7 @@
       ]
     },
     "FuseFlywheelDynamicRewardsPlugin_AUTOv2": {
-      "address": "0xBebEF6a747cAa33723E9F9DA8f59AEf0785b6570",
+      "address": "0x467A66fC4C0DB71D59443d3889119359030dc4e1",
       "abi": [
         {
           "inputs": [
@@ -22710,7 +22710,7 @@
       ]
     },
     "FuseFlywheelDynamicRewardsPlugin_DDD": {
-      "address": "0x2904Ef2478e1fF96d1351B99a1CE075C5E7fE1B1",
+      "address": "0x9c44eD0210a082CFA1378cd88BcE30dbA08daCb3",
       "abi": [
         {
           "inputs": [
@@ -22853,7 +22853,7 @@
       ]
     },
     "FuseFlywheelDynamicRewardsPlugin_EPX": {
-      "address": "0xD1FB950c9bbC00AE9A9b005Eb2bDA77f86D192Fc",
+      "address": "0xe974F10a9B0533c7472a3d895DdBA5b9352D5bc5",
       "abi": [
         {
           "inputs": [
@@ -24702,7 +24702,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xB46b0F8eDDB31EbCb6147edf01470Ee0a4671c3D",
+      "address": "0x031C5e133115342687de18a5D9363d2D82C239b0",
       "abi": [
         {
           "anonymous": false,
