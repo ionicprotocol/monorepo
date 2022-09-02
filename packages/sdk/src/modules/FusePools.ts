@@ -26,14 +26,16 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         blockPosted,
         timestampPosted,
       } = await this.contracts.FusePoolDirectory.callStatic.pools(Number(poolId), overrides);
+      const name = filterPoolName(_unfiliteredName);
 
+      // TODO: Refactor, this call can be saved, all of this data except whitelist
+      // can be retrieved from `getPoolAssetsWithData` call below.
       const rawData = await this.contracts.FusePoolLens.callStatic.getPoolSummary(comptroller, overrides);
 
       const underlyingTokens = rawData[2];
       const underlyingSymbols = rawData[3];
       const whitelistedAdmin = rawData[4];
-
-      const name = filterPoolName(_unfiliteredName);
+      //See comment above
 
       const assets: NativePricedFuseAsset[] = (
         await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
@@ -88,21 +90,21 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
         asset.supplyBalanceNative =
           Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
 
         asset.borrowBalanceNative =
           Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
 
         totalSupplyBalanceNative += asset.supplyBalanceNative;
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
           Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
         asset.totalBorrowNative =
           Number(utils.formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
 
         if (asset.totalSupplyNative === 0) {
           asset.utilization = 0;
@@ -115,7 +117,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
         const assetLiquidityNative =
           Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
         asset.liquidityNative = assetLiquidityNative;
 
         totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidityNative;
