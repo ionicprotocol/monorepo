@@ -71,6 +71,7 @@ module "bsc_mainnet_twap_bot" {
   runtime_env_vars = concat(local.secret_env_vars, local.twap_bot_env_vars, [
     { name = "SUPPORTED_PAIRS", value = local.bsc_mainnet_supported_pais },
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
+    { name = "EXLCUDED_COMPTROLLERS", value = "0x35F3a59389Dc3174A98610727C2e349E275Dc909" },
   ])
 }
 
