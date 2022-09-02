@@ -92,8 +92,10 @@ export const AssetSupplyRow = ({
       setaBNBcApr(utils.formatUnits(apr));
     };
 
-    func();
-  }, [midasSdk]);
+    if (asset.underlyingSymbol === assetSymbols.aBNBc) {
+      func();
+    }
+  }, [asset, midasSdk.provider]);
 
   const onToggleCollateral = async () => {
     const comptroller = midasSdk.createComptroller(comptrollerAddress);
