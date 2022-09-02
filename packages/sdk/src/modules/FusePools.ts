@@ -87,33 +87,38 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         );
 
         asset.supplyBalanceNative =
-          Number(utils.formatUnits(asset.supplyBalance)) * Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice));
 
         asset.borrowBalanceNative =
-          Number(utils.formatUnits(asset.borrowBalance)) * Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSupplyBalanceNative += asset.supplyBalanceNative;
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
-          Number(utils.formatUnits(asset.totalSupply)) * Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice));
         asset.totalBorrowNative =
-          Number(utils.formatUnits(asset.totalBorrow)) * Number(utils.formatUnits(asset.underlyingPrice));
+          Number(utils.formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice));
 
         if (asset.totalSupplyNative === 0) {
           asset.utilization = 0;
         } else {
           asset.utilization = (asset.totalBorrowNative / asset.totalSupplyNative) * 100;
         }
-        const assetLiquidity =
-          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
-        asset.liquidityNative = assetLiquidity;
+        const assetLiquidityNative =
+          Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice));
+        asset.liquidityNative = assetLiquidityNative;
 
-        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
+        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidityNative;
         totalLiquidityNative += asset.liquidityNative;
 
         if (!asset.isBorrowPaused) {
