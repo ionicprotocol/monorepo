@@ -75,7 +75,6 @@ export default async function getAllFusePoolUsers(
       const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth);
       fusePoolUsers.push(poolUserParams);
     }
-    // if (pool.comptroller !== "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5") {
   }
   // }
   return fusePoolUsers;
