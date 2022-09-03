@@ -6,6 +6,7 @@ export enum SupportedChains {
   moonbeam = 1284,
   neon_devnet = 245022926,
   polygon = 137,
+  arbitrum = 42161,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -283,6 +284,9 @@ export enum assetSymbols {
   "CELR-GLMR" = "CELR-GLMR",
   STELLA = "STELLA",
   CELR = "CELR",
+
+  // Arbitrum
+  "2pool" = "2pool",
 }
 
 export default assetSymbols;
