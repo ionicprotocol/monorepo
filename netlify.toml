@@ -13,7 +13,6 @@ SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
 SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 SUPABASE_NATIVE_PRICES_TABLE_NAME="native-prices"
 ICON_SERVER="https://d1912tcoux65lj.cloudfront.net"
-MIN_BORROW_USD="100"
 
 [context.branch-deploy.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"

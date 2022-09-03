@@ -5,7 +5,7 @@ import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((20 * 24 * 365 * 60).toString()),
-  cgId: "binancecoin",
+  cgId: "binancecoin-chapel",
   metadata: {
     chainIdHex: "0x61",
     name: "BSC Testnet (Chapel)",

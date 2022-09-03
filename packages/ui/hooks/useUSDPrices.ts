@@ -1,27 +1,68 @@
+import * as ChainConfigs from '@midas-capital/chains';
 import axios from 'axios';
 import { useQuery } from 'react-query';
 
-async function getUSDPriceOf(cgIds: string[]): Promise<number[]> {
-  const { data } = await axios
-    .get(`https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${cgIds.join(',')}`)
-    .catch(() => {
-      const mockData: { [key: string]: { usd: number } } = {};
-      cgIds.forEach((cgId) => {
-        mockData[cgId] = {
-          usd: 1,
-        };
-      });
-      return mockData;
-    });
-  return cgIds.map((cgId) => (data[cgId] ? data[cgId].usd : 1));
+const ChainIdCoingeckoIdMapping = Object.entries(ChainConfigs)
+  .map(([, config]): [string, string] => [config.chainId.toString(), config.specificParams.cgId])
+  .reduce<Record<string, string>>((acc, cur) => {
+    acc[cur[0]] = cur[1];
+    acc[cur[1]] = cur[0];
+    return acc;
+  }, {});
+
+const ChainIdNativeSymbolMapping = Object.entries(ChainConfigs)
+  .map(([, config]): [string, string] => [
+    config.chainId.toString(),
+    config.specificParams.metadata.nativeCurrency.symbol,
+  ])
+  .reduce<Record<string, string>>((acc, cur) => {
+    acc[cur[0]] = cur[1];
+    acc[cur[1]] = cur[0];
+    return acc;
+  }, {});
+
+interface Price {
+  value: number;
+  symbol: string;
 }
 
-export function useUSDPrice(coingeckoIds: string[]) {
+// TODO Make currency agnostic
+async function getUSDPriceOf(chainIds: string[]): Promise<Record<string, Price>> {
+  const cgIds = chainIds.map((id) => ChainIdCoingeckoIdMapping[id]);
+
+  const { data } = await axios.get(
+    `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${cgIds.join(',')}`
+  );
+
+  return cgIds
+    .map((cgId): [string, Price] => {
+      if (data[cgId])
+        return [ChainIdCoingeckoIdMapping[cgId], { value: data[cgId].usd, symbol: '$' }];
+      console.warn("No price data in response for '${cgId}', setting to 1");
+      if (cgId === ChainConfigs.neondevnet.specificParams.cgId) {
+        return [
+          ChainIdCoingeckoIdMapping[cgId],
+          { value: 0.05, symbol: ChainIdNativeSymbolMapping[ChainIdCoingeckoIdMapping[cgId]] },
+        ];
+      }
+
+      return [
+        ChainIdCoingeckoIdMapping[cgId],
+        { value: 1, symbol: ChainIdNativeSymbolMapping[ChainIdCoingeckoIdMapping[cgId]] },
+      ];
+    })
+    .reduce<Record<string, Price>>((acc, cur) => {
+      acc[cur[0]] = cur[1];
+      return acc;
+    }, {});
+}
+
+export function useUSDPrices(chainIds: string[]) {
   return useQuery(
-    ['useUSDPrice', ...coingeckoIds],
+    ['useUSDPrice', ...chainIds.sort()],
     async () => {
-      return getUSDPriceOf(coingeckoIds);
+      return getUSDPriceOf(chainIds);
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!coingeckoIds && coingeckoIds.length > 0 }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!chainIds && chainIds.length > 0 }
   );
 }

@@ -11,11 +11,12 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { Web3Provider } from '@ethersproject/providers';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { FundOperationMode } from '@midas-capital/types';
-import { ContractTransaction, utils } from 'ethers';
+import { assetSymbols, FundOperationMode } from '@midas-capital/types';
+import { Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/RewardsInfo';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
@@ -25,7 +26,14 @@ import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { DOWN_LIMIT, UP_LIMIT, URL_MIDAS_DOCS } from '@ui/constants/index';
+import {
+  aBNBcContractABI,
+  aBNBcContractAddress,
+  aprDays,
+  DOWN_LIMIT,
+  UP_LIMIT,
+  URL_MIDAS_DOCS,
+} from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
@@ -70,6 +78,24 @@ export const AssetSupplyRow = ({
   );
 
   const { data: pluginInfo } = usePluginInfo(asset.plugin);
+  const [aBNBcApr, setaBNBcApr] = useState('');
+
+  useEffect(() => {
+    const func = async () => {
+      const contract = new Contract(
+        aBNBcContractAddress,
+        aBNBcContractABI,
+        midasSdk.provider as Web3Provider
+      );
+
+      const apr = await contract.callStatic.averagePercentageRate(aprDays);
+      setaBNBcApr(utils.formatUnits(apr));
+    };
+
+    if (asset.underlyingSymbol === assetSymbols.aBNBc) {
+      func();
+    }
+  }, [asset, midasSdk.provider]);
 
   const onToggleCollateral = async () => {
     const comptroller = midasSdk.createComptroller(comptrollerAddress);
@@ -230,7 +256,7 @@ export const AssetSupplyRow = ({
           </Row>
         </Td>
 
-        <Td px={1}>
+        <Td cursor={'pointer'} onClick={openModal} px={1}>
           <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
         </Td>
 
@@ -246,6 +272,11 @@ export const AssetSupplyRow = ({
               <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
                 {supplyAPY.toFixed(2)}%
               </Text>
+              {asset.underlyingSymbol === assetSymbols.aBNBc && (
+                <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: 'md' }}>
+                  + {Number(aBNBcApr).toFixed(2)}%
+                </Text>
+              )}
 
               {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
                 rewardsOfThisMarket?.rewardsInfo.map((info) =>
@@ -326,10 +357,13 @@ export const AssetSupplyRow = ({
 
         <Td verticalAlign={'middle'}>
           <Row mainAxisAlignment={'center'} crossAxisAlignment="center">
-            <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
+            <SwitchCSS
+              symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+              color={cSwitch.bgColor}
+            />
             <Switch
               isChecked={asset.membership}
-              className={'switch-' + asset.underlyingSymbol}
+              className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
               onChange={onToggleCollateral}
               size={isMobile ? 'sm' : 'md'}
               cursor={'pointer'}

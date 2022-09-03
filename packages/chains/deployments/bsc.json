@@ -7613,7 +7613,7 @@
       ]
     },
     "AnkrBNBInterestRateModel": {
-      "address": "0x312752Db2BCe2780dA87E7691aDb2d7B83ADfb47",
+      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
       "abi": [
         {
           "inputs": [
@@ -7624,12 +7624,12 @@
             },
             {
               "internalType": "uint256",
-              "name": "baseRatePerYear",
+              "name": "_baseRateMultiplier",
               "type": "uint256"
             },
             {
               "internalType": "uint256",
-              "name": "_multiplierPerYear",
+              "name": "_jumpMultiplierPerYear",
               "type": "uint256"
             },
             {
@@ -7657,13 +7657,13 @@
             {
               "indexed": false,
               "internalType": "uint256",
-              "name": "baseRatePerBlock",
+              "name": "blocksPerYear",
               "type": "uint256"
             },
             {
               "indexed": false,
               "internalType": "uint256",
-              "name": "jumpMultiplierPerBlock",
+              "name": "baseRateMultiplier",
               "type": "uint256"
             },
             {
@@ -7691,7 +7691,7 @@
         },
         {
           "inputs": [],
-          "name": "baseRatePerBlock",
+          "name": "baseRateMultiplier",
           "outputs": [
             {
               "internalType": "uint256",
@@ -7729,6 +7729,32 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "getAnkrRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getBaseRatePerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "uint256",
@@ -7758,8 +7784,37 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "getBorrowRatePostKink",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
-          "name": "getJumpMultiplierPerBlock",
+          "name": "getMultiplierPerBlock",
           "outputs": [
             {
               "internalType": "uint256",
@@ -7819,7 +7874,7 @@
         },
         {
           "inputs": [],
-          "name": "kink",
+          "name": "jumpMultiplierPerBlock",
           "outputs": [
             {
               "internalType": "uint256",
@@ -7832,7 +7887,7 @@
         },
         {
           "inputs": [],
-          "name": "multiplierPerBlock",
+          "name": "kink",
           "outputs": [
             {
               "internalType": "uint256",
@@ -13895,7 +13950,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x3ba761cB2e4233f8951c501fA6c8C6ac89754f8C",
+      "address": "0x3d3A9288D8614Ac0930C6Ed38eEa43511A3DAB18",
       "abi": [
         {
           "inputs": [
@@ -16618,7 +16673,7 @@
       ]
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x59988d4C43c8AfD3Ebe110C12944B6f71fc0b537",
+      "address": "0x6b459108523CB748418a34039C985CB2868FBA6A",
       "abi": [
         {
           "anonymous": false,
@@ -17270,7 +17325,7 @@
       ]
     },
     "DiaPriceOracle": {
-      "address": "0x6505e15Ed6709E87Eea756a93f09359d8c175e25",
+      "address": "0x46FB169FD5900821Fc3B775504AfAcEfd642fa63",
       "abi": [
         {
           "inputs": [
@@ -19596,7 +19651,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x5483b14Fc8B4349ba4FB7513B14e9b89A2D24f87",
+      "address": "0xCa73Ef910569cfaEe8781BCF7D3dD59B9B9Bf40D",
       "abi": [
         {
           "anonymous": false,
@@ -20640,7 +20695,7 @@
       ]
     },
     "FuseFlywheelCore_AUTOv2": {
-      "address": "0x9b3A8d972B27f17B19Ed5945ab7a8779fC07C17B",
+      "address": "0xd9F8F2C42333A92770b60a7020517099A55ed9B6",
       "abi": [
         {
           "inputs": [
@@ -21264,7 +21319,7 @@
       ]
     },
     "FuseFlywheelCore_DDD": {
-      "address": "0x56631033eFF01DEe2FB7Cf6eFFa87B8c9b07F1AA",
+      "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB",
       "abi": [
         {
           "inputs": [
@@ -21888,7 +21943,7 @@
       ]
     },
     "FuseFlywheelCore_EPX": {
-      "address": "0x0e6125EC80522E47b9efcce57d5429468D30dEA7",
+      "address": "0x7bFD233Ac34cBfE9eF6F4c2f5fE0b5f21bd79C77",
       "abi": [
         {
           "inputs": [
@@ -22512,7 +22567,7 @@
       ]
     },
     "FuseFlywheelDynamicRewardsPlugin_AUTOv2": {
-      "address": "0xBebEF6a747cAa33723E9F9DA8f59AEf0785b6570",
+      "address": "0xEc7c26D0F6a6d866f80637Db643C935FA7cf55c2",
       "abi": [
         {
           "inputs": [
@@ -22655,7 +22710,7 @@
       ]
     },
     "FuseFlywheelDynamicRewardsPlugin_DDD": {
-      "address": "0x2904Ef2478e1fF96d1351B99a1CE075C5E7fE1B1",
+      "address": "0x0d4d99F8Ce8a739251048b1Cb8d51FE45edf8D29",
       "abi": [
         {
           "inputs": [
@@ -22798,7 +22853,7 @@
       ]
     },
     "FuseFlywheelDynamicRewardsPlugin_EPX": {
-      "address": "0xD1FB950c9bbC00AE9A9b005Eb2bDA77f86D192Fc",
+      "address": "0x10126C12EB9ce1Eb06E3F5C3EFad00748A82066a",
       "abi": [
         {
           "inputs": [
@@ -24647,7 +24702,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x53045712a6B20cc6aCF34549a4a14F320DF5DDf0",
+      "address": "0x031C5e133115342687de18a5D9363d2D82C239b0",
       "abi": [
         {
           "anonymous": false,
@@ -30139,48 +30194,6 @@
         }
       ]
     },
-    "InitializableClones": {
-      "address": "0x0344805288fca6e4b911C42741cA215B227ebE7f",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "name": "Deployed",
-          "type": "event"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "master",
-              "type": "address"
-            },
-            {
-              "internalType": "bytes",
-              "name": "initializer",
-              "type": "bytes"
-            }
-          ],
-          "name": "clone",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "instance",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
     "JarvisLiquidatorFunder": {
       "address": "0x190D6BbC18c34c2aF19EEA1cd9Ad566E56DaE83C",
       "abi": [
@@ -30279,87 +30292,6 @@
             }
           ],
           "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]
-    },
-    "JarvisSynthereumLiquidator": {
-      "address": "0xC2a3D9A2D516E0c03a12b16934e057895A7fFb91",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract ISynthereumLiquidityPool",
-              "name": "_pool",
-              "type": "address"
-            },
-            {
-              "internalType": "uint64",
-              "name": "_txExpirationPeriod",
-              "type": "uint64"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "pool",
-          "outputs": [
-            {
-              "internalType": "contract ISynthereumLiquidityPool",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "inputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "inputAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "strategyData",
-              "type": "bytes"
-            }
-          ],
-          "name": "redeem",
-          "outputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "outputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "outputAmount",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "txExpirationPeriod",
-          "outputs": [
-            {
-              "internalType": "uint64",
-              "name": "",
-              "type": "uint64"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         }
       ]
@@ -31265,6 +31197,4449 @@
     },
     "MasterPriceOracle_Proxy": {
       "address": "0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        }
+      ]
+    },
+    "MidasFlywheelCore_AUTOv2": {
+      "address": "0x912939dE868302812126122928d45a5586e3262a",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsDelta",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsIndex",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newStrategy",
+              "type": "address"
+            }
+          ],
+          "name": "AddStrategy",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ClaimRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelBoosterUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelRewardsUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldFeeRecipient",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newFeeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "UpdatedFeeSettings",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ONE",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "secondUser",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addStrategyForRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "claimRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeRecipient",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelBooster",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelRewards",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "_rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "_flywheelRewards",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "_flywheelBooster",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "performanceFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsAccrued",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "setBooster",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "setFlywheelRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "strategyState",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "index",
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_performanceFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "updateFeeSettings",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userIndex",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        }
+      ]
+    },
+    "MidasFlywheelCore_AUTOv2_Implementation": {
+      "address": "0x41F98648318d12C7F96a49b17d12782FCbe4Cd70",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsDelta",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsIndex",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newStrategy",
+              "type": "address"
+            }
+          ],
+          "name": "AddStrategy",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ClaimRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelBoosterUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelRewardsUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldFeeRecipient",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newFeeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "UpdatedFeeSettings",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ONE",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "secondUser",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addStrategyForRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "claimRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeRecipient",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelBooster",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelRewards",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "_rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "_flywheelRewards",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "_flywheelBooster",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "performanceFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsAccrued",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "setBooster",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "setFlywheelRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "strategyState",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "index",
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_performanceFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "updateFeeSettings",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userIndex",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "MidasFlywheelCore_AUTOv2_Proxy": {
+      "address": "0x912939dE868302812126122928d45a5586e3262a",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        }
+      ]
+    },
+    "MidasFlywheelCore_DDD": {
+      "address": "0x2e0dC08711E62c99ec0dcac67DEEe6E807a96f5A",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsDelta",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsIndex",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newStrategy",
+              "type": "address"
+            }
+          ],
+          "name": "AddStrategy",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ClaimRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelBoosterUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelRewardsUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldFeeRecipient",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newFeeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "UpdatedFeeSettings",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ONE",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "secondUser",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addStrategyForRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "claimRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeRecipient",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelBooster",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelRewards",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "_rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "_flywheelRewards",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "_flywheelBooster",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "performanceFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsAccrued",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "setBooster",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "setFlywheelRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "strategyState",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "index",
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_performanceFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "updateFeeSettings",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userIndex",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        }
+      ]
+    },
+    "MidasFlywheelCore_DDD_Implementation": {
+      "address": "0xA71546E449d1D02E5eE8cF0384A91774e4179a99",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsDelta",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsIndex",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newStrategy",
+              "type": "address"
+            }
+          ],
+          "name": "AddStrategy",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ClaimRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelBoosterUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelRewardsUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldFeeRecipient",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newFeeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "UpdatedFeeSettings",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ONE",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "secondUser",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addStrategyForRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "claimRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeRecipient",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelBooster",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelRewards",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "_rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "_flywheelRewards",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "_flywheelBooster",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "performanceFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsAccrued",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "setBooster",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "setFlywheelRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "strategyState",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "index",
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_performanceFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "updateFeeSettings",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userIndex",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "MidasFlywheelCore_DDD_Proxy": {
+      "address": "0x2e0dC08711E62c99ec0dcac67DEEe6E807a96f5A",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        }
+      ]
+    },
+    "MidasFlywheelCore_EPX": {
+      "address": "0x393527A10064435dC6C6bc4aE84bb540E1Ae2aA8",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "previousAdmin",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "AdminChanged",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "beacon",
+              "type": "address"
+            }
+          ],
+          "name": "BeaconUpgraded",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "implementation",
+              "type": "address"
+            }
+          ],
+          "name": "Upgraded",
+          "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newAdmin",
+              "type": "address"
+            }
+          ],
+          "name": "changeAdmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "implementation_",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            }
+          ],
+          "name": "upgradeTo",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newImplementation",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "upgradeToAndCall",
+          "outputs": [],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsDelta",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsIndex",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newStrategy",
+              "type": "address"
+            }
+          ],
+          "name": "AddStrategy",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ClaimRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelBoosterUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelRewardsUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldFeeRecipient",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newFeeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "UpdatedFeeSettings",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ONE",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "secondUser",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addStrategyForRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "claimRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeRecipient",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelBooster",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelRewards",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "_rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "_flywheelRewards",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "_flywheelBooster",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "performanceFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsAccrued",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "setBooster",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "setFlywheelRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "strategyState",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "index",
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_performanceFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "updateFeeSettings",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userIndex",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_logic",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "admin_",
+              "type": "address"
+            },
+            {
+              "internalType": "bytes",
+              "name": "_data",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "constructor"
+        }
+      ]
+    },
+    "MidasFlywheelCore_EPX_Implementation": {
+      "address": "0x59c73DB3A94A254658f9F3f4d7e594e7b5af0AC3",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsDelta",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rewardsIndex",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newStrategy",
+              "type": "address"
+            }
+          ],
+          "name": "AddStrategy",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "ClaimRewards",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelBoosterUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "FlywheelRewardsUpdate",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8"
+            }
+          ],
+          "name": "Initialized",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "NewPendingOwner",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPerformanceFee",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldFeeRecipient",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newFeeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "UpdatedFeeSettings",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ONE",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "secondUser",
+              "type": "address"
+            }
+          ],
+          "name": "accrue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addStrategyForRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "claimRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeRecipient",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelBooster",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "flywheelRewards",
+          "outputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllStrategies",
+          "outputs": [
+            {
+              "internalType": "contract ERC20[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "_rewardToken",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "_flywheelRewards",
+              "type": "address"
+            },
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "_flywheelBooster",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_owner",
+              "type": "address"
+            }
+          ],
+          "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "performanceFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsAccrued",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelBooster",
+              "name": "newBooster",
+              "type": "address"
+            }
+          ],
+          "name": "setBooster",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IFlywheelRewards",
+              "name": "newFlywheelRewards",
+              "type": "address"
+            }
+          ],
+          "name": "setFlywheelRewards",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "strategyState",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "index",
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_performanceFee",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "_feeRecipient",
+              "type": "address"
+            }
+          ],
+          "name": "updateFeeSettings",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "userIndex",
+          "outputs": [
+            {
+              "internalType": "uint224",
+              "name": "",
+              "type": "uint224"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "MidasFlywheelCore_EPX_Proxy": {
+      "address": "0x393527A10064435dC6C6bc4aE84bb540E1Ae2aA8",
       "abi": [
         {
           "inputs": [
@@ -33074,45 +37449,6 @@
             }
           ],
           "stateMutability": "pure",
-          "type": "function"
-        }
-      ]
-    },
-    "XBombLiquidator": {
-      "address": "0xe8A115C3a1dB17B2E681bff274c12bafFe2c4670",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "inputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "inputAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "bytes",
-              "name": "strategyData",
-              "type": "bytes"
-            }
-          ],
-          "name": "redeem",
-          "outputs": [
-            {
-              "internalType": "contract IERC20Upgradeable",
-              "name": "outputToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "outputAmount",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]

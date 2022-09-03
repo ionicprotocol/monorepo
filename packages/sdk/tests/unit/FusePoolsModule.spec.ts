@@ -30,14 +30,12 @@ describe("FusePoolsModule", function () {
       sdk.irms.JumpRateModel.address,
       ethers
     );
-    await poolHelpers.deployAssets(assets, deployer);
+    await poolHelpers.deployAssets(assets);
   });
 
   describe("fetch pools", async function () {
     it("user can fetch all pools", async function () {
-      const pools = await sdk.fetchPoolsManual({
-        options: { from: deployer.address },
-      });
+      const pools = await sdk.fetchPoolsManual();
       expect(pools.length).to.equal(1);
       expect(pools[0].creator).to.equal(deployer.address);
       expect(pools[0].name).to.equal("Fetching-Pools-Test");

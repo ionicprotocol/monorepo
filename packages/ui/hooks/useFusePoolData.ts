@@ -11,11 +11,11 @@ export const useFusePoolData = (poolId: string) => {
   const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
   return useQuery<PoolData | null>(
-    ['useFusePoolData', poolId, address, usdPrice, supportedUnderlyings],
+    ['useFusePoolData', poolId, address],
     async () => {
       if (!usdPrice) return null;
 
-      const res = await midasSdk.fetchFusePoolData(poolId, address);
+      const res = await midasSdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];
       const assets = res.assets.filter((asset) =>
         supportedUnderlyings?.includes(asset.underlyingToken)

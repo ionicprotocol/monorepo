@@ -12,7 +12,7 @@ export default async function liquidateOrRetry(midasSdk: MidasSdk, retries = 0) 
   const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
   let potentialLiquidations: Array<LiquidatablePool> = [];
   try {
-    potentialLiquidations = await midasSdk.getPotentialLiquidations(signer);
+    potentialLiquidations = await midasSdk.getPotentialLiquidations(signer, config.excludedComptrollers);
   } catch (error) {
     const msg = "Error getting potential liquidations transaction: " + error;
     logger.error(msg);

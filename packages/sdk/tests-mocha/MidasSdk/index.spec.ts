@@ -1,5 +1,5 @@
 import { ganache } from "@midas-capital/chains";
-import { constants, Contract, ContractFactory, ContractReceipt, providers, Signer, utils } from "ethers";
+import { BigNumber, constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
 import { Comptroller, FusePoolDirectory, Unitroller } from "../../lib/contracts/typechain";
@@ -15,7 +15,7 @@ const mockReceipt: Partial<ContractReceipt> = { status: 1, events: [{ args: [con
 describe("Fuse Index", () => {
   let fuseBase: MidasBase;
   let mockContract: SinonStubbedInstance<Contract>;
-  let mockFactory: SinonStubbedInstance<ContractFactory>;
+
   beforeEach(() => {
     mockContract = createStubInstance(Contract);
     mockContract.connect.returns(mockContract);
@@ -28,15 +28,15 @@ describe("Fuse Index", () => {
       wait: () => Promise.resolve(mockReceipt),
     });
 
-    mockFactory = createStubInstance(ContractFactory, {
-      deploy: stub().resolves({ address: mkAddress("0x123") }),
-    });
+    const mockSigner = createStubInstance(Signer);
+    (mockSigner as any).getAddress = () => Promise.resolve(mkAddress("0xabcd"));
 
     const mockProvider = createStubInstance(providers.Web3Provider);
     (mockProvider as any)._isProvider = true;
-    (mockProvider as any)._isSigner = true;
-    (mockProvider as any).getSigner = (address: string) => address;
+    (mockProvider as any)._isSigner = false;
+    (mockProvider as any).getSigner = () => mockSigner;
     (mockProvider as any).getCode = (address: string) => address;
+    (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
     ganache.chainDeployments = {
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
@@ -83,15 +83,7 @@ describe("Fuse Index", () => {
     });
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is false", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool(
-        "Test",
-        false,
-        constants.One,
-        constants.One,
-        mkAddress("0xa"),
-        { from: mkAddress("0xabc") },
-        [mkAddress("0xbbb")]
-      );
+      await fuseBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),
@@ -103,7 +95,7 @@ describe("Fuse Index", () => {
       );
 
       expect(getPoolAddressStub).to.be.calledOnceWithExactly(
-        mkAddress("0xabc"),
+        mkAddress("0xabcd"),
         "Test",
         2,
         mkAddress("0xfcc"),
@@ -117,15 +109,7 @@ describe("Fuse Index", () => {
 
     it("should deploy a pool when comptroller is already deployed and enforce whitelist is true", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool(
-        "Test",
-        true,
-        constants.One,
-        constants.One,
-        mkAddress("0xa"),
-        { from: mkAddress("0xabc") },
-        [mkAddress("0xbbb")]
-      );
+      await fuseBase.deployPool("Test", true, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
 
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
@@ -142,15 +126,7 @@ describe("Fuse Index", () => {
 
     it("should deploy a pool when comptroller is not deployed", async () => {
       fuseBase.chainDeployment.Comptroller = { abi: [], address: mkAddress("0xccc") };
-      await fuseBase.deployPool(
-        "Test",
-        false,
-        constants.One,
-        constants.One,
-        mkAddress("0xa"),
-        { from: mkAddress("0xabc") },
-        [mkAddress("0xbbb")]
-      );
+      await fuseBase.deployPool("Test", false, constants.One, constants.One, mkAddress("0xa"), [mkAddress("0xbbb")]);
       expect(mockContract.deployPool).to.be.calledOnceWithExactly(
         "Test",
         mkAddress("0xccc"),
