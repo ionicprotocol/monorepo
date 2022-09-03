@@ -4,7 +4,7 @@ import { BigNumber } from "ethers";
 import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
-  blocksPerYear: BigNumber.from((26 * 24 * 365 * 60).toString()),
+  blocksPerYear: BigNumber.from((4 * 24 * 365 * 60).toString()),
   cgId: "ethereum",
   metadata: {
     chainIdHex: "0xA4B1",

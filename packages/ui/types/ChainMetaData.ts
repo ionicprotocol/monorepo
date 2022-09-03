@@ -28,8 +28,8 @@ export const supportedChainIdToConfig: {
   [polygon.chainId]: { supported: true, enabled: config.isBscEnabled },
   [moonbeam.chainId]: { enabled: config.isMoonbeamEnabled, supported: config.isMoonbeamEnabled },
   [arbitrum.chainId]: {
-    enabled: config.isArbitrumEnabled,
-    supported: config.isDevelopment,
+    enabled: true,
+    supported: config.isDevelopment || config.isTestnetEnabled,
   },
   [neondevnet.chainId]: {
     enabled: true,
