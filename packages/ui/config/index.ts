@@ -6,6 +6,7 @@ type CONFIG = {
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
+  isArbitrumEnabled: boolean;
   isTestnetEnabled: boolean;
   allowedAddresses: string[];
   productDomain: string | undefined;
@@ -26,6 +27,7 @@ const config: CONFIG = {
   isEvmosEnabled: process.env.EVMOS === 'ture',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
+  isArbitrumEnabled: process.env.ARBITRUM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')
