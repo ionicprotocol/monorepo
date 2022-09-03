@@ -7,6 +7,7 @@ nextConfig = {
     EVMOS: process.env.EVMOS,
     MOONBEAM: process.env.MOONBEAM,
     POLYGON: process.env.POLYGON,
+    ARBITRUM: process.env.ARBITRUM,
     NEXT_PUBLIC_SHOW_TESTNETS: process.env.NEXT_PUBLIC_SHOW_TESTNETS,
     ICON_SERVER: process.env.ICON_SERVER,
     FEATURE_RSS: process.env.FEATURE_RSS,
