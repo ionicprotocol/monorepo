@@ -133,7 +133,7 @@ module "bsc_mainnet_liquidation_bot" {
   provider_urls           = [local.bsc_mainnet_rpc_2, local.bsc_mainnet_rpc_3]
   runtime_env_vars = concat(local.secret_env_vars, [
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
-    { name = "EXLCUDED_COMPTROLLERS", value = "0x35F3a59389Dc3174A98610727C2e349E275Dc909" },
+    { name = "EXCLUDED_COMPTROLLERS", value = "0x35F3a59389Dc3174A98610727C2e349E275Dc909" },
   ])
 }
 
