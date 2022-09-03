@@ -1,4 +1,12 @@
-import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from '@midas-capital/chains';
+import {
+  arbitrum,
+  bsc,
+  chapel,
+  ganache,
+  moonbeam,
+  neondevnet,
+  polygon,
+} from '@midas-capital/chains';
 import { ChainConfig } from '@midas-capital/types';
 
 import { config } from '@ui/config/index';
@@ -10,6 +18,7 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [neondevnet.chainId]: neondevnet,
   [chapel.chainId]: chapel,
   [ganache.chainId]: ganache,
+  [arbitrum.chainId]: arbitrum,
 };
 
 export const supportedChainIdToConfig: {
@@ -18,6 +27,10 @@ export const supportedChainIdToConfig: {
   [bsc.chainId]: { enabled: config.isBscEnabled, supported: config.isBscEnabled },
   [polygon.chainId]: { supported: true, enabled: config.isBscEnabled },
   [moonbeam.chainId]: { enabled: config.isMoonbeamEnabled, supported: config.isMoonbeamEnabled },
+  [arbitrum.chainId]: {
+    enabled: config.isArbitrumEnabled,
+    supported: config.isDevelopment,
+  },
   [neondevnet.chainId]: {
     enabled: true,
     supported: config.isDevelopment || config.isTestnetEnabled,

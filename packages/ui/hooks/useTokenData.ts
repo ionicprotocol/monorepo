@@ -22,6 +22,7 @@ const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.chapel]: [],
   [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: [],
+  [SupportedChains.arbitrum]: [],
 };
 
 export const fetchTokenData = async (

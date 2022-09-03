@@ -8,5 +8,6 @@ export {
   quickSwapDocs,
   ankrBNBDocs,
   curveFinancePolygonDocs,
+  curveFinanceArbitrumDocs,
   jarvisDocs,
 } from "./docs";
