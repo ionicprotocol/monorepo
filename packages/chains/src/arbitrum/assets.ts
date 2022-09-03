@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-import { defaultDocs } from "../common";
+import { curveFinanceArbitrumDocs, defaultDocs } from "../common";
 
 export const WBTC = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
 export const USDC = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
@@ -19,6 +19,9 @@ const LINK = "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4";
 
 const SUSHI = "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A";
 const USDT = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9";
+
+// Curve
+const TWOPOOL = "0x7f90122BF0700F9E7e1F688fe926940E8839F353";
 
 export const assets: SupportedAsset[] = [
   {
@@ -117,6 +120,15 @@ export const assets: SupportedAsset[] = [
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://arbiscan.com", WBTC),
+  },
+  // Curve LP tokens
+  {
+    symbol: assetSymbols["2pool"],
+    underlying: TWOPOOL,
+    name: "Curve.fi USDC/USDT",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinanceArbitrumDocs("2pool", TWOPOOL),
   },
 ];
 

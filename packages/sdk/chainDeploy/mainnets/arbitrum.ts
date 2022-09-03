@@ -56,11 +56,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: assetSymbols.ETH,
-    aggregator: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
     symbol: assetSymbols.FRAX,
     aggregator: "0x0809E3d38d1B4214958faf06D8b1B1a2b73f2ab8",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -72,7 +67,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.LINK,
-    aggregator: "	0xb7c8Fb1dB45007F98A68Da0588e1AA524C317f27",
+    aggregator: "0xb7c8Fb1dB45007F98A68Da0588e1AA524C317f27",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -98,7 +93,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
 ];
 
 // https://arbitrum.curve.fi/
-const curvePools: CurvePoolConfig[] = [];
+const curvePools: CurvePoolConfig[] = [
+  {
+    lpToken: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
+    pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
+    underlyings: [
+      assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
+      assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
+    ],
+  },
+];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();

@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@midas-capital/types";
 
-import deployments from "../../deployments/polygon.json";
+import deployments from "../../deployments/arbitrum.json";
 
 import chainAddresses from "./addresses";
 import assets from "./assets";
@@ -13,7 +13,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.polygon,
+  chainId: SupportedChains.arbitrum,
   chainAddresses,
   assets,
   irms,

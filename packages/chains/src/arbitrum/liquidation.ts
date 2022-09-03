@@ -1,10 +1,4 @@
-import {
-  assetSymbols,
-  LiquidationDefaults,
-  LiquidationStrategy,
-  SupportedAsset,
-  underlying,
-} from "@midas-capital/types";
+import { assetSymbols, LiquidationDefaults, LiquidationStrategy, underlying } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
 import { assets } from "./assets";
