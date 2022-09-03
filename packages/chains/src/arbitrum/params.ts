@@ -5,7 +5,7 @@ import chainAddresses from "./addresses";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((26 * 24 * 365 * 60).toString()),
-  cgId: "matic-network",
+  cgId: "ethereum",
   metadata: {
     chainIdHex: "0xA4B1",
     name: "Arbitrum One",

@@ -126,12 +126,12 @@ const config: HardhatUserConfig = {
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
-      url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      url: urlOverride || "https://data-seed-prebsc-1-s1.binance.org:8545/",
     },
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: urlOverride || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
     },
     evmostestnet: {
       accounts: { mnemonic },
@@ -139,7 +139,7 @@ const config: HardhatUserConfig = {
       url: "https://eth.bd.evmos.dev:8545",
     },
     moonbase: {
-      url: `https://rpc.api.moonbase.moonbeam.network`,
+      url: urlOverride || `https://rpc.api.moonbase.moonbeam.network`,
       accounts: { mnemonic },
       chainId: 1287,
       saveDeployments: true,
@@ -147,20 +147,25 @@ const config: HardhatUserConfig = {
       gas: 8000000,
     },
     moonbeam: {
-      url: `https://rpc.api.moonbeam.network`,
+      url: urlOverride || `https://rpc.api.moonbeam.network`,
       accounts: { mnemonic },
       chainId: 1284,
       saveDeployments: true,
     },
     neondevnet: {
-      url: `https://proxy.devnet.neonlabs.org/solana`,
+      url: urlOverride || `https://proxy.devnet.neonlabs.org/solana`,
       accounts: { mnemonic },
       chainId: 245022926,
     },
     polygon: {
-      url: `https://matic-mainnet.chainstacklabs.com`,
+      url: urlOverride || `https://matic-mainnet.chainstacklabs.com`,
       accounts: { mnemonic },
       chainId: 137,
+    },
+    arbitrum: {
+      url: urlOverride || `https://rpc.ankr.com/arbitrum`,
+      accounts: { mnemonic },
+      chainId: 42161,
     },
   },
 };

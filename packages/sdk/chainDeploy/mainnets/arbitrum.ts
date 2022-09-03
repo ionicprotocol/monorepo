@@ -1,5 +1,5 @@
 import { arbitrum } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
@@ -9,7 +9,6 @@ import {
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
-import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, CurvePoolConfig } from "../helpers/types";
 
 const assets = arbitrum.assets;
@@ -26,12 +25,7 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303"),
     uniswapV2RouterAddress: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
     uniswapV2FactoryAddress: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.STELLA)!.underlying,
-        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
-      },
-    ],
+    uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [],
     flashSwapFee: 30,
   },
@@ -173,16 +167,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// deploy uniswap twap price oracle v2 resolver
 
-  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
-    from: deployer,
-    args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (twapPriceOracleResolver.transactionHash) {
-    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
-  }
-  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
+  //   const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
+  //     from: deployer,
+  //     args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
+  //     log: true,
+  //     waitConfirmations: 1,
+  //   });
+  //   if (twapPriceOracleResolver.transactionHash) {
+  //     await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
+  //   }
+  //   console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
 
   ////
 
@@ -195,5 +189,5 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   //     deployConfig,
   //   });
 
-  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
+  //   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 };
