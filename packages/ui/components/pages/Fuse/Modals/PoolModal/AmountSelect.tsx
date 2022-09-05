@@ -315,7 +315,8 @@ const AmountSelect = ({
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
                 <Text mr={2}>Wallet Balance:</Text>
                 <Text>
-                  {myBalance ? utils.formatUnits(myBalance) : 0} {asset.underlyingSymbol}
+                  {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                  {asset.underlyingSymbol}
                 </Text>
               </Row>
               <DashboardBox width="100%" height="70px" mt={3}>
