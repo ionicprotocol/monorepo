@@ -4,6 +4,8 @@ import { BigNumber, constants, Contract, utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
+import { DEFAULT_DECIMALS } from '../constants';
+
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
@@ -22,7 +24,7 @@ export const useBorrowLimit = <T extends NativePricedFuseAsset>(
       if (options?.ignoreIsEnabledCheckFor === asset.cToken || asset.membership) {
         _maxBorrow +=
           asset.supplyBalanceNative *
-          parseFloat(utils.formatUnits(asset.collateralFactor, 18)) *
+          parseFloat(utils.formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)) *
           usdPrice;
       }
     }
