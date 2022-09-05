@@ -99,9 +99,13 @@ const AmountSelect = ({
         asset
       )) as BigNumber;
 
-      const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
+      const borrowableAmount = Number(
+        utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
+      );
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(utils.formatUnits(asset.borrowBalance));
+      const borrowedAmount = Number(
+        utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+      );
       setBorrowedAmount(borrowedAmount);
     };
 
@@ -131,7 +135,7 @@ const AmountSelect = ({
     setUserAction(UserAction.NO_ACTION);
   };
 
-  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingPrice);
+  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingDecimals, asset.underlyingPrice);
   const { data: minBorrowUsd } = useMinBorrowUsd();
 
   const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount, minBorrow], async () => {
@@ -688,7 +692,7 @@ const TokenNameAndMaxButton = ({
   const errorToast = useErrorToast();
 
   const [isLoading, setIsLoading] = useState(false);
-  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingPrice);
+  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingDecimals, asset.underlyingPrice);
 
   const setToMax = async () => {
     setIsLoading(true);

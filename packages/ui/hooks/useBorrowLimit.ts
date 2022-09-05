@@ -1,6 +1,6 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { NativePricedFuseAsset } from '@midas-capital/types';
-import { BigNumber, constants, Contract, utils } from 'ethers';
+import { BigNumber, Contract, utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
@@ -77,20 +77,20 @@ export const useMinBorrowUsd = () => {
   );
 };
 
-export const useAssetMinBorrow = (underlyingPrice: BigNumber) => {
+export const useAssetMinBorrow = (underlyingDecimals: BigNumber, underlyingPrice: BigNumber) => {
   const { data: minBorrowNative } = useMinBorrowNative();
 
   return useQuery(
-    [`useMinBorrow`, minBorrowNative, underlyingPrice],
+    [`useMinBorrow`, minBorrowNative, underlyingDecimals, underlyingPrice],
     () => {
       if (minBorrowNative) {
-        return minBorrowNative.mul(constants.WeiPerEther).div(underlyingPrice);
+        return minBorrowNative.mul(utils.parseUnits('1', underlyingDecimals)).div(underlyingPrice);
       }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!minBorrowNative && !!underlyingPrice,
+      enabled: !!minBorrowNative && !!underlyingPrice && !!underlyingDecimals,
     }
   );
 };
