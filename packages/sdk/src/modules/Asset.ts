@@ -1,5 +1,5 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
+import { FundOperationMode, InterestRateModelConf, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
 import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
@@ -139,7 +139,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           supplyBalance,
           totalSupply,
           supplyBalanceNative:
-            Number(utils.formatUnits(supplyBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(supplyBalance, 18)) *
             Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
@@ -155,7 +155,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           supplyBalance,
           totalSupply,
           supplyBalanceNative:
-            Number(utils.formatUnits(supplyBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(supplyBalance, 18)) *
             Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           supplyRatePerBlock: interestRateModel.getSupplyRate(
             totalSupply.gt(constants.Zero)
@@ -171,7 +171,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           borrowBalance,
           totalBorrow,
           borrowBalanceNative:
-            Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
+            Number(utils.formatUnits(borrowBalance, 18)) *
             Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
           borrowRatePerBlock: interestRateModel.getBorrowRate(
             assetToBeUpdated.totalSupply.gt(constants.Zero)
@@ -193,8 +193,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
           borrowBalance,
           totalBorrow,
           borrowBalanceNative:
-            Number(utils.formatUnits(borrowBalance, assetToBeUpdated.underlyingDecimals)) *
-            Number(utils.formatUnits(assetToBeUpdated.underlyingPrice, 18)),
+            Number(utils.formatUnits(borrowBalance)) * Number(utils.formatUnits(assetToBeUpdated.underlyingPrice)),
           borrowRatePerBlock,
         };
       }
