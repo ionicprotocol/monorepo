@@ -99,9 +99,13 @@ const AmountSelect = ({
         asset
       )) as BigNumber;
 
-      const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
+      const borrowableAmount = Number(
+        utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
+      );
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(utils.formatUnits(asset.borrowBalance));
+      const borrowedAmount = Number(
+        utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+      );
       setBorrowedAmount(borrowedAmount);
     };
 
