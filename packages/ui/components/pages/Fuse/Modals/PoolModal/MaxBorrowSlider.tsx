@@ -75,7 +75,7 @@ function MaxBorrowSlider({
   return (
     <Box width="100%" my={4}>
       <Text>
-        Borrow Limit ({minBorrowUsd ? `$${minBorrowUsd} USD value min borrow is required` : ''})
+        Borrow Limit ({minBorrowUsd ? `$${minBorrowUsd} USD worth min borrow is required` : ''})
       </Text>
       <HStack width="100%" mt={8} spacing={4} mb={4}>
         <Text>$0.00</Text>
