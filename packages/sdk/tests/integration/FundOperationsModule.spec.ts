@@ -50,7 +50,7 @@ describe("FundOperationsModule", function () {
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
     const assetAfterSupply = await poolHelpers.assetInPool(poolId, sdk, "WETH", deployer.address);
-    expect(utils.formatUnits(assetAfterSupply.supplyBalance, assetAfterSupply.underlyingDecimals)).to.eq("3.0");
+    expect(utils.formatUnits(assetAfterSupply.supplyBalance, 18)).to.eq("3.0");
   });
 
   it("user can borrow", async function () {
@@ -74,7 +74,7 @@ describe("FundOperationsModule", function () {
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
     const assetAfterBorrow = await poolHelpers.assetInPool(poolId, sdk, await "WETH", deployer.address);
-    expect(utils.formatUnits(assetAfterBorrow.borrowBalance, assetAfterBorrow.underlyingDecimals)).to.eq("2.0");
+    expect(utils.formatUnits(assetAfterBorrow.borrowBalance, 18)).to.eq("2.0");
   });
 
   it("user can withdraw", async function () {
@@ -97,7 +97,7 @@ describe("FundOperationsModule", function () {
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
     const assetAfterWithdraw = await poolHelpers.assetInPool(poolId, sdk, await "WETH", deployer.address);
-    expect(utils.formatUnits(assetAfterWithdraw.supplyBalance, assetAfterWithdraw.underlyingDecimals)).to.eq("1.0");
+    expect(utils.formatUnits(assetAfterWithdraw.supplyBalance, 18)).to.eq("1.0");
   });
 
   it("user can repay", async function () {
