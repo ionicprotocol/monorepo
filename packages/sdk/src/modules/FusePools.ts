@@ -26,16 +26,14 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         blockPosted,
         timestampPosted,
       } = await this.contracts.FusePoolDirectory.callStatic.pools(Number(poolId), overrides);
-      const name = filterPoolName(_unfiliteredName);
 
-      // TODO: Refactor, this call can be saved, all of this data except whitelist
-      // can be retrieved from `getPoolAssetsWithData` call below.
       const rawData = await this.contracts.FusePoolLens.callStatic.getPoolSummary(comptroller, overrides);
 
       const underlyingTokens = rawData[2];
       const underlyingSymbols = rawData[3];
       const whitelistedAdmin = rawData[4];
-      //See comment above
+
+      const name = filterPoolName(_unfiliteredName);
 
       const assets: NativePricedFuseAsset[] = (
         await this.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptroller, overrides)
@@ -89,38 +87,33 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         );
 
         asset.supplyBalanceNative =
-          Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(utils.formatUnits(asset.supplyBalance)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         asset.borrowBalanceNative =
-          Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(utils.formatUnits(asset.borrowBalance)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSupplyBalanceNative += asset.supplyBalanceNative;
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
-          Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(utils.formatUnits(asset.totalSupply)) * Number(utils.formatUnits(asset.underlyingPrice));
         asset.totalBorrowNative =
-          Number(utils.formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(utils.formatUnits(asset.totalBorrow)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         if (asset.totalSupplyNative === 0) {
           asset.utilization = 0;
         } else {
           asset.utilization = (asset.totalBorrowNative / asset.totalSupplyNative) * 100;
         }
+        const assetLiquidity =
+          Number(utils.formatUnits(asset.liquidity)) * Number(utils.formatUnits(asset.underlyingPrice));
 
         totalSuppliedNative += asset.totalSupplyNative;
         totalBorrowedNative += asset.totalBorrowNative;
 
-        const assetLiquidityNative =
-          Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals)) *
-          Number(utils.formatUnits(asset.underlyingPrice, 18));
-        asset.liquidityNative = assetLiquidityNative;
+        asset.liquidityNative = assetLiquidity;
 
-        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidityNative;
+        totalAvailableLiquidityNative += asset.isBorrowPaused ? 0 : assetLiquidity;
         totalLiquidityNative += asset.liquidityNative;
 
         if (!asset.isBorrowPaused) {
