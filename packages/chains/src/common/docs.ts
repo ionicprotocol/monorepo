@@ -81,6 +81,15 @@ export const curveFinancePolygonDocs = (
   `;
 };
 
+export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string) => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://arbitrum.curve.fi/${poolName}/deposit" target="_blank"> Curve ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p> 
+  <p>You will get back the <a href="https://arbiscan.com/address/${tokenAddress}" target="_blank"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
 export const jarvisDocs = (v: string) => {
   return `<p><b>How to acquire this token</b><p/><br />
   <p>You can acquire this asset on the <a href="https://${v}-app.jarvis.exchange/" target="_blank">Jarvis Network</a> website</p>`;

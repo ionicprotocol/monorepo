@@ -33,6 +33,7 @@
     "export:bsc": "hardhat export --network bsc --export ../chains/deployments/bsc.json",
     "export:polygon": "hardhat export --network polygon --export ../chains/deployments/polygon.json",
     "export:moonbeam": "hardhat export --network moonbeam --export ../chains/deployments/moonbeam.json",
+    "export:arbitrum": "hardhat export --network arbitrum --export ../chains/deployments/arbitrum.json",
     "export:neondevnet": "hardhat export --network neondevnet --export ../chains/deployments/neondevnet.json",
     "export:chapel": "hardhat export --network chapel --export ../chains/deployments/chapel.json",
     "export:evmos": "hardhat export --network evmostestnet --export ../chains/deployments/evmos.json",

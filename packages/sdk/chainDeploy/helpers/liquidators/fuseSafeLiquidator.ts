@@ -1,4 +1,4 @@
-import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig } from "@midas-capital/types";
 import { constants } from "ethers";
 
@@ -9,6 +9,7 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
   [polygon.chainId]: polygon,
   [moonbeam.chainId]: moonbeam,
+  [arbitrum.chainId]: arbitrum,
   [neondevnet.chainId]: neondevnet,
   [chapel.chainId]: chapel,
   [ganache.chainId]: ganache,
