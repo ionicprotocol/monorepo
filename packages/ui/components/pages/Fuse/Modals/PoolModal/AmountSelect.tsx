@@ -292,9 +292,7 @@ const AmountSelect = ({
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
             <Heading fontSize="27px" ml={3}>
-              {!isMobile && asset.underlyingName.length < 25
-                ? asset.underlyingName
-                : asset.underlyingSymbol}
+              {tokenData?.symbol || asset.underlyingSymbol}
             </Heading>
           </Row>
 
