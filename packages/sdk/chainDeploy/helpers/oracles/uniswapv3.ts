@@ -17,7 +17,7 @@ export const deployUniswapV3Oracle = async ({
   //// Uniswap Oracle
   const utpo = await deployments.deploy("UniswapV3PriceOracle", {
     from: deployer,
-    args: [],
+    args: [deployer, true],
     log: true,
   });
   if (utpo.transactionHash) await ethers.provider.waitForTransaction(utpo.transactionHash);
@@ -37,16 +37,15 @@ export const deployUniswapV3Oracle = async ({
     const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
     const tx = await uniswapV3Oracle.setPoolFeeds(underlyings, assetsToAdd);
     await tx.wait();
+    console.log(`UniswapV3 Oracle updated for tokens: ${underlyings.join(",")}`);
   }
 
   // set mpo addresses
-  if (assetsToAdd.length > 0) {
-    const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
-    const oracleAddresses = Array(underlyings.length).fill(uniswapV3Oracle.address);
-    const tx = await mpo.add(underlyings, oracleAddresses);
-    await tx.wait();
-    console.log(`Master Price Oracle updated for token ${underlyings.join(",")}`);
-  }
+  const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
+  const oracles = Array(underlyings.length).fill(uniswapV3Oracle.address);
+  const tx = await mpo.add(underlyings, oracles);
+  await tx.wait();
+  console.log(`Master Price Oracle updated for tokens: ${underlyings.join(",")}`);
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const uniswapV3PriceOracleAddress = await addressesProvider.callStatic.getAddress("UniswapV3PriceOracle");
