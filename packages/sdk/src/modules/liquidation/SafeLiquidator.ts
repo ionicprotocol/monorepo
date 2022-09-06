@@ -19,7 +19,7 @@ export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBa
       configOverrides?: ChainLiquidationConfig
     ): Promise<Array<LiquidatablePool>> {
       // Get potential liquidations from public pools
-      const fusePoolWithUsers = await getAllFusePoolUsers(this, maxHealthFactor, signer, excludedComptrollers);
+      const fusePoolWithUsers = await getAllFusePoolUsers(this, maxHealthFactor, excludedComptrollers);
       if (configOverrides)
         this.chainLiquidationConfig = {
           ...this.chainLiquidationConfig,

@@ -33,11 +33,10 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { config } from '@ui/config/index';
-import { DEFAULT_DECIMALS, DOWN_LIMIT, UP_LIMIT, UserAction } from '@ui/constants/index';
+import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
-import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { useAssetMinBorrow, useBorrowLimit, useMinBorrowUsd } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -100,9 +99,13 @@ const AmountSelect = ({
         asset
       )) as BigNumber;
 
-      const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
+      const borrowableAmount = Number(
+        utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
+      );
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(utils.formatUnits(asset.borrowBalance));
+      const borrowedAmount = Number(
+        utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+      );
       setBorrowedAmount(borrowedAmount);
     };
 
@@ -132,14 +135,21 @@ const AmountSelect = ({
     setUserAction(UserAction.NO_ACTION);
   };
 
-  const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount], async () => {
-    if (amount === null || amount.isZero()) {
+  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingPrice);
+  const { data: minBorrowUsd } = useMinBorrowUsd();
+
+  const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount, minBorrow], async () => {
+    if (amount === null || amount.isZero() || !minBorrow) {
       return false;
     }
 
     try {
       const max = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
-      return amount.lte(max);
+      if (mode === FundOperationMode.BORROW) {
+        return amount.lte(max) && amount.gte(minBorrow);
+      } else {
+        return amount.lte(max);
+      }
     } catch (e) {
       handleGenericError(e, errorToast);
       return false;
@@ -169,7 +179,7 @@ const AmountSelect = ({
     } else if (mode === FundOperationMode.WITHDRAW) {
       depositOrWithdrawAlert = 'You cannot withdraw this much!';
     } else if (mode === FundOperationMode.BORROW) {
-      depositOrWithdrawAlert = 'You cannot borrow this much!';
+      depositOrWithdrawAlert = 'You cannot borrow this amount!';
     }
   } else {
     depositOrWithdrawAlert = null;
@@ -199,12 +209,11 @@ const AmountSelect = ({
           asset.underlyingToken,
           comptrollerAddress,
           enableAsCollateral,
-          amount,
-          { from: address }
+          amount
         );
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode);
+          fundOperationError(resp.errorCode, minBorrowUsd);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -214,34 +223,29 @@ const AmountSelect = ({
           asset.cToken,
           asset.underlyingToken,
           isRepayingMax,
-          amount,
-          { from: address }
+          amount
         );
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode);
+          fundOperationError(resp.errorCode, minBorrowUsd);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.BORROW) {
-        const resp = await midasSdk.borrow(asset.cToken, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.borrow(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode);
+          fundOperationError(resp.errorCode, minBorrowUsd);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await midasSdk.withdraw(asset.cToken, amount, {
-          from: address,
-        });
+        const resp = await midasSdk.withdraw(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode);
+          fundOperationError(resp.errorCode, minBorrowUsd);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -288,9 +292,7 @@ const AmountSelect = ({
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
             <Heading fontSize="27px" ml={3}>
-              {!isMobile && asset.underlyingName.length < 25
-                ? asset.underlyingName
-                : asset.underlyingSymbol}
+              {tokenData?.symbol || asset.underlyingSymbol}
             </Heading>
           </Row>
 
@@ -313,24 +315,11 @@ const AmountSelect = ({
                 setAmount={_setAmount}
               />
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                <Text mr={2}>Balance:</Text>
-                <SimpleTooltip
-                  label={myBalance ? utils.formatUnits(myBalance) : ''}
-                  isDisabled={!myBalance}
-                >
-                  <Text fontWeight="bold">
-                    {myBalance
-                      ? toFixedNoRound(utils.formatUnits(myBalance), 2) +
-                        `${
-                          Number(utils.formatUnits(myBalance)) > DOWN_LIMIT &&
-                          Number(utils.formatUnits(myBalance)) < UP_LIMIT
-                            ? '+'
-                            : ''
-                        }`
-                      : 0}{' '}
-                    {asset.underlyingSymbol}
-                  </Text>
-                </SimpleTooltip>
+                <Text mr={2}>Wallet Balance:</Text>
+                <Text>
+                  {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                  {asset.underlyingSymbol}
+                </Text>
               </Row>
               <DashboardBox width="100%" height="70px" mt={3}>
                 <Row
@@ -372,10 +361,13 @@ const AmountSelect = ({
               <DashboardBox p={4} width="100%" mt={4}>
                 <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                   <Text fontWeight="bold">Enable As Collateral:</Text>
-                  <SwitchCSS symbol={asset.underlyingSymbol} color={cSwitch.bgColor} />
+                  <SwitchCSS
+                    symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                    color={cSwitch.bgColor}
+                  />
                   <Switch
                     h="20px"
-                    className={'switch-' + asset.underlyingSymbol}
+                    className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                     isChecked={enableAsCollateral}
                     onChange={() => {
                       setEnableAsCollateral((past) => !past);
@@ -697,10 +689,11 @@ const TokenNameAndMaxButton = ({
 
   const errorToast = useErrorToast();
 
-  const [isMaxLoading, setIsMaxLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingPrice);
 
   const setToMax = async () => {
-    setIsMaxLoading(true);
+    setIsLoading(true);
 
     try {
       const maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
@@ -712,7 +705,23 @@ const TokenNameAndMaxButton = ({
         updateAmount(str);
       }
 
-      setIsMaxLoading(false);
+      setIsLoading(false);
+    } catch (e) {
+      handleGenericError(e, errorToast);
+    }
+  };
+
+  const setToMin = () => {
+    setIsLoading(true);
+
+    try {
+      if (minBorrow) {
+        updateAmount(utils.formatUnits(minBorrow));
+      } else {
+        updateAmount('');
+      }
+
+      setIsLoading(false);
     } catch (e) {
       handleGenericError(e, errorToast);
     }
@@ -731,9 +740,13 @@ const TokenNameAndMaxButton = ({
         </Heading>
       </Row>
 
-      {mode !== FundOperationMode.BORROW && (
-        <Button height={8} onClick={setToMax} isLoading={isMaxLoading} fontSize={14} p={2}>
+      {mode !== FundOperationMode.BORROW ? (
+        <Button height={8} onClick={setToMax} isLoading={isLoading} fontSize={14} p={2}>
           MAX
+        </Button>
+      ) : (
+        <Button height={8} onClick={setToMin} isLoading={isLoading} fontSize={14} p={2}>
+          MIN
         </Button>
       )}
     </Row>
@@ -767,7 +780,7 @@ const AmountInput = ({
   );
 };
 
-export function fundOperationError(errorCode: number) {
+export function fundOperationError(errorCode: number, minBorrowUsd?: string) {
   let err;
 
   if (errorCode >= 1000) {
@@ -776,7 +789,7 @@ export function fundOperationError(errorCode: number) {
 
     if (msg === 'BORROW_BELOW_MIN') {
       msg = `As part of our guarded launch, you cannot borrow ${
-        config.minBorrowUsd ? `less than ${config.minBorrowUsd}$ worth` : 'this amount'
+        minBorrowUsd ? `less than $${minBorrowUsd} worth` : 'this amount'
       } of tokens at the moment.`;
     }
 

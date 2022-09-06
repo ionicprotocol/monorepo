@@ -75,7 +75,6 @@ const EditFlywheelModal = ({
   const { data: tokenData } = useTokenData(flywheel.rewardToken);
   const isAdmin = address === flywheel.owner;
 
-  //   Balances
   const { data: flywheelRewardsBalance, refetch: refetchRewardsBalance } = useTokenBalance(
     flywheel.rewardToken,
     flywheel.rewards
@@ -143,17 +142,12 @@ const EditFlywheelModal = ({
 
       setTransactionPending(true);
 
-      const tx = await midasSdk.setStaticRewardInfo(
-        flywheel.rewards,
-        selectedMarket.cToken,
-        {
-          // TODO use rewardsTokens decimals here
-          rewardsPerSecond: utils.parseUnits(supplySpeed),
-          // TODO enable in UI
-          rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
-        },
-        { from: address }
-      );
+      const tx = await midasSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
+        // TODO use rewardsTokens decimals here
+        rewardsPerSecond: utils.parseUnits(supplySpeed),
+        // TODO enable in UI
+        rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
+      });
 
       await tx.wait();
       refetchRewardsInfo();
@@ -167,7 +161,6 @@ const EditFlywheelModal = ({
   }, [
     supplySpeed,
     endDate,
-    address,
     flywheel.rewards,
     midasSdk,
     isAdmin,
@@ -180,9 +173,7 @@ const EditFlywheelModal = ({
     (market: string) => async () => {
       try {
         setTransactionPending(true);
-        const tx = await midasSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market, {
-          from: address,
-        });
+        const tx = await midasSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
         await tx.wait();
         setTransactionPending(false);
       } catch (err) {
@@ -191,7 +182,7 @@ const EditFlywheelModal = ({
         setTransactionPending(false);
       }
     },
-    [flywheel.address, midasSdk, errorToast, address]
+    [flywheel.address, midasSdk, errorToast]
   );
 
   return (

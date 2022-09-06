@@ -6,11 +6,11 @@ type CONFIG = {
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
+  isArbitrumEnabled: boolean;
   isTestnetEnabled: boolean;
   allowedAddresses: string[];
   productDomain: string | undefined;
   productUrl: string | undefined;
-  minBorrowUsd: string | undefined;
   supabaseUrl: string;
   supabasePublicKey: string;
   supabasePluginTableName: string;
@@ -27,13 +27,13 @@ const config: CONFIG = {
   isEvmosEnabled: process.env.EVMOS === 'ture',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
+  isArbitrumEnabled: process.env.ARBITRUM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')
     : [],
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
-  minBorrowUsd: process.env.MIN_BORROW_USD,
   supabaseUrl: process.env.SUPABASE_URL ?? '',
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',

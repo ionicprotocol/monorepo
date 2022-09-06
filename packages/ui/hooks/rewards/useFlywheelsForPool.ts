@@ -12,9 +12,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string) => {
       if (!comptrollerAddress) return [];
       if (!midasSdk) return [];
 
-      const flywheelCores = await midasSdk.getFlywheelsByPool(comptrollerAddress, {
-        from: await midasSdk.provider.getSigner().getAddress(),
-      });
+      const flywheelCores = await midasSdk.getFlywheelsByPool(comptrollerAddress);
 
       if (!flywheelCores.length) return [];
 

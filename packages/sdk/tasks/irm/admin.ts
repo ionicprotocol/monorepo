@@ -1,9 +1,9 @@
 import { task, types } from "hardhat/config";
 
 export default task("irm:set", "Set new IRM to ctoken")
-  .addOptionalParam("ctoken", "cToken for which to set the price", undefined, types.string)
-  .addParam("irm", "IRM to use", "JumpRateModel", types.string)
-  .setAction(async ({ ctoken: _ctoken, irm: _irm }, { ethers }) => {
+  .addParam("ctoken", "cToken for which to set the IRM", undefined, types.string)
+  .addParam("irmAddress", "Irm address to use ", undefined, types.string)
+  .setAction(async ({ ctoken: _ctoken, irmAddress: _irmAddress }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
 
     // @ts-ignore
@@ -13,7 +13,7 @@ export default task("irm:set", "Set new IRM to ctoken")
     const cToken = new ethers.Contract(_ctoken, sdk.chainDeployment.CErc20Delegate.abi, deployer);
     // const interestRateModel = await ethers.getContractAt(_irm, await sdk.irms[_irm].address, deployer);
 
-    const tx = await cToken._setInterestRateModel(sdk.irms[_irm].address);
+    const tx = await cToken._setInterestRateModel(_irmAddress);
     await tx.wait();
-    console.log(`Set IRM of ${await cToken.callStatic.underlying()} to ${_irm}`);
+    console.log(`Set IRM of ${await cToken.callStatic.underlying()} to ${_irmAddress}`);
   });

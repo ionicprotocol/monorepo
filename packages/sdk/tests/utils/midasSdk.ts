@@ -1,5 +1,7 @@
-import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
+import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
 import { WETH } from "../../lib/contracts/typechain/WETH";
@@ -62,9 +64,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const FuseSafeLiquidator = await ethers.getContract("FuseSafeLiquidator");
   const FuseSafeLiquidatorArtifact = await deployments.getArtifact("FuseSafeLiquidator");
   chainDeployment.FuseSafeLiquidator = { abi: FuseSafeLiquidatorArtifact.abi, address: FuseSafeLiquidator.address };
-  const InitializableClones = await ethers.getContract("InitializableClones");
-  const InitializableClonesArtifact = await deployments.getArtifact("InitializableClones");
-  chainDeployment.InitializableClones = { abi: InitializableClonesArtifact.abi, address: InitializableClones.address };
   const JumpRateModel = await ethers.getContract("JumpRateModel");
   const JumpRateModelArtifact = await deployments.getArtifact("JumpRateModel");
   chainDeployment.JumpRateModel = { abi: JumpRateModelArtifact.abi, address: JumpRateModel.address };
@@ -170,15 +169,29 @@ export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   return await getCommonDeployments(chainDeployment);
 };
 
-export const getOrCreateMidas = async (): Promise<MidasSdk> => {
+export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | string): Promise<MidasSdk> => {
   if (!midasSdk) {
+    let signer;
+    if (!signerOrProviderOrSignerName) {
+      signer = ethers.provider;
+    } else {
+      if (typeof signerOrProviderOrSignerName === "string") {
+        signer = await ethers.getNamedSigner(signerOrProviderOrSignerName);
+      }
+      if (JsonRpcProvider.isProvider(signerOrProviderOrSignerName) || Signer.isSigner(signerOrProviderOrSignerName)) {
+        signer = signerOrProviderOrSignerName;
+      } else {
+        signer = await ethers.getSigners()[0];
+      }
+    }
+
     const { chainId } = await ethers.provider.getNetwork();
     let chainDeployment: ChainDeployment;
     let chainConfig: ChainConfig;
 
     // for integration tests, always use live BSC deployments and config
     if (process.env.INTEGRATION_TEST!) {
-      return new MidasSdk(ethers.provider, bsc);
+      return new MidasSdk(signer, bsc);
     }
 
     switch (chainId) {
@@ -204,7 +217,8 @@ export const getOrCreateMidas = async (): Promise<MidasSdk> => {
         chainConfig = polygon;
         break;
     }
-    midasSdk = new MidasSdk(ethers.provider, chainConfig);
+
+    midasSdk = new MidasSdk(signer, chainConfig);
 
     // patch WETH for local deployment
     if (chainId === 31337 || chainId === 1337) {

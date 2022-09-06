@@ -4,17 +4,24 @@ export interface FuseAsset {
   cToken: string;
   plugin?: string;
 
+  /** scaled by `underlying.decimals()`  */
   borrowBalance: BigNumber;
+  /** scaled by `underlying.decimals()`  */
   supplyBalance: BigNumber;
-  liquidity: BigNumber;
 
+  /** scaled by `1e18` */
+  liquidity: BigNumber;
   membership: boolean;
 
   underlyingName: string;
   underlyingSymbol: string;
   underlyingToken: string;
   underlyingDecimals: BigNumber;
+
+  /** scaled by `1e18` */
   underlyingPrice: BigNumber;
+
+  /** scaled by `underlying.decimals()`  */
   underlyingBalance: BigNumber;
 
   collateralFactor: BigNumber;
@@ -26,7 +33,9 @@ export interface FuseAsset {
   borrowRatePerBlock: BigNumber;
   supplyRatePerBlock: BigNumber;
 
+  /** scaled by `1e18` */
   totalBorrow: BigNumber;
+  /** scaled by `1e18` */
   totalSupply: BigNumber;
 
   isBorrowPaused: boolean;
@@ -54,15 +63,18 @@ export interface FusePoolData {
   name: string;
   totalLiquidityNative: number;
   totalAvailableLiquidityNative: number;
+
+  /** scaled by `1e18` */
   totalSuppliedNative: number;
+  /** scaled by `1e18` */
   totalBorrowedNative: number;
+
   totalSupplyBalanceNative: number;
   totalBorrowBalanceNative: number;
   blockPosted: BigNumber;
   timestampPosted: BigNumber;
   underlyingTokens: string[];
   underlyingSymbols: string[];
-  whitelistedAdmin: boolean;
   utilization: number;
 }
 

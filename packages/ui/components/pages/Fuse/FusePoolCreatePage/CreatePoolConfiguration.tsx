@@ -100,7 +100,6 @@ export const CreatePoolConfiguration = () => {
         bigCloseFactor,
         bigLiquidationIncentive,
         oracle,
-        { from: address },
         whitelist
       );
       const poolId = deployResult.pop();

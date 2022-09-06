@@ -24,11 +24,7 @@ locals {
   bsc_mainnet_rpc_3          = "https://rpc.ankr.com/bsc"
   bsc_mainnet_chain_id       = "56"
   bsc_mainnet_supported_pais = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6|0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c"
-
-  bsc_testnet_rpc            = "https://bsc.getblock.io/testnet/?api_key=${var.getblock_api_key}"
-  bsc_testnet_chain_id       = "97"
-  bsc_testnet_supported_pais = "0xAE4C99935B1AA0e76900e86cD155BFA63aB77A2a|0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd,0x3129B45b375a11Abf010D2D10DB1E3DcF474A13c|0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd,0x5126C1B8b4368c6F07292932451230Ba53a6eB7A|0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7"
-
+  
   moonbeam_mainnet_rpc_0          = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
   moonbeam_mainnet_rpc_1          = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
   moonbeam_mainnet_chain_id       = "1284"

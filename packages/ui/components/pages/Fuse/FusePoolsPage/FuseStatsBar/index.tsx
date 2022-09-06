@@ -1,15 +1,33 @@
-import { Flex, Heading, Spinner, Text } from '@chakra-ui/react';
-import type { FlexProps } from '@chakra-ui/react';
+import {
+  Avatar,
+  Box,
+  Flex,
+  FlexProps,
+  Heading,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Spinner,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 
-import { useFuseTVL } from '@ui/hooks/fuse/useFuseTVL';
+import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 const MotionFlex = motion<FlexProps>(Flex);
 
 const FuseStatsBar = () => {
-  const { data: fuseTVL } = useFuseTVL();
+  const { data: tvlData, isLoading } = useTVL();
+
+  const totalTVL = useMemo(() => {
+    if (tvlData) {
+      return Object.values(tvlData).reduce((a, c) => a + c.value, 0);
+    }
+  }, [tvlData]);
   const { cPage } = useColors();
 
   return (
@@ -41,30 +59,52 @@ const FuseStatsBar = () => {
           favorite tokens.
         </Text>
       </Flex>
-      <MotionFlex
-        flexDir="column"
-        h={{ base: '10rem', lg: '15rem' }}
-        w={{ base: '100%', lg: '50%' }}
-        px={{ lg: '10vw' }}
-        alignItems="center"
-        justifyContent="center"
-        position="relative"
-        overflow="hidden"
-        boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
-        borderRadius="20px"
-        bg={cPage.secondary.bgColor}
-        color={cPage.secondary.txtColor}
-        whileHover={{ scale: 1.06 }}
-      >
-        {fuseTVL !== undefined && fuseTVL !== false ? (
-          <Heading fontWeight="extrabold" fontSize={['36px', '48px']} lineHeight={['60px']}>
-            {smallUsdFormatter(fuseTVL)}
-          </Heading>
-        ) : (
-          <Spinner />
+
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <MotionFlex
+            flexDir="column"
+            h={{ base: '10rem', lg: '15rem' }}
+            w={{ base: '100%', lg: '50%' }}
+            px={{ lg: '10vw' }}
+            alignItems="center"
+            justifyContent="center"
+            position="relative"
+            overflow="hidden"
+            boxShadow="3px 18px 23px -26px rgb(92 31 70 / 51%)"
+            borderRadius="20px"
+            bg={cPage.secondary.bgColor}
+            color={cPage.secondary.txtColor}
+            whileHover={{ scale: 1.06 }}
+          >
+            {isLoading || totalTVL === undefined ? (
+              <Spinner />
+            ) : (
+              <>
+                <Heading fontWeight="extrabold" fontSize={['36px', '48px']} lineHeight={['60px']}>
+                  {smallUsdFormatter(totalTVL)}
+                </Heading>
+              </>
+            )}
+            <Text whiteSpace="nowrap">Total value supplied across Midas</Text>
+          </MotionFlex>
+        </PopoverTrigger>
+        {tvlData && (
+          <PopoverContent p={2}>
+            <VStack width={'100%'} alignItems="flex-start">
+              {Object.values(tvlData).map((chainTVL, index) => (
+                <Flex key={'tvl_' + index}>
+                  <Avatar src={chainTVL.logo} />
+                  <Box ml="3">
+                    <Text fontWeight="bold">{smallUsdFormatter(chainTVL.value)}</Text>
+                    <Text fontSize="sm">{chainTVL.name}</Text>
+                  </Box>
+                </Flex>
+              ))}
+            </VStack>
+          </PopoverContent>
         )}
-        <Text whiteSpace="nowrap">Total value supplied across Midas</Text>
-      </MotionFlex>
+      </Popover>
     </Flex>
   );
 };

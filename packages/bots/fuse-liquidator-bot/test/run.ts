@@ -6,6 +6,6 @@ import { config, liquidateOrRetry, logger, setUpSdk } from "../src";
   const chainId: number = config.chainId;
   const provider = new JsonRpcProvider(config.rpcUrl);
   const midasSdk = setUpSdk(chainId, provider);
-  logger.info(`Config for bot: ${JSON.stringify(midasSdk.chainLiquidationConfig)}`);
+  logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
   await liquidateOrRetry(midasSdk);
 })();

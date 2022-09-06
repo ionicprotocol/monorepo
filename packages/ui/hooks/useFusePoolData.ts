@@ -6,16 +6,16 @@ import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string) => {
-  const { midasSdk, address, coingeckoId } = useMidas();
+  const { midasSdk, address, coingeckoId, currentChain } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
   return useQuery<PoolData | null>(
-    ['useFusePoolData', poolId, address, usdPrice, supportedUnderlyings],
+    ['useFusePoolData', poolId, address, currentChain.id],
     async () => {
       if (!usdPrice) return null;
 
-      const res = await midasSdk.fetchFusePoolData(poolId, address);
+      const res = await midasSdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];
       const assets = res.assets.filter((asset) =>
         supportedUnderlyings?.includes(asset.underlyingToken)
@@ -52,7 +52,7 @@ export const useFusePoolData = (poolId: string) => {
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!poolId && !!usdPrice && !!address && !!supportedUnderlyings,
+      enabled: !!poolId && !!usdPrice && !!address && !!supportedUnderlyings && !!currentChain.id,
     }
   );
 };
