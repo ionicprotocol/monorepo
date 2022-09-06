@@ -84,7 +84,7 @@ export const useAssetMinBorrow = (underlyingDecimals: BigNumber, underlyingPrice
     [`useMinBorrow`, minBorrowNative, underlyingDecimals, underlyingPrice],
     () => {
       if (minBorrowNative) {
-        return minBorrowNative.mul(utils.parseUnits('1', underlyingDecimals)).div(underlyingPrice);
+        return minBorrowNative.mul(utils.parseUnits('1', DEFAULT_DECIMALS)).div(underlyingPrice);
       }
     },
     {
