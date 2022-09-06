@@ -196,7 +196,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
     from: deployer,
-    args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
+    args: [[], "0x1557ccC2cc2B0CC6029330B86FC39CCEA007339b"],
     log: true,
     waitConfirmations: 1,
   });
