@@ -11,6 +11,12 @@ export type TokenPair = {
   baseToken: string;
 };
 
+export type UniswapV3OracleConfig = {
+  assetAddress: string;
+  poolAddress: string;
+  twapWindowSeconds: number;
+};
+
 export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;
@@ -21,6 +27,7 @@ export type ChainDeployConfig = {
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
     flashSwapFee: number;
+    uniswapV3OracleTokens?: Array<UniswapV3OracleConfig>;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;
@@ -106,6 +113,10 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
 };
 
 export type UniswapDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+};
+
+export type UniswaV3DeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
