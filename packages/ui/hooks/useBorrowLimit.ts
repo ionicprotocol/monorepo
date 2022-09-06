@@ -77,11 +77,11 @@ export const useMinBorrowUsd = () => {
   );
 };
 
-export const useAssetMinBorrow = (underlyingDecimals: BigNumber, underlyingPrice: BigNumber) => {
+export const useAssetMinBorrow = (underlyingPrice: BigNumber) => {
   const { data: minBorrowNative } = useMinBorrowNative();
 
   return useQuery(
-    [`useMinBorrow`, minBorrowNative, underlyingDecimals, underlyingPrice],
+    [`useMinBorrow`, minBorrowNative, underlyingPrice],
     () => {
       if (minBorrowNative) {
         return minBorrowNative.mul(utils.parseUnits('1', DEFAULT_DECIMALS)).div(underlyingPrice);
@@ -90,7 +90,7 @@ export const useAssetMinBorrow = (underlyingDecimals: BigNumber, underlyingPrice
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!minBorrowNative && !!underlyingPrice && !!underlyingDecimals,
+      enabled: !!minBorrowNative && !!underlyingPrice,
     }
   );
 };
