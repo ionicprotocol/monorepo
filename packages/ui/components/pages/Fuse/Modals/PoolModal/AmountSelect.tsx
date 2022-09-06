@@ -99,9 +99,13 @@ const AmountSelect = ({
         asset
       )) as BigNumber;
 
-      const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
+      const borrowableAmount = Number(
+        utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
+      );
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(utils.formatUnits(asset.borrowBalance));
+      const borrowedAmount = Number(
+        utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+      );
       setBorrowedAmount(borrowedAmount);
     };
 
@@ -131,7 +135,7 @@ const AmountSelect = ({
     setUserAction(UserAction.NO_ACTION);
   };
 
-  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingPrice);
+  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingDecimals, asset.underlyingPrice);
   const { data: minBorrowUsd } = useMinBorrowUsd();
 
   const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount, minBorrow], async () => {
@@ -288,9 +292,7 @@ const AmountSelect = ({
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
             <Heading fontSize="27px" ml={3}>
-              {!isMobile && asset.underlyingName.length < 25
-                ? asset.underlyingName
-                : asset.underlyingSymbol}
+              {tokenData?.symbol || asset.underlyingSymbol}
             </Heading>
           </Row>
 
@@ -315,7 +317,8 @@ const AmountSelect = ({
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
                 <Text mr={2}>Wallet Balance:</Text>
                 <Text>
-                  {myBalance ? utils.formatUnits(myBalance) : 0} {asset.underlyingSymbol}
+                  {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                  {asset.underlyingSymbol}
                 </Text>
               </Row>
               <DashboardBox width="100%" height="70px" mt={3}>
@@ -687,7 +690,7 @@ const TokenNameAndMaxButton = ({
   const errorToast = useErrorToast();
 
   const [isLoading, setIsLoading] = useState(false);
-  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingPrice);
+  const { data: minBorrow } = useAssetMinBorrow(asset.underlyingDecimals, asset.underlyingPrice);
 
   const setToMax = async () => {
     setIsLoading(true);

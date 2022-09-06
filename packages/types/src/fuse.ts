@@ -9,6 +9,7 @@ export interface FuseAsset {
   /** scaled by `underlying.decimals()`  */
   supplyBalance: BigNumber;
 
+  /** scaled by `1e18` */
   liquidity: BigNumber;
   membership: boolean;
 
@@ -32,9 +33,9 @@ export interface FuseAsset {
   borrowRatePerBlock: BigNumber;
   supplyRatePerBlock: BigNumber;
 
-  /** scaled by `underlying.decimals()`  */
+  /** scaled by `1e18` */
   totalBorrow: BigNumber;
-  /** scaled by `underlying.decimals()`  */
+  /** scaled by `1e18` */
   totalSupply: BigNumber;
 
   isBorrowPaused: boolean;
@@ -74,7 +75,6 @@ export interface FusePoolData {
   timestampPosted: BigNumber;
   underlyingTokens: string[];
   underlyingSymbols: string[];
-  whitelistedAdmin: boolean;
   utilization: number;
 }
 

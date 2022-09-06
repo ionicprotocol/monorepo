@@ -1,8 +1,10 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { NativePricedFuseAsset } from '@midas-capital/types';
-import { BigNumber, constants, Contract, utils } from 'ethers';
+import { BigNumber, Contract, utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
+
+import { DEFAULT_DECIMALS } from '../constants';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
@@ -22,7 +24,7 @@ export const useBorrowLimit = <T extends NativePricedFuseAsset>(
       if (options?.ignoreIsEnabledCheckFor === asset.cToken || asset.membership) {
         _maxBorrow +=
           asset.supplyBalanceNative *
-          parseFloat(utils.formatUnits(asset.collateralFactor, asset.underlyingDecimals)) *
+          parseFloat(utils.formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)) *
           usdPrice;
       }
     }
@@ -75,20 +77,20 @@ export const useMinBorrowUsd = () => {
   );
 };
 
-export const useAssetMinBorrow = (underlyingPrice: BigNumber) => {
+export const useAssetMinBorrow = (underlyingDecimals: BigNumber, underlyingPrice: BigNumber) => {
   const { data: minBorrowNative } = useMinBorrowNative();
 
   return useQuery(
-    [`useMinBorrow`, minBorrowNative, underlyingPrice],
+    [`useMinBorrow`, minBorrowNative, underlyingDecimals, underlyingPrice],
     () => {
       if (minBorrowNative) {
-        return minBorrowNative.mul(constants.WeiPerEther).div(underlyingPrice);
+        return minBorrowNative.mul(utils.parseUnits('1', underlyingDecimals)).div(underlyingPrice);
       }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!minBorrowNative && !!underlyingPrice,
+      enabled: !!minBorrowNative && !!underlyingPrice && !!underlyingDecimals,
     }
   );
 };
