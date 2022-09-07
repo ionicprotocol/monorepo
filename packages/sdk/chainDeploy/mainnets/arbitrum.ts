@@ -29,7 +29,6 @@ export const deployConfig: ChainDeployConfig = {
     uniswapOracleLpTokens: [],
     flashSwapFee: 30,
   },
-  plugins: [],
   dynamicFlywheels: [],
   cgId: arbitrum.specificParams.cgId,
 };
