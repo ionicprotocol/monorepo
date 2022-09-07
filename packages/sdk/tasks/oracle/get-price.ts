@@ -1,15 +1,26 @@
 import { task, types } from "hardhat/config";
 
 task("oracle:get-price", "Get price of token")
-  .addOptionalParam("token", "Token symbol for which to get the price", undefined, types.string)
   .addOptionalParam("address", "Token address for which to get the price", undefined, types.string)
-  .setAction(async ({ token: _token, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
+  .addOptionalParam("ctoken", "CToken address for which to get the price", undefined, types.string)
+  .setAction(async ({ ctoken: _ctoken, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
+    const { deployer } = await ethers.getNamedSigners();
     // @ts-ignore
-    const oracleModule = await import("../../tests/utils/oracle");
-    const [tokenAddress, oracle] = await oracleModule.setUpOracleWithToken(_token, _address, ethers, getNamedAccounts);
-    console.log("oracle: ", oracle.address);
-    const tokenPriceMPO = await oracle.price(tokenAddress);
-    console.log("price: ", tokenPriceMPO.toString());
-    console.log(`Price ${_token ? _token : _address}: ${ethers.utils.formatEther(tokenPriceMPO)}`);
-    return tokenPriceMPO;
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas();
+
+    const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, deployer);
+
+    console.log("oracle: ", mpo.address);
+    if (_address) {
+      const tokenPriceMPO = await mpo.price(_address);
+      console.log("underlying oracle address: ", await mpo.callStatic.oracles(_address));
+      console.log(`mpo.price(address): ${tokenPriceMPO.toString()}, i.e.: ${ethers.utils.formatEther(tokenPriceMPO)}`);
+    }
+    if (_ctoken) {
+      const tokenPriceMPO = await mpo.getUnderlyingPrice(_ctoken);
+      console.log(
+        `mpo.getUnderlyingPrice(cToken): ${tokenPriceMPO.toString()}, i.e.: ${ethers.utils.formatEther(tokenPriceMPO)}`
+      );
+    }
   });
