@@ -38,6 +38,10 @@ export const deployConfig: ChainDeployConfig = {
         token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.STELLA)!.underlying,
         baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
       },
+      {
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.CELR)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
+      },
     ],
     uniswapOracleLpTokens: [
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // GLMR-USDC
