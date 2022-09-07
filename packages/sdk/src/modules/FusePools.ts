@@ -91,9 +91,11 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         totalBorrowBalanceNative += asset.borrowBalanceNative;
 
         asset.totalSupplyNative =
-          Number(utils.formatUnits(asset.totalSupply, 18)) * Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
         asset.totalBorrowNative =
-          Number(utils.formatUnits(asset.totalBorrow, 18)) * Number(utils.formatUnits(asset.underlyingPrice, 18));
+          Number(utils.formatUnits(asset.totalBorrow, asset.underlyingDecimals)) *
+          Number(utils.formatUnits(asset.underlyingPrice, 18));
 
         if (asset.totalSupplyNative === 0) {
           asset.utilization = 0;

@@ -46,7 +46,10 @@ export const fetchMaxAmount = async (
       { from: address }
     );
 
-    maxRedeem = utils.parseUnits(toFixedNoRound(utils.formatUnits(maxRedeem), 7));
+    maxRedeem = utils.parseUnits(
+      toFixedNoRound(utils.formatUnits(maxRedeem, asset.underlyingDecimals), 7),
+      asset.underlyingDecimals
+    );
 
     if (maxRedeem) {
       return BigNumber.from(maxRedeem);
