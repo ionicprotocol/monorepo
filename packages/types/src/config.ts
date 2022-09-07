@@ -46,7 +46,8 @@ export interface PluginData {
   market: string;
   name: string;
   strategy?: string;
-  docsUrl?: string;
+  apyDocsUrl?: string;
+  strategyDocsUrl?: string;
 }
 
 export type DeployedPlugins = {
