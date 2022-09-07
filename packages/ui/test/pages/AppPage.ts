@@ -8,7 +8,7 @@ export abstract class AppPage {
   protected Page: Page;
   protected Route = '';
 
-  protected WalletConnectSelector = '#connect-wallet';
+  protected WalletConnectSelector = '#MetaMask';
   protected WalletOptionMetamaskSelector = '#wallet-option-MetaMask';
 
   private ci: string = process.env.CI || 'false';
@@ -45,27 +45,30 @@ export abstract class AppPage {
   }
 
   public async connectMetamaskWallet(): Promise<void> {
-    await await this.blockingWait(1, true);
+    await this.blockingWait(1, true);
 
-    const web3Connected = await this.Page.$('#web3-status-connected');
+    const web3Connected = await this.Page.$('#walletBtn');
+
     if (web3Connected) return;
 
     const btnConnectWallet = await this.Page.waitForSelector(this.WalletConnectSelector);
+
     if (btnConnectWallet) {
       await btnConnectWallet.click();
+      await this.Metamask.approve();
+    }
+  }
 
-      const metamaskButton = await this.Page.waitForSelector(this.WalletOptionMetamaskSelector);
+  public async acceptTerms(): Promise<void> {
+    const termsAcceptBtn = await this.Page.waitForSelector('#termsAcceptBtn');
 
-      if (metamaskButton) {
-        await metamaskButton.click();
-        await this.Metamask.approve();
-        await this.bringToFront();
-      }
+    if (termsAcceptBtn) {
+      await termsAcceptBtn.click();
     }
   }
 
   public async addTokenToMetamask(tokenAddress: string): Promise<void> {
-    await await this.blockingWait(2);
+    await this.blockingWait(2);
     await this.Metamask.page.bringToFront();
 
     await this.closeMetamaskWhatsNew();

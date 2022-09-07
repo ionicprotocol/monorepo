@@ -20,9 +20,10 @@ const oracle = 'MasterPriceOracle';
 const closeFactor = '50';
 const liquidIcent = '8';
 
-const baseUrl = 'https://testnet.midascapital.xyz/97/create-pool';
+const baseUrl = 'http://localhost:3000/97/create-pool';
 
 jest.retryTimes(1);
+jest.setTimeout(60000);
 
 describe('Create Pool:', () => {
   beforeAll(async () => {
@@ -34,6 +35,7 @@ describe('Create Pool:', () => {
     await page.bringToFront();
 
     await createPoolPage.connectMetamaskWallet();
+    await createPoolPage.acceptTerms();
     const wbnb = chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB);
     if (wbnb?.underlying) {
       await createPoolPage.addTokenToMetamask(wbnb.underlying);

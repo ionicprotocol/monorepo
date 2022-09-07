@@ -42,15 +42,14 @@ export class TestHelper {
 
     try {
       metamask = await setupMetamask(browser, { seed: seed, password: pass });
-      await metamask.switchNetwork('kovan');
-
-      if (process.env.CI === 'true') {
-        await metamask.page.setDefaultTimeout(60000);
-      } else {
-        await metamask.page.setDefaultTimeout(20000);
-      }
+      await metamask.addNetwork({
+        networkName: 'Chapel',
+        rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+        chainId: 97,
+        symbol: 'BNB',
+      });
+      await metamask.switchNetwork('Chapel');
     } catch (error) {
-      // console.log('Error occurred setting up metamask');
       throw error;
     }
 
