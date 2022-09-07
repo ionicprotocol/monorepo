@@ -55,14 +55,6 @@ export const deployConfig: ChainDeployConfig = {
     ],
     flashSwapFee: 30,
   },
-  plugins: [
-    {
-      strategy: "MockERC4626",
-      name: "Mock_BUSD",
-      underlying: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
-      otherParams: [],
-    },
-  ],
   cgId: chapel.specificParams.cgId,
 };
 
