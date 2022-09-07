@@ -33,9 +33,9 @@ export interface FuseAsset {
   borrowRatePerBlock: BigNumber;
   supplyRatePerBlock: BigNumber;
 
-  /** scaled by `1e18` */
+  /** scaled by `underlying.decimals()`  */
   totalBorrow: BigNumber;
-  /** scaled by `1e18` */
+  /** scaled by `underlying.decimals()`  */
   totalSupply: BigNumber;
 
   isBorrowPaused: boolean;
