@@ -60,7 +60,6 @@ export const deployConfig: ChainDeployConfig = {
     ],
     flashSwapFee: 30,
   },
-  plugins: [],
   dynamicFlywheels: [
     {
       rewardToken: "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC",

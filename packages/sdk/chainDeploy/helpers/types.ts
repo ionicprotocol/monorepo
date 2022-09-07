@@ -30,7 +30,6 @@ export type ChainDeployConfig = {
   wBTCToken?: string;
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
-  plugins?: PluginConfig[];
   cgId: string;
 };
 

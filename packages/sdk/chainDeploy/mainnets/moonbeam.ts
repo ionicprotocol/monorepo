@@ -50,52 +50,6 @@ export const deployConfig: ChainDeployConfig = {
     ],
     flashSwapFee: 30,
   },
-  plugins: [
-    {
-      strategy: "BeamERC4626",
-      name: "GLMR-GLNT",
-      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying,
-      otherParams: ["0", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
-      flywheelIndices: [0],
-    },
-    {
-      strategy: "BeamERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying,
-      otherParams: ["1", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
-      name: "GLMR-USDC",
-      flywheelIndices: [0],
-    },
-    {
-      strategy: "BeamERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["USDC-ETH"])!.underlying,
-      otherParams: ["4", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
-      name: "USDC-ETH",
-      flywheelIndices: [0],
-    },
-    {
-      strategy: "BeamERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["WGLMR"])!.underlying,
-      otherParams: ["5", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
-      name: "WGLMR",
-      flywheelIndices: [0],
-    },
-
-    {
-      strategy: "BeamERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["WGLMR-xcDOT"])!.underlying,
-      otherParams: ["13", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
-      name: "WGLMR-xcDOT",
-      flywheelIndices: [0],
-    },
-    {
-      // 0x
-      strategy: "BeamERC4626",
-      underlying: assets.find((a) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying,
-      otherParams: ["15", "0xC6ca172FC8BDB803c5e12731109744fb0200587b"], // poolId, vaultAddress
-      name: "USDC-ETH",
-      flywheelIndices: [0],
-    },
-  ],
   dynamicFlywheels: [
     {
       rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.GLINT)!.underlying,

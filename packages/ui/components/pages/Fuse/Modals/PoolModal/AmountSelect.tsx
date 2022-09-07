@@ -99,9 +99,13 @@ const AmountSelect = ({
         asset
       )) as BigNumber;
 
-      const borrowableAmount = Number(utils.formatUnits(borrowableAmountBN));
+      const borrowableAmount = Number(
+        utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
+      );
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(utils.formatUnits(asset.borrowBalance));
+      const borrowedAmount = Number(
+        utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+      );
       setBorrowedAmount(borrowedAmount);
     };
 
@@ -288,9 +292,7 @@ const AmountSelect = ({
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
             <Heading fontSize="27px" ml={3}>
-              {!isMobile && asset.underlyingName.length < 25
-                ? asset.underlyingName
-                : asset.underlyingSymbol}
+              {tokenData?.symbol || asset.underlyingSymbol}
             </Heading>
           </Row>
 

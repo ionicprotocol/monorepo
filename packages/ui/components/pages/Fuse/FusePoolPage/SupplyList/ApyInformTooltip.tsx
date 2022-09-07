@@ -12,18 +12,18 @@ export const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) =
       body={
         <>
           We do not have enough data to give you an APY yet. <br /> <br />
-          {pluginInfo?.docsUrl ? (
+          {pluginInfo?.apyDocsUrl ? (
             <>
               Please check{' '}
               <ChakraLink
-                href={pluginInfo?.docsUrl}
+                href={pluginInfo?.apyDocsUrl}
                 isExternal
                 variant={'color'}
                 onClick={(e) => {
                   e.stopPropagation();
                 }}
               >
-                {pluginInfo?.docsUrl} <ExternalLinkIcon mx="2px" />
+                {pluginInfo?.apyDocsUrl} <ExternalLinkIcon mx="2px" />
               </ChakraLink>{' '}
               for indicative APYs of the underlying strategy for now.
             </>
