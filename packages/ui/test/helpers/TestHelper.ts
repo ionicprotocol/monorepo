@@ -60,7 +60,7 @@ export class TestHelper {
   private static async getBrowser(): Promise<Browser> {
     let browser: Browser;
     const options: LaunchOptions = {
-      metamaskVersion: 'v10.1.1',
+      metamaskVersion: 'v10.15.0',
       headless: false,
       args: ['--no-sandbox'],
     };

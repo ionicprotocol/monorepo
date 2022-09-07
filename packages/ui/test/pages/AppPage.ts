@@ -21,11 +21,13 @@ export abstract class AppPage {
 
   public async navigateTo(): Promise<Page> {
     await this.bringToFront();
+
     if (this.BaseUrl && this.Route) {
       await this.Page.goto(this.BaseUrl + this.Route);
     } else {
       console.warn('Page has no URL and cannot be navigated to');
     }
+
     return this.Page;
   }
 

@@ -1,37 +1,30 @@
 import { Dappeteer } from '@chainsafe/dappeteer';
+import { chapel } from '@midas-capital/chains';
+import { assetSymbols } from '@midas-capital/types';
+import dotenv from 'dotenv';
 import { Browser, Page } from 'puppeteer';
 
-import { ADDRESSES, FUNDING_SOURCE, POOL_TYPE } from './constants/Index';
 import { TestHelper } from './helpers/TestHelper';
 import { CreatePoolPage } from './pages/pools/CreatePoolPage';
 
-require('dotenv').config();
+dotenv.config();
 
 let browser: Browser;
 let page: Page;
 let metamask: Dappeteer;
 
 let createPoolPage: CreatePoolPage;
-const depositPercentage = 0.2;
-const swapPercentage = 0.01;
 
-const baseUrl: string = process.env.TEST_BASE_URL || 'http://localhost:3000';
+const name = 'e2e testing';
+const oracle = 'MasterPriceOracle';
+const closeFactor = '50';
+const liquidIcent = '8';
 
-const bentoSwapCases = [
-  ['ETH', FUNDING_SOURCE.WALLET, 'USDC', FUNDING_SOURCE.BENTO],
-  ['WETH', FUNDING_SOURCE.WALLET, 'USDC', FUNDING_SOURCE.BENTO],
-  ['ETH', FUNDING_SOURCE.BENTO, 'USDC', FUNDING_SOURCE.WALLET],
-  ['WETH', FUNDING_SOURCE.BENTO, 'ETH', FUNDING_SOURCE.WALLET],
-  ['ETH', FUNDING_SOURCE.BENTO, 'USDC', FUNDING_SOURCE.BENTO],
-  ['USDC', FUNDING_SOURCE.WALLET, 'WETH', FUNDING_SOURCE.BENTO],
-  ['USDC', FUNDING_SOURCE.BENTO, 'WETH', FUNDING_SOURCE.BENTO],
-  ['USDC', FUNDING_SOURCE.BENTO, 'ETH', FUNDING_SOURCE.WALLET],
-  ['USDC', FUNDING_SOURCE.BENTO, 'WETH', FUNDING_SOURCE.WALLET],
-];
+const baseUrl = 'https://testnet.midascapital.xyz/97/create-pool';
 
 jest.retryTimes(1);
 
-describe('Trident Swap:', () => {
+describe('Create Pool:', () => {
   beforeAll(async () => {
     [metamask, page, browser] = await TestHelper.initDappeteer();
 
@@ -41,187 +34,20 @@ describe('Trident Swap:', () => {
     await page.bringToFront();
 
     await createPoolPage.connectMetamaskWallet();
-    await createPoolPage.addTokenToMetamask(ADDRESSES.USDT);
+    const wbnb = chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB);
+    if (wbnb?.underlying) {
+      await createPoolPage.addTokenToMetamask(wbnb.underlying);
+    }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   beforeEach(async () => {});
 
   afterAll(async () => {
     browser.close();
   });
 
-  test.each([['ETH', FUNDING_SOURCE.WALLET, 'USDT', FUNDING_SOURCE.WALLET]])(
-    `Complex Path: Should swap from %p %p to %p %p`,
-    async (assetA, payFromA, assetB, payFromB) => {
-      const payAFromWallet = payFromA === FUNDING_SOURCE.WALLET;
-      const payBFromWallet = payFromB === FUNDING_SOURCE.WALLET;
-
-      await swapPage.navigateTo();
-
-      const assetABalance = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const assetBBalance = await swapPage.getTokenBalance(assetB, payBFromWallet);
-      const assetADepositAmount = (assetABalance * depositPercentage).toFixed(5);
-      const assetBDepositAmount = (assetBBalance * depositPercentage).toFixed(5);
-
-      await liquidityPoolsPage.navigateTo();
-      await liquidityPoolsPage.clickCreateNewPoolButton();
-      await createPoolPage.createPool(
-        POOL_TYPE.CLASSIC,
-        assetA,
-        assetB,
-        payAFromWallet,
-        payBFromWallet,
-        assetADepositAmount,
-        assetBDepositAmount,
-        Fee.LOW
-      );
-
-      await liquidityPoolsPage.navigateTo();
-      await liquidityPoolsPage.clickCreateNewPoolButton();
-      await createPoolPage.createPool(
-        POOL_TYPE.CLASSIC,
-        assetA,
-        assetB,
-        payAFromWallet,
-        payBFromWallet,
-        assetADepositAmount,
-        assetBDepositAmount,
-        Fee.MEDIUM
-      );
-
-      await swapPage.navigateTo();
-
-      const inputTokenBalanceBefore = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const outputTokenBalanceBefore = await swapPage.getTokenBalance(assetB, payBFromWallet);
-      if (!(inputTokenBalanceBefore > 0))
-        throw new Error(`${assetA} wallet balance is 0. Can't execute swap`);
-
-      const swapAmount = (inputTokenBalanceBefore * swapPercentage).toFixed(5);
-
-      await swapPage.setInputToken(assetA);
-      await swapPage.setOutputToken(assetB);
-      await swapPage.setAmountIn(swapAmount);
-      await swapPage.setPayFromWallet(payAFromWallet);
-      await swapPage.setReceiveToWallet(payBFromWallet);
-
-      const tradeType = await swapPage.getTradeType();
-      expect(tradeType).toBe('trident');
-
-      const minOutputAmount = await swapPage.getMinOutputAmount();
-
-      await swapPage.confirmSwap(assetA, assetB);
-      await swapPage.navigateTo();
-
-      const inputTokenBalanceAfter = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const outputTokenBalanceAfter = await swapPage.getTokenBalance(assetB, payBFromWallet);
-
-      const intputTokenBalanceDiff = inputTokenBalanceBefore - inputTokenBalanceAfter;
-      const outputTokenBalanceDiff = outputTokenBalanceAfter - outputTokenBalanceBefore;
-
-      expect(closeValues(intputTokenBalanceDiff, parseFloat(swapAmount), 1e-9)).toBe(true);
-      expect(closeValues(outputTokenBalanceDiff, parseFloat(minOutputAmount), 1e-9)).toBe(true);
-    }
-  );
-
-  test.each([
-    ['ETH', FUNDING_SOURCE.WALLET, 'BAT', FUNDING_SOURCE.WALLET, swapPercentage],
-    ['ETH', FUNDING_SOURCE.WALLET, 'BAT', FUNDING_SOURCE.WALLET, 0.8],
-  ])(
-    `Single Pool: Should swap from %p %p to %p %p`,
-    async (assetA, payFromA, assetB, payFromB, swapPercent) => {
-      const payAFromWallet = payFromA === FUNDING_SOURCE.WALLET;
-      const payBFromWallet = payFromB === FUNDING_SOURCE.WALLET;
-
-      await swapPage.navigateTo();
-
-      const assetABalance = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const assetBBalance = await swapPage.getTokenBalance(assetB, payBFromWallet);
-      const assetADepositAmount = (assetABalance * depositPercentage).toFixed(5);
-      const assetBDepositAmount = (assetBBalance * 0.7).toFixed(5);
-
-      await liquidityPoolsPage.navigateTo();
-      await liquidityPoolsPage.clickCreateNewPoolButton();
-      await createPoolPage.createPool(
-        POOL_TYPE.CLASSIC,
-        assetA,
-        assetB,
-        payAFromWallet,
-        payBFromWallet,
-        assetADepositAmount,
-        assetBDepositAmount,
-        Fee.LOW
-      );
-
-      await swapPage.navigateTo();
-
-      const inputTokenBalanceBefore = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const outputTokenBalanceBefore = await swapPage.getTokenBalance(assetB, payBFromWallet);
-      if (!(inputTokenBalanceBefore > 0))
-        throw new Error(`${assetA} wallet balance is 0. Can't execute swap`);
-
-      const swapAmount = (inputTokenBalanceBefore * swapPercent).toFixed(5);
-
-      await swapPage.setInputToken(assetA);
-      await swapPage.setOutputToken(assetB);
-      await swapPage.setAmountIn(swapAmount);
-      await swapPage.setPayFromWallet(payAFromWallet);
-      await swapPage.setReceiveToWallet(payBFromWallet);
-
-      const tradeType = await swapPage.getTradeType();
-      expect(tradeType).toBe('trident');
-
-      const minOutputAmount = await swapPage.getMinOutputAmount();
-
-      await swapPage.confirmSwap(assetA, assetB);
-      await swapPage.navigateTo();
-
-      const inputTokenBalanceAfter = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const outputTokenBalanceAfter = await swapPage.getTokenBalance(assetB, payBFromWallet);
-
-      const intputTokenBalanceDiff = inputTokenBalanceBefore - inputTokenBalanceAfter;
-      const outputTokenBalanceDiff = outputTokenBalanceAfter - outputTokenBalanceBefore;
-
-      expect(closeValues(intputTokenBalanceDiff, parseFloat(swapAmount), 1e-9)).toBe(true);
-      expect(closeValues(outputTokenBalanceDiff, parseFloat(minOutputAmount), 1e-9)).toBe(true);
-    }
-  );
-
-  test.each([['BAT', FUNDING_SOURCE.WALLET, 'USDT', FUNDING_SOURCE.WALLET, swapPercentage]])(
-    `Single Path: Should swap from %p %p to %p %p`,
-    async (assetA, payFromA, assetB, payFromB, swapPercent) => {
-      const payAFromWallet = payFromA === FUNDING_SOURCE.WALLET;
-      const payBFromWallet = payFromB === FUNDING_SOURCE.WALLET;
-
-      await swapPage.navigateTo();
-      const inputTokenBalanceBefore = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const outputTokenBalanceBefore = await swapPage.getTokenBalance(assetB, payBFromWallet);
-      if (!(inputTokenBalanceBefore > 0))
-        throw new Error(`${assetA} wallet balance is 0. Can't execute swap`);
-
-      const swapAmount = (inputTokenBalanceBefore * swapPercent).toFixed(5);
-
-      await swapPage.setInputToken(assetA);
-      await swapPage.setOutputToken(assetB);
-      await swapPage.setAmountIn(swapAmount);
-      await swapPage.setPayFromWallet(payAFromWallet);
-      await swapPage.setReceiveToWallet(payBFromWallet);
-
-      const tradeType = await swapPage.getTradeType();
-      expect(tradeType).toBe('trident');
-
-      const minOutputAmount = await swapPage.getMinOutputAmount();
-
-      await swapPage.confirmSwap(assetA, assetB);
-      await swapPage.navigateTo();
-
-      const inputTokenBalanceAfter = await swapPage.getTokenBalance(assetA, payAFromWallet);
-      const outputTokenBalanceAfter = await swapPage.getTokenBalance(assetB, payBFromWallet);
-
-      const intputTokenBalanceDiff = inputTokenBalanceBefore - inputTokenBalanceAfter;
-      const outputTokenBalanceDiff = outputTokenBalanceAfter - outputTokenBalanceBefore;
-
-      expect(closeValues(intputTokenBalanceDiff, parseFloat(swapAmount), 1e-9)).toBe(true);
-      expect(closeValues(outputTokenBalanceDiff, parseFloat(minOutputAmount), 1e-9)).toBe(true);
-    }
-  );
+  test(`User can create pool`, async () => {
+    await createPoolPage.createPool(name, oracle, closeFactor, liquidIcent);
+  });
 });
