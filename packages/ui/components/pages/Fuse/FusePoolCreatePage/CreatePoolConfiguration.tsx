@@ -285,6 +285,7 @@ export const CreatePoolConfiguration = () => {
                   }}
                   render={({ field: { name, value, ref, onChange } }) => (
                     <SliderWithLabel
+                      id="closeFactor"
                       min={CLOSE_FACTOR.MIN}
                       max={CLOSE_FACTOR.MAX}
                       name={name}
@@ -331,6 +332,7 @@ export const CreatePoolConfiguration = () => {
                   }}
                   render={({ field: { name, value, ref, onChange } }) => (
                     <SliderWithLabel
+                      id="liqdIncent"
                       min={LIQUIDATION_INCENTIVE.MIN}
                       max={LIQUIDATION_INCENTIVE.MAX}
                       name={name}

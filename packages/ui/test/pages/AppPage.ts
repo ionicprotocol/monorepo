@@ -70,10 +70,9 @@ export abstract class AppPage {
   public async addTokenToMetamask(tokenAddress: string): Promise<void> {
     await this.blockingWait(2);
     await this.Metamask.page.bringToFront();
-
     await this.closeMetamaskWhatsNew();
 
-    const addTokenButton = await this.Metamask.page.waitForSelector('.add-token-button > button');
+    const addTokenButton = await this.Metamask.page.waitForSelector('.import-token-link__link');
     if (addTokenButton) {
       await addTokenButton.click();
 
@@ -83,7 +82,7 @@ export abstract class AppPage {
 
         await this.Metamask.page.waitForTimeout(4000);
 
-        this.Metamask.page.waitForSelector(
+        await this.Metamask.page.waitForSelector(
           `button[data-testid='page-container-footer-next']:not([disabled])`
         );
         const nextButton = await this.Metamask.page.waitForSelector(

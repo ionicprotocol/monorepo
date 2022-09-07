@@ -8,8 +8,8 @@ export class CreatePoolPage extends AppPage {
   private NameInputSelector = '#name';
   private OracleSelectSelector = '#oracle';
   private whitelistSwitchSelector = '#isWhitelisted';
-  private CloseFactorInputSelector = '#field-:rif:';
-  private LiqdIncentInputSelector = '#field-:rij:';
+  private CloseFactorInputSelector = '#closeFactor';
+  private LiqdIncentInputSelector = '#liqdIncent';
   private CreatePoolBtnSelector = '.chakra-button';
 
   constructor(page: Page, metamask: Dappeteer, baseUrl: string) {

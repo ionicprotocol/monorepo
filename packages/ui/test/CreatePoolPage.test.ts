@@ -23,7 +23,7 @@ const liquidIcent = '8';
 const baseUrl = 'http://localhost:3000/97/create-pool';
 
 jest.retryTimes(1);
-jest.setTimeout(60000);
+jest.setTimeout(600000);
 
 describe('Create Pool:', () => {
   beforeAll(async () => {
@@ -50,6 +50,8 @@ describe('Create Pool:', () => {
   });
 
   test(`User can create pool`, async () => {
+    await page.bringToFront();
+    await page.goto(baseUrl);
     await createPoolPage.createPool(name, oracle, closeFactor, liquidIcent);
   });
 });
