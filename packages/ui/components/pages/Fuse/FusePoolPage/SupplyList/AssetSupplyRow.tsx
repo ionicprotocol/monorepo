@@ -1,6 +1,5 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import {
-  Box,
   Button,
   Link as ChakraLink,
   HStack,
@@ -166,7 +165,9 @@ export const AssetSupplyRow = ({
                 placement="top-start"
                 body={
                   <div
-                    dangerouslySetInnerHTML={{ __html: asset.extraDocs || asset.underlyingSymbol }}
+                    dangerouslySetInnerHTML={{
+                      __html: asset.extraDocs || asset.underlyingSymbol,
+                    }}
                   />
                 }
               >
@@ -202,55 +203,51 @@ export const AssetSupplyRow = ({
                     <QuestionIcon />
                   </PopoverTooltip>
                 )}
-              <Box>
-                <PopoverTooltip
-                  placement="top-start"
-                  body={`${scanUrl}/address/${asset.underlyingToken}`}
+              <PopoverTooltip
+                placement="top-start"
+                body={`${scanUrl}/address/${asset.underlyingToken}`}
+              >
+                <Button
+                  minWidth={6}
+                  m={0}
+                  variant={'link'}
+                  as={ChakraLink}
+                  href={`${scanUrl}/address/${asset.underlyingToken}`}
+                  isExternal
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
                 >
-                  <Button
-                    minWidth={6}
-                    m={0}
-                    variant={'link'}
-                    as={ChakraLink}
-                    href={`${scanUrl}/address/${asset.underlyingToken}`}
-                    isExternal
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
-                  </Button>
-                </PopoverTooltip>
-              </Box>
+                  <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
+                </Button>
+              </PopoverTooltip>
 
               {asset.plugin && (
-                <Box>
-                  <PopoverTooltip
-                    placement="top-start"
-                    body={
-                      <>
-                        This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
-                        <br />
-                        Read more about it{' '}
-                        <ChakraLink
-                          href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
-                          isExternal
-                          variant={'color'}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          in our Docs <ExternalLinkIcon mx="2px" />
-                        </ChakraLink>
-                        .
-                      </>
-                    }
-                  >
-                    <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
-                      🔌
-                    </span>
-                  </PopoverTooltip>
-                </Box>
+                <PopoverTooltip
+                  placement="top-start"
+                  body={
+                    <>
+                      This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
+                      <br />
+                      Read more about it{' '}
+                      <ChakraLink
+                        href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
+                        isExternal
+                        variant={'color'}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                      >
+                        in our Docs <ExternalLinkIcon mx="2px" />
+                      </ChakraLink>
+                      .
+                    </>
+                  }
+                >
+                  <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
+                    🔌
+                  </span>
+                </PopoverTooltip>
               )}
             </HStack>
           </Row>
