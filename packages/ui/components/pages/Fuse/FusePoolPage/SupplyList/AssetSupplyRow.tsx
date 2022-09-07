@@ -226,9 +226,25 @@ export const AssetSupplyRow = ({
                 <PopoverTooltip
                   placement="top-start"
                   body={
-                    <>
-                      This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
+                    <Text lineHeight="base">
+                      This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy(
+                      <b>{asset.plugin}</b>).
                       <br />
+                      {pluginInfo?.apyDocsUrl && (
+                        <>
+                          <ChakraLink
+                            href={pluginInfo.apyDocsUrl}
+                            isExternal
+                            variant={'color'}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            [Vault details]
+                          </ChakraLink>
+                          <br />
+                        </>
+                      )}
                       Read more about it{' '}
                       <ChakraLink
                         href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
@@ -241,7 +257,7 @@ export const AssetSupplyRow = ({
                         in our Docs <ExternalLinkIcon mx="2px" />
                       </ChakraLink>
                       .
-                    </>
+                    </Text>
                   }
                 >
                   <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
