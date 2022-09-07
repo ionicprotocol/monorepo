@@ -82,7 +82,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   ////
 
   // rewards
-``  deployConfig.dynamicFlywheels[0].rewardToken = touchToken.address;
+  deployConfig.dynamicFlywheels[0].rewardToken = touchToken.address;
 
   ////
   //// ORACLES
