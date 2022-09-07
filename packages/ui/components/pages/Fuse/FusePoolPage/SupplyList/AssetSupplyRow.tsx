@@ -233,7 +233,7 @@ export const AssetSupplyRow = ({
                         <br />
                         Read more about it{' '}
                         <ChakraLink
-                          href={URL_MIDAS_DOCS}
+                          href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
                           isExternal
                           variant={'color'}
                           onClick={(e) => {
