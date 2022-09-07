@@ -33,6 +33,19 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   //// COMPOUND CORE CONTRACTS
   let tx: providers.TransactionResponse;
 
+  //// deploy uniswap twap price oracle v2 resolver
+
+  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
+    from: deployer,
+    args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (twapPriceOracleResolver.transactionHash) {
+    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
+  }
+  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
+
   const ffd = await deployments.deploy("FuseFeeDistributor", {
     from: deployer,
     log: true,
