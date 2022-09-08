@@ -47,7 +47,7 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
+import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
@@ -86,29 +86,10 @@ const AmountSelect = ({
 
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
-
   const { cCard, cSwitch } = useColors();
-  const [borrowableAmount, setBorrowableAmount] = useState<number>(0);
 
+  const { data: maxBorrow } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
-
-  useEffect(() => {
-    const func = async () => {
-      const borrowableAmountBN = (await fetchMaxAmount(
-        FundOperationMode.BORROW,
-        midasSdk,
-        address,
-        asset
-      )) as BigNumber;
-
-      const borrowableAmount = Number(
-        utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
-      );
-      setBorrowableAmount(borrowableAmount);
-    };
-
-    func();
-  }, [address, asset, midasSdk]);
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -309,6 +290,7 @@ const AmountSelect = ({
             width="100%"
           >
             <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%">
+              {/* Operation Selection */}
               <TabBar
                 color="black"
                 mode={mode}
@@ -316,6 +298,8 @@ const AmountSelect = ({
                 setUserEnteredAmount={_setUserEnteredAmount}
                 setAmount={_setAmount}
               />
+
+              {/* Asset Balance */}
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
                 <Text mr={2}>Wallet Balance:</Text>
                 <Text>
@@ -323,46 +307,67 @@ const AmountSelect = ({
                   {asset.underlyingSymbol}
                 </Text>
               </Row>
-              {mode === FundOperationMode.BORROW && (
-                <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                  <Alert status="info" pb={4}>
-                    <AlertIcon />
-                    {`For safety reasons, you need to borrow at least a value of $${
-                      minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
-                    }${
-                      minBorrowAsset
-                        ? ` / ${Number(
-                            utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
-                          ).toFixed(2)} ${asset.underlyingSymbol}`
-                        : ''
-                    } for now.`}
-                  </Alert>
-                </Row>
-              )}
-              <DashboardBox width="100%" height="70px" mt={3}>
-                <Row
-                  width="100%"
-                  p={4}
-                  mainAxisAlignment="space-between"
-                  crossAxisAlignment="center"
-                  expand
-                >
-                  <AmountInput
-                    displayAmount={userEnteredAmount}
-                    updateAmount={updateAmount}
-                    disabled={isBorrowPaused}
-                    autoFocus
-                  />
-                  <TokenNameAndMaxButton mode={mode} asset={asset} updateAmount={updateAmount} />
-                </Row>
-              </DashboardBox>
-              {mode === FundOperationMode.BORROW && borrowableAmount !== 0 && (
-                <MaxBorrowSlider
-                  userEnteredAmount={userEnteredAmount}
-                  updateAmount={updateAmount}
-                  borrowableAmount={borrowableAmount}
-                  asset={asset}
-                />
+
+              {mode === FundOperationMode.BORROW && asset.liquidity.isZero() ? (
+                <Alert status="info">
+                  <AlertIcon />
+                  Unable to borrow this asset yet. The asset does not have enough liquidity.
+                  <br /> Feel free to supply this asset to be borrowed by others in this pool to
+                  earn interest.
+                </Alert>
+              ) : (
+                <>
+                  {mode === FundOperationMode.BORROW && (
+                    <Row
+                      width="100%"
+                      mt={4}
+                      mainAxisAlignment="flex-end"
+                      crossAxisAlignment="center"
+                    >
+                      <Alert status="info" pb={4}>
+                        <AlertIcon />
+                        {`For safety reasons, you need to borrow at least a value of $${
+                          minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
+                        }${
+                          minBorrowAsset
+                            ? ` / ${Number(
+                                utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
+                              ).toFixed(2)} ${asset.underlyingSymbol}`
+                            : ''
+                        } for now.`}
+                      </Alert>
+                    </Row>
+                  )}
+                  <DashboardBox width="100%" height="70px" mt={3}>
+                    <Row
+                      width="100%"
+                      p={4}
+                      mainAxisAlignment="space-between"
+                      crossAxisAlignment="center"
+                      expand
+                    >
+                      <AmountInput
+                        displayAmount={userEnteredAmount}
+                        updateAmount={updateAmount}
+                        disabled={isBorrowPaused}
+                        autoFocus
+                      />
+                      <TokenNameAndMaxButton
+                        mode={mode}
+                        asset={asset}
+                        updateAmount={updateAmount}
+                      />
+                    </Row>
+                  </DashboardBox>
+                  {mode === FundOperationMode.BORROW && maxBorrow && maxBorrow.number !== 0 && (
+                    <MaxBorrowSlider
+                      userEnteredAmount={userEnteredAmount}
+                      updateAmount={updateAmount}
+                      borrowableAmount={maxBorrow.number}
+                      asset={asset}
+                    />
+                  )}
+                </>
               )}
             </Column>
 
