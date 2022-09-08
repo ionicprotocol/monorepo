@@ -9,7 +9,7 @@ export interface FuseAsset {
   /** scaled by `underlying.decimals()`  */
   supplyBalance: BigNumber;
 
-  /** scaled by `1e18` */
+  /** scaled by `underlying.decimals()`  */
   liquidity: BigNumber;
   membership: boolean;
 
