@@ -9,14 +9,15 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { FuseAsset } from '@midas-capital/types';
+import { utils } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
+
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
-import { utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
 
 interface MaxBorrowSliderProps {
   userEnteredAmount: string;

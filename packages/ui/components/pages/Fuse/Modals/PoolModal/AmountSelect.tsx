@@ -1,4 +1,3 @@
-// Chakra and UI stuff
 import {
   Alert,
   AlertIcon,
@@ -24,7 +23,7 @@ import {
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
@@ -39,6 +38,7 @@ import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -50,7 +50,6 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 
 interface AmountSelectProps {
   assets: MarketData[];
