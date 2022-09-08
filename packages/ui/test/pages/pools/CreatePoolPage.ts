@@ -8,8 +8,8 @@ export class CreatePoolPage extends AppPage {
   private NameInputSelector = '#name';
   private OracleSelectSelector = '#oracle';
   private whitelistSwitchSelector = '#isWhitelisted';
-  private CloseFactorInputSelector = '#closeFactor';
-  private LiqdIncentInputSelector = '#liqdIncent';
+  private CloseFactorInputSelector = '#closeFactor input';
+  private LiqIncentInputSelector = '#liqIncent input';
   private CreatePoolBtnSelector = '.chakra-button';
 
   constructor(page: Page, metamask: Dappeteer, baseUrl: string) {
@@ -20,12 +20,12 @@ export class CreatePoolPage extends AppPage {
     name: string,
     oracle: string,
     closeFactor: string,
-    liquidIcent: string
+    liqIncent: string
   ): Promise<void> {
     await this.setPoolName(name);
     await this.setOracle(oracle);
     await this.setCloseFactor(closeFactor);
-    await this.setLiquidIncent(liquidIcent);
+    await this.setLiquidIncent(liqIncent);
 
     await this.confirmCreate();
   }
@@ -43,19 +43,11 @@ export class CreatePoolPage extends AppPage {
   }
 
   public async setCloseFactor(closeFactor: string): Promise<void> {
-    const closeFactorInput = await this.Page.waitForSelector(this.CloseFactorInputSelector);
-
-    if (closeFactorInput) {
-      closeFactorInput.type(closeFactor);
-    }
+    await this.Page.$eval(this.CloseFactorInputSelector, (el) => (el.textContent = closeFactor));
   }
 
-  public async setLiquidIncent(liquidIcent: string): Promise<void> {
-    const liqdIncentInput = await this.Page.waitForSelector(this.LiqdIncentInputSelector);
-
-    if (liqdIncentInput) {
-      liqdIncentInput.type(liquidIcent);
-    }
+  public async setLiquidIncent(liqIncent: string): Promise<void> {
+    await this.Page.$eval(this.LiqIncentInputSelector, (el) => (el.textContent = liqIncent));
   }
 
   public async confirmCreate(): Promise<void> {

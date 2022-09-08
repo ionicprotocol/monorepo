@@ -44,7 +44,7 @@ export class TestHelper {
       metamask = await setupMetamask(browser, { seed: seed, password: pass });
       await metamask.addNetwork({
         networkName: 'Chapel',
-        rpc: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+        rpc: 'https://data-seed-prebsc-2-s1.binance.org:8545/',
         chainId: 97,
         symbol: 'BNB',
       });

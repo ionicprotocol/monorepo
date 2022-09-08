@@ -332,7 +332,7 @@ export const CreatePoolConfiguration = () => {
                   }}
                   render={({ field: { name, value, ref, onChange } }) => (
                     <SliderWithLabel
-                      id="liqdIncent"
+                      id="liqIncent"
                       min={LIQUIDATION_INCENTIVE.MIN}
                       max={LIQUIDATION_INCENTIVE.MAX}
                       name={name}

@@ -18,7 +18,7 @@ let createPoolPage: CreatePoolPage;
 const name = 'e2e testing';
 const oracle = 'MasterPriceOracle';
 const closeFactor = '50';
-const liquidIcent = '8';
+const liqIncent = '8';
 
 const baseUrl = 'http://localhost:3000/97/create-pool';
 
@@ -38,7 +38,7 @@ describe('Create Pool:', () => {
     await createPoolPage.acceptTerms();
     const wbnb = chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB);
     if (wbnb?.underlying) {
-      await createPoolPage.addTokenToMetamask(wbnb.underlying);
+      // await createPoolPage.addTokenToMetamask(wbnb.underlying);
     }
   });
 
@@ -46,12 +46,12 @@ describe('Create Pool:', () => {
   beforeEach(async () => {});
 
   afterAll(async () => {
-    browser.close();
+    // browser.close();
   });
 
   test(`User can create pool`, async () => {
     await page.bringToFront();
     await page.goto(baseUrl);
-    await createPoolPage.createPool(name, oracle, closeFactor, liquidIcent);
+    await createPoolPage.createPool(name, oracle, closeFactor, liqIncent);
   });
 });
