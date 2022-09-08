@@ -284,8 +284,10 @@ export enum assetSymbols {
   // Stella
   "STELLA-GLMR" = "STELLA-GLMR",
   "CELR-GLMR" = "CELR-GLMR",
+  "ATOM-GLMR" = "ATOM-GLMR",
   STELLA = "STELLA",
   CELR = "CELR",
+  celrUSDT = "celrUSDT",
 
   // Arbitrum
   "2pool" = "2pool",
