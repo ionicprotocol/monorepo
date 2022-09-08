@@ -227,35 +227,34 @@ export const AssetSupplyRow = ({
                   placement="top-start"
                   body={
                     <Text lineHeight="base">
-                      This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy(
-                      <b>{asset.plugin}</b>).
+                      This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
                       <br />
-                      {pluginInfo?.apyDocsUrl && (
+                      {pluginInfo?.apyDocsUrl ? (
+                        <ChakraLink
+                          href={pluginInfo.apyDocsUrl}
+                          isExternal
+                          variant={'color'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          Vault details
+                        </ChakraLink>
+                      ) : (
                         <>
+                          Read more about it{' '}
                           <ChakraLink
-                            href={pluginInfo.apyDocsUrl}
+                            href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
                             isExternal
                             variant={'color'}
                             onClick={(e) => {
                               e.stopPropagation();
                             }}
                           >
-                            [Vault details]
+                            in our Docs <ExternalLinkIcon mx="2px" />
                           </ChakraLink>
-                          <br />
                         </>
                       )}
-                      Read more about it{' '}
-                      <ChakraLink
-                        href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
-                        isExternal
-                        variant={'color'}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        in our Docs <ExternalLinkIcon mx="2px" />
-                      </ChakraLink>
                       .
                     </Text>
                   }
