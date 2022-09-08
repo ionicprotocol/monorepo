@@ -8,49 +8,47 @@ import {
   SliderTrack,
   Text,
 } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
-
+import { FuseAsset } from '@midas-capital/types';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { useMinBorrowUsd } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { utils } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
+
+interface MaxBorrowSliderProps {
+  userEnteredAmount: string;
+  updateAmount: (amount: string) => void;
+  borrowableAmount: number;
+  asset: FuseAsset;
+}
 
 function MaxBorrowSlider({
   userEnteredAmount,
   updateAmount,
   borrowableAmount,
-  borrowedAmount,
-  underlyingPrice,
-}: {
-  userEnteredAmount: string;
-  updateAmount: (amount: string) => void;
-  borrowableAmount: number;
-  borrowedAmount: number;
-  underlyingPrice: BigNumber;
-}) {
-  const borrowLimit = useMemo(
-    () => borrowableAmount + borrowedAmount,
-    [borrowableAmount, borrowedAmount]
-  );
 
-  const borrowedPercent = useMemo(
-    () => Number(((borrowedAmount * 100) / borrowLimit).toFixed(0)),
-    [borrowLimit, borrowedAmount]
-  );
+  asset,
+}: MaxBorrowSliderProps) {
+  const { borrowedAmount, borrowedPercent, borrowLimit, borrowablePercent } = useMemo(() => {
+    const borrowBalanceNumber = Number(
+      utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
+    );
+    const borrowLimitNumber = borrowableAmount + borrowBalanceNumber;
 
-  const borrowablePercent = useMemo(
-    () => Number(((borrowableAmount / borrowLimit) * 100).toFixed(0)),
-    [borrowableAmount, borrowLimit]
-  );
+    return {
+      borrowedAmount: borrowBalanceNumber,
+      borrowedPercent: Number(((borrowBalanceNumber * 100) / borrowLimitNumber).toFixed(0)),
+      borrowLimit: borrowLimitNumber,
+      borrowablePercent: Number(((borrowableAmount / borrowLimitNumber) * 100).toFixed(0)),
+    };
+  }, [asset, borrowableAmount]);
 
   const [sliderValue, setSliderValue] = useState(borrowedPercent);
   const { coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
-  const { data: minBorrowUsd } = useMinBorrowUsd();
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
   const { cPage } = useColors();
@@ -74,10 +72,7 @@ function MaxBorrowSlider({
 
   return (
     <Box width="100%" my={4}>
-      <Text>
-        Borrow Limit ({minBorrowUsd ? `$${minBorrowUsd} USD worth min borrow is required` : ''})
-      </Text>
-      <HStack width="100%" mt={8} spacing={4} mb={4}>
+      <HStack width="100%" mt={10} spacing={4} mb={0}>
         <Text>$0.00</Text>
         <HStack width="100%" spacing={0}>
           {borrowedPercent !== 0 && (
@@ -88,7 +83,12 @@ function MaxBorrowSlider({
               width={`${borrowedPercent}%`}
             >
               <SliderMark value={borrowedPercent} mt={4} ml={-4} fontSize="sm">
-                ${(borrowedAmount * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
+                $
+                {(
+                  borrowedAmount *
+                  Number(utils.formatUnits(asset.underlyingPrice, 18)) *
+                  price
+                ).toFixed(2)}
               </SliderMark>
               <SliderTrack>
                 <SliderFilledTrack bg={cPage.primary.borderColor} />
@@ -120,7 +120,7 @@ function MaxBorrowSlider({
           )}
         </HStack>
         <Text>
-          ${(borrowLimit * Number(utils.formatUnits(underlyingPrice)) * price).toFixed(2)}
+          ${(borrowLimit * Number(utils.formatUnits(asset.underlyingPrice, 18)) * price).toFixed(2)}
         </Text>
       </HStack>
     </Box>

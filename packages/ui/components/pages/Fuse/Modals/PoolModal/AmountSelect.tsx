@@ -1,5 +1,7 @@
 // Chakra and UI stuff
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Heading,
@@ -36,7 +38,7 @@ import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
-import { useAssetMinBorrow, useBorrowLimit, useMinBorrowUsd } from '@ui/hooks/useBorrowLimit';
+import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -48,6 +50,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 
 interface AmountSelectProps {
   assets: MarketData[];
@@ -86,7 +89,6 @@ const AmountSelect = ({
 
   const { cCard, cSwitch } = useColors();
   const [borrowableAmount, setBorrowableAmount] = useState<number>(0);
-  const [borrowedAmount, setBorrowedAmount] = useState<number>(0);
 
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
 
@@ -103,10 +105,6 @@ const AmountSelect = ({
         utils.formatUnits(borrowableAmountBN, asset.underlyingDecimals)
       );
       setBorrowableAmount(borrowableAmount);
-      const borrowedAmount = Number(
-        utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)
-      );
-      setBorrowedAmount(borrowedAmount);
     };
 
     func();
@@ -135,26 +133,30 @@ const AmountSelect = ({
     setUserAction(UserAction.NO_ACTION);
   };
 
-  const minBorrow = useAssetMinBorrow(asset);
-  const { data: minBorrowUsd } = useMinBorrowUsd();
+  const {
+    data: { minBorrowAsset, minBorrowUSD },
+  } = useBorrowMinimum(asset);
 
-  const { data: amountIsValid } = useQuery(['ValidAmount', mode, amount, minBorrow], async () => {
-    if (amount === null || amount.isZero() || !minBorrow) {
-      return false;
-    }
-
-    try {
-      const max = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
-      if (mode === FundOperationMode.BORROW) {
-        return amount.lte(max) && amount.gte(minBorrow);
-      } else {
-        return amount.lte(max);
+  const { data: amountIsValid } = useQuery(
+    ['ValidAmount', mode, amount, minBorrowAsset],
+    async () => {
+      if (amount === null || amount.isZero() || !minBorrowAsset) {
+        return false;
       }
-    } catch (e) {
-      handleGenericError(e, errorToast);
-      return false;
+
+      try {
+        const max = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
+        if (mode === FundOperationMode.BORROW) {
+          return amount.lte(max) && amount.gte(minBorrowAsset);
+        } else {
+          return amount.lte(max);
+        }
+      } catch (e) {
+        handleGenericError(e, errorToast);
+        return false;
+      }
     }
-  });
+  );
 
   let depositOrWithdrawAlert = null;
   if (mode === FundOperationMode.BORROW && isBorrowPaused) {
@@ -213,7 +215,7 @@ const AmountSelect = ({
         );
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode, minBorrowUsd);
+          fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -227,7 +229,7 @@ const AmountSelect = ({
         );
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode, minBorrowUsd);
+          fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -236,7 +238,7 @@ const AmountSelect = ({
         const resp = await midasSdk.borrow(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode, minBorrowUsd);
+          fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -245,7 +247,7 @@ const AmountSelect = ({
         const resp = await midasSdk.withdraw(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode, minBorrowUsd);
+          fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
           setPendingTxHash(tx.hash);
@@ -321,6 +323,22 @@ const AmountSelect = ({
                   {asset.underlyingSymbol}
                 </Text>
               </Row>
+              {mode === FundOperationMode.BORROW && (
+                <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
+                  <Alert status="info" pb={4}>
+                    <AlertIcon />
+                    {`For safety reasons, you need to borrow at least a value of $${
+                      minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
+                    }${
+                      minBorrowAsset
+                        ? ` / ${Number(
+                            utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
+                          ).toFixed(2)} ${asset.underlyingSymbol}`
+                        : ''
+                    } for now.`}
+                  </Alert>
+                </Row>
+              )}
               <DashboardBox width="100%" height="70px" mt={3}>
                 <Row
                   width="100%"
@@ -338,12 +356,11 @@ const AmountSelect = ({
                   <TokenNameAndMaxButton mode={mode} asset={asset} updateAmount={updateAmount} />
                 </Row>
               </DashboardBox>
-              {mode === FundOperationMode.BORROW && borrowableAmount + borrowedAmount !== 0 && (
+              {mode === FundOperationMode.BORROW && borrowableAmount !== 0 && (
                 <MaxBorrowSlider
                   userEnteredAmount={userEnteredAmount}
                   updateAmount={updateAmount}
                   borrowableAmount={borrowableAmount}
-                  borrowedAmount={borrowedAmount}
                   asset={asset}
                 />
               )}
@@ -690,7 +707,9 @@ const TokenNameAndMaxButton = ({
   const errorToast = useErrorToast();
 
   const [isLoading, setIsLoading] = useState(false);
-  const minBorrow = useAssetMinBorrow(asset);
+  const {
+    data: { minBorrowAsset },
+  } = useBorrowMinimum(asset);
 
   const setToMax = async () => {
     setIsLoading(true);
@@ -715,8 +734,8 @@ const TokenNameAndMaxButton = ({
     setIsLoading(true);
 
     try {
-      if (minBorrow) {
-        updateAmount(utils.formatUnits(minBorrow, asset.underlyingDecimals));
+      if (minBorrowAsset) {
+        updateAmount(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals));
       } else {
         updateAmount('');
       }
@@ -780,7 +799,7 @@ const AmountInput = ({
   );
 };
 
-export function fundOperationError(errorCode: number, minBorrowUsd?: string) {
+export function fundOperationError(errorCode: number, minBorrowUSD?: number) {
   let err;
 
   if (errorCode >= 1000) {
@@ -789,7 +808,7 @@ export function fundOperationError(errorCode: number, minBorrowUsd?: string) {
 
     if (msg === 'BORROW_BELOW_MIN') {
       msg = `As part of our guarded launch, you cannot borrow ${
-        minBorrowUsd ? `less than $${minBorrowUsd} worth` : 'this amount'
+        !!minBorrowUSD ? `less than $${minBorrowUSD.toFixed(2)} worth` : 'this amount'
       } of tokens at the moment.`;
     }
 
