@@ -14,6 +14,7 @@ const madDAI = "0xc234A67a4F840E61adE794be47de455361b52413";
 const madUSDC = "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9";
 const multiUSDC = "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b";
 const madUSDT = "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594";
+const celrUSDT = "0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c";
 const multiUSDT = "0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73";
 const FRAX = "0x322E86852e492a7Ee17f28a78c663da38FB33bfb";
 const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
@@ -25,6 +26,7 @@ const CELR = "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283";
 // StellaSwap
 const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
 const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57"; // not supported on stella
+const GLMR_ATOM = "0xf4C10263f2A4B1f75b8a5FD5328fb61605321639";
 const USDC_ETH = "0x0Aa48bF937ee8F41f1a52D225EF5A6F6961e39FA";
 const WGLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
 const GLMR_madUSDC = "0x9bFcf685e641206115dadc0C9ab17181e1d4975c";
@@ -236,12 +238,36 @@ export const assets: SupportedAsset[] = [
     extraDocs: stellaSwapDocs("ETH", CELR, "CELR-GLMR", CELR_GLMR),
   },
   {
+    symbol: assetSymbols["ATOM-GLMR"],
+    underlying: GLMR_ATOM,
+    name: "Stella Swap ATOM/GLMR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", ATOM, "ATOM-GLMR", GLMR_ATOM),
+  },
+  {
     symbol: assetSymbols.STELLA,
     underlying: STELLA,
     name: "Stellaswap Token",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", STELLA),
+  },
+  {
+    symbol: assetSymbols.CELR,
+    underlying: CELR,
+    name: "CELR Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", CELR),
+  },
+  {
+    symbol: assetSymbols.celrUSDT,
+    underlying: celrUSDT,
+    name: "CELR USDT Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", celrUSDT),
   },
 ];
 
