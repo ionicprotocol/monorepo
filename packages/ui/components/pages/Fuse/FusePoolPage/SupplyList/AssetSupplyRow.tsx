@@ -226,22 +226,37 @@ export const AssetSupplyRow = ({
                 <PopoverTooltip
                   placement="top-start"
                   body={
-                    <>
+                    <Text lineHeight="base">
                       This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
                       <br />
-                      Read more about it{' '}
-                      <ChakraLink
-                        href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
-                        isExternal
-                        variant={'color'}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                      >
-                        in our Docs <ExternalLinkIcon mx="2px" />
-                      </ChakraLink>
+                      {pluginInfo?.apyDocsUrl ? (
+                        <ChakraLink
+                          href={pluginInfo.apyDocsUrl}
+                          isExternal
+                          variant={'color'}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          Vault details
+                        </ChakraLink>
+                      ) : (
+                        <>
+                          Read more about it{' '}
+                          <ChakraLink
+                            href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
+                            isExternal
+                            variant={'color'}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
+                          >
+                            in our Docs <ExternalLinkIcon mx="2px" />
+                          </ChakraLink>
+                        </>
+                      )}
                       .
-                    </>
+                    </Text>
                   }
                 >
                   <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
