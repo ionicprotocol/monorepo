@@ -1,6 +1,5 @@
-import { Web3Provider } from '@ethersproject/providers';
-import { NativePricedFuseAsset } from '@midas-capital/types';
-import { BigNumber, Contract, utils } from 'ethers';
+import { FuseAsset, NativePricedFuseAsset } from '@midas-capital/types';
+import { utils } from 'ethers';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
@@ -38,14 +37,7 @@ export const useMinBorrowNative = () => {
   return useQuery(
     [`useMinBorrowNative`, midasSdk.chainId],
     async () => {
-      const FuseFeeDistributor = new Contract(
-        midasSdk.chainDeployment.FuseFeeDistributor.address,
-        midasSdk.chainDeployment.FuseFeeDistributor.abi,
-        midasSdk.provider as Web3Provider
-      );
-      const minBorrowNative = await FuseFeeDistributor.callStatic.minBorrowEth();
-
-      return minBorrowNative as BigNumber;
+      return midasSdk.contracts.FuseFeeDistributor.callStatic.minBorrowEth();
     },
     {
       cacheTime: Infinity,
@@ -77,20 +69,13 @@ export const useMinBorrowUsd = () => {
   );
 };
 
-export const useAssetMinBorrow = (underlyingPrice: BigNumber) => {
+export const useAssetMinBorrow = (asset: FuseAsset) => {
   const { data: minBorrowNative } = useMinBorrowNative();
-
-  return useQuery(
-    [`useMinBorrow`, minBorrowNative, underlyingPrice],
-    () => {
-      if (minBorrowNative) {
-        return minBorrowNative.mul(utils.parseUnits('1', DEFAULT_DECIMALS)).div(underlyingPrice);
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!minBorrowNative && !!underlyingPrice,
+  return useMemo(() => {
+    if (minBorrowNative) {
+      return minBorrowNative
+        .div(asset.underlyingPrice)
+        .mul(utils.parseUnits('1', asset.underlyingDecimals));
     }
-  );
+  }, [minBorrowNative, asset]);
 };
