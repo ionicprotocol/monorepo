@@ -1,11 +1,9 @@
 import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "ethers";
 
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
-import { FuseFlywheelCore__factory } from "../../lib/contracts/typechain/factories/FuseFlywheelCore__factory";
-import { FlywheelCore } from "../../lib/contracts/typechain/FlywheelCore";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
+import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
 
 import { withCreateContracts } from "./CreateContracts";
 
@@ -73,11 +71,11 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       return marketRewardsInfo;
     }
 
-    async getFlywheelsByPool(poolAddress: string): Promise<FlywheelCore[]> {
+    async getFlywheelsByPool(poolAddress: string): Promise<MidasFlywheel[]> {
       const comptrollerInstance = this.getComptrollerInstance(poolAddress);
       const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
-        return new Contract(address, this.artifacts.FuseFlywheelCore.abi, this.signer) as FuseFlywheelCore;
+        return new Contract(address, this.artifacts.MidasFlywheel.abi, this.signer) as MidasFlywheel;
       });
 
       const filterList = await Promise.all(
@@ -210,31 +208,6 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         enabled: marketState.lastUpdatedTimestamp > 0,
         ...rewardsInfo,
       };
-    }
-
-    /** WRITE */
-    async deployFlywheelCore(
-      rewardTokenAddress: string,
-      options?: {
-        rewardsAddress?: string;
-        boosterAddress?: string;
-        ownerAddress?: string;
-        authorityAddress?: string;
-      }
-    ) {
-      const flywheelCoreFactory = new ContractFactory(
-        this.artifacts.FuseFlywheelCore.abi,
-        this.artifacts.FuseFlywheelCore.bytecode,
-        this.signer
-      ) as FuseFlywheelCore__factory;
-      const addressOfSigner = await this.signer.getAddress();
-      return (await flywheelCoreFactory.deploy(
-        rewardTokenAddress,
-        options?.rewardsAddress || constants.AddressZero,
-        options?.boosterAddress || constants.AddressZero,
-        options?.ownerAddress || addressOfSigner,
-        options?.authorityAddress || constants.AddressZero
-      )) as FuseFlywheelCore;
     }
 
     async deployFlywheelStaticRewards(
