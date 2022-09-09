@@ -228,7 +228,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       const addressOfSigner = await this.signer.getAddress();
       const mfw = await midasFlywheel.deploy();
       const flywheelCoreInstance = this.createMidasFlywheel(mfw.address);
-      await flywheelCoreInstance.initialize(
+      const flywheelCoreInstanceWithSigner = flywheelCoreInstance.connect(this.signer);
+      await flywheelCoreInstanceWithSigner.initialize(
         rewardTokenAddress,
         options?.rewardsAddress || constants.AddressZero,
         options?.boosterAddress || constants.AddressZero,
