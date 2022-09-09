@@ -1,6 +1,7 @@
 import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "ethers";
 
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
+import { MidasFlywheel__factory } from "../../lib/contracts/typechain/factories/MidasFlywheel__factory";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
@@ -209,7 +210,32 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         ...rewardsInfo,
       };
     }
-
+    /** WRITE */
+    async deployFlywheelCore(
+      rewardTokenAddress: string,
+      options?: {
+        rewardsAddress?: string;
+        boosterAddress?: string;
+        ownerAddress?: string;
+        authorityAddress?: string;
+      }
+    ) {
+      const midasFlywheel = new ContractFactory(
+        this.artifacts.MidasFlywheel.abi,
+        this.artifacts.MidasFlywheel.bytecode,
+        this.signer
+      ) as MidasFlywheel__factory;
+      const addressOfSigner = await this.signer.getAddress();
+      const mfw = await midasFlywheel.deploy();
+      const flywheelCoreInstance = this.createMidasFlywheel(mfw.address);
+      await flywheelCoreInstance.initialize(
+        rewardTokenAddress,
+        options?.rewardsAddress || constants.AddressZero,
+        options?.boosterAddress || constants.AddressZero,
+        options?.ownerAddress || addressOfSigner
+      );
+      return flywheelCoreInstance;
+    }
     async deployFlywheelStaticRewards(
       flywheelCoreAddress: string,
       options?: {
