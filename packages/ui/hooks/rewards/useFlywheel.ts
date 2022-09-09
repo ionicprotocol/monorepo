@@ -12,7 +12,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
       if (!flywheelAddress) return undefined;
       if (!midasSdk) return undefined;
 
-      const flywheel = midasSdk.createFuseFlywheelCore(flywheelAddress);
+      const flywheel = midasSdk.createMidasFlywheel(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [authority, booster, rewards, markets, owner, rewardToken] = await Promise.all([
