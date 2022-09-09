@@ -8,6 +8,7 @@ import { ArrakisERC4626 } from "../lib/contracts/typechain/ArrakisERC4626.sol";
 import { BeefyERC4626 } from "../lib/contracts/typechain/BeefyERC4626.sol";
 import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
+import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 
 export default task("plugins:identify", "Prints the markets with plugins and the relevant plugin ID").setAction(
@@ -104,12 +105,27 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
   async ({}, { ethers, getChainId, deployments }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
+    const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
+
     const chainid = await getChainId();
     const pluginConfigs = getPluginConfigs(new ethers.utils.AbiCoder(), chainid);
+
+    const oldImplementations = [];
+    const newImplementations = [];
+    const arrayOfTrue = [];
 
     for (let i = 0; i < pluginConfigs.length; i++) {
       const conf = pluginConfigs[i];
       console.log(conf);
+
+      const market = (await ethers.getContractAt(
+        "CErc20PluginRewardsDelegate",
+        conf.market,
+        deployer
+      )) as CErc20PluginRewardsDelegate;
+
+      const oldPlugin = await market.callStatic.plugin();
+      oldImplementations.push(oldPlugin);
 
       let deployArgs;
       if (conf.otherParams) {
@@ -119,10 +135,10 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
       }
 
       console.log(deployArgs);
+      const contractId = `${conf.strategy}_${conf.market}`;
+      console.log(contractId);
 
-      console.log(`${conf.strategy}_${conf.market}`);
-
-      const deployment = await deployments.deploy(`${conf.strategy}_${conf.market}`, {
+      const deployment = await deployments.deploy(contractId, {
         contract: conf.strategy,
         from: deployer.address,
         proxy: {
@@ -139,9 +155,15 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
       });
 
       if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);
-
       console.log("ERC4626 Strategy: ", deployment.address);
+
+      newImplementations.push(deployment.address);
+      arrayOfTrue.push(true);
     }
+
+    const tx = await ffd._editPluginImplementationWhitelist(oldImplementations, newImplementations, arrayOfTrue);
+    await tx.wait();
+    console.log("_editPluginImplementationWhitelist: ", tx.hash);
   }
 );
 
