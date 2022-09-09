@@ -13,7 +13,7 @@ export {
   CTokenErrorCodes,
   FundOperationMode,
 } from "./enums";
-export { underlying, assetArrayToMap } from "./utils";
+export { underlying, assetFilter, assetArrayToMap } from "./utils";
 export { FundingStrategy, JarvisLiquidityPool, LiquidationDefaults, RedemptionStrategy } from "./liquidation";
 export {
   ChainAddresses,

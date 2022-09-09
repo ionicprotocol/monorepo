@@ -1,0 +1,24 @@
+import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { ChainConfig } from "@midas-capital/types";
+import { Signer } from "ethers";
+
+import { chainIdToConfig } from "./enums";
+import { withOracle } from "./oracle";
+
+export type GConstructor<T> = new (...args: any[]) => T;
+export type SecurityBaseConstructor = GConstructor<SecurityBase>;
+
+export type SupportedProvider = JsonRpcProvider | Web3Provider;
+export type SupportedSigners = Signer;
+export type SignerOrProvider = SupportedSigners | SupportedProvider;
+
+export class SecurityBase {
+  chainConfig: ChainConfig;
+
+  constructor(chainId: number) {
+    this.chainConfig = chainIdToConfig[chainId];
+  }
+}
+
+const MidasBaseWithModules = withOracle(SecurityBase);
+export default class MidasSdk extends MidasBaseWithModules {}
