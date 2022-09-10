@@ -6,9 +6,9 @@ import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
+import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 import { SignerOrProvider, SupportedProvider } from "../MidasSdk";
@@ -21,7 +21,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     }
 
     createUnitroller = this.createContractInstance<Unitroller>("Unitroller");
-    createFuseFlywheelCore = this.createContractInstance<FuseFlywheelCore>("FuseFlywheelCore");
+    createMidasFlywheel = this.createContractInstance<MidasFlywheel>("MidasFlywheel");
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
     createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
