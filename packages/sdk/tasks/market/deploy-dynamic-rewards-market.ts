@@ -81,7 +81,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
     // for each token and its flywheel, set up the market and its rewards
     for (const [idx, rewardToken] of rewardTokens.entries()) {
-      const flywheel = sdk.createFuseFlywheelCore(fwAddresses[idx]);
+      const flywheel = sdk.createMidasFlywheel(fwAddresses[idx]);
       const tokenRewards = await flywheel.callStatic.flywheelRewards();
 
       // Step 1: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)

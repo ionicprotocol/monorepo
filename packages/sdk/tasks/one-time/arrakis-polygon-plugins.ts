@@ -102,7 +102,7 @@ task("arrakis:polygon:set-flywheels", "set plugin for each market")
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
-    const mimoFlywheel = sdk.createFuseFlywheelCore(mimoFlywheelAddress);
+    const mimoFlywheel = sdk.createMidasFlywheel(mimoFlywheelAddress);
 
     for (const detail of DETAILS) {
       const marketAddress = await sdk
