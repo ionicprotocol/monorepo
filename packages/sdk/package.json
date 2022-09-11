@@ -74,7 +74,7 @@
     "eslint": "^8.23.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "hardhat": "2.8.4",
+    "hardhat": "^2.11.1",
     "hardhat-abi-exporter": "^2.10.0",
     "hardhat-deploy": "^0.11.14",
     "hardhat-tracer": "^1.1.0-rc.9",
