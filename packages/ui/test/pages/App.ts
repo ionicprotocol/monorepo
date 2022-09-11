@@ -1,7 +1,7 @@
 import { Dappeteer } from '@chainsafe/dappeteer';
 import { Page } from 'puppeteer';
 
-import { CreatePoolPage } from './pools/CreatePoolPage';
+import { CreatePoolPage } from '@ui/test/pages/pools/CreatePoolPage';
 
 export class App {
   public CreatePoolPage: CreatePoolPage;

@@ -352,6 +352,7 @@ export const CreatePoolConfiguration = () => {
       </DashboardBox>
       <Center>
         <Button
+          id="createPool"
           type="submit"
           isLoading={isCreating}
           width={'100%'}

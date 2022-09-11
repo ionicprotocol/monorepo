@@ -1,7 +1,7 @@
 import { Dappeteer } from '@chainsafe/dappeteer';
 import { Page } from 'puppeteer';
 
-import { AppPage } from '../AppPage';
+import { AppPage } from '@ui/test/pages/AppPage';
 
 export class CreatePoolPage extends AppPage {
   // Page selectors
@@ -10,7 +10,7 @@ export class CreatePoolPage extends AppPage {
   private whitelistSwitchSelector = '#isWhitelisted';
   private CloseFactorInputSelector = '#closeFactor input';
   private LiqIncentInputSelector = '#liqIncent input';
-  private CreatePoolBtnSelector = '.chakra-button';
+  private CreatePoolBtnSelector = '#createPool';
 
   constructor(page: Page, metamask: Dappeteer, baseUrl: string) {
     super(page, metamask, baseUrl);
@@ -51,13 +51,12 @@ export class CreatePoolPage extends AppPage {
   }
 
   public async confirmCreate(): Promise<void> {
-    await this.blockingWait(3, true);
     const createPoolBtn = await this.Page.$(this.CreatePoolBtnSelector);
     if (createPoolBtn) {
       await createPoolBtn.click();
-      await this.Metamask.confirmTransaction();
-      await this.bringToFront();
       await this.blockingWait(3, true);
+      await this.Metamask.confirmTransaction();
+      // await this.bringToFront();
     }
   }
 }

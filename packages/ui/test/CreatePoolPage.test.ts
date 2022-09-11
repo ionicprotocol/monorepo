@@ -4,8 +4,8 @@ import { assetSymbols } from '@midas-capital/types';
 import dotenv from 'dotenv';
 import { Browser, Page } from 'puppeteer';
 
-import { TestHelper } from './helpers/TestHelper';
-import { CreatePoolPage } from './pages/pools/CreatePoolPage';
+import { TestHelper } from '@ui/test/helpers/TestHelper';
+import { CreatePoolPage } from '@ui/test/pages/pools/CreatePoolPage';
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ let metamask: Dappeteer;
 let createPoolPage: CreatePoolPage;
 
 const name = 'e2e testing';
-const oracle = 'MasterPriceOracle';
+const oracle = '0x429041250873643235cb3788871447c6fF3205aA';
 const closeFactor = '50';
 const liqIncent = '8';
 
@@ -38,7 +38,7 @@ describe('Create Pool:', () => {
     await createPoolPage.acceptTerms();
     const wbnb = chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB);
     if (wbnb?.underlying) {
-      // await createPoolPage.addTokenToMetamask(wbnb.underlying);
+      await createPoolPage.addTokenToMetamask(wbnb.underlying);
     }
   });
 

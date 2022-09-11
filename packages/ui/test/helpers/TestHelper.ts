@@ -1,7 +1,7 @@
 import { Dappeteer, launch, LaunchOptions, setupMetamask } from '@chainsafe/dappeteer';
 import puppeteer, { Browser, Page } from 'puppeteer';
 
-import { App } from '../pages/App';
+import { App } from '@ui/test/pages/App';
 
 export class TestHelper {
   public static async init(): Promise<App> {
