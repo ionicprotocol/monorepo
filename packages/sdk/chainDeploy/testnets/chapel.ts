@@ -1,5 +1,5 @@
 import { chapel } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
