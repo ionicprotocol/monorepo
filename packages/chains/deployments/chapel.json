@@ -6674,7 +6674,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xC9d0E2752716c0A2577db71402b78a9d335B1310",
+      "address": "0x66ceEB3AA6fC5d67f478b56B475fF930bacf7E03",
       "abi": [
         {
           "inputs": [
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x295BF08680c79d24801719dC3Da58D8a90Ea1642",
+      "address": "0xC6cB1FeA5F391B6998D074Ad31EB1DCFbDEF7601",
       "abi": [
         {
           "inputs": [
@@ -8636,6 +8636,30 @@
           ],
           "name": "repayBorrowVerify",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newFlywheel",
+              "type": "address"
+            }
+          ],
+          "name": "replaceFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -20970,6 +20994,267 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "UniswapTwapPriceOracleV2Resolver": {
+      "address": "0x6D0F7E9E301ff304efE9b552ccf632947Ff937f2",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "pair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "baseToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deviationThreshold",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct UniswapTwapPriceOracleV2Resolver.PairConfig[]",
+              "name": "_pairConfigs",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "contract UniswapTwapPriceOracleV2Root",
+              "name": "_root",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "pair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "baseToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deviationThreshold",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct UniswapTwapPriceOracleV2Resolver.PairConfig",
+              "name": "pair",
+              "type": "tuple"
+            }
+          ],
+          "name": "addPair",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract UniswapTwapPriceOracleV2Root",
+              "name": "_root",
+              "type": "address"
+            }
+          ],
+          "name": "changeRoot",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "checker",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "canExec",
+              "type": "bool"
+            },
+            {
+              "internalType": "bytes",
+              "name": "execPayload",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getPairs",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "pair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "baseToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deviationThreshold",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct UniswapTwapPriceOracleV2Resolver.PairConfig[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getWorkablePairs",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "lastUpdate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "index",
+              "type": "uint256"
+            }
+          ],
+          "name": "removeFromPairs",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "root",
+          "outputs": [
+            {
+              "internalType": "contract UniswapTwapPriceOracleV2Root",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "workablePairs",
+              "type": "address[]"
+            }
+          ],
+          "name": "updatePairs",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
