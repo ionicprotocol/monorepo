@@ -160,7 +160,6 @@ export interface CreateFlywheelModalProps extends CreateFlywheelProps {
 }
 export interface Flywheel {
   address: string;
-  authority: string;
   booster: string;
   owner: string;
   rewards: string;

@@ -112,8 +112,8 @@ task("dotdot:bsc:set-flywheels", "set plugin for each market")
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
-    const dddFlywheel = sdk.createFuseFlywheelCore(dddFlywheelAddress);
-    const epxFlywheel = sdk.createFuseFlywheelCore(epxFlywheelAddress);
+    const dddFlywheel = sdk.createMidasFlywheel(dddFlywheelAddress);
+    const epxFlywheel = sdk.createMidasFlywheel(epxFlywheelAddress);
 
     for (const detail of DETAILS) {
       const marketAddress = await sdk

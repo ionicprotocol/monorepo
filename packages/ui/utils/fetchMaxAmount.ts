@@ -4,13 +4,36 @@ import { BigNumber, utils } from 'ethers';
 
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { useQuery } from 'react-query';
+import { useMidas } from '@ui/context/MidasContext';
+
+export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
+  const {
+    midasSdk,
+    address,
+    currentChain: { id: chainId },
+  } = useMidas();
+  return useQuery<{ bigNumber: BigNumber; number: number }>(
+    ['useMaxAmount', asset.cToken, chainId],
+    async () => {
+      const bigNumber = await fetchMaxAmount(mode, midasSdk, address, asset);
+      return {
+        bigNumber: bigNumber,
+        number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
+      };
+    },
+    {
+      enabled: !!midasSdk && !!address && !!chainId && !!asset,
+    }
+  );
+}
 
 export const fetchMaxAmount = async (
   mode: FundOperationMode,
   midasSdk: MidasSdk,
   address: string,
   asset: NativePricedFuseAsset
-) => {
+): Promise<BigNumber> => {
   if (mode === FundOperationMode.SUPPLY) {
     return await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
   }
@@ -57,4 +80,5 @@ export const fetchMaxAmount = async (
       throw new Error('Could not fetch your max withdraw amount! Code: ');
     }
   }
+  throw new Error('Unsupported `FundOperationMode` passed.');
 };
