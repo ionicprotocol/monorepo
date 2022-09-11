@@ -73,6 +73,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
 
   const comp = await deployments.deploy("Comptroller", {
+    contract: "Comptroller.sol:Comptroller",
     from: deployer,
     args: [ffd.address],
     log: true,
