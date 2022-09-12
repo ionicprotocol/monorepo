@@ -16,7 +16,7 @@ import { SignerOrProvider, SupportedProvider } from "../MidasSdk";
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
     createContractInstance<T extends Contract>(contract: keyof Artifacts) {
-      return (address: string, signerOrProvider: SignerOrProvider = this.provider) =>
+      return (address: string, signerOrProvider: SignerOrProvider = this.signer) =>
         new Contract(address, this.artifacts[contract].abi, signerOrProvider) as T;
     }
 
@@ -26,25 +26,25 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
     createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
 
-    createRewardsDistributor(distributorAddress: string, signer: Signer | SupportedProvider = this.provider) {
+    createRewardsDistributor(distributorAddress: string, signer: Signer | SupportedProvider = this.signer) {
       return new Contract(
         distributorAddress,
         this.chainDeployment.RewardsDistributorDelegate.abi,
         signer
       ) as RewardsDistributorDelegate;
     }
-    createComptroller(comptrollerAddress: string, signer: Signer | SupportedProvider = this.provider) {
+    createComptroller(comptrollerAddress: string, signer: Signer | SupportedProvider = this.signer) {
       return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signer) as Comptroller;
     }
 
-    createOracle(oracleAddress: string, type: string, signer: Signer | SupportedProvider = this.provider) {
+    createOracle(oracleAddress: string, type: string, signer: Signer | SupportedProvider = this.signer) {
       return new Contract(oracleAddress, this.chainDeployment[type].abi, signer);
     }
 
-    createCToken(cTokenAddress: string, signer: Signer | SupportedProvider = this.provider) {
+    createCToken(cTokenAddress: string, signer: Signer | SupportedProvider = this.signer) {
       return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signer) as CErc20Delegate;
     }
-    createCErc20PluginRewardsDelegate(cTokenAddress: string, signer: Signer | SupportedProvider = this.provider) {
+    createCErc20PluginRewardsDelegate(cTokenAddress: string, signer: Signer | SupportedProvider = this.signer) {
       return new Contract(
         cTokenAddress,
         this.chainDeployment.CErc20PluginRewardsDelegate.abi,
@@ -52,7 +52,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       ) as CErc20PluginRewardsDelegate;
     }
 
-    createMasterPriceOracle(signer: Signer | SupportedProvider = this.provider) {
+    createMasterPriceOracle(signer: Signer | SupportedProvider = this.signer) {
       return new Contract(
         this.chainDeployment.MasterPriceOracle.address!,
         this.chainDeployment.MasterPriceOracle.abi,
