@@ -16,15 +16,15 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     const midasSdkModule = await import("../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const oldComptrollerImplementations = [oldImplementation];
-    const newComptrollerImplementations = [newImplementation];
-    const comptrollerArrayOfTrue = [true];
-
     const fuseFeeDistributor = new ethers.Contract(
       sdk.chainDeployment.FuseFeeDistributor.address,
       sdk.chainDeployment.FuseFeeDistributor.abi,
       deployer
     );
+
+    const oldComptrollerImplementations = [oldImplementation];
+    const newComptrollerImplementations = [newImplementation];
+    const comptrollerArrayOfTrue = [true];
 
     let tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
       oldComptrollerImplementations,

@@ -18,10 +18,10 @@ import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP2
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
 import FixedNativePriceOracleArtifact from "../lib/contracts/out/FixedNativePriceOracle.sol/FixedNativePriceOracle.json";
 import FlywheelStaticRewardsArtifact from "../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
-import FuseFlywheelCoreArtifact from "../lib/contracts/out/FuseFlywheelCore.sol/FuseFlywheelCore.json";
 import FuseFlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FuseFlywheelDynamicRewards.sol/FuseFlywheelDynamicRewards.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
+import MidasFlywheelArtifact from "../lib/contracts/out/MidasFlywheel.sol/MidasFlywheel.json";
 import RewardsDistributorDelegateArtifact from "../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
 import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
 import SimplePriceOracleArtifact from "../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
@@ -45,7 +45,7 @@ const EIP20Interface: Artifact = EIP20InterfaceArtifact;
 const ERC20: Artifact = ERC20Artifact;
 const FuseFlywheelDynamicRewards: Artifact = FuseFlywheelDynamicRewardsArtifacts;
 const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
-const FuseFlywheelCore: Artifact = FuseFlywheelCoreArtifact;
+const MidasFlywheel: Artifact = MidasFlywheelArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
@@ -76,7 +76,7 @@ const ARTIFACTS = {
   ERC20,
   FuseFlywheelDynamicRewards,
   FlywheelStaticRewards,
-  FuseFlywheelCore,
+  MidasFlywheel,
   JumpRateModel,
   JumpRateModel_MIMO_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -111,7 +111,7 @@ export {
   ERC20,
   FuseFlywheelDynamicRewards,
   FlywheelStaticRewards,
-  FuseFlywheelCore,
+  MidasFlywheel,
   JumpRateModel,
   JumpRateModel_MIMO_002_004_4_08,
   AnkrBNBInterestRateModel,

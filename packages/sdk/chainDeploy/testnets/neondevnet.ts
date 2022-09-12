@@ -1,6 +1,6 @@
 import { neondevnet } from "@midas-capital/chains";
 import { assetSymbols, SupportedAsset } from "@midas-capital/types";
-import { BigNumber, ethers, utils } from "ethers";
+import { ethers } from "ethers";
 
 import { ChainDeployConfig } from "../helpers";
 

@@ -46,6 +46,7 @@ export type PluginConfig = {
   otherParams?: string[];
   flywheelAddresses?: string[];
   flywheelIndices?: number[];
+  market: string;
 };
 
 export type ChainlinkAsset = {
