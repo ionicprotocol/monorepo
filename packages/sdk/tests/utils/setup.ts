@@ -10,7 +10,7 @@ import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOrac
 import { SimplePriceOracle } from "../../lib/contracts/typechain/SimplePriceOracle";
 import { MidasSdk } from "../../src";
 
-import { BSC_POOLS, getAssetsConf } from "./assets";
+import { getAssetsConf } from "./assets";
 import { getOrCreateMidas } from "./midasSdk";
 import { createPool, deployAssets } from "./pool";
 
@@ -76,18 +76,7 @@ export const wrapNativeToken = async ({ amount, account, weth }) => {
   await run("wrap-native-token", { amount, account, weth });
 };
 
-export const setUpPools = async (poolNames: BSC_POOLS[]) => {
-  let poolAddress: string;
-  const { deployer } = await ethers.getNamedSigners();
-  const poolAddresses: string[] = [];
-  for (const poolName of poolNames) {
-    [poolAddress] = await createPool({ poolName, signer: deployer });
-    poolAddresses.push(poolAddress);
-  }
-  return poolAddresses;
-};
-
-export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
+export const setUpLiquidation = async (poolName: string) => {
   const { deployer, rando } = await ethers.getNamedSigners();
 
   const sdk = await getOrCreateMidas();
@@ -117,13 +106,7 @@ export const setUpLiquidation = async (poolName: BSC_POOLS | string) => {
 
   const [poolAddress] = await createPool({ poolName, signer: deployer });
 
-  const assets = await getAssetsConf(
-    poolAddress,
-    fuseFeeDistributor.address,
-    sdk.irms.JumpRateModel.address,
-    ethers,
-    poolName
-  );
+  const assets = await getAssetsConf(poolAddress, fuseFeeDistributor.address, sdk.irms.JumpRateModel.address, ethers);
   let tx;
   for (const asset of assets) {
     const assetPrice = await oracle.callStatic.price(asset.underlying);

@@ -3,7 +3,7 @@ import { task, types } from "hardhat/config";
 task("oracle:get-price", "Get price of token")
   .addOptionalParam("address", "Token address for which to get the price", undefined, types.string)
   .addOptionalParam("ctoken", "CToken address for which to get the price", undefined, types.string)
-  .setAction(async ({ ctoken: _ctoken, address: _address, price: _price }, { getNamedAccounts, ethers }) => {
+  .setAction(async ({ ctoken: _ctoken, address: _address }, { ethers }) => {
     const { deployer } = await ethers.getNamedSigners();
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");

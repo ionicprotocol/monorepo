@@ -24,7 +24,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.AAVE,
-    underlying: "0x9e7c05e787bac79730eca196cfab2b1b53f2ff47",
+    underlying: "0x9E7C05e787bAC79730EcA196CFab2b1b53F2Ff47",
     name: "Wrapped AAVE (AAVE)",
     decimals: 6,
     oracle: OracleTypes.SimplePriceOracle,
