@@ -2,7 +2,7 @@ import { task, types } from "hardhat/config";
 
 import { UniswapOracleV2ResolverPairParams } from "../../chainDeploy";
 
-const uniswapTwapPriceOracleV2Resolver = "0x6B98340336cE524835F14d354a36ad880Ef30782";
+const uniswapTwapPriceOracleV2Resolver = "0x46Ae511521f2AceCa553bBB92fCf43BD57a41816";
 
 const twapOracleV2ResolverPairs: UniswapOracleV2ResolverPairParams[] = [
   {

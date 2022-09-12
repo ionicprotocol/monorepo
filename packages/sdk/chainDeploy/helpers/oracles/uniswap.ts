@@ -39,6 +39,19 @@ export const deployUniswapOracle = async ({
   if (utpof.transactionHash) await ethers.provider.waitForTransaction(utpof.transactionHash);
   console.log("UniswapTwapPriceOracleV2Factory: ", utpof.address);
 
+  //// deploy uniswap twap price oracle v2 resolver
+
+  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
+    from: deployer,
+    args: [[], utpor.address],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (twapPriceOracleResolver.transactionHash) {
+    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
+  }
+  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
+
   const uniTwapOracleFactory = (await ethers.getContract(
     "UniswapTwapPriceOracleV2Factory",
     deployer
