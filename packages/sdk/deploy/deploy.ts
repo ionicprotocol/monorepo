@@ -73,13 +73,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
 
   const comp = await deployments.deploy("Comptroller", {
-    contract: "Comptroller.sol:Comptroller",
     from: deployer,
     args: [ffd.address],
     log: true,
   });
   if (comp.transactionHash) await ethers.provider.waitForTransaction(comp.transactionHash);
-  console.log("Comptroller.sol:Comptroller: ", comp.address);
+  console.log("Comptroller ", comp.address);
 
   const oldErc20Delegate = await ethers.getContractOrNull("CErc20Delegate");
   const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate");
