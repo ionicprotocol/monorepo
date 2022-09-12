@@ -3,9 +3,9 @@ import { task, types } from "hardhat/config";
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FlywheelCore } from "../lib/contracts/typechain/FlywheelCore";
+import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 import { MidasFlywheel } from "../lib/contracts/typechain/MidasFlywheel";
-import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol";
 
 export default task("flyhwheels:replace", "Replaces an old flyhwheel contract with a new one").setAction(
   async ({}, { ethers, deployments, getChainId }) => {
@@ -45,11 +45,12 @@ export default task("flyhwheels:replace", "Replaces an old flyhwheel contract wi
 
           console.log(`replacing old flywheel ${oldFlywheelAddress}`);
           // first, deploy a replacement flywheel
-          const fwc = (await ethers.getContract(`MidasFlywheel_${fwConfig.name}`,
-            deployer)) as MidasFlywheel;
+          const fwc = (await ethers.getContract(`MidasFlywheel_${fwConfig.name}`, deployer)) as MidasFlywheel;
           console.log("MidasFlywheel: ", fwc.address);
-          const fdr = (await ethers.getContract(`FuseFlywheelDynamicRewardsPlugin_${fwConfig.name}`,
-            deployer)) as FuseFlywheelDynamicRewardsPlugin;
+          const fdr = (await ethers.getContract(
+            `FuseFlywheelDynamicRewardsPlugin_${fwConfig.name}`,
+            deployer
+          )) as FuseFlywheelDynamicRewardsPlugin;
           // then we should replace the IFlywheelRewards contract with a new one
           // that refers to the new flywheel
           console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
