@@ -19,8 +19,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string) => {
       const flywheels: Flywheel[] = await Promise.all(
         flywheelCores.map(async (flywheel) => {
           // TODO add function to FlywheelLensRouter to get all info in one call
-          const [authority, booster, rewards, markets, owner, rewardToken] = await Promise.all([
-            flywheel.callStatic.authority(),
+          const [booster, rewards, markets, owner, rewardToken] = await Promise.all([
             flywheel.callStatic.flywheelBooster(),
             flywheel.callStatic.flywheelRewards(),
             flywheel.callStatic.getAllStrategies(),
@@ -30,7 +29,6 @@ export const useFlywheelsForPool = (comptrollerAddress?: string) => {
 
           return {
             address: flywheel.address,
-            authority,
             booster,
             owner,
             rewards,
