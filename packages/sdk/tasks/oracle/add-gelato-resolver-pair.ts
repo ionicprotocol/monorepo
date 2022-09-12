@@ -2,7 +2,7 @@ import { task, types } from "hardhat/config";
 
 import { UniswapOracleV2ResolverPairParams } from "../../chainDeploy";
 
-const uniswapTwapPriceOracleV2Resolver = "0x46Ae511521f2AceCa553bBB92fCf43BD57a41816";
+const uniswapTwapPriceOracleV2Resolver = "0x308ae65B466a063bE9f6BFf9D59feB43C3954DbF";
 
 const twapOracleV2ResolverPairs: UniswapOracleV2ResolverPairParams[] = [
   {
@@ -28,6 +28,7 @@ task("oracle:add-gelato-resolver-pair", "Add resolver token pair for gelator tas
       uniswapTwapPriceOracleV2Resolver,
       deployer
     );
+    console.log(resolver.address);
 
     for (const pair of twapOracleV2ResolverPairs) {
       await resolver.addPair(pair);
