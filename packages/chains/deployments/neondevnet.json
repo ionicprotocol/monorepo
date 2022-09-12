@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xcb2F225E233712Fff2cE72c8F0FFbc431e8E8eA1",
+      "address": "0x6cF68FE2F3F9ee730eC83726124Da4B64E935Bd9",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x83434A67aE6D89dD40e7E84599A6358641b412a0",
+      "address": "0x191F2343AEF1C8525cAD385C6f619D608409AAC2",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x8C163C00371c5723dCCA0F868B371f3C934c07d6",
+      "address": "0x643136176f4aCA44f8772c31753DD2d4166956d7",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0xa497554e02C81451139dE61278543eB3c9dEed4A",
+      "address": "0x5772b83Cc905704ce848e4a1a889035f9f0AEAc4",
       "abi": [
         {
           "inputs": [],
@@ -6674,7 +6674,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x1216d03CaAB312e8D5D91cEec634b563Ee3cEFfA",
+      "address": "0x08Edf98B956Ab8B90CBE56077A49830316E6b2E8",
       "abi": [
         {
           "inputs": [
@@ -8428,6 +8428,30 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "oldFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newFlywheel",
+              "type": "address"
+            }
+          ],
+          "name": "replaceFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
@@ -9021,31 +9045,6 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "uint256",
-              "name": "error",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "info",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "detail",
-              "type": "uint256"
-            }
-          ],
-          "name": "Failure",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
               "internalType": "uint8",
               "name": "version",
               "type": "uint8"
@@ -9060,17 +9059,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldAdmin",
+              "name": "oldOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newAdmin",
+              "name": "newOwner",
               "type": "address"
             }
           ],
-          "name": "NewAdmin",
+          "name": "NewOwner",
           "type": "event"
         },
         {
@@ -9079,17 +9078,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldPendingAdmin",
+              "name": "oldPendingOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "NewPendingAdmin",
+          "name": "NewPendingOwner",
           "type": "event"
         },
         {
@@ -9113,14 +9112,8 @@
         },
         {
           "inputs": [],
-          "name": "_acceptAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_acceptOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -9340,6 +9333,13 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "_resetGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
@@ -9466,18 +9466,12 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "_setPendingAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -9537,19 +9531,6 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "adminHasRights",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
@@ -9602,19 +9583,6 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "comptrollerImplementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -9712,32 +9680,6 @@
             }
           ],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdmin",
-          "outputs": [
-            {
-              "internalType": "address payable",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdminHasRights",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -9929,20 +9871,7 @@
         },
         {
           "inputs": [],
-          "name": "pendingAdmin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "pendingComptrollerImplementation",
+          "name": "pendingOwner",
           "outputs": [
             {
               "internalType": "address",
@@ -10021,33 +9950,8 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x57337C27121D041D8CBbCA4Bd5aF3d23b3604A30",
+      "address": "0xE34Bb04a2534D439eeB13c79966ab6e8A3DE9b48",
       "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "error",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "info",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "detail",
-              "type": "uint256"
-            }
-          ],
-          "name": "Failure",
-          "type": "event"
-        },
         {
           "anonymous": false,
           "inputs": [
@@ -10067,17 +9971,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldAdmin",
+              "name": "oldOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newAdmin",
+              "name": "newOwner",
               "type": "address"
             }
           ],
-          "name": "NewAdmin",
+          "name": "NewOwner",
           "type": "event"
         },
         {
@@ -10086,17 +9990,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldPendingAdmin",
+              "name": "oldPendingOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "NewPendingAdmin",
+          "name": "NewPendingOwner",
           "type": "event"
         },
         {
@@ -10120,14 +10024,8 @@
         },
         {
           "inputs": [],
-          "name": "_acceptAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_acceptOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -10347,6 +10245,13 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "_resetGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "address",
@@ -10473,18 +10378,12 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "_setPendingAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -10544,32 +10443,6 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "admin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "adminHasRights",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
@@ -10622,19 +10495,6 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "comptrollerImplementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -10732,32 +10592,6 @@
             }
           ],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdmin",
-          "outputs": [
-            {
-              "internalType": "address payable",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdminHasRights",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -10949,20 +10783,7 @@
         },
         {
           "inputs": [],
-          "name": "pendingAdmin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "pendingComptrollerImplementation",
+          "name": "pendingOwner",
           "outputs": [
             {
               "internalType": "address",
@@ -11458,31 +11279,6 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "uint256",
-              "name": "error",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "info",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "detail",
-              "type": "uint256"
-            }
-          ],
-          "name": "Failure",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
               "internalType": "uint8",
               "name": "version",
               "type": "uint8"
@@ -11497,17 +11293,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldAdmin",
+              "name": "oldOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newAdmin",
+              "name": "newOwner",
               "type": "address"
             }
           ],
-          "name": "NewAdmin",
+          "name": "NewOwner",
           "type": "event"
         },
         {
@@ -11516,17 +11312,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldPendingAdmin",
+              "name": "oldPendingOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "NewPendingAdmin",
+          "name": "NewPendingOwner",
           "type": "event"
         },
         {
@@ -11596,14 +11392,8 @@
         },
         {
           "inputs": [],
-          "name": "_acceptAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_acceptOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -11644,6 +11434,13 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "_resetGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bool",
@@ -11660,32 +11457,13 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "_setPendingAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "adminHasRights",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -11702,19 +11480,6 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "comptrollerImplementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -11796,32 +11561,6 @@
         {
           "inputs": [],
           "name": "enforceDeployerWhitelist",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdmin",
-          "outputs": [
-            {
-              "internalType": "address payable",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdminHasRights",
           "outputs": [
             {
               "internalType": "bool",
@@ -12103,20 +11842,7 @@
         },
         {
           "inputs": [],
-          "name": "pendingAdmin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "pendingComptrollerImplementation",
+          "name": "pendingOwner",
           "outputs": [
             {
               "internalType": "address",
@@ -12260,7 +11986,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x4fdA22E16aA6268288b2af78F321Ca67B0d6166D",
+      "address": "0xB3177C0b176A2c26369A2ca9503907A15c75F467",
       "abi": [
         {
           "anonymous": false,
@@ -12286,31 +12012,6 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "uint256",
-              "name": "error",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "info",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "detail",
-              "type": "uint256"
-            }
-          ],
-          "name": "Failure",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
               "internalType": "uint8",
               "name": "version",
               "type": "uint8"
@@ -12325,17 +12026,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldAdmin",
+              "name": "oldOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newAdmin",
+              "name": "newOwner",
               "type": "address"
             }
           ],
-          "name": "NewAdmin",
+          "name": "NewOwner",
           "type": "event"
         },
         {
@@ -12344,17 +12045,17 @@
             {
               "indexed": false,
               "internalType": "address",
-              "name": "oldPendingAdmin",
+              "name": "oldPendingOwner",
               "type": "address"
             },
             {
               "indexed": false,
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "NewPendingAdmin",
+          "name": "NewPendingOwner",
           "type": "event"
         },
         {
@@ -12424,14 +12125,8 @@
         },
         {
           "inputs": [],
-          "name": "_acceptAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_acceptOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -12472,6 +12167,13 @@
           "type": "function"
         },
         {
+          "inputs": [],
+          "name": "_resetGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [
             {
               "internalType": "bool",
@@ -12488,45 +12190,13 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "newPendingAdmin",
+              "name": "newPendingOwner",
               "type": "address"
             }
           ],
-          "name": "_setPendingAdmin",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
+          "name": "_setPendingOwner",
+          "outputs": [],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "admin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "adminHasRights",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -12543,19 +12213,6 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "comptrollerImplementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
             }
           ],
           "stateMutability": "view",
@@ -12637,32 +12294,6 @@
         {
           "inputs": [],
           "name": "enforceDeployerWhitelist",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdmin",
-          "outputs": [
-            {
-              "internalType": "address payable",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "fuseAdminHasRights",
           "outputs": [
             {
               "internalType": "bool",
@@ -12944,20 +12575,7 @@
         },
         {
           "inputs": [],
-          "name": "pendingAdmin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "pendingComptrollerImplementation",
+          "name": "pendingOwner",
           "outputs": [
             {
               "internalType": "address",
@@ -17127,6 +16745,311 @@
         {
           "stateMutability": "payable",
           "type": "receive"
+        }
+      ]
+    },
+    "Pyth": {
+      "address": "0xBAA7BE260dbA0DfD53C9C85Ff67585f7C08892a5",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "getCurrentPrice",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "int64",
+                  "name": "price",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "conf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int32",
+                  "name": "expo",
+                  "type": "int32"
+                }
+              ],
+              "internalType": "struct PythStructs.Price",
+              "name": "price",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "getEmaPrice",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "int64",
+                  "name": "price",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "conf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int32",
+                  "name": "expo",
+                  "type": "int32"
+                }
+              ],
+              "internalType": "struct PythStructs.Price",
+              "name": "price",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "getPrevPriceUnsafe",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "int64",
+                  "name": "price",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "conf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int32",
+                  "name": "expo",
+                  "type": "int32"
+                }
+              ],
+              "internalType": "struct PythStructs.Price",
+              "name": "price",
+              "type": "tuple"
+            },
+            {
+              "internalType": "uint64",
+              "name": "publishTime",
+              "type": "uint64"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "parseSolanaPriceAccountData",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "bytes32",
+                  "name": "id",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "productId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "price",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "conf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int32",
+                  "name": "expo",
+                  "type": "int32"
+                },
+                {
+                  "internalType": "enum PythStructs.PriceStatus",
+                  "name": "status",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint32",
+                  "name": "maxNumPublishers",
+                  "type": "uint32"
+                },
+                {
+                  "internalType": "uint32",
+                  "name": "numPublishers",
+                  "type": "uint32"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "emaPrice",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "emaConf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "publishTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "prevPrice",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "prevConf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "prevPublishTime",
+                  "type": "uint64"
+                }
+              ],
+              "internalType": "struct PythStructs.PriceFeed",
+              "name": "priceFeed",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes32",
+              "name": "id",
+              "type": "bytes32"
+            }
+          ],
+          "name": "queryPriceFeed",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "bytes32",
+                  "name": "id",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "bytes32",
+                  "name": "productId",
+                  "type": "bytes32"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "price",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "conf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int32",
+                  "name": "expo",
+                  "type": "int32"
+                },
+                {
+                  "internalType": "enum PythStructs.PriceStatus",
+                  "name": "status",
+                  "type": "uint8"
+                },
+                {
+                  "internalType": "uint32",
+                  "name": "maxNumPublishers",
+                  "type": "uint32"
+                },
+                {
+                  "internalType": "uint32",
+                  "name": "numPublishers",
+                  "type": "uint32"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "emaPrice",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "emaConf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "publishTime",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "int64",
+                  "name": "prevPrice",
+                  "type": "int64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "prevConf",
+                  "type": "uint64"
+                },
+                {
+                  "internalType": "uint64",
+                  "name": "prevPublishTime",
+                  "type": "uint64"
+                }
+              ],
+              "internalType": "struct PythStructs.PriceFeed",
+              "name": "",
+              "type": "tuple"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },

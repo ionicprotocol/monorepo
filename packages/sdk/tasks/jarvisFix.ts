@@ -21,8 +21,8 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     const twobrl = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
     const dddFlywheelAddress = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
     const epxFlywheelAddress = "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4";
-    const dddFlywheel = sdk.createFuseFlywheelCore(dddFlywheelAddress);
-    const epxFlywheel = sdk.createFuseFlywheelCore(epxFlywheelAddress);
+    const dddFlywheel = sdk.createMidasFlywheel(dddFlywheelAddress);
+    const epxFlywheel = sdk.createMidasFlywheel(epxFlywheelAddress);
     const marketAddress = await sdk
       .createComptroller("0x31d76A64Bc8BbEffb601fac5884372DEF910F044", signer)
       .callStatic.cTokensByUnderlying(twobrl);
