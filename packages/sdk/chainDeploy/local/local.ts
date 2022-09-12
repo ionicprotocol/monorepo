@@ -114,7 +114,7 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   await tx.wait();
 
   // Plugins & Rewards
-  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+  await deployFlywheelWithDynamicRewards({
     ethers,
     getNamedAccounts,
     deployments,
