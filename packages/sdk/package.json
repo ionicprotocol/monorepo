@@ -46,7 +46,7 @@
     "deploy:evmos": "hardhat --network evmostestnet deploy --tags prod --no-compile",
     "deploy:moonbeam": "hardhat --network moonbeam deploy --tags prod --no-compile",
     "deploy:neondevnet": "hardhat --network neondevnet deploy --tags prod --no-compile",
-    "deploy:localhost": "hardhat --network moonbeam localhost --tags prod --no-compile",
+    "deploy:localhost": "hardhat --network localhost deploy --tags prod --no-compile",
     "forge": "forge",
     "hardhat": "hardhat"
   },
