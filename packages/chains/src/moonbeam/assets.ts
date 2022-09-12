@@ -266,7 +266,7 @@ export const assets: SupportedAsset[] = [
     underlying: celrUSDT,
     name: "CELR USDT Token",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", celrUSDT),
   },
 ];
