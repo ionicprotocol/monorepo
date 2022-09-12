@@ -1,4 +1,4 @@
-// import fetch from "node-fetch";
+import axios, { AxiosResponse } from "axios";
 
 export { fetchChainLinkFeedParameters } from "./chainLinkFeedParameters";
 
@@ -8,23 +8,16 @@ const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
-export interface HttpResponse<T> extends Response {
-  parsedBody: T;
-}
 export async function http<T>(
   request: string,
-  method = "GET",
-  headers: Headers = defaultHeaders
-): Promise<HttpResponse<T>> {
-  const response: HttpResponse<T> = await fetch(request, { method, headers });
-
+  method = "get",
+  headers: Headers = defaultHeaders,
+  params: Record<string, string> = {}
+): Promise<AxiosResponse<T>> {
   try {
-    // may error if there is no body
-    response.parsedBody = await response.json();
-  } catch (ex) {}
-
-  if (!response.ok) {
-    throw new Error(response.statusText);
+    const response: AxiosResponse<T> = await axios[method](request, { headers, ...params });
+    return response;
+  } catch (error) {
+    console.log(Object.keys(error), error.message);
   }
-  return response;
 }

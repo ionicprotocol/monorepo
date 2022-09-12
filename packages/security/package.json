@@ -48,9 +48,9 @@
     "@midas-capital/chains": "workspace:*",
     "@midas-capital/types": "workspace:*",
     "@types/node-cache": "^4.2.5",
+    "axios": "^0.27.2",
     "ethers": "^5.7.0",
     "node-cache": "^5.1.2",
-    "node-fetch": "^3.2.10",
     "utf-8-validate": "^5.0.9"
   }
 }

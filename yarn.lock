@@ -2700,6 +2700,7 @@ __metadata:
     "@types/chai-subset": ^1
     "@types/mocha": ^9.1.1
     "@types/node-cache": ^4.2.5
+    axios: ^0.27.2
     chai: ^4.3.6
     chai-as-promised: ^7.1.1
     chai-subset: ^1.6.0
@@ -2708,7 +2709,6 @@ __metadata:
     eslint-plugin-prettier: ^4.0.0
     ethers: ^5.7.0
     node-cache: ^5.1.2
-    node-fetch: ^3.2.10
     nyc: ^15.1.0
     prettier: 2.7.1
     sinon: ^14.0.0
@@ -17981,7 +17981,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^3.0.0, node-fetch@npm:^3.1.1, node-fetch@npm:^3.2.10":
+"node-fetch@npm:^3.0.0, node-fetch@npm:^3.1.1":
   version: 3.2.10
   resolution: "node-fetch@npm:3.2.10"
   dependencies:

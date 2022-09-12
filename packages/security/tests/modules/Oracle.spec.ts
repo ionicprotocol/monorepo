@@ -11,7 +11,7 @@ describe("Oracle", () => {
   describe("getOracleRating", () => {
     it("should fetch oracle rating", async () => {
       const ratings = await oracle.getOracleRating();
-      console.log("1");
+      console.log(ratings);
     });
   });
 
