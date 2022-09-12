@@ -1,9 +1,8 @@
-import { bsc } from "@midas-capital/chains";
+import { bsc, polygon } from "@midas-capital/chains";
 import { assetSymbols } from "@midas-capital/types";
 import { ethers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { PluginConfig } from "../chainDeploy";
 import { ArrakisERC4626 } from "../lib/contracts/typechain/ArrakisERC4626.sol";
 import { BeefyERC4626 } from "../lib/contracts/typechain/BeefyERC4626.sol";
 import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
@@ -12,7 +11,7 @@ import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributo
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 
 export default task("plugins:identify", "Prints the markets with plugins and the relevant plugin ID").setAction(
-  async ({}, { ethers }) => {
+  async ({}, { ethers, getChainId }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     const contractIds = [];
@@ -25,6 +24,8 @@ export default task("plugins:identify", "Prints the markets with plugins and the
         plugins.push(pluginAddress);
       }
     }
+
+    const chainid = await getChainId();
 
     console.log(`got plugins ${plugins}`);
     console.log(`got contract ids ${contractIds}`);
@@ -90,6 +91,15 @@ export default task("plugins:identify", "Prints the markets with plugins and the
           } catch (err) {
             // ignore
           }
+
+          const pluginConfigs = getPluginConfigs(new ethers.utils.AbiCoder(), chainid);
+
+          const config = pluginConfigs.find(pc => pc.market == marketAddress);
+
+          if (!config) {
+            console.log(`no new plugin for old plugin ${currentPluginAddress}`);
+          }
+
           console.log();
         } catch (e) {
           console.log(`market ${marketAddress} is probably not a plugin market`);
@@ -120,8 +130,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
 
       const market = (await ethers.getContractAt(
         "CErc20PluginRewardsDelegate",
-        conf.market,
-        deployer
+        conf.market
       )) as CErc20PluginRewardsDelegate;
 
       const oldPlugin = await market.callStatic.plugin();
@@ -138,8 +147,9 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
       const contractId = `${conf.strategy}_${conf.market}`;
       console.log(contractId);
 
+      const artifact = await deployments.getArtifact(conf.strategy);
       const deployment = await deployments.deploy(contractId, {
-        contract: conf.strategy,
+        contract: artifact,
         from: deployer.address,
         proxy: {
           proxyContract: "OpenZeppelinTransparentProxy",
@@ -164,8 +174,55 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     const tx = await ffd._editPluginImplementationWhitelist(oldImplementations, newImplementations, arrayOfTrue);
     await tx.wait();
     console.log("_editPluginImplementationWhitelist: ", tx.hash);
+
+    for (let i = 0; i < pluginConfigs.length; i++) {
+      const conf = pluginConfigs[i];
+      console.log(conf);
+
+      const market = (await ethers.getContractAt(
+        "CErc20PluginRewardsDelegate",
+        conf.market,
+        deployer
+      )) as CErc20PluginRewardsDelegate;
+
+      const comptrollerAddress = await market.callStatic.comptroller();
+
+      const comptroller = (await ethers.getContractAt(
+        "Comptroller.sol:Comptroller",
+        comptrollerAddress,
+        deployer
+      )) as Comptroller;
+
+      const admin = await comptroller.callStatic.admin();
+      if (admin == deployer.address) {
+        const currentPluginAddress = await market.callStatic.plugin();
+        const contractId = `${conf.strategy}_${conf.market}`;
+        const newPlugin = await ethers.getContract(contractId);
+        const newPluginAddress = newPlugin.address;
+
+        if (currentPluginAddress != newPluginAddress) {
+          console.log(`changing ${currentPluginAddress} with ${newPluginAddress}`);
+          const tx = await market._updatePlugin(newPluginAddress);
+          await tx.wait();
+          console.log("_updatePlugin: ", tx.hash);
+        }
+      } else {
+        console.log(`market poll has a different admin ${admin}`);
+      }
+    }
   }
 );
+
+
+type PluginConfig = {
+  name: string;
+  strategy: string;
+  underlying: string;
+  otherParams?: any[];
+  flywheelAddresses?: string[];
+  flywheelIndices?: number[];
+  market: string;
+};
 
 function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): PluginConfig[] {
   let assets;
@@ -184,14 +241,13 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
         strategy: "DotDotLpERC4626",
         underlying: assets.find((a) => a.symbol === assetSymbols["2brl"])!.underlying, // 2BRL
         otherParams: [
-          "", // _dddFlywheel // TODO
-          "", // _epxFlywheel // TODO
+          "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
+          "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba", // _rewardsDestination
-          abicoder.encode(
-            ["address[]"],
-            [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]
-          ), // _rewardTokens
+          // abicoder.encode(["address[]"], [
+              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
+            // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "2brl",
@@ -201,14 +257,13 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
         strategy: "DotDotLpERC4626",
         underlying: assets.find((a) => a.symbol === assetSymbols.val3EPS)!.underlying,
         otherParams: [
-          "", // _dddFlywheel // TODO
-          "", // _epxFlywheel // TODO
+          "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
+          "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C", // _rewardsDestination
-          abicoder.encode(
-            ["address[]"],
-            [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]
-          ), // _rewardTokens
+          // abicoder.encode(["address[]"], [
+              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
+            // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "val3EPS",
@@ -219,14 +274,13 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
         strategy: "DotDotLpERC4626",
         underlying: assets.find((a) => a.symbol === assetSymbols.valdai3EPS)!.underlying,
         otherParams: [
-          "", // _dddFlywheel // TODO
-          "", // _epxFlywheel // TODO
+          "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
+          "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0x7479dd29b9256aB74c9bf84d6f9CE6e30014d248", // _rewardsDestination
-          abicoder.encode(
-            ["address[]"],
-            [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]
-          ), // _rewardTokens
+          // abicoder.encode(["address[]"], [
+              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
+            // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "valdai3EPS",
@@ -236,14 +290,13 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
         strategy: "DotDotLpERC4626",
         underlying: assets.find((a) => a.symbol === assetSymbols["3EPS"])!.underlying,
         otherParams: [
-          "", // _dddFlywheel // TODO
-          "", // _epxFlywheel // TODO
+          "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
+          "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0x6f9B6ccD027d1c6Ed09ee215B9Ca5B85a57C6eA1", // _rewardsDestination
-          abicoder.encode(
-            ["address[]"],
-            [["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]]
-          ), // _rewardTokens
+          // abicoder.encode(["address[]"], [
+              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
+            // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "3EPS",
@@ -305,12 +358,14 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
         strategy: "ArrakisERC4626",
         market: "0xa5A14c3814d358230a56e8f011B8fc97A508E890",
         name: "Arrakis PAR-USDC Vault",
-        underlying: "",
+        underlying: polygon.assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_PAR_005).underlying,
         otherParams: [
-          "", // _flywheel // TODO
+          "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
           "0x528330fF7c358FE1bAe348D23849CCed8edA5917", // IGuniPool _pool
           "0xa5A14c3814d358230a56e8f011B8fc97A508E890", // _rewardsDestination
-          abicoder.encode(["address[]"], [["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"]]), // _rewardTokens
+          // abicoder.encode(["address[]"], [
+            ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"]
+          // ]), // _rewardTokens
         ],
       },
     ];
