@@ -9,13 +9,13 @@ const twapOracleV2ResolverPairs: UniswapOracleV2ResolverPairParams[] = [
     pair: "0x7F5Ac0FC127bcf1eAf54E3cd01b00300a0861a62", // STELLA/WGLMR
     baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
     minPeriod: 1800,
-    deviationThreshold: "50000000000000000",
+    deviationThreshold: "10000000000000000", // 1%
   },
   {
     pair: "0xd47BeC28365a82C0C006f3afd617012B02b129D6", // CELR/WGLMR
     baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
     minPeriod: 1800,
-    deviationThreshold: "50000000000000000",
+    deviationThreshold: "10000000000000000", // 1%
   },
 ];
 
