@@ -1,12 +1,11 @@
-import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { ChainDeployConfig, chainDeployConfig, ChainDeployConfig } from "../chainDeploy";
-import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
+import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FlywheelCore } from "../lib/contracts/typechain/FlywheelCore";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
-import { MidasFlywheelCore } from "../lib/contracts/typechain/MidasFlywheelCore";
+import { MidasFlywheel } from "../lib/contracts/typechain/MidasFlywheel";
+import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol";
 
 export default task("flyhwheels:replace", "Replaces an old flyhwheel contract with a new one").setAction(
   async ({}, { ethers, deployments, getChainId }) => {
@@ -46,57 +45,25 @@ export default task("flyhwheels:replace", "Replaces an old flyhwheel contract wi
 
           console.log(`replacing old flywheel ${oldFlywheelAddress}`);
           // first, deploy a replacement flywheel
-          const fwc = await deployments.deploy(`MidasFlywheelCore_${fwConfig.name}`, {
-            contract: "MidasFlywheelCore",
-            from: deployer.address,
-            log: true,
-            proxy: {
-              execute: {
-                init: {
-                  methodName: "initialize",
-                  args: [
-                    rewardToken,
-                    "0x0000000000000000000000000000000000000009", // need to initialize to address that does NOT have balance, otherwise this fails (i.e. AddressZero)
-                    constants.AddressZero,
-                    deployer.address,
-                  ],
-                },
-              },
-              proxyContract: "OpenZeppelinTransparentProxy",
-              owner: deployer.address,
-            },
-            waitConfirmations: 1,
-          });
-          console.log("MidasFlywheelCore: ", fwc.address);
-
+          const fwc = (await ethers.getContract(`MidasFlywheel_${fwConfig.name}`,
+            deployer)) as MidasFlywheel;
+          console.log("MidasFlywheel: ", fwc.address);
+          const fdr = (await ethers.getContract(`FuseFlywheelDynamicRewardsPlugin_${fwConfig.name}`,
+            deployer)) as FuseFlywheelDynamicRewardsPlugin;
           // then we should replace the IFlywheelRewards contract with a new one
           // that refers to the new flywheel
-
-          const fdr = await deployments.deploy(`FuseFlywheelDynamicRewardsPlugin_${fwConfig.name}`, {
-            contract: "FuseFlywheelDynamicRewardsPlugin",
-            from: deployer.address,
-            args: [fwc.address, fwConfig.cycleLength],
-            log: true,
-            waitConfirmations: 1,
-          });
           console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
-          const newFlywheel = (await ethers.getContractAt(
-            "MidasFlywheelCore",
-            fwc.address,
-            deployer
-          )) as MidasFlywheelCore;
-          let tx = await newFlywheel.setFlywheelRewards(fdr.address, { from: deployer.address });
+          let tx = await fwc.setFlywheelRewards(fdr.address, { from: deployer.address });
           await tx.wait();
           console.log("setFlywheelRewards: ", tx.hash);
 
-          tx = await comptroller.replaceFlywheel(oldFlywheelAddress, newFlywheel.address);
+          tx = await comptroller.replaceFlywheel(oldFlywheelAddress, fwc.address);
           await tx.wait();
           console.log("replaceFlywheel: ", tx.hash);
           console.log(`replaced old flywheel ${oldFlywheelAddress}`);
         } catch (e) {
           console.error(`error while deploying flywheel ${oldFlywheelAddress}`, e);
-          break;
         }
       }
     }
