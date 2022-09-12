@@ -4,13 +4,11 @@ import { deployments, ethers } from "hardhat";
 
 import {
   EIP20Interface,
-  FuseFeeDistributor,
   FuseSafeLiquidator,
   MasterPriceOracle,
   SimplePriceOracle,
 } from "../../lib/contracts/typechain";
-import { ChainLiquidationConfig, ERC20Abi } from "../../src";
-import { getChainLiquidationConfig } from "../../src/modules/liquidation/config";
+import { ERC20Abi } from "../../src";
 import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import { getOrCreateMidas } from "../utils/midasSdk";
 import { DeployedAsset } from "../utils/pool";
@@ -19,62 +17,41 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
 (process.env.FORK_CHAIN_ID ? describe.only : describe.skip)("#safeLiquidateWithFlashLoan", () => {
   let tx: providers.TransactionResponse;
 
-  let eth: MarketConfig;
   let erc20One: MarketConfig;
   let erc20Two: MarketConfig;
   let oracle: MasterPriceOracle;
   let simplePriceOracle: SimplePriceOracle;
 
-  let deployedEth: DeployedAsset;
   let deployedErc20One: DeployedAsset;
   let deployedErc20Two: DeployedAsset;
 
   let poolAddress: string;
   let liquidator: FuseSafeLiquidator;
 
-  let fuseFeeDistributor: FuseFeeDistributor;
-
-  let ethUnderlying: EIP20Interface;
-  let erc20OneUnderlying: EIP20Interface;
   let erc20TwoUnderlying: EIP20Interface;
 
   let erc20OneOriginalUnderlyingPrice: BigNumber;
-  let erc20TwoOriginalUnderlyingPrice: BigNumber;
 
-  let chainId: number;
   let poolName: string;
 
   let deployedAssets: DeployedAsset[];
   let assets: MarketConfig[];
 
-  let liquidationConfigOverrides: ChainLiquidationConfig;
-
   beforeEach(async () => {
     poolName = "liquidation - fl - " + Math.random().toString();
-    ({ chainId } = await ethers.provider.getNetwork());
     await deployments.fixture("prod");
     const sdk = await getOrCreateMidas();
 
-    liquidationConfigOverrides = {
-      ...getChainLiquidationConfig(sdk)[chainId],
-    };
     await setUpPriceOraclePrices();
-    ({ poolAddress, liquidator, oracle, fuseFeeDistributor, deployedAssets, simplePriceOracle, assets } =
-      await setUpLiquidation(poolName));
+    ({ poolAddress, liquidator, oracle, deployedAssets, simplePriceOracle, assets } = await setUpLiquidation(poolName));
 
-    eth = assets.find((d) => d.symbol === "WBNB");
     erc20One = assets.find((d) => d.symbol === "BTCB");
     erc20Two = assets.find((d) => d.symbol === "BUSD");
 
-    deployedEth = deployedAssets.find((d) => d.symbol === "WBNB");
     deployedErc20One = deployedAssets.find((d) => d.symbol === "BTCB");
     deployedErc20Two = deployedAssets.find((d) => d.symbol === "BUSD");
 
     erc20OneOriginalUnderlyingPrice = await oracle.getUnderlyingPrice(deployedErc20One.assetAddress);
-    erc20TwoOriginalUnderlyingPrice = await oracle.getUnderlyingPrice(deployedErc20Two.assetAddress);
-
-    ethUnderlying = new Contract(eth.underlying, ERC20Abi, sdk.provider.getSigner()) as EIP20Interface;
-    erc20OneUnderlying = new Contract(erc20One.underlying, ERC20Abi, sdk.provider.getSigner()) as EIP20Interface;
     erc20TwoUnderlying = new Contract(erc20One.underlying, ERC20Abi, sdk.provider.getSigner()) as EIP20Interface;
   });
 

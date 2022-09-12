@@ -1,4 +1,5 @@
 import {
+  Box,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -27,7 +28,7 @@ export const PopoverTooltip = ({
 } & PopoverProps) => {
   const { cPage } = useColors();
   return (
-    <>
+    <Box>
       <style>
         {`
             .chakra-popover__arrow {
@@ -57,6 +58,6 @@ export const PopoverTooltip = ({
           {footer && <PopoverFooter>{footer}</PopoverFooter>}
         </PopoverContent>
       </Popover>
-    </>
+    </Box>
   );
 };
