@@ -287,7 +287,6 @@ export enum assetSymbols {
   "ATOM-GLMR" = "ATOM-GLMR",
   STELLA = "STELLA",
   CELR = "CELR",
-  celrUSDT = "celrUSDT",
 
   // Arbitrum
   "2pool" = "2pool",

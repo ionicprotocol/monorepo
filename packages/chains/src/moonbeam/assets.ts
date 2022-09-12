@@ -14,7 +14,6 @@ const madDAI = "0xc234A67a4F840E61adE794be47de455361b52413";
 const madUSDC = "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9";
 const multiUSDC = "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b";
 const madUSDT = "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594";
-const celrUSDT = "0x81ECac0D6Be0550A00FF064a4f9dd2400585FE9c";
 const multiUSDT = "0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73";
 const FRAX = "0x322E86852e492a7Ee17f28a78c663da38FB33bfb";
 const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
@@ -260,14 +259,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", CELR),
-  },
-  {
-    symbol: assetSymbols.celrUSDT,
-    underlying: celrUSDT,
-    name: "CELR USDT Token",
-    decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs("https://moonbeam.moonscan.io", celrUSDT),
   },
 ];
 
