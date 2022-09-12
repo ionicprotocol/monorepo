@@ -21,7 +21,15 @@ import {
   NativePricedFuseAsset,
 } from '@midas-capital/types';
 import axios from 'axios';
-import { BigNumber, constants, ContractTransaction, ethers, getDefaultProvider, Signer, utils } from 'ethers';
+import {
+  BigNumber,
+  constants,
+  ContractTransaction,
+  ethers,
+  getDefaultProvider,
+  Signer,
+  utils,
+} from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -245,14 +253,6 @@ const AmountSelect = ({
     }
   };
 
-  // console.log(getDefaultProvider().getBalance(address), 'ethers getBalance');
-
-// console.log(address,'address')
-
-  //GETS BALANCE OF BNB
-  // console.log(midasSdk.signer.getBalance(),'signer');
-  // midasSdk.signer.getBalance().then(bal=>{console.log(utils.formatEther(bal),'BNB balance')})
-
   // const wBNBcontract = new ethers.Contract(
   //   midasSdk.chainSpecificAddresses.W_TOKEN,
   //   ERC20Abi,
@@ -277,21 +277,19 @@ const AmountSelect = ({
     const wrappedBalanceDeci = utils.formatEther(wrappedBalance);
     const nativeBalanceDeci = utils.formatEther(nativeBalance);
 
-    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN ? //Check is selected token is wrapped native token
-      wrappedBalance.isZero()
+    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN //Check is selected token is wrapped native token
+      ? wrappedBalance.isZero()
         ? nativeBalance.isZero()
           ? setOptionToWrap(false) //NO NATIVE BALANCE => DO NOTHING / Set option to wrap false
           : setOptionToWrap(true) //Native balance exists => give option to wrap
-        : //do nothing? prompt add native token to wallet?
-          setOptionToWrap(false)
-      : console.log('not wrapped native token');
+        : setOptionToWrap(false) //NO WRAPPED BALANCE => DO NOTHING / Set option to wrap false
+      : setOptionToWrap(false); // NOT WRAPPED NATIVE TOKEN SELECTED => DO NOTHING / Set option to wrap false
   };
 
   wrappedCheck();
   console.log(optionToWrap, 'option to wrap');
 
-  //TODO NEXT FIND NAME OF SELECTED ASSET AND DETERMINE WHETHER ITS THE WRAPPED NATIVE TOKEN
-
+  //NEXT TODO MAKE BUTTON FOR WRAP OPTION
 
   return (
     <Column
