@@ -70,6 +70,7 @@ const config: HardhatUserConfig = {
   paths: {
     sources: "./none",
     tests: "./tests",
+    artifacts: "./lib/contracts/out",
   },
   defaultNetwork: "hardhat",
   namedAccounts: {
