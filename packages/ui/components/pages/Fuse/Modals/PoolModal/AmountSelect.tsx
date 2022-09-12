@@ -21,15 +21,7 @@ import {
   NativePricedFuseAsset,
 } from '@midas-capital/types';
 import axios from 'axios';
-import {
-  BigNumber,
-  constants,
-  ContractTransaction,
-  ethers,
-  getDefaultProvider,
-  Signer,
-  utils,
-} from 'ethers';
+import { BigNumber, constants, ContractTransaction, ethers, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -58,7 +50,6 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { provider } from '@ui/utils/connectors';
 
 interface AmountSelectProps {
   assets: MarketData[];
@@ -97,6 +88,7 @@ const AmountSelect = ({
   const { cCard, cSwitch } = useColors();
 
   const [optionToWrap, setOptionToWrap] = useState<Boolean>(false); //This will replace Supply with Wrap when set to true.
+  const nativeSymbol = asset.underlyingSymbol.slice(1);
 
   const { data: maxBorrow } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
@@ -253,15 +245,6 @@ const AmountSelect = ({
     }
   };
 
-  // const wBNBcontract = new ethers.Contract(
-  //   midasSdk.chainSpecificAddresses.W_TOKEN,
-  //   ERC20Abi,
-  //   midasSdk.signer
-  // );
-
-  // console.log(midasSdk.chainSpecificAddresses.W_TOKEN, 'wToken address')
-  // console.log(midasSdk.chainDeployment, 'midasSDK')
-
   const wrappedCheck = async () => {
     //Checks if wrapped token exists
 
@@ -287,9 +270,11 @@ const AmountSelect = ({
   };
 
   wrappedCheck();
-  console.log(optionToWrap, 'option to wrap');
+  // console.log(optionToWrap, 'option to wrap');
 
-  //NEXT TODO MAKE BUTTON FOR WRAP OPTION
+  const onWrap = () => {
+    console.log(`WRAP ${nativeSymbol} to ${asset.underlyingSymbol}`)
+  };
 
   return (
     <Column
@@ -328,7 +313,6 @@ const AmountSelect = ({
           </Row>
 
           <ModalDivider />
-
           <Column
             mainAxisAlignment="flex-start"
             crossAxisAlignment="center"
@@ -419,50 +403,77 @@ const AmountSelect = ({
               )}
             </Column>
 
-            <StatsColumn
-              amount={amount}
-              assets={assets}
-              index={index}
-              mode={mode}
-              enableAsCollateral={enableAsCollateral}
-            />
+            {optionToWrap && mode === 0 ? (
+              <Text margin="10px" textAlign="center">
+                No {asset.underlyingSymbol} detected. Wrap your {nativeSymbol} to
+                supply {asset.underlyingSymbol} to the pool
+              </Text>
+            ) : (
+              <>
+                <StatsColumn
+                  amount={amount}
+                  assets={assets}
+                  index={index}
+                  mode={mode}
+                  enableAsCollateral={enableAsCollateral}
+                />
 
-            {showEnableAsCollateral ? (
-              <DashboardBox p={4} width="100%" mt={4}>
-                <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold">Enable As Collateral:</Text>
-                  <SwitchCSS
-                    symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
-                    color={cSwitch.bgColor}
-                  />
-                  <Switch
-                    h="20px"
-                    className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
-                    isChecked={enableAsCollateral}
-                    onChange={() => {
-                      setEnableAsCollateral((past) => !past);
-                    }}
-                  />
-                </Row>
-              </DashboardBox>
-            ) : null}
-
-            <Button
-              mt={4}
-              width="100%"
-              height="70px"
-              className={
-                isMobile ||
-                depositOrWithdrawAlertFontSize === '14px' ||
-                depositOrWithdrawAlertFontSize === '15px'
-                  ? 'confirm-button-disable-font-size-scale'
-                  : ''
-              }
-              onClick={onConfirm}
-              isDisabled={!amountIsValid}
-            >
-              {depositOrWithdrawAlert ?? 'Confirm'}
-            </Button>
+                {showEnableAsCollateral ? (
+                  <DashboardBox p={4} width="100%" mt={4}>
+                    <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
+                      <Text fontWeight="bold">Enable As Collateral:</Text>
+                      <SwitchCSS
+                        symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                        color={cSwitch.bgColor}
+                      />
+                      <Switch
+                        h="20px"
+                        className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                        isChecked={enableAsCollateral}
+                        onChange={() => {
+                          setEnableAsCollateral((past) => !past);
+                        }}
+                      />
+                    </Row>
+                  </DashboardBox>
+                ) : null}
+              </>
+            )}
+            {optionToWrap ? (
+              <Button
+                mt={4}
+                width="100%"
+                height="70px"
+                className={
+                  isMobile ||
+                  depositOrWithdrawAlertFontSize === '14px' ||
+                  depositOrWithdrawAlertFontSize === '15px'
+                    ? 'confirm-button-disable-font-size-scale'
+                    : ''
+                }
+                onClick={onWrap}
+                // isDisabled={!amountIsValid}
+              >
+                Wrap {nativeSymbol} to {asset.underlyingSymbol}
+              </Button>
+            ) : (
+              <Button
+                mt={4}
+                width="100%"
+                height="70px"
+                className={
+                  isMobile ||
+                  depositOrWithdrawAlertFontSize === '14px' ||
+                  depositOrWithdrawAlertFontSize === '15px'
+                    ? 'confirm-button-disable-font-size-scale'
+                    : ''
+                }
+                onClick={onConfirm}
+                isDisabled={!amountIsValid}
+              >
+                {depositOrWithdrawAlert ?? 'Confirm'}
+              </Button>
+            )}
           </Column>
         </>
       )}
