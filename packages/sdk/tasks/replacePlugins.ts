@@ -94,7 +94,7 @@ export default task("plugins:identify", "Prints the markets with plugins and the
 
           const pluginConfigs = getPluginConfigs(new ethers.utils.AbiCoder(), chainid);
 
-          const config = pluginConfigs.find(pc => pc.market == marketAddress);
+          const config = pluginConfigs.find((pc) => pc.market == marketAddress);
 
           if (!config) {
             console.log(`no new plugin for old plugin ${currentPluginAddress}`);
@@ -213,7 +213,6 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
   }
 );
 
-
 type PluginConfig = {
   name: string;
   strategy: string;
@@ -246,8 +245,8 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba", // _rewardsDestination
           // abicoder.encode(["address[]"], [
-              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
-            // ]), // _rewardTokens
+          ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"],
+          // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "2brl",
@@ -262,8 +261,8 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0xccc9BEF35C50A3545e01Ef72Cc957E0aec8B2e7C", // _rewardsDestination
           // abicoder.encode(["address[]"], [
-              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
-            // ]), // _rewardTokens
+          ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"],
+          // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "val3EPS",
@@ -279,8 +278,8 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0x7479dd29b9256aB74c9bf84d6f9CE6e30014d248", // _rewardsDestination
           // abicoder.encode(["address[]"], [
-              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
-            // ]), // _rewardTokens
+          ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"],
+          // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "valdai3EPS",
@@ -295,8 +294,8 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
           "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
           "0x6f9B6ccD027d1c6Ed09ee215B9Ca5B85a57C6eA1", // _rewardsDestination
           // abicoder.encode(["address[]"], [
-              ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"]
-            // ]), // _rewardTokens
+          ["0xaf41054c1487b0e5e2b9250c0332ecbce6ce9d71", "0x84c97300a190676a19D1E13115629A11f8482Bd1"],
+          // ]), // _rewardTokens
         ],
         flywheelIndices: [0, 1],
         name: "3EPS",
@@ -364,7 +363,7 @@ function getPluginConfigs(abicoder: ethers.utils.AbiCoder, chainid: string): Plu
           "0x528330fF7c358FE1bAe348D23849CCed8edA5917", // IGuniPool _pool
           "0xa5A14c3814d358230a56e8f011B8fc97A508E890", // _rewardsDestination
           // abicoder.encode(["address[]"], [
-            ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"]
+          ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"],
           // ]), // _rewardTokens
         ],
       },

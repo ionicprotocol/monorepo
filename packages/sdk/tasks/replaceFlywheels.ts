@@ -2,11 +2,11 @@ import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
+import { ERC20 } from "../lib/contracts/typechain/ERC20";
 import { FlywheelCore } from "../lib/contracts/typechain/FlywheelCore";
 import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol";
 import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
 import { MidasFlywheel } from "../lib/contracts/typechain/MidasFlywheel";
-import { ERC20 } from "../lib/contracts/typechain/ERC20";
 
 export default task("flyhwheels:replace", "Replaces an old flyhwheel contract with a new one").setAction(
   async ({}, { ethers, deployments, getChainId }) => {
@@ -51,7 +51,9 @@ export default task("flyhwheels:replace", "Replaces an old flyhwheel contract wi
           const balanceOld = await erc20.balanceOf(flywheelRewards);
 
           if (!balanceOld.isZero()) {
-            console.log(`OLD DYNAMIC REWARDS ${flywheelRewards} STILL HAS IN IT ${balanceOld} TOKENS OF ${rewardToken}`);
+            console.log(
+              `OLD DYNAMIC REWARDS ${flywheelRewards} STILL HAS IN IT ${balanceOld} TOKENS OF ${rewardToken}`
+            );
           }
 
           const fwConfig = config.dynamicFlywheels.find((c) => c.rewardToken == rewardToken);
