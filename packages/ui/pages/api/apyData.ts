@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
+import { APYResult } from '@ui/types/ComponentPropsType';
 
 const querySchema = yup.object().shape({
   chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
@@ -16,7 +17,6 @@ const querySchema = yup.object().shape({
 });
 
 type Query = yup.InferType<typeof querySchema>;
-export type APYResult = { apy: number } | { apy?: undefined; error: string };
 
 interface SupabaseRow {
   created_at: Date;

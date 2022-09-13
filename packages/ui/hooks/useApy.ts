@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { APYResult } from '../pages/api/apyData';
-
 import { useMidas } from '@ui/context/MidasContext';
+import { APYResult } from '@ui/types/ComponentPropsType';
 
 export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
   const {

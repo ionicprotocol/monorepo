@@ -16,8 +16,6 @@ import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
 
-import { PoolData } from '../../../../../types/TokensDataMap';
-
 import { StatRow } from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails/StatRow';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
@@ -25,6 +23,7 @@ import { useMidas } from '@ui/context/MidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { PoolData } from '@ui/types/TokensDataMap';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 

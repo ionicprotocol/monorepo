@@ -2,8 +2,8 @@ import { MidasSdk } from '@midas-capital/sdk';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
-import { useMultiMidas } from '../../context/MultiMidasContext';
-import { useUSDPrices } from '../useUSDPrices';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useUSDPrices } from '@ui/hooks/useUSDPrices';
 
 export const fetchFuseNumberTVL = async (midasSdk: MidasSdk, usdPrice: number) => {
   const tvlNative = await midasSdk.getTotalValueLocked(false);
