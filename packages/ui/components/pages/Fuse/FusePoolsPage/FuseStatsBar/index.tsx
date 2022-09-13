@@ -18,6 +18,7 @@ import { useMemo } from 'react';
 import { FaDiscord } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DISCORD_URL, URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
@@ -64,12 +65,16 @@ const FuseStatsBar = () => {
           favorite tokens.
         </Text>
         <HStack gap={2}>
-          <Link href={DISCORD_URL} isExternal>
-            <FaDiscord fontSize={30} />
-          </Link>
-          <Link href={URL_MIDAS_DOCS} isExternal>
-            <SiGitbook fontSize={30} />
-          </Link>
+          <SimpleTooltip label="Discord">
+            <Link href={DISCORD_URL} isExternal>
+              <FaDiscord fontSize={30} />
+            </Link>
+          </SimpleTooltip>
+          <SimpleTooltip label="Gitbook">
+            <Link href={URL_MIDAS_DOCS} isExternal>
+              <SiGitbook fontSize={30} />
+            </Link>
+          </SimpleTooltip>
         </HStack>
       </Flex>
 
