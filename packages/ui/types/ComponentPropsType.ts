@@ -252,3 +252,5 @@ export interface TokenDataResponse {
   overlayTextColor: string;
   symbol: string;
 }
+
+export type APYResult = { apy: number } | { apy?: undefined; error: string };
