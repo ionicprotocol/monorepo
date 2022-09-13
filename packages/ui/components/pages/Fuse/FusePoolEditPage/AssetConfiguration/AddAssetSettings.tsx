@@ -16,8 +16,8 @@ import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useQueryClient } from 'react-query';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';

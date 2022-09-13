@@ -4,7 +4,7 @@ import { BigNumber, utils } from 'ethers';
 
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useMidas } from '@ui/context/MidasContext';
 
 export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {

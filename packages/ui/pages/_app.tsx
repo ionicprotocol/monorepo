@@ -3,7 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import LogRocket from 'logrocket';
 import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { createClient, WagmiConfig } from 'wagmi';
 

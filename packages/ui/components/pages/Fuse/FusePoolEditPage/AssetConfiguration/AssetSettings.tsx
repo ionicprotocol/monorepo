@@ -25,7 +25,7 @@ import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 
 import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';

@@ -13,7 +13,8 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
+
 import { Chain } from 'wagmi';
 
 import { useColors } from '@ui/hooks/useColors';
