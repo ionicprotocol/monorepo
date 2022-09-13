@@ -61,6 +61,31 @@ export const deployConfig: ChainDeployConfig = {
       cycleLength: 1,
       name: assetSymbols.GLINT,
     },
+    {
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.STELLA)!.underlying,
+      cycleLength: 1,
+      name: assetSymbols.STELLA,
+    },
+    {
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.ATOM)!.underlying,
+      cycleLength: 1,
+      name: assetSymbols.ATOM,
+    },
+    {
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.GLMR)!.underlying,
+      cycleLength: 1,
+      name: assetSymbols.GLMR,
+    },
+    {
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.CELR)!.underlying,
+      cycleLength: 1,
+      name: assetSymbols.CELR,
+    },
+    {
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC)!.underlying,
+      cycleLength: 1,
+      name: assetSymbols.USDC,
+    },
   ],
   cgId: moonbeam.specificParams.cgId,
 };
