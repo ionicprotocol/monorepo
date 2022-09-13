@@ -1,10 +1,10 @@
 import { FuseAsset } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { useQuery } from '@tanstack/react-query';
 
 export const useBorrowMinimum = (asset: FuseAsset) => {
   const { midasSdk, coingeckoId } = useMidas();
@@ -34,8 +34,8 @@ export const useBorrowMinimum = (asset: FuseAsset) => {
       minBorrowUSD: Number(utils.formatUnits(response.data, 18)) * usdPrice,
       minBorrowNative: response.data,
       minBorrowAsset: response.data
-        .div(asset.underlyingPrice)
-        .mul(utils.parseUnits('1', asset.underlyingDecimals)),
+        .mul(utils.parseUnits('1', asset.underlyingDecimals))
+        .div(asset.underlyingPrice),
     };
   }, [response, usdPrice, asset]);
 

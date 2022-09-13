@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Button, Link as ChakraLink } from '@chakra-ui/react';
 import { Provider, Web3Provider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
+import { useQueryClient } from '@tanstack/react-query';
 import {
   createContext,
   Dispatch,
@@ -13,8 +14,6 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
-
 import { Chain } from 'wagmi';
 
 import { useColors } from '@ui/hooks/useColors';

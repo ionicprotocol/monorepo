@@ -9,12 +9,14 @@ import {
   Tr,
   useClipboard,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
-import { useQueryClient } from '@tanstack/react-query';
+
+import { PoolData } from '../../../../../types/TokensDataMap';
 
 import { StatRow } from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails/StatRow';
 import { MidasBox } from '@ui/components/shared/Box';
@@ -25,7 +27,6 @@ import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
-import { PoolData } from '../../../../../types/TokensDataMap';
 
 const PoolDetails = ({ data: poolData }: { data: PoolData }) => {
   const isMobile = useIsMobile();

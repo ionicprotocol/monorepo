@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "lint-fix": "eslint ./** -c .eslintrc.json --fix --ext ts,tsx,json",
+    "lint-fix": "eslint '**/*.{ts,tsx}' -c .eslintrc.json --fix --ext ts,tsx,json",
     "postinstall": "chakra-cli tokens ./theme/index.ts"
   },
   "dependencies": {

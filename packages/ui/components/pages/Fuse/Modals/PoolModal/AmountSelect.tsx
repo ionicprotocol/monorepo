@@ -20,11 +20,11 @@ import {
   FundOperationMode,
   NativePricedFuseAsset,
 } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';

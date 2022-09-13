@@ -1,11 +1,11 @@
 import { MidasSdk } from '@midas-capital/sdk';
 import { FundOperationMode, NativePricedFuseAsset } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import { BigNumber, utils } from 'ethers';
 
+import { useMidas } from '@ui/context/MidasContext';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
-import { useQuery } from '@tanstack/react-query';
-import { useMidas } from '@ui/context/MidasContext';
 
 export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
   const {
