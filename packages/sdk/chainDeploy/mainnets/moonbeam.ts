@@ -38,6 +38,10 @@ export const deployConfig: ChainDeployConfig = {
         token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.STELLA)!.underlying,
         baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
       },
+      {
+        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.CELR)!.underlying,
+        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
+      },
     ],
     uniswapOracleLpTokens: [
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // GLMR-USDC
@@ -247,19 +251,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
-
-  //// deploy uniswap twap price oracle v2 resolver
-
-  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
-    from: deployer,
-    args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (twapPriceOracleResolver.transactionHash) {
-    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
-  }
-  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
 
   ////
 

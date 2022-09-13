@@ -243,6 +243,14 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", STELLA),
   },
+  {
+    symbol: assetSymbols.CELR,
+    underlying: CELR,
+    name: "CELR Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", CELR),
+  },
 ];
 
 export default assets;
