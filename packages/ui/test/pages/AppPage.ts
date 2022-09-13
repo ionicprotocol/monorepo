@@ -79,7 +79,6 @@ export abstract class AppPage {
       const addressInput = await this.Metamask.page.waitForSelector('#custom-address');
       if (addressInput) {
         addressInput.type(tokenAddress);
-
         await this.Metamask.page.waitForTimeout(4000);
 
         await this.Metamask.page.waitForSelector(
@@ -90,7 +89,7 @@ export abstract class AppPage {
         );
         if (nextButton) {
           await nextButton.click();
-
+          await this.Metamask.page.waitForSelector('footer > button');
           const buttons = await this.Metamask.page.$$('footer > button');
           await buttons[1].click();
 
