@@ -48,7 +48,7 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
-import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AmountSelectProps {
@@ -330,9 +330,10 @@ const AmountSelect = ({
                           minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
                         }${
                           minBorrowAsset
-                            ? ` / ${Number(
-                                utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
-                              ).toFixed(2)} ${asset.underlyingSymbol}`
+                            ? ` / ${toCeil(
+                                Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
+                                2
+                              )} ${asset.underlyingSymbol}`
                             : ''
                         } for now.`}
                       </Alert>
