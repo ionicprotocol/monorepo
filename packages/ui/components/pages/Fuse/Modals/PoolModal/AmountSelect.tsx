@@ -50,6 +50,8 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { useFusePools } from '@ui/hooks/fuse/useFusePools';
+import { useNetwork } from 'wagmi';
 
 interface AmountSelectProps {
   assets: MarketData[];
@@ -71,7 +73,7 @@ const AmountSelect = ({
 }: AmountSelectProps) => {
   const asset = assets[index];
 
-  const { midasSdk, setPendingTxHash, address } = useMidas();
+  const { midasSdk, setPendingTxHash, address, currentChain } = useMidas();
 
   const errorToast = useErrorToast();
 
@@ -275,6 +277,8 @@ const AmountSelect = ({
   const onWrap = () => {
     console.log(`WRAP ${nativeSymbol} to ${asset.underlyingSymbol}`)
   };
+  console.log(useNetwork().chain, 'usenetwork wagmi')
+  console.log( currentChain ,'chain specific')
 
   return (
     <Column
