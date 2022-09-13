@@ -1,4 +1,4 @@
-name: Liquidator-Bot/Push/PR - Create and publish a Docker image
+name: Liquidator-Bot/Push/PR - Create and publish a Docker image & Deploy
 
 on:
   push:
