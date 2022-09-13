@@ -18,7 +18,7 @@ export default task("market:upgrade", "Upgrades a market's implementation")
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const comptroller = sdk.createComptroller(comptrollerAddress);
+    const comptroller = sdk.createComptroller(comptrollerAddress, signer);
 
     const allMarkets = await comptroller.callStatic.getAllMarkets();
 
