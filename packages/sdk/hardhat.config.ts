@@ -28,6 +28,8 @@ import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
 import "./tasks/upgradePools";
 import "./tasks/replaceDeployer";
+import "./tasks/replacePlugins";
+import "./tasks/replaceFlywheels";
 
 import "./tasks/one-time/dot-dot-bsc-plugins";
 // import "./tasks/one-time/jarvis-polygon-plugins";
