@@ -13,7 +13,7 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { ERC20Abi, MidasSdk } from '@midas-capital/sdk';
+import { MidasSdk } from '@midas-capital/sdk';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
@@ -21,7 +21,7 @@ import {
   NativePricedFuseAsset,
 } from '@midas-capital/types';
 import axios from 'axios';
-import { BigNumber, constants, ContractTransaction, ethers, utils } from 'ethers';
+import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
 import { useQuery } from 'react-query';
@@ -50,8 +50,6 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { useFusePools } from '@ui/hooks/fuse/useFusePools';
-import { useNetwork } from 'wagmi';
 
 interface AmountSelectProps {
   assets: MarketData[];
@@ -89,11 +87,18 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
   const { cCard, cSwitch } = useColors();
 
-  const [optionToWrap, setOptionToWrap] = useState<Boolean>(false); //This will replace Supply with Wrap when set to true.
-  const nativeSymbol = asset.underlyingSymbol.slice(1);
+  // const [optionToWrap, setOptionToWrap] = useState<boolean>(false); //This will replace Supply with Wrap when set to true.
 
   const { data: maxBorrow } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
+  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+
+  const nativeSymbol = currentChain.nativeCurrency.symbol;
+  const optionToWrap =
+    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN &&
+    mode === FundOperationMode.SUPPLY &&
+    myBalance?.isZero() &&
+    !myNativeBalance?.isZero();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -130,8 +135,10 @@ const AmountSelect = ({
       }
 
       try {
-        const max = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
-        if (mode === FundOperationMode.BORROW) {
+        const max = optionToWrap
+          ? (myNativeBalance as BigNumber)
+          : ((await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber);
+        if (mode === FundOperationMode.BORROW && optionToWrap === false) {
           return amount.lte(max) && amount.gte(minBorrowAsset);
         } else {
           return amount.lte(max);
@@ -247,38 +254,9 @@ const AmountSelect = ({
     }
   };
 
-  const wrappedCheck = async () => {
-    //Checks if wrapped token exists
-
-    const wrappedContract = new ethers.Contract(
-      midasSdk.chainSpecificAddresses.W_TOKEN,
-      ERC20Abi,
-      midasSdk.signer
-    );
-
-    const wrappedBalance: BigNumber = await wrappedContract.balanceOf(address);
-    const nativeBalance: BigNumber = await midasSdk.signer.getBalance();
-
-    const wrappedBalanceDeci = utils.formatEther(wrappedBalance);
-    const nativeBalanceDeci = utils.formatEther(nativeBalance);
-
-    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN //Check is selected token is wrapped native token
-      ? wrappedBalance.isZero()
-        ? nativeBalance.isZero()
-          ? setOptionToWrap(false) //NO NATIVE BALANCE => DO NOTHING / Set option to wrap false
-          : setOptionToWrap(true) //Native balance exists => give option to wrap
-        : setOptionToWrap(false) //NO WRAPPED BALANCE => DO NOTHING / Set option to wrap false
-      : setOptionToWrap(false); // NOT WRAPPED NATIVE TOKEN SELECTED => DO NOTHING / Set option to wrap false
-  };
-
-  wrappedCheck();
-  // console.log(optionToWrap, 'option to wrap');
-
   const onWrap = () => {
-    console.log(`WRAP ${nativeSymbol} to ${asset.underlyingSymbol}`)
+    console.log(`WRAP ${nativeSymbol} to ${asset.underlyingSymbol}`);
   };
-  console.log(useNetwork().chain, 'usenetwork wagmi')
-  console.log( currentChain ,'chain specific')
 
   return (
     <Column
@@ -343,7 +321,17 @@ const AmountSelect = ({
                   {asset.underlyingSymbol}
                 </Text>
               </Row>
-
+              {optionToWrap ? (
+                <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
+                  <Text mr={2}>Native Token Balance:</Text>
+                  <Text>
+                    {myNativeBalance
+                      ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
+                      : 0}{' '}
+                    {nativeSymbol}
+                  </Text>
+                </Row>
+              ) : null}
               {mode === FundOperationMode.BORROW && asset.liquidity.isZero() ? (
                 <Alert status="info">
                   <AlertIcon />
@@ -392,6 +380,7 @@ const AmountSelect = ({
                         mode={mode}
                         asset={asset}
                         updateAmount={updateAmount}
+                        optionToWrap={optionToWrap}
                       />
                     </Row>
                   </DashboardBox>
@@ -407,10 +396,10 @@ const AmountSelect = ({
               )}
             </Column>
 
-            {optionToWrap && mode === 0 ? (
+            {optionToWrap ? (
               <Text margin="10px" textAlign="center">
-                No {asset.underlyingSymbol} detected. Wrap your {nativeSymbol} to
-                supply {asset.underlyingSymbol} to the pool
+                No {asset.underlyingSymbol} detected. Wrap your {nativeSymbol} to supply{' '}
+                {asset.underlyingSymbol} to the pool
               </Text>
             ) : (
               <>
@@ -456,7 +445,7 @@ const AmountSelect = ({
                     : ''
                 }
                 onClick={onWrap}
-                // isDisabled={!amountIsValid}
+                isDisabled={!amountIsValid}
               >
                 Wrap {nativeSymbol} to {asset.underlyingSymbol}
               </Button>
@@ -765,10 +754,12 @@ const TokenNameAndMaxButton = ({
   updateAmount,
   asset,
   mode,
+  optionToWrap,
 }: {
   asset: NativePricedFuseAsset;
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
+  optionToWrap: boolean;
 }) => {
   const { midasSdk, address } = useMidas();
 
@@ -783,7 +774,12 @@ const TokenNameAndMaxButton = ({
     setIsLoading(true);
 
     try {
-      const maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
+      let maxBN;
+      if (optionToWrap) {
+        maxBN = await midasSdk.signer.getBalance();
+      } else {
+        maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
+      }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
@@ -823,7 +819,7 @@ const TokenNameAndMaxButton = ({
           <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
         <Heading fontSize="18px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
-          {asset.underlyingSymbol}
+          {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
         </Heading>
       </Row>
 
