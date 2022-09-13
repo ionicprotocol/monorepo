@@ -3,7 +3,7 @@ import { MidasSdk } from '@midas-capital/sdk';
 import { SupportedChains } from '@midas-capital/types';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 
-import { chainIdToConfig } from '../types/ChainMetaData';
+import { chainIdToConfig } from '@ui/types/ChainMetaData';
 
 export interface MultiMidasContextData {
   sdks: Partial<Record<SupportedChains, MidasSdk>>;

@@ -3,10 +3,10 @@ import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   SupportedChains,
 } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';

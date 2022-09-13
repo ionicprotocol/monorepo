@@ -1,7 +1,7 @@
 import { FuseAsset } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';

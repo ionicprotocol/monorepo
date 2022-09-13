@@ -24,7 +24,9 @@ export interface FuseAsset {
   /** scaled by `underlying.decimals()`  */
   underlyingBalance: BigNumber;
 
+  /** scaled by `1e18` */
   collateralFactor: BigNumber;
+  /** scaled by `1e18` */
   reserveFactor: BigNumber;
 
   adminFee: BigNumber;
