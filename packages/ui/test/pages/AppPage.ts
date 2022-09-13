@@ -68,7 +68,7 @@ export abstract class AppPage {
   }
 
   public async addTokenToMetamask(tokenAddress: string): Promise<void> {
-    await this.blockingWait(2);
+    // await this.blockingWait(1);
     await this.Metamask.page.bringToFront();
     await this.closeMetamaskWhatsNew();
 

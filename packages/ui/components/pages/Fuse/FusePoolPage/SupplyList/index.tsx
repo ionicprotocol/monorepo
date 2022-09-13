@@ -39,7 +39,7 @@ export const SupplyList = ({
 
   return (
     <Box overflowX="auto">
-      <Table variant={'unstyled'} size={'sm'}>
+      <Table id="supplyList" variant={'unstyled'} size={'sm'}>
         <TableCaption
           mt="0"
           placement="top"

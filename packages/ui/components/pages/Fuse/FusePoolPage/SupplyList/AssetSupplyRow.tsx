@@ -157,7 +157,12 @@ export const AssetSupplyRow = ({
           bgColor: cCard.hoverBgColor,
         }}
       >
-        <Td cursor={'pointer'} onClick={openModal} pr={0}>
+        <Td
+          cursor={'pointer'}
+          onClick={openModal}
+          className={tokenData?.symbol ?? asset.underlyingSymbol}
+          pr={0}
+        >
           <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
             <CTokenIcon size="sm" address={asset.underlyingToken} />
             <VStack alignItems={'flex-start'} ml={2}>
@@ -354,7 +359,12 @@ export const AssetSupplyRow = ({
                 Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) >= UP_LIMIT
               }
             >
-              <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
+              <Text
+                id="supplyTokenBalance"
+                color={cCard.txtColor}
+                mt={1}
+                fontSize={{ base: '2.8vw', sm: '0.8rem' }}
+              >
                 {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}
                 {Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) >
                   DOWN_LIMIT &&

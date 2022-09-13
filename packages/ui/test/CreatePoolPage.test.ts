@@ -46,7 +46,7 @@ describe('Create Pool:', () => {
   beforeEach(async () => {});
 
   afterAll(async () => {
-    // browser.close();
+    browser.close();
   });
 
   test(`User can create pool`, async () => {

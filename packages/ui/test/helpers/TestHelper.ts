@@ -43,12 +43,12 @@ export class TestHelper {
     try {
       metamask = await setupMetamask(browser, { seed: seed, password: pass });
       await metamask.addNetwork({
-        networkName: 'Chapel',
-        rpc: 'https://data-seed-prebsc-2-s1.binance.org:8545/',
-        chainId: 97,
-        symbol: 'BNB',
+        networkName: 'forked',
+        rpc: 'http://localnode.com:8545/',
+        chainId: 137,
+        symbol: 'MATIC',
       });
-      await metamask.switchNetwork('Chapel');
+      await metamask.switchNetwork('forked');
     } catch (error) {
       throw error;
     }
