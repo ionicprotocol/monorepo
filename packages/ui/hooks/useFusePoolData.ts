@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useSupportedUnderlyings } from '@ui/hooks/useSupportedAssets';

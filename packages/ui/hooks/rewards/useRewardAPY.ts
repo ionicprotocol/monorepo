@@ -3,7 +3,7 @@
 
 import { MidasSdk } from '@midas-capital/sdk';
 import { BigNumber, utils } from 'ethers';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
@@ -203,6 +203,7 @@ export const getPriceFromOracles = async (
 
   // Pool's MPO
   const comptrollerInstance = midasSdk.createComptroller(comptroller);
+  console.log({ comptrollerInstance });
   const oracleAddress: string = await comptrollerInstance.callStatic.oracle();
   const oracleContract = midasSdk.createOracle(oracleAddress, 'MasterPriceOracle');
 

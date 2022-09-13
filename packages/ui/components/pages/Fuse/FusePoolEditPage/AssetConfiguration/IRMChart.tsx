@@ -3,7 +3,7 @@
 import { Box, Center, Spinner, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';

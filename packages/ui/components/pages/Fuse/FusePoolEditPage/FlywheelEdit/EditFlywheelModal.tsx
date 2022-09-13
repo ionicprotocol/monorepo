@@ -24,7 +24,7 @@ import { Web3Provider } from '@ethersproject/providers';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { FilterButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';

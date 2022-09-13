@@ -1,6 +1,6 @@
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useIncentivesWithRates } from '@ui/hooks/rewards/useRewardAPY';

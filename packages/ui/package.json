@@ -22,6 +22,8 @@
     "@midas-capital/sdk": "workspace:*",
     "@midas-capital/types": "workspace:*",
     "@supabase/supabase-js": "^1.35.6",
+    "@tanstack/react-query": "^4.3.4",
+    "@tanstack/react-query-devtools": "^4.3.5",
     "apexcharts": "^3.35.5",
     "axios": "^0.27.2",
     "ethers": "^5.7.0",
@@ -40,7 +42,6 @@
     "react-i18next": "^11.18.6",
     "react-icons": "^4.4.0",
     "react-jazzicon": "^1.0.4",
-    "react-query": "^3.39.2",
     "wagmi": "^0.6.5",
     "yup": "^0.32.11"
   },

@@ -1,6 +1,6 @@
 import { neondevnet } from '@midas-capital/chains';
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export function useUSDPrice(coingeckoId: string) {
   return useQuery(

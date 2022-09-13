@@ -1,6 +1,6 @@
 import * as ChainConfigs from '@midas-capital/chains';
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 const ChainIdCoingeckoIdMapping = Object.entries(ChainConfigs)
   .map(([, config]): [string, string] => [config.chainId.toString(), config.specificParams.cgId])

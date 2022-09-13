@@ -1,6 +1,6 @@
 import { MidasSdk } from '@midas-capital/sdk';
 import { utils } from 'ethers';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '../../context/MultiMidasContext';
 import { useUSDPrices } from '../useUSDPrices';

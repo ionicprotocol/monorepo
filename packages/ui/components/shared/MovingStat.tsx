@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import { ABILLY } from '@ui/constants/index';
