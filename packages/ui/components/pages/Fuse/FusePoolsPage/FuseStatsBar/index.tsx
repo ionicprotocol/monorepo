@@ -4,6 +4,8 @@ import {
   Flex,
   FlexProps,
   Heading,
+  HStack,
+  Link,
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -13,7 +15,11 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
+import { FaDiscord } from 'react-icons/fa';
+import { SiGitbook } from 'react-icons/si';
 
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { DISCORD_URL, URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -53,11 +59,23 @@ const FuseStatsBar = () => {
         <Heading fontSize="37px" lineHeight="40px" fontWeight="bold">
           Unleash the power of your assets
         </Heading>
-        <Text fontSize="18px" lineHeight="31px" mt="19px" fontWeight="medium" zIndex="100">
+        <Text fontSize="18px" lineHeight="31px" my="19px" fontWeight="medium" zIndex="100">
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
         </Text>
+        <HStack gap={2}>
+          <SimpleTooltip label="Discord">
+            <Link href={DISCORD_URL} isExternal>
+              <FaDiscord fontSize={30} />
+            </Link>
+          </SimpleTooltip>
+          <SimpleTooltip label="Gitbook">
+            <Link href={URL_MIDAS_DOCS} isExternal>
+              <SiGitbook fontSize={30} />
+            </Link>
+          </SimpleTooltip>
+        </HStack>
       </Flex>
 
       <Popover trigger="hover">
