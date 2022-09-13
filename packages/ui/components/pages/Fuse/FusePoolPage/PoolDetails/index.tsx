@@ -23,15 +23,15 @@ import { useMidas } from '@ui/context/MidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import { PoolData } from '@ui/types/TokensDataMap';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolDetails = ({ data: poolData }: { data: PoolData }) => {
+const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
   const isMobile = useIsMobile();
   const { assets, totalSuppliedFiat, totalBorrowedFiat, totalAvailableLiquidityFiat, comptroller } =
     poolData || {
-      assets: [],
+      assets: [] as Array<MarketData>,
       totalSuppliedFiat: 0,
       totalBorrowedFiat: 0,
       totalAvailableLiquidityFiat: 0,

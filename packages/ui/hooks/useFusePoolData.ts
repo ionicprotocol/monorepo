@@ -10,10 +10,10 @@ export const useFusePoolData = (poolId: string) => {
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
-  return useQuery<PoolData | null>(
+  return useQuery<PoolData | undefined>(
     ['useFusePoolData', poolId, address, currentChain.id],
     async () => {
-      if (!usdPrice) return null;
+      if (!usdPrice) return;
 
       const res = await midasSdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];

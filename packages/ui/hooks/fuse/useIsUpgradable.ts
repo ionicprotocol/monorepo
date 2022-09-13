@@ -3,10 +3,13 @@ import { useQuery } from '@tanstack/react-query';
 import { useMidas } from '@ui/context/MidasContext';
 
 export const useIsUpgradeable = (comptrollerAddress: string) => {
-  const { midasSdk } = useMidas();
+  const {
+    midasSdk,
+    currentChain: { id },
+  } = useMidas();
 
   const { data } = useQuery(
-    comptrollerAddress + ' isUpgradeable',
+    ['useIsUpgradeable', id, comptrollerAddress],
     async () => {
       const comptroller = midasSdk.createComptroller(comptrollerAddress);
 
