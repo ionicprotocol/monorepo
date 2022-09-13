@@ -14,10 +14,12 @@ export async function http<T>(
   headers: Headers = defaultHeaders,
   params: Record<string, string> = {}
 ): Promise<AxiosResponse<T>> {
+  let response: AxiosResponse<T>;
   try {
-    const response: AxiosResponse<T> = await axios[method](request, { headers, ...params });
-    return response;
+    response = await axios[method](request, { headers, ...params });
   } catch (error) {
     console.log(Object.keys(error), error.message);
+    response = error.response;
   }
+  return response;
 }

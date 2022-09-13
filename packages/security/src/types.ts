@@ -1,9 +1,5 @@
-import { ChainlinkFeedResponseHeartbeat, ChainlinkFeedResponseStatus } from "./enums";
-
-enum ChainLinkFeedStatusEnum {}
-enum ChainLinkFeedHeartbeatEnum {}
-export type ChainLinkFeedStatus = ChainLinkFeedStatusEnum | ChainlinkFeedResponseStatus;
-export type ChainLinkFeedHeartbeat = ChainLinkFeedHeartbeatEnum | ChainlinkFeedResponseHeartbeat;
+export type ChainLinkFeedStatus = "verified" | "monitored" | "custom" | "deprecating";
+export type ChainLinkFeedHeartbeat = "1m" | "10m" | "15m" | "24h";
 
 export type ChainLinkAssetConfig = {
   symbolMappings: Array<Record<string, string>>;
@@ -16,15 +12,26 @@ export type ChainLinkFeed = {
   feedStatus: ChainLinkFeedStatus;
   validators: number;
   heartbeat: number;
+  score?: number;
 };
 
 export type ChainLinkFeedResponse = {
   pair: string;
   assetName: string;
   deviationThreshold: number;
-  heartbeat: ChainlinkFeedResponseHeartbeat;
+  heartbeat: ChainLinkFeedHeartbeat;
   decimals: string;
   proxy: string;
-  feedCategory: ChainlinkFeedResponseStatus;
+  feedCategory: ChainLinkFeedStatus;
   feedType: string;
+};
+
+export type ScoreRange = {
+  range: [number, number] | number;
+  score: number;
+};
+
+export type ScoreEnum = {
+  enum: string;
+  score: number;
 };
