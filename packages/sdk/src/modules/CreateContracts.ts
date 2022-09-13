@@ -34,7 +34,6 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       ) as RewardsDistributorDelegate;
     }
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      console.log({ comptrollerAddress, signerOrProvider, abi: this.chainDeployment.Comptroller.abi });
       return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signerOrProvider) as Comptroller;
     }
 

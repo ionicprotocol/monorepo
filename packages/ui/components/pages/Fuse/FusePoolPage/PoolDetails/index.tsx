@@ -38,8 +38,6 @@ const PoolDetails = ({ data: poolData }: { data: PoolData }) => {
       comptroller: '',
     };
 
-  console.log({ poolData });
-
   const { cCard } = useColors();
   const router = useRouter();
   const poolId = router.query.poolId as string;

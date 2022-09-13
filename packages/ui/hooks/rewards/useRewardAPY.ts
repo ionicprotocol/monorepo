@@ -203,7 +203,6 @@ export const getPriceFromOracles = async (
 
   // Pool's MPO
   const comptrollerInstance = midasSdk.createComptroller(comptroller);
-  console.log({ comptrollerInstance });
   const oracleAddress: string = await comptrollerInstance.callStatic.oracle();
   const oracleContract = midasSdk.createOracle(oracleAddress, 'MasterPriceOracle');
 
