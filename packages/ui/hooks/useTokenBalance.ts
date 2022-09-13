@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
+import { useQuery } from '@tanstack/react-query';
 import { BigNumber, Contract } from 'ethers';
-import { useQuery } from 'react-query';
 import { erc20ABI } from 'wagmi';
 
 import { useMidas } from '@ui/context/MidasContext';

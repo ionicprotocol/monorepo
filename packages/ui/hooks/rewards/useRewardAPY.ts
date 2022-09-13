@@ -2,8 +2,8 @@
 // export const
 
 import { MidasSdk } from '@midas-capital/sdk';
+import { useQuery } from '@tanstack/react-query';
 import { BigNumber, utils } from 'ethers';
-import { useQuery } from 'react-query';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
