@@ -51,6 +51,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying, // GLMR-madUSDC
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["STELLA-GLMR"])!.underlying, // STELLA-GLMR
       assets.find((a: SupportedAsset) => a.symbol === assetSymbols["CELR-GLMR"])!.underlying, // CELR-GLMR
+      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["ATOM-GLMR"])!.underlying, // ATOM-GLMR
     ],
     flashSwapFee: 30,
   },
