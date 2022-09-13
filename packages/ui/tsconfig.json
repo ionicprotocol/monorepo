@@ -19,5 +19,6 @@
     "composite": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["api", "node_modules"]
+  "exclude": ["api", "node_modules"],
+  "sourceMap": true,
 }

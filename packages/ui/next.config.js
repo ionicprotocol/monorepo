@@ -2,6 +2,7 @@
 
 nextConfig = {
   reactStrictMode: true,
+  productionBrowserSourceMaps: true,
   env: {
     BSC: process.env.BSC,
     EVMOS: process.env.EVMOS,
