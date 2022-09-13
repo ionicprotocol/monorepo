@@ -84,8 +84,12 @@ export const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
         flexShrink={0}
       >
         {data ? (
-          data.supplierRates === null ? (
-            <Center color="#FFFFFF" height="100%">
+          selectedAsset.isBorrowPaused ? (
+            <Center height="100%">
+              <Text>This asset is not borrowable.</Text>
+            </Center>
+          ) : data.supplierRates === null ? (
+            <Center height="100%">
               <Text>No graph is available for this asset(&apos)s interest curves.</Text>
             </Center>
           ) : (
@@ -172,7 +176,9 @@ export const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
         />
 
         <CaptionedStat
-          stat={shortUsdFormatter(selectedAsset.totalBorrowFiat)}
+          stat={
+            selectedAsset.isBorrowPaused ? '-' : shortUsdFormatter(selectedAsset.totalBorrowFiat)
+          }
           statSize="lg"
           captionSize="xs"
           caption={'Asset Borrowed'}
@@ -180,7 +186,7 @@ export const AssetAndOtherInfo = ({ assets }: { assets: MarketData[] }) => {
           captionFirst={true}
         />
         <CaptionedStat
-          stat={selectedAsset.utilization.toFixed(0) + '%'}
+          stat={selectedAsset.isBorrowPaused ? '-' : selectedAsset.utilization.toFixed(0) + '%'}
           statSize="lg"
           captionSize="xs"
           caption={'Asset Utilization'}
