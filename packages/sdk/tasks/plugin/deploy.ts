@@ -1,4 +1,9 @@
+import { bsc } from "@midas-capital/chains";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { ethers } from "ethers";
 import { task, types } from "hardhat/config";
+
+import { PluginConfig } from "../../chainDeploy";
 
 task("plugin:deploy", "Deploy ERC4626 Strategy")
   .addParam("contractName", "Name of the ERC4626 strategy", undefined, types.string)
@@ -11,8 +16,8 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
     undefined,
     types.string
   )
-  .setAction(async (taskArgs, hre) => {
-    const signer = await hre.ethers.getNamedSigner(taskArgs.creator);
+  .setAction(async (taskArgs, { ethers, deployments }) => {
+    const signer = await ethers.getNamedSigner(taskArgs.creator);
 
     const otherParams = taskArgs.otherParams ? taskArgs.otherParams.split(",") : null;
     let deployArgs;
@@ -22,14 +27,23 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
       deployArgs = [taskArgs.underlying];
     }
 
-    const deployment = await hre.deployments.deploy(taskArgs.deploymentName, {
+    const deployment = await deployments.deploy(taskArgs.deploymentName, {
       contract: taskArgs.contractName,
       from: signer.address,
-      args: deployArgs,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: deployArgs,
+          },
+        },
+        owner: signer.address,
+      },
       log: true,
     });
 
-    if (deployment.transactionHash) await hre.ethers.provider.waitForTransaction(deployment.transactionHash);
+    if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);
 
     console.log("ERC4626 Strategy: ", deployment.address);
     return deployment.address;
