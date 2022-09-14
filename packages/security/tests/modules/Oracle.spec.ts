@@ -1,16 +1,25 @@
+import { SupportedChains } from "@midas-capital/types";
+
 import { SecurityBase } from "../../src";
 import * as OraclesModule from "../../src/oracle";
 
 describe("Oracle", () => {
   const Oracle = OraclesModule.withOracle(SecurityBase);
-  let oracle: InstanceType<typeof Oracle>;
+  let oracleBsc: InstanceType<typeof Oracle>;
+  let oraclePolygon: InstanceType<typeof Oracle>;
+
   beforeEach(() => {
-    oracle = new Oracle(56);
+    oracleBsc = new Oracle(SupportedChains.bsc);
+    oraclePolygon = new Oracle(SupportedChains.polygon);
   });
 
   describe("getOracleRating", () => {
-    it("should fetch oracle rating", async () => {
-      const ratings = await oracle.getOracleRating();
+    it("should fetch oracle rating for bsc", async () => {
+      const ratings = await oracleBsc.getOracleRating();
+      console.log(ratings);
+    });
+    it.only("should fetch oracle rating for polygon", async () => {
+      const ratings = await oraclePolygon.getOracleRating();
       console.log(ratings);
     });
   });
