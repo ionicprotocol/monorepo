@@ -72,3 +72,5 @@ export const aBNBcContractABI = [
     type: 'function',
   },
 ];
+
+export const DISCORD_URL = 'https://discord.gg/85YxVuPeMt';

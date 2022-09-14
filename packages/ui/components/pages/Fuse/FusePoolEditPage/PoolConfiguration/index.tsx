@@ -18,12 +18,12 @@ import {
 } from '@chakra-ui/react';
 import { Web3Provider } from '@ethersproject/providers';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useQueryClient } from 'react-query';
 
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
@@ -59,7 +59,7 @@ const PoolConfiguration = ({
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
 
-  const data = useExtraPoolInfo(comptrollerAddress);
+  const { data } = useExtraPoolInfo(comptrollerAddress);
 
   const [inputPoolName, setInputPoolName] = useState<string>(poolName);
   const [isEditable, setIsEditable] = useState<boolean>(false);

@@ -20,11 +20,11 @@ import {
   FundOperationMode,
   NativePricedFuseAsset,
 } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
-import { useQuery } from 'react-query';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -48,13 +48,13 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
-import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AmountSelectProps {
+  asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
-  index: number;
   isBorrowPaused?: boolean;
   mode: FundOperationMode;
   onClose: () => void;
@@ -63,14 +63,12 @@ interface AmountSelectProps {
 const AmountSelect = ({
   assets,
   comptrollerAddress,
-  index,
+  asset,
   isBorrowPaused = false,
   mode,
   onClose,
   setMode,
 }: AmountSelectProps) => {
-  const asset = assets[index];
-
   const { midasSdk, setPendingTxHash, address, currentChain } = useMidas();
 
   const errorToast = useErrorToast();
@@ -87,13 +85,11 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
   const { cCard, cSwitch } = useColors();
 
-  // const [optionToWrap, setOptionToWrap] = useState<boolean>(false); //This will replace Supply with Wrap when set to true.
-
-  const { data: maxBorrow } = useMaxAmount(FundOperationMode.BORROW, asset);
+  const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
 
-  const nativeSymbol = currentChain.nativeCurrency.symbol;
+  const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
     asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN &&
     mode === FundOperationMode.SUPPLY &&
@@ -354,9 +350,10 @@ const AmountSelect = ({
                           minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
                         }${
                           minBorrowAsset
-                            ? ` / ${Number(
-                                utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
-                              ).toFixed(2)} ${asset.underlyingSymbol}`
+                            ? ` / ${toCeil(
+                                Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
+                                2
+                              )} ${asset.underlyingSymbol}`
                             : ''
                         } for now.`}
                       </Alert>
@@ -384,14 +381,16 @@ const AmountSelect = ({
                       />
                     </Row>
                   </DashboardBox>
-                  {mode === FundOperationMode.BORROW && maxBorrow && maxBorrow.number !== 0 && (
-                    <MaxBorrowSlider
-                      userEnteredAmount={userEnteredAmount}
-                      updateAmount={updateAmount}
-                      borrowableAmount={maxBorrow.number}
-                      asset={asset}
-                    />
-                  )}
+                  {mode === FundOperationMode.BORROW &&
+                    maxBorrowInAsset &&
+                    maxBorrowInAsset.number !== 0 && (
+                      <MaxBorrowSlider
+                        userEnteredAmount={userEnteredAmount}
+                        updateAmount={updateAmount}
+                        borrowableAmount={maxBorrowInAsset.number}
+                        asset={asset}
+                      />
+                    )}
                 </>
               )}
             </Column>
@@ -406,7 +405,7 @@ const AmountSelect = ({
                 <StatsColumn
                   amount={amount}
                   assets={assets}
-                  index={index}
+                  asset={asset}
                   mode={mode}
                   enableAsCollateral={enableAsCollateral}
                 />
@@ -596,11 +595,12 @@ const TabBar = ({
 interface StatsColumnProps {
   mode: FundOperationMode;
   assets: MarketData[];
-  index: number;
+  asset: MarketData;
   amount: BigNumber;
   enableAsCollateral: boolean;
 }
-const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsColumnProps) => {
+const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsColumnProps) => {
+  const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
   const updatedAssets: MarketData[] | undefined = useUpdatedUserAssets({
     mode,
@@ -616,11 +616,10 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
 
   // Define the old and new asset (same asset different numerical values)
-  const asset = assets[index];
   const updatedAsset = updatedAssets ? updatedAssets[index] : null;
 
   // Calculate Old and new Borrow Limits
-  const borrowLimit = useBorrowLimit(assets, {});
+  const borrowLimit = useBorrowLimit(assets);
   const updatedBorrowLimit = useBorrowLimit(updatedAssets ?? [], {
     ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
   });

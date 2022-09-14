@@ -20,3 +20,7 @@ export const bigMul = (value1: string, value2: string) => {
   const val = multiply(bignumber(value1), bignumber(value2));
   return format(val, { notation: 'fixed' });
 };
+
+export const toCeil = (value: number, len: number) => {
+  return Math.ceil(value * Math.pow(10, len)) / Math.pow(10, len);
+};

@@ -39,6 +39,19 @@ export const deployUniswapOracle = async ({
   if (utpof.transactionHash) await ethers.provider.waitForTransaction(utpof.transactionHash);
   console.log("UniswapTwapPriceOracleV2Factory: ", utpof.address);
 
+  //// deploy uniswap twap price oracle v2 resolver
+
+  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
+    from: deployer,
+    args: [[], utpor.address],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (twapPriceOracleResolver.transactionHash) {
+    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
+  }
+  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
+
   const uniTwapOracleFactory = (await ethers.getContract(
     "UniswapTwapPriceOracleV2Factory",
     deployer
@@ -91,9 +104,17 @@ export const deployUniswapOracle = async ({
 
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const uniTwapOracleFactoryAddress = await addressesProvider.callStatic.getAddress("UniswapTwapPriceOracleV2Factory");
+  const uniTwapOracleV2ResolverAddress = await addressesProvider.callStatic.getAddress(
+    "UniswapTwapPriceOracleV2Resolver"
+  );
   if (uniTwapOracleFactoryAddress !== uniTwapOracleFactory.address) {
     const tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Factory", uniTwapOracleFactory.address);
     await tx.wait();
     console.log("setAddress UniswapTwapPriceOracleV2Factory: ", tx.hash);
+  }
+  if (uniTwapOracleV2ResolverAddress !== twapPriceOracleResolver.address) {
+    const tx = await addressesProvider.setAddress("UniswapTwapPriceOracleV2Resolver", twapPriceOracleResolver.address);
+    await tx.wait();
+    console.log("setAddress UniswapTwapPriceOracleV2Resolver: ", tx.hash);
   }
 };

@@ -3,10 +3,10 @@ import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   SupportedChains,
 } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ethers } from 'ethers';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
@@ -76,25 +76,29 @@ export const useTokenData = (address: string | undefined) => {
   const {
     currentChain: { id },
   } = useMidas();
+
   const validAddress = useMemo(() => {
     if (address) {
       try {
         return ethers.utils.getAddress(address);
       } catch {}
     }
+
     return undefined;
   }, [address]);
 
-  return useQuery<TokenData | undefined>(
+  return useQuery<TokenData | null>(
     ['useTokenData', id, validAddress],
     async () => {
       if (validAddress && id) {
         const res = await fetchTokenData([validAddress], id);
 
         return res[0];
+      } else {
+        return null;
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!validAddress && !!id }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!id }
   );
 };
 

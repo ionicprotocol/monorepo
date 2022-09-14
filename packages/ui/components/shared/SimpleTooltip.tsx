@@ -1,4 +1,4 @@
-import { Tooltip, TooltipProps } from '@chakra-ui/react';
+import { Box, Tooltip, TooltipProps } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
 
@@ -11,7 +11,7 @@ export const SimpleTooltip = ({
 } & TooltipProps) => {
   const { cPage } = useColors();
   return (
-    <>
+    <Box>
       <style>
         {`
             .chakra-tooltip__arrow {
@@ -30,6 +30,6 @@ export const SimpleTooltip = ({
       >
         {children}
       </Tooltip>
-    </>
+    </Box>
   );
 };

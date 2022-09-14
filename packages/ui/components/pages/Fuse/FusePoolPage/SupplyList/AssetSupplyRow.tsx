@@ -46,19 +46,17 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AssetSupplyRowProps {
   assets: MarketData[];
-  index: number;
+  asset: MarketData;
   comptrollerAddress: string;
   rewards: FlywheelMarketRewardsInfo[];
 }
 export const AssetSupplyRow = ({
   assets,
-  index,
+  asset,
   comptrollerAddress,
   rewards = [],
 }: AssetSupplyRowProps) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
-
-  const asset = assets[index];
   const { midasSdk, scanUrl, currentChain, setPendingTxHash } = useMidas();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const supplyAPY = midasSdk.ratePerBlockToAPY(
@@ -144,7 +142,7 @@ export const AssetSupplyRow = ({
             defaultMode={FundOperationMode.SUPPLY}
             comptrollerAddress={comptrollerAddress}
             assets={assets}
-            index={index}
+            asset={asset}
             isOpen={isModalOpen}
             onClose={closeModal}
           />
