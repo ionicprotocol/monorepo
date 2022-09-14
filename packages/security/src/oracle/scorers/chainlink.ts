@@ -1,4 +1,3 @@
-import { ChainlinkFeedResponseStatus } from "../../../dist/esm/enums";
 import { ChainLinkFeed, ScoreEnum, ScoreRange } from "../../types";
 
 import { scoreEnum, scoreRanges } from "./generic";
@@ -16,12 +15,13 @@ const validatorsRanges: Array<ScoreRange> = [
 ];
 
 const feedStatusEnums: Array<ScoreEnum> = [
-  { enum: ChainlinkFeedResponseStatus.verified, score: 1 },
-  { enum: ChainlinkFeedResponseStatus.monitored, score: 0.9 },
-  { enum: ChainlinkFeedResponseStatus.deprecating, score: 0.1 },
+  { enum: "verified", score: 1 },
+  { enum: "monitored", score: 0.9 },
+  { enum: "deprecating", score: 0.1 },
 ];
 
 export function scoreChainLinkFeed(feed: ChainLinkFeed): number {
+  console.log(feed);
   const heartbeatScore = scoreRanges(feed.heartbeat, heartbeatRanges);
   const validatorScore = scoreRanges(feed.validators, validatorsRanges);
   const feedStatusScore = scoreEnum(feed.feedStatus, feedStatusEnums);

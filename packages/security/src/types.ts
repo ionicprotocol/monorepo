@@ -2,7 +2,7 @@ export type ChainLinkFeedStatus = "verified" | "monitored" | "custom" | "depreca
 export type ChainLinkFeedHeartbeat = "1m" | "10m" | "15m" | "24h";
 
 export type ChainLinkAssetConfig = {
-  symbolMappings: Array<Record<string, string>>;
+  symbolMappings: Record<string, string>;
   chainLinkApiResponseKey: { networkName: string; networkIndex: number };
   defaultValidatorNumber: number;
 };
@@ -12,6 +12,7 @@ export type ChainLinkFeed = {
   feedStatus: ChainLinkFeedStatus;
   validators: number;
   heartbeat: number;
+  symbol: string;
   score?: number;
 };
 
@@ -32,6 +33,6 @@ export type ScoreRange = {
 };
 
 export type ScoreEnum = {
-  enum: string;
+  enum: ChainLinkFeedStatus;
   score: number;
 };

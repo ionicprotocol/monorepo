@@ -24,12 +24,19 @@ export async function fetchChainLinkFeedParameters(assetConfig: ChainLinkAssetCo
   if (networkType !== "mainnet") {
     throw new Error(`Chainlink feed API returned ${networkType} network type`);
   }
-  return proxies.map((c) => {
+  const filteredProxies = proxies.filter((proxy) => {
+    if (proxy.pair in assetConfig.symbolMappings) {
+      return proxy;
+    }
+  });
+
+  return filteredProxies.map((c) => {
     return {
       validators: assetConfig.defaultValidatorNumber,
       heartbeat: heartbeatToSeconds[c.heartbeat],
       deviationThreshold: c.deviationThreshold,
       feedStatus: c.feedCategory,
+      symbol: assetConfig.symbolMappings[c.pair],
     };
   });
 }
