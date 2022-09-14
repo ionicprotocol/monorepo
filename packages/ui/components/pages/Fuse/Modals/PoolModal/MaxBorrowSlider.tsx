@@ -18,6 +18,7 @@ import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 interface MaxBorrowSliderProps {
   userEnteredAmount: string;
@@ -112,7 +113,7 @@ function MaxBorrowSlider({
               focusThumbOnChange={false}
             >
               <SliderTrack>
-                <SliderFilledTrack />
+                <SliderFilledTrack bg={sliderValue > 90 ? 'red' : undefined} />
               </SliderTrack>
               <SimpleTooltip label={`${sliderValue}%`} isOpen zIndex={999}>
                 <SliderThumb />
@@ -120,9 +121,7 @@ function MaxBorrowSlider({
             </Slider>
           )}
         </HStack>
-        <Text>
-          ${(borrowLimit * Number(utils.formatUnits(asset.underlyingPrice, 18)) * price).toFixed(2)}
-        </Text>
+        <Text>{smallUsdFormatter(borrowLimit)}</Text>
       </HStack>
     </Box>
   );
