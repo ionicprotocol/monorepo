@@ -52,9 +52,9 @@ import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AmountSelectProps {
+  asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
-  index: number;
   isBorrowPaused?: boolean;
   mode: FundOperationMode;
   onClose: () => void;
@@ -63,14 +63,12 @@ interface AmountSelectProps {
 const AmountSelect = ({
   assets,
   comptrollerAddress,
-  index,
+  asset,
   isBorrowPaused = false,
   mode,
   onClose,
   setMode,
 }: AmountSelectProps) => {
-  const asset = assets[index];
-
   const { midasSdk, setPendingTxHash, address } = useMidas();
 
   const errorToast = useErrorToast();
@@ -374,7 +372,7 @@ const AmountSelect = ({
             <StatsColumn
               amount={amount}
               assets={assets}
-              index={index}
+              asset={asset}
               mode={mode}
               enableAsCollateral={enableAsCollateral}
             />
@@ -544,11 +542,12 @@ const TabBar = ({
 interface StatsColumnProps {
   mode: FundOperationMode;
   assets: MarketData[];
-  index: number;
+  asset: MarketData;
   amount: BigNumber;
   enableAsCollateral: boolean;
 }
-const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsColumnProps) => {
+const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsColumnProps) => {
+  const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
   const updatedAssets: MarketData[] | undefined = useUpdatedUserAssets({
     mode,
@@ -564,11 +563,10 @@ const StatsColumn = ({ mode, assets, index, amount, enableAsCollateral }: StatsC
   const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
 
   // Define the old and new asset (same asset different numerical values)
-  const asset = assets[index];
   const updatedAsset = updatedAssets ? updatedAssets[index] : null;
 
   // Calculate Old and new Borrow Limits
-  const borrowLimit = useBorrowLimit(assets, {});
+  const borrowLimit = useBorrowLimit(assets);
   const updatedBorrowLimit = useBorrowLimit(updatedAssets ?? [], {
     ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
   });

@@ -55,8 +55,6 @@ export const useFusePools = (
       const hidePools = (config[`hidePools${currentChain.id}` as configKey] as string[]) || [];
       res.map((pool) => {
         if (pool && !hidePools.includes(pool.id.toString())) {
-          const { underlyingTokens, underlyingSymbols } = pool;
-
           data.push({
             ...pool,
           });
