@@ -5,7 +5,6 @@ import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { useSupportedUnderlyings } from '@ui/hooks/useSupportedAssets';
 
 const poolSort = (pools: FusePoolData[]) => {
   return pools.sort((a, b) => {
@@ -27,13 +26,12 @@ export const useFusePools = (
   filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null
 ) => {
   const { midasSdk, currentChain, address } = useMidas();
-  const { data: supportedUnderlyings } = useSupportedUnderlyings();
 
   const isCreatedPools = filter === 'created-pools';
   const isAllPools = filter === '';
 
   const { data: pools, ...queryResultRest } = useQuery(
-    ['useFusePools', currentChain.id, filter, address, supportedUnderlyings],
+    ['useFusePools', currentChain.id, filter, address],
     async () => {
       let res;
 
@@ -57,23 +55,8 @@ export const useFusePools = (
       const hidePools = (config[`hidePools${currentChain.id}` as configKey] as string[]) || [];
       res.map((pool) => {
         if (pool && !hidePools.includes(pool.id.toString())) {
-          const underlyingTokens: string[] = [];
-          const underlyingSymbols: string[] = [];
-          pool.underlyingTokens.map((token, index) => {
-            if (supportedUnderlyings?.includes(token)) {
-              underlyingTokens.push(token);
-              underlyingSymbols.push(pool.underlyingSymbols[index]);
-            }
-          });
-          const assets = pool.assets.filter((asset) =>
-            supportedUnderlyings?.includes(asset.underlyingToken)
-          );
-
           data.push({
             ...pool,
-            assets,
-            underlyingTokens,
-            underlyingSymbols,
           });
         }
       });
@@ -81,7 +64,7 @@ export const useFusePools = (
       return data;
     },
     {
-      enabled: !!currentChain.id && !!supportedUnderlyings,
+      enabled: !!currentChain.id,
     }
   );
 

@@ -17,6 +17,7 @@ import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 interface MaxBorrowSliderProps {
@@ -30,7 +31,6 @@ function MaxBorrowSlider({
   userEnteredAmount,
   updateAmount,
   borrowableAmount,
-
   asset,
 }: MaxBorrowSliderProps) {
   const { borrowedAmount, borrowedPercent, borrowLimit, borrowablePercent } = useMemo(() => {
@@ -112,7 +112,7 @@ function MaxBorrowSlider({
               focusThumbOnChange={false}
             >
               <SliderTrack>
-                <SliderFilledTrack />
+                <SliderFilledTrack bg={sliderValue > 90 ? 'red' : undefined} />
               </SliderTrack>
               <SimpleTooltip label={`${sliderValue}%`} isOpen zIndex={999}>
                 <SliderThumb />
@@ -121,7 +121,9 @@ function MaxBorrowSlider({
           )}
         </HStack>
         <Text>
-          ${(borrowLimit * Number(utils.formatUnits(asset.underlyingPrice, 18)) * price).toFixed(2)}
+          {smallUsdFormatter(
+            borrowLimit * Number(utils.formatUnits(asset.underlyingPrice, 18)) * price
+          )}
         </Text>
       </HStack>
     </Box>
