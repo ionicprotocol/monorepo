@@ -1,4 +1,5 @@
 import { task } from "hardhat/config";
+
 import { IUniswapV3Pool__factory } from "../../lib/contracts/typechain";
 
 task("oracle:increase-cardinality", "Increase cardinality for pair")
