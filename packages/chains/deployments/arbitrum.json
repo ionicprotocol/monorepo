@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x29C45bc5305C44340D820A57df4C6b58EA8c41ff",
+      "address": "0xecDbcAF614aa7988b67e6f7c2F4B9821D591dC4e",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x89eBC78346dD9CdFb331d8f8029c445C698260f3",
+      "address": "0x59c73DB3A94A254658f9F3f4d7e594e7b5af0AC3",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x08Edf98B956Ab8B90CBE56077A49830316E6b2E8",
+      "address": "0x393527A10064435dC6C6bc4aE84bb540E1Ae2aA8",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0xB3177C0b176A2c26369A2ca9503907A15c75F467",
+      "address": "0x10126C12EB9ce1Eb06E3F5C3EFad00748A82066a",
       "abi": [
         {
           "inputs": [],
@@ -6674,7 +6674,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xC6cB1FeA5F391B6998D074Ad31EB1DCFbDEF7601",
+      "address": "0x983e0d0E02CF14C086E1cbde89F7d79D4A4deefb",
       "abi": [
         {
           "inputs": [
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xA2938d28D26F5D0aA86ffdC9BED815F184A7b1bD",
+      "address": "0x0d4d99F8Ce8a739251048b1Cb8d51FE45edf8D29",
       "abi": [
         {
           "inputs": [
@@ -8209,6 +8209,25 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "isUserOfPool",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "cTokenBorrowed",
               "type": "address"
             },
@@ -8636,6 +8655,30 @@
           ],
           "name": "repayBorrowVerify",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "newFlywheel",
+              "type": "address"
+            }
+          ],
+          "name": "replaceFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -12840,6 +12883,57 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getPoolsOfUser",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "getPublicPools",
           "outputs": [
@@ -13163,7 +13257,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x44136e215EC68Cbd3c678FA7a58112a52d037eEE",
+      "address": "0xd1B340FE12AC2098FeA13Aa071eE5E69145eEe0f",
       "abi": [
         {
           "anonymous": false,
@@ -13530,6 +13624,57 @@
             }
           ],
           "name": "getPoolsByAccount",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getPoolsOfUser",
           "outputs": [
             {
               "internalType": "uint256[]",
@@ -14024,7 +14169,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0xE622c2967E2885ED04436075889C88696328aBE8",
+      "address": "0x2983c76A5fd01A0D58E2A47a15Fdd63782f06435",
       "abi": [
         {
           "anonymous": false,
@@ -14367,6 +14512,94 @@
             }
           ],
           "name": "getPoolsByAccountWithData",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "totalSupply",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "totalBorrow",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "underlyingTokens",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "underlyingSymbols",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "whitelistedAdmin",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct FusePoolLens.FusePoolData[]",
+              "name": "",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "",
+              "type": "bool[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getPoolsOfUserWithData",
           "outputs": [
             {
               "internalType": "uint256[]",
@@ -16878,7 +17111,7 @@
       ]
     },
     "JumpRateModel": {
-      "address": "0xd570Dd4D3C30E020524dCb48e67ebc45B0F64D8B",
+      "address": "0x6B98340336cE524835F14d354a36ad880Ef30782",
       "abi": [
         {
           "inputs": [
@@ -19034,6 +19267,267 @@
         }
       ]
     },
+    "UniswapTwapPriceOracleV2Resolver": {
+      "address": "0x5C04964d3d57e2a1067208bba11044f103fd0701",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "pair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "baseToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deviationThreshold",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct UniswapTwapPriceOracleV2Resolver.PairConfig[]",
+              "name": "_pairConfigs",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "contract UniswapTwapPriceOracleV2Root",
+              "name": "_root",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "pair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "baseToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deviationThreshold",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct UniswapTwapPriceOracleV2Resolver.PairConfig",
+              "name": "pair",
+              "type": "tuple"
+            }
+          ],
+          "name": "addPair",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract UniswapTwapPriceOracleV2Root",
+              "name": "_root",
+              "type": "address"
+            }
+          ],
+          "name": "changeRoot",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "checker",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "canExec",
+              "type": "bool"
+            },
+            {
+              "internalType": "bytes",
+              "name": "execPayload",
+              "type": "bytes"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getPairs",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "address",
+                  "name": "pair",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "baseToken",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "minPeriod",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "deviationThreshold",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct UniswapTwapPriceOracleV2Resolver.PairConfig[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getWorkablePairs",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "lastUpdate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "index",
+              "type": "uint256"
+            }
+          ],
+          "name": "removeFromPairs",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "renounceOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "root",
+          "outputs": [
+            {
+              "internalType": "contract UniswapTwapPriceOracleV2Root",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "transferOwnership",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address[]",
+              "name": "workablePairs",
+              "type": "address[]"
+            }
+          ],
+          "name": "updatePairs",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
     "UniswapTwapPriceOracleV2Root": {
       "address": "0x1557ccC2cc2B0CC6029330B86FC39CCEA007339b",
       "abi": [
@@ -19261,7 +19755,7 @@
       ]
     },
     "WhitePaperInterestRateModel": {
-      "address": "0xC1B6152d3977E994F5a4E0dead9d0a11a0D229Ef",
+      "address": "0xEC7f3Cc73fF1B5b928105a81f57c676FD4004080",
       "abi": [
         {
           "inputs": [

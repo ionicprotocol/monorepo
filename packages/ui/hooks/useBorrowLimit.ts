@@ -2,8 +2,7 @@ import { NativePricedFuseAsset } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { DEFAULT_DECIMALS } from '../constants';
-
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 

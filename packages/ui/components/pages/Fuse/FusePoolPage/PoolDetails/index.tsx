@@ -9,12 +9,12 @@ import {
   Tr,
   useClipboard,
 } from '@chakra-ui/react';
+import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useState } from 'react';
-import { useQueryClient } from 'react-query';
 
 import { StatRow } from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails/StatRow';
 import { MidasBox } from '@ui/components/shared/Box';
@@ -22,24 +22,27 @@ import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { useMidas } from '@ui/context/MidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
-import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolData>['data'] }) => {
+const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
   const isMobile = useIsMobile();
-
-  const assets = poolData?.assets ?? [];
-  const totalSuppliedFiat = poolData?.totalSuppliedFiat ?? 0;
-  const totalBorrowedFiat = poolData?.totalBorrowedFiat ?? 0;
-  const totalAvailableLiquidityFiat = poolData?.totalAvailableLiquidityFiat ?? 0;
-  const comptrollerAddress = poolData?.comptroller ?? '';
+  const { assets, totalSuppliedFiat, totalBorrowedFiat, totalAvailableLiquidityFiat, comptroller } =
+    poolData || {
+      assets: [] as Array<MarketData>,
+      totalSuppliedFiat: 0,
+      totalBorrowedFiat: 0,
+      totalAvailableLiquidityFiat: 0,
+      comptroller: '',
+    };
 
   const { cCard } = useColors();
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const data = useExtraPoolInfo(comptrollerAddress || '');
+  const { data } = useExtraPoolInfo(poolData?.comptroller);
+
   const { hasCopied, onCopy } = useClipboard(data?.admin ?? '');
   const { setLoading, currentChain, setPendingTxHash } = useMidas();
   const { midasSdk } = useMidas();
@@ -47,16 +50,16 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
   const queryClient = useQueryClient();
 
   const acceptOwnership = useCallback(async () => {
-    if (!comptrollerAddress) return;
+    if (!comptroller) return;
     setIsLoading(true);
-    const unitroller = midasSdk.createUnitroller(comptrollerAddress);
+    const unitroller = midasSdk.createUnitroller(comptroller);
     const tx = await unitroller._acceptAdmin();
     setPendingTxHash(tx.hash);
     await tx.wait();
     setIsLoading(false);
 
     await queryClient.refetchQueries();
-  }, [comptrollerAddress, midasSdk, queryClient, setPendingTxHash]);
+  }, [comptroller, midasSdk, queryClient, setPendingTxHash]);
 
   return (
     <MidasBox height={isMobile ? 'auto' : '450px'}>
@@ -156,7 +159,7 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
                 statBTitle={'Whitelist'}
                 statB={data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
               />
-              {comptrollerAddress && (
+              {comptroller && (
                 <Tr borderTopWidth={'1px'} borderColor={cCard.dividerColor}>
                   <Td
                     fontSize={{ base: '3vw', sm: '0.9rem' }}
@@ -166,7 +169,7 @@ const PoolDetails = ({ data: poolData }: { data: ReturnType<typeof useFusePoolDa
                     textAlign="left"
                     border="none"
                   >
-                    Pool Address: <b>{comptrollerAddress}</b>
+                    Pool Address: <b>{comptroller}</b>
                   </Td>
                 </Tr>
               )}

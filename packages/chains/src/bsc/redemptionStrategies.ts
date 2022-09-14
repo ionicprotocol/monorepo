@@ -5,6 +5,7 @@ import assets, { WBNB } from "./assets";
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
   [underlying(assets, assetSymbols["3EPS"])]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
   [underlying(assets, assetSymbols["2brl"])]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
+  [underlying(assets, assetSymbols["3brl"])]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
   [underlying(assets, assetSymbols.val3EPS)]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
   [underlying(assets, assetSymbols.valdai3EPS)]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,

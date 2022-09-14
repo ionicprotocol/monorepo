@@ -1,7 +1,7 @@
 import { FusePoolData } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';

@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Contract } from 'ethers';
-import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
