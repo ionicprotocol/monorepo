@@ -53,14 +53,14 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   const { data: poolData } = useFusePoolData(poolID);
 
   const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress);
+
   const { cPage } = useColors();
 
   useEffect(() => {
     const availableAssets = supportedAssets.filter(
       (asset) =>
-        (asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
-          asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())) &&
-        !asset.disabled
+        asset.name.toLowerCase().includes(nameOrAddress.toLowerCase()) ||
+        asset.symbol.toLowerCase().includes(nameOrAddress.toLowerCase())
     );
     setAvailableAssets(sortSupportedAssets(availableAssets));
   }, [nameOrAddress, supportedAssets]);
