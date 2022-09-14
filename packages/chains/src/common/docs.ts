@@ -5,7 +5,7 @@ export const defaultDocs = (blockExplorerUrl: string, tokenAddress: string): str
 
 export const ellipsisDocs = (poolAddress: string, poolName: string, tokenAddress: string) => {
   return `<p><b>How to acquire this token</b><p/><br />
-  <p> 1. Head over to the <a href="https://ellipsis.finance//${poolAddress}" target="_blank">${poolName} Ellipsis Finance Pool</a> and click on "Add Liquidity".</p><br />
+  <p> 1. Head over to the <a href="https://ellipsis.finance/pool/${poolAddress}" target="_blank">${poolName} Ellipsis Finance Pool</a> and click on "Add Liquidity".</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
   <p> You will get back the <a href="https://bscscan.com/address/${tokenAddress}" target="_blank">${poolName} pool LP tokens</a>.</p><br />
   <p> 3. Come back here and hit "MAX" to deposit them all in this pool.</p> 

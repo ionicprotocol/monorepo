@@ -18,12 +18,11 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AssetBorrowRowProps {
   assets: MarketData[];
-  index: number;
+  asset: MarketData;
   comptrollerAddress: string;
 }
 
-export const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorrowRowProps) => {
-  const asset = assets[index];
+export const AssetBorrowRow = ({ assets, asset, comptrollerAddress }: AssetBorrowRowProps) => {
   const { currentChain, midasSdk } = useMidas();
 
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
@@ -45,7 +44,7 @@ export const AssetBorrowRow = ({ assets, index, comptrollerAddress }: AssetBorro
             comptrollerAddress={comptrollerAddress}
             defaultMode={FundOperationMode.BORROW}
             assets={assets}
-            index={index}
+            asset={asset}
             isOpen={isModalOpen}
             onClose={closeModal}
           />

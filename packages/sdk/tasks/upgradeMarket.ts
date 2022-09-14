@@ -99,9 +99,13 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
-
-      if (autoImplOn) {
+      if (admin == signer.address) {
+        const autoImplOn = await comptroller.callStatic.autoImplementation();
+        if (!autoImplOn) {
+          const tx = await comptroller._toggleAutoImplementations(true);
+          await tx.wait();
+          console.log(`turned autoimpl on ${tx.hash}`);
+        }
         const markets = await comptroller.callStatic.getAllMarkets();
         // console.log("pool assets", assets);
         for (let j = 0; j < markets.length; j++) {
@@ -128,8 +132,12 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
             console.error(`failed to upgrade market ${market}`, e);
           }
         }
+
+        const tx = await comptroller._toggleAutoImplementations(false);
+        await tx.wait();
+        console.log(`turned autoimpl off ${tx.hash}`);
       } else {
-        console.log(`autoimplementations for the pool is off`);
+        console.log(`signer is not the admin of this pool ${admin}`);
       }
     }
   });
