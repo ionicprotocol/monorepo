@@ -16,11 +16,11 @@ let metamask: Dappeteer;
 let createPoolPage: CreatePoolPage;
 
 const name = 'e2e testing';
-const oracle = '0x429041250873643235cb3788871447c6fF3205aA';
+const oracle = '0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA';
 const closeFactor = '50';
-const liqIncent = '8';
+const liquidationIncentive = '8';
 
-const baseUrl = 'http://localhost:3000/97/create-pool';
+const baseUrl = 'http://localhost:3000/56/create-pool';
 
 jest.retryTimes(1);
 jest.setTimeout(600000);
@@ -37,9 +37,9 @@ describe('Create Pool:', () => {
     await createPoolPage.connectMetamaskWallet();
     await createPoolPage.acceptTerms();
     const wbnb = chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB);
-    if (wbnb?.underlying) {
-      await createPoolPage.addTokenToMetamask(wbnb.underlying);
-    }
+    // if (wbnb?.underlying) {
+    //   await createPoolPage.addTokenToMetamask(wbnb.underlying);
+    // }
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -52,6 +52,6 @@ describe('Create Pool:', () => {
   test(`User can create pool`, async () => {
     await page.bringToFront();
     await page.goto(baseUrl);
-    await createPoolPage.createPool(name, oracle, closeFactor, liqIncent);
+    await createPoolPage.createPool(name, oracle, closeFactor, liquidationIncentive);
   });
 });
