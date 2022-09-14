@@ -1,8 +1,8 @@
 export type ChainLinkFeedStatus = "verified" | "monitored" | "custom" | "deprecating";
-export type ChainLinkFeedHeartbeat = "1m" | "10m" | "15m" | "24h";
+export type ChainLinkFeedHeartbeat = "27s" | "30s" | "1m" | "5m" | "10m" | "15m" | "6h" | "24h";
 
 export type ChainLinkAssetConfig = {
-  symbolMappings: Record<string, string>;
+  symbolMappings: Record<string, string | Array<string>>;
   chainLinkApiResponseKey: { networkName: string; networkIndex: number };
   defaultValidatorNumber: number;
 };
@@ -12,7 +12,7 @@ export type ChainLinkFeed = {
   feedStatus: ChainLinkFeedStatus;
   validators: number;
   heartbeat: number;
-  symbol: string;
+  symbols: string | Array<string>;
   score?: number;
 };
 
