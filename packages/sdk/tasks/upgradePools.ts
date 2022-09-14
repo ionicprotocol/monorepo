@@ -78,21 +78,35 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
-      if (autoImplOn) {
-        const implBefore = await comptroller.callStatic.comptrollerImplementation();
-        const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
-        if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
-          console.log(`No auto upgrade with latest implementation ${latestImpl}`);
-        } else {
-          console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);
-          const tx = await comptroller.enterMarkets([]);
-          await tx.wait();
-          const implAfter = await comptroller.callStatic.comptrollerImplementation();
-          console.log(`Comptroller implementation after ${implAfter}`);
+      if (admin == deployer.address) {
+        try {
+          const autoImplOn = await comptroller.callStatic.autoImplementation();
+          if (!autoImplOn) {
+            const tx = await comptroller._toggleAutoImplementations(true);
+            await tx.wait();
+            console.log(`turned autoimpl on ${tx.hash}`);
+          }
+
+          const implBefore = await comptroller.callStatic.comptrollerImplementation();
+          const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
+          if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
+            console.log(`No auto upgrade with latest implementation ${latestImpl}`);
+          } else {
+            console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);
+            const tx = await comptroller.enterMarkets([]);
+            await tx.wait();
+            const implAfter = await comptroller.callStatic.comptrollerImplementation();
+            console.log(`Comptroller implementation after ${implAfter}`);
+          }
+        } catch (e) {
+          console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
         }
+
+        const tx = await comptroller._toggleAutoImplementations(false);
+        await tx.wait();
+        console.log(`turned autoimpl off ${tx.hash}`);
       } else {
-        console.log(`autoimplementations for the pool is off`);
+        console.log(`the admin of the pool ${admin} is not the deployer`);
       }
     }
   }

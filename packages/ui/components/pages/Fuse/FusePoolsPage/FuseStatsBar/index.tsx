@@ -70,7 +70,7 @@ const FuseStatsBar = () => {
               <FaDiscord fontSize={30} />
             </Link>
           </SimpleTooltip>
-          <SimpleTooltip label="Gitbook">
+          <SimpleTooltip label="Documentation">
             <Link href={URL_MIDAS_DOCS} isExternal>
               <SiGitbook fontSize={30} />
             </Link>

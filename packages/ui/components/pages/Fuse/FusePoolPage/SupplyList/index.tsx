@@ -96,13 +96,13 @@ export const SupplyList = ({
         <Tbody>
           {assets.length > 0 ? (
             <>
-              {suppliedAssets.map((asset, index) => {
+              {suppliedAssets.map((asset) => {
                 return (
                   <AssetSupplyRow
                     comptrollerAddress={comptrollerAddress}
                     key={asset.underlyingToken}
-                    assets={suppliedAssets}
-                    index={index}
+                    assets={assets}
+                    asset={asset}
                     rewards={rewards}
                   />
                 );
@@ -112,13 +112,13 @@ export const SupplyList = ({
                 <Tr borderWidth={1} borderColor={cCard.dividerColor}></Tr>
               )}
 
-              {nonSuppliedAssets.map((asset, index) => {
+              {nonSuppliedAssets.map((asset) => {
                 return (
                   <AssetSupplyRow
                     comptrollerAddress={comptrollerAddress}
                     key={asset.underlyingToken}
-                    assets={nonSuppliedAssets}
-                    index={index}
+                    assets={assets}
+                    asset={asset}
                     rewards={rewards}
                   />
                 );
