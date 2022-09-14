@@ -72,19 +72,14 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.ATOM,
     },
     {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.GLMR)!.underlying,
+      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
       cycleLength: 1,
-      name: assetSymbols.GLMR,
+      name: assetSymbols.WGLMR,
     },
     {
       rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.CELR)!.underlying,
       cycleLength: 1,
       name: assetSymbols.CELR,
-    },
-    {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDC)!.underlying,
-      cycleLength: 1,
-      name: assetSymbols.USDC,
     },
   ],
   cgId: moonbeam.specificParams.cgId,
