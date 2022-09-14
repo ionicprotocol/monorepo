@@ -20,12 +20,12 @@ export class CreatePoolPage extends AppPage {
     name: string,
     oracle: string,
     closeFactor: string,
-    liqIncent: string
+    liquidationIncentive: string
   ): Promise<void> {
     await this.setPoolName(name);
     await this.setOracle(oracle);
     await this.setCloseFactor(closeFactor);
-    await this.setLiquidIncent(liqIncent);
+    await this.setLiquidationIncentive(liquidationIncentive);
 
     await this.confirmCreate();
   }
@@ -46,7 +46,7 @@ export class CreatePoolPage extends AppPage {
     await this.Page.$eval(this.CloseFactorInputSelector, (el) => (el.textContent = closeFactor));
   }
 
-  public async setLiquidIncent(liqIncent: string): Promise<void> {
+  public async setLiquidationIncentive(liqIncent: string): Promise<void> {
     await this.Page.$eval(this.LiqIncentInputSelector, (el) => (el.textContent = liqIncent));
   }
 

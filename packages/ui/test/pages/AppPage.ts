@@ -79,7 +79,6 @@ export abstract class AppPage {
       const addressInput = await this.Metamask.page.waitForSelector('#custom-address');
       if (addressInput) {
         addressInput.type(tokenAddress);
-        await this.Metamask.page.waitForTimeout(4000);
 
         await this.Metamask.page.waitForSelector(
           `button[data-testid='page-container-footer-next']:not([disabled])`

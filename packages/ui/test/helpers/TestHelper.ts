@@ -22,8 +22,14 @@ export class TestHelper {
       seed = seedPhrase;
       pass = password;
     } else {
-      seed = process.env.TEST_SEED || 'seed seed seed';
-      pass = process.env.TEST_PASS || 'password';
+      const envSeed = process.env.TEST_SEED;
+      const envPassword = process.env.TEST_SEED;
+      if (envSeed && envPassword) {
+        seed = envSeed;
+        pass = envPassword;
+      } else {
+        throw new Error('SEED and PASSWORD not set.');
+      }
     }
 
     const browser = await this.getBrowser();
@@ -39,16 +45,17 @@ export class TestHelper {
     pass: string
   ): Promise<Dappeteer> {
     let metamask: Dappeteer;
+    const networkName = 'ForkedBSC';
 
     try {
       metamask = await setupMetamask(browser, { seed: seed, password: pass });
       await metamask.addNetwork({
-        networkName: 'forked',
+        networkName,
         rpc: 'http://localnode.com:8545/',
-        chainId: 137,
-        symbol: 'MATIC',
+        chainId: 56,
+        symbol: 'BNB',
       });
-      await metamask.switchNetwork('forked');
+      await metamask.switchNetwork(networkName);
     } catch (error) {
       throw error;
     }
