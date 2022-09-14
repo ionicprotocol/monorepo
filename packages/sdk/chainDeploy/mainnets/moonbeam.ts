@@ -47,7 +47,6 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["GLMR-USDC"]),
       underlying(assets, assetSymbols["USDC-ETH"]),
       underlying(assets, assetSymbols["WGLMR-xcDOT"]),
-      underlying(assets, assetSymbols["GLMR-madUSDC"]),
       underlying(assets, assetSymbols["STELLA-GLMR"]),
       underlying(assets, assetSymbols["CELR-GLMR"]),
       underlying(assets, assetSymbols["ATOM-GLMR"]),
