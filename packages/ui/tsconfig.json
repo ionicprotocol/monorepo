@@ -17,8 +17,8 @@
     "incremental": true,
     "downlevelIteration": true,
     "composite": true,
-    "sourceMap": true,
+    "sourceMap": true
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["api", "node_modules"],
+  "exclude": ["api", "node_modules"]
 }
