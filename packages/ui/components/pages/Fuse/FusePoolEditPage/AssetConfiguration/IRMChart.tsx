@@ -1,9 +1,9 @@
 /*  This is a dynamically imported component on client-side only */
 
 import { Box, Center, Spinner, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
-import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';

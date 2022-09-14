@@ -26,37 +26,37 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
     createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
 
-    createRewardsDistributor(distributorAddress: string, signer: Signer | SupportedProvider = this.signer) {
+    createRewardsDistributor(distributorAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(
         distributorAddress,
         this.chainDeployment.RewardsDistributorDelegate.abi,
-        signer
+        signerOrProvider
       ) as RewardsDistributorDelegate;
     }
-    createComptroller(comptrollerAddress: string, signer: Signer | SupportedProvider = this.signer) {
-      return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signer) as Comptroller;
+    createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
+      return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signerOrProvider) as Comptroller;
     }
 
-    createOracle(oracleAddress: string, type: string, signer: Signer | SupportedProvider = this.signer) {
-      return new Contract(oracleAddress, this.chainDeployment[type].abi, signer);
+    createOracle(oracleAddress: string, type: string, signerOrProvider: SignerOrProvider = this.signer) {
+      return new Contract(oracleAddress, this.chainDeployment[type].abi, signerOrProvider);
     }
 
-    createCToken(cTokenAddress: string, signer: Signer | SupportedProvider = this.signer) {
-      return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signer) as CErc20Delegate;
+    createCToken(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
+      return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signerOrProvider) as CErc20Delegate;
     }
-    createCErc20PluginRewardsDelegate(cTokenAddress: string, signer: Signer | SupportedProvider = this.signer) {
+    createCErc20PluginRewardsDelegate(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(
         cTokenAddress,
         this.chainDeployment.CErc20PluginRewardsDelegate.abi,
-        signer
+        signerOrProvider
       ) as CErc20PluginRewardsDelegate;
     }
 
-    createMasterPriceOracle(signer: Signer | SupportedProvider = this.signer) {
+    createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(
         this.chainDeployment.MasterPriceOracle.address!,
         this.chainDeployment.MasterPriceOracle.abi,
-        signer
+        signerOrProvider
       ) as MasterPriceOracle;
     }
   };

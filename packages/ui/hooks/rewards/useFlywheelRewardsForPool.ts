@@ -1,5 +1,5 @@
+import { useQuery } from '@tanstack/react-query';
 import LogRocket from 'logrocket';
-import { useQuery } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 
