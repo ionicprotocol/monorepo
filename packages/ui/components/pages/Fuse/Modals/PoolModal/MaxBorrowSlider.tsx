@@ -31,7 +31,6 @@ function MaxBorrowSlider({
   userEnteredAmount,
   updateAmount,
   borrowableAmount,
-
   asset,
 }: MaxBorrowSliderProps) {
   const { borrowedAmount, borrowedPercent, borrowLimit, borrowablePercent } = useMemo(() => {
@@ -121,7 +120,11 @@ function MaxBorrowSlider({
             </Slider>
           )}
         </HStack>
-        <Text>{smallUsdFormatter(borrowLimit)}</Text>
+        <Text>
+          {smallUsdFormatter(
+            borrowLimit * Number(utils.formatUnits(asset.underlyingPrice, 18)) * price
+          )}
+        </Text>
       </HStack>
     </Box>
   );

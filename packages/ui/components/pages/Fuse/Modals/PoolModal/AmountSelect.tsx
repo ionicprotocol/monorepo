@@ -85,7 +85,7 @@ const AmountSelect = ({
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
   const { cCard, cSwitch } = useColors();
 
-  const maxBorrow = useBorrowLimit(assets);
+  const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
 
   const updateAmount = (newAmount: string) => {
@@ -357,14 +357,16 @@ const AmountSelect = ({
                       />
                     </Row>
                   </DashboardBox>
-                  {mode === FundOperationMode.BORROW && maxBorrow && maxBorrow !== 0 && (
-                    <MaxBorrowSlider
-                      userEnteredAmount={userEnteredAmount}
-                      updateAmount={updateAmount}
-                      borrowableAmount={maxBorrow}
-                      asset={asset}
-                    />
-                  )}
+                  {mode === FundOperationMode.BORROW &&
+                    maxBorrowInAsset &&
+                    maxBorrowInAsset.number !== 0 && (
+                      <MaxBorrowSlider
+                        userEnteredAmount={userEnteredAmount}
+                        updateAmount={updateAmount}
+                        borrowableAmount={maxBorrowInAsset.number}
+                        asset={asset}
+                      />
+                    )}
                 </>
               )}
             </Column>
