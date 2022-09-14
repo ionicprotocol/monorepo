@@ -17,8 +17,8 @@ import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 interface MaxBorrowSliderProps {
   userEnteredAmount: string;
