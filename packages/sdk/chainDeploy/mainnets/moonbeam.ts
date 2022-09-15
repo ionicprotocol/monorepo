@@ -22,7 +22,7 @@ import {
 const assets = moonbeam.assets;
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
+  wtoken: underlying(assets, assetSymbols.WGLMR),
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
   nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
@@ -37,10 +37,16 @@ export const deployConfig: ChainDeployConfig = {
       {
         token: underlying(assets, assetSymbols.STELLA),
         baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
       },
       {
         token: underlying(assets, assetSymbols.CELR),
         baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
       },
     ],
     uniswapOracleLpTokens: [
@@ -78,20 +84,6 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: underlying(assets, assetSymbols.CELR),
       cycleLength: 1,
       name: assetSymbols.CELR,
-    },
-  ],
-  gelatoResolverAssets: [
-    {
-      pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
-      baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
-      minPeriod: 1800,
-      deviationThreshold: "10000000000000000", // 1%
-    },
-    {
-      pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
-      baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
-      minPeriod: 1800,
-      deviationThreshold: "10000000000000000", // 1%
     },
   ],
   cgId: moonbeam.specificParams.cgId,
