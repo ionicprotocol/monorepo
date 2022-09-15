@@ -4,4 +4,4 @@
 [submodule "packages/sdk/lib/contracts"]
 	path = packages/sdk/lib/contracts
 	url = git@github.com:Midas-Protocol/contracts.git
-	branch = feat/univ3-price-oracle
+	branch = development
