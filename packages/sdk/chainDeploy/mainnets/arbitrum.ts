@@ -28,7 +28,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
     uniswapOracleInitialDeployTokens: [
       {
-        token: underlying(assets, assetSymbols.gOHM),
+        token: underlying(assets, assetSymbols.GOHM),
         baseToken: underlying(assets, assetSymbols.WETH),
       },
     ],
