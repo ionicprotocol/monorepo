@@ -1,6 +1,4 @@
 import { Dappeteer } from '@chainsafe/dappeteer';
-import { chapel } from '@midas-capital/chains';
-import { assetSymbols } from '@midas-capital/types';
 import dotenv from 'dotenv';
 import { Browser, Page } from 'puppeteer';
 
@@ -36,10 +34,6 @@ describe('Create Pool:', () => {
 
     await createPoolPage.connectMetamaskWallet();
     await createPoolPage.acceptTerms();
-    const wbnb = chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB);
-    // if (wbnb?.underlying) {
-    //   await createPoolPage.addTokenToMetamask(wbnb.underlying);
-    // }
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
