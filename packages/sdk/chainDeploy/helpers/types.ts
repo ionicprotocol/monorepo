@@ -1,4 +1,5 @@
 import { SupportedAsset } from "@midas-capital/types";
+import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
 export enum ChainlinkFeedBaseCurrency {
@@ -14,7 +15,7 @@ export type TokenPair = {
 export type UniswapV3OracleConfig = {
   assetAddress: string;
   poolAddress: string;
-  twapWindowSeconds: number;
+  twapWindowSeconds: BigNumber;
 };
 
 export type ChainDeployConfig = {

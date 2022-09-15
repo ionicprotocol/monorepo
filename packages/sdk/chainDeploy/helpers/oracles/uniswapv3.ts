@@ -27,15 +27,22 @@ export const deployUniswapV3Oracle = async ({
 
   const assetsToAdd = [];
   for (const assetConfig of deployConfig.uniswap.uniswapV3OracleTokens) {
-    const existingOracleAssetConfig = await uniswapV3Oracle.callStatic.poolFeeds(assetConfig.assetAddress);
-    if (existingOracleAssetConfig.poolAddress == constants.AddressZero) {
+    const existingOracleAssetConfig: UniswapV3PriceOracle.AssetConfigStruct =
+      await uniswapV3Oracle.callStatic.poolFeeds(assetConfig.assetAddress);
+    if (
+      existingOracleAssetConfig.poolAddress != assetConfig.poolAddress ||
+      existingOracleAssetConfig.twapWindow != assetConfig.twapWindowSeconds
+    ) {
       assetsToAdd.push(assetConfig);
     }
   }
   // set pool feeds
   if (assetsToAdd.length > 0) {
     const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
-    const tx = await uniswapV3Oracle.setPoolFeeds(underlyings, assetsToAdd);
+    const feedConfigs = assetsToAdd.map((assetConfig) => {
+      return { poolAddress: assetConfig.poolAddress, twapWindow: assetConfig.twapWindowSeconds };
+    });
+    const tx = await uniswapV3Oracle.setPoolFeeds(underlyings, feedConfigs);
     await tx.wait();
     console.log(`UniswapV3 Oracle updated for tokens: ${underlyings.join(",")}`);
   }

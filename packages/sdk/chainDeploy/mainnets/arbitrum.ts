@@ -1,5 +1,5 @@
 import { arbitrum } from "@midas-capital/chains";
-import { assetSymbols } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
@@ -28,27 +28,27 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
     uniswapOracleInitialDeployTokens: [
       {
-        token: assets.find((a) => a.symbol === assetSymbols.gOHM)!.underlying,
-        baseToken: assets.find((a) => a.symbol === assetSymbols.WETH)!.underlying,
+        token: underlying(assets, assetSymbols.gOHM),
+        baseToken: underlying(assets, assetSymbols.WETH),
       },
     ],
     uniswapOracleLpTokens: [],
     flashSwapFee: 25,
     uniswapV3OracleTokens: [
       {
-        assetAddress: assets.find((a) => a.symbol === assetSymbols.DPX)!.underlying,
+        assetAddress: underlying(assets, assetSymbols.DPX),
         poolAddress: "0xb52781C275431bD48d290a4318e338FE0dF89eb9",
-        twapWindowSeconds: 30 * 60,
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
       },
       {
-        assetAddress: assets.find((a) => a.symbol === assetSymbols.MAGIC)!.underlying,
+        assetAddress: underlying(assets, assetSymbols.MAGIC),
         poolAddress: "0x7e7FB3CCEcA5F2ac952eDF221fd2a9f62E411980",
-        twapWindowSeconds: 30 * 60,
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
       },
       {
-        assetAddress: assets.find((a) => a.symbol === assetSymbols.GMX)!.underlying,
+        assetAddress: underlying(assets, assetSymbols.GMX),
         poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
-        twapWindowSeconds: 30 * 60,
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
       },
     ],
   },
@@ -119,15 +119,21 @@ const curvePools: CurvePoolConfig[] = [
   {
     lpToken: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
     pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.USDT)],
   },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+
+  //// deploy uniswap v3 price oracle
+  await deployUniswapV3Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
 
   //// ORACLES
   //// Uniswap Oracle
@@ -203,15 +209,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
   }
   console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
-
-  //// deploy uniswap v3 price oracle
-  await deployUniswapV3Oracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-  });
 
   ////
 
