@@ -49,6 +49,7 @@ export class PoolDetailPage extends AppPage {
       await this.blockingWait(4);
       await this.bringToFront();
       await this.Page.waitForSelector(this.SuccessToast);
+      await this.blockingWait(2);
       await this.Page.waitForSelector(this.SupplyAssetBalance);
       const updatedBalance = await this.Page.$eval(this.SupplyAssetBalance, (el) => el.textContent);
       if (updatedBalance) {
