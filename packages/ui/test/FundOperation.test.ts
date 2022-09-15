@@ -51,4 +51,10 @@ describe('Fund Operation:', () => {
     await page.goto(testUrl);
     await poolDetailPage.supply(assetSymbol, supplyAmount);
   });
+
+  test(`User can withdraw on pool`, async () => {
+    await page.bringToFront();
+    await page.goto(testUrl);
+    await poolDetailPage.withdraw(assetSymbol, supplyAmount);
+  });
 });

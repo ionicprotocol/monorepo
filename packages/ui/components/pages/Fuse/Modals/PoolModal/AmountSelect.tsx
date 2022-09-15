@@ -527,13 +527,17 @@ const TabBar = ({
           <TabList>
             {isSupplySide ? (
               <>
-                <AmountTab mr={2}>Supply</AmountTab>
-                <AmountTab>Withdraw</AmountTab>
+                <AmountTab className="supplyTab" mr={2}>
+                  Supply
+                </AmountTab>
+                <AmountTab className="withdrawTab">Withdraw</AmountTab>
               </>
             ) : (
               <>
-                <AmountTab mr={2}>Borrow</AmountTab>
-                <AmountTab>Repay</AmountTab>
+                <AmountTab className="borrowTab" mr={2}>
+                  Borrow
+                </AmountTab>
+                <AmountTab className="repayTab">Repay</AmountTab>
               </>
             )}
           </TabList>
