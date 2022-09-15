@@ -1,5 +1,5 @@
 import { bsc } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
@@ -77,6 +77,20 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: "0xa184088a740c695E156F91f5cC086a06bb78b827",
       cycleLength: 1,
       name: "AUTOv2",
+    },
+  ],
+  gelatoResolverAssets: [
+    {
+      pair: "0xc19956eCA8A3333671490EF6D6d4329Df049dddD", // WBNB-DDD
+      baseToken: wbnb,
+      minPeriod: 1800,
+      deviationThreshold: "10000000000000000", // 1%
+    },
+    {
+      pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EXP
+      baseToken: wbnb,
+      minPeriod: 1800,
+      deviationThreshold: "10000000000000000", // 1%
     },
   ],
   cgId: bsc.specificParams.cgId,

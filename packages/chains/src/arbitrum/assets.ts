@@ -126,6 +126,14 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://arbiscan.com", WBTC),
   },
   {
+    symbol: assetSymbols.GOHM,
+    underlying: GOHM,
+    name: "Governance OHM",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://arbiscan.com", GOHM),
+  },
+  {
     symbol: assetSymbols.DPX,
     underlying: DPX,
     name: "Dopex Governance Token",
@@ -140,14 +148,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
     extraDocs: defaultDocs("https://arbiscan.com", MAGIC),
-  },
-  {
-    symbol: assetSymbols.gOHM,
-    underlying: gOHM,
-    name: "Governance OHM",
-    decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", gOHM),
   },
   {
     symbol: assetSymbols.GMX,

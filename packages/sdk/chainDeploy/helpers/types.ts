@@ -38,7 +38,15 @@ export type ChainDeployConfig = {
   wBTCToken?: string;
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
+  gelatoResolverAssets?: GelatoResolverConfig[];
   cgId: string;
+};
+
+export type GelatoResolverConfig = {
+  pair: string;
+  baseToken: string;
+  minPeriod: number;
+  deviationThreshold: string;
 };
 
 export type DynamicFlywheelConfig = {
