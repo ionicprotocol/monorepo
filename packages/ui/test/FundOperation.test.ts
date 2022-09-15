@@ -1,32 +1,22 @@
 import { Dappeteer } from '@chainsafe/dappeteer';
-import { chapel } from '@midas-capital/chains';
-import { assetSymbols } from '@midas-capital/types';
-import dotenv from 'dotenv';
 import { Browser, Page } from 'puppeteer';
 
+import { Config } from '@ui/test//helpers/Config';
 import { TestHelper } from '@ui/test/helpers/TestHelper';
 import { PoolDetailPage } from '@ui/test/pages/pools/PoolDetailPage';
-
-dotenv.config();
 
 let browser: Browser;
 let page: Page;
 let metamask: Dappeteer;
 let poolDetailPage: PoolDetailPage;
 
-const chainId = 97;
-const networkName = 'chapel';
-const symbol = 'BNB';
-const rpc = chapel.specificParams.metadata.rpcUrls.default;
-
-const testUrl = 'http://localhost:3000/97/pool/25';
-const supplyAmount = '0.01';
-const assetSymbol = assetSymbols.WBNB;
+const { chainId, networkName, symbol, rpc, testUrl, supplyAmount, assetSymbol, asset } =
+  Config.fundOperation();
 
 // jest.retryTimes(1);
 jest.setTimeout(600000);
 
-describe('Fund Operation in Chapel:', () => {
+describe('Fund Operation:', () => {
   beforeAll(async () => {
     [metamask, page, browser] = await TestHelper.initDappeteer({
       networkName,
@@ -43,18 +33,20 @@ describe('Fund Operation in Chapel:', () => {
     await poolDetailPage.connectMetamaskWallet();
     // pass terms modal
     await poolDetailPage.acceptTerms();
-    // add WBNB token
-    const asset = chapel.assets.find((asset) => asset.symbol === assetSymbol);
+    // add token
     if (asset?.underlying) {
       await poolDetailPage.addTokenToMetamask(asset.underlying);
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  beforeEach(async () => {});
+
   afterAll(async () => {
     browser.close();
   });
 
-  test(`User can supply on pool 25`, async () => {
+  test(`User can supply on pool`, async () => {
     await page.bringToFront();
     await page.goto(testUrl);
     await poolDetailPage.supply(assetSymbol, supplyAmount);

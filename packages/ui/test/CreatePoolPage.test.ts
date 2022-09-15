@@ -20,7 +20,7 @@ const liquidationIncentive = '8';
 
 const baseUrl = 'http://localhost:3000/56/create-pool';
 
-jest.retryTimes(1);
+// jest.retryTimes(1);
 jest.setTimeout(600000);
 
 describe('Create Pool:', () => {

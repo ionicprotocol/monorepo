@@ -1,6 +1,7 @@
 import { Dappeteer, launch, LaunchOptions, setupMetamask } from '@chainsafe/dappeteer';
 import puppeteer, { Browser, Page } from 'puppeteer';
 
+import { BASE_URL } from '@ui/test/constants/index';
 import { App } from '@ui/test/pages/App';
 
 export type Network = {
@@ -13,7 +14,7 @@ export type Network = {
 export class TestHelper {
   public static async init(): Promise<App> {
     const [metamask, page] = await this.initDappeteer();
-    const app = new App(page, metamask, process.env.TEST_BASE_URL || 'http://localhost:3000');
+    const app = new App(page, metamask, BASE_URL);
 
     return app;
   }
