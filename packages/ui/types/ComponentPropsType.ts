@@ -59,28 +59,6 @@ export type RowProps = {
   expand?: boolean;
 } & FlexProps;
 
-export type APYMovingStatProps = Omit<CaptionedStatProps, 'stat'> & {
-  startingAmount: number;
-
-  /** This should be a percent like: 0.1, 0.08, 0.12, 0.192 */
-  apy: number;
-
-  /** This should be in milliseconds like: 1000, 200, 100, 20 */
-  interval: number;
-
-  formatStat: (num: number) => string;
-};
-
-export type APYWithRefreshMovingProps = Omit<
-  Omit<APYMovingStatProps, 'interval'>,
-  'startingAmount'
-> &
-  Omit<Omit<RefetchMovingStatProps, 'interval'>, 'fetch'> & {
-    fetch: () => Promise<number>;
-    fetchInterval: number;
-    apyInterval: number;
-  };
-
 export type AssetsMapWithTokenDataReturn = {
   assetsArrayWithTokenData: NativePricedFuseAssetWithTokenData[][] | null; // Fuse Asset with additional info about the token appended on
   tokensDataMap: TokensDataHash; // hashmap of unique assets and their token data
@@ -160,7 +138,6 @@ export interface CreateFlywheelModalProps extends CreateFlywheelProps {
 }
 export interface Flywheel {
   address: string;
-  authority: string;
   booster: string;
   owner: string;
   rewards: string;
@@ -253,3 +230,5 @@ export interface TokenDataResponse {
   overlayTextColor: string;
   symbol: string;
 }
+
+export type APYResult = { apy: number } | { apy?: undefined; error: string };

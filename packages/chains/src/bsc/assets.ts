@@ -18,6 +18,7 @@ const TUSD = "0x14016E85a25aeb13065688cAFB43044C2ef86784";
 const MAI = "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d";
 const threeEPS = "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452";
 const twoBRL = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
+const threeBRL = "0x27b5Fc5333246F63280dA8e3e533512EfA747c13";
 const val3EPS = "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5";
 const valdai3EPS = "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC";
 const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
@@ -25,6 +26,7 @@ const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
 const aBNBc = "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
 const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
+const BRZw = "0x5b1a9850f55d9282a7C4Bf23A2a21B050e3Beb2f";
 const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
 const WBNB_BUSD = "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16";
 const WBNB_DAI = "0xc7c3cCCE4FA25700fD5574DA7E200ae28BBd36A3";
@@ -161,7 +163,7 @@ const assets: SupportedAsset[] = [
     name: "Ellipsis.finance 3EPS (BUSD/USDC/USDT)",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: ellipsisDocs("0x160caed03795365f3a589f10c379ffa7d75d4e76", "3EPS", threeEPS),
+    extraDocs: ellipsisDocs("0x160CAed03795365F3A589f10C379FfA7d75d4E76", "3EPS", threeEPS),
   },
   {
     symbol: assetSymbols.val3EPS,
@@ -179,7 +181,6 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0x245e8bb5427822FB8fd6cE062d8dd853FbcfABF5", "valdai3EPS", valdai3EPS),
   },
-
   {
     symbol: assetSymbols["2brl"],
     underlying: twoBRL,
@@ -187,6 +188,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0xad51e40D8f255dba1Ad08501D6B1a6ACb7C188f3", "2brl", twoBRL),
+  },
+  {
+    symbol: assetSymbols["3brl"],
+    underlying: threeBRL,
+    name: "Ellipsis.finance 3BRL (jBRL, BRZ, BRZ (Wormhole))",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", "3brl", threeBRL),
   },
   // Bomb
   {
@@ -233,10 +242,19 @@ const assets: SupportedAsset[] = [
     symbol: assetSymbols.BRZ,
     underlying: BRZ,
     name: "BRZ Token",
-    decimals: 18,
+    decimals: 4,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
     <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`,
+  },
+  {
+    symbol: assetSymbols.BRZw,
+    underlying: BRZw,
+    name: "BRZ Token (Wormhole)",
+    decimals: 4,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>This is the Wormhole-bridged version of BRZ. To get it, you can bridge BRZ from Solana to BSC using the <a href="https://www.portalbridge.com/#/transfer" target="_blank" style="color: #BCAC83; cursor="pointer">Official Bridge</></p>`,
   },
   {
     symbol: assetSymbols["WBNB-BUSD"],

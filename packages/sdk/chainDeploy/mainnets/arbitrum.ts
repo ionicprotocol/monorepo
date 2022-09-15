@@ -52,7 +52,6 @@ export const deployConfig: ChainDeployConfig = {
       },
     ],
   },
-  plugins: [],
   dynamicFlywheels: [],
   cgId: arbitrum.specificParams.cgId,
 };

@@ -1,5 +1,5 @@
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 

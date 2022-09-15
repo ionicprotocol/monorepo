@@ -9,7 +9,7 @@ export interface FuseAsset {
   /** scaled by `underlying.decimals()`  */
   supplyBalance: BigNumber;
 
-  /** scaled by `1e18` */
+  /** scaled by `underlying.decimals()`  */
   liquidity: BigNumber;
   membership: boolean;
 
@@ -24,7 +24,9 @@ export interface FuseAsset {
   /** scaled by `underlying.decimals()`  */
   underlyingBalance: BigNumber;
 
+  /** scaled by `1e18` */
   collateralFactor: BigNumber;
+  /** scaled by `1e18` */
   reserveFactor: BigNumber;
 
   adminFee: BigNumber;
@@ -33,9 +35,9 @@ export interface FuseAsset {
   borrowRatePerBlock: BigNumber;
   supplyRatePerBlock: BigNumber;
 
-  /** scaled by `1e18` */
+  /** scaled by `underlying.decimals()`  */
   totalBorrow: BigNumber;
-  /** scaled by `1e18` */
+  /** scaled by `underlying.decimals()`  */
   totalSupply: BigNumber;
 
   isBorrowPaused: boolean;

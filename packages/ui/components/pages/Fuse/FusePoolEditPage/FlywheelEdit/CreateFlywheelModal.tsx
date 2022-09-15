@@ -16,7 +16,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
-import { FuseFlywheelCore } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FuseFlywheelCore';
+import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/MidasFlywheel';
 import React, { useMemo, useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
@@ -59,7 +59,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       setFailedStep(0);
       if (!rewardTokenData) throw new Error('No Token Data');
       setIsDeploying(true);
-      let fwCore: FuseFlywheelCore;
+      let fwCore: MidasFlywheel;
 
       try {
         setActiveStep(1);

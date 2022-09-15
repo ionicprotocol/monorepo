@@ -5,15 +5,12 @@ import { stellaSwapDocs } from "../common/docs";
 
 const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
 const xcDOT = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
-const madWBTC = "0x1DC78Acda13a8BC4408B207c9E48CDBc096D95e0";
+const multiWBTC = "0x922D641a426DcFFaeF11680e5358F34d97d112E1";
 const stDOT = "0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108";
 const ETH = "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f";
 const BNB = "0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055";
 const multiDAI = "0x765277EebeCA2e31912C9946eAe1021199B39C61";
-const madDAI = "0xc234A67a4F840E61adE794be47de455361b52413";
-const madUSDC = "0x8f552a71EFE5eeFc207Bf75485b356A0b3f01eC9";
 const multiUSDC = "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b";
-const madUSDT = "0x8e70cD5B4Ff3f62659049e74b6649c6603A0E594";
 const multiUSDT = "0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73";
 const FRAX = "0x322E86852e492a7Ee17f28a78c663da38FB33bfb";
 const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
@@ -25,9 +22,9 @@ const CELR = "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283";
 // StellaSwap
 const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
 const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57"; // not supported on stella
+const GLMR_ATOM = "0xf4C10263f2A4B1f75b8a5FD5328fb61605321639";
 const USDC_ETH = "0x0Aa48bF937ee8F41f1a52D225EF5A6F6961e39FA";
 const WGLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
-const GLMR_madUSDC = "0x9bFcf685e641206115dadc0C9ab17181e1d4975c";
 const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
 const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
 const STELLA_GLMR = "0x7F5Ac0FC127bcf1eAf54E3cd01b00300a0861a62";
@@ -43,12 +40,12 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", ATOM),
   },
   {
-    symbol: assetSymbols.madWBTC,
-    underlying: madWBTC,
-    name: "Nomad Wrapped BTC",
+    symbol: assetSymbols.multiWBTC,
+    underlying: multiWBTC,
+    name: "Multichain Wrapped BTC",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://moonbeam.moonscan.io", madWBTC),
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiWBTC),
   },
   {
     symbol: assetSymbols.xcDOT,
@@ -92,36 +89,12 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiDAI),
   },
   {
-    symbol: assetSymbols.madDAI,
-    underlying: madDAI,
-    name: "Nomad DAI Stablecoin",
-    decimals: 6,
-    oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: defaultDocs("https://moonbeam.moonscan.io", madDAI),
-  },
-  {
-    symbol: assetSymbols.madUSDC,
-    underlying: madUSDC,
-    name: "Nomad USDC",
-    decimals: 6,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://moonbeam.moonscan.io", madUSDC),
-  },
-  {
     symbol: assetSymbols.multiUSDC,
     underlying: multiUSDC,
     name: "Multichain USDC",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiUSDC),
-  },
-  {
-    symbol: assetSymbols.madUSDT,
-    underlying: madUSDT,
-    name: "Nomad USDT",
-    decimals: 6,
-    oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: defaultDocs("https://moonbeam.moonscan.io", madUSDT),
   },
   {
     symbol: assetSymbols.multiUSDT,
@@ -196,14 +169,6 @@ export const assets: SupportedAsset[] = [
     extraDocs: beamSwapDocs(WGLMR, xcDOT, "WGLMR-xcDOT", WGLMR_xcDOT),
   },
   {
-    symbol: assetSymbols["GLMR-madUSDC"],
-    underlying: GLMR_madUSDC,
-    name: "BeamSwap GLMR-madUSDC LP Token",
-    decimals: 18,
-    oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: beamSwapDocs(WGLMR, madUSDC, "GLMR-madUSDC", GLMR_madUSDC),
-  },
-  {
     symbol: assetSymbols["xcDOT-stDOT"],
     underlying: xcDOT_stDOT,
     name: "Curve.fi xcDOT-stDOT LP Token",
@@ -236,12 +201,28 @@ export const assets: SupportedAsset[] = [
     extraDocs: stellaSwapDocs("ETH", CELR, "CELR-GLMR", CELR_GLMR),
   },
   {
+    symbol: assetSymbols["ATOM-GLMR"],
+    underlying: GLMR_ATOM,
+    name: "Stella Swap ATOM/GLMR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", ATOM, "ATOM-GLMR", GLMR_ATOM),
+  },
+  {
     symbol: assetSymbols.STELLA,
     underlying: STELLA,
     name: "Stellaswap Token",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", STELLA),
+  },
+  {
+    symbol: assetSymbols.CELR,
+    underlying: CELR,
+    name: "CELR Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", CELR),
   },
 ];
 

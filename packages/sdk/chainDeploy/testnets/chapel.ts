@@ -1,5 +1,5 @@
 import { chapel } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
@@ -55,14 +55,6 @@ export const deployConfig: ChainDeployConfig = {
     ],
     flashSwapFee: 30,
   },
-  plugins: [
-    {
-      strategy: "MockERC4626",
-      name: "Mock_BUSD",
-      underlying: assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying,
-      otherParams: [],
-    },
-  ],
   cgId: chapel.specificParams.cgId,
 };
 

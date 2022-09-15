@@ -1,16 +1,39 @@
 import { MidasSdk } from '@midas-capital/sdk';
 import { FundOperationMode, NativePricedFuseAsset } from '@midas-capital/types';
+import { useQuery } from '@tanstack/react-query';
 import { BigNumber, utils } from 'ethers';
 
+import { useMidas } from '@ui/context/MidasContext';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+
+export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
+  const {
+    midasSdk,
+    address,
+    currentChain: { id: chainId },
+  } = useMidas();
+  return useQuery<{ bigNumber: BigNumber; number: number }>(
+    ['useMaxAmount', asset.cToken, chainId],
+    async () => {
+      const bigNumber = await fetchMaxAmount(mode, midasSdk, address, asset);
+      return {
+        bigNumber: bigNumber,
+        number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
+      };
+    },
+    {
+      enabled: !!midasSdk && !!address && !!chainId && !!asset,
+    }
+  );
+}
 
 export const fetchMaxAmount = async (
   mode: FundOperationMode,
   midasSdk: MidasSdk,
   address: string,
   asset: NativePricedFuseAsset
-) => {
+): Promise<BigNumber> => {
   if (mode === FundOperationMode.SUPPLY) {
     return await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
   }
@@ -46,7 +69,10 @@ export const fetchMaxAmount = async (
       { from: address }
     );
 
-    maxRedeem = utils.parseUnits(toFixedNoRound(utils.formatUnits(maxRedeem), 7));
+    maxRedeem = utils.parseUnits(
+      toFixedNoRound(utils.formatUnits(maxRedeem, asset.underlyingDecimals), 7),
+      asset.underlyingDecimals
+    );
 
     if (maxRedeem) {
       return BigNumber.from(maxRedeem);
@@ -54,4 +80,5 @@ export const fetchMaxAmount = async (
       throw new Error('Could not fetch your max withdraw amount! Code: ');
     }
   }
+  throw new Error('Unsupported `FundOperationMode` passed.');
 };

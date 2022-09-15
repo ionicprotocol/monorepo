@@ -37,7 +37,6 @@ export type ChainDeployConfig = {
   wBTCToken?: string;
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
-  plugins?: PluginConfig[];
   cgId: string;
 };
 
@@ -54,6 +53,7 @@ export type PluginConfig = {
   otherParams?: string[];
   flywheelAddresses?: string[];
   flywheelIndices?: number[];
+  market: string;
 };
 
 export type ChainlinkAsset = {
@@ -147,5 +147,5 @@ export type UniswapOracleV2ResolverPairParams = {
   pair: string;
   baseToken: string;
   minPeriod: number;
-  deviationThreshold: number;
+  deviationThreshold: string;
 };

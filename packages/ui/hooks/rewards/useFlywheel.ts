@@ -1,4 +1,4 @@
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { Flywheel } from '@ui/types/ComponentPropsType';
@@ -12,11 +12,10 @@ export const useFlywheel = (flywheelAddress?: string) => {
       if (!flywheelAddress) return undefined;
       if (!midasSdk) return undefined;
 
-      const flywheel = midasSdk.createFuseFlywheelCore(flywheelAddress);
+      const flywheel = midasSdk.createMidasFlywheel(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
-      const [authority, booster, rewards, markets, owner, rewardToken] = await Promise.all([
-        flywheel.callStatic.authority(),
+      const [booster, rewards, markets, owner, rewardToken] = await Promise.all([
         flywheel.callStatic.flywheelBooster(),
         flywheel.callStatic.flywheelRewards(),
         flywheel.callStatic.getAllStrategies(),
@@ -26,7 +25,6 @@ export const useFlywheel = (flywheelAddress?: string) => {
 
       return {
         address: flywheel.address,
-        authority,
         booster,
         owner,
         rewards,

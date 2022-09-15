@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 
 import { FuseFlywheelDeployFnParams } from "..";
-import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
+import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
 
 export const deployFlywheelWithDynamicRewards = async ({
   ethers,
@@ -19,8 +19,8 @@ export const deployFlywheelWithDynamicRewards = async ({
         `Deploying MidasFlywheelCore & FuseFlywheelDynamicRewardsPlugin for ${config.rewardToken} reward token`
       );
       //// MidasFlywheelCore with Dynamic Rewards
-      const fwc = await deployments.deploy(`MidasFlywheelCore_${config.name}`, {
-        contract: "MidasFlywheelCore",
+      const fwc = await deployments.deploy(`MidasFlywheel_${config.name}`, {
+        contract: "MidasFlywheel",
         from: deployer,
         log: true,
         proxy: {
@@ -40,7 +40,7 @@ export const deployFlywheelWithDynamicRewards = async ({
         },
         waitConfirmations: 1,
       });
-      console.log("MidasFlywheelCore: ", fwc.address);
+      console.log("MidasFlywheel: ", fwc.address);
 
       const fdr = await deployments.deploy(`FuseFlywheelDynamicRewardsPlugin_${config.name}`, {
         contract: "FuseFlywheelDynamicRewardsPlugin",
@@ -51,11 +51,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       });
       console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
-      const flywheelCore = (await ethers.getContractAt(
-        "MidasFlywheelCore",
-        fwc.address,
-        deployer
-      )) as MidasFlywheelCore;
+      const flywheelCore = (await ethers.getContract(`MidasFlywheel_${config.name}`, deployer)) as MidasFlywheel;
       const tx = await flywheelCore.setFlywheelRewards(fdr.address, { from: deployer });
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);

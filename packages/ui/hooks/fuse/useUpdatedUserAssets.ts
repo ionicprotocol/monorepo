@@ -1,7 +1,7 @@
 import { FundOperationMode } from '@midas-capital/types';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
-import { useQuery, UseQueryResult } from 'react-query';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';

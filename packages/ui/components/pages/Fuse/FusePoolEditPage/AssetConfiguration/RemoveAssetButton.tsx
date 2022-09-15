@@ -1,8 +1,8 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
+import { useQueryClient } from '@tanstack/react-query';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
-import { useQueryClient } from 'react-query';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
 import { useMidas } from '@ui/context/MidasContext';

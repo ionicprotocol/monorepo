@@ -39,6 +39,7 @@ export const ADMIN_FEE = {
 
 export const POOLS_PER_PAGE = 6;
 
+// TODO: We should replace this with NATIVE_DECIMALS from the @midas-capital/chains package
 export const DEFAULT_DECIMALS = 18;
 
 // enums
@@ -71,3 +72,5 @@ export const aBNBcContractABI = [
     type: 'function',
   },
 ];
+
+export const DISCORD_URL = 'https://discord.gg/85YxVuPeMt';

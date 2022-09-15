@@ -1,6 +1,7 @@
 import LogRocket from 'logrocket';
 
 export const handleGenericError = (e: any, errorToast: (input: any) => any) => {
+  console.error(e);
   let message: string;
 
   if (e instanceof Error) {

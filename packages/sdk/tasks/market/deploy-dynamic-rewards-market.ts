@@ -27,7 +27,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     const contractName = taskArgs.contractName;
     const pluginExtraParams = taskArgs.pluginExtraParams.split(",");
     const rewardTokens = taskArgs.rewardTokens.split(",");
-    const fwAddresses = taskArgs.fwAddress.split(",");
+    const fwAddresses = taskArgs.fwAddresses.split(",");
     const symbol = taskArgs.symbol;
 
     const underlying = underlyings.find((a) => a.symbol === symbol)!.underlying;
@@ -39,14 +39,23 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     const deployArgs = [underlying, ...fwAddresses, ...pluginExtraParams, marketAddress, rewardTokens];
 
     // STEP 1: deploy plugins
-    console.log(`Deploying plugin with arguments: ${{ deployArgs }}`);
-    const pluginDeployment = await hre.deployments.deploy(contractName + "_" + symbol + "_" + comptroller, {
-      contract: contractName,
-      from: signer.address,
-      args: deployArgs,
-      log: true,
-    });
+    console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
+    const pluginContract = await hre.ethers.getContractFactory(contractName, signer);
+    const pluginDeployment = await pluginContract.deploy();
+    console.log(pluginDeployment.deployTransaction.hash);
+    if (pluginDeployment.deployTransaction.hash)
+      await hre.ethers.provider.waitForTransaction(pluginDeployment.deployTransaction.hash);
+
     console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
+    const plugin = await hre.ethers.getContractAt(contractName, pluginDeployment.address, signer);
+
+    const _asset = await plugin.asset();
+
+    if (_asset === hre.ethers.constants.AddressZero) {
+      const tx = await plugin.initialize(...deployArgs);
+      await tx.wait();
+      console.log(`Plugin initialised with status: ${tx.status} - ${tx.hash}`);
+    }
 
     // STEP 2: whitelist plugins
     console.log(`Whitelisting plugin: ${pluginDeployment.address} ...`);
@@ -81,7 +90,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
     // for each token and its flywheel, set up the market and its rewards
     for (const [idx, rewardToken] of rewardTokens.entries()) {
-      const flywheel = sdk.createFuseFlywheelCore(fwAddresses[idx]);
+      const flywheel = sdk.createMidasFlywheel(fwAddresses[idx]);
       const tokenRewards = await flywheel.callStatic.flywheelRewards();
 
       // Step 1: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)
