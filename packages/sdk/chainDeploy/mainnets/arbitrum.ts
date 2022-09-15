@@ -30,6 +30,14 @@ export const deployConfig: ChainDeployConfig = {
     flashSwapFee: 30,
   },
   dynamicFlywheels: [],
+  gelatoResolverAssets: [
+    {
+      pair: "0xaa5bD49f2162ffdC15634c87A77AC67bD51C6a6D", // WETH-GOHM
+      baseToken: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      minPeriod: 1800,
+      deviationThreshold: "10000000000000000", // 1%
+    },
+  ],
   cgId: arbitrum.specificParams.cgId,
 };
 
