@@ -8,6 +8,7 @@ import {
   deployCurveLpOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
+  deployUniswapV3Oracle,
 } from "../helpers";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, CurvePoolConfig } from "../helpers/types";
 
@@ -35,7 +36,24 @@ export const deployConfig: ChainDeployConfig = {
       },
     ],
     uniswapOracleLpTokens: [],
-    flashSwapFee: 30,
+    flashSwapFee: 25,
+    uniswapV3OracleTokens: [
+      {
+        assetAddress: underlying(assets, assetSymbols.DPX),
+        poolAddress: "0xb52781C275431bD48d290a4318e338FE0dF89eb9",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+      },
+      {
+        assetAddress: underlying(assets, assetSymbols.MAGIC),
+        poolAddress: "0x7e7FB3CCEcA5F2ac952eDF221fd2a9f62E411980",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+      },
+      {
+        assetAddress: underlying(assets, assetSymbols.GMX),
+        poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+      },
+    ],
   },
   dynamicFlywheels: [],
   cgId: arbitrum.specificParams.cgId,
@@ -111,6 +129,15 @@ const curvePools: CurvePoolConfig[] = [
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
 
+  //// deploy uniswap v3 price oracle
+  await deployUniswapV3Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
+
   //// ORACLES
   //// Uniswap Oracle
   await deployUniswapOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
@@ -172,19 +199,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
-
-  //// deploy uniswap twap price oracle v2 resolver
-
-  //   const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
-  //     from: deployer,
-  //     args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
-  //     log: true,
-  //     waitConfirmations: 1,
-  //   });
-  //   if (twapPriceOracleResolver.transactionHash) {
-  //     await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
-  //   }
-  //   console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
 
   ////
 
