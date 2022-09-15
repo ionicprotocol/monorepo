@@ -197,19 +197,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
-  //// deploy uniswap twap price oracle v2 resolver
-
-  const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
-    from: deployer,
-    args: [[], "0x1557ccC2cc2B0CC6029330B86FC39CCEA007339b"],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (twapPriceOracleResolver.transactionHash) {
-    await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
-  }
-  console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
-
   ////
 
   // Plugins & Rewards
