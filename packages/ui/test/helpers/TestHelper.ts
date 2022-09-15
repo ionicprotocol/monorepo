@@ -3,6 +3,13 @@ import puppeteer, { Browser, Page } from 'puppeteer';
 
 import { App } from '@ui/test/pages/App';
 
+export type Network = {
+  networkName: string;
+  rpc: string;
+  chainId: number;
+  symbol: string;
+};
+
 export class TestHelper {
   public static async init(): Promise<App> {
     const [metamask, page] = await this.initDappeteer();
@@ -11,29 +18,16 @@ export class TestHelper {
     return app;
   }
 
-  public static async initDappeteer(
-    seedPhrase = '',
-    password = ''
-  ): Promise<[Dappeteer, Page, Browser]> {
-    let seed: string;
-    let pass: string;
+  public static async initDappeteer(network?: Network): Promise<[Dappeteer, Page, Browser]> {
+    const envSeed = process.env.TEST_SEED;
+    const envPassword = process.env.TEST_PASSWORD;
 
-    if (seedPhrase !== '' && password !== '') {
-      seed = seedPhrase;
-      pass = password;
-    } else {
-      const envSeed = process.env.TEST_SEED;
-      const envPassword = process.env.TEST_SEED;
-      if (envSeed && envPassword) {
-        seed = envSeed;
-        pass = envPassword;
-      } else {
-        throw new Error('SEED and PASSWORD not set.');
-      }
+    if (!envSeed || !envPassword) {
+      throw new Error('SEED or PASSWORD not set.');
     }
 
     const browser = await this.getBrowser();
-    const metamask = await this.getMetamask(browser, seed, pass);
+    const metamask = await this.getMetamask(browser, envSeed, envPassword, network);
     const page = await this.getPage(browser);
 
     return [metamask, page, browser];
@@ -42,20 +36,17 @@ export class TestHelper {
   private static async getMetamask(
     browser: Browser,
     seed: string,
-    pass: string
+    pass: string,
+    network?: Network
   ): Promise<Dappeteer> {
     let metamask: Dappeteer;
-    const networkName = 'ForkedBSC';
 
     try {
       metamask = await setupMetamask(browser, { seed: seed, password: pass });
-      await metamask.addNetwork({
-        networkName,
-        rpc: 'http://localnode.com:8545/',
-        chainId: 56,
-        symbol: 'BNB',
-      });
-      await metamask.switchNetwork(networkName);
+      if (network) {
+        await metamask.addNetwork(network);
+        await metamask.switchNetwork(network.networkName);
+      }
     } catch (error) {
       throw error;
     }

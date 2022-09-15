@@ -9,7 +9,8 @@
     "lint": "next lint",
     "lint-fix": "eslint '**/*.{ts,tsx}' -c .eslintrc.json --fix --ext ts,tsx,json",
     "postinstall": "chakra-cli tokens ./theme/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "test:chapel": "jest test/networks/chapel/*"
   },
   "dependencies": {
     "@ajna/pagination": "^1.4.19",

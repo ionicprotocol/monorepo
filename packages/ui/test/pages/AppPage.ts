@@ -78,7 +78,14 @@ export abstract class AppPage {
 
       const addressInput = await this.Metamask.page.waitForSelector('#custom-address');
       if (addressInput) {
-        addressInput.type(tokenAddress);
+        // await this.Metamask.page.evaluate(
+        //   (input, tokenAddress) => (input.value = tokenAddress),
+        //   addressInput,
+        //   tokenAddress
+        // );
+
+        await addressInput.type(tokenAddress);
+        await this.blockingWait(3);
 
         await this.Metamask.page.waitForSelector(
           `button[data-testid='page-container-footer-next']:not([disabled])`
