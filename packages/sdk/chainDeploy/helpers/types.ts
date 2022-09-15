@@ -1,4 +1,5 @@
 import { SupportedAsset } from "@midas-capital/types";
+import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
 export enum ChainlinkFeedBaseCurrency {
@@ -11,16 +12,31 @@ export type TokenPair = {
   baseToken: string;
 };
 
+export type UniswapOracleDeployConfig = {
+  token: string;
+  baseToken: string;
+  pair: string;
+  minPeriod: number;
+  deviationThreshold: string;
+};
+
+export type UniswapV3OracleConfig = {
+  assetAddress: string;
+  poolAddress: string;
+  twapWindowSeconds: BigNumber;
+};
+
 export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;
     uniswapV2FactoryAddress: string;
-    uniswapOracleInitialDeployTokens: Array<TokenPair>;
+    uniswapOracleInitialDeployTokens: Array<UniswapOracleDeployConfig>;
     pairInitHashCode?: string;
     hardcoded: { name: string; symbol: string; address: string }[];
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
     flashSwapFee: number;
+    uniswapV3OracleTokens?: Array<UniswapV3OracleConfig>;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;
@@ -106,6 +122,10 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
 };
 
 export type UniswapDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+};
+
+export type UniswaV3DeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
