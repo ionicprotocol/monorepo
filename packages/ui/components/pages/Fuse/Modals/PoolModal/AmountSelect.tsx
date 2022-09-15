@@ -13,6 +13,7 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
+import { TransactionRequest } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
 import {
   ComptrollerErrorCodes,
@@ -89,12 +90,15 @@ const AmountSelect = ({
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
 
+  const ganacheWTokenAddress = '0x22a4d1bf93e84e107795c82f0c718a083dd1c215';
+
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
-    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN &&
-    mode === FundOperationMode.SUPPLY &&
-    myBalance?.isZero() &&
-    !myNativeBalance?.isZero();
+    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN ||
+    (asset.underlyingToken.toLowerCase() === ganacheWTokenAddress &&
+      mode === FundOperationMode.SUPPLY &&
+      myBalance?.isZero() &&
+      !myNativeBalance?.isZero());
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -250,8 +254,25 @@ const AmountSelect = ({
     }
   };
 
-  const onWrap = () => {
-    console.log(`WRAP ${nativeSymbol} to ${asset.underlyingSymbol}`);
+  const onWrap = async () => {
+    try {
+      const tx: TransactionRequest = {
+        to:
+          currentChain.id === 1337 ? ganacheWTokenAddress : midasSdk.chainSpecificAddresses.W_TOKEN,
+        value: amount,
+        from: address,
+        nonce: await midasSdk.signer.getTransactionCount(),
+        gasLimit: utils.hexlify(100000),
+        gasPrice: await midasSdk.signer.getGasPrice(),
+      };
+      setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
+      const resp = await midasSdk.signer.sendTransaction(tx);
+      setPendingTxHash(resp.hash);
+      onClose();
+    } catch (e) {
+      handleGenericError(e, errorToast);
+      setUserAction(UserAction.NO_ACTION);
+    }
   };
 
   return (
@@ -758,7 +779,7 @@ const TokenNameAndMaxButton = ({
   asset: NativePricedFuseAsset;
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
-  optionToWrap: boolean;
+  optionToWrap: boolean | undefined;
 }) => {
   const { midasSdk, address } = useMidas();
 
