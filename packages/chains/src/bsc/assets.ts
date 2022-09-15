@@ -351,7 +351,7 @@ const assets: SupportedAsset[] = [
     underlying: EPX,
     name: "EPX",
     decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV3,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", EPX),
   },
   {
@@ -359,7 +359,7 @@ const assets: SupportedAsset[] = [
     underlying: DDD,
     name: "DDD",
     decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV3,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", DDD),
   },
 ];
