@@ -43,6 +43,7 @@ export enum OracleTypes {
   SimplePriceOracle = "SimplePriceOracle",
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
+  UniswapTwapPriceOracleV3 = "UniswapTwapPriceOracleV3",
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
 }
@@ -188,6 +189,9 @@ export enum assetSymbols {
   "BTCB-ETH" = "BTCB-ETH",
 
   "CAKE-WBNB" = "CAKE-WBNB",
+
+  DDD = "DDD",
+  EPX = "EPX",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
