@@ -189,6 +189,9 @@ export enum assetSymbols {
 
   "CAKE-WBNB" = "CAKE-WBNB",
 
+  DDD = "DDD",
+  EPX = "EPX",
+
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
   saddleOptUSD = "saddleOptUSD",
