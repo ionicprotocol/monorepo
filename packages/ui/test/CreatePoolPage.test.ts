@@ -23,7 +23,7 @@ const baseUrl = 'http://localhost:3000/56/create-pool';
 // jest.retryTimes(1);
 jest.setTimeout(600000);
 
-describe('Create Pool:', () => {
+describe.skip('Create Pool:', () => {
   beforeAll(async () => {
     [metamask, page, browser] = await TestHelper.initDappeteer();
 
