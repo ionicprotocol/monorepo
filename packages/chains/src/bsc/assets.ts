@@ -39,6 +39,8 @@ const USDC_BUSD = "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1";
 const USDC_ETH = "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0";
 const CAKE_WBNB = "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0";
 const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
+const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
+const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 
 const assets: SupportedAsset[] = [
   {
@@ -343,6 +345,22 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: pancakeSwapDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH),
+  },
+  {
+    symbol: assetSymbols.EPX,
+    underlying: EPX,
+    name: "Ellipsis X",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", EPX),
+  },
+  {
+    symbol: assetSymbols.DDD,
+    underlying: DDD,
+    name: "DotDot",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", DDD),
   },
 ];
 

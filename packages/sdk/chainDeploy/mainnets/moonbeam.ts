@@ -80,6 +80,20 @@ export const deployConfig: ChainDeployConfig = {
       name: assetSymbols.CELR,
     },
   ],
+  gelatoResolverAssets: [
+    {
+      pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
+      baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
+      minPeriod: 1800,
+      deviationThreshold: "10000000000000000", // 1%
+    },
+    {
+      pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
+      baseToken: "0xAcc15dC74880C9944775448304B263D191c6077F",
+      minPeriod: 1800,
+      deviationThreshold: "10000000000000000", // 1%
+    },
+  ],
   cgId: moonbeam.specificParams.cgId,
 };
 

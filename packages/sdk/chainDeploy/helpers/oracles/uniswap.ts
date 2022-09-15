@@ -52,6 +52,13 @@ export const deployUniswapOracle = async ({
   }
   console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
 
+  const resolverContract = await ethers.getContract("UniswapTwapPriceOracleV2Resolver", deployer);
+
+  for (const gelatoConfig of deployConfig.gelatoResolverAssets) {
+    await resolverContract.addPair(gelatoConfig);
+    console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${gelatoConfig.pair}`);
+  }
+
   const uniTwapOracleFactory = (await ethers.getContract(
     "UniswapTwapPriceOracleV2Factory",
     deployer

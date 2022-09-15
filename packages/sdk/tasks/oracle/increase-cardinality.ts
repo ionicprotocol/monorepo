@@ -1,17 +1,18 @@
 import { task } from "hardhat/config";
 
-import { IUniswapV3Pool__factory } from "../../lib/contracts/typechain";
+import { IUniswapV3Pool__factory } from "../../lib/contracts/typechain/factories/IUniswapV3Pool__factory";
 
-task("oracle:increase-cardinality", "Increase cardinality for pair")
-  .addParam("pair")
+task("oracle:increase-cardinality", "Increase cardinality for pool")
+  .addParam("address")
   .setAction(async (taskArgs, hre) => {
     const { deployer } = await hre.ethers.getNamedSigners();
 
-    const address = taskArgs.pair;
+    const address = taskArgs.address;
 
-    const pairContract = new hre.ethers.Contract(address, IUniswapV3Pool__factory.abi, deployer);
-    const tx = await pairContract.increaseObservationCardinalityNext(10);
-    const txReceipt = tx.wait();
+    const poolContract = new hre.ethers.Contract(address, IUniswapV3Pool__factory.abi, deployer);
+    await poolContract.increaseObservationCardinalityNext(10, {
+      gasLimit: 1000000,
+    });
 
-    console.log(`Cardinality increased for pair ${address} - ${txReceipt.transactionHash}`);
+    console.log(`Cardinality increased for pool ${address}`);
   });

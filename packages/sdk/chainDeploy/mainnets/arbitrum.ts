@@ -1,5 +1,5 @@
 import { arbitrum } from "@midas-capital/chains";
-import { assetSymbols } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
@@ -8,6 +8,7 @@ import {
   deployCurveLpOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
+  deployUniswapV3Oracle,
 } from "../helpers";
 import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, CurvePoolConfig } from "../helpers/types";
 
@@ -25,11 +26,41 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303"),
     uniswapV2RouterAddress: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
     uniswapV2FactoryAddress: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
-    uniswapOracleInitialDeployTokens: [],
+    uniswapOracleInitialDeployTokens: [
+      {
+        token: underlying(assets, assetSymbols.GOHM),
+        baseToken: underlying(assets, assetSymbols.WETH),
+      },
+    ],
     uniswapOracleLpTokens: [],
-    flashSwapFee: 30,
+    flashSwapFee: 25,
+    uniswapV3OracleTokens: [
+      {
+        assetAddress: underlying(assets, assetSymbols.DPX),
+        poolAddress: "0xb52781C275431bD48d290a4318e338FE0dF89eb9",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+      },
+      {
+        assetAddress: underlying(assets, assetSymbols.MAGIC),
+        poolAddress: "0x7e7FB3CCEcA5F2ac952eDF221fd2a9f62E411980",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+      },
+      {
+        assetAddress: underlying(assets, assetSymbols.GMX),
+        poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+      },
+    ],
   },
   dynamicFlywheels: [],
+  gelatoResolverAssets: [
+    {
+      pair: "0xaa5bD49f2162ffdC15634c87A77AC67bD51C6a6D", // WETH-GOHM
+      baseToken: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      minPeriod: 1800,
+      deviationThreshold: "10000000000000000", // 1%
+    },
+  ],
   cgId: arbitrum.specificParams.cgId,
 };
 
@@ -96,15 +127,21 @@ const curvePools: CurvePoolConfig[] = [
   {
     lpToken: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
     pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.USDT)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.USDT)],
   },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+
+  //// deploy uniswap v3 price oracle
+  await deployUniswapV3Oracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+  });
 
   //// ORACLES
   //// Uniswap Oracle
@@ -167,19 +204,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
-
-  //// deploy uniswap twap price oracle v2 resolver
-
-  //   const twapPriceOracleResolver = await deployments.deploy("UniswapTwapPriceOracleV2Resolver", {
-  //     from: deployer,
-  //     args: [[], "0x7645f0A9F814286857E937cB1b3fa9659B03385b"],
-  //     log: true,
-  //     waitConfirmations: 1,
-  //   });
-  //   if (twapPriceOracleResolver.transactionHash) {
-  //     await ethers.provider.waitForTransaction(twapPriceOracleResolver.transactionHash);
-  //   }
-  //   console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
 
   ////
 
