@@ -11,11 +11,19 @@ export type TokenPair = {
   baseToken: string;
 };
 
+export type UniswapOracleDeployConfig = {
+  token: string;
+  baseToken: string;
+  pair: string;
+  minPeriod: number;
+  deviationThreshold: string;
+};
+
 export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;
     uniswapV2FactoryAddress: string;
-    uniswapOracleInitialDeployTokens: Array<TokenPair>;
+    uniswapOracleInitialDeployTokens: Array<UniswapOracleDeployConfig>;
     pairInitHashCode?: string;
     hardcoded: { name: string; symbol: string; address: string }[];
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
@@ -30,15 +38,7 @@ export type ChainDeployConfig = {
   wBTCToken?: string;
   blocksPerYear: number;
   dynamicFlywheels?: DynamicFlywheelConfig[];
-  gelatoResolverAssets?: GelatoResolverConfig[];
   cgId: string;
-};
-
-export type GelatoResolverConfig = {
-  pair: string;
-  baseToken: string;
-  minPeriod: number;
-  deviationThreshold: string;
 };
 
 export type DynamicFlywheelConfig = {

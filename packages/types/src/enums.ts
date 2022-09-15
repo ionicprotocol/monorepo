@@ -290,6 +290,7 @@ export enum assetSymbols {
   // Arbitrum
   "2pool" = "2pool",
   GOHM = "GOHM",
+  "WETH-GOHM" = "WETH-GOHM",
 }
 
 export default assetSymbols;
