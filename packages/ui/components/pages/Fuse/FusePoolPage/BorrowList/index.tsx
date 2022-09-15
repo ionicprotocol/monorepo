@@ -113,37 +113,37 @@ export const BorrowList = ({ assets, borrowBalanceFiat, comptrollerAddress }: Bo
         <Tbody>
           {assets.length > 0 ? (
             <>
-              {borrowedAssets.map((asset, index) => {
+              {borrowedAssets.map((asset) => {
                 return (
                   <AssetBorrowRow
                     comptrollerAddress={comptrollerAddress}
                     key={asset.underlyingToken}
-                    assets={borrowedAssets}
-                    index={index}
+                    assets={assets}
+                    asset={asset}
                   />
                 );
               })}
               {borrowedAssets.length > 0 && nonBorrowedAssets.length > 0 && (
                 <Tr borderWidth={1} borderColor={cCard.dividerColor}></Tr>
               )}
-              {nonBorrowedAssets.map((asset, index) => {
+              {nonBorrowedAssets.map((asset) => {
                 return (
                   <AssetBorrowRow
                     comptrollerAddress={comptrollerAddress}
                     key={asset.underlyingToken}
-                    assets={nonBorrowedAssets}
-                    index={index}
+                    assets={assets}
+                    asset={asset}
                   />
                 );
               })}
               {isShow &&
-                unBorrowableAssets.map((asset, index) => {
+                unBorrowableAssets.map((asset) => {
                   return (
                     <AssetBorrowRow
                       comptrollerAddress={comptrollerAddress}
                       key={asset.underlyingToken}
-                      assets={unBorrowableAssets}
-                      index={index}
+                      assets={assets}
+                      asset={asset}
                     />
                   );
                 })}

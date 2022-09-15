@@ -11,9 +11,7 @@ export const useBorrowMinimum = (asset: FuseAsset) => {
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const response = useQuery(
     [`useBorrowMinimum`, midasSdk.chainId],
-    async () => {
-      return midasSdk.contracts.FuseFeeDistributor.callStatic.minBorrowEth();
-    },
+    async () => midasSdk.contracts.FuseFeeDistributor.callStatic.minBorrowEth(),
     {
       cacheTime: Infinity,
       staleTime: Infinity,

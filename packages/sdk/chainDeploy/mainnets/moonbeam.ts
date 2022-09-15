@@ -1,5 +1,5 @@
 import { moonbeam } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import {
@@ -22,7 +22,7 @@ import {
 const assets = moonbeam.assets;
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
+  wtoken: underlying(assets, assetSymbols.WGLMR),
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
   nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
@@ -35,49 +35,53 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x68A384D826D3678f78BB9FB1533c7E9577dACc0E",
     uniswapOracleInitialDeployTokens: [
       {
-        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.STELLA)!.underlying,
-        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
+        token: underlying(assets, assetSymbols.STELLA),
+        baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
       },
       {
-        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.CELR)!.underlying,
-        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
+        token: underlying(assets, assetSymbols.CELR),
+        baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
       },
     ],
     uniswapOracleLpTokens: [
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-USDC"])!.underlying, // GLMR-USDC
-      // assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-GLINT"])!.underlying, // GLMR-GLINT
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["USDC-ETH"])!.underlying, // USDC-ETH
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["WGLMR-xcDOT"])!.underlying, // WGLMR-xcDOT
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["GLMR-madUSDC"])!.underlying, // GLMR-madUSDC
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["STELLA-GLMR"])!.underlying, // STELLA-GLMR
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["CELR-GLMR"])!.underlying, // CELR-GLMR
-      assets.find((a: SupportedAsset) => a.symbol === assetSymbols["ATOM-GLMR"])!.underlying, // ATOM-GLMR
+      underlying(assets, assetSymbols["GLMR-USDC"]),
+      underlying(assets, assetSymbols["USDC-ETH"]),
+      underlying(assets, assetSymbols["WGLMR-xcDOT"]),
+      underlying(assets, assetSymbols["STELLA-GLMR"]),
+      underlying(assets, assetSymbols["CELR-GLMR"]),
+      underlying(assets, assetSymbols["ATOM-GLMR"]),
     ],
     flashSwapFee: 30,
   },
   dynamicFlywheels: [
     {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.GLINT)!.underlying,
+      rewardToken: underlying(assets, assetSymbols.GLINT),
       cycleLength: 1,
       name: assetSymbols.GLINT,
     },
     {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.STELLA)!.underlying,
+      rewardToken: underlying(assets, assetSymbols.STELLA),
       cycleLength: 1,
       name: assetSymbols.STELLA,
     },
     {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.ATOM)!.underlying,
+      rewardToken: underlying(assets, assetSymbols.ATOM),
       cycleLength: 1,
       name: assetSymbols.ATOM,
     },
     {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WGLMR)!.underlying,
+      rewardToken: underlying(assets, assetSymbols.WGLMR),
       cycleLength: 1,
       name: assetSymbols.WGLMR,
     },
     {
-      rewardToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.CELR)!.underlying,
+      rewardToken: underlying(assets, assetSymbols.CELR),
       cycleLength: 1,
       name: assetSymbols.CELR,
     },
@@ -93,7 +97,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: assetSymbols.madWBTC,
+    symbol: assetSymbols.multiWBTC,
     aggregator: "0x8c4425e141979c66423A83bE2ee59135864487Eb",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
@@ -119,23 +123,8 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   // stables
   {
-    symbol: assetSymbols.madUSDC,
-    aggregator: "0xA122591F60115D63421f66F752EF9f6e0bc73abC",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
     symbol: assetSymbols.multiUSDC,
     aggregator: "0xA122591F60115D63421f66F752EF9f6e0bc73abC",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
-    symbol: assetSymbols.madUSDT,
-    aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
-    symbol: assetSymbols.multiUSDT,
-    aggregator: "0xB97Ad0E74fa7d920791E90258A6E2085088b4320",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -148,31 +137,19 @@ const chainlinkAssets: ChainlinkAsset[] = [
 const diaAssets: DiaAsset[] = [
   {
     symbol: assetSymbols.FTM,
-    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.FTM)!.underlying,
+    underlying: underlying(assets, assetSymbols.FTM),
     feed: "0x1f1BAe8D7a2957CeF5ffA0d957cfEDd6828D728f",
     key: "FTM/USD",
   },
   {
     symbol: assetSymbols.multiUSDT,
-    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.multiUSDT)!.underlying,
-    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
-    key: "USDT/USD",
-  },
-  {
-    symbol: assetSymbols.madUSDT,
-    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.madUSDT)!.underlying,
+    underlying: underlying(assets, assetSymbols.multiUSDT),
     feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
     key: "USDT/USD",
   },
   {
     symbol: assetSymbols.multiDAI,
-    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.multiDAI)!.underlying,
-    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
-    key: "DAI/USD",
-  },
-  {
-    symbol: assetSymbols.madDAI,
-    underlying: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.madDAI)!.underlying,
+    underlying: underlying(assets, assetSymbols.multiDAI),
     feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
     key: "DAI/USD",
   },
@@ -181,21 +158,9 @@ const diaAssets: DiaAsset[] = [
 // https://moonbeam.curve.fi/
 const curvePools: CurvePoolConfig[] = [
   {
-    lpToken: "0xace58a26b8db90498ef0330fdc9c2655db0c45e2",
-    pool: "0xace58a26b8db90498ef0330fdc9c2655db0c45e2",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.madDAI)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.madUSDC)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.madUSDT)!.underlying,
-    ],
-  },
-  {
     lpToken: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
     pool: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.stDOT)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.xcDOT)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.stDOT), underlying(assets, assetSymbols.xcDOT)],
   },
 ];
 

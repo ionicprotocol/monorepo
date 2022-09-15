@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -215,6 +215,9 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.polygon:
         chainConfig = polygon;
+        break;
+      case SupportedChains.arbitrum:
+        chainConfig = arbitrum;
         break;
     }
 
