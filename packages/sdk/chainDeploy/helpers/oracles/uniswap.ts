@@ -54,9 +54,14 @@ export const deployUniswapOracle = async ({
 
   const resolverContract = await ethers.getContract("UniswapTwapPriceOracleV2Resolver", deployer);
 
-  for (const gelatoConfig of deployConfig.gelatoResolverAssets) {
-    await resolverContract.addPair(gelatoConfig);
-    console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${gelatoConfig.pair}`);
+  for (const uniConfig of deployConfig.uniswap.uniswapOracleInitialDeployTokens) {
+    await resolverContract.addPair({
+      pair: uniConfig.pair,
+      baseToken: uniConfig.baseToken,
+      minPeriod: uniConfig.minPeriod,
+      deviationThreshold: uniConfig.deviationThreshold,
+    });
+    console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${uniConfig.pair}`);
   }
 
   const uniTwapOracleFactory = (await ethers.getContract(
