@@ -1,5 +1,3 @@
-import { constants } from "ethers";
-
 import { AddressesProvider } from "../../../lib/contracts/typechain/AddressesProvider";
 import { MasterPriceOracle } from "../../../lib/contracts/typechain/MasterPriceOracle";
 import { UniswapV3PriceOracle } from "../../../lib/contracts/typechain/UniswapV3PriceOracle";
