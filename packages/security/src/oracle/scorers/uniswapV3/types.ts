@@ -3,6 +3,12 @@ import { BigNumber } from "ethers";
 export type TargetType = "price" | "sqrtPriceX96After" | "priceImpact";
 export type Direction = "pump" | "dump";
 
+export type Token = {
+  address: string;
+  symbol: string;
+  decimals: number;
+};
+
 export type Quote = {
   amountOut: BigNumber;
   sqrtPriceX96After: BigNumber;
@@ -28,4 +34,9 @@ export type ExtendedTrade = Trade & {
 export type PumpAndDump = {
   pump: Trade;
   dump: Trade;
+};
+
+export type UniswapV3AssetConfig = {
+  token: Token;
+  targetPriceImpact: 20;
 };

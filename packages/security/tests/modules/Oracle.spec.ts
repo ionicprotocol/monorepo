@@ -4,13 +4,13 @@ import { SecurityBase } from "../../src";
 import * as OraclesModule from "../../src/oracle";
 
 describe("Oracle", () => {
-  const Oracle = OraclesModule.withOracle(SecurityBase);
+  const Oracle = OraclesModule.withChainLinkOracleScorer(SecurityBase);
   let oracleBsc: InstanceType<typeof Oracle>;
   let oraclePolygon: InstanceType<typeof Oracle>;
 
   beforeEach(() => {
-    oracleBsc = new Oracle(SupportedChains.bsc);
-    oraclePolygon = new Oracle(SupportedChains.polygon);
+    oracleBsc = new Oracle(SupportedChains.bsc, null);
+    oraclePolygon = new Oracle(SupportedChains.polygon, null);
   });
 
   describe("getOracleRating", () => {

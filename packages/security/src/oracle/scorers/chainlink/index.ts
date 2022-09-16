@@ -1,10 +1,10 @@
 import { SecurityBaseConstructor } from "../../..";
-import { ChainLinkFeed } from "../../../types";
 import { chainLinkOracleAssetMappings } from "../../constants";
 import { fetchChainLinkFeedParameters } from "../../fetchers";
 import { scoreEnum, scoreRanges } from "../generic";
 
 import { feedStatusEnums, heartbeatRanges, validatorsRanges } from "./constants";
+import { ChainLinkFeed } from "./types";
 
 export function withChainLinkOracleScorer<TBase extends SecurityBaseConstructor>(Base: TBase) {
   return class ChainLinkOracle extends Base {

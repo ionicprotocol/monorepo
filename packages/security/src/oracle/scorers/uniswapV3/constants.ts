@@ -27,12 +27,6 @@ export const TICK_SPACINGS = {
   10000: 200,
 };
 
-export type Token = {
-  address: string;
-  symbol: string;
-  decimals: number;
-};
-
 export const amountsUSD = [
   100_000, 200_000, 300_000, 400_000, 500_000, 600_000, 700_000, 800_000, 900_000, 1_000_000, 2_000_000, 3_000_000,
   4_000_000, 5_000_000, 6_000_000, 7_000_000, 8_000_000, 9_000_000, 10_000_000,

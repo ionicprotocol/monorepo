@@ -1,8 +1,8 @@
 import Decimal from "decimal.js";
 import { BigNumber, Contract } from "ethers";
 
-import { amountsUSD, Token } from "./constants";
-import { Direction, ExtendedTrade, PumpAndDump, TargetType } from "./types";
+import { amountsUSD } from "./constants";
+import { Direction, ExtendedTrade, PumpAndDump, TargetType, Token, Trade } from "./types";
 import { getDump, getPump, getPumpAndDump } from "./uniswapV3";
 import { formatPrice, isInverted } from "./utils";
 
@@ -52,8 +52,8 @@ export const searchTrade = (
     const tolerance = 0.01;
     const ranges = 20;
 
-    let allTrades = [];
-    let best;
+    let allTrades: Array<Trade> = [];
+    let best: ExtendedTrade;
 
     // TODO improve this hack
     const inverted = isInverted(token.address);
@@ -72,8 +72,8 @@ export const searchTrade = (
       };
     };
 
-    const findBest = (samples) =>
-      samples.reduce((accu, s, i) => {
+    const findBest = (samples: Array<ExtendedTrade>) =>
+      samples.reduce((accu, s) => {
         const sampleVal = new Decimal(s[targetType]);
         const accuVal = new Decimal(accu[targetType]);
 
@@ -125,15 +125,14 @@ export const searchTrade = (
       i++;
     }
 
-    allTrades = sortBy(allTrades, "value");
+    allTrades = allTrades.sort((a, b) => a.value - b.value);
 
     // take the best trade above target if available
-    best =
-      allTrades.find((t) =>
-        targetType === "priceImpact" || direction === "pump"
-          ? target.lte(Decimal.abs(t[targetType]))
-          : target.gte(Decimal.abs(t[targetType]))
-      ) || best;
+    best = allTrades.find((t) =>
+      targetType === "priceImpact" || direction === "pump"
+        ? target.lte(Decimal.abs(t[targetType]))
+        : target.gte(Decimal.abs(t[targetType]))
+    );
 
     // console.log(direction, 'RESULT', best);
     return {
@@ -152,10 +151,11 @@ export const binarySearchTradeValues = (
   fee: BigNumber,
   ethPrice: number,
   target: { lte: (arg0: string) => any; gte: (arg0: string) => any; log: (arg0: number) => any },
-  targetType: TargetType
+  targetType: TargetType,
+  quoter: Contract
 ) => {
-  let execPump = searchTrade(currPrice, currSqrtPriceX96, token, fee, ethPrice, target, targetType, "pump");
-  let execDump = searchTrade(currPrice, currSqrtPriceX96, token, fee, ethPrice, target, targetType, "dump");
+  let execPump = searchTrade(currPrice, currSqrtPriceX96, token, fee, ethPrice, target, targetType, "pump", quoter);
+  let execDump = searchTrade(currPrice, currSqrtPriceX96, token, fee, ethPrice, target, targetType, "dump", quoter);
   // todo improve!
   if (isInverted(token.address)) [execPump, execDump] = [execDump, execPump];
   return { promise: Promise.all([execPump, execDump]) };

@@ -1,5 +1,5 @@
 import { heartbeatToSeconds } from "../../enums";
-import { ChainLinkAssetConfig, ChainLinkFeed, ChainLinkFeedResponse } from "../../types";
+import { ChainLinkAssetConfig, ChainLinkFeed, ChainLinkFeedResponse } from "../scorers/chainlink/types";
 
 import { http } from ".";
 

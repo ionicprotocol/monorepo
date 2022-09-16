@@ -1,7 +1,7 @@
 import { BigNumber, Contract, utils } from "ethers";
 
-import { c1e18, Token, WETH_ADDRESS } from "./constants";
-import { PumpAndDump, Quote, Trade } from "./types";
+import { c1e18, WETH_ADDRESS } from "./constants";
+import { PumpAndDump, Quote, Token, Trade } from "./types";
 import { div, formatPrice, isInverted, sqrtPriceX96ToPrice } from "./utils";
 
 export const getDump = async (

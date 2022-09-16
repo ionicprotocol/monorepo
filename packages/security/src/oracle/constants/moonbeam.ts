@@ -1,6 +1,6 @@
 import { assetSymbols } from "@midas-capital/types";
 
-import { ChainLinkAssetConfig } from "../../types";
+import { ChainLinkAssetConfig } from "../scorers/chainlink/types";
 
 export const chainLinkOracleAssetMappings: ChainLinkAssetConfig = {
   defaultValidatorNumber: 16,
