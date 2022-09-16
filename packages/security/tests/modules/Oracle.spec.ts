@@ -15,11 +15,11 @@ describe("Oracle", () => {
 
   describe("getOracleRating", () => {
     it("should fetch oracle rating for bsc", async () => {
-      const ratings = await oracleBsc.getOracleRating();
+      const ratings = await oracleBsc.getChainLinkOracleRating();
       console.log(ratings);
     });
     it.only("should fetch oracle rating for polygon", async () => {
-      const ratings = await oraclePolygon.getOracleRating();
+      const ratings = await oraclePolygon.getChainLinkOracleRating();
       console.log(ratings);
     });
   });

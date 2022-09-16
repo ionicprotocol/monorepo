@@ -1,3 +1,6 @@
+import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
+import { Signer } from "ethers";
+
 export type ChainLinkFeedStatus = "verified" | "monitored" | "custom" | "deprecating";
 export type ChainLinkFeedHeartbeat = "27s" | "30s" | "1m" | "5m" | "10m" | "15m" | "6h" | "24h";
 

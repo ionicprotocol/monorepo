@@ -3,7 +3,7 @@ import { ChainConfig } from "@midas-capital/types";
 import { Signer } from "ethers";
 
 import { chainIdToConfig } from "./enums";
-import { withOracle } from "./oracle";
+import { withChainLinkOracleScorer, withUniswapV3OracleScorer } from "./oracle";
 
 export type GConstructor<T> = new (...args: any[]) => T;
 export type SecurityBaseConstructor = GConstructor<SecurityBase>;
@@ -14,11 +14,13 @@ export type SignerOrProvider = SupportedSigners | SupportedProvider;
 
 export class SecurityBase {
   chainConfig: ChainConfig;
+  provider: SignerOrProvider;
 
-  constructor(chainId: number) {
+  constructor(chainId: number, provider: SignerOrProvider) {
     this.chainConfig = chainIdToConfig[chainId];
+    this.provider = provider;
   }
 }
 
-const MidasBaseWithModules = withOracle(SecurityBase);
+const MidasBaseWithModules = withChainLinkOracleScorer(withUniswapV3OracleScorer(SecurityBase));
 export default class MidasSdk extends MidasBaseWithModules {}
