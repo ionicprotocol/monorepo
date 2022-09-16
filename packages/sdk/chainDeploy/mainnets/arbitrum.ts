@@ -39,16 +39,6 @@ export const deployConfig: ChainDeployConfig = {
     flashSwapFee: 25,
     uniswapV3OracleTokens: [
       {
-        assetAddress: underlying(assets, assetSymbols.DPX),
-        poolAddress: "0xb52781C275431bD48d290a4318e338FE0dF89eb9",
-        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
-      },
-      {
-        assetAddress: underlying(assets, assetSymbols.MAGIC),
-        poolAddress: "0x7e7FB3CCEcA5F2ac952eDF221fd2a9f62E411980",
-        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
-      },
-      {
         assetAddress: underlying(assets, assetSymbols.GMX),
         poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
         twapWindowSeconds: ethers.BigNumber.from(30 * 60),
@@ -113,6 +103,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.WBTC,
     aggregator: "0xc5a90A6d7e4Af242dA238FFe279e9f2BA0c64B2e",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.MAGIC,
+    aggregator: "0x47E55cCec6582838E173f252D08Afd8116c2202d",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.DPX,
+    aggregator: "0xc373B9DB0707fD451Bc56bA5E9b029ba26629DF0",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
 ];

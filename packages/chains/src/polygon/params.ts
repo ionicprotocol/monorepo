@@ -12,7 +12,7 @@ const specificParams: ChainParams = {
     shortName: "Polygon",
     img: "https://raw.githubusercontent.com/sushiswap/icons/master/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },
-    rpcUrls: { default: "https://rpc-mainnet.maticvigil.com/" },
+    rpcUrls: { default: "https://rpc.ankr.com/polygon" },
     nativeCurrency: {
       symbol: "MATIC",
       name: "MATIC",
