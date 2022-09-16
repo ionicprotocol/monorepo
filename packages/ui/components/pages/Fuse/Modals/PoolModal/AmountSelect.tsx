@@ -14,7 +14,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { TransactionRequest } from '@ethersproject/providers';
-import { MidasSdk } from '@midas-capital/sdk';
+import { ERC20Abi, MidasSdk, WETHAbi } from '@midas-capital/sdk';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
@@ -23,7 +23,7 @@ import {
 } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
+import { BigNumber, constants, Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
 
@@ -51,6 +51,7 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 interface AmountSelectProps {
   asset: MarketData;
@@ -90,15 +91,12 @@ const AmountSelect = ({
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
 
-  const ganacheWTokenAddress = '0x22a4d1bf93e84e107795c82f0c718a083dd1c215';
-
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
-    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN ||
-    (asset.underlyingToken.toLowerCase() === ganacheWTokenAddress &&
-      mode === FundOperationMode.SUPPLY &&
-      myBalance?.isZero() &&
-      !myNativeBalance?.isZero());
+    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN &&
+    mode === FundOperationMode.SUPPLY &&
+    myBalance?.isZero() &&
+    !myNativeBalance?.isZero();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -256,17 +254,26 @@ const AmountSelect = ({
 
   const onWrap = async () => {
     try {
-      const tx: TransactionRequest = {
-        to:
-          currentChain.id === 1337 ? ganacheWTokenAddress : midasSdk.chainSpecificAddresses.W_TOKEN,
-        value: amount,
-        from: address,
-        nonce: await midasSdk.signer.getTransactionCount(),
-        gasLimit: utils.hexlify(100000),
-        gasPrice: await midasSdk.signer.getGasPrice(),
-      };
+      // const tx: TransactionRequest = {
+      //   to:
+      //     currentChain.id === 1337 ? ganacheWTokenAddress : midasSdk.chainSpecificAddresses.W_TOKEN,
+      //   value: amount,
+      //   from: address,
+      //   nonce: await midasSdk.signer.getTransactionCount(),
+      //   gasLimit: utils.hexlify(100000),
+      //   gasPrice: await midasSdk.signer.getGasPrice(),
+      // };
+    const WToken = getContract(midasSdk.chainSpecificAddresses.W_TOKEN, WETHAbi, midasSdk.signer);
+
+      // console.log(WToken,'WTOKEN CONTRACT ')
+
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
-      const resp = await midasSdk.signer.sendTransaction(tx);
+
+    const resp = await WToken.deposit({ from: address, value: amount });
+
+    console.dir(resp)
+
+      // const resp = await midasSdk.signer.sendTransaction(tx);
       setPendingTxHash(resp.hash);
       onClose();
     } catch (e) {
@@ -274,6 +281,11 @@ const AmountSelect = ({
       setUserAction(UserAction.NO_ACTION);
     }
   };
+
+  // console.log(utils.formatEther(myNativeBalance),'myNativeBalance');
+  // console.log(utils.formatEther(myBalance),'myBalance');
+  // console.log(optionToWrap,'optionToWrap')
+  // console.log(WETHAbi,'wethabi')
 
   return (
     <Column
