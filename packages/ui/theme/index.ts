@@ -18,6 +18,8 @@ export const COLOR_PALETTE = {
   grullo: '#B29E84',
   grullo30: '#B29E844d',
   ecru: '#BCAC83',
+  ecru10: '#bcac831a',
+  ecru20: '#bcac8333',
   ecru30: '#4E4A45',
   ecru80: '#BCAC83cc', // alpha 0.8
   bone: '#EBE6E0',
@@ -25,6 +27,8 @@ export const COLOR_PALETTE = {
   white50: '#FFFFFF80',
   whiteBg: '#F6F4F1',
   silverMetallic: '#A5ADB4',
+  silverMetallic10: '#a5adb41a',
+  silverMetallic20: '#a5adb433',
   silverMetallic30: '#DEDEDE',
   silverMetallic80: '#8c9298',
   gunmetal: '#253439',

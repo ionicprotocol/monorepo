@@ -48,10 +48,18 @@ export function DataTable<Data extends object>({
     <Table>
       <Thead>
         {table.getHeaderGroups().map((headerGroup) => (
-          <Tr key={headerGroup.id}>
+          <Tr key={headerGroup.id} borderColor={cCard.dividerColor} borderBottomWidth={1}>
             {headerGroup.headers.map((header) => {
               return (
-                <Th key={header.id} onClick={header.column.getToggleSortingHandler()}>
+                <Th
+                  key={header.id}
+                  onClick={header.column.getToggleSortingHandler()}
+                  border="none"
+                  color={cCard.txtColor}
+                  fontSize={16}
+                  textTransform="capitalize"
+                  py={4}
+                >
                   <HStack gap={1} justifyContent={header.index === 0 ? 'flex-start' : 'flex-end'}>
                     <>{flexRender(header.column.columnDef.header, header.getContext())}</>
                     <>
@@ -73,7 +81,13 @@ export function DataTable<Data extends object>({
       <Tbody>
         {table.getRowModel().rows.map((row) => (
           <Fragment key={row.id}>
-            <Tr key={row.id} borderColor={cCard.dividerColor} borderBottomWidth={1}>
+            <Tr
+              key={row.id}
+              borderColor={cCard.dividerColor}
+              borderTopWidth={row.getIsExpanded() ? 4 : 1}
+              background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+              _hover={{ bg: cCard.hoverBgColor }}
+            >
               {row.getVisibleCells().map((cell) => {
                 return (
                   <Td key={cell.id} border="none">
@@ -83,7 +97,11 @@ export function DataTable<Data extends object>({
               })}
             </Tr>
             {row.getIsExpanded() && (
-              <Tr borderColor={cCard.dividerColor} borderBottomWidth={1}>
+              <Tr
+                borderColor={cCard.dividerColor}
+                borderBottomWidth={row.getIsExpanded() ? 6 : 0}
+                background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+              >
                 {/* 2nd row is a custom 1 cell row */}
                 <Td border="none" colSpan={row.getVisibleCells().length}>
                   {renderSubComponent({ row })}

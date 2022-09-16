@@ -88,12 +88,12 @@ const ExpanderComponent = ({
       }}
       disabled={!canExpand ? true : false}
       variant="outline"
-      color={cOutlineBtn.primary.txtColor}
+      color={isExpanded ? cOutlineBtn.primary.hoverTxtColor : cOutlineBtn.primary.txtColor}
       aria-label="detail view"
       borderRadius="50%"
       borderWidth={3}
       borderColor={cOutlineBtn.primary.borderColor}
-      background={cOutlineBtn.primary.bgColor}
+      background={isExpanded ? cOutlineBtn.primary.hoverBgColor : cOutlineBtn.primary.bgColor}
       icon={isExpanded ? <ChevronUpIcon fontSize={30} /> : <ChevronDownIcon fontSize={30} />}
       _hover={{
         background: cOutlineBtn.primary.hoverBgColor,
@@ -554,12 +554,21 @@ export const MarketsList = ({
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
       {
-        header: 'Assets',
+        id: 'assets',
+        header: () => (
+          <Text textAlign="start" py={2} fontSize="18">
+            Assets
+          </Text>
+        ),
         footer: (props) => props.column.id,
         columns: [
           {
             accessorKey: 'market',
-            header: 'Market',
+            header: () => (
+              <Text textAlign="start" py={2}>
+                Market
+              </Text>
+            ),
             cell: ({ getValue }) => <MarketComponent asset={getValue<MarketData>()} />,
             footer: (props) => props.column.id,
           },
@@ -567,7 +576,11 @@ export const MarketsList = ({
             accessorFn: (row) => row.ltv,
             id: 'LTV',
             cell: ({ getValue }) => <LtvComponent asset={getValue<MarketData>()} />,
-            header: () => <Text textAlign="end">LTV</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                LTV
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
@@ -576,42 +589,66 @@ export const MarketsList = ({
             cell: ({ getValue }) => (
               <SupplyApyComponent asset={getValue<MarketData>()} rewards={rewards} />
             ),
-            header: () => <Text textAlign="end">Supply APY</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                Supply APY
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
             accessorFn: (row) => row.borrowApy,
             id: 'borrowApy',
             cell: ({ getValue }) => <BorrowApyComponent asset={getValue<MarketData>()} />,
-            header: () => <Text textAlign="end">Borrow Apy</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                Borrow Apy
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
             accessorFn: (row) => row.tvl,
             id: 'tvl',
             cell: ({ getValue }) => <TvlComponent asset={getValue<MarketData>()} />,
-            header: () => <Text textAlign="end">TVL</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                TVL
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
             accessorFn: (row) => row.supplyBalance,
             id: 'supplyBalance',
             cell: ({ getValue }) => <SupplyBalanceComponent asset={getValue<MarketData>()} />,
-            header: () => <Text textAlign="end">Supply Balance</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                Supply Balance
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
             accessorFn: (row) => row.borrowBalance,
             id: 'borrowBalance',
             cell: ({ getValue }) => <BorrowBalanceComponent asset={getValue<MarketData>()} />,
-            header: () => <Text textAlign="end">Borrow Balance</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                Borrow Balance
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
             accessorFn: (row) => row.liquidity,
             id: 'liquidity',
             cell: ({ getValue }) => <LiquidityComponent asset={getValue<MarketData>()} />,
-            header: () => <Text textAlign="end">Liquidity</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                Liquidity
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
@@ -623,7 +660,11 @@ export const MarketsList = ({
                 comptrollerAddress={comptrollerAddress}
               />
             ),
-            header: () => <Text textAlign="end">Collateral</Text>,
+            header: () => (
+              <Text textAlign="end" py={2}>
+                Collateral
+              </Text>
+            ),
             footer: (props) => props.column.id,
           },
           {
