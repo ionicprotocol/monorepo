@@ -2730,6 +2730,7 @@ __metadata:
     "@supabase/supabase-js": ^1.35.6
     "@tanstack/react-query": ^4.3.4
     "@tanstack/react-query-devtools": ^4.3.5
+    "@tanstack/react-table": ^8.5.13
     "@testing-library/react": ^13.4.0
     "@types/node": 18.7.16
     "@types/react": ^18.0.19
@@ -4822,6 +4823,25 @@ __metadata:
     react-native:
       optional: true
   checksum: 87c43ec85c34bff97f315167554c970d2428391df8f2e2dee8e562ec7f4f7724babc770c24ea8a0714b3d3144fb8b0e0cd65325150c395ca5057245bd44cc813
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-table@npm:^8.5.13":
+  version: 8.5.13
+  resolution: "@tanstack/react-table@npm:8.5.13"
+  dependencies:
+    "@tanstack/table-core": 8.5.13
+  peerDependencies:
+    react: ">=16"
+    react-dom: ">=16"
+  checksum: 97f5947e1d5e12ac44e6cb9a88c5a3f4003b36e1accd16abf67abb84df2c0ec40bfc4bc882ab391024e1fadb35c8d2e17da277aaf004a23f5167a1e889a78b1c
+  languageName: node
+  linkType: hard
+
+"@tanstack/table-core@npm:8.5.13":
+  version: 8.5.13
+  resolution: "@tanstack/table-core@npm:8.5.13"
+  checksum: 980e3e547161cc21e681d9db4335e5a636bca63c68898e73ec475bca3043c4a8940f535a9d47df7728b9ae464598cc2cb4daccefa04a10539aace6fa4f369c71
   languageName: node
   linkType: hard
 

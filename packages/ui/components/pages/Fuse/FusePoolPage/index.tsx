@@ -7,6 +7,7 @@ import { memo } from 'react';
 import { AssetDetails } from '@ui/components/pages/Fuse/FusePoolPage/AssetDetails';
 import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
+import { MarketsList } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
@@ -93,6 +94,19 @@ const FusePoolPage = memo(() => {
             />
           )}
 
+          <Grid w="100%" gap={4} mb={4}>
+            <MidasBox pb={3}>
+              {data ? (
+                <MarketsList
+                  assets={data.assets}
+                  rewards={marketRewards}
+                  comptrollerAddress={data.comptroller}
+                />
+              ) : (
+                <TableSkeleton tableHeading="Your Supply Balance" />
+              )}
+            </MidasBox>
+          </Grid>
           <Grid
             templateColumns={{
               base: 'repeat(1, 1fr)',
