@@ -1,18 +1,19 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
-import { Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Button, Link as ChakraLink, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import * as React from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
-import { Row as CRow } from '@ui/components/shared/Flex';
+import { Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
+import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
-export const Market = ({ asset }: { asset: MarketData }) => {
+export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddress: string }) => {
   const { scanUrl } = useMidas();
   const { data: tokenData } = useTokenData(asset.underlyingToken);
 
@@ -20,8 +21,13 @@ export const Market = ({ asset }: { asset: MarketData }) => {
 
   const { data: pluginInfo } = usePluginInfo(asset.plugin);
 
+  const { data: claimableRewards } = useAssetClaimableRewards({
+    poolAddress,
+    assetAddress: asset.cToken,
+  });
+
   return (
-    <CRow mainAxisAlignment="flex-start" crossAxisAlignment="center">
+    <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <CTokenIcon size="sm" address={asset.underlyingToken} />
       <VStack alignItems={'flex-start'} ml={2}>
         <PopoverTooltip
@@ -38,6 +44,11 @@ export const Market = ({ asset }: { asset: MarketData }) => {
             {tokenData?.symbol ?? asset.underlyingSymbol}
           </Text>
         </PopoverTooltip>
+        {claimableRewards && claimableRewards.length > 0 && (
+          <Stack>
+            <Badge colorScheme="green">Rewards</Badge>
+          </Stack>
+        )}
       </VStack>
 
       <HStack ml={2}>
@@ -107,6 +118,6 @@ export const Market = ({ asset }: { asset: MarketData }) => {
           </PopoverTooltip>
         )}
       </HStack>
-    </CRow>
+    </Row>
   );
 };

@@ -6,7 +6,7 @@ import { Contract, utils } from 'ethers';
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
-import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/RewardsInfo';
+import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { aBNBcContractABI, aBNBcContractAddress, aprDays } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';

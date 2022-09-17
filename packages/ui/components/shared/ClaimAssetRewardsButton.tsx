@@ -54,7 +54,7 @@ const ClaimAssetRewardsButton = ({
           </AvatarGroup>
           {!isMobile && (
             <Text ml={1} mr={1} fontWeight="semibold" color={cCard.txtColor} width="max-content">
-              Claim
+              Claim Rewards
             </Text>
           )}
         </Column>

@@ -101,6 +101,8 @@ const FusePoolPage = memo(() => {
                   assets={data.assets}
                   rewards={marketRewards}
                   comptrollerAddress={data.comptroller}
+                  supplyBalanceFiat={data.totalSupplyBalanceFiat}
+                  borrowBalanceFiat={data.totalBorrowBalanceFiat}
                 />
               ) : (
                 <TableSkeleton tableHeading="Your Supply Balance" />

@@ -17,7 +17,7 @@ import { Contract, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useEffect, useMemo, useState } from 'react';
 
-import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/RewardsInfo';
+import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { CTokenIcon, TokenWithLabel } from '@ui/components/shared/CTokenIcon';

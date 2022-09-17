@@ -41,14 +41,16 @@ import { Collateral } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/C
 import { ExpanderButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ExpanderButton';
 import { Liquidity } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Liquidity';
 import { Ltv } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Ltv';
-import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Market';
 import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
+import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
 import { Tvl } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Tvl';
 import { FilterButton } from '@ui/components/shared/Button';
-import { MARKETS_COUNT_PER_PAGE } from '@ui/constants/index';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { DOWN_LIMIT, MARKETS_COUNT_PER_PAGE, UP_LIMIT } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { sortAssets } from '@ui/utils/sortAssets';
 
 export type Market = {
@@ -67,10 +69,14 @@ export const MarketsList = ({
   assets,
   rewards = [],
   comptrollerAddress,
+  supplyBalanceFiat,
+  borrowBalanceFiat,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
   comptrollerAddress: string;
+  supplyBalanceFiat: number;
+  borrowBalanceFiat: number;
 }) => {
   const suppliedAssets = useMemo(
     () => sortAssets(assets).filter((asset) => asset.supplyBalance.gt(0)),
@@ -106,7 +112,9 @@ export const MarketsList = ({
             Market
           </Text>
         ),
-        cell: ({ getValue }) => <Market asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <TokenName asset={getValue<MarketData>()} poolAddress={comptrollerAddress} />
+        ),
         footer: (props) => props.column.id,
       },
       {
@@ -240,6 +248,32 @@ export const MarketsList = ({
 
   return (
     <Box overflowX="auto">
+      <Flex px="4" mt={6} gap={8}>
+        <HStack>
+          <Text>Your Supply Balance :</Text>
+          <SimpleTooltip
+            label={supplyBalanceFiat.toString()}
+            isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
+          >
+            <Text fontSize={24}>
+              {smallUsdFormatter(supplyBalanceFiat)}
+              {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
+            </Text>
+          </SimpleTooltip>
+        </HStack>
+        <HStack>
+          <Text>Your Borrow Balance :</Text>
+          <SimpleTooltip
+            label={borrowBalanceFiat.toString()}
+            isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
+          >
+            <Text fontSize={24}>
+              {smallUsdFormatter(borrowBalanceFiat)}
+              {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
+            </Text>
+          </SimpleTooltip>
+        </HStack>
+      </Flex>
       <Flex justifyContent="space-between" px="4" py="8">
         <HStack className="pagination" gap={4}>
           <Text fontSize={24}>Assets</Text>
@@ -369,7 +403,7 @@ export const MarketsList = ({
                 >
                   {/* 2nd row is a custom 1 cell row */}
                   <Td border="none" colSpan={row.getVisibleCells().length}>
-                    <AdditionalInfo row={row} />
+                    <AdditionalInfo row={row} comptrollerAddress={comptrollerAddress} />
                   </Td>
                 </Tr>
               )}
