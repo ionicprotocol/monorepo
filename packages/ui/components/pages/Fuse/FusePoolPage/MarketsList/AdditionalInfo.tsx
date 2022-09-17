@@ -58,18 +58,21 @@ export const AdditionalInfo = ({
           comptrollerAddress={comptrollerAddress}
           assets={assets}
           asset={asset}
+          isDisabled={asset.supplyBalanceFiat === 0}
         />
         <FundButton
           mode={FundOperationMode.BORROW}
           comptrollerAddress={comptrollerAddress}
           assets={assets}
           asset={asset}
+          isDisabled={asset.isBorrowPaused}
         />
         <FundButton
           mode={FundOperationMode.REPAY}
           comptrollerAddress={comptrollerAddress}
           assets={assets}
           asset={asset}
+          isDisabled={asset.isBorrowPaused || asset.borrowBalanceFiat === 0}
         />
       </HStack>
       <Grid
@@ -167,7 +170,7 @@ export const AdditionalInfo = ({
             templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
             gap={2}
             width="100%"
-            mb={4}
+            mb={8}
           >
             <CaptionedStat
               stat={shortUsdFormatter(asset.totalSupplyFiat)}

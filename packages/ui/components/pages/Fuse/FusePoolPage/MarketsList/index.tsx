@@ -226,7 +226,7 @@ export const MarketsList = ({
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, onPagination] = React.useState<PaginationState>({
     pageIndex: 0,
-    pageSize: 5,
+    pageSize: MARKETS_COUNT_PER_PAGE[0],
   });
   const table = useReactTable({
     columns,
@@ -310,7 +310,10 @@ export const MarketsList = ({
           </HStack>
           <HStack gap={2}>
             <Text>
-              {pagination.pageIndex * pagination.pageSize + 1} -{' '}
+              {table.getCoreRowModel().rows.length === 0
+                ? 0
+                : pagination.pageIndex * pagination.pageSize + 1}{' '}
+              -{' '}
               {(pagination.pageIndex + 1) * pagination.pageSize >
               table.getCoreRowModel().rows.length
                 ? table.getCoreRowModel().rows.length
@@ -378,41 +381,49 @@ export const MarketsList = ({
           ))}
         </Thead>
         <Tbody>
-          {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Tr
-                key={row.id}
-                borderColor={cCard.dividerColor}
-                borderTopWidth={row.getIsExpanded() ? 4 : 1}
-                background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                _hover={{ bg: cCard.hoverBgColor }}
-              >
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <Td key={cell.id} border="none">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </Td>
-                  );
-                })}
-              </Tr>
-              {row.getIsExpanded() && (
+          {table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
+            table.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
                 <Tr
+                  key={row.id}
                   borderColor={cCard.dividerColor}
-                  borderBottomWidth={row.getIsExpanded() ? 6 : 0}
+                  borderTopWidth={row.getIsExpanded() ? 4 : 1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                  _hover={{ bg: cCard.hoverBgColor }}
                 >
-                  {/* 2nd row is a custom 1 cell row */}
-                  <Td border="none" colSpan={row.getVisibleCells().length}>
-                    <AdditionalInfo
-                      row={row}
-                      rows={table.getCoreRowModel().rows}
-                      comptrollerAddress={comptrollerAddress}
-                    />
-                  </Td>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <Td key={cell.id} border="none">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </Td>
+                    );
+                  })}
                 </Tr>
-              )}
-            </Fragment>
-          ))}
+                {row.getIsExpanded() && (
+                  <Tr
+                    borderColor={cCard.dividerColor}
+                    borderBottomWidth={row.getIsExpanded() ? 6 : 0}
+                    background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                  >
+                    {/* 2nd row is a custom 1 cell row */}
+                    <Td border="none" colSpan={row.getVisibleCells().length}>
+                      <AdditionalInfo
+                        row={row}
+                        rows={table.getCoreRowModel().rows}
+                        comptrollerAddress={comptrollerAddress}
+                      />
+                    </Td>
+                  </Tr>
+                )}
+              </Fragment>
+            ))
+          ) : (
+            <Tr>
+              <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                <Center py={8}>There are no assets in this pool.</Center>
+              </Td>
+            </Tr>
+          )}
         </Tbody>
       </Table>
     </Box>
