@@ -20,10 +20,12 @@ export const AdditionalInfo = ({
   row,
   rows,
   comptrollerAddress,
+  supplyBalanceFiat,
 }: {
   row: Row<Market>;
   rows: Row<Market>[];
   comptrollerAddress: string;
+  supplyBalanceFiat: number;
 }) => {
   const asset: MarketData = row.original.market;
   const assets: MarketData[] = rows.map((row) => row.original.market);
@@ -65,14 +67,14 @@ export const AdditionalInfo = ({
           comptrollerAddress={comptrollerAddress}
           assets={assets}
           asset={asset}
-          isDisabled={asset.isBorrowPaused}
+          isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
         />
         <FundButton
           mode={FundOperationMode.REPAY}
           comptrollerAddress={comptrollerAddress}
           assets={assets}
           asset={asset}
-          isDisabled={asset.isBorrowPaused || asset.borrowBalanceFiat === 0}
+          isDisabled={asset.borrowBalanceFiat === 0}
         />
       </HStack>
       <Grid
@@ -95,7 +97,9 @@ export const AdditionalInfo = ({
           {data ? (
             asset.isBorrowPaused ? (
               <Center height="100%">
-                <Text color={cPage.primary.txtColor}>This asset is not borrowable.</Text>
+                <Text fontSize={18} color={cPage.primary.txtColor}>
+                  This asset is not borrowable.
+                </Text>
               </Center>
             ) : data.supplierRates === null ? (
               <Center height="100%">

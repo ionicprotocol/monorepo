@@ -411,6 +411,7 @@ export const MarketsList = ({
                         row={row}
                         rows={table.getCoreRowModel().rows}
                         comptrollerAddress={comptrollerAddress}
+                        supplyBalanceFiat={supplyBalanceFiat}
                       />
                     </Td>
                   </Tr>
