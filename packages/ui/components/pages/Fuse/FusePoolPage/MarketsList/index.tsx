@@ -403,7 +403,11 @@ export const MarketsList = ({
                 >
                   {/* 2nd row is a custom 1 cell row */}
                   <Td border="none" colSpan={row.getVisibleCells().length}>
-                    <AdditionalInfo row={row} comptrollerAddress={comptrollerAddress} />
+                    <AdditionalInfo
+                      row={row}
+                      rows={table.getCoreRowModel().rows}
+                      comptrollerAddress={comptrollerAddress}
+                    />
                   </Td>
                 </Tr>
               )}

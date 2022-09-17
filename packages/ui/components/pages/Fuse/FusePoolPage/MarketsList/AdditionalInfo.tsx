@@ -1,9 +1,11 @@
-import { Box, Button, Center, Grid, HStack, Spinner, Text } from '@chakra-ui/react';
+import { Box, Center, Grid, HStack, Spinner, Text } from '@chakra-ui/react';
+import { FundOperationMode } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 
 import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
+import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/FundButton';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { useChartData } from '@ui/hooks/useChartData';
@@ -16,12 +18,15 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export const AdditionalInfo = ({
   row,
+  rows,
   comptrollerAddress,
 }: {
   row: Row<Market>;
+  rows: Row<Market>[];
   comptrollerAddress: string;
 }) => {
   const asset: MarketData = row.original.market;
+  const assets: MarketData[] = rows.map((row) => row.original.market);
   const assetUtilization =
     asset.totalSupply.toString() === '0'
       ? 0
@@ -42,10 +47,30 @@ export const AdditionalInfo = ({
     <Box>
       <HStack justifyContent="flex-end">
         <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
-        <Button>Supply</Button>
-        <Button>Withdraw</Button>
-        <Button>Borrow</Button>
-        <Button>Repay</Button>
+        <FundButton
+          mode={FundOperationMode.SUPPLY}
+          comptrollerAddress={comptrollerAddress}
+          assets={assets}
+          asset={asset}
+        />
+        <FundButton
+          mode={FundOperationMode.WITHDRAW}
+          comptrollerAddress={comptrollerAddress}
+          assets={assets}
+          asset={asset}
+        />
+        <FundButton
+          mode={FundOperationMode.BORROW}
+          comptrollerAddress={comptrollerAddress}
+          assets={assets}
+          asset={asset}
+        />
+        <FundButton
+          mode={FundOperationMode.REPAY}
+          comptrollerAddress={comptrollerAddress}
+          assets={assets}
+          asset={asset}
+        />
       </HStack>
       <Grid
         templateColumns={{
@@ -142,7 +167,7 @@ export const AdditionalInfo = ({
             templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
             gap={2}
             width="100%"
-            p={4}
+            mb={4}
           >
             <CaptionedStat
               stat={shortUsdFormatter(asset.totalSupplyFiat)}
@@ -173,7 +198,6 @@ export const AdditionalInfo = ({
             templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
             gap={2}
             width="100%"
-            p={4}
           >
             <CaptionedStat
               stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
