@@ -1,6 +1,7 @@
 import { extendTheme } from '@chakra-ui/react';
 
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
+import { BadgeStyleConfig } from '@ui/theme/components/Badge';
 import { ButtonStyleConfig } from '@ui/theme/components/Button';
 import { IconButtonStyleConfig } from '@ui/theme/components/IconButton';
 import { InputConfigStyle } from '@ui/theme/components/Input';
@@ -82,6 +83,7 @@ export const theme = extendTheme({
     Select: SelectConfigStyle,
     Stat: StatStyleConfig,
     Tooltip: TooltipStyleConfig,
+    Badge: BadgeStyleConfig,
   },
 });
 

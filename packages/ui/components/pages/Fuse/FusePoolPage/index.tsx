@@ -105,7 +105,7 @@ const FusePoolPage = memo(() => {
                   borrowBalanceFiat={data.totalBorrowBalanceFiat}
                 />
               ) : (
-                <TableSkeleton tableHeading="Your Supply Balance" />
+                <TableSkeleton tableHeading="Assets" />
               )}
             </MidasBox>
           </Grid>

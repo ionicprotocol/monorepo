@@ -1,9 +1,10 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
-import { Badge, Button, Link as ChakraLink, HStack, Stack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import * as React from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
+import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
@@ -28,7 +29,7 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
 
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-      <CTokenIcon size="sm" address={asset.underlyingToken} />
+      <CTokenIcon size="md" address={asset.underlyingToken} />
       <VStack alignItems={'flex-start'} ml={2}>
         <PopoverTooltip
           placement="top-start"
@@ -40,14 +41,19 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             />
           }
         >
-          <Text fontWeight="bold" textAlign={'left'} fontSize={{ base: '2.8vw', sm: '0.9rem' }}>
+          <Text textAlign={'left'} fontSize={{ base: '2.8vw', sm: '1.2rem' }}>
             {tokenData?.symbol ?? asset.underlyingSymbol}
           </Text>
         </PopoverTooltip>
-        {claimableRewards && claimableRewards.length > 0 && (
-          <Stack>
-            <Badge colorScheme="green">Rewards</Badge>
-          </Stack>
+        {claimableRewards && claimableRewards.length > 0 && <GlowingBox px={2}>Rewards</GlowingBox>}
+        {asset.isBorrowPaused ? (
+          <Badge variant="outline" colorScheme="purple">
+            Protected
+          </Badge>
+        ) : (
+          <Badge variant="outline" colorScheme="green">
+            Borrowable
+          </Badge>
         )}
       </VStack>
 
