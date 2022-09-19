@@ -31,6 +31,7 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
+  SortingFn,
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
@@ -59,10 +60,12 @@ import {
   REWARDS,
   UP_LIMIT,
 } from '@ui/constants/index';
+import { useMidas } from '@ui/context/MidasContext';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sortAssets';
 
 export type Market = {
@@ -90,6 +93,7 @@ export const MarketsList = ({
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
 }) => {
+  const { midasSdk, currentChain } = useMidas();
   const suppliedAssets = useMemo(
     () => sortAssets(assets).filter((asset) => asset.supplyBalance.gt(0)),
     [assets]
@@ -127,6 +131,52 @@ export const MarketsList = ({
     }
   };
 
+  const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
+    if (columnId === 'market') {
+      return rowA.original.market.underlyingSymbol.localeCompare(
+        rowB.original.market.underlyingSymbol
+      );
+    } else if (columnId === 'ltv') {
+      return rowA.original.market.collateralFactor.gt(rowB.original.market.collateralFactor)
+        ? 1
+        : -1;
+    } else if (columnId === 'supplyApy') {
+      const rowASupplyAPY = midasSdk.ratePerBlockToAPY(
+        rowA.original.market.supplyRatePerBlock,
+        getBlockTimePerMinuteByChainId(currentChain.id)
+      );
+      const rowBSupplyAPY = midasSdk.ratePerBlockToAPY(
+        rowB.original.market.supplyRatePerBlock,
+        getBlockTimePerMinuteByChainId(currentChain.id)
+      );
+      return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
+    } else if (columnId === 'borrowApy') {
+      const rowABorrowAPY = midasSdk.ratePerBlockToAPY(
+        rowA.original.market.borrowRatePerBlock,
+        getBlockTimePerMinuteByChainId(currentChain.id)
+      );
+      const rowBBorrowAPY = midasSdk.ratePerBlockToAPY(
+        rowB.original.market.borrowRatePerBlock,
+        getBlockTimePerMinuteByChainId(currentChain.id)
+      );
+      return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
+    } else if (columnId === 'tvl') {
+      return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
+    } else if (columnId === 'supplyBalance') {
+      return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
+        ? 1
+        : -1;
+    } else if (columnId === 'borrowBalance') {
+      return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
+        ? 1
+        : -1;
+    } else if (columnId === 'liquidity') {
+      return rowA.original.market.liquidityFiat > rowB.original.market.liquidityFiat ? 1 : -1;
+    } else {
+      return 1;
+    }
+  };
+
   const data: Market[] = useMemo(() => {
     return [...suppliedAssets, ...nonSuppliedAssets].map((asset) => {
       return {
@@ -157,10 +207,11 @@ export const MarketsList = ({
         ),
         footer: (props) => props.column.id,
         filterFn: assetFilter,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.ltv,
-        id: 'LTV',
+        id: 'ltv',
         cell: ({ getValue }) => <Ltv asset={getValue<MarketData>()} />,
         header: () => (
           <Text textAlign="end" py={2}>
@@ -168,6 +219,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.supplyApy,
@@ -179,6 +231,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.borrowApy,
@@ -190,6 +243,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.tvl,
@@ -201,6 +255,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.supplyBalance,
@@ -212,6 +267,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.borrowBalance,
@@ -223,6 +279,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.liquidity,
@@ -234,6 +291,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        sortingFn: assetSort,
       },
       {
         accessorFn: (row) => row.collateral,
@@ -379,12 +437,16 @@ export const MarketsList = ({
               {isRewardsFiltered ? (
                 <GlowingBox height="100%" p={2}>
                   <Center px={2} width="100%" height="100%" borderRadius="xl">
-                    {`${allClaimableRewards && Object.keys(allClaimableRewards).length} Rewards`}
+                    {`${
+                      (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
+                    } Rewards`}
                   </Center>
                 </GlowingBox>
               ) : (
                 <Center px={4} width="100%" height="100%" fontWeight="bold" borderRadius="xl">
-                  {`${allClaimableRewards && Object.keys(allClaimableRewards).length} Rewards`}
+                  {`${
+                    (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
+                  } Rewards`}
                 </Center>
               )}
             </Button>
