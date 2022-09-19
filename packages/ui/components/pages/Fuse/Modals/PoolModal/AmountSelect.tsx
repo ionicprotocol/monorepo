@@ -13,8 +13,7 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { TransactionRequest } from '@ethersproject/providers';
-import { ERC20Abi, MidasSdk, WETHAbi } from '@midas-capital/sdk';
+import { MidasSdk, WETHAbi } from '@midas-capital/sdk';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
@@ -23,9 +22,10 @@ import {
 } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { BigNumber, constants, Contract, ContractTransaction, utils } from 'ethers';
+import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { ReactNode, useMemo, useState } from 'react';
+import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -51,7 +51,6 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 interface AmountSelectProps {
   asset: MarketData;
@@ -263,15 +262,13 @@ const AmountSelect = ({
       //   gasLimit: utils.hexlify(100000),
       //   gasPrice: await midasSdk.signer.getGasPrice(),
       // };
-    const WToken = getContract(midasSdk.chainSpecificAddresses.W_TOKEN, WETHAbi, midasSdk.signer);
+      const WToken = getContract(midasSdk.chainSpecificAddresses.W_TOKEN, WETHAbi, midasSdk.signer);
 
       // console.log(WToken,'WTOKEN CONTRACT ')
 
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
 
-    const resp = await WToken.deposit({ from: address, value: amount });
-
-    console.dir(resp)
+      const resp = await WToken.deposit({ from: address, value: amount });
 
       // const resp = await midasSdk.signer.sendTransaction(tx);
       setPendingTxHash(resp.hash);
