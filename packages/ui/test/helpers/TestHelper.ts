@@ -20,8 +20,8 @@ export class TestHelper {
   }
 
   public static async initDappeteer(network?: Network): Promise<[Dappeteer, Page, Browser]> {
-    const envSeed = process.env.TEST_SEED;
-    const envPassword = process.env.TEST_PASSWORD;
+    const envSeed = process.env.TEST_METAMASK_SEED;
+    const envPassword = process.env.TEST_METAMASK_PASSWORD;
 
     if (!envSeed || !envPassword) {
       throw new Error('SEED or PASSWORD not set.');
@@ -66,7 +66,7 @@ export class TestHelper {
     try {
       browser = await launch(puppeteer, options);
     } catch (error) {
-      // console.log('Error occurred launching Puppeteer');
+      console.error('Error occurred launching Puppeteer');
       throw error;
     }
 
@@ -85,7 +85,7 @@ export class TestHelper {
         'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36'
       );
     } catch (error) {
-      // console.log('Error occurred creating new page');
+      console.error('Error occurred creating new page');
       throw error;
     }
 
