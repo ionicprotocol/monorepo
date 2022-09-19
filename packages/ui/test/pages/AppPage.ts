@@ -45,8 +45,6 @@ export abstract class AppPage {
   }
 
   public async connectMetamaskWallet(): Promise<void> {
-    await this.blockingWait(1, true);
-
     const web3Connected = await this.Page.$('#walletBtn');
 
     if (web3Connected) return;

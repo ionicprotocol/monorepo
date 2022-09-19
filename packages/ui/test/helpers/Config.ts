@@ -37,9 +37,9 @@ export class Config {
         return {
           chainId: SupportedChains.bsc,
           networkName: 'ForkedBSC',
-          symbol: 'BNB',
+          symbol: 'FORK',
           rpc: FORKED_RPC,
-          testUrl: `${BASE_URL}/56/pool/1`,
+          testUrl: `${BASE_URL}/56/pool/4`,
           supplyAmount: DEFAULT_AMOUNT,
           assetSymbol: assetSymbols.WBNB,
           asset: bsc.assets.find((asset) => asset.symbol === assetSymbols.WBNB),

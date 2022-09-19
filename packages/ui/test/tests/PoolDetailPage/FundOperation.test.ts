@@ -13,7 +13,6 @@ let poolDetailPage: PoolDetailPage;
 const { chainId, networkName, symbol, rpc, testUrl, supplyAmount, assetSymbol, asset } =
   Config.fundOperation();
 
-// jest.retryTimes(1);
 jest.setTimeout(600000);
 
 describe('Fund Operation:', () => {
@@ -33,10 +32,6 @@ describe('Fund Operation:', () => {
     await poolDetailPage.connectMetamaskWallet();
     // pass terms modal
     await poolDetailPage.acceptTerms();
-    // add token
-    if (asset?.underlying) {
-      await poolDetailPage.addTokenToMetamask(asset.underlying);
-    }
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -49,7 +44,9 @@ describe('Fund Operation:', () => {
   test(`User can supply on pool`, async () => {
     await page.bringToFront();
     await page.goto(testUrl);
+    const balanceBefore = await poolDetailPage.supplyBalance(assetSymbol);
     await poolDetailPage.supply(assetSymbol, supplyAmount);
+    const balanceAfter = await poolDetailPage.supplyBalance(assetSymbol);
   });
 
   test(`User can withdraw on pool`, async () => {

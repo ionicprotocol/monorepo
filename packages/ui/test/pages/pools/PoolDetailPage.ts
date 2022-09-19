@@ -20,26 +20,31 @@ export class PoolDetailPage extends AppPage {
   public async supply(symbol: string, amount: string): Promise<void> {
     await this.Page.waitForSelector(this.SupplyAssetBalance);
     const supplyBalance = await this.Page.$eval(this.SupplyAssetBalance, (el) => el.textContent);
-    await this.openModal(symbol);
-    await this.setAmount(amount);
-    await this.confirm(parseFloat(supplyBalance || ''), amount, FundOperationMode.SUPPLY);
+    await this._openModal(symbol);
+    await this._setAmount(amount);
+    await this._confirm(parseFloat(supplyBalance || ''), amount, FundOperationMode.SUPPLY);
+  }
+
+  public async supplyBalance(symbol: string): Promise<string | undefined> {
+    await this.Page.waitForSelector(this.SupplyAssetBalance);
+    return (await this.Page.$eval(this.SupplyAssetBalance, (el) => el.textContent)) || undefined;
   }
 
   public async withdraw(symbol: string, amount: string): Promise<void> {
     await this.Page.waitForSelector(this.SupplyAssetBalance);
     const supplyBalance = await this.Page.$eval(this.SupplyAssetBalance, (el) => el.textContent);
-    await this.openModal(symbol);
+    await this._openModal(symbol);
     const withdrawTab = await this.Page.waitForSelector(this.ModalWithdrawTab);
     if (withdrawTab) {
       await withdrawTab.click();
-      await this.setAmount(amount);
-      await this.confirm(parseFloat(supplyBalance || ''), amount, FundOperationMode.WITHDRAW);
+      await this._setAmount(amount);
+      await this._confirm(parseFloat(supplyBalance || ''), amount, FundOperationMode.WITHDRAW);
     } else {
       throw new Error('Withdraw Tab Error!');
     }
   }
 
-  public async openModal(symbol: string): Promise<void> {
+  private async _openModal(symbol: string): Promise<void> {
     const supplyListAssetRow = await this.Page.waitForSelector(this.SupplyListAssetSymbol + symbol);
     if (supplyListAssetRow) {
       await supplyListAssetRow.click();
@@ -49,23 +54,29 @@ export class PoolDetailPage extends AppPage {
     }
   }
 
-  public async setAmount(amount: string): Promise<void> {
+  private async _setAmount(amount: string): Promise<void> {
     const fundInput = await this.Page.waitForSelector(this.FundInput);
     if (fundInput) {
       await fundInput.type(amount);
     }
   }
 
-  public async confirm(balance: number, amount: string, mode: FundOperationMode): Promise<void> {
+  private async _confirm(balance: number, amount: string, mode: FundOperationMode): Promise<void> {
     const confirmFundButton = await this.Page.waitForSelector(this.ConfirmFundButton);
     if (confirmFundButton) {
       await confirmFundButton.click();
-      await this.blockingWait(4);
-      await this.Metamask.confirmTransaction();
-      await this.blockingWait(4);
-      await this.bringToFront();
-      await this.Page.waitForSelector(this.SuccessToast);
-      await this.blockingWait(2);
+      let finished = false;
+      while (!finished) {
+        await this.Metamask.page.waitForTimeout(1000);
+        await this.Metamask.confirmTransaction();
+
+        try {
+          await this.Page.bringToFront();
+          await this.Page.waitForSelector(this.SuccessToast, { timeout: 4000 });
+          finished = true;
+        } catch {}
+      }
+
       if (mode === FundOperationMode.SUPPLY) {
         await this.Page.waitForSelector(this.SupplyAssetBalance);
         const updatedBalance = await this.Page.$eval(
