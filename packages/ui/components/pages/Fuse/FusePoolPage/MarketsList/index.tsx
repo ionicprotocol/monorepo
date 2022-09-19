@@ -430,15 +430,15 @@ export const MarketsList = ({
           </HStack>
           <HStack gap={2}>
             <Text>
-              {table.getCoreRowModel().rows.length === 0
+              {table.getFilteredRowModel().rows.length === 0
                 ? 0
                 : pagination.pageIndex * pagination.pageSize + 1}{' '}
               -{' '}
               {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getCoreRowModel().rows.length
-                ? table.getCoreRowModel().rows.length
+              table.getFilteredRowModel().rows.length
+                ? table.getFilteredRowModel().rows.length
                 : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getCoreRowModel().rows.length}
+              of {table.getFilteredRowModel().rows.length}
             </Text>
             <HStack>
               <IconButton
