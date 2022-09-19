@@ -63,14 +63,16 @@ export class MidasBase {
     return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
   }
 
-  public contracts: {
-    FuseFeeDistributor: FuseFeeDistributor;
-    FusePoolDirectory: FusePoolDirectory;
-    FusePoolLens: FusePoolLens;
-    FusePoolLensSecondary: FusePoolLensSecondary;
-    FuseSafeLiquidator: FuseSafeLiquidator;
-    [contractName: string]: Contract;
-  };
+  public _contracts:
+    | {
+        FuseFeeDistributor: FuseFeeDistributor;
+        FusePoolDirectory: FusePoolDirectory;
+        FusePoolLens: FusePoolLens;
+        FusePoolLensSecondary: FusePoolLensSecondary;
+        FuseSafeLiquidator: FuseSafeLiquidator;
+        [contractName: string]: Contract;
+      }
+    | undefined;
   public chainConfig: ChainConfig;
   public availableOracles: Array<string>;
   public availableIrms: Array<string>;
@@ -98,11 +100,45 @@ export class MidasBase {
     return this._signer;
   }
 
+  public get contracts(): {
+    FuseFeeDistributor: FuseFeeDistributor;
+    FusePoolDirectory: FusePoolDirectory;
+    FusePoolLensSecondary: FusePoolLensSecondary;
+    FuseSafeLiquidator: FuseSafeLiquidator;
+    [contractName: string]: Contract;
+  } {
+    return {
+      FusePoolDirectory: new Contract(
+        this.chainDeployment.FusePoolDirectory.address,
+        this.chainDeployment.FusePoolDirectory.abi,
+        this.provider
+      ) as FusePoolDirectory,
+      FusePoolLens: new Contract(
+        this.chainDeployment.FusePoolLens.address,
+        this.chainDeployment.FusePoolLens.abi,
+        this.provider
+      ) as FusePoolLens,
+      FusePoolLensSecondary: new Contract(
+        this.chainDeployment.FusePoolLensSecondary.address,
+        this.chainDeployment.FusePoolLensSecondary.abi,
+        this.provider
+      ) as FusePoolLensSecondary,
+      FuseSafeLiquidator: new Contract(
+        this.chainDeployment.FuseSafeLiquidator.address,
+        this.chainDeployment.FuseSafeLiquidator.abi,
+        this.provider
+      ) as FuseSafeLiquidator,
+      FuseFeeDistributor: new Contract(
+        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FuseFeeDistributor.abi,
+        this.provider
+      ) as FuseFeeDistributor,
+    };
+  }
+
   setSigner(signer: Signer) {
     this._provider = signer.provider as SupportedProvider;
     this._signer = signer;
-
-    this.initStaticContracts();
     return this;
   }
 
@@ -132,34 +168,6 @@ export class MidasBase {
     this.fundingStrategies = chainConfig.fundingStrategies;
     this.artifacts = ARTIFACTS;
 
-    this.contracts = {
-      FusePoolDirectory: new Contract(
-        this.chainDeployment.FusePoolDirectory.address,
-        this.chainDeployment.FusePoolDirectory.abi,
-        this.provider
-      ) as FusePoolDirectory,
-      FusePoolLens: new Contract(
-        this.chainDeployment.FusePoolLens.address,
-        this.chainDeployment.FusePoolLens.abi,
-        this.provider
-      ) as FusePoolLens,
-      FusePoolLensSecondary: new Contract(
-        this.chainDeployment.FusePoolLensSecondary.address,
-        this.chainDeployment.FusePoolLensSecondary.abi,
-        this.provider
-      ) as FusePoolLensSecondary,
-      FuseSafeLiquidator: new Contract(
-        this.chainDeployment.FuseSafeLiquidator.address,
-        this.chainDeployment.FuseSafeLiquidator.abi,
-        this.provider
-      ) as FuseSafeLiquidator,
-      FuseFeeDistributor: new Contract(
-        this.chainDeployment.FuseFeeDistributor.address,
-        this.chainDeployment.FuseFeeDistributor.abi,
-        this.provider
-      ) as FuseFeeDistributor,
-    };
-
     if (this.chainDeployment.FuseFlywheelLensRouter) {
       this.contracts["FuseFlywheelLensRouter"] = new Contract(
         this.chainDeployment.FuseFlywheelLensRouter?.address || constants.AddressZero,
@@ -186,36 +194,6 @@ export class MidasBase {
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
     this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
-  }
-
-  initStaticContracts() {
-    this.contracts = {
-      FusePoolDirectory: new Contract(
-        this.chainDeployment.FusePoolDirectory.address,
-        this.chainDeployment.FusePoolDirectory.abi,
-        this.provider
-      ) as FusePoolDirectory,
-      FusePoolLens: new Contract(
-        this.chainDeployment.FusePoolLens.address,
-        this.chainDeployment.FusePoolLens.abi,
-        this.provider
-      ) as FusePoolLens,
-      FusePoolLensSecondary: new Contract(
-        this.chainDeployment.FusePoolLensSecondary.address,
-        this.chainDeployment.FusePoolLensSecondary.abi,
-        this.provider
-      ) as FusePoolLensSecondary,
-      FuseSafeLiquidator: new Contract(
-        this.chainDeployment.FuseSafeLiquidator.address,
-        this.chainDeployment.FuseSafeLiquidator.abi,
-        this.provider
-      ) as FuseSafeLiquidator,
-      FuseFeeDistributor: new Contract(
-        this.chainDeployment.FuseFeeDistributor.address,
-        this.chainDeployment.FuseFeeDistributor.abi,
-        this.provider
-      ) as FuseFeeDistributor,
-    };
   }
 
   async deployPool(
