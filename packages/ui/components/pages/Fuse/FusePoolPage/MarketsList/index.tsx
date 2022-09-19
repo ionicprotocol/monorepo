@@ -6,6 +6,7 @@ import {
 } from '@chakra-ui/icons';
 import {
   Box,
+  Button,
   Center,
   Flex,
   HStack,
@@ -22,9 +23,11 @@ import {
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import {
   ColumnDef,
+  FilterFn,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
+  getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   PaginationState,
@@ -32,7 +35,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import * as React from 'react';
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 
 import { AdditionalInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/AdditionalInfo';
 import { BorrowApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/BorrowApy';
@@ -45,9 +48,18 @@ import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Su
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
 import { Tvl } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Tvl';
-import { FilterButton } from '@ui/components/shared/Button';
+import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { DOWN_LIMIT, MARKETS_COUNT_PER_PAGE, UP_LIMIT } from '@ui/constants/index';
+import {
+  BORROWABLE,
+  COLLATERAL,
+  DOWN_LIMIT,
+  MARKETS_COUNT_PER_PAGE,
+  PROTECTED,
+  REWARDS,
+  UP_LIMIT,
+} from '@ui/constants/index';
+import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -87,6 +99,26 @@ export const MarketsList = ({
     [assets]
   );
 
+  const { data: claimableRewards } = useAssetsClaimableRewards({
+    poolAddress: comptrollerAddress,
+    assetsAddress: assets.map((asset) => asset.cToken),
+  });
+
+  const assetFilter: FilterFn<Market> = (row, columnId, value) => {
+    if (
+      (value.includes(REWARDS) &&
+        claimableRewards &&
+        claimableRewards[row.original.market.cToken]) ||
+      (value.includes(COLLATERAL) && row.original.market.membership) ||
+      (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
+      (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
   const data: Market[] = useMemo(() => {
     return [...suppliedAssets, ...nonSuppliedAssets].map((asset) => {
       return {
@@ -116,6 +148,7 @@ export const MarketsList = ({
           <TokenName asset={getValue<MarketData>()} poolAddress={comptrollerAddress} />
         ),
         footer: (props) => props.column.id,
+        filterFn: assetFilter,
       },
       {
         accessorFn: (row) => row.ltv,
@@ -223,28 +256,83 @@ export const MarketsList = ({
     ];
   }, [rewards, comptrollerAddress]);
 
-  const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [pagination, onPagination] = React.useState<PaginationState>({
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
   });
+  const [isCollateralFiltered, setIsCollateralFiltered] = useState<boolean>(true);
+  const [isRewardsFiltered, setIsRewardsFiltered] = useState<boolean>(true);
+  const [isProtectedFiltered, setIsProtectedFiltered] = useState<boolean>(true);
+  const [isBorrowableFiltered, setIsBorrowableFiltered] = useState<boolean>(true);
+  const [globalFilter, setGlobalFilter] = useState<string[]>([
+    REWARDS,
+    COLLATERAL,
+    PROTECTED,
+    BORROWABLE,
+  ]);
   const table = useReactTable({
     columns,
     data,
     getRowCanExpand: () => true,
+    getColumnCanGlobalFilter: () => true,
     getPaginationRowModel: getPaginationRowModel(),
     onPaginationChange: onPagination,
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: assetFilter,
+    getFilteredRowModel: getFilteredRowModel(),
     state: {
       sorting,
       pagination,
+      globalFilter,
     },
   });
 
   const { cCard } = useColors();
+
+  const onRewardsFiltered = () => {
+    if (!isRewardsFiltered) {
+      setGlobalFilter([...globalFilter, REWARDS]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== REWARDS));
+    }
+
+    setIsRewardsFiltered(!isRewardsFiltered);
+  };
+
+  const onCollateralFiltered = () => {
+    if (!isCollateralFiltered) {
+      setGlobalFilter([...globalFilter, COLLATERAL]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== COLLATERAL));
+    }
+
+    setIsCollateralFiltered(!isCollateralFiltered);
+  };
+
+  const onProtectedFiltered = () => {
+    if (!isProtectedFiltered) {
+      setGlobalFilter([...globalFilter, PROTECTED]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== PROTECTED));
+    }
+
+    setIsProtectedFiltered(!isProtectedFiltered);
+  };
+
+  const onBorrowableFiltered = () => {
+    if (!isBorrowableFiltered) {
+      setGlobalFilter([...globalFilter, BORROWABLE]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== BORROWABLE));
+    }
+
+    setIsBorrowableFiltered(!isBorrowableFiltered);
+  };
 
   return (
     <Box overflowX="auto">
@@ -277,19 +365,51 @@ export const MarketsList = ({
       <Flex justifyContent="space-between" px="4" py="8">
         <HStack className="pagination" gap={4}>
           <Text fontSize={24}>Assets</Text>
-          <FilterButton
-            variant="filter"
-            isSelected={true}
-            onClick={() => {
-              // setSelectedAsset(asset);
-              // setSelectedIndex(index);
-            }}
-            px={2}
-          >
-            <Center px={1} fontWeight="bold">
-              Collateral
-            </Center>
-          </FilterButton>
+          <HStack>
+            <Button variant="ghost" onClick={onRewardsFiltered} p={0}>
+              {isRewardsFiltered ? (
+                <GlowingBox height="100%" p={2}>
+                  <Center px={2} width="100%" height="100%" borderRadius="xl">
+                    Rewards
+                  </Center>
+                </GlowingBox>
+              ) : (
+                <Center px={4} width="100%" height="100%" fontWeight="bold" borderRadius="xl">
+                  Rewards
+                </Center>
+              )}
+            </Button>
+            <Button
+              variant={isCollateralFiltered ? 'outline' : 'ghost'}
+              colorScheme="orange"
+              onClick={onCollateralFiltered}
+              px={2}
+            >
+              <Center px={1} fontWeight="bold">
+                Collateral
+              </Center>
+            </Button>
+            <Button
+              variant={isProtectedFiltered ? 'outline' : 'ghost'}
+              colorScheme="purple"
+              onClick={onProtectedFiltered}
+              px={2}
+            >
+              <Center px={1} fontWeight="bold">
+                Protected
+              </Center>
+            </Button>
+            <Button
+              variant={isBorrowableFiltered ? 'outline' : 'ghost'}
+              colorScheme="cyan"
+              onClick={onBorrowableFiltered}
+              px={2}
+            >
+              <Center px={1} fontWeight="bold">
+                Borrowable
+              </Center>
+            </Button>
+          </HStack>
         </HStack>
         <HStack className="pagination" gap={4}>
           <HStack>
@@ -322,7 +442,7 @@ export const MarketsList = ({
             </Text>
             <HStack>
               <IconButton
-                variant="outline"
+                variant="_outline"
                 aria-label="toPrevious"
                 icon={<ChevronLeftIcon fontSize={30} />}
                 onClick={() => table.previousPage()}
@@ -330,7 +450,7 @@ export const MarketsList = ({
                 isRound
               />
               <IconButton
-                variant="outline"
+                variant="_outline"
                 aria-label="toNext"
                 icon={<ChevronRightIcon fontSize={30} />}
                 onClick={() => table.nextPage()}

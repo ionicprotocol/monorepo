@@ -1,11 +1,12 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
-import { Badge, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import * as React from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { URL_MIDAS_DOCS } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
@@ -45,15 +46,34 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             {tokenData?.symbol ?? asset.underlyingSymbol}
           </Text>
         </PopoverTooltip>
-        {claimableRewards && claimableRewards.length > 0 && <GlowingBox px={2}>Rewards</GlowingBox>}
+        {claimableRewards && claimableRewards.length > 0 && (
+          <SimpleTooltip label="This asset has rewards!">
+            <Box>
+              <GlowingBox px={2} fontSize={12}>
+                Rewards
+              </GlowingBox>
+            </Box>
+          </SimpleTooltip>
+        )}
+        {asset.membership && (
+          <SimpleTooltip label="This asset can be deposited as collateral">
+            <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
+              Collateral
+            </Badge>
+          </SimpleTooltip>
+        )}
         {asset.isBorrowPaused ? (
-          <Badge variant="outline" colorScheme="purple">
-            Protected
-          </Badge>
+          <SimpleTooltip label="This asset cannot be borrowed">
+            <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
+              Protected
+            </Badge>
+          </SimpleTooltip>
         ) : (
-          <Badge variant="outline" colorScheme="green">
-            Borrowable
-          </Badge>
+          <SimpleTooltip label="This asset can be borrowed">
+            <Badge variant="outline" colorScheme="cyan" textTransform="capitalize">
+              Borrowable
+            </Badge>
+          </SimpleTooltip>
         )}
       </VStack>
 
