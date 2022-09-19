@@ -99,16 +99,24 @@ export const MarketsList = ({
     [assets]
   );
 
-  const { data: claimableRewards } = useAssetsClaimableRewards({
+  const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
     assetsAddress: assets.map((asset) => asset.cToken),
   });
 
+  const [collateralCounts, protectedCounts, borrowableCounts] = useMemo(() => {
+    return [
+      assets.filter((asset) => asset.membership).length,
+      assets.filter((asset) => asset.isBorrowPaused).length,
+      assets.filter((asset) => !asset.isBorrowPaused).length,
+    ];
+  }, [assets]);
+
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
       (value.includes(REWARDS) &&
-        claimableRewards &&
-        claimableRewards[row.original.market.cToken]) ||
+        allClaimableRewards &&
+        allClaimableRewards[row.original.market.cToken]) ||
       (value.includes(COLLATERAL) && row.original.market.membership) ||
       (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
       (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
@@ -254,6 +262,7 @@ export const MarketsList = ({
         },
       },
     ];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewards, comptrollerAddress]);
 
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -370,12 +379,12 @@ export const MarketsList = ({
               {isRewardsFiltered ? (
                 <GlowingBox height="100%" p={2}>
                   <Center px={2} width="100%" height="100%" borderRadius="xl">
-                    Rewards
+                    {`${allClaimableRewards && Object.keys(allClaimableRewards).length} Rewards`}
                   </Center>
                 </GlowingBox>
               ) : (
                 <Center px={4} width="100%" height="100%" fontWeight="bold" borderRadius="xl">
-                  Rewards
+                  {`${allClaimableRewards && Object.keys(allClaimableRewards).length} Rewards`}
                 </Center>
               )}
             </Button>
@@ -386,7 +395,7 @@ export const MarketsList = ({
               px={2}
             >
               <Center px={1} fontWeight="bold">
-                Collateral
+                {`${collateralCounts} Collateral`}
               </Center>
             </Button>
             <Button
@@ -396,7 +405,7 @@ export const MarketsList = ({
               px={2}
             >
               <Center px={1} fontWeight="bold">
-                Protected
+                {`${protectedCounts} Protected`}
               </Center>
             </Button>
             <Button
@@ -406,7 +415,7 @@ export const MarketsList = ({
               px={2}
             >
               <Center px={1} fontWeight="bold">
-                Borrowable
+                {`${borrowableCounts} Borrowable`}
               </Center>
             </Button>
           </HStack>
@@ -538,10 +547,16 @@ export const MarketsList = ({
                 )}
               </Fragment>
             ))
-          ) : (
+          ) : assets.length === 0 ? (
             <Tr>
               <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                 <Center py={8}>There are no assets in this pool.</Center>
+              </Td>
+            </Tr>
+          ) : (
+            <Tr>
+              <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                <Center py={8}>There are no results</Center>
               </Td>
             </Tr>
           )}
