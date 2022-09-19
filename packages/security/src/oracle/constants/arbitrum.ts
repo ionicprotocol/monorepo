@@ -1,5 +1,6 @@
 import { arbitrum } from "@midas-capital/chains";
 import { assetFilter, assetSymbols } from "@midas-capital/types";
+import Decimal from "decimal.js";
 
 import { ChainLinkAssetConfig } from "../scorers/chainlink/types";
 import { UniswapV3AssetConfig } from "../scorers/uniswapV3/types";
@@ -37,6 +38,13 @@ export const uniswapV3OracleAssetMappings: UniswapV3AssetConfig[] = [
       symbol: GMX.symbol,
       decimals: GMX.decimals,
     },
-    targetPriceImpact: 20,
+    baseToken: arbitrum.chainAddresses.W_TOKEN,
+    targetPriceImpact: new Decimal(20),
+    fee: 10000,
   },
 ];
+
+// 100 = 0.01%
+// 500 = 0.05%
+// 3000 = 0.3%
+// 10000 = 1%

@@ -1,13 +1,6 @@
 import { Decimal } from "decimal.js";
 import { BigNumber } from "ethers";
 
-export const UNISWAP_QUOTERV2_ADDRESS = "0x0209c4Dc18B2A1439fD2427E34E7cF3c6B91cFB9";
-export const UNISWAP_FACTORY_ADDRESS = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
-export const POOL_INIT_CODE_HASH = "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54";
-export const EULER_VIEW_ADDRESS = "0x9D2B3052f5A3c156A34FC32cD08E9F5501720ea4";
-export const EULER_CONTRACT_ADDRESS = "0x27182842E098f60e3D576794A5bFFb0777E025d3";
-export const USDC_ADDRESS = "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48";
-export const WETH_ADDRESS = "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2";
 export const MAX_TICK_PRICE = Decimal.pow(1.0001, 887272);
 export const MIN_TICK_PRICE = Decimal.pow(1.0001, -887272);
 export const c1e18 = BigNumber.from(10).pow(18);

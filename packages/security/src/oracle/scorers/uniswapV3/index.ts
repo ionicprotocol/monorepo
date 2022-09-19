@@ -1,36 +1,35 @@
-import Decimal from "decimal.js";
 import { Contract } from "ethers";
 
 import { SecurityBaseConstructor } from "../../..";
+import { uniswapV3OracleAssetMappings } from "../../constants";
+import { UniswapV3Fetcher } from "../../fetchers";
 
-import { QUOTER_ABI, UNISWAP_QUOTERV2_ADDRESS } from "./constants";
-import { binarySearchTradeValues, getStandardTrades } from "./trades";
+import { QUOTER_ABI } from "./constants";
+import { binarySearchTradeValues } from "./trades";
+import { isInverted, sqrtPriceX96ToPrice } from "./utils";
 
 export function withUniswapV3OracleScorer<TBase extends SecurityBaseConstructor>(Base: TBase) {
   return class UniswapV3OracleScorer extends Base {
-    public quoter: Contract = new Contract(UNISWAP_QUOTERV2_ADDRESS, QUOTER_ABI, this.provider);
+    fetcher: UniswapV3Fetcher = new UniswapV3Fetcher(this.chainConfig, this.provider);
+    quoter: Contract = new Contract(this.chainConfig.chainAddresses.UNISWAP_V3.QUOTER_V2, QUOTER_ABI, this.provider);
 
     async getUniswapV3OracleRating(): Promise<Array<null>> {
       const { chainId } = this.chainConfig;
-    }
-    #getQuoterContract = () => {
-      return;
-    };
-    async #getTrades() {
-      const trades = await getStandardTrades(currPrice, token, fee, ethPrice, this.quoter);
-    }
-    async #searchTrades(targetPriceImpact: number) {
-      const targetDecimal = new Decimal(targetPriceImpact);
-      const promise = binarySearchTradeValues(
-        currPrice,
-        currSqrtPriceX96,
-        token,
-        fee,
+      const uniswapV3Parameters = await uniswapV3OracleAssetMappings[chainId];
+      const tokenConfig = uniswapV3Parameters[0];
+      const { sqrtPriceX96 } = await this.fetcher.getSlot0(tokenConfig.token, tokenConfig.fee, this.provider);
+      const ethPrice = 1300;
+      const promise = await binarySearchTradeValues(
+        sqrtPriceX96ToPrice(sqrtPriceX96, isInverted(tokenConfig.token.address, this.fetcher.W_TOKEN)),
+        tokenConfig.token,
+        tokenConfig.fee,
         ethPrice,
-        targetDecimal,
+        tokenConfig.targetPriceImpact,
         "priceImpact",
-        this.quoter
+        this.fetcher
       );
+      console.log(promise);
+      return [null];
     }
   };
 }

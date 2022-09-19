@@ -1,3 +1,7 @@
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { SupportedChains } from "@midas-capital/types";
+
+import { chainIdToConfig } from "../src/enums";
 /**
  * Creates an eth-address compatible string with given prefix
  *
@@ -16,4 +20,10 @@ export const mkAddress = (prefix = "0x0"): string => {
  */
 export const mkBytes32 = (prefix = "0xa"): string => {
   return prefix.padEnd(66, "0");
+};
+
+export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
+  const { specificParams } = chainIdToConfig[chainId];
+  const providerUrl = process.env.ETH_PROVIDER_URL || specificParams.metadata.rpcUrls[0];
+  return new JsonRpcProvider(providerUrl);
 };

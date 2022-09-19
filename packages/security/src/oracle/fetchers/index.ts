@@ -23,3 +23,5 @@ export async function http<T>(
   }
   return response;
 }
+
+export { UniswapV3Fetcher } from "./uniswapV3";

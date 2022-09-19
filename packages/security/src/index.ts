@@ -22,5 +22,5 @@ export class SecurityBase {
   }
 }
 
-const MidasBaseWithModules = withChainLinkOracleScorer(withUniswapV3OracleScorer(SecurityBase));
-export default class MidasSdk extends MidasBaseWithModules {}
+const SecurityBaseWithModules = withChainLinkOracleScorer(withUniswapV3OracleScorer(SecurityBase));
+export default class Security extends SecurityBaseWithModules {}

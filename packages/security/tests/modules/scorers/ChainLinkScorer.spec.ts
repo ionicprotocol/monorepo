@@ -1,7 +1,7 @@
 import { SupportedChains } from "@midas-capital/types";
 
-import { SecurityBase } from "../../src";
-import * as OraclesModule from "../../src/oracle";
+import { SecurityBase } from "../../../src/index";
+import * as OraclesModule from "../../../src/oracle";
 
 describe("Oracle", () => {
   const Oracle = OraclesModule.withChainLinkOracleScorer(SecurityBase);
@@ -18,7 +18,7 @@ describe("Oracle", () => {
       const ratings = await oracleBsc.getChainLinkOracleRating();
       console.log(ratings);
     });
-    it.only("should fetch oracle rating for polygon", async () => {
+    it("should fetch oracle rating for polygon", async () => {
       const ratings = await oraclePolygon.getChainLinkOracleRating();
       console.log(ratings);
     });
