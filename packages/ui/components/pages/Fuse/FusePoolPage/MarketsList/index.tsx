@@ -305,6 +305,7 @@ export const MarketsList = ({
           </Text>
         ),
         footer: (props) => props.column.id,
+        enableSorting: false,
       },
       {
         id: 'expander',
@@ -552,6 +553,7 @@ export const MarketsList = ({
                     fontSize={16}
                     textTransform="capitalize"
                     py={4}
+                    cursor="pointer"
                   >
                     <HStack gap={1} justifyContent={header.index === 0 ? 'flex-start' : 'flex-end'}>
                       <>{flexRender(header.column.columnDef.header, header.getContext())}</>
