@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x87ee44561e3ee7553C776f27bB2304C9c7dDcb69",
+      "address": "0xb8996d93a439a50Ea7C7C0d3d32AFb548Dd3BEF5",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x816B6b893924feDb9bf0FAd3A74bD985103c5B63",
+      "address": "0xC6D57300974368BE5B979e62EA76cab5C6bc3130",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x202828aED479EE7c3A272c892A9b1abba3700dbC",
+      "address": "0x9417CEAeECd2ad16A19763da12Ae597A12B58506",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0x23bE3C22E7A611dd48bE5428459a7D072ef6aee0",
+      "address": "0x5eCd7E305C6f1056fB16f4F3bB7A77617E9b0d09",
       "abi": [
         {
           "inputs": [],
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xC6cB1FeA5F391B6998D074Ad31EB1DCFbDEF7601",
+      "address": "0x3EFDFFC244F729eF875def7841Ae95BD75Ae3C74",
       "abi": [
         {
           "inputs": [
@@ -7680,6 +7680,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "flywheelAddress",
+              "type": "address"
+            }
+          ],
+          "name": "addNonAccruingFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "admin",
           "outputs": [
@@ -7834,29 +7853,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrowAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "borrowVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -8148,6 +8144,35 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "isBorrow",
+              "type": "bool"
+            }
+          ],
+          "name": "getMaxRedeemOrBorrow",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "getRewardsDistributors",
           "outputs": [
@@ -8209,6 +8234,25 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "isUserOfPool",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "cTokenBorrowed",
               "type": "address"
             },
@@ -8241,44 +8285,6 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cTokenBorrowed",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "cTokenCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "liquidator",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "actualRepayAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "seizeTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "liquidateBorrowVerify",
-          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -8404,63 +8410,20 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "minter",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "actualMintAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "mintTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "mintVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "exchangeRateMantissa",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "accountTokens",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "mintAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "mintWithinLimits",
-          "outputs": [
-            {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "name": "nonAccruingRewardsDistributors",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -8609,63 +8572,6 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "payer",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "actualRepayAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrowerIndex",
-              "type": "uint256"
-            }
-          ],
-          "name": "repayBorrowVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "oldFlywheel",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "newFlywheel",
-              "type": "address"
-            }
-          ],
-          "name": "replaceFlywheel",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
@@ -8732,39 +8638,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cTokenCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "cTokenBorrowed",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "liquidator",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "seizeTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "seizeVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -8850,34 +8723,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "src",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "transferTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -12162,6 +12007,57 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getPoolsOfUser",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "getPublicPools",
           "outputs": [
@@ -12485,7 +12381,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x750cec6bB47E814ab052Dc8607203569B48636A8",
+      "address": "0x1C957B27f9595D2fe79f8e45D321561d4739b0f3",
       "abi": [
         {
           "anonymous": false,
@@ -12852,6 +12748,57 @@
             }
           ],
           "name": "getPoolsByAccount",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getPoolsOfUser",
           "outputs": [
             {
               "internalType": "uint256[]",
@@ -13346,7 +13293,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x4544D7078DFc3B07191bF0aA9f4e0f79803f9338",
+      "address": "0x84a49D5B6a94A6011AFF01FaB96AA56257c033E2",
       "abi": [
         {
           "anonymous": false,
@@ -13689,6 +13636,94 @@
             }
           ],
           "name": "getPoolsByAccountWithData",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "totalSupply",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "totalBorrow",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "address[]",
+                  "name": "underlyingTokens",
+                  "type": "address[]"
+                },
+                {
+                  "internalType": "string[]",
+                  "name": "underlyingSymbols",
+                  "type": "string[]"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "whitelistedAdmin",
+                  "type": "bool"
+                }
+              ],
+              "internalType": "struct FusePoolLens.FusePoolData[]",
+              "name": "",
+              "type": "tuple[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "",
+              "type": "bool[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getPoolsOfUserWithData",
           "outputs": [
             {
               "internalType": "uint256[]",
@@ -14210,7 +14245,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x8cb1b8fE835d8Ab6C172617fB69F5FC4F0C8Cc7a",
+      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
       "abi": [
         {
           "anonymous": false,
@@ -20999,7 +21034,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Resolver": {
-      "address": "0x6D0F7E9E301ff304efE9b552ccf632947Ff937f2",
+      "address": "0xe974F10a9B0533c7472a3d895DdBA5b9352D5bc5",
       "abi": [
         {
           "inputs": [
