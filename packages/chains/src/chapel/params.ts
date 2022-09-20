@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x61",
     name: "BSC Testnet (Chapel)",
     shortName: "BSC Testnet",
-    img: "https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/chapel.jpg",
     rpcUrls: { default: "https://data-seed-prebsc-1-s1.binance.org:8545/" },
     blockExplorerUrls: { default: { name: "BscScan(Testnet)", url: "https://testnet.bscscan.com" } },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/chapel.jpg",
     },
     testnet: true,
   },
