@@ -22,7 +22,7 @@ import {
 const assets = moonbeam.assets;
 
 export const deployConfig: ChainDeployConfig = {
-  wtoken: "0xAcc15dC74880C9944775448304B263D191c6077F",
+  wtoken: underlying(assets, assetSymbols.WGLMR),
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
   nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
@@ -37,10 +37,16 @@ export const deployConfig: ChainDeployConfig = {
       {
         token: underlying(assets, assetSymbols.STELLA),
         baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
       },
       {
         token: underlying(assets, assetSymbols.CELR),
         baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
       },
     ],
     uniswapOracleLpTokens: [

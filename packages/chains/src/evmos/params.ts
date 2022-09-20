@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x2328",
     name: "Evmos Testnet",
     shortName: "Evmos Testnet",
-    img: "/images/evmos.png",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/evmos.png",
     rpcUrls: { default: "https://eth.bd.evmos.dev:8545" },
     blockExplorerUrls: { default: { name: "Evmos", url: "https://evm.evmos.dev" } },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#000",
       overlayTextColor: "#fff",
-      logoURL: "/images/evmos.png",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/evmos.png",
     },
     testnet: true,
   },

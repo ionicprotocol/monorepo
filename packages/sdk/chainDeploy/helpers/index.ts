@@ -1,6 +1,7 @@
 export { ChainDeployConfig, ChainlinkFeedBaseCurrency } from "./types";
 export { deployIRMs } from "./irms";
 export { deployUniswapOracle } from "./oracles/uniswap";
+export { deployUniswapV3Oracle } from "./oracles/uniswapv3";
 export { deployUniswapLpOracle } from "./oracles/uniswapLp";
 export { deployCurveLpOracle } from "./oracles/curveLp";
 export { deployABNBcOracle } from "./oracles/aBNBcOracle";

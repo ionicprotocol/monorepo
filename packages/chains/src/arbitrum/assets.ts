@@ -13,6 +13,10 @@ const WETH = "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1";
 const FRAX = "0x17FC002b466eEc40DaE837Fc4bE5c67993ddBd6F";
 const FXS = "0x9d2F299715D94d8A7E6F5eaa8E654E8c74a988A7";
 const LINK = "0xf97f4df75117a78c1A5a0DBb814Af92458539FB4";
+const DPX = "0x6C2C06790b3E3E3c38e12Ee22F8183b37a13EE55";
+const GOHM = "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1";
+const MAGIC = "0x539bdE0d7Dbd336b79148AA742883198BBF60342";
+const GMX = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a";
 
 // no price feed
 // const MAI = "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d";
@@ -120,6 +124,38 @@ export const assets: SupportedAsset[] = [
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://arbiscan.com", WBTC),
+  },
+  {
+    symbol: assetSymbols.GOHM,
+    underlying: GOHM,
+    name: "Governance OHM",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://arbiscan.com", GOHM),
+  },
+  {
+    symbol: assetSymbols.DPX,
+    underlying: DPX,
+    name: "Dopex Governance Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://arbiscan.com", DPX),
+  },
+  {
+    symbol: assetSymbols.MAGIC,
+    underlying: MAGIC,
+    name: "MAGIC",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://arbiscan.com", MAGIC),
+  },
+  {
+    symbol: assetSymbols.GMX,
+    underlying: GMX,
+    name: "GMX",
+    decimals: 18,
+    oracle: OracleTypes.UniswapV3PriceOracle,
+    extraDocs: defaultDocs("https://arbiscan.com", GMX),
   },
   // Curve LP tokens
   {

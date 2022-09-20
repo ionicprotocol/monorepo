@@ -8,7 +8,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0xE9AC0CE",
     name: "Neon Devnet",
     shortName: "Neon Devnet",
-    img: "/images/neon.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/neon.jpg",
     rpcUrls: { default: "https://proxy.devnet.neonlabs.org/solana" },
     blockExplorerUrls: { default: { name: "NeonScan", url: "https://neonscan.org/" } },
     nativeCurrency: {
@@ -22,7 +22,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "/images/neon.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/neon.jpg",
     },
     testnet: true,
   },
