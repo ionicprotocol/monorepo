@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0xA4B1",
     name: "Arbitrum One",
     shortName: "Arbitrum",
-    img: "https://raw.githubusercontent.com/sushiswap/icons/master/network/arbitrum.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
     blockExplorerUrls: { default: { name: "arbiscan", url: "https://arbiscan.com" } },
     rpcUrls: { default: "https://rpc.ankr.com/arbitrum" },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#7A88A1",
       overlayTextColor: "#fff",
-      logoURL: "https://raw.githubusercontent.com/sushiswap/icons/master/network/arbitrum.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
     },
   },
 };
