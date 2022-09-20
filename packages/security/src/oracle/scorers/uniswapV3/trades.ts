@@ -3,43 +3,20 @@ import { BigNumber, utils } from "ethers";
 
 import { UniswapV3Fetcher } from "../../fetchers";
 
-import { amountsUSD } from "./constants";
-import { Direction, PumpAndDump, TargetType, Token, Trade } from "./types";
-import { isInverted } from "./utils";
+import { Direction, Token, Trade, UniswapV3AssetConfig } from "./types";
+import { formatPrice, isInverted } from "./utils";
 
-export const getStandardTrades = async (
-  currPrice: BigNumber,
-  token: Token,
-  fee: number,
-  ethPrice: number,
-  fetcher: UniswapV3Fetcher
-): Promise<PumpAndDump[]> => {
-  const trades: PumpAndDump[] = [];
-  for (const amountUSD of amountsUSD) {
-    const trade = await fetcher.getPumpAndDump(currPrice, token, fee, ethPrice, amountUSD);
-    trades.push(trade);
-  }
-  return trades;
-};
-
-type SearchTrade = {
-  best: Trade;
-  trades: Array<Trade>;
-};
+Decimal.set({ precision: 50 });
 
 // TODO only price target
 export const searchTrade = async (
   currPrice: BigNumber,
-  token: Token,
-  fee: number,
+  tokenConfig: UniswapV3AssetConfig,
   ethPrice: number,
   target: Decimal,
-  targetType: TargetType,
   direction: Direction,
   fetcher: UniswapV3Fetcher
-): Promise<SearchTrade> => {
-  console.log("searching trade", direction);
-
+): Promise<Trade> => {
   let high = 1_000_000_000;
   let low = 0;
   const tolerance = 0.01;
@@ -49,11 +26,11 @@ export const searchTrade = async (
   let best: Trade;
 
   // TODO improve this hack
-  const inverted = isInverted(token.address, fetcher.W_TOKEN);
+  const inverted = isInverted(tokenConfig.token.address, fetcher.W_TOKEN);
   const adjustedDirection = (inverted ? { pump: "dump", dump: "pump" }[direction] : direction) as Direction;
 
   const getTickTrade = async (tick: number, index: number): Promise<Trade> => {
-    const trade = await fetcher.getTrade(currPrice, token, fee, ethPrice, tick, adjustedDirection);
+    const trade = await fetcher.getTrade(currPrice, tokenConfig, ethPrice, tick, adjustedDirection);
     allTrades.push(trade);
     return {
       ...trade,
@@ -66,8 +43,8 @@ export const searchTrade = async (
 
   const findBest = (samples: Array<Trade>) =>
     samples.reduce((accu: Trade, s: Trade) => {
-      const sampleVal = new Decimal(s[targetType]); // TODO: or sqrtPriceX96After
-      const accuVal = new Decimal(accu[targetType]); // TODO: or sqrtPriceX96After
+      const sampleVal = new Decimal(s.priceImpact); // TODO: or sqrtPriceX96After
+      const accuVal = new Decimal(accu.priceImpact); // TODO: or sqrtPriceX96After
 
       if (
         sampleVal
@@ -106,7 +83,7 @@ export const searchTrade = async (
     } else {
       // otherwise make sure the range is not flat
       for (let j = 0; j < best.index; j++) {
-        if (samples[j][targetType] !== best[targetType]) {
+        if (samples[j].priceImpact !== best.priceImpact) {
           low = ticks[j];
         }
       }
@@ -115,42 +92,29 @@ export const searchTrade = async (
     // console.log(direction, 'low high: ', low, high);
     i++;
   }
-  allTrades = allTrades.sort((a, b) => a.value - b.value);
-  //   console.log(target, "target");
-  //   console.log(
-  //     allTrades.slice(0, 10).map((a) => {
-  //       return {
-  //         ...a,
-  //         amountIn: utils.formatUnits(a.amountIn, 18),
-  //         amountOut: utils.formatUnits(a.amountOut, 18),
-  //         after: utils.formatUnits(a.after, 18),
-  //         sqrtPriceX96After: utils.formatUnits(a.sqrtPriceX96After, 18),
-  //       };
-  //     })
-  //   );
-  best = allTrades.find((t) =>
-    direction === "pump" ? target.lte(Decimal.abs(t.priceImpact)) : target.gte(Decimal.abs(t.priceImpact))
-  );
-  console.log("best trade", best);
-  return {
-    best,
-    // include trades below and a few over
-    trades: allTrades.filter((t) => t.value < Math.max(10_000_000, best.value * 1.2)),
-  };
+  allTrades = allTrades.sort((a, b) => b.value - a.value);
+  return allTrades.find((t) => target.gt(Decimal.abs(t.priceImpact)));
 };
 
 export const binarySearchTradeValues = async (
   currPrice: BigNumber,
-  token: Token,
-  fee: number,
+  tokenConfig: UniswapV3AssetConfig,
   ethPrice: number,
   target: Decimal,
-  targetType: TargetType,
   fetcher: UniswapV3Fetcher
-): Promise<{ execPump: SearchTrade; execDump: SearchTrade }> => {
-  let execPump = await searchTrade(currPrice, token, fee, ethPrice, target, targetType, "pump", fetcher);
-  let execDump = await searchTrade(currPrice, token, fee, ethPrice, target, targetType, "dump", fetcher);
+): Promise<{ execPump: Trade; execDump: Trade }> => {
+  let execPump = await searchTrade(currPrice, tokenConfig, ethPrice, target, "pump", fetcher);
+  let execDump = await searchTrade(currPrice, tokenConfig, ethPrice, target, "dump", fetcher);
   // todo improve!
-  if (isInverted(token.address, fetcher.W_TOKEN)) [execPump, execDump] = [execDump, execPump];
+  if (tokenConfig.inverted) [execPump, execDump] = [execDump, execPump];
   return { execPump, execDump };
+};
+
+export const getCostOfAttack = (trade: Trade, currPrice: BigNumber, ethPrice: number, token: Token, WETH_ADDRESS) => {
+  return trade.tokenOut === WETH_ADDRESS
+    ? trade.value - parseFloat(utils.formatEther(trade.amountOut)) * ethPrice
+    : trade.value -
+        parseFloat(utils.formatUnits(trade.amountOut, token.decimals)) *
+          parseFloat(formatPrice(currPrice, token)) *
+          ethPrice;
 };

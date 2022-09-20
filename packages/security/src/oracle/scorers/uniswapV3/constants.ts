@@ -1,6 +1,8 @@
 import { Decimal } from "decimal.js";
 import { BigNumber } from "ethers";
 
+Decimal.set({ precision: 50 });
+
 export const MAX_TICK_PRICE = Decimal.pow(1.0001, 887272);
 export const MIN_TICK_PRICE = Decimal.pow(1.0001, -887272);
 export const c1e18 = BigNumber.from(10).pow(18);

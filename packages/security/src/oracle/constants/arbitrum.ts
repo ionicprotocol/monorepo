@@ -38,9 +38,11 @@ export const uniswapV3OracleAssetMappings: UniswapV3AssetConfig[] = [
       symbol: GMX.symbol,
       decimals: GMX.decimals,
     },
-    baseToken: arbitrum.chainAddresses.W_TOKEN,
     targetPriceImpact: new Decimal(20),
+    baseToken: arbitrum.chainAddresses.W_TOKEN,
     fee: 10000,
+    cardinality: 10,
+    attackBlocks: 2,
   },
 ];
 

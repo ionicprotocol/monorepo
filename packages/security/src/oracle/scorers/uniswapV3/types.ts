@@ -1,7 +1,6 @@
 import Decimal from "decimal.js";
 import { BigNumber } from "ethers";
 
-export type TargetType = "price" | "sqrtPriceX96After" | "priceImpact";
 export type Direction = "pump" | "dump";
 
 export type Token = {
@@ -22,7 +21,7 @@ export type Trade = {
   value: number;
   priceImpact: string;
   sqrtPriceX96After?: string;
-  price: string;
+  price: BigNumber;
   after?: BigNumber;
   amountOut?: BigNumber;
   tokenOut?: string;
@@ -40,6 +39,9 @@ export type UniswapV3AssetConfig = {
   targetPriceImpact: Decimal;
   fee: number;
   baseToken: string;
+  cardinality: number;
+  attackBlocks: number;
+  inverted?: boolean;
 };
 
 export type Slot0 = {
@@ -47,4 +49,15 @@ export type Slot0 = {
   tick: BigNumber;
   observationIndex: BigNumber;
   price?: BigNumber;
+};
+
+export type Attack = {
+  type: Direction;
+  price: BigNumber;
+  priceImpact: string;
+  after: BigNumber;
+  cost: number;
+  amountIn: BigNumber;
+  amountOut: BigNumber;
+  tokenOut: string;
 };

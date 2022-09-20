@@ -4,8 +4,8 @@ import { BigNumber, Contract, utils } from "ethers";
 
 import { SignerOrProvider } from "../..";
 import { c1e18, QUOTER_ABI, UNISWAP_V3_POOL_ABI } from "../scorers/uniswapV3/constants";
-import { Direction, PumpAndDump, Quote, Slot0, Token, Trade } from "../scorers/uniswapV3/types";
-import { formatPrice, isInverted, sqrtPriceX96ToPrice } from "../scorers/uniswapV3/utils";
+import { Direction, PumpAndDump, Quote, Slot0, Trade, UniswapV3AssetConfig } from "../scorers/uniswapV3/types";
+import { sqrtPriceX96ToPrice } from "../scorers/uniswapV3/utils";
 
 export class UniswapV3Fetcher {
   public quoter: Contract;
@@ -18,11 +18,11 @@ export class UniswapV3Fetcher {
     this.quoter = new Contract(chainConfig.chainAddresses.UNISWAP_V3.QUOTER_V2, QUOTER_ABI, provider);
   }
 
-  getSlot0 = async (token: Token, fee: number, provider: SignerOrProvider): Promise<Slot0 | null> => {
+  getSlot0 = async (tokenConfig: UniswapV3AssetConfig, provider: SignerOrProvider): Promise<Slot0 | null> => {
+    const { token, fee, inverted } = tokenConfig;
     if (token.address === this.W_TOKEN) return null;
     const poolAddress = this.#computeUniV3PoolAddress(token.address, this.W_TOKEN, fee);
     try {
-      const inverted = isInverted(token.address, this.W_TOKEN);
       const pool = new Contract(poolAddress, UNISWAP_V3_POOL_ABI, provider);
       const res: Slot0 = await pool.callStatic["slot0()"]();
       return {
@@ -47,30 +47,28 @@ export class UniswapV3Fetcher {
   };
   getPumpAndDump = async (
     currPrice: BigNumber,
-    token: Token,
-    fee: number,
+    tokenConfig: UniswapV3AssetConfig,
     ethPrice: number,
     tradeValueInUSD: number
   ): Promise<PumpAndDump> => {
     const [pump, dump] = await Promise.all([
-      this.getTrade(currPrice, token, fee, ethPrice, tradeValueInUSD, "pump"),
-      this.getTrade(currPrice, token, fee, ethPrice, tradeValueInUSD, "dump"),
+      this.getTrade(currPrice, tokenConfig, ethPrice, tradeValueInUSD, "pump"),
+      this.getTrade(currPrice, tokenConfig, ethPrice, tradeValueInUSD, "dump"),
     ]);
     return { pump, dump };
   };
 
   getTrade = async (
     currPrice: BigNumber,
-    token: Token,
-    fee: number,
+    tokenConfig: UniswapV3AssetConfig,
     ethPrice: number,
     tradeValueInUSD: number,
     direction: Direction
   ): Promise<Trade> => {
-    if (token.address === this.W_TOKEN) return { value: tradeValueInUSD, price: "0", priceImpact: "0" };
+    const { token, fee, inverted } = tokenConfig;
+    if (token.address === this.W_TOKEN) return { value: tradeValueInUSD, price: BigNumber.from(0), priceImpact: "0" };
 
     try {
-      const inverted = isInverted(token.address, this.W_TOKEN);
       const amountIn =
         direction === "pump"
           ? utils.parseEther(new Decimal(tradeValueInUSD / ethPrice).toFixed(18))
@@ -97,11 +95,11 @@ export class UniswapV3Fetcher {
           .mul(100)
       );
       return {
-        amountIn,
+        amountIn: amountIn,
         value: tradeValueInUSD,
         priceImpact,
         sqrtPriceX96After: quote.sqrtPriceX96After.toString(),
-        price: formatPrice(after, token),
+        price: currPrice,
         after,
         amountOut: quote.amountOut,
         tokenOut: direction === "pump" ? token.address : this.W_TOKEN,
