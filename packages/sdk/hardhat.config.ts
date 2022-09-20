@@ -106,6 +106,14 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       accounts: { mnemonic },
     },
+    fork: {
+      accounts: { mnemonic },
+      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
+      gasPrice: 20e9,
+      gas: 7500000,
+      allowUnlimitedContractSize: true,
+      url: "http://localhost:8545",
+    },
     rinkeby: {
       accounts: { mnemonic },
       chainId: 4,
@@ -121,14 +129,7 @@ const config: HardhatUserConfig = {
       chainId: 56,
       url: urlOverride || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
     },
-    bscfork: {
-      accounts: { mnemonic },
-      chainId: 56,
-      gasPrice: 20e9,
-      gas: 7500000,
-      allowUnlimitedContractSize: true,
-      url: "http://localhost:8545",
-    },
+
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
