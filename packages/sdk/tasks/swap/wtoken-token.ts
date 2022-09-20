@@ -28,6 +28,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
     }
 
     const tokenContract = new ethers.Contract(_token, sdkModule.ERC20Abi, account);
+    const tokenSymbol = await tokenContract.callStatic.symbol();
     await tokenContract.approve(
       sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
       ethers.BigNumber.from(2).pow(ethers.BigNumber.from(256)).sub(ethers.constants.One),
@@ -37,7 +38,7 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
       }
     );
 
-    console.log(`Token balance before: ${ethers.utils.formatEther(await tokenContract.balanceOf(account.address))}`);
+    const beforeBalance = ethers.utils.formatEther(await tokenContract.balanceOf(account.address));
     const uniRouter = new ethers.Contract(
       sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
       [
@@ -58,5 +59,6 @@ export default task("swap:wtoken-token", "Swap WNATIVE for token")
       value: ethAmount,
     });
     await txn.wait();
-    console.log(`Token balance after: ${ethers.utils.formatEther(await tokenContract.balanceOf(account.address))}`);
+    const afterBalance = ethers.utils.formatEther(await tokenContract.balanceOf(account.address));
+    console.log(`Token balance: ${beforeBalance} ${tokenSymbol} => ${afterBalance} ${tokenSymbol}`);
   });
