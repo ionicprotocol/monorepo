@@ -2,6 +2,9 @@ import { polygon } from "@midas-capital/chains";
 import { assetSymbols } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
+
 const COMPTROLLER = "0xF1ABd146B4620D2AE67F34EA39532367F73bbbd2";
 const mimoFlywheelAddress = "0x6c44d119536CE433dC8bed943B7A1BC7EFCD56F4";
 const vault = "0x2BC39d179FAfC32B7796DDA3b936e491C87D245b";
@@ -136,3 +139,41 @@ task("jarvis:polygon:set-flywheels", "set plugin for each market")
       }
     }
   });
+
+task("fix:jarvis:epxddd", "A one-time task to fix the old EPX and DDD flywheels").setAction(
+  async ({}, { run, ethers }) => {
+    const deployer = await ethers.getNamedSigner("deployer");
+
+    const epxFlywheel = "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4";
+    const dddFlywheel = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
+    const jarvisFiatPool = "0x31d76A64Bc8BbEffb601fac5884372DEF910F044";
+
+    // // should be done already at deploy
+    // await run("comptroller:implementation:whitelist",
+    //   {
+    //     oldImplementation: "",
+    //     newImplementation: ""
+    //   });
+
+    const latestComptrollerImpl = (await ethers.getContract("Comptroller", deployer)) as Comptroller;
+
+    const unitroller = (await ethers.getContractAt("Unitroller", jarvisFiatPool, deployer)) as Unitroller;
+
+    let tx = await unitroller._setPendingImplementation(latestComptrollerImpl.address);
+    await tx.wait();
+    console.log(`set the pending implementation with ${tx.hash}`);
+
+    tx = await latestComptrollerImpl._become(unitroller.address);
+    await tx.wait();
+    console.log(`became the implementation with ${tx.hash}`);
+
+    const asComptroller = (await ethers.getContractAt("Comptroller", jarvisFiatPool, deployer)) as Comptroller;
+
+    tx = await asComptroller.addNonAccruingFlywheel(epxFlywheel);
+    await tx.wait();
+    console.log(`moved the old EPX flywheel to the non-accruing with ${tx.hash}`);
+    tx = await asComptroller.addNonAccruingFlywheel(dddFlywheel);
+    await tx.wait();
+    console.log(`moved the old DDD flywheel to the non-accruing with ${tx.hash}`);
+  }
+);
