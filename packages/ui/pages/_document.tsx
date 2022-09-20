@@ -22,7 +22,7 @@ class MyDocument extends Document {
           <meta property="og:site_name" content="Midas Capital" />
           <meta
             property="og:image"
-            content="https://d1912tcoux65lj.cloudfront.net/social/social_midas.png"
+            content="https://d1912tcoux65lj.cloudfront.net/social/social_midas.jpg"
           />
           <meta
             property="og:title"
@@ -44,7 +44,7 @@ class MyDocument extends Document {
           <meta name="twitter:url" content="https://app.midascapital.xyz/" />
           <meta
             name="twitter:image"
-            content="https://d1912tcoux65lj.cloudfront.net/social/social_midas.png"
+            content="https://d1912tcoux65lj.cloudfront.net/social/social_midas.jpg"
           />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
