@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x504",
     name: "Moonbeam",
     shortName: "Moonbeam",
-    img: "https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/moonbeam.jpg",
     blockExplorerUrls: { default: { name: "Moonbeam", url: "https://moonscan.io/" } },
     rpcUrls: { default: "https://rpc.api.moonbeam.network" },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://raw.githubusercontent.com/sushiswap/icons/master/network/moonbeam.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/moonbeam.jpg",
     },
   },
 };
