@@ -7,7 +7,6 @@ import {
   DelegateContractName,
   DeployedPlugins,
   FundingStrategyContract,
-  InterestRateModel,
   IrmConfig,
   OracleConfig,
   RedemptionStrategyContract,
@@ -48,6 +47,14 @@ import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } fr
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
+export type StaticContracts = {
+  FuseFeeDistributor: FuseFeeDistributor;
+  FusePoolDirectory: FusePoolDirectory;
+  FusePoolLens: FusePoolLens;
+  FusePoolLensSecondary: FusePoolLensSecondary;
+  FuseSafeLiquidator: FuseSafeLiquidator;
+  [contractName: string]: Contract;
+};
 
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -63,16 +70,7 @@ export class MidasBase {
     return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
   }
 
-  public _contracts:
-    | {
-        FuseFeeDistributor: FuseFeeDistributor;
-        FusePoolDirectory: FusePoolDirectory;
-        FusePoolLens: FusePoolLens;
-        FusePoolLensSecondary: FusePoolLensSecondary;
-        FuseSafeLiquidator: FuseSafeLiquidator;
-        [contractName: string]: Contract;
-      }
-    | undefined;
+  public _contracts: StaticContracts | undefined;
   public chainConfig: ChainConfig;
   public availableOracles: Array<string>;
   public availableIrms: Array<string>;
@@ -100,13 +98,11 @@ export class MidasBase {
     return this._signer;
   }
 
-  public get contracts(): {
-    FuseFeeDistributor: FuseFeeDistributor;
-    FusePoolDirectory: FusePoolDirectory;
-    FusePoolLensSecondary: FusePoolLensSecondary;
-    FuseSafeLiquidator: FuseSafeLiquidator;
-    [contractName: string]: Contract;
-  } {
+  public set contracts(newContracts: Partial<StaticContracts>) {
+    this._contracts = { ...this._contracts, ...newContracts };
+  }
+
+  public get contracts(): StaticContracts {
     return {
       FusePoolDirectory: new Contract(
         this.chainDeployment.FusePoolDirectory.address,
@@ -133,6 +129,7 @@ export class MidasBase {
         this.chainDeployment.FuseFeeDistributor.abi,
         this.provider
       ) as FuseFeeDistributor,
+      ...this._contracts,
     };
   }
 
