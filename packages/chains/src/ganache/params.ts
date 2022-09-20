@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x539",
     name: "Ganache",
     shortName: "Ganache",
-    img: "/images/hardhat.svg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/hardhat.svg",
     rpcUrls: { default: "http://localhost:8545" },
     blockExplorerUrls: { default: { name: "Etherscan", url: "http://localhost:3000" } },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://raw.githubusercontent.com/sushiswap/icons/master/network/rinkeby.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/hardhat.svg",
     },
     testnet: true,
   },
