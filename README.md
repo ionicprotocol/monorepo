@@ -90,3 +90,30 @@ For convenience we have a Hardhat task to make some token swaps to on the forked
 ```
 > yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
 ```
+
+
+## Running UI Tests
+
+We are using [ChainSafe/dappeteer](https://github.com/ChainSafe/dappeteer) to test our UI with Metamask. The test are expecting to work on a fork of BSC mainnet for now.
+
+Follow this step to run the UI test locally
+
+1) Start local forked BSC node
+```
+> yarn dev:node:fork
+```
+
+2) Start local UI dev server
+```
+> yarn dev:ui
+```
+
+3) Fund test accounts
+```
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
+```
+
+4) Run dAppateer
+```
+> yarn test:ui
+```
