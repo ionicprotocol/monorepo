@@ -7,6 +7,7 @@ import {
   DelegateContractName,
   DeployedPlugins,
   FundingStrategyContract,
+  InterestRateModel,
   IrmConfig,
   OracleConfig,
   RedemptionStrategyContract,
