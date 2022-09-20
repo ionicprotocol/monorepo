@@ -202,10 +202,11 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.bsc:
         chainConfig = bsc;
-        if (process.env.FORK_CHAIN_ID!) {
-          chainDeployment = await getBscForkDeployments();
-          chainConfig.chainDeployments = chainDeployment;
-        }
+        // Not sure yet if this can be removed, hinders proper use of forked chains
+        // if (process.env.FORK_CHAIN_ID!) {
+        //   chainDeployment = await getBscForkDeployments();
+        //   chainConfig.chainDeployments = chainDeployment;
+        // }
         break;
       case SupportedChains.moonbeam:
         chainConfig = moonbeam;
