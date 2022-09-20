@@ -12,6 +12,8 @@ import "./tasks/oracle";
 import "./tasks/plugin";
 import "./tasks/pool";
 import "./tasks/irm";
+import "./tasks/swap/index";
+import "./tasks/fork";
 
 import "./tasks/addChainlinkFeeds";
 import "./tasks/createPoolsWithAssets";
@@ -24,7 +26,6 @@ import "./tasks/liquidation";
 import "./tasks/pauseMarketMinting";
 import "./tasks/sendTestTokens";
 import "./tasks/swap";
-import "./tasks/swap/index";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
 import "./tasks/upgradePools";
