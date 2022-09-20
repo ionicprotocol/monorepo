@@ -253,24 +253,12 @@ const AmountSelect = ({
 
   const onWrap = async () => {
     try {
-      // const tx: TransactionRequest = {
-      //   to:
-      //     currentChain.id === 1337 ? ganacheWTokenAddress : midasSdk.chainSpecificAddresses.W_TOKEN,
-      //   value: amount,
-      //   from: address,
-      //   nonce: await midasSdk.signer.getTransactionCount(),
-      //   gasLimit: utils.hexlify(100000),
-      //   gasPrice: await midasSdk.signer.getGasPrice(),
-      // };
       const WToken = getContract(midasSdk.chainSpecificAddresses.W_TOKEN, WETHAbi, midasSdk.signer);
-
-      // console.log(WToken,'WTOKEN CONTRACT ')
 
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
 
       const resp = await WToken.deposit({ from: address, value: amount });
 
-      // const resp = await midasSdk.signer.sendTransaction(tx);
       setPendingTxHash(resp.hash);
       onClose();
     } catch (e) {
@@ -278,11 +266,6 @@ const AmountSelect = ({
       setUserAction(UserAction.NO_ACTION);
     }
   };
-
-  // console.log(utils.formatEther(myNativeBalance),'myNativeBalance');
-  // console.log(utils.formatEther(myBalance),'myBalance');
-  // console.log(optionToWrap,'optionToWrap')
-  // console.log(WETHAbi,'wethabi')
 
   return (
     <Column
