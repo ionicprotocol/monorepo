@@ -25,7 +25,7 @@ export class PoolDetailPage extends AppPage {
     await this._confirm(parseFloat(supplyBalance || ''), amount, FundOperationMode.SUPPLY);
   }
 
-  public async supplyBalance(symbol: string): Promise<string | undefined> {
+  public async supplyBalance(): Promise<string | undefined> {
     await this.Page.waitForSelector(this.SupplyAssetBalance);
     return (await this.Page.$eval(this.SupplyAssetBalance, (el) => el.textContent)) || undefined;
   }

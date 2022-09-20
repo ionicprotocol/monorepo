@@ -1,6 +1,6 @@
 import LogRocket from 'logrocket';
 
-export const handleGenericError = (e: any, errorToast: (input: any) => any) => {
+export const handleGenericError = (e: unknown, errorToast: (input: unknown) => void) => {
   console.error(e);
   let message: string;
 
@@ -8,7 +8,7 @@ export const handleGenericError = (e: any, errorToast: (input: any) => any) => {
     message = e.toString();
     LogRocket.captureException(e);
   } else {
-    message = e.message ?? JSON.stringify(e);
+    message = (e as { message: string }).message || JSON.stringify(e);
     LogRocket.captureException(new Error(message));
   }
 

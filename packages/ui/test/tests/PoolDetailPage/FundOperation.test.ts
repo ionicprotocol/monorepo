@@ -10,7 +10,7 @@ let page: Page;
 let metamask: Dappeteer;
 let poolDetailPage: PoolDetailPage;
 
-const { chainId, networkName, symbol, rpc, testUrl, supplyAmount, assetSymbol, asset } =
+const { chainId, networkName, symbol, rpc, testUrl, supplyAmount, assetSymbol } =
   Config.fundOperation();
 
 jest.setTimeout(600000);
@@ -44,14 +44,20 @@ describe('Fund Operation:', () => {
   test(`User can supply on pool`, async () => {
     await page.bringToFront();
     await page.goto(testUrl);
-    const balanceBefore = await poolDetailPage.supplyBalance(assetSymbol);
+
+    const balanceBefore = await poolDetailPage.supplyBalance();
     await poolDetailPage.supply(assetSymbol, supplyAmount);
-    const balanceAfter = await poolDetailPage.supplyBalance(assetSymbol);
+    const balanceAfter = await poolDetailPage.supplyBalance();
+    expect(balanceBefore).not.toEqual(balanceAfter);
   });
 
   test(`User can withdraw on pool`, async () => {
     await page.bringToFront();
     await page.goto(testUrl);
+
+    const balanceBefore = await poolDetailPage.supplyBalance();
     await poolDetailPage.withdraw(assetSymbol, supplyAmount);
+    const balanceAfter = await poolDetailPage.supplyBalance();
+    expect(balanceBefore).not.toEqual(balanceAfter);
   });
 });
