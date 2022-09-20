@@ -9,6 +9,7 @@ import {
   Button,
   Center,
   Flex,
+  Grid,
   HStack,
   IconButton,
   Select,
@@ -19,6 +20,7 @@ import {
   Th,
   Thead,
   Tr,
+  VStack,
 } from '@chakra-ui/react';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import {
@@ -36,7 +38,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import * as React from 'react';
-import { Fragment, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 
 import { AdditionalInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/AdditionalInfo';
 import { BorrowApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/BorrowApy';
@@ -63,6 +65,7 @@ import {
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -197,11 +200,7 @@ export const MarketsList = ({
     return [
       {
         accessorKey: 'market',
-        header: () => (
-          <Text textAlign="start" py={2}>
-            Market
-          </Text>
-        ),
+        header: () => <Text py={2}>Market</Text>,
         cell: ({ getValue }) => (
           <TokenName asset={getValue<MarketData>()} poolAddress={comptrollerAddress} />
         ),
@@ -226,9 +225,10 @@ export const MarketsList = ({
         id: 'supplyApy',
         cell: ({ getValue }) => <SupplyApy asset={getValue<MarketData>()} rewards={rewards} />,
         header: () => (
-          <Text textAlign="end" py={2}>
-            Supply APY
-          </Text>
+          <VStack py={2} textAlign="end" alignItems="end">
+            <Text>Supply</Text>
+            <Text>Apy</Text>
+          </VStack>
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
@@ -238,9 +238,10 @@ export const MarketsList = ({
         id: 'borrowApy',
         cell: ({ getValue }) => <BorrowApy asset={getValue<MarketData>()} />,
         header: () => (
-          <Text textAlign="end" py={2}>
-            Borrow Apy
-          </Text>
+          <VStack py={2} textAlign="end" alignItems="end">
+            <Text>Borrow</Text>
+            <Text>Apy</Text>
+          </VStack>
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
@@ -262,9 +263,10 @@ export const MarketsList = ({
         id: 'supplyBalance',
         cell: ({ getValue }) => <SupplyBalance asset={getValue<MarketData>()} />,
         header: () => (
-          <Text textAlign="end" py={2}>
-            Supply Balance
-          </Text>
+          <VStack py={2} textAlign="end" alignItems="end">
+            <Text>Supply</Text>
+            <Text>Balance</Text>
+          </VStack>
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
@@ -274,9 +276,10 @@ export const MarketsList = ({
         id: 'borrowBalance',
         cell: ({ getValue }) => <BorrowBalance asset={getValue<MarketData>()} />,
         header: () => (
-          <Text textAlign="end" py={2}>
-            Borrow Balance
-          </Text>
+          <VStack py={2} textAlign="end" alignItems="end">
+            <Text>Borrow</Text>
+            <Text>Balance</Text>
+          </VStack>
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
@@ -299,11 +302,7 @@ export const MarketsList = ({
         cell: ({ getValue }) => (
           <Collateral asset={getValue<MarketData>()} comptrollerAddress={comptrollerAddress} />
         ),
-        header: () => (
-          <Text textAlign="end" py={2}>
-            Collateral
-          </Text>
-        ),
+        header: () => <Text py={2}>Collateral</Text>,
         footer: (props) => props.column.id,
         enableSorting: false,
       },
@@ -312,11 +311,13 @@ export const MarketsList = ({
         header: () => null,
         cell: ({ row }) => {
           return (
-            <ExpanderButton
-              getToggleExpandedHandler={row.getToggleExpandedHandler()}
-              isExpanded={row.getIsExpanded()}
-              canExpand={row.getCanExpand()}
-            />
+            <Box textAlign="center">
+              <ExpanderButton
+                getToggleExpandedHandler={row.getToggleExpandedHandler()}
+                isExpanded={row.getIsExpanded()}
+                canExpand={row.getCanExpand()}
+              />
+            </Box>
           );
         },
       },
@@ -329,6 +330,8 @@ export const MarketsList = ({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
   });
+  const isMobile = useIsMobile();
+
   const [isCollateralFiltered, setIsCollateralFiltered] = useState<boolean>(true);
   const [isRewardsFiltered, setIsRewardsFiltered] = useState<boolean>(true);
   const [isProtectedFiltered, setIsProtectedFiltered] = useState<boolean>(true);
@@ -339,6 +342,8 @@ export const MarketsList = ({
     PROTECTED,
     BORROWABLE,
   ]);
+  const [columnVisibility, setColumnVisibility] = useState({});
+
   const table = useReactTable({
     columns,
     data,
@@ -353,12 +358,26 @@ export const MarketsList = ({
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: assetFilter,
     getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       pagination,
       globalFilter,
+      columnVisibility,
     },
   });
+
+  useEffect(() => {
+    if (isMobile) {
+      table.getColumn('ltv').toggleVisibility(false);
+      table.getColumn('tvl').toggleVisibility(false);
+      table.getColumn('collateral').toggleVisibility(false);
+    } else {
+      table.getColumn('ltv').toggleVisibility(true);
+      table.getColumn('tvl').toggleVisibility(true);
+      table.getColumn('collateral').toggleVisibility(true);
+    }
+  }, [isMobile, table]);
 
   const { cCard } = useColors();
 
@@ -403,7 +422,7 @@ export const MarketsList = ({
   };
 
   return (
-    <Box overflowX="auto">
+    <Box>
       <Flex px="4" mt={6} gap={8}>
         <HStack>
           <Text>Your Supply Balance :</Text>
@@ -431,20 +450,28 @@ export const MarketsList = ({
         </HStack>
       </Flex>
       <Flex justifyContent="space-between" px="4" py="8">
-        <HStack className="pagination" gap={4}>
+        <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
           <Text fontSize={24}>Assets</Text>
-          <HStack>
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              lg: 'repeat(4, 1fr)',
+              md: 'repeat(2, 1fr)',
+              sm: 'repeat(2, 1fr)',
+            }}
+            gap={2}
+          >
             <Button variant="ghost" onClick={onRewardsFiltered} p={0}>
               {isRewardsFiltered ? (
-                <GlowingBox height="100%" p={2}>
-                  <Center px={2} width="100%" height="100%" borderRadius="xl">
+                <GlowingBox height="100%" width="100%">
+                  <Center width="100%" height="100%" borderRadius="xl">
                     {`${
                       (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                     } Rewards`}
                   </Center>
                 </GlowingBox>
               ) : (
-                <Center px={4} width="100%" height="100%" fontWeight="bold" borderRadius="xl">
+                <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl">
                   {`${
                     (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                   } Rewards`}
@@ -455,35 +482,32 @@ export const MarketsList = ({
               variant={isCollateralFiltered ? 'outline' : 'ghost'}
               colorScheme="orange"
               onClick={onCollateralFiltered}
-              px={2}
             >
-              <Center px={1} fontWeight="bold">
-                {`${collateralCounts} Collateral`}
-              </Center>
+              <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
             </Button>
             <Button
               variant={isProtectedFiltered ? 'outline' : 'ghost'}
               colorScheme="purple"
               onClick={onProtectedFiltered}
-              px={2}
             >
-              <Center px={1} fontWeight="bold">
-                {`${protectedCounts} Protected`}
-              </Center>
+              <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
             </Button>
             <Button
               variant={isBorrowableFiltered ? 'outline' : 'ghost'}
               colorScheme="cyan"
               onClick={onBorrowableFiltered}
-              px={2}
             >
-              <Center px={1} fontWeight="bold">
-                {`${borrowableCounts} Borrowable`}
-              </Center>
+              <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
             </Button>
-          </HStack>
-        </HStack>
-        <HStack className="pagination" gap={4}>
+          </Grid>
+        </Flex>
+        <Flex
+          className="pagination"
+          flexDirection={{ base: 'column', lg: 'row' }}
+          gap={4}
+          justifyContent="flex-end"
+          alignItems="flex-end"
+        >
           <HStack>
             <Text>Rows Per Page :</Text>
             <Select
@@ -531,9 +555,8 @@ export const MarketsList = ({
               />
             </HStack>
           </HStack>
-        </HStack>
+        </Flex>
       </Flex>
-
       <Table>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -552,8 +575,9 @@ export const MarketsList = ({
                     color={cCard.txtColor}
                     fontSize={16}
                     textTransform="capitalize"
-                    py={4}
+                    py={2}
                     cursor="pointer"
+                    px={{ base: 2, lg: 4 }}
                   >
                     <HStack gap={1} justifyContent={header.index === 0 ? 'flex-start' : 'flex-end'}>
                       <>{flexRender(header.column.columnDef.header, header.getContext())}</>
@@ -586,7 +610,7 @@ export const MarketsList = ({
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} border="none">
+                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );

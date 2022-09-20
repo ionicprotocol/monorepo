@@ -95,7 +95,7 @@ const FusePoolPage = memo(() => {
           )}
 
           <Grid w="100%" gap={4} mb={4}>
-            <MidasBox pb={3}>
+            <MidasBox pb={3} overflowX="auto">
               {data ? (
                 <MarketsList
                   assets={data.assets}

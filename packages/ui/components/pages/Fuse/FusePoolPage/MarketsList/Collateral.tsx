@@ -3,7 +3,7 @@ import { ContractTransaction } from 'ethers';
 import LogRocket from 'logrocket';
 import * as React from 'react';
 
-import { Row as CRow } from '@ui/components/shared/Flex';
+import { Row } from '@ui/components/shared/Flex';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -66,7 +66,7 @@ export const Collateral = ({
     LogRocket.track('Fuse-ToggleCollateral');
   };
   return (
-    <CRow mainAxisAlignment="flex-end" crossAxisAlignment="center">
+    <Row mainAxisAlignment="center" crossAxisAlignment="center">
       <SwitchCSS symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')} color={cSwitch.bgColor} />
       <Switch
         isChecked={asset.membership}
@@ -75,6 +75,6 @@ export const Collateral = ({
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}
       />
-    </CRow>
+    </Row>
   );
 };
