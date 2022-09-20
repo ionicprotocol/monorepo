@@ -71,3 +71,22 @@ To run `forge` commands inside the `sdk` package, run:
 }
 - `yarn` from top-level to update dependencies/symlinks.
 ```
+
+
+## Working with Mainnet Fork
+
+Make sure to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
+
+We had a great experience using an RPC Node from NodeReals MegaNode service - https://nodereal.io/meganode .
+
+And than start a forked local node by running.
+
+```
+> yarn dev:node:fork
+```
+
+For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
+
+```
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
+```
