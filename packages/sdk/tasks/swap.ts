@@ -2,7 +2,7 @@ import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber } from "ethers";
 import { task, types } from "hardhat/config";
 
-export default task("swap-token-for-wtoken", "Swap token for WNATIVE")
+task("swap-token-for-wtoken", "Swap token for WNATIVE")
   .addParam("token", "token address", undefined, types.string)
   .addOptionalParam("amount", "Amount to trade", "100", types.string)
   .addOptionalParam("account", "Account with which to trade", "bob", types.string)
