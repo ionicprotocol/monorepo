@@ -12,7 +12,7 @@ class MyDocument extends Document {
 
   render() {
     return (
-      <Html>
+      <Html prefix="og: http://ogp.me/ns#">
         <Head>
           {/* HTML Meta Tags */}
           <meta
