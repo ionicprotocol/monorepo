@@ -7,7 +7,8 @@ services:
       context: .
     environment:
       - MNEMONIC
-      - FORK_URL_BSC
+      - FORK_URL_BSC # Leaving this in here, to potentially not break things?
+      - FORK_RPC_URL
       - FORK_CHAIN_ID=56
       - FORK_BLOCK_NUMBER
     ports:
