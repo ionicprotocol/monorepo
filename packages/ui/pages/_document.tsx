@@ -42,11 +42,16 @@ class MyDocument extends Document {
             property="og:title"
             content="Midas - Money markets for all. Lending and borrowing pools for any asset."
           />
+          <meta property="og:site_name" content="Midas Capital" />
           <meta
             property="og:description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
           />
           <meta property="og:image" content={`${config.iconServerURL}/social/social_midas.png`} />
+          <meta
+            property="og:image:alt"
+            content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
+          />
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
