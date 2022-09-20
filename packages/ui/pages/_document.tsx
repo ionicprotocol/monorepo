@@ -19,6 +19,22 @@ class MyDocument extends Document {
             name="description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
           />
+          {/* Twitter Meta Tags */}
+          <meta name="twitter:card" content="summary_large_image" />
+          {/* <meta property="twitter:domain" content={config.productDomain} /> */}
+          {/* <meta property="twitter:url" content={config.productUrl} /> */}
+          <meta
+            name="twitter:title"
+            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+          />
+          <meta
+            name="twitter:description"
+            content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
+          />
+          <meta
+            name="twitter:image:src"
+            content={`${config.iconServerURL}/social/social_midas.png`}
+          />
           {/* Facebook Meta Tags */}
           <meta property="og:url" content={config.productUrl} />
           <meta property="og:type" content="website" />
@@ -31,20 +47,6 @@ class MyDocument extends Document {
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
           />
           <meta property="og:image" content={`${config.iconServerURL}/social/social_midas.png`} />
-
-          {/* Twitter Meta Tags */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="twitter:domain" content={config.productDomain} />
-          <meta property="twitter:url" content={config.productUrl} />
-          <meta
-            name="twitter:title"
-            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
-          />
-          <meta
-            name="twitter:description"
-            content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
-          />
-          <meta name="twitter:image" content={`${config.iconServerURL}/social/social_midas.png`} />
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
