@@ -99,6 +99,16 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       )) as Comptroller;
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
+      if (admin == signer.address) {
+        const autoImplOn = await comptroller.callStatic.autoImplementation();
+        if (!autoImplOn) {
+          const tx = await comptroller._toggleAutoImplementations(true);
+          await tx.wait();
+          console.log(`turned autoimpl on ${tx.hash}`);
+        }
+      } else {
+        console.log(`signer is not the admin of this pool ${admin}`);
+      }
 
       const markets = await comptroller.callStatic.getAllMarkets();
       // console.log("pool assets", assets);
@@ -119,16 +129,6 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
           if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
             console.log(`No auto upgrade with latest implementation ${latestImpl}`);
           } else {
-            if (admin == signer.address) {
-              const autoImplOn = await comptroller.callStatic.autoImplementation();
-              if (!autoImplOn) {
-                const tx = await comptroller._toggleAutoImplementations(true);
-                await tx.wait();
-                console.log(`turned autoimpl on ${tx.hash}`);
-              }
-            } else {
-              console.log(`signer is not the admin of this pool ${admin}`);
-            }
 
             const tx = await cTokenInstance.accrueInterest();
             const receipt: TransactionReceipt = await tx.wait();
@@ -136,16 +136,16 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
 
             const implAfter = await cTokenInstance.callStatic.implementation();
             console.log(`implementation after ${implAfter}`);
-
-            if (admin == signer.address) {
-              const tx = await comptroller._toggleAutoImplementations(false);
-              await tx.wait();
-              console.log(`turned autoimpl off ${tx.hash}`);
-            }
           }
         } catch (e) {
           console.error(`failed to upgrade market ${market}`, e);
         }
+      }
+
+      if (admin == signer.address) {
+        const tx = await comptroller._toggleAutoImplementations(false);
+        await tx.wait();
+        console.log(`turned autoimpl off ${tx.hash}`);
       }
     }
   });
