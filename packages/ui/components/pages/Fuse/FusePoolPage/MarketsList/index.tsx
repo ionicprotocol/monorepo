@@ -198,10 +198,9 @@ export const MarketsList = ({
         id: 'supplyApy',
         cell: ({ getValue }) => <SupplyApy asset={getValue<MarketData>()} rewards={rewards} />,
         header: () => (
-          <VStack py={2} textAlign="end" alignItems="end">
-            <Text>Supply</Text>
-            <Text>APY</Text>
-          </VStack>
+          <Box py={2} textAlign="end" alignItems="end">
+            <Text lineHeight="1.4">Supply APY</Text>
+          </Box>
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
@@ -211,10 +210,9 @@ export const MarketsList = ({
         id: 'borrowApy',
         cell: ({ getValue }) => <BorrowApy asset={getValue<MarketData>()} />,
         header: () => (
-          <VStack py={2} textAlign="end" alignItems="end">
-            <Text>Borrow</Text>
-            <Text>APY</Text>
-          </VStack>
+          <Box py={2} textAlign="end" alignItems="end">
+            <Text lineHeight="1.4">Borrow APY</Text>
+          </Box>
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
@@ -539,17 +537,26 @@ export const MarketsList = ({
                     cursor="pointer"
                     px={{ base: 2, lg: 4 }}
                   >
-                    <HStack gap={0} justifyContent={header.index === 0 ? 'flex-start' : 'flex-end'}>
-                      <>{flexRender(header.column.columnDef.header, header.getContext())}</>
-                      <>
-                        {header.column.getIsSorted() ? (
-                          header.column.getIsSorted() === 'desc' ? (
+                    <HStack
+                      gap={0}
+                      justifyContent={
+                        header.index === 0
+                          ? 'flex-start'
+                          : header.column.id === 'collateral'
+                          ? 'center'
+                          : 'flex-end'
+                      }
+                    >
+                      <Box width={3}>
+                        <Box hidden={header.column.getIsSorted() ? false : true}>
+                          {header.column.getIsSorted() === 'desc' ? (
                             <ArrowDownIcon aria-label="sorted descending" />
                           ) : (
                             <ArrowUpIcon aria-label="sorted ascending" />
-                          )
-                        ) : null}
-                      </>
+                          )}
+                        </Box>
+                      </Box>
+                      <>{flexRender(header.column.columnDef.header, header.getContext())}</>
                     </HStack>
                   </Th>
                 );

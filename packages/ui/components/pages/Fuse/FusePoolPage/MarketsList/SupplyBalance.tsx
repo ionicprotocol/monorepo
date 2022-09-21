@@ -20,7 +20,7 @@ export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
         label={asset.supplyBalanceFiat.toString()}
         isDisabled={asset.supplyBalanceFiat === DOWN_LIMIT || asset.supplyBalanceFiat >= UP_LIMIT}
       >
-        <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: 'lg' }}>
+        <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
           {smallUsdFormatter(asset.supplyBalanceFiat)}
           {asset.supplyBalanceFiat > DOWN_LIMIT && asset.supplyBalanceFiat < UP_LIMIT && '+'}
         </Text>

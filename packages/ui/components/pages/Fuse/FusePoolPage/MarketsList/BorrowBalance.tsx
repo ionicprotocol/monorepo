@@ -19,7 +19,7 @@ export const BorrowBalance = ({ asset }: { asset: MarketData }) => {
         label={asset.borrowBalanceFiat.toString()}
         isDisabled={asset.borrowBalanceFiat === DOWN_LIMIT || asset.borrowBalanceFiat >= UP_LIMIT}
       >
-        <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: 'lg' }}>
+        <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
           {smallUsdFormatter(asset.borrowBalanceFiat)}
           {asset.borrowBalanceFiat > DOWN_LIMIT && asset.borrowBalanceFiat < UP_LIMIT && '+'}
         </Text>

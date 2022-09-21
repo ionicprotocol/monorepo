@@ -57,7 +57,7 @@ export const SupplyApy = ({
 
   return (
     <VStack alignItems={'flex-end'}>
-      <Text color={supplyApyColor} fontSize={{ base: '2.8vw', sm: 'lg' }}>
+      <Text color={supplyApyColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
         {supplyAPY.toFixed(2)}%
       </Text>
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
