@@ -520,6 +520,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
+
+  // upgrade any of the pools if necessary
+  await run("pools:all:upgrade");
+
+  // upgrade any of the markets if necessary
+  await run("markets:all:upgrade");
 };
 
 func.tags = ["prod"];
