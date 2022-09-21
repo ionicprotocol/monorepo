@@ -244,7 +244,7 @@ const AmountSelect = ({
 
   const updateAvailableToWithdraw = async () => {
     const max = await fetchMaxAmount(mode, midasSdk, address, asset);
-    setAvailableToWithdraw(utils.formatEther(max));
+    setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
   };
 
   if (mode === FundOperationMode.WITHDRAW) {
