@@ -24,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -80,6 +80,8 @@ const AmountSelect = ({
   const [userEnteredAmount, _setUserEnteredAmount] = useState('');
 
   const [amount, _setAmount] = useState<BigNumber>(constants.Zero);
+
+  const [availableToWithdraw, setAvailableToWithdraw] = useState('0.0');
 
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
@@ -240,8 +242,20 @@ const AmountSelect = ({
     }
   };
 
+  const updateAvailableToWithdraw = useCallback(async () => {
+    const max = await fetchMaxAmount(mode, midasSdk, address, asset);
+    setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
+  }, [address, asset, midasSdk, mode]);
+
+  useEffect(() => {
+    if (mode === FundOperationMode.WITHDRAW) {
+      updateAvailableToWithdraw();
+    }
+  }, [mode, updateAvailableToWithdraw]);
+
   return (
     <Column
+      id="fundOperationModal"
       mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
       bg={cCard.bgColor}
@@ -271,7 +285,7 @@ const AmountSelect = ({
             <Box height="36px" width="36px">
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
-            <Heading fontSize="27px" ml={3}>
+            <Heading id="symbol" fontSize="27px" ml={3}>
               {tokenData?.symbol || asset.underlyingSymbol}
             </Heading>
           </Row>
@@ -298,11 +312,22 @@ const AmountSelect = ({
 
               {/* Asset Balance */}
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                <Text mr={2}>Wallet Balance:</Text>
-                <Text>
-                  {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
-                  {asset.underlyingSymbol}
-                </Text>
+                {mode === FundOperationMode.WITHDRAW ? (
+                  <>
+                    <Text mr={2}>Available To Withdraw:</Text>
+                    <Text>
+                      {availableToWithdraw} {asset.underlyingSymbol}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text mr={2}>Wallet Balance:</Text>
+                    <Text>
+                      {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                      {asset.underlyingSymbol}
+                    </Text>
+                  </>
+                )}
               </Row>
 
               {mode === FundOperationMode.BORROW && asset.liquidity.isZero() ? (
@@ -400,6 +425,7 @@ const AmountSelect = ({
             ) : null}
 
             <Button
+              id="confirmFund"
               mt={4}
               width="100%"
               height="70px"
@@ -525,13 +551,17 @@ const TabBar = ({
           <TabList>
             {isSupplySide ? (
               <>
-                <AmountTab mr={2}>Supply</AmountTab>
-                <AmountTab>Withdraw</AmountTab>
+                <AmountTab className="supplyTab" mr={2}>
+                  Supply
+                </AmountTab>
+                <AmountTab className="withdrawTab">Withdraw</AmountTab>
               </>
             ) : (
               <>
-                <AmountTab mr={2}>Borrow</AmountTab>
-                <AmountTab>Repay</AmountTab>
+                <AmountTab className="borrowTab" mr={2}>
+                  Borrow
+                </AmountTab>
+                <AmountTab className="repayTab">Repay</AmountTab>
               </>
             )}
           </TabList>
@@ -789,6 +819,7 @@ const AmountInput = ({
 } & InputProps) => {
   return (
     <Input
+      id="fundInput"
       type="number"
       inputMode="decimal"
       fontSize={22}

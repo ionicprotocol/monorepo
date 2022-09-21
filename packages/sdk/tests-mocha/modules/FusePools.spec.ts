@@ -67,7 +67,6 @@ describe("FusePools", () => {
         getWhitelistedPoolsByAccountWithData: stub().resolves([[]]),
       },
     });
-    fusePools.contracts.FusePoolLens = mockFusePoolLensContract;
 
     mockFusePoolDirectoryContract = createStubInstance(Contract);
     Object.defineProperty(mockFusePoolDirectoryContract, "callStatic", {
@@ -83,7 +82,8 @@ describe("FusePools", () => {
         getAllPools: stub().resolves(["0"]),
       },
     });
-    fusePools.contracts.FusePoolDirectory = mockFusePoolDirectoryContract;
+
+    fusePools.contracts = { FusePoolDirectory: mockFusePoolDirectoryContract, FusePoolLens: mockFusePoolLensContract };
 
     mockComptrollerContract = createStubInstance(Contract);
     Object.defineProperty(mockComptrollerContract, "callStatic", {

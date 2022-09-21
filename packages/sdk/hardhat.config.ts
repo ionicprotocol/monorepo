@@ -12,6 +12,8 @@ import "./tasks/oracle";
 import "./tasks/plugin";
 import "./tasks/pool";
 import "./tasks/irm";
+import "./tasks/swap/index";
+import "./tasks/fork";
 
 import "./tasks/addChainlinkFeeds";
 import "./tasks/createPoolsWithAssets";
@@ -41,7 +43,7 @@ dotEnvConfig();
 
 const urlOverride = process.env.ETH_PROVIDER_URL;
 
-console.log("FORK_URL_BSC: ", process.env.FORK_URL_BSC);
+console.log("FORK_RPC_URL: ", process.env.FORK_RPC_URL);
 
 const mnemonic =
   process.env.SUGAR_DADDY ||
@@ -82,9 +84,9 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      forking: process.env.FORK_URL_BSC
+      forking: process.env.FORK_RPC_URL
         ? {
-            url: process.env.FORK_URL_BSC,
+            url: process.env.FORK_RPC_URL,
             blockNumber: process.env.FORK_BLOCK_NUMBER ? Number(process.env.FORK_BLOCK_NUMBER) : undefined,
           }
         : undefined,
@@ -104,6 +106,14 @@ const config: HardhatUserConfig = {
       allowUnlimitedContractSize: true,
       accounts: { mnemonic },
     },
+    fork: {
+      accounts: { mnemonic },
+      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
+      gasPrice: 20e9,
+      gas: 7500000,
+      allowUnlimitedContractSize: true,
+      url: "http://localhost:8545",
+    },
     rinkeby: {
       accounts: { mnemonic },
       chainId: 4,
@@ -119,14 +129,7 @@ const config: HardhatUserConfig = {
       chainId: 56,
       url: urlOverride || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
     },
-    bscfork: {
-      accounts: { mnemonic },
-      chainId: 56,
-      gasPrice: 20e9,
-      gas: 7500000,
-      allowUnlimitedContractSize: true,
-      url: "http://localhost:8545",
-    },
+
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
