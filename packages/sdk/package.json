@@ -42,7 +42,7 @@
     "typechain": "typechain --target ethers-v5 --out-dir './lib/contracts/typechain' './lib/contracts/out/**/!(*.metadata).json' --show-stack-traces",
     "deploy:chapel": "hardhat --network chapel deploy --tags prod --no-compile",
     "deploy:bsc": "hardhat --network bsc deploy --tags prod --no-compile",
-    "deploy:polygon": "hardhat --network bsc deploy --tags prod --no-compile",
+    "deploy:polygon": "hardhat --network polygon deploy --tags prod --no-compile",
     "deploy:evmos": "hardhat --network evmostestnet deploy --tags prod --no-compile",
     "deploy:moonbeam": "hardhat --network moonbeam deploy --tags prod --no-compile",
     "deploy:neondevnet": "hardhat --network neondevnet deploy --tags prod --no-compile",
