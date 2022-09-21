@@ -74,6 +74,7 @@ export const Collateral = ({
         onChange={onToggleCollateral}
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}
+        ml={4}
       />
     </Row>
   );
