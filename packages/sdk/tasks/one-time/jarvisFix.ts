@@ -12,7 +12,7 @@ task("jarvis-fix", "deploy new strategy for jarvis 2brl pool")
     }
 
     // @ts-ignore
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const jarvisComptroller = "0x31d76A64Bc8BbEffb601fac5884372DEF910F044";
