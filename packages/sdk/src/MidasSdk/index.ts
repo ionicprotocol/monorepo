@@ -100,7 +100,7 @@ export class MidasBase {
   }
 
   public set contracts(newContracts: Partial<StaticContracts>) {
-    this._contracts = { ...this._contracts, ...newContracts };
+    this._contracts = { ...this._contracts, ...newContracts } as StaticContracts;
   }
 
   public get contracts(): StaticContracts {

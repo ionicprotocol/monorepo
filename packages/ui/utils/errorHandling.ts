@@ -1,6 +1,7 @@
+import { CreateToastFnReturn } from '@chakra-ui/react';
 import LogRocket from 'logrocket';
 
-export const handleGenericError = (e: unknown, errorToast: (input: unknown) => void) => {
+export const handleGenericError = (e: unknown, errorToast?: CreateToastFnReturn) => {
   console.error(e);
   let message: string;
 
@@ -12,5 +13,7 @@ export const handleGenericError = (e: unknown, errorToast: (input: unknown) => v
     LogRocket.captureException(new Error(message));
   }
 
-  errorToast({ description: message });
+  if (errorToast) {
+    errorToast({ description: message });
+  }
 };
