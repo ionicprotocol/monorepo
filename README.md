@@ -110,7 +110,7 @@ Follow this step to run the UI test locally
 
 3) Fund test accounts
 ```
-> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
 ```
 
 4) Run dAppateer
