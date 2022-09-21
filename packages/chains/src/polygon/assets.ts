@@ -41,10 +41,12 @@ const JCAD_CADC = "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F";
 const JSGD_XSGD = "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA";
 const JNZD_NZDS = "0x976A750168801F58E8AEdbCfF9328138D544cc09";
 const JEUR_EURT = "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1";
+const EURE_JEUR = "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4";
 
 // stable fore
 const AGEUR = "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4";
 const JEUR = "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c";
+const EURE = "0x18ec0A6E18E5bc3784fDd3a3634b31245ab704F6";
 const PAR = "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128";
 const EURT = "0x7BDF330f423Ea880FF95fC41A280fD5eCFD3D09f";
 const JJPY = "0x8343091F2499FD4b6174A46D067A920a3b851FF9";
@@ -379,6 +381,14 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs(286, "JEUR-EURT", JEUR_EURT, true),
   },
+  {
+    symbol: assetSymbols["EURE-JEUR"],
+    underlying: EURE_JEUR,
+    name: "Jarvis EURE-JEUR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", JEUR_EURT, true),
+  },
   // stable forex
   {
     symbol: assetSymbols.AGEUR,
@@ -406,6 +416,13 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.EURT,
     underlying: EURT,
     name: "Euro Tether (PoS)",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+  },
+  {
+    symbol: assetSymbols.EURE,
+    underlying: EURE,
+    name: "Monerium EUR emoney",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
   },

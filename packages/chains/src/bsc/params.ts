@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x38",
     name: "Binance Smart Chain",
     shortName: "BSC",
-    img: "https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/bsc.jpg",
     blockExplorerUrls: { default: { name: "BscScan", url: "https://bscscan.com" } },
     rpcUrls: { default: "https://bsc-dataseed.binance.org/" },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://raw.githubusercontent.com/sushiswap/icons/master/network/bsc.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/bsc.jpg",
     },
   },
 };

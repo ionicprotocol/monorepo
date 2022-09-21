@@ -1,5 +1,5 @@
 import { polygon } from "@midas-capital/chains";
-import { assetSymbols } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
@@ -17,15 +17,15 @@ import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
 
 const assets = polygon.assets;
-const wmatic = assets.find((a) => a.symbol === assetSymbols.WMATIC)!.underlying;
+const wmatic = underlying(assets, assetSymbols.WMATIC);
 
 export const deployConfig: ChainDeployConfig = {
   wtoken: wmatic,
   nativeTokenUsdChainlinkFeed: "0xAB594600376Ec9fD91F8e885dADF0CE036862dE0",
   nativeTokenName: "Matic Token",
   nativeTokenSymbol: "MATIC",
-  stableToken: assets.find((a) => a.symbol === assetSymbols.USDC)!.underlying,
-  wBTCToken: assets.find((a) => a.symbol === assetSymbols.WBTC)!.underlying,
+  stableToken: underlying(assets, assetSymbols.USDC),
+  wBTCToken: underlying(assets, assetSymbols.WBTC),
   blocksPerYear: polygon.specificParams.blocksPerYear.toNumber(),
   uniswap: {
     hardcoded: [],
@@ -53,10 +53,10 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
     uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [
-      assets.find((a) => a.symbol === assetSymbols["WMATIC-USDC"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["WMATIC-ETH"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["WMATIC-USDT"])!.underlying,
-      assets.find((a) => a.symbol === assetSymbols["WETH-WBTC"])!.underlying,
+      underlying(assets, assetSymbols["WMATIC-USDC"]),
+      underlying(assets, assetSymbols["WMATIC-ETH"]),
+      underlying(assets, assetSymbols["WMATIC-USDT"]),
+      underlying(assets, assetSymbols["WETH-WBTC"]),
     ],
     flashSwapFee: 30,
   },
@@ -223,6 +223,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.EURE,
+    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.JJPY,
     aggregator: "0xD647a6fC9BC6402301583C91decC5989d8Bc382D",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -314,109 +319,93 @@ const curvePools: CurvePoolConfig[] = [
   {
     lpToken: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.AGEUR)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.AGEUR), underlying(assets, assetSymbols.JEUR)],
   },
   {
     lpToken: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
     pool: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.PAR)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.PAR), underlying(assets, assetSymbols.JEUR)],
   },
   {
     lpToken: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
     pool: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.JEUR)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.EURT)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.EURT)],
+  },
+  {
+    lpToken: "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4",
+    pool: "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4",
+    underlyings: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.EURE)],
   },
   {
     lpToken: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
     pool: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.JJPY)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.JPYC)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.JJPY), underlying(assets, assetSymbols.JPYC)],
   },
   {
     lpToken: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
     pool: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.JCAD)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.CADC)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.JCAD), underlying(assets, assetSymbols.CADC)],
   },
   {
     lpToken: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
     pool: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.JSGD)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.XSGD)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.JSGD), underlying(assets, assetSymbols.XSGD)],
   },
   {
     lpToken: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
     pool: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
-    underlyings: [
-      assets.find((a) => a.symbol === assetSymbols.JNZD)!.underlying,
-      assets.find((a) => a.symbol === assetSymbols.NZDS)!.underlying,
-    ],
+    underlyings: [underlying(assets, assetSymbols.JNZD), underlying(assets, assetSymbols.NZDS)],
   },
 ];
 
 const gelatoAssets: GelatoGUniAsset[] = [
   {
     // USDC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_WETH_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_WETH_005),
   },
   {
     // WBTC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WBTC_WETH_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_WBTC_WETH_005),
   },
   {
     // USDC/PAR
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_PAR_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_PAR_005),
   },
   {
     // WMATIC/USDC
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_USDC_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_WMATIC_USDC_005),
   },
   {
     // USDC/agEUR
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_agEUR_001)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_agEUR_001),
   },
   {
     // WMATIC/WETH
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_WETH_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_WMATIC_WETH_005),
   },
   {
     // WMATIC/AAVE
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WMATIC_AAVE_03)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_WMATIC_AAVE_03),
   },
   {
     // USDC/MAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_MAI_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_MAI_005),
   },
   {
     // USDC/USDT 0.01 % fee tier
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_USDT_001)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_USDT_001),
   },
   {
     // USDC/USDT 0.05 % fee tier
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_USDT_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_USDT_005),
   },
   {
     // USDC/DAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_USDC_DAI_005)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_USDC_DAI_005),
   },
   {
     // WETH/DAI
-    vaultAddress: assets.find((a) => a.symbol == assetSymbols.arrakis_WETH_DAI_03)!.underlying,
+    vaultAddress: underlying(assets, assetSymbols.arrakis_WETH_DAI_03),
   },
 ];
 
@@ -559,7 +548,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
-  const busdAddress = assets.find((a) => a.symbol === assetSymbols.BUSD)!.underlying;
+  const busdAddress = underlying(assets, assetSymbols.BUSD);
   const busdAddressAp = await addressesProvider.callStatic.getAddress("bUSD");
   if (busdAddressAp !== busdAddress) {
     const tx = await addressesProvider.setAddress("bUSD", busdAddress);
