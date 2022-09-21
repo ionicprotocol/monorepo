@@ -1,4 +1,4 @@
-import { HStack, Text, VStack } from '@chakra-ui/react';
+import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { Web3Provider } from '@ethersproject/providers';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
@@ -29,6 +29,7 @@ export const SupplyApy = ({
   );
 
   const { cCard } = useColors();
+  const supplyApyColor = useColorModeValue('cyan.500', 'cyan');
 
   const rewardsOfThisMarket = useMemo(
     () => rewards.find((r) => r.market === asset.cToken),
@@ -56,7 +57,7 @@ export const SupplyApy = ({
 
   return (
     <VStack alignItems={'flex-end'}>
-      <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+      <Text color={supplyApyColor} fontSize={{ base: '2.8vw', sm: 'lg' }}>
         {supplyAPY.toFixed(2)}%
       </Text>
       {asset.underlyingSymbol === assetSymbols.aBNBc && (

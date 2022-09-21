@@ -3,6 +3,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
+import { useMemo } from 'react';
 
 import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
 import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/FundButton';
@@ -29,21 +30,13 @@ export const AdditionalInfo = ({
 }) => {
   const asset: MarketData = row.original.market;
   const assets: MarketData[] = rows.map((row) => row.original.market);
-  const assetUtilization =
-    asset.totalSupply.toString() === '0'
-      ? 0
-      : parseFloat(
-          // Use Max.min() to cap util at 100%
-          Math.min(
-            (Number(utils.formatUnits(asset.totalBorrow, 18)) /
-              Number(utils.formatUnits(asset.totalSupply, 18))) *
-              100,
-            100
-          ).toFixed(0)
-        );
 
   const { data } = useChartData(asset.cToken);
   const { cChart, cPage } = useColors();
+  const assetUtilization = useMemo(
+    () => parseFloat(asset.utilization.toFixed(0)),
+    [asset.utilization]
+  );
 
   return (
     <Box>

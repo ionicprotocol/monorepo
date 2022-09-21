@@ -75,7 +75,6 @@ export const aBNBcContractABI = [
 
 export const DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
 export const MARKETS_COUNT_PER_PAGE = [10, 20, 30, 50];
-export const FUNDOPERATION_MODE_NAMES = ['Supply', 'Withdraw', 'Borrow', 'Repay'];
 
 //Assets Filters
 export const REWARDS = 'Rewards';

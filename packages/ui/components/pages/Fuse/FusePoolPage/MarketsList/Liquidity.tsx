@@ -33,7 +33,7 @@ export const Liquidity = ({ asset }: { asset: MarketData }) => {
         placement="top-end"
       >
         <VStack alignItems={'flex-end'}>
-          <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+          <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: 'lg' }}>
             {smallUsdFormatter(asset.liquidityFiat)}
             {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && '+'}
           </Text>

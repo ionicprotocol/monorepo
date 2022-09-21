@@ -1,5 +1,6 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
+import { utils } from 'ethers';
 import * as React from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -32,20 +33,33 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <CTokenIcon size="md" address={asset.underlyingToken} />
       <VStack alignItems={'flex-start'} ml={2}>
-        <PopoverTooltip
-          placement="top-start"
-          body={
-            <div
-              dangerouslySetInnerHTML={{
-                __html: asset.extraDocs || asset.underlyingSymbol,
-              }}
-            />
-          }
-        >
-          <Text textAlign={'left'} fontSize={{ base: '2.8vw', sm: '1.2rem' }}>
-            {tokenData?.symbol ?? asset.underlyingSymbol}
-          </Text>
-        </PopoverTooltip>
+        <HStack>
+          <PopoverTooltip
+            placement="top-start"
+            body={
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: asset.extraDocs || asset.underlyingSymbol,
+                }}
+              />
+            }
+          >
+            <Text textAlign={'left'} fontSize={{ base: '2.8vw', sm: '1.2rem' }}>
+              {tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+          </PopoverTooltip>
+          <PopoverTooltip
+            placement="top-start"
+            body={
+              'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
+            }
+          >
+            <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: 'lg' }}>
+              ({utils.formatUnits(asset.collateralFactor, 16)}%)
+            </Text>
+          </PopoverTooltip>
+        </HStack>
+
         {claimableRewards && claimableRewards.length > 0 && (
           <SimpleTooltip label="This asset has rewards!">
             <Box>
@@ -57,7 +71,7 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
         )}
         {asset.membership && (
           <SimpleTooltip label="This asset can be deposited as collateral">
-            <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
+            <Badge variant="outline" colorScheme="cyan" textTransform="capitalize">
               Collateral
             </Badge>
           </SimpleTooltip>
@@ -70,7 +84,7 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
           </SimpleTooltip>
         ) : (
           <SimpleTooltip label="This asset can be borrowed">
-            <Badge variant="outline" colorScheme="cyan" textTransform="capitalize">
+            <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
               Borrowable
             </Badge>
           </SimpleTooltip>

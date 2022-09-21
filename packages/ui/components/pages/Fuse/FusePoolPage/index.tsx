@@ -105,9 +105,7 @@ const FusePoolPage = memo(() => {
             )}
           </MidasBox>
 
-          <MidasBox width="100%">
-            <PoolDetails data={data} />
-          </MidasBox>
+          <PoolDetails data={data} />
         </Flex>
       </PageTransitionLayout>
     </>
