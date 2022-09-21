@@ -1,7 +1,6 @@
 import { ColorModeScript } from '@chakra-ui/react';
 import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document';
 
-import { config } from '@ui/config/index';
 import { theme } from '@ui/theme/index';
 
 class MyDocument extends Document {
@@ -14,37 +13,49 @@ class MyDocument extends Document {
     return (
       <Html>
         <Head>
-          {/* HTML Meta Tags */}
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="robots" content="index,follow" />
           <meta
             name="description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
           />
-          {/* Facebook Meta Tags */}
-          <meta property="og:url" content={config.productUrl} />
-          <meta property="og:type" content="website" />
-          <meta
-            property="og:title"
-            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
-          />
-          <meta
-            property="og:description"
-            content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
-          />
-          <meta property="og:image" content={`${config.iconServerURL}/social/social_midas.png`} />
 
-          {/* Twitter Meta Tags */}
-          <meta name="twitter:card" content="summary_large_image" />
-          <meta property="twitter:domain" content={config.productDomain} />
-          <meta property="twitter:url" content={config.productUrl} />
+          <meta name="twitter:card" content="summary_large_image" key="twcard" />
           <meta
             name="twitter:title"
             content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+            key="twtitle"
           />
           <meta
             name="twitter:description"
             content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
+            key="twdesc"
           />
-          <meta name="twitter:image" content={`${config.iconServerURL}/social/social_midas.png`} />
+          <meta name="twitter:url" content="https://app.midascapital.xyz/" key="twurl" />
+          <meta
+            name="twitter:image"
+            content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
+            key="twimage"
+          />
+
+          <meta property="og:type" content="website" key="ogtype" />
+          <meta property="og:site_name" content="Midas Capital" key="ogsitename" />
+          <meta
+            property="og:image"
+            content="https://d1912tcoux65lj.cloudfront.net/social/preview.png"
+            key="ogimage"
+          />
+          <meta
+            property="og:title"
+            content="Midas - Money markets for all. Lending and borrowing pools for any asset."
+            key="ogtitle"
+          />
+          <meta
+            property="og:description"
+            content="Build custom lending and borrowing pools for any group of assets that are isolated from other pools and assets within the protocol. Use any asset as collateral and optimize the capital efficiency of your holdings."
+            key="ogdesc"
+          />
 
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
