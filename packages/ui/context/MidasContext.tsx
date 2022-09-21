@@ -121,26 +121,27 @@ export const MidasProvider = ({
             description: <>Transaction is pending now.</>,
           });
           const res = await tx.wait();
-          successToast({
-            title: <>Complete!</>,
-            description: (
-              <Button
-                href={`${scanUrl}/tx/${tx.hash}`}
-                rightIcon={<ExternalLinkIcon />}
-                color={cPage.primary.bgColor}
-                variant={'link'}
-                as={ChakraLink}
-                isExternal
-                width="100%"
-                py={2}
-              >
-                View Transaction
-              </Button>
-            ),
-          });
+
           if (res.blockNumber) {
             mounted.current && setFinishedTxHash(hash);
             await queryClient.refetchQueries();
+            successToast({
+              title: <>Complete!</>,
+              description: (
+                <Button
+                  href={`${scanUrl}/tx/${tx.hash}`}
+                  rightIcon={<ExternalLinkIcon />}
+                  color={cPage.primary.bgColor}
+                  variant={'link'}
+                  as={ChakraLink}
+                  isExternal
+                  width="100%"
+                  py={2}
+                >
+                  View Transaction
+                </Button>
+              ),
+            });
           }
         }
       } catch (e) {

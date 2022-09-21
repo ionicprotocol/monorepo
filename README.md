@@ -71,3 +71,49 @@ To run `forge` commands inside the `sdk` package, run:
 }
 - `yarn` from top-level to update dependencies/symlinks.
 ```
+
+
+## Working with Mainnet Fork
+
+Make sure to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
+
+We had a great experience using an RPC Node from NodeReals MegaNode service - https://nodereal.io/meganode .
+
+And than start a forked local node by running.
+
+```
+> yarn dev:node:fork
+```
+
+For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
+
+```
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
+```
+
+
+## Running UI Tests
+
+We are using [ChainSafe/dappeteer](https://github.com/ChainSafe/dappeteer) to test our UI with Metamask. The test are expecting to work on a fork of BSC mainnet for now.
+
+Follow this step to run the UI test locally
+
+1) Start local forked BSC node
+```
+> yarn dev:node:fork
+```
+
+2) Start local UI dev server
+```
+> yarn dev:ui
+```
+
+3) Fund test accounts
+```
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
+```
+
+4) Run dAppateer
+```
+> yarn test:ui
+```

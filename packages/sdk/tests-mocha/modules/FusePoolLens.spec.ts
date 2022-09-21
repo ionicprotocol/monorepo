@@ -29,22 +29,14 @@ describe("FusePoolLens", () => {
     mockContract = createStubInstance(Contract);
 
     FusePoolLens = withFusePoolLens(MidasBase);
-    fusePoolLens = new FusePoolLens(mockProvider, ganache, {
-      FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
-      FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
-      FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
-      FuseSafeLiquidator: { abi: [], address: mkAddress("0xecc") },
-      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-      JumpRateModel: { abi: [], address: mkAddress("0xaac") },
-      WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
-    });
+    fusePoolLens = new FusePoolLens(mockProvider, ganache);
 
     Object.defineProperty(mockContract, "callStatic", {
       value: {
         getPublicPoolsByVerificationWithData: stub().resolves(totalLockedData),
       },
     });
-    fusePoolLens.contracts.FusePoolLens = mockContract;
+    fusePoolLens.contracts = { FusePoolLens: mockContract };
   });
 
   it("getTotalValueLocked", async () => {

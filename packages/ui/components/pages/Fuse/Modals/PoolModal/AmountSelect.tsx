@@ -242,6 +242,7 @@ const AmountSelect = ({
 
   return (
     <Column
+      id="fundOperationModal"
       mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
       bg={cCard.bgColor}
@@ -271,7 +272,7 @@ const AmountSelect = ({
             <Box height="36px" width="36px">
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
-            <Heading fontSize="27px" ml={3}>
+            <Heading id="symbol" fontSize="27px" ml={3}>
               {tokenData?.symbol || asset.underlyingSymbol}
             </Heading>
           </Row>
@@ -400,6 +401,7 @@ const AmountSelect = ({
             ) : null}
 
             <Button
+              id="confirmFund"
               mt={4}
               width="100%"
               height="70px"
@@ -525,13 +527,17 @@ const TabBar = ({
           <TabList>
             {isSupplySide ? (
               <>
-                <AmountTab mr={2}>Supply</AmountTab>
-                <AmountTab>Withdraw</AmountTab>
+                <AmountTab className="supplyTab" mr={2}>
+                  Supply
+                </AmountTab>
+                <AmountTab className="withdrawTab">Withdraw</AmountTab>
               </>
             ) : (
               <>
-                <AmountTab mr={2}>Borrow</AmountTab>
-                <AmountTab>Repay</AmountTab>
+                <AmountTab className="borrowTab" mr={2}>
+                  Borrow
+                </AmountTab>
+                <AmountTab className="repayTab">Repay</AmountTab>
               </>
             )}
           </TabList>
@@ -789,6 +795,7 @@ const AmountInput = ({
 } & InputProps) => {
   return (
     <Input
+      id="fundInput"
       type="number"
       inputMode="decimal"
       fontSize={22}

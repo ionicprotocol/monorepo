@@ -65,7 +65,7 @@ export const getPositionRatio = async ({ name, namedUser, userAddress }) => {
 };
 
 export const tradeNativeForAsset = async ({ token, amount, account }) => {
-  await run("swap-wtoken-for-token", { token, amount, account });
+  await run("swap:wtoken-token", { token, amount, account });
 };
 
 export const tradeAssetForAsset = async ({ token1, token2, amount, account }) => {
@@ -73,7 +73,7 @@ export const tradeAssetForAsset = async ({ token1, token2, amount, account }) =>
 };
 
 export const wrapNativeToken = async ({ amount, account, weth }) => {
-  await run("wrap-native-token", { amount, account, weth });
+  await run("swap:native-wtoken", { amount, account, weth });
 };
 
 export const setUpLiquidation = async (poolName: string) => {
