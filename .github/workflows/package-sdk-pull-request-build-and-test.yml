@@ -65,6 +65,7 @@ jobs:
     env:
       MNEMONIC: '${{ secrets.MNEMONIC }}'
       FORK_URL_BSC: '${{ secrets.FORK_URL_BSC }}'
+      FORK_RPC_URL: '${{ secrets.FORK_URL_BSC }}'
       FORK_BLOCK_NUMBER: 19279700
     runs-on: ubuntu-latest
     steps:
