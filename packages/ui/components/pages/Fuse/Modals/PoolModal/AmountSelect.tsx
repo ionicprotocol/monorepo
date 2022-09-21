@@ -24,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -242,14 +242,16 @@ const AmountSelect = ({
     }
   };
 
-  const updateAvailableToWithdraw = async () => {
+  const updateAvailableToWithdraw = useCallback(async () => {
     const max = await fetchMaxAmount(mode, midasSdk, address, asset);
     setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
-  };
+  }, [address, asset, midasSdk, mode]);
 
-  if (mode === FundOperationMode.WITHDRAW) {
-    updateAvailableToWithdraw();
-  }
+  useEffect(() => {
+    if (mode === FundOperationMode.WITHDRAW) {
+      updateAvailableToWithdraw();
+    }
+  }, [mode, updateAvailableToWithdraw]);
 
   return (
     <Column
