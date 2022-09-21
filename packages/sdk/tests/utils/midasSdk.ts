@@ -202,11 +202,6 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.bsc:
         chainConfig = bsc;
-        // Not sure yet if this can be removed, hinders proper use of forked chains
-        // if (process.env.FORK_CHAIN_ID!) {
-        //   chainDeployment = await getBscForkDeployments();
-        //   chainConfig.chainDeployments = chainDeployment;
-        // }
         break;
       case SupportedChains.moonbeam:
         chainConfig = moonbeam;
@@ -220,6 +215,12 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
       case SupportedChains.arbitrum:
         chainConfig = arbitrum;
         break;
+    }
+
+    // Override for when in SIMULATION
+    if (process.env.SIMULATION!) {
+      chainDeployment = await getBscForkDeployments();
+      chainConfig.chainDeployments = chainDeployment;
     }
 
     midasSdk = new MidasSdk(signer, chainConfig);

@@ -64,9 +64,9 @@ jobs:
   build-and-test-bsc:
     env:
       MNEMONIC: '${{ secrets.MNEMONIC }}'
-      FORK_URL_BSC: '${{ secrets.FORK_URL_BSC }}'
       FORK_RPC_URL: '${{ secrets.FORK_URL_BSC }}'
-      FORK_BLOCK_NUMBER: 19279700
+      SIMULATION: true
+      FORK_BLOCK_NUMBER: 21528676
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
