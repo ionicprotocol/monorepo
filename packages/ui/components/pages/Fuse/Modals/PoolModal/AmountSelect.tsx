@@ -24,7 +24,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -80,6 +80,8 @@ const AmountSelect = ({
   const [userEnteredAmount, _setUserEnteredAmount] = useState('');
 
   const [amount, _setAmount] = useState<BigNumber>(constants.Zero);
+
+  const [availableToWithdraw, setAvailableToWithdraw] = useState('0.0');
 
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
@@ -240,6 +242,17 @@ const AmountSelect = ({
     }
   };
 
+  const updateAvailableToWithdraw = useCallback(async () => {
+    const max = await fetchMaxAmount(mode, midasSdk, address, asset);
+    setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
+  }, [address, asset, midasSdk, mode]);
+
+  useEffect(() => {
+    if (mode === FundOperationMode.WITHDRAW) {
+      updateAvailableToWithdraw();
+    }
+  }, [mode, updateAvailableToWithdraw]);
+
   return (
     <Column
       id="fundOperationModal"
@@ -299,11 +312,22 @@ const AmountSelect = ({
 
               {/* Asset Balance */}
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                <Text mr={2}>Wallet Balance:</Text>
-                <Text>
-                  {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
-                  {asset.underlyingSymbol}
-                </Text>
+                {mode === FundOperationMode.WITHDRAW ? (
+                  <>
+                    <Text mr={2}>Available To Withdraw:</Text>
+                    <Text>
+                      {availableToWithdraw} {asset.underlyingSymbol}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text mr={2}>Wallet Balance:</Text>
+                    <Text>
+                      {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                      {asset.underlyingSymbol}
+                    </Text>
+                  </>
+                )}
               </Row>
 
               {mode === FundOperationMode.BORROW && asset.liquidity.isZero() ? (
