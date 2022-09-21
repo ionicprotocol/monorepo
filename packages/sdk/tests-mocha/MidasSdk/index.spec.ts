@@ -47,7 +47,7 @@ describe("Fuse Index", () => {
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };
     fuseBase = new MidasBase(mockProvider, ganache);
-    fuseBase.contracts.FusePoolDirectory = mockContract as unknown as FusePoolDirectory;
+    fuseBase.contracts = { FusePoolDirectory: mockContract as unknown as FusePoolDirectory };
   });
   afterEach(function () {
     restore();

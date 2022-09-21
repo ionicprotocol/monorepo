@@ -474,7 +474,9 @@ const Terms = () => {
           </Text>
         </ModalBody>
         <ModalFooter>
-          <Button onClick={accept}>Accept</Button>
+          <Button id="termsAcceptBtn" onClick={accept}>
+            Accept
+          </Button>
           <Button
             ml={'8px'}
             onClick={() => {
