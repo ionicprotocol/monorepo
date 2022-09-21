@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0x89",
     name: "Polygon Mainnet",
     shortName: "Polygon",
-    img: "https://raw.githubusercontent.com/sushiswap/icons/master/network/polygon.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },
     rpcUrls: { default: "https://rpc.ankr.com/polygon" },
     nativeCurrency: {
@@ -24,7 +24,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
-      logoURL: "https://raw.githubusercontent.com/sushiswap/icons/master/network/polygon.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     },
   },
 };
