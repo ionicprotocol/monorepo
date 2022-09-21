@@ -101,50 +101,61 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       console.log("pool admin", admin);
 
       const markets = await comptroller.callStatic.getAllMarkets();
-      // console.log("pool assets", assets);
+      const marketsToUpgrade = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
-        try {
-          const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
+        const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market)) as CErc20Delegate;
 
-          console.log("market", {
-            cToken: market,
-            cTokenName: await cTokenInstance.callStatic.name(),
-            cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
-          });
+        console.log("market", {
+          cToken: market,
+          cTokenName: await cTokenInstance.callStatic.name(),
+          cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
+        });
 
-          const implBefore = await cTokenInstance.callStatic.implementation();
-          console.log(`implementation before ${implBefore}`);
-          const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
-          if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
-            console.log(`No auto upgrade with latest implementation ${latestImpl}`);
-          } else {
-            if (admin == signer.address) {
-              const autoImplOn = await comptroller.callStatic.autoImplementation();
-              if (!autoImplOn) {
-                const tx = await comptroller._toggleAutoImplementations(true);
-                await tx.wait();
-                console.log(`turned autoimpl on ${tx.hash}`);
-              }
-            } else {
-              console.log(`signer is not the admin of this pool ${admin}`);
-            }
+        const implBefore = await cTokenInstance.callStatic.implementation();
+        console.log(`implementation before ${implBefore}`);
+        const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
+        if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
+          console.log(`No auto upgrade with latest implementation ${latestImpl}`);
+        } else {
+          console.log(`will upgrade ${market} to ${latestImpl}`);
+          marketsToUpgrade.push(market);
+        }
+      }
 
+      if (marketsToUpgrade.length > 0) {
+        if (admin == signer.address) {
+          const autoImplOn = await comptroller.callStatic.autoImplementation();
+          if (!autoImplOn) {
+            const tx = await comptroller._toggleAutoImplementations(true);
+            await tx.wait();
+            console.log(`turned autoimpl on ${tx.hash}`);
+          }
+        } else {
+          console.log(`signer is not the admin of this pool ${admin}`);
+        }
+
+        for (let k = 0; k < marketsToUpgrade.length; k++) {
+          const market = marketsToUpgrade[k];
+          try {
+            const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
+
+            console.log(`upgrading ${market}`);
             const tx = await cTokenInstance.accrueInterest();
             const receipt: TransactionReceipt = await tx.wait();
             console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
 
             const implAfter = await cTokenInstance.callStatic.implementation();
             console.log(`implementation after ${implAfter}`);
-
-            if (admin == signer.address) {
-              const tx = await comptroller._toggleAutoImplementations(false);
-              await tx.wait();
-              console.log(`turned autoimpl off ${tx.hash}`);
-            }
+          } catch (e) {
+            console.error(`failed to upgrade market ${market}`, e);
           }
-        } catch (e) {
-          console.error(`failed to upgrade market ${market}`, e);
+        }
+
+        if (admin == signer.address) {
+          const tx = await comptroller._toggleAutoImplementations(false);
+          await tx.wait();
+          console.log(`turned autoimpl off ${tx.hash}`);
         }
       }
     }
