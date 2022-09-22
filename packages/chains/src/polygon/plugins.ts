@@ -3,7 +3,7 @@ import { assetSymbols, DeployedPlugins, underlying } from "@midas-capital/types"
 import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
-  "0xfe52e46EE81B712d6b15923ae3607E79b7C6Eb04": {
+  "0xB6a8f36746BcCC1025Ec54eb2c6DCEF8EeE8df2f": {
     market: "0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871",
     name: "Beefy EURE-jEUR Vault",
     strategy: "BeefyERC4626",
@@ -28,7 +28,7 @@ const deployedPlugins: DeployedPlugins = {
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eurp",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["JEUR-PAR"]),
-    otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "10"],
+    otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "0"],
   },
   "0xCC9083ad35bd9d55eF9D4cB4C2A6e879fB70fdc1": {
     market: "0x1792046890b99ae36756Fd00f135dc5F80D41dfA",

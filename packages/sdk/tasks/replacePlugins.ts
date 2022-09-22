@@ -13,7 +13,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const chainid = await getChainId();
-    const pluginConfigs: DeployedPlugins = chainIdToConfig[chainid];
+    const pluginConfigs: DeployedPlugins = chainIdToConfig[chainid].deployedPlugins;
 
     const oldImplementations = [];
     const newImplementations = [];
@@ -28,9 +28,9 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
         conf.market
       )) as CErc20PluginRewardsDelegate;
 
-      const oldPlugin = await market.callStatic.plugin();
-      if (oldPlugin != pluginAddress) throw new Error(`wrong plugin address/config for market ${conf.market}`);
-      oldImplementations.push(oldPlugin);
+      const currentPlugin = await market.callStatic.plugin();
+      if (currentPlugin != pluginAddress) throw new Error(`wrong plugin address/config for market ${conf.market}`);
+      oldImplementations.push(currentPlugin);
 
       let deployArgs;
       if (conf.otherParams) {
