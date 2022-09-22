@@ -13,7 +13,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const chainid = await getChainId();
-    const pluginConfigs: DeployedPlugins = chainIdToConfig[chainid];
+    const pluginConfigs: DeployedPlugins = chainIdToConfig[chainid].deployedPlugins;
 
     const oldImplementations = [];
     const newImplementations = [];
@@ -28,9 +28,9 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
         conf.market
       )) as CErc20PluginRewardsDelegate;
 
-      const oldPlugin = await market.callStatic.plugin();
-      if (oldPlugin != pluginAddress) throw new Error(`wrong plugin address/config for market ${conf.market}`);
-      oldImplementations.push(oldPlugin);
+      const currentPlugin = await market.callStatic.plugin();
+      if (currentPlugin != pluginAddress) throw new Error(`wrong plugin address/config for market ${conf.market}`);
+      oldImplementations.push(currentPlugin);
 
       let deployArgs;
       if (conf.otherParams) {
@@ -113,6 +113,9 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
   }
 );
 
+// npx hardhat plugins:change --market 0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871 --new-plugin 0x43fa05d9D56c44d7a697Ac458CC16707A545183B --network polygon
+// npx hardhat plugins:change --market 0xCC7eab2605972128752396241e46C281e0405a27 --new-plugin 0x9F82D802FB4940743C543041b86220A9096A7522 --network polygon
+
 task("plugins:change", "Replaces an old plugin contract with a new one")
   .addParam("market", "The address of the market", undefined, types.string)
   .addParam("newPlugin", "The address of the new plugin", undefined, types.string)
@@ -131,6 +134,6 @@ task("plugins:change", "Replaces an old plugin contract with a new one")
         await market._updatePlugin(newPluginAddress);
       }
     } catch (e) {
-      console.log(`market ${marketAddress} is probably not a plugin market`);
+      console.log(`market ${marketAddress} is probably not a plugin market`, e);
     }
   });
