@@ -227,10 +227,7 @@ const AmountSelect = ({
         const maxAmount = await fetchMaxAmount(mode, midasSdk, address, asset);
         let resp;
         if (maxAmount.eq(amount)) {
-          resp = await midasSdk.withdraw(
-            asset.cToken,
-            BigNumber.from((Math.pow(2, 256) - 1).toString())
-          );
+          resp = await midasSdk.withdraw(asset.cToken, constants.MaxUint256);
         } else {
           resp = await midasSdk.withdraw(asset.cToken, amount);
         }
