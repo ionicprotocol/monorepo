@@ -387,7 +387,7 @@ export const assets: SupportedAsset[] = [
     name: "Jarvis EURE-JEUR LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", JEUR_EURT, true),
+    extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true),
   },
   // stable forex
   {

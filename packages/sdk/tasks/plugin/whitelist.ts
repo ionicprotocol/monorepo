@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
@@ -16,15 +17,19 @@ export default task("plugin:whitelist", "Whitelists a plugin implementation")
     const arrayOfTrue = [];
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
 
+    let tx: ethers.ContractTransaction;
+
     if (oldPluginImplementation) {
       oldImplementations.push(oldPluginImplementation);
       newImplementations.push(newPluginImplementation);
       arrayOfTrue.push(true);
 
-      await fuseFeeDistributor._setLatestPluginImplementation(oldPluginImplementation, newPluginImplementation);
+      tx = await fuseFeeDistributor._setLatestPluginImplementation(oldPluginImplementation, newPluginImplementation);
+      await tx.wait();
+      console.log(`Set latest plugin implementation to: ${newPluginImplementation} from ${newPluginImplementation}`);
     }
 
-    const tx = await fuseFeeDistributor._editPluginImplementationWhitelist(
+    tx = await fuseFeeDistributor._editPluginImplementationWhitelist(
       oldImplementations,
       newImplementations,
       arrayOfTrue
