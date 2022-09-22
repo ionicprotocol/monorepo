@@ -129,7 +129,6 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
           if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
             console.log(`No auto upgrade with latest implementation ${latestImpl}`);
           } else {
-
             const tx = await cTokenInstance.accrueInterest();
             const receipt: TransactionReceipt = await tx.wait();
             console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
