@@ -1,10 +1,10 @@
-import { task, types } from "hardhat/config";
 import { chainIdToConfig } from "@midas-capital/chains";
+import { DeployedPlugins } from "@midas-capital/types";
+import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
-import { DeployedPlugins } from "@midas-capital/types";
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
   async ({}, { ethers, getChainId, deployments }) => {
@@ -19,7 +19,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     const newImplementations = [];
     const arrayOfTrue = [];
 
-    for (let pluginAddress in pluginConfigs) {
+    for (const pluginAddress in pluginConfigs) {
       const conf = pluginConfigs[pluginAddress];
       console.log(conf);
 
@@ -56,7 +56,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
             },
             onUpgrade: {
               methodName: "reinitialize",
-              args: []
+              args: [],
             },
           },
           owner: deployer.address,
@@ -75,7 +75,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     await tx.wait();
     console.log("_editPluginImplementationWhitelist: ", tx.hash);
 
-    for (let pluginAddress in pluginConfigs) {
+    for (const pluginAddress in pluginConfigs) {
       const conf = pluginConfigs[pluginAddress];
       console.log(conf);
 
