@@ -35,7 +35,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
 
     if (setLatest) {
-      const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(
+      const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
         oldImplementation
       );
       if (

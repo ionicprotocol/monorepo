@@ -1,6 +1,13 @@
 import { DeployedPlugins } from "@midas-capital/types";
 
 const deployedPlugins: DeployedPlugins = {
+  "0xfe52e46EE81B712d6b15923ae3607E79b7C6Eb04": {
+    market: "0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871",
+    name: "Beefy EURE-jEUR Vault",
+    strategy: "BeefyERC4626",
+    apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eure",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
+  },
   "0x6578e774120F6010315784C69C634bF3946AFb0c": {
     market: "0x9b5D86F4e7A45f4b458A2B673B4A3b43D15428A7",
     name: "Beefy agEUR-jEUR Vault",
