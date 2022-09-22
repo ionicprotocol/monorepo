@@ -1,9 +1,4 @@
-import { bsc } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset } from "@midas-capital/types";
-import { ethers } from "ethers";
 import { task, types } from "hardhat/config";
-
-import { PluginConfig } from "../../chainDeploy";
 
 task("plugin:deploy", "Deploy ERC4626 Strategy")
   .addParam("contractName", "Name of the ERC4626 strategy", undefined, types.string)
