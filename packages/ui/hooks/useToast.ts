@@ -5,6 +5,7 @@ const useSuccessToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     options = options ? options : {};
     return {
+      id: 'success',
       title: 'Success!',
       status: 'success',
       duration: 5000,
@@ -20,6 +21,7 @@ const useErrorToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     options = options ? options : {};
     return {
+      id: 'error',
       title: 'Error!',
       status: 'error',
       duration: 10000,
@@ -35,6 +37,7 @@ const useWarningToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     options = options ? options : {};
     return {
+      id: 'warning',
       title: 'Warning!',
       status: 'warning',
       duration: 10000,
@@ -50,6 +53,7 @@ const useInfoToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
     options = options ? options : {};
     return {
+      id: 'info',
       title: 'Info!',
       status: 'info',
       duration: 5000,

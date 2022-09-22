@@ -45,9 +45,8 @@
     "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node --no-deploy",
     "dev:node:deploy": "yarn workspace @midas-capital/sdk deploy:localhost",
-    "dev:fork:chapel:node": "FORK_URL_BSC=${MY_CHAPEL_FORK_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=97 yarn workspace @midas-capital/sdk hardhat node --no-deploy --tags fork",
-    "dev:fork:bsc:node": "FORK_URL_BSC=${MY_BSC_FORK_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=56 yarn workspace @midas-capital/sdk hardhat node --no-deploy --tags fork",
-    "dev:fork:polygon:node": "FORK_URL_BSC=${MY_POLYGON_FORK_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=137 yarn workspace @midas-capital/sdk hardhat node --no-deploy --tags fork",
-    "dev:simulate:deploy:bsc": "FORK_URL_BSC=${MY_BSC_FORK_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=56 yarn workspace @midas-capital/sdk hardhat node --tags prod"
+    "dev:node:fork": "yarn workspace @midas-capital/sdk hardhat node --no-deploy",
+    "dev:simulate:deploy:bsc": "FORK_RPC_URL=${FORK_RPC_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=56 yarn workspace @midas-capital/sdk hardhat node --tags prod",
+    "test:ui": "yarn workspace @midas-capital/ui test"
   }
 }

@@ -16,6 +16,7 @@ const ConnectWalletButton: React.FC = () => {
 
   return (
     <Button
+      id="walletBtn"
       variant={'topBar'}
       onClick={onOpen}
       ref={accountBtnElement as LegacyRef<HTMLButtonElement>}

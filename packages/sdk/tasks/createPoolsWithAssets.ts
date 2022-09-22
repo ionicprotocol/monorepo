@@ -166,7 +166,7 @@ task("pools:create-unhealthy-token-borrow-eth-collateral", "Borrow TOUCH against
   .addParam("supplyAccount", "Account from which to supply", "deployer", types.string)
   .addParam("borrowAccount", "Account from which to borrow", "alice", types.string)
   .setAction(async (taskArgs, hre) => {
-    await hre.run("wrap-native-token", { account: "deployer", price: "1" });
+    await hre.run("swap:native-wtoken", { account: "deployer", price: "1" });
     await hre.run("oracle:set-price", { token: "WETH", price: "1" });
     await hre.run("oracle:set-price", { token: "TOUCH", price: "0.1" });
     await hre.run("oracle:set-price", { token: "TRIBE", price: "0.01" });
