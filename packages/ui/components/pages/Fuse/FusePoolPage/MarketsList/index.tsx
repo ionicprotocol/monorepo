@@ -39,7 +39,6 @@ import { AdditionalInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsLi
 import { BorrowApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/BorrowBalance';
 import { Collateral } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Collateral';
-import { ExpanderButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ExpanderButton';
 import { Liquidity } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Liquidity';
 import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
@@ -265,21 +264,6 @@ export const MarketsList = ({
         footer: (props) => props.column.id,
         sortingFn: assetSort,
         // enableSorting: false,
-      },
-      {
-        id: 'expander',
-        header: () => null,
-        cell: ({ row }) => {
-          return (
-            <Box textAlign="center">
-              <ExpanderButton
-                getToggleExpandedHandler={row.getToggleExpandedHandler()}
-                isExpanded={row.getIsExpanded()}
-                canExpand={row.getCanExpand()}
-              />
-            </Box>
-          );
-        },
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -574,6 +558,8 @@ export const MarketsList = ({
                   borderTopWidth={1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
+                  onClick={() => row.toggleExpanded()}
+                  cursor="pointer"
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
@@ -587,6 +573,8 @@ export const MarketsList = ({
                   <Tr
                     borderColor={cCard.dividerColor}
                     borderBottomWidth={0}
+                    borderTopWidth={1}
+                    borderStyle="dashed"
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   >
                     {/* 2nd row is a custom 1 cell row */}
