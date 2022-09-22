@@ -10,6 +10,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
   async ({}, { ethers, getChainId, deployments }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
+    console.log({ deployer: deployer.address });
     const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const chainid = await getChainId();
@@ -19,9 +20,11 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     const newImplementations = [];
     const arrayOfTrue = [];
 
-    for (const pluginAddress in pluginConfigs) {
+    const pluginAddresses = Object.keys(pluginConfigs);
+
+    for (const pluginAddress of pluginAddresses) {
       const conf = pluginConfigs[pluginAddress];
-      console.log(conf);
+      console.log({ conf });
 
       const market = (await ethers.getContractAt(
         "CErc20PluginRewardsDelegate",
