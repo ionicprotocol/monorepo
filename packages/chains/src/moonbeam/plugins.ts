@@ -7,6 +7,13 @@ const deployedPlugins: DeployedPlugins = {
     strategy: "StellaLpERC4626",
     apyDocsUrl: "https://app.stellaswap.com/farm",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam-coming-soon",
+    underlying: "0xf4C10263f2A4B1f75b8a5FD5328fb61605321639",
+    otherParams: [
+      "0xF3a5454496E26ac57da879bf3285Fa85DEBF0388",
+      "5",
+      "0x85Ff07b5F3454143531F36Bd6bEd92654d0681eD",
+      ["0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2", "0xAcc15dC74880C9944775448304B263D191c6077F"],
+    ],
   },
   "0x46eC3122C73CA62A18FFCFd434cDc1C341Fe96dB": {
     market: "0x32Be4b977BaB44e9146Bb414c18911e652C56568",
@@ -14,6 +21,13 @@ const deployedPlugins: DeployedPlugins = {
     strategy: "StellaLpERC4626",
     apyDocsUrl: "https://app.stellaswap.com/farm",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam-coming-soon",
+    underlying: "0xa927E1e1E044CA1D9fe1854585003477331fE2Af",
+    otherParams: [
+      "0xF3a5454496E26ac57da879bf3285Fa85DEBF0388",
+      "10",
+      "0x32Be4b977BaB44e9146Bb414c18911e652C56568",
+      ["0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2", "0xAcc15dC74880C9944775448304B263D191c6077F"]
+    ],
   },
 };
 
