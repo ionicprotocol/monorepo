@@ -13,8 +13,6 @@ export const usePluginInfo = (pluginAddress?: string) => {
         : {
             name: `Unnamed (${pluginAddress})`,
             market: '',
-            apyDocsUrl: '',
-            strategyDocsUrl: '',
           };
     },
     {
