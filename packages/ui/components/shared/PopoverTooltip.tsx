@@ -20,7 +20,6 @@ export const PopoverTooltip = ({
   header,
   body,
   footer,
-  placement,
   ...popoverProps
 }: {
   header?: PopoverHeaderProps['children'];
@@ -33,25 +32,12 @@ export const PopoverTooltip = ({
   return (
     <Box>
       <style>
-        {placement === 'bottom'
-          ? `
-            .chakra-popover__arrow {
-              border-top: none;
-              border-left: none;
-              border-right: 1px solid ${cPage.primary.borderColor};
-              border-bottom: 1px solid ${cPage.primary.borderColor};
-            }
-            .chakra-popover__popper a {
-              font-weight: bold;
-              color: ${cPage.primary.borderColor}
-            }
-        `
-          : `
+        {`
         .chakra-popover__arrow {
-          border-top: 1px solid ${cPage.primary.borderColor};
-          border-left: 1px solid ${cPage.primary.borderColor};
-          border-right: none;
-          border-bottom: none;
+          border-top: none;
+          border-left: none;
+          border-right: 1px solid ${cPage.primary.borderColor};
+          border-bottom: 1px solid ${cPage.primary.borderColor};
         }
         .chakra-popover__popper a {
           font-weight: bold;
@@ -59,7 +45,7 @@ export const PopoverTooltip = ({
         }
     `}
       </style>
-      <Popover placement={placement || 'top'} trigger="hover" {...popoverProps}>
+      <Popover placement="top" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         <PopoverContent
           onClick={(e) => e.stopPropagation()}

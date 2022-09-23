@@ -395,13 +395,13 @@ export const MarketsList = ({
             gap={2}
           >
             <PopoverTooltip
-              placement="bottom"
               body={
                 <VStack alignItems="flex-start">
                   <Text fontSize={18} fontWeight="bold">
                     Rewards Asset
                   </Text>
                   <Text>Assets that have rewards.</Text>
+                  <Text>Click to filter</Text>
                 </VStack>
               }
             >
@@ -430,13 +430,13 @@ export const MarketsList = ({
               </Button>
             </PopoverTooltip>
             <PopoverTooltip
-              placement="bottom"
               body={
                 <VStack alignItems="flex-start">
                   <Text fontSize={18} fontWeight="bold">
                     Collateral Asset
                   </Text>
                   <Text>Assets that can be deposited as collateral to borrow other assets.</Text>
+                  <Text>Click to filter</Text>
                 </VStack>
               }
             >
@@ -452,13 +452,13 @@ export const MarketsList = ({
             </PopoverTooltip>
 
             <PopoverTooltip
-              placement="bottom"
               body={
                 <VStack alignItems="flex-start">
                   <Text fontSize={18} fontWeight="bold">
                     Protected Asset
                   </Text>
                   <Text>Assets cannot be borrowed.</Text>
+                  <Text>Click to filter</Text>
                 </VStack>
               }
             >
@@ -473,13 +473,13 @@ export const MarketsList = ({
               </Button>
             </PopoverTooltip>
             <PopoverTooltip
-              placement="bottom"
               body={
                 <VStack alignItems="flex-start">
                   <Text fontSize={18} fontWeight="bold">
                     Borrowable Asset
                   </Text>
                   <Text>Assets that can be borrowed.</Text>
+                  <Text>Click to filter</Text>
                 </VStack>
               }
             >
