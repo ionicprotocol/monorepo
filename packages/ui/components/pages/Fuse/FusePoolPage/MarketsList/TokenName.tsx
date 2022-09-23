@@ -32,7 +32,7 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <CTokenIcon size="md" address={asset.underlyingToken} />
-      <VStack alignItems={'flex-start'} ml={2}>
+      <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <PopoverTooltip
           placement="top-start"
           body={
@@ -57,35 +57,37 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             {utils.formatUnits(asset.collateralFactor, 16)}% LTV
           </Text>
         </PopoverTooltip>
-        {claimableRewards && claimableRewards.length > 0 && (
-          <SimpleTooltip label="This asset has rewards!">
-            <Box>
-              <GlowingBox px={2} fontSize={12} height={5} borderRadius={8} py={0}>
-                Rewards
-              </GlowingBox>
-            </Box>
-          </SimpleTooltip>
-        )}
-        {asset.membership && (
-          <SimpleTooltip label="This asset can be deposited as collateral">
-            <Badge variant="outline" colorScheme="cyan" textTransform="capitalize">
-              Collateral
-            </Badge>
-          </SimpleTooltip>
-        )}
-        {asset.isBorrowPaused ? (
-          <SimpleTooltip label="This asset cannot be borrowed">
-            <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
-              Protected
-            </Badge>
-          </SimpleTooltip>
-        ) : (
-          <SimpleTooltip label="This asset can be borrowed">
-            <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
-              Borrowable
-            </Badge>
-          </SimpleTooltip>
-        )}
+        <VStack alignItems={'flex-start'} ml={2} spacing={1}>
+          {claimableRewards && claimableRewards.length > 0 && (
+            <SimpleTooltip label="This asset has rewards!">
+              <Box>
+                <GlowingBox px={2} fontSize={12} height={5} borderRadius={8} py={0}>
+                  Rewards
+                </GlowingBox>
+              </Box>
+            </SimpleTooltip>
+          )}
+          {asset.membership && (
+            <SimpleTooltip label="This asset can be deposited as collateral">
+              <Badge variant="outline" colorScheme="cyan" textTransform="capitalize">
+                Collateral
+              </Badge>
+            </SimpleTooltip>
+          )}
+          {asset.isBorrowPaused ? (
+            <SimpleTooltip label="This asset cannot be borrowed">
+              <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
+                Protected
+              </Badge>
+            </SimpleTooltip>
+          ) : (
+            <SimpleTooltip label="This asset can be borrowed">
+              <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
+                Borrowable
+              </Badge>
+            </SimpleTooltip>
+          )}
+        </VStack>
       </VStack>
 
       <HStack ml={2}>

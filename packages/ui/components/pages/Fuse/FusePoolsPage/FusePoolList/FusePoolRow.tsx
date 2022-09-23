@@ -30,7 +30,7 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { longFormat, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -146,10 +146,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
 
         <VStack flex={2}>
           {usdPrice ? (
-            <SimpleTooltip
-              label={(data.totalSuppliedNative * usdPrice).toString()}
-              isDisabled={data.totalSuppliedNative * usdPrice === 0}
-            >
+            <SimpleTooltip label={`$${longFormat(data.totalSuppliedNative * usdPrice)}`}>
               <Text fontWeight="bold" textAlign="center">
                 {smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
                 {data.totalSuppliedNative * usdPrice > 0 &&
@@ -164,10 +161,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
 
         <VStack flex={2}>
           {usdPrice ? (
-            <SimpleTooltip
-              label={(data.totalBorrowedNative * usdPrice).toString()}
-              isDisabled={data.totalBorrowedNative * usdPrice === 0}
-            >
+            <SimpleTooltip label={`$${longFormat(data.totalBorrowedNative * usdPrice)}`}>
               <Text fontWeight="bold" textAlign="center">
                 {smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
                 {data.totalBorrowedNative * usdPrice > 0 &&
