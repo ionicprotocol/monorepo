@@ -81,6 +81,7 @@ export const REWARDS = 'Rewards';
 export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
+export const SEARCH = 'Search';
 
 export const RESERVE_FACTOR_TOOLTIP =
   'The reserve factor defines the portion of borrower interest that is converted into reserves.';
