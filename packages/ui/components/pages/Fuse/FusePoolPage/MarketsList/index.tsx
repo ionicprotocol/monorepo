@@ -117,8 +117,8 @@ export const MarketsList = ({
 
   const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
     if (columnId === 'market') {
-      return rowA.original.market.underlyingSymbol.localeCompare(
-        rowB.original.market.underlyingSymbol
+      return rowB.original.market.underlyingSymbol.localeCompare(
+        rowA.original.market.underlyingSymbol
       );
     } else if (columnId === 'supplyApy') {
       const rowASupplyAPY = midasSdk.ratePerBlockToAPY(
