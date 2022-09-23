@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Button, Link as ChakraLink } from '@chakra-ui/react';
+import { Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { Provider, Web3Provider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
 import { useQueryClient } from '@tanstack/react-query';
@@ -124,29 +124,39 @@ export const MidasProvider = ({
 
           if (res.blockNumber) {
             mounted.current && setFinishedTxHash(hash);
-            await queryClient.refetchQueries();
             successToast({
               title: <>Complete!</>,
               description: (
-                <Button
-                  href={`${scanUrl}/tx/${tx.hash}`}
-                  rightIcon={<ExternalLinkIcon />}
-                  color={cPage.primary.bgColor}
-                  variant={'link'}
-                  as={ChakraLink}
-                  isExternal
-                  width="100%"
-                  py={2}
-                >
-                  View Transaction
-                </Button>
+                <VStack alignItems="flex-start" mt={1}>
+                  <HStack>
+                    <Text>Your can check transaction </Text>
+                    <Button
+                      href={`${scanUrl}/tx/${tx.hash}`}
+                      rightIcon={<ExternalLinkIcon />}
+                      color={cPage.primary.bgColor}
+                      variant={'link'}
+                      as={ChakraLink}
+                      isExternal
+                    >
+                      here
+                    </Button>
+                  </HStack>
+                  <HStack>
+                    <Text>Your data is being updated! Please wait...</Text>
+                  </HStack>
+                </VStack>
               ),
+            });
+            await queryClient.refetchQueries();
+            successToast({
+              title: <>Complete!</>,
+              description: <Text>Data is fully updated!</Text>,
             });
           }
         }
       } catch (e) {
-        handleGenericError(e, errorToast);
         mounted.current && setFinishedTxHash(hash);
+        handleGenericError(e, errorToast);
       }
     };
 
