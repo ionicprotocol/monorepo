@@ -7,6 +7,7 @@ import {
   Grid,
   HStack,
   IconButton,
+  Input,
   Select,
   Table,
   Tbody,
@@ -53,11 +54,13 @@ import {
   MARKETS_COUNT_PER_PAGE,
   PROTECTED,
   REWARDS,
+  SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
+import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -104,14 +107,24 @@ export const MarketsList = ({
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
-      (value.includes(REWARDS) &&
-        allClaimableRewards &&
-        allClaimableRewards[row.original.market.cToken]) ||
-      (value.includes(COLLATERAL) && row.original.market.membership) ||
-      (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
-      (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
+      !searchText ||
+      (value.includes(SEARCH) &&
+        (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
+          row.original.market.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
+          row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))
     ) {
-      return true;
+      if (
+        (value.includes(REWARDS) &&
+          allClaimableRewards &&
+          allClaimableRewards[row.original.market.cToken]) ||
+        (value.includes(COLLATERAL) && row.original.market.membership) ||
+        (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
+        (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -280,6 +293,7 @@ export const MarketsList = ({
     BORROWABLE,
   ]);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [searchText, setSearchText] = useState('');
 
   const table = useReactTable({
     columns,
@@ -355,35 +369,117 @@ export const MarketsList = ({
     setIsBorrowableFiltered(!isBorrowableFiltered);
   };
 
+  const onSearchFiltered = () => {
+    if (searchText) {
+      setGlobalFilter([...globalFilter, SEARCH]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== SEARCH));
+    }
+  };
+
+  useEffect(() => {
+    onSearchFiltered();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchText]);
+
   return (
     <Box>
-      <Flex px="4" mt={6} gap={8}>
-        <HStack>
-          <Text>Your Supply Balance :</Text>
-          <SimpleTooltip
-            label={supplyBalanceFiat.toString()}
-            isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
-          >
-            <Text fontSize={24}>
-              {smallUsdFormatter(supplyBalanceFiat)}
-              {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
+      <Flex
+        px="4"
+        mt={6}
+        justifyContent="space-between"
+        flexDirection={{ base: 'column', sm: 'row' }}
+        gap={4}
+      >
+        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={8}>
+          <HStack>
+            <Text>Your Supply Balance :</Text>
+            <SimpleTooltip
+              label={supplyBalanceFiat.toString()}
+              isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
+            >
+              <Text fontSize={24}>
+                {smallUsdFormatter(supplyBalanceFiat)}
+                {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+          </HStack>
+          <HStack>
+            <Text>Your Borrow Balance :</Text>
+            <SimpleTooltip
+              label={borrowBalanceFiat.toString()}
+              isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
+            >
+              <Text fontSize={24}>
+                {smallUsdFormatter(borrowBalanceFiat)}
+                {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+          </HStack>
+        </Flex>
+        <Flex
+          className="pagination"
+          flexDirection={{ base: 'column', lg: 'row' }}
+          gap={4}
+          justifyContent="flex-end"
+          alignItems="flex-end"
+        >
+          <HStack>
+            {!isMobile && <Text>Rows Per Page :</Text>}
+            <Select
+              value={pagination.pageSize}
+              onChange={(e) => {
+                table.setPageSize(Number(e.target.value));
+              }}
+              maxW="max-content"
+            >
+              {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
+                <option key={pageSize} value={pageSize}>
+                  {pageSize}
+                </option>
+              ))}
+            </Select>
+          </HStack>
+          <HStack gap={2}>
+            <Text>
+              {table.getFilteredRowModel().rows.length === 0
+                ? 0
+                : pagination.pageIndex * pagination.pageSize + 1}{' '}
+              -{' '}
+              {(pagination.pageIndex + 1) * pagination.pageSize >
+              table.getFilteredRowModel().rows.length
+                ? table.getFilteredRowModel().rows.length
+                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+              of {table.getFilteredRowModel().rows.length}
             </Text>
-          </SimpleTooltip>
-        </HStack>
-        <HStack>
-          <Text>Your Borrow Balance :</Text>
-          <SimpleTooltip
-            label={borrowBalanceFiat.toString()}
-            isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
-          >
-            <Text fontSize={24}>
-              {smallUsdFormatter(borrowBalanceFiat)}
-              {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
+            <HStack>
+              <IconButton
+                variant="_outline"
+                aria-label="toPrevious"
+                icon={<ChevronLeftIcon fontSize={30} />}
+                onClick={() => table.previousPage()}
+                disabled={!table.getCanPreviousPage()}
+                isRound
+              />
+              <IconButton
+                variant="_outline"
+                aria-label="toNext"
+                icon={<ChevronRightIcon fontSize={30} />}
+                onClick={() => table.nextPage()}
+                disabled={!table.getCanNextPage()}
+                isRound
+              />
+            </HStack>
+          </HStack>
+        </Flex>
       </Flex>
-      <Flex justifyContent="space-between" px="4" py="8">
+      <Flex
+        justifyContent="space-between"
+        px="4"
+        py="8"
+        flexDirection={{ base: 'column', sm: 'row' }}
+        gap={4}
+      >
         <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
           <Text fontSize={24}>Assets</Text>
           <Grid
@@ -495,60 +591,8 @@ export const MarketsList = ({
             </PopoverTooltip>
           </Grid>
         </Flex>
-        <Flex
-          className="pagination"
-          flexDirection={{ base: 'column', lg: 'row' }}
-          gap={4}
-          justifyContent="flex-end"
-          alignItems="flex-end"
-        >
-          <HStack>
-            {!isMobile && <Text>Rows Per Page :</Text>}
-            <Select
-              value={pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              maxW="max-content"
-            >
-              {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </Select>
-          </HStack>
-          <HStack gap={2}>
-            <Text>
-              {table.getFilteredRowModel().rows.length === 0
-                ? 0
-                : pagination.pageIndex * pagination.pageSize + 1}{' '}
-              -{' '}
-              {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getFilteredRowModel().rows.length
-                ? table.getFilteredRowModel().rows.length
-                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getFilteredRowModel().rows.length}
-            </Text>
-            <HStack>
-              <IconButton
-                variant="_outline"
-                aria-label="toPrevious"
-                icon={<ChevronLeftIcon fontSize={30} />}
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                isRound
-              />
-              <IconButton
-                variant="_outline"
-                aria-label="toNext"
-                icon={<ChevronRightIcon fontSize={30} />}
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                isRound
-              />
-            </HStack>
-          </HStack>
+        <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
+          <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
         </Flex>
       </Flex>
       <Table>
@@ -658,5 +702,32 @@ export const MarketsList = ({
         </Tbody>
       </Table>
     </Box>
+  );
+};
+
+const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void }) => {
+  const [searchText, setSearchText] = useState('');
+  const isMobile = useIsMobile();
+  const debouncedText = useDebounce(searchText, 400);
+
+  useEffect(() => {
+    onUpdate(debouncedText);
+  }, [debouncedText, onUpdate]);
+
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  return (
+    <HStack>
+      {!isMobile && <Text>Search</Text>}
+      <Input
+        type="text"
+        value={searchText}
+        onChange={onSearch}
+        placeholder="Search token name, symbol or address"
+        _focusVisible={{}}
+      />
+    </HStack>
   );
 };
