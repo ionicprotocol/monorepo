@@ -61,6 +61,7 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { sortAssets } from '@ui/utils/sortAssets';
 
 export type Market = {
   market: MarketData;
@@ -158,7 +159,7 @@ export const MarketsList = ({
   };
 
   const data: Market[] = useMemo(() => {
-    return assets.map((asset) => {
+    return sortAssets(assets).map((asset) => {
       return {
         market: asset,
         supplyApy: asset,
