@@ -615,7 +615,7 @@ export const MarketsList = ({
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }}>
+                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }} py={2}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );

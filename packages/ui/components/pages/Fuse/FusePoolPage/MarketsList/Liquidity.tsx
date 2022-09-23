@@ -20,35 +20,34 @@ export const Liquidity = ({ asset }: { asset: MarketData }) => {
 
   return (
     <Box textAlign="end">
-      <PopoverTooltip
-        body={
-          <>
-            <div>${longFormat(asset.liquidityFiat)}</div>
-            <br />
-            <div>
-              Liquidity is the amount of this asset that is available to borrow (unborrowed). To see
-              how much has been supplied and borrowed in total, navigate to the Pool Info tab.
-            </div>
-          </>
-        }
-        placement="top-end"
-      >
-        <VStack alignItems={'flex-end'}>
+      <VStack alignItems={'flex-end'}>
+        <PopoverTooltip
+          body={
+            <>
+              <div>${longFormat(asset.liquidityFiat)}</div>
+              <br />
+              <div>
+                Liquidity is the amount of this asset that is available to borrow (unborrowed). To
+                see how much has been supplied and borrowed in total, navigate to the Pool Info tab.
+              </div>
+            </>
+          }
+        >
           <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
             {smallUsdFormatter(asset.liquidityFiat)}
             {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && '+'}
           </Text>
-        </VStack>
-      </PopoverTooltip>
-      <SimpleTooltip
-        label={`${longFormat(liquidity)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
-      >
-        <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
-          {shortUsdFormatter(liquidity).replace('$', '')}
-          {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
-          {tokenData?.symbol ?? asset.underlyingSymbol}
-        </Text>
-      </SimpleTooltip>
+        </PopoverTooltip>
+        <SimpleTooltip
+          label={`${longFormat(liquidity)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
+        >
+          <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
+            {shortUsdFormatter(liquidity).replace('$', '')}
+            {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
+            {tokenData?.symbol ?? asset.underlyingSymbol}
+          </Text>
+        </SimpleTooltip>
+      </VStack>
     </Box>
   );
 };
