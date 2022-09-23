@@ -44,6 +44,7 @@ import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Su
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   BORROWABLE,
@@ -393,56 +394,105 @@ export const MarketsList = ({
             }}
             gap={2}
           >
-            <Button
-              variant="ghost"
-              onClick={onRewardsFiltered}
-              p={0}
-              minWidth="150px"
-              disabled={!allClaimableRewards || Object.keys(allClaimableRewards).length === 0}
+            <PopoverTooltip
+              placement="bottom"
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Rewards Asset
+                  </Text>
+                  <Text>Assets that have rewards.</Text>
+                </VStack>
+              }
             >
-              {isRewardsFiltered ? (
-                <GlowingBox height="100%" width="100%">
-                  <Center width="100%" height="100%" borderRadius="xl">
+              <Button
+                variant="ghost"
+                onClick={onRewardsFiltered}
+                p={0}
+                minWidth="150px"
+                disabled={!allClaimableRewards || Object.keys(allClaimableRewards).length === 0}
+              >
+                {isRewardsFiltered ? (
+                  <GlowingBox height="100%" width="100%">
+                    <Center width="100%" height="100%" borderRadius="xl">
+                      {`${
+                        (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
+                      } Rewards`}
+                    </Center>
+                  </GlowingBox>
+                ) : (
+                  <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl">
                     {`${
                       (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                     } Rewards`}
                   </Center>
-                </GlowingBox>
-              ) : (
-                <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl">
-                  {`${
-                    (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                  } Rewards`}
-                </Center>
-              )}
-            </Button>
-            <Button
-              variant={isCollateralFiltered ? 'outline' : 'ghost'}
-              colorScheme="cyan"
-              onClick={onCollateralFiltered}
-              minWidth="150px"
-              disabled={collateralCounts === 0}
+                )}
+              </Button>
+            </PopoverTooltip>
+            <PopoverTooltip
+              placement="bottom"
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Collateral Asset
+                  </Text>
+                  <Text>Assets that can be deposited as collateral to borrow other assets.</Text>
+                </VStack>
+              }
             >
-              <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
-            </Button>
-            <Button
-              variant={isProtectedFiltered ? 'outline' : 'ghost'}
-              colorScheme="purple"
-              onClick={onProtectedFiltered}
-              minWidth="150px"
-              disabled={protectedCounts === 0}
+              <Button
+                variant={isCollateralFiltered ? 'outline' : 'ghost'}
+                colorScheme="cyan"
+                onClick={onCollateralFiltered}
+                minWidth="150px"
+                disabled={collateralCounts === 0}
+              >
+                <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
+              </Button>
+            </PopoverTooltip>
+
+            <PopoverTooltip
+              placement="bottom"
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Protected Asset
+                  </Text>
+                  <Text>Assets cannot be borrowed.</Text>
+                </VStack>
+              }
             >
-              <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
-            </Button>
-            <Button
-              variant={isBorrowableFiltered ? 'outline' : 'ghost'}
-              colorScheme="orange"
-              onClick={onBorrowableFiltered}
-              minWidth="150px"
-              disabled={borrowableCounts === 0}
+              <Button
+                variant={isProtectedFiltered ? 'outline' : 'ghost'}
+                colorScheme="purple"
+                onClick={onProtectedFiltered}
+                minWidth="150px"
+                disabled={protectedCounts === 0}
+              >
+                <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
+              </Button>
+            </PopoverTooltip>
+            <PopoverTooltip
+              placement="bottom"
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Borrowable Asset
+                  </Text>
+                  <Text>Assets that can be borrowed.</Text>
+                </VStack>
+              }
             >
-              <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
-            </Button>
+              <Button
+                variant={isBorrowableFiltered ? 'outline' : 'ghost'}
+                colorScheme="orange"
+                onClick={onBorrowableFiltered}
+                minWidth="150px"
+                disabled={borrowableCounts === 0}
+              >
+                <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
+              </Button>
+            </PopoverTooltip>
           </Grid>
         </Flex>
         <Flex
