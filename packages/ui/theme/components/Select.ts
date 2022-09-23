@@ -21,6 +21,7 @@ export const SelectConfigStyle: ComponentStyleConfig = {
           outline: 'none',
         },
         cursor: 'pointer',
+        boxShadow: 'none !important',
       },
       icon: {
         color: mode('ecru', 'ecru')(props),

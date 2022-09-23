@@ -176,7 +176,7 @@ const FusePoolList = () => {
                         align="center"
                         separator={
                           <PaginationSeparator
-                            variant="outline"
+                            variant="_outline"
                             bg={cOutlineBtn.primary.bgColor}
                             jumpSize={3}
                             fontSize="lg"
@@ -187,7 +187,7 @@ const FusePoolList = () => {
                       >
                         {pages.map((page: number) => (
                           <PaginationPage
-                            variant="outline"
+                            variant="_outline"
                             bg={
                               page === currentPage ? cOutlineBtn.primary.selectedBgColor : undefined
                             }
@@ -299,7 +299,7 @@ const FusePoolList = () => {
                               align="center"
                               separator={
                                 <PaginationSeparator
-                                  variant="outline"
+                                  variant="_outline"
                                   bg={cOutlineBtn.primary.bgColor}
                                   jumpSize={3}
                                   fontSize="lg"
@@ -310,7 +310,7 @@ const FusePoolList = () => {
                             >
                               {pages.map((page: number) => (
                                 <PaginationPage
-                                  variant="outline"
+                                  variant="_outline"
                                   bg={
                                     page === currentPage
                                       ? cOutlineBtn.primary.selectedBgColor

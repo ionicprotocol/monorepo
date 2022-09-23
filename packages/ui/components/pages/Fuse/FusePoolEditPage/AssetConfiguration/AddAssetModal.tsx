@@ -135,7 +135,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
               poolData.assets.map((asset, index) => {
                 return (
                   <WrapItem key={index}>
-                    <Button variant="solid" px={2}>
+                    <Button variant="_solid" px={2}>
                       <CTokenIcon size="sm" address={asset.underlyingToken} />
                       <Center pl={1} fontWeight="bold">
                         {asset.underlyingSymbol}

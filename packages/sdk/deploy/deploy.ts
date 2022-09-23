@@ -358,16 +358,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   } else {
     console.log(`No old delegates implementations to whitelist the upgrade for`);
   }
-
-  const autoImplementation = await comptroller.callStatic.autoImplementation();
-  console.log("autoImplementation: ", autoImplementation);
-  if (!autoImplementation) {
-    tx = await comptroller._toggleAutoImplementations(true);
-    await tx.wait();
-    console.log("Toggled comptroller AutoImplementation", tx.hash);
-  } else {
-    console.log("Comptroller AutoImplementation already set");
-  }
   ////
 
   ////
@@ -520,6 +510,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
+
+  // upgrade any of the pools if necessary
+  await run("pools:all:upgrade");
+
+  // upgrade any of the markets if necessary
+  await run("markets:all:upgrade");
 };
 
 func.tags = ["prod"];

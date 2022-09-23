@@ -101,7 +101,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             <Heading size="md">Flywheels</Heading>
 
             <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-              <Button variant="ghost" onClick={openAdd} ml="auto">
+              <Button variant="_ghost" onClick={openAdd} ml="auto">
                 Add existing Flywheel
               </Button>
               <Button onClick={openCreate} ml="auto">

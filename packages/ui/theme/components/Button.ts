@@ -29,13 +29,13 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     },
   },
   variants: {
-    ghost: {
+    _ghost: {
       _hover: {
         bg: 'ecru80',
         color: 'raisinBlack',
       },
     },
-    solid: (props) => ({
+    _solid: (props) => ({
       bg: mode('ecru', 'ecru')(props),
       color: mode('raisinBlack', 'raisinBlack')(props),
       _hover: {
@@ -54,7 +54,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       _active: { opacity: 0.8 },
     }),
 
-    outline: (props) => ({
+    _outline: (props) => ({
       bg: mode('whiteBg', 'raisinBlack')(props),
       color: mode('raisinBlack', 'ecru')(props),
       borderWidth: 2,
@@ -65,7 +65,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       },
     }),
     topBar: (props) => ({
-      ...props.theme.components.Button.variants.solid(props),
+      ...props.theme.components.Button.variants._solid(props),
       height: '40px',
       ml: 2,
     }),
@@ -103,6 +103,6 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
   },
   defaultProps: {
     size: 'md',
-    variant: 'solid',
+    variant: '_solid',
   },
 };

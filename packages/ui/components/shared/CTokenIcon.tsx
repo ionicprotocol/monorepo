@@ -83,7 +83,7 @@ export const TokenWithLabel = ({
           {...avatarProps}
         />
         {!tokenData && <Text>LOAD</Text>}
-        <Text>{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
+        <Text fontSize={'sm'}>{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
       </HStack>
     </Skeleton>
   );

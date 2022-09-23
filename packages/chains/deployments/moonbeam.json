@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xBB625e3BA8bcaEB7C0f3237Eaa5DA8D9bCCc96f2",
+      "address": "0x4930d5b5f65654A7b3554E4bF1F0aaC2cA1980C0",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xDcC10801935A8565f717cc42dC8c2c5cB0C50374",
+      "address": "0xA9Fa989b6829BDEAa77e6F3d2DEBaBdc55d3a1Be",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x4e12D10169504A76Aa69f3e421A5A0A1D6a67EF9",
+      "address": "0xB62bB235774436A5D49888f0b9d68f82f1a6c82A",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0xe1b488B01cA2143A08A800a92FEA38d661fC31D4",
+      "address": "0x45a1411ecc9d2B8E8F7a86a8459194b96223e9ad",
       "abi": [
         {
           "inputs": [],
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x67A30e8f31e684c268CeA1615419d98FAcAfeC76",
+      "address": "0x648745e53fC425816996a15a45e167dCa29Db0B0",
       "abi": [
         {
           "inputs": [
@@ -7680,6 +7680,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "flywheelAddress",
+              "type": "address"
+            }
+          ],
+          "name": "addNonAccruingFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "admin",
           "outputs": [
@@ -7834,29 +7853,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrowAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "borrowVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -8148,6 +8144,35 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "isBorrow",
+              "type": "bool"
+            }
+          ],
+          "name": "getMaxRedeemOrBorrow",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "getRewardsDistributors",
           "outputs": [
@@ -8276,44 +8301,6 @@
               "type": "address"
             },
             {
-              "internalType": "address",
-              "name": "liquidator",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "actualRepayAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "seizeTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "liquidateBorrowVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cTokenBorrowed",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "cTokenCollateral",
-              "type": "address"
-            },
-            {
               "internalType": "uint256",
               "name": "actualRepayAmount",
               "type": "uint256"
@@ -8423,63 +8410,20 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "minter",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "actualMintAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "mintTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "mintVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "exchangeRateMantissa",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "accountTokens",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "mintAmount",
-              "type": "uint256"
-            }
-          ],
-          "name": "mintWithinLimits",
-          "outputs": [
-            {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "name": "nonAccruingRewardsDistributors",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -8628,63 +8572,6 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "payer",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "actualRepayAmount",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrowerIndex",
-              "type": "uint256"
-            }
-          ],
-          "name": "repayBorrowVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "oldFlywheel",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "newFlywheel",
-              "type": "address"
-            }
-          ],
-          "name": "replaceFlywheel",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
@@ -8751,39 +8638,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cTokenCollateral",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "cTokenBorrowed",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "liquidator",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "seizeTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "seizeVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -8869,34 +8723,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "src",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "transferTokens",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferVerify",
-          "outputs": [],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -16233,7 +16059,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x75448e678E852C5cfC80537EE2641D1fA51aa3b7",
+      "address": "0xe4353733113670Af22C5b8f9B430a630fE0ED459",
       "abi": [
         {
           "anonymous": false,
@@ -20157,7 +19983,7 @@
       ]
     },
     "MidasFlywheel_ATOM_Implementation": {
-      "address": "0x9989D086961d8B080A8D4d645871C759655F2FA2",
+      "address": "0x60D35DFfC6C266B22f5A61aE02fE3BCD1aff390d",
       "abi": [
         {
           "anonymous": false,
@@ -21934,7 +21760,7 @@
       ]
     },
     "MidasFlywheel_CELR_Implementation": {
-      "address": "0xc64359b5f3199481021F6E56aDa3044a00D7A694",
+      "address": "0x1C10718a83DE1131B0e64221f2f7Fd71f777672B",
       "abi": [
         {
           "anonymous": false,
@@ -23711,7 +23537,7 @@
       ]
     },
     "MidasFlywheel_GLINT_Implementation": {
-      "address": "0x8677b4F8588a54252F6e78FD1e62474D5904b685",
+      "address": "0x3DB426bb9591F6367c6b30fDA579647355618b97",
       "abi": [
         {
           "anonymous": false,
@@ -25488,7 +25314,7 @@
       ]
     },
     "MidasFlywheel_STELLA_Implementation": {
-      "address": "0x4A3499A1e6DCBE2350196901Ec7a45C4C8e93e46",
+      "address": "0xBf0794bF4021Dd944833Cf884D403450bD271B67",
       "abi": [
         {
           "anonymous": false,
@@ -27265,7 +27091,7 @@
       ]
     },
     "MidasFlywheel_WGLMR_Implementation": {
-      "address": "0x5EE0ae04f9cc2334d80f1450dd2243214c058171",
+      "address": "0x90515788007b6218c90C8717f4d98C726Be5a2A0",
       "abi": [
         {
           "anonymous": false,
