@@ -260,7 +260,7 @@ export const MarketsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewards, comptrollerAddress]);
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'market', desc: false }]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'market', desc: true }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
