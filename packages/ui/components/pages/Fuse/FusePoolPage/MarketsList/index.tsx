@@ -175,7 +175,7 @@ export const MarketsList = ({
     return [
       {
         accessorKey: 'market',
-        header: () => <Text py={2}>Market (LTV)</Text>,
+        header: () => <Text py={2}>Market / LTV</Text>,
         cell: ({ getValue }) => (
           <TokenName asset={getValue<MarketData>()} poolAddress={comptrollerAddress} />
         ),
