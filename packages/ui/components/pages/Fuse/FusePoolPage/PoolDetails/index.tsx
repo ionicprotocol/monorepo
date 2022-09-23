@@ -62,7 +62,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
   }, [comptroller, midasSdk, queryClient, setPendingTxHash]);
 
   return (
-    <MidasBox height={isMobile ? 'auto' : '450px'}>
+    <MidasBox height={isMobile ? 'auto' : '450px'} width="100%">
       <Column
         mainAxisAlignment="flex-start"
         crossAxisAlignment="flex-start"

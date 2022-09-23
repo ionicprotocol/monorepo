@@ -1,6 +1,6 @@
 import { HStack, Skeleton, Text } from '@chakra-ui/react';
 
-import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList/ApyInformTooltip';
+import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ApyInformTooltip';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';

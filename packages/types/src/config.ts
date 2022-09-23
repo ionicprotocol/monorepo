@@ -48,6 +48,8 @@ export interface PluginData {
   strategy?: string;
   apyDocsUrl?: string;
   strategyDocsUrl?: string;
+  underlying: string;
+  otherParams?: any[];
 }
 
 export type DeployedPlugins = {

@@ -88,7 +88,7 @@ And than start a forked local node by running.
 For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
 
 ```
-> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network bscfork
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
 ```
 
 

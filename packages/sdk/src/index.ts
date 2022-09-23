@@ -1,5 +1,6 @@
 export { default as MidasSdk } from "./MidasSdk";
 export { default as ERC20Abi } from "./MidasSdk/abi/ERC20.json";
+export { default as WETHAbi } from "./MidasSdk/abi/WETH.json";
 
 import { MidasBase } from "./MidasSdk";
 import AnkrBNBInterestRateModel from "./MidasSdk/irm/AnkrBnbInterestRateModel";
