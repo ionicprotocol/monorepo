@@ -21,8 +21,14 @@ export const shortFormatter = new Intl.NumberFormat('en-US', {
 });
 
 const midFormatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
   maximumFractionDigits: 2,
   notation: 'compact',
+});
+
+const longFormatter = new Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 18,
 });
 
 export const dynamicFormatter = (value: number, options: Intl.NumberFormatOptions) =>
@@ -58,4 +64,8 @@ export function tokenFormatter(value: BigNumber, decimals: BigNumberish = 18, sy
 
 export function aprFormatter(value: BigNumber, decimals: BigNumberish = 18, symbol?: string) {
   return midFormatter.format(Number(formatUnits(value, decimals))) + (symbol || '');
+}
+
+export function longFormat(num: number) {
+  return longFormatter.format(num);
 }
