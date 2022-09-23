@@ -61,7 +61,6 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { sortAssets } from '@ui/utils/sortAssets';
 
 export type Market = {
   market: MarketData;
@@ -87,14 +86,6 @@ export const MarketsList = ({
   borrowBalanceFiat: number;
 }) => {
   const { midasSdk, currentChain } = useMidas();
-  const suppliedAssets = useMemo(
-    () => sortAssets(assets).filter((asset) => asset.supplyBalance.gt(0)),
-    [assets]
-  );
-  const nonSuppliedAssets = useMemo(
-    () => sortAssets(assets).filter((asset) => asset.supplyBalance.eq(0)),
-    [assets]
-  );
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -160,14 +151,14 @@ export const MarketsList = ({
     } else if (columnId === 'liquidity') {
       return rowA.original.market.liquidityFiat > rowB.original.market.liquidityFiat ? 1 : -1;
     } else if (columnId === 'collateral') {
-      return rowB.original.market.membership ? 1 : -1;
+      return rowA.original.market.membership ? 1 : -1;
     } else {
       return 1;
     }
   };
 
   const data: Market[] = useMemo(() => {
-    return [...suppliedAssets, ...nonSuppliedAssets].map((asset) => {
+    return assets.map((asset) => {
       return {
         market: asset,
         supplyApy: asset,
@@ -178,7 +169,7 @@ export const MarketsList = ({
         liquidity: asset,
       };
     });
-  }, [suppliedAssets, nonSuppliedAssets]);
+  }, [assets]);
 
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
@@ -269,7 +260,7 @@ export const MarketsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewards, comptrollerAddress]);
 
-  const [sorting, setSorting] = useState<SortingState>([]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'market', desc: false }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
@@ -298,6 +289,7 @@ export const MarketsList = ({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
+    enableSortingRemoval: false,
     getExpandedRowModel: getExpandedRowModel(),
     onGlobalFilterChange: setGlobalFilter,
     globalFilterFn: assetFilter,
@@ -400,7 +392,13 @@ export const MarketsList = ({
             }}
             gap={2}
           >
-            <Button variant="ghost" onClick={onRewardsFiltered} p={0} minWidth="150px">
+            <Button
+              variant="ghost"
+              onClick={onRewardsFiltered}
+              p={0}
+              minWidth="150px"
+              disabled={!allClaimableRewards || Object.keys(allClaimableRewards).length === 0}
+            >
               {isRewardsFiltered ? (
                 <GlowingBox height="100%" width="100%">
                   <Center width="100%" height="100%" borderRadius="xl">
@@ -422,6 +420,7 @@ export const MarketsList = ({
               colorScheme="cyan"
               onClick={onCollateralFiltered}
               minWidth="150px"
+              disabled={collateralCounts === 0}
             >
               <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
             </Button>
@@ -430,6 +429,7 @@ export const MarketsList = ({
               colorScheme="purple"
               onClick={onProtectedFiltered}
               minWidth="150px"
+              disabled={protectedCounts === 0}
             >
               <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
             </Button>
@@ -438,6 +438,7 @@ export const MarketsList = ({
               colorScheme="orange"
               onClick={onBorrowableFiltered}
               minWidth="150px"
+              disabled={borrowableCounts === 0}
             >
               <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
             </Button>
@@ -531,7 +532,7 @@ export const MarketsList = ({
                           : 'flex-end'
                       }
                     >
-                      <Box width={3}>
+                      <Box width={3} mb={1}>
                         <Box hidden={header.column.getIsSorted() ? false : true}>
                           {header.column.getIsSorted() === 'desc' ? (
                             <ArrowDownIcon aria-label="sorted descending" />
