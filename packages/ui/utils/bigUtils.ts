@@ -27,7 +27,6 @@ const midFormatter = new Intl.NumberFormat('en-US', {
 });
 
 const longFormatter = new Intl.NumberFormat('en-US', {
-  minimumFractionDigits: 2,
   maximumFractionDigits: 18,
 });
 
