@@ -13,6 +13,7 @@ import "./tasks/plugin";
 import "./tasks/pool";
 import "./tasks/irm";
 import "./tasks/fork";
+import "./tasks/swap";
 
 import "./tasks/addChainlinkFeeds";
 import "./tasks/createPoolsWithAssets";
@@ -24,7 +25,6 @@ import "./tasks/getPoolData";
 import "./tasks/liquidation";
 import "./tasks/pauseMarketMinting";
 import "./tasks/sendTestTokens";
-import "./tasks/swap";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
 import "./tasks/upgradePools";
