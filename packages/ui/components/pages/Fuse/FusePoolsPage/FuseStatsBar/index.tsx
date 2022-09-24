@@ -72,22 +72,30 @@ const FuseStatsBar = () => {
         <HStack gap={2}>
           <SimpleTooltip label="Documentation">
             <Link href={MIDAS_DOCS_URL} isExternal>
-              <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
+              </motion.div>
             </Link>
           </SimpleTooltip>
           <SimpleTooltip label="Discord">
             <Link href={MIDAS_DISCORD_URL} isExternal>
-              <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
+              </motion.div>
             </Link>
           </SimpleTooltip>
           <SimpleTooltip label="Telegram">
             <Link href={MIDAS_TELEGRAM_URL} isExternal>
-              <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
+              </motion.div>
             </Link>
           </SimpleTooltip>
           <SimpleTooltip label="Twitter">
             <Link href={MIDAS_TWITTER_URL} isExternal>
-              <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
+              </motion.div>
             </Link>
           </SimpleTooltip>
         </HStack>

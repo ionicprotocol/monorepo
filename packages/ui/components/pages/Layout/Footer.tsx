@@ -24,7 +24,13 @@ const Footer = () => {
     >
       <Row mainAxisAlignment="center" crossAxisAlignment="center" width="100%">
         <Link href={MIDAS_DOCS_URL} isExternal>
-          <Text color={cPage.primary.txtColor} mx={2} fontSize="md" textDecoration="underline">
+          <Text
+            color={cPage.primary.txtColor}
+            mx={2}
+            fontSize="md"
+            textDecoration="underline"
+            _hover={{ color: cPage.primary.borderColor }}
+          >
             {'Docs'}
           </Text>
         </Link>
@@ -32,7 +38,13 @@ const Footer = () => {
           ·
         </Text>
         <Link href={MIDAS_DISCORD_URL} isExternal>
-          <Text color={cPage.primary.txtColor} mx={2} fontSize="md" textDecoration="underline">
+          <Text
+            color={cPage.primary.txtColor}
+            mx={2}
+            fontSize="md"
+            textDecoration="underline"
+            _hover={{ color: cPage.primary.borderColor }}
+          >
             {'Discord'}
           </Text>
         </Link>
@@ -40,7 +52,13 @@ const Footer = () => {
           ·
         </Text>
         <Link href={MIDAS_TELEGRAM_URL} isExternal>
-          <Text color={cPage.primary.txtColor} mx={2} fontSize="md" textDecoration="underline">
+          <Text
+            color={cPage.primary.txtColor}
+            mx={2}
+            fontSize="md"
+            textDecoration="underline"
+            _hover={{ color: cPage.primary.borderColor }}
+          >
             {'Telegram'}
           </Text>
         </Link>
@@ -48,7 +66,13 @@ const Footer = () => {
           ·
         </Text>
         <Link href={MIDAS_TWITTER_URL} isExternal>
-          <Text color={cPage.primary.txtColor} mx={2} fontSize="md" textDecoration="underline">
+          <Text
+            color={cPage.primary.txtColor}
+            mx={2}
+            fontSize="md"
+            textDecoration="underline"
+            _hover={{ color: cPage.primary.borderColor }}
+          >
             {'Twitter'}
           </Text>
         </Link>
