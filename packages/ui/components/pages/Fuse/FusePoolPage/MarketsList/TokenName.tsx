@@ -8,7 +8,7 @@ import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { URL_MIDAS_DOCS } from '@ui/constants/index';
+import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
@@ -136,7 +136,7 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
                   <>
                     Read more about it{' '}
                     <ChakraLink
-                      href={pluginInfo?.strategyDocsUrl || URL_MIDAS_DOCS}
+                      href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
                       isExternal
                       variant={'color'}
                       onClick={(e) => {
