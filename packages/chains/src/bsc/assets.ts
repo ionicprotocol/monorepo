@@ -21,6 +21,7 @@ const twoBRL = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
 const threeBRL = "0x27b5Fc5333246F63280dA8e3e533512EfA747c13";
 const val3EPS = "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5";
 const valdai3EPS = "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC";
+const epsBUSD_jCHF = "0x5887cEa5e2bb7dD36F0C06Da47A8Df918c289A29";
 const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
 const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
 const aBNBc = "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A";
@@ -199,6 +200,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", "3brl", threeBRL),
+  },
+  {
+    symbol: assetSymbols["JCHF-BUSD"],
+    underlying: epsBUSD_jCHF,
+    name: "Ellipsis.finance JCHF-BUSD",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", "eps BUSD jCHF", epsBUSD_jCHF),
   },
   // Bomb
   {

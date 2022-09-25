@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x4930d5b5f65654A7b3554E4bF1F0aaC2cA1980C0",
+      "address": "0xc2Af1451dBFbf564FB32E57f275d419395F5BC92",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xA9Fa989b6829BDEAa77e6F3d2DEBaBdc55d3a1Be",
+      "address": "0x72e02db51AF6e8963a35ff79a5bE5b15e44bBb1E",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xB62bB235774436A5D49888f0b9d68f82f1a6c82A",
+      "address": "0x628C6d2236fC1712D66Df5fbFf9041f7809C959C",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0x45a1411ecc9d2B8E8F7a86a8459194b96223e9ad",
+      "address": "0x7698198376DAAB5097c9A327250BD07062118626",
       "abi": [
         {
           "inputs": [],
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x648745e53fC425816996a15a45e167dCa29Db0B0",
+      "address": "0xa4024144f063A76FdBee234A9Af924614DDaff20",
       "abi": [
         {
           "inputs": [
@@ -8020,35 +8020,6 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "account",
-              "type": "address"
-            }
-          ],
-          "name": "getAccountLiquidity",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -10966,25 +10937,6 @@
         {
           "inputs": [
             {
-              "internalType": "bytes",
-              "name": "constructorData",
-              "type": "bytes"
-            }
-          ],
-          "name": "deployCEther",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -11250,7 +11202,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x29C45bc5305C44340D820A57df4C6b58EA8c41ff",
+      "address": "0x23bBcF59BF843cD55c4DA9bDB81429695C87f847",
       "abi": [
         {
           "anonymous": false,
@@ -11865,25 +11817,6 @@
             }
           ],
           "name": "deployCErc20",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes",
-              "name": "constructorData",
-              "type": "bytes"
-            }
-          ],
-          "name": "deployCEther",
           "outputs": [
             {
               "internalType": "address",
@@ -14195,7 +14128,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x9e2c57aBEC61ba4DFCd84fc847B118355714FbB4",
+      "address": "0xb0543004b96e30d2089D455ff88e6b14cE468Aa1",
       "abi": [
         {
           "anonymous": false,
@@ -19983,7 +19916,7 @@
       ]
     },
     "MidasFlywheel_ATOM_Implementation": {
-      "address": "0x60D35DFfC6C266B22f5A61aE02fE3BCD1aff390d",
+      "address": "0x81503F4810A668a6D4e8233842655B554B95D7E4",
       "abi": [
         {
           "anonymous": false,
@@ -21760,7 +21693,7 @@
       ]
     },
     "MidasFlywheel_CELR_Implementation": {
-      "address": "0x1C10718a83DE1131B0e64221f2f7Fd71f777672B",
+      "address": "0x49Ab0F58DCF70b30Ab364Dfa58C9e3D4e3d211B9",
       "abi": [
         {
           "anonymous": false,
@@ -23537,7 +23470,7 @@
       ]
     },
     "MidasFlywheel_GLINT_Implementation": {
-      "address": "0x3DB426bb9591F6367c6b30fDA579647355618b97",
+      "address": "0x7e616687A5c426f51Debc41582Ccb5f60F2DB67A",
       "abi": [
         {
           "anonymous": false,
@@ -25314,7 +25247,7 @@
       ]
     },
     "MidasFlywheel_STELLA_Implementation": {
-      "address": "0xBf0794bF4021Dd944833Cf884D403450bD271B67",
+      "address": "0x059C78F16509874F9e3EE9F251Dca6143A6870B6",
       "abi": [
         {
           "anonymous": false,
@@ -27091,7 +27024,7 @@
       ]
     },
     "MidasFlywheel_WGLMR_Implementation": {
-      "address": "0x90515788007b6218c90C8717f4d98C726Be5a2A0",
+      "address": "0x5ab5aD064296242696FFC81A263136cEa5F9a524",
       "abi": [
         {
           "anonymous": false,

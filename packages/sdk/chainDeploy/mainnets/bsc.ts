@@ -231,6 +231,12 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.BRZw),
     ],
   },
+  {
+    // eps BUSD jCHF
+    lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
+    pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
+    underlyings: [underlying(assets, assetSymbols.JCHF), underlying(assets, assetSymbols.BUSD)],
+  },
 ];
 
 const diaAssets: DiaAsset[] = [
