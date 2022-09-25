@@ -46,6 +46,7 @@ export const InputConfigStyle: ComponentStyleConfig = {
         paddingLeft: 0,
         _focusVisible: {
           boxShadow: 'none',
+          outline: 'none',
         },
       },
       addon: {
@@ -83,6 +84,7 @@ export const InputConfigStyle: ComponentStyleConfig = {
         },
         _focusVisible: {
           boxShadow: 'none',
+          outline: 'none',
         },
       },
       addon: {
@@ -124,6 +126,7 @@ export const InputConfigStyle: ComponentStyleConfig = {
         },
         _focusVisible: {
           boxShadow: 'none',
+          outline: 'none',
         },
       },
     }),
@@ -135,6 +138,7 @@ export const InputConfigStyle: ComponentStyleConfig = {
         _placeholder: { color: mode('silverMetallic', 'white50')(props) },
         _focusVisible: {
           boxShadow: 'none',
+          outline: 'none',
         },
       },
     }),
