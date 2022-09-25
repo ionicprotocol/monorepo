@@ -246,6 +246,7 @@ export enum assetSymbols {
   "JSGD-XSGD" = "JSGD-XSGD",
   "JNZD-NZDS" = "JNZD-NZDS",
   "EURE-JEUR" = "EURE-JEUR",
+  "JCHF-BUSD" = "JCHF-BUSD",
   AGEUR = "AGEUR",
   EURT = "EURT",
   EURE = "EURE",
