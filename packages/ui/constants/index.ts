@@ -5,7 +5,10 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
 export const ABILLY = 1e9;
 
-export const URL_MIDAS_DOCS = 'https://docs.midascapital.xyz/';
+export const MIDAS_DOCS_URL = 'https://docs.midascapital.xyz/';
+export const MIDAS_DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
+export const MIDAS_TELEGRAM_URL = 'https://t.me/midascapitaltg';
+export const MIDAS_TWITTER_URL = 'https://twitter.com/MidasCapitalxyz';
 
 export const CLOSE_FACTOR = {
   DEFAULT: 50,
@@ -73,7 +76,6 @@ export const aBNBcContractABI = [
   },
 ];
 
-export const DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
 export const MARKETS_COUNT_PER_PAGE = [10, 20, 30, 50];
 
 //Assets Filters
@@ -81,3 +83,11 @@ export const REWARDS = 'Rewards';
 export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
+export const SEARCH = 'Search';
+
+export const RESERVE_FACTOR_TOOLTIP =
+  'The reserve factor defines the portion of borrower interest that is converted into reserves.';
+export const COLLATERAL_FACTOR_TOOLTIP =
+  'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.';
+export const ADMIN_FEE_TOOLTIP =
+  "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee.";

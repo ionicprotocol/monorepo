@@ -7,6 +7,7 @@ import {
   Grid,
   HStack,
   IconButton,
+  Input,
   Select,
   Table,
   Tbody,
@@ -44,6 +45,7 @@ import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Su
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   BORROWABLE,
@@ -52,11 +54,13 @@ import {
   MARKETS_COUNT_PER_PAGE,
   PROTECTED,
   REWARDS,
+  SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
+import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -103,14 +107,24 @@ export const MarketsList = ({
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
-      (value.includes(REWARDS) &&
-        allClaimableRewards &&
-        allClaimableRewards[row.original.market.cToken]) ||
-      (value.includes(COLLATERAL) && row.original.market.membership) ||
-      (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
-      (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
+      !searchText ||
+      (value.includes(SEARCH) &&
+        (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
+          row.original.market.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
+          row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))
     ) {
-      return true;
+      if (
+        (value.includes(REWARDS) &&
+          allClaimableRewards &&
+          allClaimableRewards[row.original.market.cToken]) ||
+        (value.includes(COLLATERAL) && row.original.market.membership) ||
+        (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
+        (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
+      ) {
+        return true;
+      } else {
+        return false;
+      }
     } else {
       return false;
     }
@@ -279,6 +293,7 @@ export const MarketsList = ({
     BORROWABLE,
   ]);
   const [columnVisibility, setColumnVisibility] = useState({});
+  const [searchText, setSearchText] = useState('');
 
   const table = useReactTable({
     columns,
@@ -354,96 +369,53 @@ export const MarketsList = ({
     setIsBorrowableFiltered(!isBorrowableFiltered);
   };
 
+  const onSearchFiltered = () => {
+    if (searchText) {
+      setGlobalFilter([...globalFilter, SEARCH]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== SEARCH));
+    }
+  };
+
+  useEffect(() => {
+    onSearchFiltered();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchText]);
+
   return (
     <Box>
-      <Flex px="4" mt={6} gap={8}>
-        <HStack>
-          <Text>Your Supply Balance :</Text>
-          <SimpleTooltip
-            label={supplyBalanceFiat.toString()}
-            isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
-          >
-            <Text fontSize={24}>
-              {smallUsdFormatter(supplyBalanceFiat)}
-              {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
-        <HStack>
-          <Text>Your Borrow Balance :</Text>
-          <SimpleTooltip
-            label={borrowBalanceFiat.toString()}
-            isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
-          >
-            <Text fontSize={24}>
-              {smallUsdFormatter(borrowBalanceFiat)}
-              {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
-      </Flex>
-      <Flex justifyContent="space-between" px="4" py="8">
-        <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
-          <Text fontSize={24}>Assets</Text>
-          <Grid
-            templateColumns={{
-              base: 'repeat(1, 1fr)',
-              lg: 'repeat(4, 1fr)',
-              sm: 'repeat(2, 1fr)',
-            }}
-            gap={2}
-          >
-            <Button
-              variant="ghost"
-              onClick={onRewardsFiltered}
-              p={0}
-              minWidth="150px"
-              disabled={!allClaimableRewards || Object.keys(allClaimableRewards).length === 0}
+      <Flex
+        px="4"
+        mt={6}
+        justifyContent="space-between"
+        flexDirection={{ base: 'column', sm: 'row' }}
+        gap={4}
+      >
+        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={8}>
+          <HStack>
+            <Text>Your Supply Balance :</Text>
+            <SimpleTooltip
+              label={supplyBalanceFiat.toString()}
+              isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
             >
-              {isRewardsFiltered ? (
-                <GlowingBox height="100%" width="100%">
-                  <Center width="100%" height="100%" borderRadius="xl">
-                    {`${
-                      (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                    } Rewards`}
-                  </Center>
-                </GlowingBox>
-              ) : (
-                <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl">
-                  {`${
-                    (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                  } Rewards`}
-                </Center>
-              )}
-            </Button>
-            <Button
-              variant={isCollateralFiltered ? 'outline' : 'ghost'}
-              colorScheme="cyan"
-              onClick={onCollateralFiltered}
-              minWidth="150px"
-              disabled={collateralCounts === 0}
+              <Text fontSize={24}>
+                {smallUsdFormatter(supplyBalanceFiat)}
+                {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+          </HStack>
+          <HStack>
+            <Text>Your Borrow Balance :</Text>
+            <SimpleTooltip
+              label={borrowBalanceFiat.toString()}
+              isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
             >
-              <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
-            </Button>
-            <Button
-              variant={isProtectedFiltered ? 'outline' : 'ghost'}
-              colorScheme="purple"
-              onClick={onProtectedFiltered}
-              minWidth="150px"
-              disabled={protectedCounts === 0}
-            >
-              <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
-            </Button>
-            <Button
-              variant={isBorrowableFiltered ? 'outline' : 'ghost'}
-              colorScheme="orange"
-              onClick={onBorrowableFiltered}
-              minWidth="150px"
-              disabled={borrowableCounts === 0}
-            >
-              <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
-            </Button>
-          </Grid>
+              <Text fontSize={24}>
+                {smallUsdFormatter(borrowBalanceFiat)}
+                {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
+              </Text>
+            </SimpleTooltip>
+          </HStack>
         </Flex>
         <Flex
           className="pagination"
@@ -499,6 +471,128 @@ export const MarketsList = ({
               />
             </HStack>
           </HStack>
+        </Flex>
+      </Flex>
+      <Flex
+        justifyContent="space-between"
+        px="4"
+        py="8"
+        flexDirection={{ base: 'column', sm: 'row' }}
+        gap={4}
+      >
+        <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
+          <Text fontSize={24}>Assets</Text>
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              lg: 'repeat(4, 1fr)',
+              sm: 'repeat(2, 1fr)',
+            }}
+            gap={2}
+          >
+            <PopoverTooltip
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Rewards Asset
+                  </Text>
+                  <Text>Assets that have rewards.</Text>
+                  <Text>Click to filter</Text>
+                </VStack>
+              }
+            >
+              <Button
+                variant="ghost"
+                onClick={onRewardsFiltered}
+                p={0}
+                minWidth="150px"
+                disabled={!allClaimableRewards || Object.keys(allClaimableRewards).length === 0}
+              >
+                {isRewardsFiltered ? (
+                  <GlowingBox height="100%" width="100%">
+                    <Center width="100%" height="100%" borderRadius="xl">
+                      {`${
+                        (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
+                      } Rewards`}
+                    </Center>
+                  </GlowingBox>
+                ) : (
+                  <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl">
+                    {`${
+                      (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
+                    } Rewards`}
+                  </Center>
+                )}
+              </Button>
+            </PopoverTooltip>
+            <PopoverTooltip
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Collateral Asset
+                  </Text>
+                  <Text>Assets that can be deposited as collateral to borrow other assets.</Text>
+                  <Text>Click to filter</Text>
+                </VStack>
+              }
+            >
+              <Button
+                variant={isCollateralFiltered ? 'outline' : 'ghost'}
+                colorScheme="cyan"
+                onClick={onCollateralFiltered}
+                minWidth="150px"
+                disabled={collateralCounts === 0}
+              >
+                <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
+              </Button>
+            </PopoverTooltip>
+
+            <PopoverTooltip
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Protected Asset
+                  </Text>
+                  <Text>Assets cannot be borrowed.</Text>
+                  <Text>Click to filter</Text>
+                </VStack>
+              }
+            >
+              <Button
+                variant={isProtectedFiltered ? 'outline' : 'ghost'}
+                colorScheme="purple"
+                onClick={onProtectedFiltered}
+                minWidth="150px"
+                disabled={protectedCounts === 0}
+              >
+                <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
+              </Button>
+            </PopoverTooltip>
+            <PopoverTooltip
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Borrowable Asset
+                  </Text>
+                  <Text>Assets that can be borrowed.</Text>
+                  <Text>Click to filter</Text>
+                </VStack>
+              }
+            >
+              <Button
+                variant={isBorrowableFiltered ? 'outline' : 'ghost'}
+                colorScheme="orange"
+                onClick={onBorrowableFiltered}
+                minWidth="150px"
+                disabled={borrowableCounts === 0}
+              >
+                <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
+              </Button>
+            </PopoverTooltip>
+          </Grid>
+        </Flex>
+        <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
+          <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
         </Flex>
       </Flex>
       <Table>
@@ -565,7 +659,7 @@ export const MarketsList = ({
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }}>
+                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }} py={2}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );
@@ -608,5 +702,32 @@ export const MarketsList = ({
         </Tbody>
       </Table>
     </Box>
+  );
+};
+
+const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void }) => {
+  const [searchText, setSearchText] = useState('');
+  const isMobile = useIsMobile();
+  const debouncedText = useDebounce(searchText, 400);
+
+  useEffect(() => {
+    onUpdate(debouncedText);
+  }, [debouncedText, onUpdate]);
+
+  const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchText(e.target.value);
+  };
+
+  return (
+    <HStack>
+      {!isMobile && <Text>Search</Text>}
+      <Input
+        type="text"
+        value={searchText}
+        onChange={onSearch}
+        placeholder="Search token name, symbol or address"
+        _focusVisible={{}}
+      />
+    </HStack>
   );
 };

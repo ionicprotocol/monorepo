@@ -111,6 +111,7 @@ export interface CaptionedStatProps {
   spacing?: string | number;
   captionFirst?: boolean;
   captionColor?: string;
+  tooltip?: string;
 }
 
 export interface CTokensDataForRewardsMap {

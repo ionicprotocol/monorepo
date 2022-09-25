@@ -35,7 +35,13 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
+import {
+  ADMIN_FEE,
+  ADMIN_FEE_TOOLTIP,
+  COLLATERAL_FACTOR,
+  COLLATERAL_FACTOR_TOOLTIP,
+  RESERVE_FACTOR,
+} from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useColors } from '@ui/hooks/useColors';
@@ -360,11 +366,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 <FormLabel htmlFor="collateralFactor" margin={0}>
                   <Text fontWeight="bold" width="max-content">
                     Collateral Factor{' '}
-                    <SimpleTooltip
-                      label={
-                        'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
-                      }
-                    >
+                    <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
                         bg={cCard.bgColor}
@@ -526,11 +528,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 <FormLabel htmlFor="adminFee" margin={0}>
                   <Text fontWeight="bold">
                     Admin Fee{' '}
-                    <SimpleTooltip
-                      label={
-                        "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
-                      }
-                    >
+                    <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
                         bg={cCard.bgColor}
