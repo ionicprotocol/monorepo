@@ -1,4 +1,4 @@
-import { Heading } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
@@ -15,9 +15,9 @@ export const RewardsBanner = ({ tokens = [] }: { tokens: string[] }) => {
     >
       <GlowingBox w="100%" h="50px" mt={4}>
         <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" h="100%" w="100" p={3}>
-          <Heading fontSize="md" ml={2}>
+          <Text variant="smText" ml={2}>
             This pool is offering rewards
-          </Heading>
+          </Text>
           <CTokenAvatarGroup tokenAddresses={tokens} ml={2} mr={2} popOnHover={true} />
         </Row>
       </GlowingBox>

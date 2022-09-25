@@ -35,7 +35,7 @@ const FuseNavbar = () => {
       <VStack w={'100%'}>
         <HStack w={'100%'} justifyContent="flex-end" pt={2}>
           <AccountButton />
-          <Button variant={'topBar'} onClick={toggleColorMode}>
+          <Button variant="_solid" ml="2" onClick={toggleColorMode}>
             {colorMode === 'light' ? (
               <MoonIcon color="gray.700" w={5} h={5} />
             ) : (

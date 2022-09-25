@@ -17,23 +17,22 @@ const ConnectWalletButton: React.FC = () => {
   return (
     <Button
       id="walletBtn"
-      variant={'topBar'}
+      variant="_solid"
       onClick={onOpen}
       ref={accountBtnElement as LegacyRef<HTMLButtonElement>}
+      ml="2"
     >
       <Center>
         {pendingTxHashes.length === 0 ? (
           <>
             <HStack>
               <Jazzicon diameter={23} seed={jsNumberForAddress(address)} />
-              {!isMobile && <Text fontWeight="semibold">{shortAddress(address)}</Text>}
+              {!isMobile && <Text>{shortAddress(address)}</Text>}
             </HStack>
           </>
         ) : (
           <>
-            <Text mr={2} fontWeight="semibold">
-              {pendingTxHashes.length} Pending
-            </Text>
+            <Text mr={2}>{pendingTxHashes.length} Pending</Text>
             <Spinner w={5} h={5} />
           </>
         )}

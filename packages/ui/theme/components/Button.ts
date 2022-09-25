@@ -1,3 +1,4 @@
+import { theme } from '@chakra-ui/react';
 import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { mode } from '@chakra-ui/theme-tools';
 
@@ -11,24 +12,37 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     justifyContent: 'center',
   },
   sizes: {
+    base: {
+      height: 8,
+      minWidth: 8,
+      fontSize: 14,
+      px: 2,
+      py: 2,
+    },
     sm: {
-      fontSize: 'sm',
-      px: 3,
-      py: 3,
+      height: 8,
+      minWidth: 8,
+      fontSize: 14,
+      px: 2,
+      py: 2,
     },
     md: {
-      fontSize: 'md',
-      px: 3,
-      py: 3,
-      minWidth: '40px',
+      height: 10,
+      minWidth: 10,
+      fontSize: 16,
+      px: 4,
+      py: 4,
     },
     lg: {
-      fontSize: 'xl',
+      height: 10,
+      minWidth: 10,
+      fontSize: 16,
       px: 4,
       py: 4,
     },
   },
   variants: {
+    ...theme.components.Button.variants,
     _ghost: {
       _hover: {
         bg: 'ecru80',
@@ -64,11 +78,6 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
         color: mode('raisinBlack', 'raisinBlack')(props),
       },
     }),
-    topBar: (props) => ({
-      ...props.theme.components.Button.variants._solid(props),
-      height: '40px',
-      ml: 2,
-    }),
     filter: (props) => ({
       bg: props.isSelected ? mode('ecru', 'ecru')(props) : mode('whiteBg', 'raisinBlack')(props),
       color: props.isSelected
@@ -102,7 +111,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     }),
   },
   defaultProps: {
-    size: 'md',
+    size: ['base', 'sm', 'md', 'lg'],
     variant: '_solid',
   },
 };

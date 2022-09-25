@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
-import { FilterButton } from '@ui/components/shared/Button';
+import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
@@ -55,7 +55,7 @@ const AssetConfiguration = ({
           {assets.map((asset, index) => {
             return (
               <Box mr={2} key={asset.cToken} mb={2}>
-                <FilterButton
+                <CButton
                   variant="filter"
                   isSelected={asset.cToken === selectedAsset.cToken}
                   onClick={() => {
@@ -68,7 +68,7 @@ const AssetConfiguration = ({
                   <Center px={1} fontWeight="bold">
                     {asset.underlyingSymbol}
                   </Center>
-                </FilterButton>
+                </CButton>
               </Box>
             );
           })}

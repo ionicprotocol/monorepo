@@ -20,10 +20,11 @@ const SwitchNetworkButton: React.FC = () => {
 
   return (
     <Button
-      variant={'topBar'}
+      variant="_solid"
       onClick={onOpen}
       tabIndex={0}
       ref={networkBtnElement as LegacyRef<HTMLButtonElement>}
+      ml="2"
     >
       <Center>
         {chainMetadata && (
