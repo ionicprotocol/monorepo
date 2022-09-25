@@ -38,7 +38,7 @@ export const CollateralRatioBar = ({
         </Tooltip>
 
         <Tooltip label={'This is how much you have borrowed.'}>
-          <Text flexShrink={0} mt="2px" mr={3} fontSize="10px">
+          <Text flexShrink={0} mt="2px" mr={3} fontSize={24}>
             {smallUsdFormatter(borrowFiat)}
           </Text>
         </Tooltip>
@@ -62,7 +62,7 @@ export const CollateralRatioBar = ({
         </Tooltip>
 
         <Tooltip label="If your borrow amount reaches this value, you will be liquidated.">
-          <Text flexShrink={0} mt="2px" ml={3} fontSize="10px">
+          <Text flexShrink={0} mt="2px" ml={3} fontSize={24}>
             {smallUsdFormatter(maxBorrow)}
           </Text>
         </Tooltip>

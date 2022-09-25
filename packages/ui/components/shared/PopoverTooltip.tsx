@@ -25,23 +25,25 @@ export const PopoverTooltip = ({
   header?: PopoverHeaderProps['children'];
   body?: PopoverBodyProps['children'];
   footer?: PopoverFooterProps['children'];
+  placement?: string;
 } & PopoverProps) => {
   const { cPage } = useColors();
+
   return (
     <Box>
       <style>
         {`
-            .chakra-popover__arrow {
-              border-top: none;
-              border-left: none;
-              border-right: 1px solid ${cPage.primary.borderColor};
-              border-bottom: 1px solid ${cPage.primary.borderColor};
-            }
-            .chakra-popover__popper a {
-              font-weight: bold;
-              color: ${cPage.primary.borderColor}
-            }
-        `}
+        .chakra-popover__arrow {
+          border-top: none;
+          border-left: none;
+          border-right: 1px solid ${cPage.primary.borderColor};
+          border-bottom: 1px solid ${cPage.primary.borderColor};
+        }
+        .chakra-popover__popper a {
+          font-weight: bold;
+          color: ${cPage.primary.borderColor}
+        }
+    `}
       </style>
       <Popover placement="top" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>

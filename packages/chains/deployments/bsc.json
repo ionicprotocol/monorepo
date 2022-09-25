@@ -18876,7 +18876,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x14b3074BfE2421417f52dF283119a3a81075dDDD",
+      "address": "0x11B5822F3EF4fAb8D094CF8a68E6cEcdc9BA181B",
       "abi": [
         {
           "inputs": [
@@ -46112,7 +46112,7 @@
       ]
     },
     "JarvisLiquidatorFunder": {
-      "address": "0x190D6BbC18c34c2aF19EEA1cd9Ad566E56DaE83C",
+      "address": "0xc70161B071FA3e201C4CFBB33D9A69f31bEbE2DD",
       "abi": [
         {
           "inputs": [

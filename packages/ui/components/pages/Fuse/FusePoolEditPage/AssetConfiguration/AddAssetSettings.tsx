@@ -23,7 +23,13 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { ADMIN_FEE, COLLATERAL_FACTOR, RESERVE_FACTOR } from '@ui/constants/index';
+import {
+  ADMIN_FEE,
+  ADMIN_FEE_TOOLTIP,
+  COLLATERAL_FACTOR,
+  COLLATERAL_FACTOR_TOOLTIP,
+  RESERVE_FACTOR,
+} from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -165,11 +171,7 @@ export const AddAssetSettings = ({
       <FormControl isInvalid={!!errors.collateralFactor}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="collateralFactor">
-            <SimpleTooltip
-              label={
-                'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.'
-              }
-            >
+            <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
               <Text fontWeight="bold">
                 Collateral Factor{' '}
                 <QuestionIcon
@@ -271,11 +273,7 @@ export const AddAssetSettings = ({
       <FormControl isInvalid={!!errors.adminFee}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="adminFee">
-            <SimpleTooltip
-              label={
-                "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee."
-              }
-            >
+            <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
               <Text fontWeight="bold">
                 Admin Fee{' '}
                 <QuestionIcon

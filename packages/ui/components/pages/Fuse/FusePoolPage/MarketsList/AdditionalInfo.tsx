@@ -9,6 +9,11 @@ import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
 import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/FundButton';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
+import {
+  ADMIN_FEE_TOOLTIP,
+  COLLATERAL_FACTOR_TOOLTIP,
+  RESERVE_FACTOR_TOOLTIP,
+} from '@ui/constants/index';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -175,7 +180,6 @@ export const AdditionalInfo = ({
               captionSize="xs"
               caption={'Asset Supplied'}
               crossAxisAlignment="center"
-              captionFirst={true}
             />
             <CaptionedStat
               stat={asset.isBorrowPaused ? '-' : shortUsdFormatter(asset.totalBorrowFiat)}
@@ -183,7 +187,6 @@ export const AdditionalInfo = ({
               captionSize="xs"
               caption={'Asset Borrowed'}
               crossAxisAlignment="center"
-              captionFirst={true}
             />
             <CaptionedStat
               stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
@@ -191,7 +194,6 @@ export const AdditionalInfo = ({
               captionSize="xs"
               caption={'Asset Utilization'}
               crossAxisAlignment="center"
-              captionFirst={true}
             />
           </Grid>
           <Grid
@@ -205,7 +207,7 @@ export const AdditionalInfo = ({
               captionSize="xs"
               caption={'Collateral Factor'}
               crossAxisAlignment="center"
-              captionFirst={true}
+              tooltip={COLLATERAL_FACTOR_TOOLTIP}
             />
 
             <CaptionedStat
@@ -214,7 +216,7 @@ export const AdditionalInfo = ({
               captionSize="xs"
               caption={'Reserve Factor'}
               crossAxisAlignment="center"
-              captionFirst={true}
+              tooltip={RESERVE_FACTOR_TOOLTIP}
             />
             <CaptionedStat
               stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
@@ -222,7 +224,7 @@ export const AdditionalInfo = ({
               captionSize="xs"
               caption={'Admin Fee'}
               crossAxisAlignment="center"
-              captionFirst={true}
+              tooltip={ADMIN_FEE_TOOLTIP}
             />
           </Grid>
         </Box>
