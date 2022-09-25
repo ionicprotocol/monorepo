@@ -61,6 +61,15 @@ export const TextStyleConfig: ComponentStyleConfig = {
         lg: 16,
       },
     }),
+    xsText: (props) => ({
+      color: mode('raisinBlack', 'whiteBg')(props),
+      fontSize: {
+        base: 12,
+        sm: 12,
+        md: 14,
+        lg: 14,
+      },
+    }),
     panelLgText: (props) => ({
       fontSize: {
         base: 18,
