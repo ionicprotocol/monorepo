@@ -3,7 +3,6 @@ import {
   AlertIcon,
   Box,
   Button,
-  Heading,
   Input,
   InputProps,
   Spinner,
@@ -292,10 +291,10 @@ const AmountSelect = ({
       {userAction === UserAction.WAITING_FOR_TRANSACTIONS ? (
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
           <Loader />
-          <Heading mt="30px" textAlign="center" size="md">
+          <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions
-          </Heading>
-          <Text fontSize="sm" mt="15px" textAlign="center">
+          </Text>
+          <Text variant="smText" mt="15px" textAlign="center">
             Do not close this tab until you submit all transactions!
           </Text>
         </Column>
@@ -312,9 +311,9 @@ const AmountSelect = ({
             <Box height="36px" width="36px">
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
-            <Heading id="symbol" fontSize="27px" ml={3}>
+            <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
               {tokenData?.symbol || asset.underlyingSymbol}
-            </Heading>
+            </Text>
           </Row>
 
           <ModalDivider />
@@ -340,15 +339,19 @@ const AmountSelect = ({
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
                 {mode === FundOperationMode.WITHDRAW ? (
                   <>
-                    <Text mr={2}>Available To Withdraw:</Text>
+                    <Text variant="smText" mr={2}>
+                      Available To Withdraw:
+                    </Text>
                     <Text>
                       {availableToWithdraw} {asset.underlyingSymbol}
                     </Text>
                   </>
                 ) : (
                   <>
-                    <Text mr={2}>Wallet Balance:</Text>
-                    <Text>
+                    <Text variant="smText" mr={2}>
+                      Wallet Balance:
+                    </Text>
+                    <Text variant="smText">
                       {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
                       {asset.underlyingSymbol}
                     </Text>
@@ -357,8 +360,10 @@ const AmountSelect = ({
               </Row>
               {optionToWrap ? (
                 <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                  <Text mr={2}>Native Token Balance:</Text>
-                  <Text>
+                  <Text variant="smText" mr={2}>
+                    Native Token Balance:
+                  </Text>
+                  <Text variant="smText">
                     {myNativeBalance
                       ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
                       : 0}{' '}
@@ -384,16 +389,20 @@ const AmountSelect = ({
                     >
                       <Alert status="info" pb={4}>
                         <AlertIcon />
-                        {`For safety reasons, you need to borrow at least a value of $${
-                          minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
-                        }${
-                          minBorrowAsset
-                            ? ` / ${toCeil(
-                                Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
-                                2
-                              )} ${asset.underlyingSymbol}`
-                            : ''
-                        } for now.`}
+                        <Text variant="smText">
+                          {`For safety reasons, you need to borrow at least a value of $${
+                            minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
+                          }${
+                            minBorrowAsset
+                              ? ` / ${toCeil(
+                                  Number(
+                                    utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
+                                  ),
+                                  2
+                                )} ${asset.underlyingSymbol}`
+                              : ''
+                          } for now.`}
+                        </Text>
                       </Alert>
                     </Row>
                   )}
@@ -434,7 +443,7 @@ const AmountSelect = ({
             </Column>
 
             {optionToWrap ? (
-              <Text margin="10px" textAlign="center">
+              <Text variant="smText" margin="10px" textAlign="center">
                 No {asset.underlyingSymbol} detected. Wrap your {nativeSymbol} to supply{' '}
                 {asset.underlyingSymbol} to the pool
               </Text>
@@ -451,7 +460,9 @@ const AmountSelect = ({
                 {showEnableAsCollateral ? (
                   <DashboardBox p={4} width="100%" mt={4}>
                     <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-                      <Text fontWeight="bold">Enable As Collateral:</Text>
+                      <Text variant="smText" fontWeight="bold">
+                        Enable As Collateral:
+                      </Text>
                       <SwitchCSS
                         symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                         color={cSwitch.bgColor}
@@ -474,7 +485,6 @@ const AmountSelect = ({
                 id="wrapFund"
                 mt={4}
                 width="100%"
-                height="70px"
                 className={
                   isMobile ||
                   depositOrWithdrawAlertFontSize === '14px' ||
@@ -492,7 +502,6 @@ const AmountSelect = ({
                 id="confirmFund"
                 mt={4}
                 width="100%"
-                height="70px"
                 className={
                   isMobile ||
                   depositOrWithdrawAlertFontSize === '14px' ||
@@ -613,7 +622,7 @@ const TabBar = ({
             }
           }}
         >
-          <TabList>
+          <TabList height={10}>
             {isSupplySide ? (
               <>
                 <AmountTab className="supplyTab" mr={2}>
@@ -713,7 +722,7 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
             width="100%"
             // color={color}
           >
-            <Text fontWeight="bold" flexShrink={0}>
+            <Text variant="smText" fontWeight="bold" flexShrink={0}>
               Supply Balance:
             </Text>
             <SimpleTooltip
@@ -724,7 +733,7 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
               <Text
                 fontWeight="bold"
                 flexShrink={0}
-                fontSize={isSupplyingOrWithdrawing ? 'sm' : 'lg'}
+                variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}
               >
                 {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
                 {isSupplyingOrWithdrawing ? (
@@ -739,10 +748,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" flexShrink={0}>
+            <Text fontWeight="bold" flexShrink={0} variant="smText">
               {isSupplyingOrWithdrawing ? 'Supply APY' : 'Borrow APR'}:
             </Text>
-            <Text fontWeight="bold" fontSize={updatedAPYDiffIsLarge ? 'sm' : 'lg'}>
+            <Text fontWeight="bold" variant={updatedAPYDiffIsLarge ? 'xsText' : 'mdText'}>
               {isSupplyingOrWithdrawing ? supplyAPY.toFixed(2) : borrowAPR.toFixed(2)}%
               {updatedAPYDiffIsLarge ? (
                 <>
@@ -757,10 +766,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" flexShrink={0}>
+            <Text fontWeight="bold" flexShrink={0} variant="smText">
               Borrow Limit:
             </Text>
-            <Text fontWeight="bold" fontSize={isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
+            <Text fontWeight="bold" variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}>
               {smallUsdFormatter(borrowLimit)}
               {isSupplyingOrWithdrawing ? (
                 <>
@@ -772,8 +781,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold">Debt Balance:</Text>
-            <Text fontWeight="bold" fontSize={!isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
+            <Text fontWeight="bold" variant="smText">
+              Debt Balance:
+            </Text>
+            <Text fontWeight="bold" variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}>
               {smallUsdFormatter(asset.borrowBalanceFiat)}
               {!isSupplyingOrWithdrawing ? (
                 <>
@@ -853,25 +864,33 @@ const TokenNameAndMaxButton = ({
     }
   };
 
-  const { cSolidBtn } = useColors();
-
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-        <Box height="32px" width="32px" mr={1}>
+        <Box height={8} width={8} mr={1}>
           <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
-        <Heading fontSize="18px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
+        <Text variant="mdText" fontWeight="bold" mr={2} flexShrink={0}>
           {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
-        </Heading>
+        </Text>
       </Row>
 
       {mode !== FundOperationMode.BORROW ? (
-        <Button height={8} onClick={setToMax} isLoading={isLoading} fontSize={14} p={2}>
+        <Button
+          height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+          px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+          onClick={setToMax}
+          isLoading={isLoading}
+        >
           MAX
         </Button>
       ) : (
-        <Button height={8} onClick={setToMin} isLoading={isLoading} fontSize={14} p={2}>
+        <Button
+          height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+          px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+          onClick={setToMin}
+          isLoading={isLoading}
+        >
           MIN
         </Button>
       )}

@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Flex, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
@@ -80,9 +80,9 @@ const FusePoolEditPage = memo(() => {
                   router.back();
                 }}
               />
-              <Heading textAlign="left" fontSize="xl" fontWeight="bold">
+              <Text textAlign="left" variant="title" fontWeight="bold">
                 Back
-              </Heading>
+              </Text>
             </HStack>
             {!!data && (
               <AdminAlert

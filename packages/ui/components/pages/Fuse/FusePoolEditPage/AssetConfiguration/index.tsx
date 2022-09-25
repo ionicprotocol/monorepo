@@ -1,4 +1,4 @@
-import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import { Box, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useEffect, useState } from 'react';
 
@@ -35,7 +35,9 @@ const AssetConfiguration = ({
       flexShrink={0}
     >
       <ConfigRow mainAxisAlignment="space-between">
-        <Heading size="sm">Assets Configuration</Heading>
+        <Text variant="mdText" fontWeight="bold">
+          Assets Configuration
+        </Text>
 
         <Box display={'flex'}>
           <AddAssetButton
@@ -48,7 +50,7 @@ const AssetConfiguration = ({
       <ModalDivider />
 
       <ConfigRow>
-        <Text fontWeight="bold" mr={4}>
+        <Text variant="smText" mr={4}>
           Assets:
         </Text>
         <Flex wrap="wrap">

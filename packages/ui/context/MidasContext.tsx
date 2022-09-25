@@ -16,7 +16,6 @@ import {
 } from 'react';
 import { Chain } from 'wagmi';
 
-import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
@@ -85,8 +84,6 @@ export const MidasProvider = ({
 
   const queryClient = useQueryClient();
 
-  const { cPage } = useColors();
-
   const mounted = useRef(false);
 
   const coingeckoId = midasSdk.chainSpecificParams.cgId;
@@ -127,14 +124,13 @@ export const MidasProvider = ({
             successToast({
               title: <>Complete!</>,
               description: (
-                <VStack alignItems="flex-start" mt={1}>
+                <VStack alignItems="flex-start" mt={1} spacing={0}>
                   <HStack>
-                    <Text>Your can check transaction </Text>
+                    <Text variant="panelSmText">Your can check transaction </Text>
                     <Button
                       href={`${scanUrl}/tx/${tx.hash}`}
                       rightIcon={<ExternalLinkIcon />}
-                      color={cPage.primary.bgColor}
-                      variant={'link'}
+                      variant="panelLink"
                       as={ChakraLink}
                       isExternal
                     >
@@ -142,7 +138,7 @@ export const MidasProvider = ({
                     </Button>
                   </HStack>
                   <HStack>
-                    <Text>Your data is being updated! Please wait...</Text>
+                    <Text variant="panelSmText">Your data is being updated! Please wait...</Text>
                   </HStack>
                 </VStack>
               ),
@@ -150,7 +146,7 @@ export const MidasProvider = ({
             await queryClient.refetchQueries();
             successToast({
               title: <>Complete!</>,
-              description: <Text>Data is fully updated!</Text>,
+              description: <Text variant="panelSmText">Data is fully updated!</Text>,
             });
           }
         }

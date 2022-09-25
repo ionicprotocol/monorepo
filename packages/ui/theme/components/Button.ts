@@ -4,6 +4,7 @@ import { mode } from '@chakra-ui/theme-tools';
 
 export const ButtonStyleConfig: ComponentStyleConfig = {
   baseStyle: {
+    ...theme.components.Button.baseStyle,
     fontWeight: 'bold',
     borderRadius: 'xl',
     fontFamily: 'heading',
@@ -97,6 +98,36 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       color: mode('raisinBlack', 'whiteBg')(props),
       _hover: {
         color: mode('ecru', 'ecru')(props),
+      },
+      p: {
+        lg: 0,
+        md: 0,
+        sm: 0,
+        base: 0,
+      },
+      height: {
+        lg: 6,
+        md: 6,
+        sm: 6,
+        base: 6,
+      },
+    }),
+    panelLink: (props) => ({
+      color: mode('raisinBlack', 'raisinBlack')(props),
+      _hover: {
+        color: mode('ecru', 'ecru')(props),
+      },
+      p: {
+        lg: 0,
+        md: 0,
+        sm: 0,
+        base: 0,
+      },
+      height: {
+        lg: 6,
+        md: 6,
+        sm: 6,
+        base: 6,
       },
     }),
     listed: (props) => ({
