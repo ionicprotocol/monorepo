@@ -322,8 +322,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             py={4}
             alignItems="center"
           >
-            <Text fontWeight="bold">
-              Borrowing Possibility{' '}
+            <HStack>
+              <Text variant="smText">Borrowing Possibility </Text>
               <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
                 <QuestionIcon
                   color={cCard.txtColor}
@@ -333,7 +333,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                   mb="4px"
                 />
               </SimpleTooltip>
-            </Text>
+            </HStack>
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
               <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
@@ -364,8 +364,10 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 alignItems="center"
               >
                 <FormLabel htmlFor="collateralFactor" margin={0}>
-                  <Text fontWeight="bold" width="max-content">
-                    Collateral Factor{' '}
+                  <HStack>
+                    <Text variant="smText" width="max-content">
+                      Collateral Factor{' '}
+                    </Text>
                     <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
@@ -375,7 +377,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         mb="4px"
                       />
                     </SimpleTooltip>
-                  </Text>
+                  </HStack>
                 </FormLabel>
                 <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -445,8 +447,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 alignItems="center"
               >
                 <FormLabel htmlFor="reserveFactor" margin={0}>
-                  <Text fontWeight="bold">
-                    Reserve Factor{' '}
+                  <HStack>
+                    <Text variant="smText">Reserve Factor </Text>
                     <SimpleTooltip
                       label={
                         "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
@@ -460,7 +462,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         mb="4px"
                       />
                     </SimpleTooltip>
-                  </Text>
+                  </HStack>
                 </FormLabel>
                 <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -526,8 +528,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 alignItems="center"
               >
                 <FormLabel htmlFor="adminFee" margin={0}>
-                  <Text fontWeight="bold">
-                    Admin Fee{' '}
+                  <HStack>
+                    <Text variant="smText">Admin Fee </Text>{' '}
                     <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
@@ -537,7 +539,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         mb="4px"
                       />
                     </SimpleTooltip>
-                  </Text>
+                  </HStack>
                 </FormLabel>
                 <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -592,7 +594,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
               <Box>
                 <HStack>
-                  <Text fontWeight="bold">Rewards Plugin </Text>
+                  <Text variant="smText">Rewards Plugin </Text>
                   <PopoverTooltip
                     body={
                       <>
@@ -645,8 +647,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                   alignItems="center"
                 >
                   <FormLabel htmlFor="interestRateModel" margin={0}>
-                    <Text fontWeight="bold">
-                      Interest Model{' '}
+                    <HStack>
+                      <Text variant="smText">Interest Model </Text>
                       <SimpleTooltip
                         label={
                           'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
@@ -660,7 +662,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                           mb="4px"
                         />
                       </SimpleTooltip>
-                    </Text>
+                    </HStack>
                   </FormLabel>
                   <Spacer />
                   <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="center">

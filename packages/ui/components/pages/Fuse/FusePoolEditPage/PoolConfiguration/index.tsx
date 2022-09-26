@@ -6,7 +6,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
   Input,
   InputGroup,
   InputLeftElement,
@@ -335,7 +334,7 @@ const PoolConfiguration = ({
   return (
     <Column height="100%">
       <ConfigRow>
-        <Heading size="sm">{`Pool ${poolId} Configuration`}</Heading>
+        <Text variant="mdText" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
       </ConfigRow>
       <ModalDivider />
       {data ? (
@@ -343,7 +342,7 @@ const PoolConfiguration = ({
           <Flex px={{ base: 4, md: 8 }} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <InputGroup width="100%">
               <InputLeftElement>
-                <Text fontWeight="bold">Pool Name:</Text>
+                <Text variant="smText">Pool Name:</Text>
               </InputLeftElement>
               <Input
                 value={inputPoolName}
@@ -376,7 +375,7 @@ const PoolConfiguration = ({
           </Flex>
           <ModalDivider />
           <ConfigRow>
-            <Text fontWeight="bold" mr={2}>
+            <Text variant="smText" mr={2}>
               Assets:
             </Text>
             {assets.length > 0 ? (
@@ -393,12 +392,12 @@ const PoolConfiguration = ({
                 </Text>
               </>
             ) : (
-              <Text>None</Text>
+              <Text variant="smText">None</Text>
             )}
           </ConfigRow>
           <ModalDivider />
           <ConfigRow>
-            <Text fontWeight="bold">Whitelist:</Text>
+            <Text variant="smText">Whitelist:</Text>
             <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
             <Switch
               ml="auto"
@@ -445,7 +444,7 @@ const PoolConfiguration = ({
 
           <ConfigRow>
             <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
-              <Text fontWeight="bold">Upgradeable:</Text>
+              <Text variant="smText">Upgradeable:</Text>
               {data.upgradeable ? (
                 <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
                   <Button height="35px" ml="auto" onClick={openTransferOwnershipModalOpen}>
@@ -461,7 +460,7 @@ const PoolConfiguration = ({
                   </Button>
                 </Flex>
               ) : (
-                <Text ml="auto" fontWeight="bold">
+                <Text ml="auto" variant="smText">
                   Admin Rights Disabled
                 </Text>
               )}
@@ -483,7 +482,7 @@ const PoolConfiguration = ({
                   alignItems="center"
                 >
                   <FormLabel htmlFor="closeFactor" margin={0}>
-                    <Text fontWeight="bold">Close Factor:</Text>
+                    <Text variant="smText">Close Factor:</Text>
                   </FormLabel>
                   <Spacer />
                   <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -547,7 +546,7 @@ const PoolConfiguration = ({
                   alignItems="center"
                 >
                   <FormLabel htmlFor="liquidationIncentive" margin={0}>
-                    <Text fontWeight="bold">Liquidation Incentive:</Text>
+                    <Text variant="smText">Liquidation Incentive:</Text>
                   </FormLabel>
                   <Spacer />
                   <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">

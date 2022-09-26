@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Heading, HStack, Skeleton } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Skeleton, Text } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -49,9 +49,9 @@ const FusePoolPage = memo(() => {
               }}
             />
             {data ? (
-              <Heading textAlign="left" fontSize="xl" fontWeight="bold">
+              <Text textAlign="left" variant="title" fontWeight="bold">
                 {data.name}
-              </Heading>
+              </Text>
             ) : (
               <Skeleton>Pool Name</Skeleton>
             )}

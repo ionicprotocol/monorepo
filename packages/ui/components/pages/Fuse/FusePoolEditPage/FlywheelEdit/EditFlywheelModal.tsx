@@ -26,7 +26,7 @@ import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { FilterButton } from '@ui/components/shared/Button';
+import { CButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -272,7 +272,7 @@ const EditFlywheelModal = ({
 
               <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
                 {pool.assets.map((asset, index) => (
-                  <FilterButton
+                  <CButton
                     key={index}
                     isSelected={asset.cToken === selectedMarket?.cToken}
                     variant="filter"
@@ -280,7 +280,7 @@ const EditFlywheelModal = ({
                     flex={1}
                   >
                     {asset.underlyingSymbol}
-                  </FilterButton>
+                  </CButton>
                 ))}
               </HStack>
 

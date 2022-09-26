@@ -125,7 +125,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
         <>
           {poolData?.assets.length !== 0 && (
             <Box width="100%">
-              <Text textAlign="left" fontSize={18} fontWeight="bold" mt={2} px={6}>
+              <Text textAlign="left" variant="smText" fontWeight="bold" mt={2} px={6}>
                 Added assets
               </Text>
             </Box>
@@ -149,7 +149,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
           {availableAssets.length !== 0 ? (
             <>
               <Box width="100%">
-                <Text textAlign="left" fontSize={18} fontWeight="bold" px={6} mt={4}>
+                <Text textAlign="left" variant="smText" fontWeight="bold" px={6} mt={4}>
                   Available supported assets
                 </Text>
               </Box>
@@ -185,19 +185,18 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                       key={index}
                       width="100%"
                       justifyContent="flex-start"
-                      height="60px"
-                      px={2}
                       onClick={() => setNameOrAddress(asset.underlying)}
                       disabled={addedAssets && addedAssets.includes(asset.underlying.toLowerCase())}
+                      height="max-content"
                     >
-                      <Flex direction="row" alignContent="center">
+                      <Flex direction="row" alignContent="center" py={2}>
                         <CTokenIcon address={asset.underlying} />
                         <Flex ml={6} direction="column">
-                          <Text fontSize={24} textAlign="left">
+                          <Text variant="lgText" textAlign="left">
                             {asset.symbol}
                           </Text>
                           <Spacer />
-                          <Text fontWeight="normal" textAlign="left" fontSize={16}>
+                          <Text fontWeight="normal" variant="smText" textAlign="left">
                             {asset.name}
                           </Text>
                         </Flex>
@@ -234,7 +233,11 @@ const AddAssetModal = ({
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Add Asset</ModalHeader>
+        <ModalHeader>
+          <Text variant="title" fontWeight="bold">
+            Add Asset
+          </Text>
+        </ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <AddAsset onSuccess={onClose} {...addAssetProps} />

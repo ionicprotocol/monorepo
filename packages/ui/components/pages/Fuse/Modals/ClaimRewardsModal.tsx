@@ -116,7 +116,9 @@ const ClaimRewardsModal = ({
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Claim Rewards</ModalHeader>
+        <ModalHeader>
+          <Text variant="title">Claim Rewards</Text>
+        </ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <VStack m={4}>

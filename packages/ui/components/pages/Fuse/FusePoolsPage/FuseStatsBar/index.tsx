@@ -3,7 +3,6 @@ import {
   Box,
   Flex,
   FlexProps,
-  Heading,
   HStack,
   Link,
   Popover,
@@ -61,10 +60,10 @@ const FuseStatsBar = () => {
         fontSize="sm"
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
-        <Heading fontSize="37px" lineHeight="40px" fontWeight="bold">
+        <Text variant="heading" fontWeight="bold">
           Unleash the power of your assets
-        </Heading>
-        <Text fontSize="18px" lineHeight="31px" my="19px" fontWeight="medium" zIndex="100">
+        </Text>
+        <Text variant="mdText" my={4} zIndex="100" lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
@@ -122,12 +121,14 @@ const FuseStatsBar = () => {
               <Spinner />
             ) : (
               <>
-                <Heading fontWeight="extrabold" fontSize={['36px', '48px']} lineHeight={['60px']}>
+                <Text variant="panelHeading" fontWeight="bold" lineHeight={['60px']}>
                   {smallUsdFormatter(totalTVL)}
-                </Heading>
+                </Text>
               </>
             )}
-            <Text whiteSpace="nowrap">Total value supplied across Midas</Text>
+            <Text whiteSpace="nowrap" variant="panelMdText">
+              Total value supplied across Midas
+            </Text>
           </MotionFlex>
         </PopoverTrigger>
         {tvlData && (

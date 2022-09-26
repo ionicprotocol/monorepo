@@ -19,8 +19,8 @@ const StatNumber = (props: StatNumberProps) => {
   const { cPage } = useColors();
   return (
     <ChakraStatNumber
-      fontSize={['3xl', '3xl', '2xl', '3xl']}
-      fontWeight="medium"
+      fontSize={['2xl', '2xl', '3xl', '3xl']}
+      fontWeight="bold"
       color={cPage.secondary.txtColor}
       {...props}
     />

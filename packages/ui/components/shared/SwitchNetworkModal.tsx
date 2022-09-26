@@ -1,6 +1,5 @@
 import {
   Grid,
-  Heading,
   Image,
   Modal,
   ModalBody,
@@ -14,7 +13,7 @@ import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 
-import { FilterButton } from '@ui/components/shared/Button';
+import { CButton } from '@ui/components/shared/Button';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { supportedChainIdToConfig } from '@ui/types/ChainMetaData';
 import { getChainConfig } from '@ui/utils/networkData';
@@ -30,27 +29,27 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select a Network</ModalHeader>
+        <ModalHeader>
+          <Text variant="title">Select a Network</Text>
+        </ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <ModalBody mt={4} mb={6}>
-          <Heading fontSize={'lg'} fontWeight={'medium'} lineHeight={'tall'}>
-            {chain ? (
-              <Text>
-                Currently using{' '}
-                <Text as="span" fontWeight={'extrabold'}>
-                  Midas
-                </Text>{' '}
-                on the{' '}
-                <Text as="span" fontWeight={'extrabold'}>
-                  {chain.name} {chain.unsupported && '(Unsupported)'}
-                </Text>{' '}
-                network.
-              </Text>
-            ) : (
-              <Text>Connect a wallet first</Text>
-            )}
-          </Heading>
+          {chain ? (
+            <Text variant="mdText">
+              Currently using{' '}
+              <Text as="span" variant="mdText" fontWeight={'extrabold'}>
+                Midas
+              </Text>{' '}
+              on the{' '}
+              <Text as="span" variant="mdText" fontWeight={'extrabold'}>
+                {chain.name} {chain.unsupported && '(Unsupported)'}
+              </Text>{' '}
+              network.
+            </Text>
+          ) : (
+            <Text variant="mdText">Connect a wallet first</Text>
+          )}
           <Grid
             templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
             gap={{ base: 4, sm: 6 }}
@@ -60,11 +59,10 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
               supportedChains.map(
                 (chainMetadata) =>
                   chainMetadata && (
-                    <FilterButton
+                    <CButton
                       isSelected={chain?.id === chainMetadata.chainId}
                       variant="filter"
                       key={chainMetadata.chainId}
-                      h={'12'}
                       justifyContent={'flex-start'}
                       disabled={!supportedChainIdToConfig[chainMetadata.chainId].enabled}
                       onClick={() => {
@@ -82,15 +80,15 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                       }}
                     >
                       <Image
-                        h={'8'}
-                        mr={'4'}
+                        h={'6'}
+                        mr={'2'}
                         borderRadius={'50%'}
                         src={chainMetadata.specificParams.metadata.img}
                         alt=""
-                      ></Image>
+                      />
                       {chainMetadata.specificParams.metadata.name}
                       {supportedChainIdToConfig[chainMetadata.chainId].enabled ? '' : ' (Soon)'}
-                    </FilterButton>
+                    </CButton>
                   )
               )}
           </Grid>

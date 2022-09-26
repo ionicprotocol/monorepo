@@ -37,7 +37,7 @@ export const AdditionalInfo = ({
   const assets: MarketData[] = rows.map((row) => row.original.market);
 
   const { data } = useChartData(asset.cToken);
-  const { cChart, cPage } = useColors();
+  const { cChart } = useColors();
   const assetUtilization = useMemo(
     () => parseFloat(asset.utilization.toFixed(0)),
     [asset.utilization]
@@ -95,13 +95,13 @@ export const AdditionalInfo = ({
           {data ? (
             asset.isBorrowPaused ? (
               <Center height="100%">
-                <Text fontSize={18} color={cPage.primary.txtColor}>
-                  This asset is not borrowable.
-                </Text>
+                <Text variant="smText">This asset is not borrowable.</Text>
               </Center>
             ) : data.supplierRates === null ? (
               <Center height="100%">
-                <Text>No graph is available for this asset(&apos)s interest curves.</Text>
+                <Text variant="smText">
+                  No graph is available for this asset(&apos)s interest curves.
+                </Text>
               </Center>
             ) : (
               <Chart
@@ -176,22 +176,16 @@ export const AdditionalInfo = ({
           >
             <CaptionedStat
               stat={shortUsdFormatter(asset.totalSupplyFiat)}
-              statSize="lg"
-              captionSize="xs"
               caption={'Asset Supplied'}
               crossAxisAlignment="center"
             />
             <CaptionedStat
               stat={asset.isBorrowPaused ? '-' : shortUsdFormatter(asset.totalBorrowFiat)}
-              statSize="lg"
-              captionSize="xs"
               caption={'Asset Borrowed'}
               crossAxisAlignment="center"
             />
             <CaptionedStat
               stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
-              statSize="lg"
-              captionSize="xs"
               caption={'Asset Utilization'}
               crossAxisAlignment="center"
             />
@@ -203,8 +197,6 @@ export const AdditionalInfo = ({
           >
             <CaptionedStat
               stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
-              statSize="lg"
-              captionSize="xs"
               caption={'Collateral Factor'}
               crossAxisAlignment="center"
               tooltip={COLLATERAL_FACTOR_TOOLTIP}
@@ -212,16 +204,12 @@ export const AdditionalInfo = ({
 
             <CaptionedStat
               stat={Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0) + '%'}
-              statSize="lg"
-              captionSize="xs"
               caption={'Reserve Factor'}
               crossAxisAlignment="center"
               tooltip={RESERVE_FACTOR_TOOLTIP}
             />
             <CaptionedStat
               stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
-              statSize="lg"
-              captionSize="xs"
               caption={'Admin Fee'}
               crossAxisAlignment="center"
               tooltip={ADMIN_FEE_TOOLTIP}
