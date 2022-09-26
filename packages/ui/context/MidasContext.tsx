@@ -147,6 +147,7 @@ export const MidasProvider = ({
             });
             await queryClient.refetchQueries();
             successToast({
+              id: 'toast-success',
               title: <>Complete!</>,
               description: <Text variant="panelSmText">Data is fully updated!</Text>,
             });

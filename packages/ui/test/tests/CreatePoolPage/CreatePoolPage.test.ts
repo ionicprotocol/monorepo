@@ -2,6 +2,7 @@ import { Dappeteer } from '@chainsafe/dappeteer';
 import dotenv from 'dotenv';
 import { Browser, Page } from 'puppeteer';
 
+import { JEST_EXE_TIME } from '@ui/test/constants';
 import { TestHelper } from '@ui/test/helpers/TestHelper';
 import { CreatePoolPage } from '@ui/test/pages/pools/CreatePoolPage';
 
@@ -21,7 +22,7 @@ const liquidationIncentive = '8';
 const baseUrl = 'http://localhost:3000/56/create-pool';
 
 // jest.retryTimes(1);
-jest.setTimeout(600000);
+jest.setTimeout(JEST_EXE_TIME);
 
 describe.skip('Create Pool:', () => {
   beforeAll(async () => {
