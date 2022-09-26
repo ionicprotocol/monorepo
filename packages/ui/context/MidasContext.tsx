@@ -132,6 +132,8 @@ export const MidasProvider = ({
                       rightIcon={<ExternalLinkIcon />}
                       variant="panelLink"
                       as={ChakraLink}
+                      p={0}
+                      height={3}
                       isExternal
                     >
                       here
