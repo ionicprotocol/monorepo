@@ -534,14 +534,14 @@ export const MarketsList = ({
               >
                 {isRewardsFiltered ? (
                   <GlowingBox height="100%" width="100%">
-                    <Center width="100%" height="100%" borderRadius="xl">
+                    <Center width="100%" height="100%" borderRadius="xl" pt="2px">
                       {`${
                         (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                       } Rewards`}
                     </Center>
                   </GlowingBox>
                 ) : (
-                  <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl">
+                  <Center width="100%" height="100%" fontWeight="bold" borderRadius="xl" pt="2px">
                     {`${
                       (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                     } Rewards`}
@@ -567,7 +567,7 @@ export const MarketsList = ({
                 width="140px"
                 disabled={collateralCounts === 0}
               >
-                <Center fontWeight="bold">{`${collateralCounts} Collateral`}</Center>
+                <Center fontWeight="bold" pt="2px">{`${collateralCounts} Collateral`}</Center>
               </Button>
             </PopoverTooltip>
 
@@ -589,7 +589,7 @@ export const MarketsList = ({
                 width="140px"
                 disabled={protectedCounts === 0}
               >
-                <Center fontWeight="bold">{`${protectedCounts} Protected`}</Center>
+                <Center fontWeight="bold" pt="2px">{`${protectedCounts} Protected`}</Center>
               </Button>
             </PopoverTooltip>
             <PopoverTooltip
@@ -609,6 +609,7 @@ export const MarketsList = ({
                 onClick={onBorrowableFiltered}
                 width="140px"
                 disabled={borrowableCounts === 0}
+                pt="2px"
               >
                 <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
               </Button>
