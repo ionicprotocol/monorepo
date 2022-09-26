@@ -11,12 +11,14 @@ export const FundButton = ({
   asset,
   mode,
   isDisabled,
+  supplyBalanceFiat,
 }: {
   comptrollerAddress: string;
   assets: MarketData[];
   asset: MarketData;
   mode: FundOperationMode;
   isDisabled?: boolean;
+  supplyBalanceFiat?: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
 
@@ -39,6 +41,7 @@ export const FundButton = ({
         asset={asset}
         isOpen={isModalOpen}
         onClose={closeModal}
+        supplyBalanceFiat={supplyBalanceFiat}
       />
     </Box>
   );

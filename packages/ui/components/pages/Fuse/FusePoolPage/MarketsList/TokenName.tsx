@@ -75,11 +75,19 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             </SimpleTooltip>
           )}
           {asset.isBorrowPaused ? (
-            <SimpleTooltip label="This asset cannot be borrowed">
-              <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
-                Protected
-              </Badge>
-            </SimpleTooltip>
+            asset.isSupplyPaused ? (
+              <SimpleTooltip label="This asset cannot be supplied and borrowed">
+                <Badge variant="outline" colorScheme="gray" textTransform="capitalize">
+                  Deprecated
+                </Badge>
+              </SimpleTooltip>
+            ) : (
+              <SimpleTooltip label="This asset cannot be borrowed">
+                <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
+                  Protected
+                </Badge>
+              </SimpleTooltip>
+            )
           ) : (
             <SimpleTooltip label="This asset can be borrowed">
               <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
