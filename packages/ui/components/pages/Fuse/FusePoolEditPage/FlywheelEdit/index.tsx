@@ -170,7 +170,11 @@ const FlywheelRow = ({
   const { cCard } = useColors();
 
   return (
-    <Tr _hover={{ background: 'grey', cursor: 'pointer' }} p={4} onClick={() => onClick(flywheel)}>
+    <Tr
+      _hover={{ background: cCard.hoverBgColor, cursor: 'pointer' }}
+      p={4}
+      onClick={() => onClick(flywheel)}
+    >
       <Td>
         <ClipboardValue label={shortAddress(flywheel.address)} value={flywheel.address} />
       </Td>

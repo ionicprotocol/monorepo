@@ -20,7 +20,7 @@ export const BorrowApy = ({ asset }: { asset: MarketData }) => {
 
   return (
     <VStack alignItems={'flex-end'}>
-      <Text color={borrowApyColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+      <Text color={borrowApyColor} fontWeight="bold" variant="smText">
         {borrowAPR.toFixed(3)}%
       </Text>
     </VStack>

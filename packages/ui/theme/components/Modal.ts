@@ -2,7 +2,7 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { mode } from '@chakra-ui/theme-tools';
 
 export const ModalStyleConfig: ComponentStyleConfig = {
-  parts: ['dialog', 'header'],
+  parts: ['dialog', 'header', 'body', 'closeButton'],
   baseStyle: (props) => ({
     dialog: {
       borderRadius: 'xl',
@@ -11,8 +11,18 @@ export const ModalStyleConfig: ComponentStyleConfig = {
       borderColor: mode('ecru', 'ecru')(props),
     },
     header: {
-      fontSize: '2xl',
+      fontSize: {
+        base: 18,
+        sm: 20,
+        md: 22,
+        lg: 24,
+      },
       textAlign: 'left',
+    },
+    body: {},
+    closeButton: {
+      boxShadow: 'none',
+      outline: 'none',
     },
   }),
   sizes: {},

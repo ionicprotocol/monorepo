@@ -105,9 +105,7 @@ export interface TokensDataHash {
 export interface CaptionedStatProps {
   crossAxisAlignment: CrossAxisAlignment;
   stat: string;
-  statSize: string;
   caption: string;
-  captionSize: string;
   spacing?: string | number;
   captionFirst?: boolean;
   captionColor?: string;

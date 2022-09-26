@@ -1,14 +1,4 @@
-import {
-  Button,
-  Heading,
-  Link,
-  Skeleton,
-  Table,
-  Tbody,
-  Td,
-  Tr,
-  useClipboard,
-} from '@chakra-ui/react';
+import { Button, Link, Skeleton, Table, Tbody, Td, Text, Tr, useClipboard } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
@@ -78,7 +68,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
           height="60px"
           flexShrink={0}
         >
-          <Heading size="sm">{`Pool Details`}</Heading>
+          <Text variant="mdText" fontWeight="bold">{`Pool Details`}</Text>
 
           {data?.isPowerfulAdmin ? (
             <RouterLink href={`/${currentChain.id}/pool/${poolId}/edit`} passHref>

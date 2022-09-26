@@ -101,7 +101,7 @@ export const FuseDashNav = () => {
           <Box display="flex" mt={2}>
             <InputGroup mr={3} width="auto" display={{ base: 'none', lg: 'flex' }}>
               <InputLeftElement>
-                <Text>Sort By</Text>
+                <Text variant="smText">Sort By</Text>
               </InputLeftElement>
               <Select
                 ml={'4.5rem'}

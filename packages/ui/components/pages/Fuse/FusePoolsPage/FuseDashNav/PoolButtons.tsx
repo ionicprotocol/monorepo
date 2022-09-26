@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { Dispatch } from 'react';
 import { MdViewList, MdViewModule } from 'react-icons/md';
 
-import { FilterButton, FilterIconButton } from '@ui/components/shared/Button';
+import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { useMidas } from '@ui/context/MidasContext';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
@@ -38,14 +38,14 @@ export const PoolButtons = ({
             justifyContent="center"
             mt={2}
           >
-            <FilterIconButton
+            <CIconButton
               aria-label="List View"
               variant="filter"
               isSelected={viewMode === 'list'}
               onClick={() => setViewMode('list')}
               icon={<Icon as={MdViewList} w={8} h={8} />}
             />
-            <FilterIconButton
+            <CIconButton
               aria-label="List View"
               variant="filter"
               isSelected={viewMode === 'card'}
@@ -62,34 +62,34 @@ export const PoolButtons = ({
             mt={2}
             hidden
           >
-            <FilterButton
+            <CButton
               isSelected={isAllPoolSelected}
               onClick={() => setSearchText('')}
               variant="filter"
             >
               All Pools
-            </FilterButton>
-            <FilterButton
+            </CButton>
+            <CButton
               isSelected={isCreatedPoolSelected}
               onClick={() => setSearchText('created-pools')}
               variant="filter"
             >
               Created Pools
-            </FilterButton>
-            <FilterButton
+            </CButton>
+            <CButton
               isSelected={isVerifiedPoolSelected}
               onClick={() => setSearchText('verified-pools')}
               variant="filter"
             >
               Verified Pools
-            </FilterButton>
-            <FilterButton
+            </CButton>
+            <CButton
               isSelected={isUnverifiedPoolSelected}
               onClick={() => setSearchText('unverified-pools')}
               variant="filter"
             >
               Unverified Pools
-            </FilterButton>
+            </CButton>
           </ButtonGroup>
         </>
       )}
@@ -101,34 +101,34 @@ export const PoolButtons = ({
           mr={2}
           hidden
         >
-          <FilterButton
+          <CButton
             isSelected={isAllPoolSelected}
             onClick={() => setSearchText('')}
             variant="filter"
           >
             All Pools
-          </FilterButton>
-          <FilterButton
+          </CButton>
+          <CButton
             isSelected={isCreatedPoolSelected}
             onClick={() => setSearchText('created-pools')}
             variant="filter"
           >
             Created Pools
-          </FilterButton>
-          <FilterButton
+          </CButton>
+          <CButton
             isSelected={isVerifiedPoolSelected}
             onClick={() => setSearchText('verified-pools')}
             variant="filter"
           >
             Verified Pools
-          </FilterButton>
-          <FilterButton
+          </CButton>
+          <CButton
             isSelected={isUnverifiedPoolSelected}
             onClick={() => setSearchText('unverified-pools')}
             variant="filter"
           >
             Unverified Pools
-          </FilterButton>
+          </CButton>
         </Grid>
       )}
       <Button

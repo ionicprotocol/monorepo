@@ -21,7 +21,7 @@ export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
   return (
     <VStack alignItems="flex-end">
       <SimpleTooltip label={`$${longFormat(asset.supplyBalanceFiat)}`}>
-        <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+        <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
           {smallUsdFormatter(asset.supplyBalanceFiat)}
           {asset.supplyBalanceFiat > DOWN_LIMIT && asset.supplyBalanceFiat < UP_LIMIT && '+'}
         </Text>
@@ -31,7 +31,7 @@ export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
           tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol
         }`}
       >
-        <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
+        <Text color={cCard.txtColor} mt={1} variant="xsText">
           {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}
           {supplyBalance > DOWN_LIMIT && supplyBalance < UP_LIMIT && '+'}{' '}
           {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}

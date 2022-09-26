@@ -20,7 +20,7 @@ export const BorrowBalance = ({ asset }: { asset: MarketData }) => {
   return (
     <VStack alignItems={'flex-end'}>
       <SimpleTooltip label={`$${longFormat(asset.borrowBalanceFiat)}`}>
-        <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+        <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
           {smallUsdFormatter(asset.borrowBalanceFiat)}
           {asset.borrowBalanceFiat > DOWN_LIMIT && asset.borrowBalanceFiat < UP_LIMIT && '+'}
         </Text>
@@ -28,7 +28,7 @@ export const BorrowBalance = ({ asset }: { asset: MarketData }) => {
       <SimpleTooltip
         label={`${longFormat(borrowBalance)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
       >
-        <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
+        <Text color={cCard.txtColor} mt={1} variant="xsText">
           {smallUsdFormatter(borrowBalance).replace('$', '')}
           {borrowBalance > DOWN_LIMIT && borrowBalance < UP_LIMIT && '+'}{' '}
           {tokenData?.symbol ?? asset.underlyingSymbol}
