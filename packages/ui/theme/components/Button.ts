@@ -3,6 +3,7 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { mode } from '@chakra-ui/theme-tools';
 
 export const ButtonStyleConfig: ComponentStyleConfig = {
+  ...theme.components.Button,
   baseStyle: {
     ...theme.components.Button.baseStyle,
     fontWeight: 'bold',
@@ -12,45 +13,17 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     alignItems: 'center',
     justifyContent: 'center',
   },
-  sizes: {
-    base: {
-      height: 8,
-      minWidth: 8,
-      fontSize: 14,
-      px: 2,
-      py: 2,
-    },
-    sm: {
-      height: 8,
-      minWidth: 8,
-      fontSize: 14,
-      px: 2,
-      py: 2,
-    },
-    md: {
-      height: 10,
-      minWidth: 10,
-      fontSize: 16,
-      px: 3,
-      py: 3,
-    },
-    lg: {
-      height: 10,
-      minWidth: 10,
-      fontSize: 16,
-      px: 3,
-      py: 3,
-    },
-  },
   variants: {
     ...theme.components.Button.variants,
     _ghost: {
+      ...theme.components.Button.variants?.ghost,
       _hover: {
         bg: 'ecru80',
         color: 'raisinBlack',
       },
     },
     _solid: (props) => ({
+      ...theme.components.Button.variants?.solid,
       bg: mode('ecru', 'ecru')(props),
       color: mode('raisinBlack', 'raisinBlack')(props),
       _hover: {
@@ -60,6 +33,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       _active: { opacity: 0.8 },
     }),
     silver: (props) => ({
+      ...theme.components.Button.variants?.solid,
       bg: mode('silverMetallic', 'silverMetallic')(props),
       color: mode('raisinBlack', 'raisinBlack')(props),
       _hover: {
@@ -70,6 +44,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     }),
 
     _outline: (props) => ({
+      ...theme.components.Button.variants?.outline,
       bg: mode('whiteBg', 'raisinBlack')(props),
       color: mode('raisinBlack', 'ecru')(props),
       borderWidth: 2,
@@ -80,6 +55,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       },
     }),
     filter: (props) => ({
+      ...theme.components.Button.variants?.solid,
       bg: props.isSelected ? mode('ecru', 'ecru')(props) : mode('whiteBg', 'raisinBlack')(props),
       color: props.isSelected
         ? mode('raisinBlack', 'raisinBlack')(props)
@@ -94,43 +70,22 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
         borderColor: mode('ecru', 'ecru')(props),
       },
     }),
-    link: (props) => ({
+    _link: (props) => ({
+      ...theme.components.Button.variants?.link,
       color: mode('raisinBlack', 'whiteBg')(props),
       _hover: {
         color: mode('ecru', 'ecru')(props),
       },
-      p: {
-        lg: 0,
-        md: 0,
-        sm: 0,
-        base: 0,
-      },
-      height: {
-        lg: 6,
-        md: 6,
-        sm: 6,
-        base: 6,
-      },
     }),
     panelLink: (props) => ({
+      ...theme.components.Button.variants?.link,
       color: mode('raisinBlack', 'raisinBlack')(props),
       _hover: {
         color: mode('ecru', 'ecru')(props),
       },
-      p: {
-        lg: 0,
-        md: 0,
-        sm: 0,
-        base: 0,
-      },
-      height: {
-        lg: 6,
-        md: 6,
-        sm: 6,
-        base: 6,
-      },
     }),
     listed: (props) => ({
+      ...theme.components.Button.variants?.solid,
       color: mode('raisinBlack', 'whiteBg')(props),
       bg: mode('whiteBg', 'raisinBlack')(props),
       _hover: {
@@ -142,7 +97,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     }),
   },
   defaultProps: {
-    size: ['base', 'sm', 'md', 'lg'],
+    ...theme.components.Button.defaultProps,
     variant: '_solid',
   },
 };

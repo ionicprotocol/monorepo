@@ -185,11 +185,11 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                       key={index}
                       width="100%"
                       justifyContent="flex-start"
-                      height={{ lg: 16, md: 16, sm: 14, base: 14 }}
                       onClick={() => setNameOrAddress(asset.underlying)}
                       disabled={addedAssets && addedAssets.includes(asset.underlying.toLowerCase())}
+                      height="max-content"
                     >
-                      <Flex direction="row" alignContent="center">
+                      <Flex direction="row" alignContent="center" py={2}>
                         <CTokenIcon address={asset.underlying} />
                         <Flex ml={6} direction="column">
                           <Text variant="lgText" textAlign="left">

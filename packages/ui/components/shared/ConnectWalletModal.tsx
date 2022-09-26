@@ -54,7 +54,7 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
               <Button
                 id={connector.name}
                 variant="_ghost"
-                height="100%"
+                height={40}
                 key={connector.id}
                 disabled={!connector.ready}
                 onClick={() => {

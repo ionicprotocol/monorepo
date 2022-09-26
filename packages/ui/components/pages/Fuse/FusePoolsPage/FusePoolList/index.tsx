@@ -198,9 +198,7 @@ const FusePoolList = () => {
                             }
                             key={`pagination_page_${page}`}
                             page={page}
-                            fontSize="lg"
                             width={10}
-                            pt={4}
                           />
                         ))}
                       </PaginationPageGroup>
@@ -325,7 +323,6 @@ const FusePoolList = () => {
                                   page={page}
                                   fontSize="lg"
                                   width={10}
-                                  pt={4}
                                 />
                               ))}
                             </PaginationPageGroup>

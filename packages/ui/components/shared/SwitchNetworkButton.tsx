@@ -24,7 +24,8 @@ const SwitchNetworkButton: React.FC = () => {
       onClick={onOpen}
       tabIndex={0}
       ref={networkBtnElement as LegacyRef<HTMLButtonElement>}
-      ml="2"
+      ml={2}
+      px={2}
     >
       <Center>
         {chainMetadata && (

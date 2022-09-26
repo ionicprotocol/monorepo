@@ -20,7 +20,8 @@ const ConnectWalletButton: React.FC = () => {
       variant="_solid"
       onClick={onOpen}
       ref={accountBtnElement as LegacyRef<HTMLButtonElement>}
-      ml="2"
+      ml={2}
+      px={2}
     >
       <Center>
         {pendingTxHashes.length === 0 ? (
