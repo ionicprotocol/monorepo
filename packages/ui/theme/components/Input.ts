@@ -16,6 +16,7 @@ export const InputConfigStyle: ComponentStyleConfig = {
       },
       _focusVisible: {
         boxShadow: 'none',
+        outline: 'none',
       },
     },
   },
