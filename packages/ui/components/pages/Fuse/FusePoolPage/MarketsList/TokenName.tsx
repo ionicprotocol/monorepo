@@ -31,7 +31,20 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
 
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-      <CTokenIcon size="md" address={asset.underlyingToken} />
+      <PopoverTooltip
+        placement="top-start"
+        body={
+          <div
+            dangerouslySetInnerHTML={{
+              __html: asset.extraDocs || asset.underlyingSymbol,
+            }}
+          />
+        }
+      >
+        <div>
+          <CTokenIcon size="md" address={asset.underlyingToken} withTooltip={false} />
+        </div>
+      </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>
           <PopoverTooltip
@@ -99,13 +112,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
       </VStack>
 
       <HStack ml={2}>
-        {asset.underlyingSymbol &&
-          tokenData?.symbol &&
-          asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() && (
-            <PopoverTooltip body={asset.underlyingSymbol}>
-              <QuestionIcon />
-            </PopoverTooltip>
-          )}
         <PopoverTooltip placement="top-start" body={`${scanUrl}/address/${asset.underlyingToken}`}>
           <Button
             minWidth={6}
@@ -121,49 +127,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
           </Button>
         </PopoverTooltip>
-
-        {asset.plugin && (
-          <PopoverTooltip
-            placement="top-start"
-            body={
-              <Text lineHeight="base">
-                This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
-                <br />
-                {pluginInfo?.apyDocsUrl ? (
-                  <ChakraLink
-                    href={pluginInfo.apyDocsUrl}
-                    isExternal
-                    variant={'color'}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    Vault details
-                  </ChakraLink>
-                ) : (
-                  <>
-                    Read more about it{' '}
-                    <ChakraLink
-                      href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
-                      isExternal
-                      variant={'color'}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      in our Docs <ExternalLinkIcon mx="2px" />
-                    </ChakraLink>
-                  </>
-                )}
-                .
-              </Text>
-            }
-          >
-            <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
-              🔌
-            </span>
-          </PopoverTooltip>
-        )}
       </HStack>
     </Row>
   );
