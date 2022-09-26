@@ -534,8 +534,8 @@ export const MarketsList = ({
           <Grid
             templateColumns={{
               base: 'repeat(1, 1fr)',
-              sm: 'repeat(3, 1fr)',
-              md: 'repeat(3, 1fr)',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(2, 1fr)',
               lg: 'repeat(5, 1fr)',
             }}
             gap={2}
@@ -639,27 +639,28 @@ export const MarketsList = ({
                 <Center fontWeight="bold" pt="2px">{`${protectedCounts} Protected`}</Center>
               </Button>
             </PopoverTooltip>
-            <PopoverTooltip
-              body={
-                <VStack alignItems="flex-start">
-                  <Text fontSize={18} fontWeight="bold">
-                    Deprecated Asset
-                  </Text>
-                  <Text>Assets cannot be supplied and borrowed.</Text>
-                  <Text>Click to filter</Text>
-                </VStack>
-              }
-            >
-              <Button
-                variant={isDeprecatedFiltered ? 'outline' : 'ghost'}
-                colorScheme="grey"
-                onClick={onDeprecatedFiltered}
-                width="140px"
-                disabled={deprecatedCounts === 0}
+            {deprecatedCounts !== 0 && (
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start">
+                    <Text fontSize={18} fontWeight="bold">
+                      Deprecated Asset
+                    </Text>
+                    <Text>Assets cannot be supplied and borrowed.</Text>
+                    <Text>Click to filter</Text>
+                  </VStack>
+                }
               >
-                <Center fontWeight="bold" pt="2px">{`${deprecatedCounts} Deprecated`}</Center>
-              </Button>
-            </PopoverTooltip>
+                <Button
+                  variant={isDeprecatedFiltered ? 'outline' : 'ghost'}
+                  colorScheme="grey"
+                  onClick={onDeprecatedFiltered}
+                  width="140px"
+                >
+                  <Center fontWeight="bold" pt="2px">{`${deprecatedCounts} Deprecated`}</Center>
+                </Button>
+              </PopoverTooltip>
+            )}
           </Grid>
         </Flex>
         <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
