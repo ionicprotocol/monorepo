@@ -67,9 +67,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
                 this.chainDeployment["CErc20PluginDelegate"].address,
               ].includes(implementation)
             ) {
-              const plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
-                .callStatic.plugin()
-                .catch(() => undefined);
+              const plugin = await ctoken.callStatic.plugin().catch(() => undefined);
               if (!plugin) return;
               asset.plugin = plugin;
             }
