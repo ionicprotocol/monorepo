@@ -2,8 +2,8 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { CToken } from "../lib/contracts/typechain/CToken";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { CToken } from "../../lib/contracts/typechain/CToken";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("comptroller", "Comptroller Address", undefined, types.string)
@@ -40,22 +40,22 @@ task("market:mint-pause", "Pauses minting on a market")
       admin
     )) as Comptroller;
 
-    const currentPauseGuardian = await pool.pauseGuardian();
-    if (currentPauseGuardian === constants.AddressZero) {
-      tx = await pool._setPauseGuardian(admin.address);
-      await tx.wait();
-      console.log(`Set the pause guardian to ${admin.address}`);
-    }
+    // const currentPauseGuardian = await pool.pauseGuardian();
+    // if (currentPauseGuardian === constants.AddressZero) {
+    //   tx = await pool._setPauseGuardian(admin.address);
+    //   await tx.wait();
+    //   console.log(`Set the pause guardian to ${admin.address}`);
+    // }
 
-    const isPaused: boolean = await pool.mintGuardianPaused(market.address);
-    if (isPaused != taskArgs.paused) {
-      tx = await pool._setMintPaused(market.address, taskArgs.paused);
-      await tx.wait();
+    // const isPaused: boolean = await pool.mintGuardianPaused(market.address);
+    // if (isPaused != taskArgs.paused) {
+    //   tx = await pool._setMintPaused(market.address, taskArgs.paused);
+    //   await tx.wait();
 
-      console.log(`Market mint pause tx ${tx.hash}`);
-    } else {
-      console.log(`No need to set the minting pause to ${taskArgs.paused} as it is already set to that value`);
-    }
+    //   console.log(`Market mint pause tx ${tx.hash}`);
+    // } else {
+    //   console.log(`No need to set the minting pause to ${taskArgs.paused} as it is already set to that value`);
+    // }
 
     const isPausedAfter: boolean = await pool.mintGuardianPaused(market.address);
 

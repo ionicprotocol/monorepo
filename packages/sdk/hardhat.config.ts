@@ -23,7 +23,6 @@ import "./tasks/fluxFeed";
 import "./tasks/flywheel";
 import "./tasks/getPoolData";
 import "./tasks/liquidation";
-import "./tasks/pauseMarketMinting";
 import "./tasks/sendTestTokens";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
