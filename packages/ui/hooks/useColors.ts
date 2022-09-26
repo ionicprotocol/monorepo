@@ -50,7 +50,7 @@ export function useColors() {
     txtColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.white),
     dividerColor: cPage.primary.dividerColor,
     borderColor: cPage.primary.borderColor,
-    hoverBgColor: useColorModeValue(COLOR_PALETTE.silverMetallic30, COLOR_PALETTE.ecru30),
+    hoverBgColor: useColorModeValue(COLOR_PALETTE.silverMetallic30, COLOR_PALETTE.ecru10),
   };
 
   const cSwitch = {

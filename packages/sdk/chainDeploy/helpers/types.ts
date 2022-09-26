@@ -138,11 +138,6 @@ export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
-export type Erc4626PluginDeployFnParams = ChainDeployFnParams & {
-  deployConfig: ChainDeployConfig;
-  dynamicFlywheels: Array<string>;
-};
-
 export type aBNBcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
 };
@@ -150,11 +145,4 @@ export type aBNBcDeployParams = ChainDeployFnParams & {
 export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gelatoAssets: GelatoGUniAsset[];
-};
-
-export type UniswapOracleV2ResolverPairParams = {
-  pair: string;
-  baseToken: string;
-  minPeriod: number;
-  deviationThreshold: string;
 };

@@ -17,6 +17,8 @@ describe("FusePools", () => {
   let mockFusePoolDirectoryContract: SinonStubbedInstance<Contract>;
   let mockComptrollerContract: SinonStubbedInstance<Contract>;
   let mockGetAssetContract: SinonStubbedInstance<Contract>;
+  const CErc20PluginDelegateAddress = mkAddress("0xCErc20PluginDelegate");
+  const PluginAddress = mkAddress("0xPlugin");
 
   const poolSummaryRawData = [BigNumber.from(1), BigNumber.from(1), [], [], true];
   const poolSummaryStruct = [
@@ -52,7 +54,7 @@ describe("FusePools", () => {
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
       CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
-      CErc20PluginDelegate: { abi: [], address: mkAddress("0xabc") },
+      CErc20PluginDelegate: { abi: [], address: CErc20PluginDelegateAddress },
       CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
     };
 
@@ -96,7 +98,8 @@ describe("FusePools", () => {
     mockGetAssetContract = createStubInstance(Contract);
     Object.defineProperty(mockGetAssetContract, "callStatic", {
       value: {
-        plugin: stub().resolves({ plugin: "Hello" }),
+        implementation: stub().resolves(CErc20PluginDelegateAddress),
+        plugin: stub().resolves(PluginAddress),
       },
     });
 

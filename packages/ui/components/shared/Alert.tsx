@@ -1,4 +1,12 @@
-import { Alert, AlertDescription, AlertIcon, AlertProps, AlertTitle, Box } from '@chakra-ui/react';
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertProps,
+  AlertTitle,
+  Box,
+  Text,
+} from '@chakra-ui/react';
 import React, { ReactNode } from 'react';
 
 import { useColors } from '@ui/hooks/useColors';
@@ -25,7 +33,7 @@ export const AdminAlert = ({
       {...alertProps}
     >
       <AlertIcon color={cAlert.iconColor} />
-      <span style={{ color: 'black' }}>{isAdmin ? isAdminText : isNotAdminText}</span>
+      <Text variant="panelSmText">{isAdmin ? isAdminText : isNotAdminText}</Text>
       <Box h="100%" ml="auto">
         {rightAdornment}
       </Box>

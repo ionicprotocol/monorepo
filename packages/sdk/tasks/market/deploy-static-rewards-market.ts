@@ -42,7 +42,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
 
     const cTokenImplementation = await cToken.callStatic.implementation();
-    console.log({ marketAddress, cTokenImplementation });
+    console.log({ underlyingAddress, marketAddress, cTokenImplementation });
     const deployArgs = [underlyingAddress, ...pluginExtraParams];
 
     // STEP 1: deploy plugins
@@ -70,8 +70,15 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     const pluginAddress = deployment.address;
 
     console.log(`Plugin deployed successfully: ${pluginAddress}`);
-    const plugin = await ethers.getContractAt(contractName, pluginAddress, signer);
 
+    const plugin = await ethers.getContractAt(contractName, pluginAddress, signer);
+    const pluginAsset = await plugin.callStatic.asset();
+
+    console.log(`Plugin asset: ${pluginAsset}`);
+
+    if (pluginAsset !== underlyingAddress) {
+      throw new Error(`Plugin asset: ${pluginAsset} does not match underlying asset: ${underlyingAddress}`);
+    }
     console.log({ pluginAddress: plugin.address });
     // STEP 2: whitelist plugins
 

@@ -32,13 +32,13 @@ export const CollateralRatioBar = ({
     <MidasBox width={'100%'} height="65px" p={4} mx="auto" {...midasBoxProps}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" expand>
         <Tooltip label={'Keep this bar from filling up to avoid being liquidated!'}>
-          <Text flexShrink={0} mr={4}>
+          <Text variant="mdText" flexShrink={0} mr={4}>
             Borrow Limit
           </Text>
         </Tooltip>
 
         <Tooltip label={'This is how much you have borrowed.'}>
-          <Text flexShrink={0} mt="2px" mr={3} fontSize="10px">
+          <Text flexShrink={0} mt="2px" mr={3} variant="lgText" fontWeight="bold">
             {smallUsdFormatter(borrowFiat)}
           </Text>
         </Tooltip>
@@ -62,7 +62,7 @@ export const CollateralRatioBar = ({
         </Tooltip>
 
         <Tooltip label="If your borrow amount reaches this value, you will be liquidated.">
-          <Text flexShrink={0} mt="2px" ml={3} fontSize="10px">
+          <Text flexShrink={0} mt="2px" ml={3} variant="lgText" fontWeight="bold">
             {smallUsdFormatter(maxBorrow)}
           </Text>
         </Tooltip>

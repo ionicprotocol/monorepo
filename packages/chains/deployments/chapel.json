@@ -762,7 +762,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xb8996d93a439a50Ea7C7C0d3d32AFb548Dd3BEF5",
+      "address": "0x983e0d0E02CF14C086E1cbde89F7d79D4A4deefb",
       "abi": [
         {
           "inputs": [],
@@ -2219,7 +2219,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xC6D57300974368BE5B979e62EA76cab5C6bc3130",
+      "address": "0xEEC413fB57830c62c3D909b2Dc185dA22f56fe3C",
       "abi": [
         {
           "anonymous": false,
@@ -3729,7 +3729,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x9417CEAeECd2ad16A19763da12Ae597A12B58506",
+      "address": "0x473cDB1038d17FB7388ce832971330032C48C6cE",
       "abi": [
         {
           "anonymous": false,
@@ -5264,7 +5264,7 @@
       ]
     },
     "CEtherDelegate": {
-      "address": "0x5eCd7E305C6f1056fB16f4F3bB7A77617E9b0d09",
+      "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665",
       "abi": [
         {
           "inputs": [],
@@ -6888,7 +6888,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x3EFDFFC244F729eF875def7841Ae95BD75Ae3C74",
+      "address": "0x0fF21c5Ec8999805F1e62E9df8190C33076AEC4B",
       "abi": [
         {
           "inputs": [
@@ -8020,35 +8020,6 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "account",
-              "type": "address"
-            }
-          ],
-          "name": "getAccountLiquidity",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -9725,25 +9696,6 @@
         {
           "inputs": [
             {
-              "internalType": "bytes",
-              "name": "constructorData",
-              "type": "bytes"
-            }
-          ],
-          "name": "deployCEther",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -10009,7 +9961,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x4Ec7e50E1a4eA877E8075bC463e3e959608f6308",
+      "address": "0x6B98340336cE524835F14d354a36ad880Ef30782",
       "abi": [
         {
           "anonymous": false,
@@ -10624,25 +10576,6 @@
             }
           ],
           "name": "deployCErc20",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes",
-              "name": "constructorData",
-              "type": "bytes"
-            }
-          ],
-          "name": "deployCEther",
           "outputs": [
             {
               "internalType": "address",
@@ -12381,7 +12314,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x1C957B27f9595D2fe79f8e45D321561d4739b0f3",
+      "address": "0x6f8D2a75ba90b95FfF93601D0FF9084625F6CaB3",
       "abi": [
         {
           "anonymous": false,

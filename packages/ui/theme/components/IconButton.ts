@@ -7,7 +7,36 @@ export const IconButtonStyleConfig: ComponentStyleConfig = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 10,
+    borderWidth: 2,
+    _active: { opacity: 0.8 },
+    mr: '-px',
+    _disabled: {
+      opacity: 0.4,
+      cursor: 'not-allowed',
+      boxShadow: 'none',
+    },
+  },
+  sizes: {
+    base: {
+      height: 8,
+      minWidth: 8,
+      fontSize: 14,
+    },
+    sm: {
+      height: 8,
+      minWidth: 8,
+      fontSize: 14,
+    },
+    md: {
+      height: 10,
+      minWidth: 10,
+      fontSize: 16,
+    },
+    lg: {
+      height: 10,
+      minWidth: 10,
+      fontSize: 16,
+    },
   },
   variants: {
     filter: (props) => ({
@@ -15,18 +44,36 @@ export const IconButtonStyleConfig: ComponentStyleConfig = {
       color: props.isSelected
         ? mode('raisinBlack', 'raisinBlack')(props)
         : mode('ecru', 'ecru')(props),
-      borderWidth: 2,
       borderColor: mode('ecru', 'ecru')(props),
-      mr: '-px',
-      _active: { opacity: 0.8 },
       _hover: {
         bg: mode('ecru', 'ecru')(props),
         color: mode('raisinBlack', 'raisinBlack')(props),
         borderColor: mode('ecru', 'ecru')(props),
+        _disabled: {
+          bg: mode('whiteBg', 'raisinBlack')(props),
+          color: mode('ecru', 'ecru')(props),
+          borderColor: mode('ecru', 'ecru')(props),
+        },
+      },
+    }),
+    _outline: (props) => ({
+      bg: mode('whiteBg', 'raisinBlack')(props),
+      color: mode('ecru', 'ecru')(props),
+      borderColor: mode('ecru', 'ecru')(props),
+      _hover: {
+        bg: mode('ecru', 'ecru')(props),
+        color: mode('raisinBlack', 'raisinBlack')(props),
+        borderColor: mode('ecru', 'ecru')(props),
+        _disabled: {
+          bg: mode('whiteBg', 'raisinBlack')(props),
+          color: mode('ecru', 'ecru')(props),
+          borderColor: mode('ecru', 'ecru')(props),
+        },
       },
     }),
   },
   defaultProps: {
-    variant: 'filter',
+    size: ['base', 'sm', 'md', 'lg'],
+    variant: '_outline',
   },
 };

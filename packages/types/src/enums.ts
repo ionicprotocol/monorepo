@@ -53,6 +53,7 @@ export enum IrmTypes {
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
   JumpRateModel_MIMO_2_004_4_08 = "JumpRateModel_MIMO_2_004_4_08",
+  JumpRateModel_JARVIS_2_004_4_08 = "JumpRateModel_JARVIS_2_004_4_08",
 }
 
 export enum LiquidationStrategy {
@@ -246,6 +247,7 @@ export enum assetSymbols {
   "JSGD-XSGD" = "JSGD-XSGD",
   "JNZD-NZDS" = "JNZD-NZDS",
   "EURE-JEUR" = "EURE-JEUR",
+  "JCHF-BUSD" = "JCHF-BUSD",
   AGEUR = "AGEUR",
   EURT = "EURT",
   EURE = "EURE",

@@ -6,7 +6,7 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
+  HStack,
   Input,
   Select,
   Spinner,
@@ -133,9 +133,9 @@ export const CreatePoolConfiguration = () => {
   return (
     <Box as="form" alignSelf={'center'} mx="auto" onSubmit={handleSubmit(onDeploy)}>
       <DashboardBox maxWidth="550px" mx={'auto'}>
-        <Heading fontWeight="extrabold" size="md" px={4} py={4}>
+        <Text fontWeight="bold" variant="title" px={4} py={4}>
           Create Pool
-        </Heading>
+        </Text>
         {!config.allowedAddresses.includes(address.toLowerCase()) && (
           <Banner
             text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
@@ -148,7 +148,9 @@ export const CreatePoolConfiguration = () => {
         <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
           <FormControl isInvalid={!!errors.name}>
             <OptionRow>
-              <FormLabel htmlFor="name">Name</FormLabel>
+              <FormLabel htmlFor="name">
+                <Text variant="smText">Name</Text>
+              </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                 <Input
                   id="name"
@@ -166,7 +168,9 @@ export const CreatePoolConfiguration = () => {
           <Divider bg={cCard.dividerColor} />
           <FormControl isInvalid={!!errors.oracle}>
             <OptionRow>
-              <FormLabel htmlFor="oracle">Oracle</FormLabel>
+              <FormLabel htmlFor="oracle">
+                <Text variant="smText">Oracle</Text>
+              </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                 <Select
                   id="oracle"
@@ -203,15 +207,16 @@ export const CreatePoolConfiguration = () => {
           <FormControl>
             <OptionRow>
               <FormLabel htmlFor="isWhitelisted">
-                <SimpleTooltip
-                  label={
-                    "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
-                  }
-                >
-                  <Text fontWeight="normal">
-                    Whitelisted <QuestionIcon ml={1} mb="4px" />
-                  </Text>
-                </SimpleTooltip>
+                <HStack>
+                  <Text variant="smText">Whitelisted</Text>
+                  <SimpleTooltip
+                    label={
+                      "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
+                    }
+                  >
+                    <QuestionIcon ml={1} mb="4px" />
+                  </SimpleTooltip>
+                </HStack>
               </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-end">
                 <Controller
@@ -258,15 +263,16 @@ export const CreatePoolConfiguration = () => {
           <FormControl isInvalid={!!errors.closeFactor}>
             <OptionRow>
               <FormLabel htmlFor="closeFactor">
-                <SimpleTooltip
-                  label={
-                    "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
-                  }
-                >
-                  <Text fontWeight="normal">
-                    Close Factor <QuestionIcon ml={1} mb="4px" />
-                  </Text>
-                </SimpleTooltip>
+                <HStack>
+                  <Text variant="smText">Close Factor</Text>
+                  <SimpleTooltip
+                    label={
+                      "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
+                    }
+                  >
+                    <QuestionIcon ml={1} mb="4px" />
+                  </SimpleTooltip>
+                </HStack>
               </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-end" crossAxisAlignment="flex-end">
                 <Controller
@@ -305,15 +311,16 @@ export const CreatePoolConfiguration = () => {
           <FormControl isInvalid={!!errors.liquidationIncentive}>
             <OptionRow>
               <FormLabel htmlFor="liquidationIncentive">
-                <SimpleTooltip
-                  label={
-                    "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
-                  }
-                >
-                  <Text fontWeight="normal">
-                    Liquidation Incentive <QuestionIcon ml={1} mb="4px" />
-                  </Text>
-                </SimpleTooltip>
+                <HStack>
+                  <Text variant="smText">Liquidation Incentive</Text>
+                  <SimpleTooltip
+                    label={
+                      "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
+                    }
+                  >
+                    <QuestionIcon ml={1} mb="4px" />
+                  </SimpleTooltip>
+                </HStack>
               </FormLabel>
               <Column mainAxisAlignment="flex-end" crossAxisAlignment="flex-start">
                 <Controller
@@ -355,8 +362,8 @@ export const CreatePoolConfiguration = () => {
           id="createPool"
           type="submit"
           isLoading={isCreating}
-          width={'100%'}
-          height="60px"
+          width="100%"
+          height={12}
           mt={4}
           fontSize="xl"
           maxWidth={'550px'}

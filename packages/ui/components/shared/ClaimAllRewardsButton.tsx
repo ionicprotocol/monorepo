@@ -34,7 +34,7 @@ const ClaimAllRewardsButton: React.FC = () => {
       />
       <GlowingBox
         as="button"
-        height="40px"
+        height={10}
         minW="50px"
         onClick={openClaimModal}
         borderRadius={'xl'}

@@ -1,17 +1,15 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Flex, Grid, Heading, HStack, Skeleton } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Skeleton, Text } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
 
-import { AssetDetails } from '@ui/components/pages/Fuse/FusePoolPage/AssetDetails';
-import { BorrowList } from '@ui/components/pages/Fuse/FusePoolPage/BorrowList';
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
+import { MarketsList } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
-import { SupplyList } from '@ui/components/pages/Fuse/FusePoolPage/SupplyList';
-import FuseNavbar from '@ui/components/pages/Layout/FuseNavbar';
+import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
@@ -19,7 +17,6 @@ import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { useMidas } from '@ui/context/MidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
-import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
 const FusePoolPage = memo(() => {
@@ -31,8 +28,6 @@ const FusePoolPage = memo(() => {
   const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller);
   const rewardTokens = useRewardTokensOfPool(data?.comptroller);
 
-  const { cPage } = useColors();
-
   return (
     <>
       {data && (
@@ -42,15 +37,7 @@ const FusePoolPage = memo(() => {
       )}
 
       <PageTransitionLayout>
-        <Flex
-          minH="100vh"
-          flexDir="column"
-          alignItems="flex-start"
-          bgColor={cPage.primary.bgColor}
-          justifyContent="flex-start"
-          mb={20}
-        >
-          <FuseNavbar />
+        <FusePageLayout>
           <HStack width={'100%'} mx="auto" spacing={6}>
             <ArrowBackIcon
               fontSize="2xl"
@@ -62,9 +49,9 @@ const FusePoolPage = memo(() => {
               }}
             />
             {data ? (
-              <Heading textAlign="left" fontSize="xl" fontWeight="bold">
+              <Text textAlign="left" variant="title" fontWeight="bold">
                 {data.name}
-              </Heading>
+              </Text>
             ) : (
               <Skeleton>Pool Name</Skeleton>
             )}
@@ -93,48 +80,22 @@ const FusePoolPage = memo(() => {
             />
           )}
 
-          <Grid
-            templateColumns={{
-              base: 'repeat(1, 1fr)',
-              lg: 'repeat(2, 1fr)',
-            }}
-            templateRows={{
-              base: 'repeat(4, auto)',
-              lg: 'repeat(2, auto)',
-            }}
-            w="100%"
-            gap={4}
-          >
-            <MidasBox pb={3}>
-              {data ? (
-                <SupplyList
-                  assets={data.assets}
-                  comptrollerAddress={data.comptroller}
-                  supplyBalanceFiat={data.totalSupplyBalanceFiat}
-                  rewards={marketRewards}
-                />
-              ) : (
-                <TableSkeleton tableHeading="Your Supply Balance" />
-              )}
-            </MidasBox>
+          <MidasBox overflowX="auto" width="100%" mb="4">
+            {data ? (
+              <MarketsList
+                assets={data.assets}
+                rewards={marketRewards}
+                comptrollerAddress={data.comptroller}
+                supplyBalanceFiat={data.totalSupplyBalanceFiat}
+                borrowBalanceFiat={data.totalBorrowBalanceFiat}
+              />
+            ) : (
+              <TableSkeleton tableHeading="Assets" />
+            )}
+          </MidasBox>
 
-            <MidasBox pb={3}>
-              {data ? (
-                <BorrowList
-                  comptrollerAddress={data.comptroller}
-                  assets={data.assets}
-                  borrowBalanceFiat={data.totalBorrowBalanceFiat}
-                />
-              ) : (
-                <TableSkeleton tableHeading="Your Borrow Balance" />
-              )}
-            </MidasBox>
-
-            <PoolDetails data={data} />
-
-            <AssetDetails data={data} />
-          </Grid>
-        </Flex>
+          <PoolDetails data={data} />
+        </FusePageLayout>
       </PageTransitionLayout>
     </>
   );

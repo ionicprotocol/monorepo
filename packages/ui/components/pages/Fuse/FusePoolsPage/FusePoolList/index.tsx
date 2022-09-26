@@ -176,7 +176,7 @@ const FusePoolList = () => {
                         align="center"
                         separator={
                           <PaginationSeparator
-                            variant="outline"
+                            variant="_outline"
                             bg={cOutlineBtn.primary.bgColor}
                             jumpSize={3}
                             fontSize="lg"
@@ -187,7 +187,7 @@ const FusePoolList = () => {
                       >
                         {pages.map((page: number) => (
                           <PaginationPage
-                            variant="outline"
+                            variant="_outline"
                             bg={
                               page === currentPage ? cOutlineBtn.primary.selectedBgColor : undefined
                             }
@@ -198,9 +198,7 @@ const FusePoolList = () => {
                             }
                             key={`pagination_page_${page}`}
                             page={page}
-                            fontSize="lg"
                             width={10}
-                            pt={4}
                           />
                         ))}
                       </PaginationPageGroup>
@@ -233,30 +231,30 @@ const FusePoolList = () => {
                 <>
                   <HStack px={6} alignItems={'flex-end'}>
                     <VStack flex={5}>
-                      <Text fontWeight="bold" textAlign="center">
+                      <Text variant="smText" textAlign="center">
                         Pool Name
                       </Text>
                     </VStack>
                     <VStack flex={3}></VStack>
                     {config.isRssScoreEnabled && (
                       <VStack flex={2}>
-                        <Text fontWeight="bold" textAlign="center">
+                        <Text variant="smText" textAlign="center">
                           Risk Score
                         </Text>
                       </VStack>
                     )}
                     <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
-                      <Text fontWeight="bold" textAlign="center">
+                      <Text variant="smText" textAlign="center">
                         Assets
                       </Text>
                     </VStack>
                     <VStack flex={2}>
-                      <Text fontWeight="bold" textAlign="center">
+                      <Text variant="smText" textAlign="center">
                         Total Supplied
                       </Text>
                     </VStack>
                     <VStack flex={2}>
-                      <Text fontWeight="bold" textAlign="center">
+                      <Text variant="smText" textAlign="center">
                         Total Borrowed
                       </Text>
                     </VStack>
@@ -299,7 +297,7 @@ const FusePoolList = () => {
                               align="center"
                               separator={
                                 <PaginationSeparator
-                                  variant="outline"
+                                  variant="_outline"
                                   bg={cOutlineBtn.primary.bgColor}
                                   jumpSize={3}
                                   fontSize="lg"
@@ -310,7 +308,7 @@ const FusePoolList = () => {
                             >
                               {pages.map((page: number) => (
                                 <PaginationPage
-                                  variant="outline"
+                                  variant="_outline"
                                   bg={
                                     page === currentPage
                                       ? cOutlineBtn.primary.selectedBgColor
@@ -325,7 +323,6 @@ const FusePoolList = () => {
                                   page={page}
                                   fontSize="lg"
                                   width={10}
-                                  pt={4}
                                 />
                               ))}
                             </PaginationPageGroup>
