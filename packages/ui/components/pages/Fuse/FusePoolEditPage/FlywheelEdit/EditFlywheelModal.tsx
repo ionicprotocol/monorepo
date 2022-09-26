@@ -175,6 +175,7 @@ const EditFlywheelModal = ({
         setTransactionPending(true);
         const tx = await midasSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
         await tx.wait();
+        refetchRewardsInfo();
         setTransactionPending(false);
       } catch (err) {
         handleGenericError(err, errorToast);
@@ -182,7 +183,7 @@ const EditFlywheelModal = ({
         setTransactionPending(false);
       }
     },
-    [flywheel.address, midasSdk, errorToast]
+    [flywheel.address, midasSdk, errorToast, refetchRewardsInfo]
   );
 
   return (
@@ -211,8 +212,8 @@ const EditFlywheelModal = ({
                 <StatNumber>{tokenData ? tokenData.name : 'Loading...'}</StatNumber>
                 {tokenData && (
                   <ClipboardValue
-                    value={flywheel.address}
-                    label={shortAddress(flywheel.address)}
+                    value={tokenData.address}
+                    label={shortAddress(tokenData.address)}
                     component={StatHelpText}
                   />
                 )}
