@@ -511,6 +511,7 @@ const AmountSelect = ({
                 }
                 onClick={onConfirm}
                 isDisabled={!amountIsValid}
+                height={16}
               >
                 {depositOrWithdrawAlert ?? 'Confirm'}
               </Button>

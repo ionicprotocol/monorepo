@@ -524,7 +524,7 @@ export const MarketsList = ({
               <Button
                 variant="ghost"
                 onClick={onRewardsFiltered}
-                p="0px !important"
+                p={0}
                 width="140px"
                 disabled={!allClaimableRewards || Object.keys(allClaimableRewards).length === 0}
               >
