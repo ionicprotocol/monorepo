@@ -234,7 +234,13 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await midasSdk.withdraw(asset.cToken, amount);
+        const maxAmount = await fetchMaxAmount(mode, midasSdk, address, asset);
+        let resp;
+        if (maxAmount.eq(amount)) {
+          resp = await midasSdk.withdraw(asset.cToken, constants.MaxUint256);
+        } else {
+          resp = await midasSdk.withdraw(asset.cToken, amount);
+        }
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode, minBorrowUSD);
