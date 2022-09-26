@@ -624,7 +624,7 @@ export const MarketsList = ({
                   <Text fontSize={18} fontWeight="bold">
                     Protected Asset
                   </Text>
-                  <Text>Assets cannot be borrowed.</Text>
+                  <Text>Assets that cannot be borrowed.</Text>
                   <Text>Click to filter</Text>
                 </VStack>
               }
@@ -646,7 +646,7 @@ export const MarketsList = ({
                     <Text fontSize={18} fontWeight="bold">
                       Deprecated Asset
                     </Text>
-                    <Text>Assets cannot be supplied and borrowed.</Text>
+                    <Text>Assets that cannot be supplied and borrowed.</Text>
                     <Text>Click to filter</Text>
                   </VStack>
                 }
