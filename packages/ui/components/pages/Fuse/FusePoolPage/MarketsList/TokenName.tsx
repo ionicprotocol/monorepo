@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
+import { LinkIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import * as React from 'react';
@@ -8,11 +8,9 @@ import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
-import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -21,8 +19,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
   const { data: tokenData } = useTokenData(asset.underlyingToken);
 
   const { cCard } = useColors();
-
-  const { data: pluginInfo } = usePluginInfo(asset.plugin);
 
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
