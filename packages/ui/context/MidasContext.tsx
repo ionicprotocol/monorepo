@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Button, Link as ChakraLink } from '@chakra-ui/react';
+import { Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { Provider, Web3Provider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
 import { useQueryClient } from '@tanstack/react-query';
@@ -16,7 +16,6 @@ import {
 } from 'react';
 import { Chain } from 'wagmi';
 
-import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
@@ -85,8 +84,6 @@ export const MidasProvider = ({
 
   const queryClient = useQueryClient();
 
-  const { cPage } = useColors();
-
   const mounted = useRef(false);
 
   const coingeckoId = midasSdk.chainSpecificParams.cgId;
@@ -121,31 +118,43 @@ export const MidasProvider = ({
             description: <>Transaction is pending now.</>,
           });
           const res = await tx.wait();
-          successToast({
-            title: <>Complete!</>,
-            description: (
-              <Button
-                href={`${scanUrl}/tx/${tx.hash}`}
-                rightIcon={<ExternalLinkIcon />}
-                color={cPage.primary.bgColor}
-                variant={'link'}
-                as={ChakraLink}
-                isExternal
-                width="100%"
-                py={2}
-              >
-                View Transaction
-              </Button>
-            ),
-          });
+
           if (res.blockNumber) {
             mounted.current && setFinishedTxHash(hash);
+            successToast({
+              title: <>Complete!</>,
+              description: (
+                <VStack alignItems="flex-start" mt={1} spacing={0}>
+                  <HStack>
+                    <Text variant="panelSmText">Your can check transaction </Text>
+                    <Button
+                      href={`${scanUrl}/tx/${tx.hash}`}
+                      rightIcon={<ExternalLinkIcon />}
+                      variant="panelLink"
+                      as={ChakraLink}
+                      p={0}
+                      height={3}
+                      isExternal
+                    >
+                      here
+                    </Button>
+                  </HStack>
+                  <HStack>
+                    <Text variant="panelSmText">Your data is being updated! Please wait...</Text>
+                  </HStack>
+                </VStack>
+              ),
+            });
             await queryClient.refetchQueries();
+            successToast({
+              title: <>Complete!</>,
+              description: <Text variant="panelSmText">Data is fully updated!</Text>,
+            });
           }
         }
       } catch (e) {
-        handleGenericError(e, errorToast);
         mounted.current && setFinishedTxHash(hash);
+        handleGenericError(e, errorToast);
       }
     };
 

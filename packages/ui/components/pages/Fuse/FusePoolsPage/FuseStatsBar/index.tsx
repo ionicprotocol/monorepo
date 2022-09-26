@@ -3,7 +3,6 @@ import {
   Box,
   Flex,
   FlexProps,
-  Heading,
   HStack,
   Link,
   Popover,
@@ -15,11 +14,16 @@ import {
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { useMemo } from 'react';
-import { FaDiscord } from 'react-icons/fa';
+import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { DISCORD_URL, URL_MIDAS_DOCS } from '@ui/constants/index';
+import {
+  MIDAS_DISCORD_URL,
+  MIDAS_DOCS_URL,
+  MIDAS_TELEGRAM_URL,
+  MIDAS_TWITTER_URL,
+} from '@ui/constants/index';
 import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -56,23 +60,41 @@ const FuseStatsBar = () => {
         fontSize="sm"
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
-        <Heading fontSize="37px" lineHeight="40px" fontWeight="bold">
+        <Text variant="heading" fontWeight="bold">
           Unleash the power of your assets
-        </Heading>
-        <Text fontSize="18px" lineHeight="31px" my="19px" fontWeight="medium" zIndex="100">
+        </Text>
+        <Text variant="mdText" my={4} zIndex="100" lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
         </Text>
         <HStack gap={2}>
-          <SimpleTooltip label="Discord">
-            <Link href={DISCORD_URL} isExternal>
-              <FaDiscord fontSize={30} />
+          <SimpleTooltip label="Documentation">
+            <Link href={MIDAS_DOCS_URL} isExternal>
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
+              </motion.div>
             </Link>
           </SimpleTooltip>
-          <SimpleTooltip label="Documentation">
-            <Link href={URL_MIDAS_DOCS} isExternal>
-              <SiGitbook fontSize={30} />
+          <SimpleTooltip label="Discord">
+            <Link href={MIDAS_DISCORD_URL} isExternal>
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
+              </motion.div>
+            </Link>
+          </SimpleTooltip>
+          <SimpleTooltip label="Telegram">
+            <Link href={MIDAS_TELEGRAM_URL} isExternal>
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
+              </motion.div>
+            </Link>
+          </SimpleTooltip>
+          <SimpleTooltip label="Twitter">
+            <Link href={MIDAS_TWITTER_URL} isExternal>
+              <motion.div whileHover={{ scale: 1.2 }}>
+                <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
+              </motion.div>
             </Link>
           </SimpleTooltip>
         </HStack>
@@ -99,12 +121,14 @@ const FuseStatsBar = () => {
               <Spinner />
             ) : (
               <>
-                <Heading fontWeight="extrabold" fontSize={['36px', '48px']} lineHeight={['60px']}>
+                <Text variant="panelHeading" fontWeight="bold" lineHeight={['60px']}>
                   {smallUsdFormatter(totalTVL)}
-                </Heading>
+                </Text>
               </>
             )}
-            <Text whiteSpace="nowrap">Total value supplied across Midas</Text>
+            <Text whiteSpace="nowrap" variant="panelMdText">
+              Total value supplied across Midas
+            </Text>
           </MotionFlex>
         </PopoverTrigger>
         {tvlData && (

@@ -1,4 +1,4 @@
-import { TableRowProps, Td, Tr } from '@chakra-ui/react';
+import { TableRowProps, Td, Text, Tr } from '@chakra-ui/react';
 
 import { useColors } from '@ui/hooks/useColors';
 
@@ -18,26 +18,16 @@ export const StatRow = ({
 
   return (
     <Tr borderTopWidth={'1px'} borderColor={cCard.dividerColor} {...tableRowProps}>
-      <Td
-        fontSize={{ base: '3vw', sm: '0.9rem' }}
-        wordBreak={'break-all'}
-        width={'50%'}
-        lineHeight={1.5}
-        textAlign="left"
-        border="none"
-      >
-        {statATitle}: <b>{statA}</b>
+      <Td wordBreak={'break-all'} width={'50%'} lineHeight={1.5} textAlign="left" border="none">
+        <Text variant="smText">
+          {statATitle}: <b>{statA}</b>
+        </Text>
       </Td>
 
-      <Td
-        fontSize={{ base: '3vw', sm: '0.9rem' }}
-        wordBreak={'break-all'}
-        width={'50%'}
-        lineHeight={1.5}
-        textAlign="left"
-        border="none"
-      >
-        {statBTitle}: <b>{statB}</b>
+      <Td wordBreak={'break-all'} width={'50%'} lineHeight={1.5} textAlign="left" border="none">
+        <Text variant="smText">
+          {statBTitle}: <b>{statB}</b>
+        </Text>
       </Td>
     </Tr>
   );

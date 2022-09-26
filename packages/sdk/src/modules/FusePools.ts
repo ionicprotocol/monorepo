@@ -59,23 +59,18 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
         promises.push(
           (async () => {
-            let plugin: string | undefined = undefined;
-
-            plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
-              .callStatic.plugin()
-              .catch(() => undefined);
-            if (!plugin) {
-              // @ts-ignore
-              plugin = await this.getAssetInstance<CErc20PluginRewardsDelegate>(
-                asset.cToken,
-                "CErc20PluginRewardsDelegate"
-              )
-                .callStatic.plugin()
-                .catch(() => undefined);
+            const ctoken = this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate");
+            const implementation = await ctoken.callStatic.implementation();
+            if (
+              [
+                this.chainDeployment["CErc20PluginRewardsDelegate"].address,
+                this.chainDeployment["CErc20PluginDelegate"].address,
+              ].includes(implementation)
+            ) {
+              const plugin = await ctoken.callStatic.plugin().catch(() => undefined);
+              if (!plugin) return;
+              asset.plugin = plugin;
             }
-            if (!plugin) return;
-
-            asset.plugin = plugin;
           })()
         );
 

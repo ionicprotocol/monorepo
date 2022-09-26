@@ -2,6 +2,24 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { mode } from '@chakra-ui/theme-tools';
 
 export const InputConfigStyle: ComponentStyleConfig = {
+  baseStyle: {
+    field: {
+      minWidth: 0,
+      outline: 0,
+      position: 'relative',
+      appearance: 'none',
+      transitionProperty: 'common',
+      transitionDuration: 'normal',
+      _disabled: {
+        opacity: 0.4,
+        cursor: 'not-allowed',
+      },
+      _focusVisible: {
+        boxShadow: 'none',
+        outline: 'none',
+      },
+    },
+  },
   parts: ['field', 'element', 'addon'],
   variants: {
     outlineLeftAddon: (props) => ({
@@ -27,6 +45,10 @@ export const InputConfigStyle: ComponentStyleConfig = {
         _placeholder: { color: mode('silverMetallic', 'white50')(props) },
         borderLeft: 'none',
         paddingLeft: 0,
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
+        },
       },
       addon: {
         backgroundColor: mode('whiteBg', 'raisinBlack')(props),
@@ -60,6 +82,10 @@ export const InputConfigStyle: ComponentStyleConfig = {
         _placeholder: { color: mode('silverMetallic', 'white50')(props) },
         _readOnly: {
           borderColor: 'ecru30',
+        },
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
         },
       },
       addon: {
@@ -99,6 +125,10 @@ export const InputConfigStyle: ComponentStyleConfig = {
           cursor: 'auto',
           outline: 'none',
         },
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
+        },
       },
     }),
     unstyled: (props) => ({
@@ -107,6 +137,10 @@ export const InputConfigStyle: ComponentStyleConfig = {
         backgroundColor: mode('whiteBg', 'raisinBlack')(props),
         fontSize: '16px',
         _placeholder: { color: mode('silverMetallic', 'white50')(props) },
+        _focusVisible: {
+          boxShadow: 'none',
+          outline: 'none',
+        },
       },
     }),
   },

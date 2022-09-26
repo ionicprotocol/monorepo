@@ -3,7 +3,6 @@ import {
   AlertIcon,
   Box,
   Button,
-  Heading,
   Input,
   InputProps,
   Spinner,
@@ -13,7 +12,7 @@ import {
   Tabs,
   Text,
 } from '@chakra-ui/react';
-import { MidasSdk } from '@midas-capital/sdk';
+import { MidasSdk, WETHAbi } from '@midas-capital/sdk';
 import {
   ComptrollerErrorCodes,
   CTokenErrorCodes,
@@ -24,7 +23,8 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -59,6 +59,7 @@ interface AmountSelectProps {
   mode: FundOperationMode;
   onClose: () => void;
   setMode: (mode: FundOperationMode) => void;
+  supplyBalanceFiat?: number;
 }
 const AmountSelect = ({
   assets,
@@ -68,8 +69,9 @@ const AmountSelect = ({
   mode,
   onClose,
   setMode,
+  supplyBalanceFiat,
 }: AmountSelectProps) => {
-  const { midasSdk, setPendingTxHash, address } = useMidas();
+  const { midasSdk, setPendingTxHash, address, currentChain } = useMidas();
 
   const errorToast = useErrorToast();
 
@@ -81,12 +83,22 @@ const AmountSelect = ({
 
   const [amount, _setAmount] = useState<BigNumber>(constants.Zero);
 
+  const [availableToWithdraw, setAvailableToWithdraw] = useState('0.0');
+
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
   const { cCard, cSwitch } = useColors();
 
   const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
+  const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+
+  const nativeSymbol = currentChain.nativeCurrency?.symbol;
+  const optionToWrap =
+    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN &&
+    mode === FundOperationMode.SUPPLY &&
+    myBalance?.isZero() &&
+    !myNativeBalance?.isZero();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -123,8 +135,10 @@ const AmountSelect = ({
       }
 
       try {
-        const max = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
-        if (mode === FundOperationMode.BORROW) {
+        const max = optionToWrap
+          ? (myNativeBalance as BigNumber)
+          : ((await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber);
+        if (mode === FundOperationMode.BORROW && optionToWrap === false) {
           return amount.lte(max) && amount.gte(minBorrowAsset);
         } else {
           return amount.lte(max);
@@ -222,7 +236,13 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await midasSdk.withdraw(asset.cToken, amount);
+        const maxAmount = await fetchMaxAmount(mode, midasSdk, address, asset);
+        let resp;
+        if (maxAmount.eq(amount)) {
+          resp = await midasSdk.withdraw(asset.cToken, constants.MaxUint256);
+        } else {
+          resp = await midasSdk.withdraw(asset.cToken, amount);
+        }
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode, minBorrowUSD);
@@ -240,8 +260,36 @@ const AmountSelect = ({
     }
   };
 
+  const onWrap = async () => {
+    try {
+      const WToken = getContract(midasSdk.chainSpecificAddresses.W_TOKEN, WETHAbi, midasSdk.signer);
+
+      setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
+
+      const resp = await WToken.deposit({ from: address, value: amount });
+
+      setPendingTxHash(resp.hash);
+      onClose();
+    } catch (e) {
+      handleGenericError(e, errorToast);
+      setUserAction(UserAction.NO_ACTION);
+    }
+  };
+
+  const updateAvailableToWithdraw = useCallback(async () => {
+    const max = await fetchMaxAmount(mode, midasSdk, address, asset);
+    setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
+  }, [address, asset, midasSdk, mode]);
+
+  useEffect(() => {
+    if (mode === FundOperationMode.WITHDRAW) {
+      updateAvailableToWithdraw();
+    }
+  }, [mode, updateAvailableToWithdraw]);
+
   return (
     <Column
+      id="fundOperationModal"
       mainAxisAlignment="flex-start"
       crossAxisAlignment="flex-start"
       bg={cCard.bgColor}
@@ -251,10 +299,10 @@ const AmountSelect = ({
       {userAction === UserAction.WAITING_FOR_TRANSACTIONS ? (
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
           <Loader />
-          <Heading mt="30px" textAlign="center" size="md">
+          <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions
-          </Heading>
-          <Text fontSize="sm" mt="15px" textAlign="center">
+          </Text>
+          <Text variant="smText" mt="15px" textAlign="center">
             Do not close this tab until you submit all transactions!
           </Text>
         </Column>
@@ -271,13 +319,12 @@ const AmountSelect = ({
             <Box height="36px" width="36px">
               <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
             </Box>
-            <Heading fontSize="27px" ml={3}>
+            <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
               {tokenData?.symbol || asset.underlyingSymbol}
-            </Heading>
+            </Text>
           </Row>
 
           <ModalDivider />
-
           <Column
             mainAxisAlignment="flex-start"
             crossAxisAlignment="center"
@@ -294,17 +341,46 @@ const AmountSelect = ({
                 setMode={setMode}
                 setUserEnteredAmount={_setUserEnteredAmount}
                 setAmount={_setAmount}
+                asset={asset}
+                supplyBalanceFiat={supplyBalanceFiat}
               />
 
               {/* Asset Balance */}
               <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-                <Text mr={2}>Wallet Balance:</Text>
-                <Text>
-                  {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
-                  {asset.underlyingSymbol}
-                </Text>
+                {mode === FundOperationMode.WITHDRAW ? (
+                  <>
+                    <Text variant="smText" mr={2}>
+                      Available To Withdraw:
+                    </Text>
+                    <Text>
+                      {availableToWithdraw} {asset.underlyingSymbol}
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Text variant="smText" mr={2}>
+                      Wallet Balance:
+                    </Text>
+                    <Text variant="smText">
+                      {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                      {asset.underlyingSymbol}
+                    </Text>
+                  </>
+                )}
               </Row>
-
+              {optionToWrap ? (
+                <Row width="100%" mt={4} mainAxisAlignment="flex-end" crossAxisAlignment="center">
+                  <Text variant="smText" mr={2}>
+                    Native Token Balance:
+                  </Text>
+                  <Text variant="smText">
+                    {myNativeBalance
+                      ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals)
+                      : 0}{' '}
+                    {nativeSymbol}
+                  </Text>
+                </Row>
+              ) : null}
               {mode === FundOperationMode.BORROW && asset.liquidity.isZero() ? (
                 <Alert status="info">
                   <AlertIcon />
@@ -323,16 +399,20 @@ const AmountSelect = ({
                     >
                       <Alert status="info" pb={4}>
                         <AlertIcon />
-                        {`For safety reasons, you need to borrow at least a value of $${
-                          minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
-                        }${
-                          minBorrowAsset
-                            ? ` / ${toCeil(
-                                Number(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)),
-                                2
-                              )} ${asset.underlyingSymbol}`
-                            : ''
-                        } for now.`}
+                        <Text variant="smText">
+                          {`For safety reasons, you need to borrow at least a value of $${
+                            minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
+                          }${
+                            minBorrowAsset
+                              ? ` / ${toCeil(
+                                  Number(
+                                    utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
+                                  ),
+                                  2
+                                )} ${asset.underlyingSymbol}`
+                              : ''
+                          } for now.`}
+                        </Text>
                       </Alert>
                     </Row>
                   )}
@@ -354,6 +434,7 @@ const AmountSelect = ({
                         mode={mode}
                         asset={asset}
                         updateAmount={updateAmount}
+                        optionToWrap={optionToWrap}
                       />
                     </Row>
                   </DashboardBox>
@@ -371,50 +452,80 @@ const AmountSelect = ({
               )}
             </Column>
 
-            <StatsColumn
-              amount={amount}
-              assets={assets}
-              asset={asset}
-              mode={mode}
-              enableAsCollateral={enableAsCollateral}
-            />
+            {optionToWrap ? (
+              <Text variant="smText" margin="10px" textAlign="center">
+                No {asset.underlyingSymbol} detected. Wrap your {nativeSymbol} to supply{' '}
+                {asset.underlyingSymbol} to the pool
+              </Text>
+            ) : (
+              <>
+                <StatsColumn
+                  amount={amount}
+                  assets={assets}
+                  asset={asset}
+                  mode={mode}
+                  enableAsCollateral={enableAsCollateral}
+                />
 
-            {showEnableAsCollateral ? (
-              <DashboardBox p={4} width="100%" mt={4}>
-                <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold">Enable As Collateral:</Text>
-                  <SwitchCSS
-                    symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
-                    color={cSwitch.bgColor}
-                  />
-                  <Switch
-                    h="20px"
-                    className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
-                    isChecked={enableAsCollateral}
-                    onChange={() => {
-                      setEnableAsCollateral((past) => !past);
-                    }}
-                  />
-                </Row>
-              </DashboardBox>
-            ) : null}
-
-            <Button
-              mt={4}
-              width="100%"
-              height="70px"
-              className={
-                isMobile ||
-                depositOrWithdrawAlertFontSize === '14px' ||
-                depositOrWithdrawAlertFontSize === '15px'
-                  ? 'confirm-button-disable-font-size-scale'
-                  : ''
-              }
-              onClick={onConfirm}
-              isDisabled={!amountIsValid}
-            >
-              {depositOrWithdrawAlert ?? 'Confirm'}
-            </Button>
+                {showEnableAsCollateral ? (
+                  <DashboardBox p={4} width="100%" mt={4}>
+                    <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
+                      <Text variant="smText" fontWeight="bold">
+                        Enable As Collateral:
+                      </Text>
+                      <SwitchCSS
+                        symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                        color={cSwitch.bgColor}
+                      />
+                      <Switch
+                        h="20px"
+                        className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
+                        isChecked={enableAsCollateral}
+                        onChange={() => {
+                          setEnableAsCollateral((past) => !past);
+                        }}
+                      />
+                    </Row>
+                  </DashboardBox>
+                ) : null}
+              </>
+            )}
+            {optionToWrap ? (
+              <Button
+                id="wrapFund"
+                mt={4}
+                width="100%"
+                className={
+                  isMobile ||
+                  depositOrWithdrawAlertFontSize === '14px' ||
+                  depositOrWithdrawAlertFontSize === '15px'
+                    ? 'confirm-button-disable-font-size-scale'
+                    : ''
+                }
+                onClick={onWrap}
+                isDisabled={!amountIsValid}
+              >
+                Wrap {nativeSymbol} to {asset.underlyingSymbol}
+              </Button>
+            ) : (
+              <Button
+                id="confirmFund"
+                mt={4}
+                width="100%"
+                className={
+                  isMobile ||
+                  depositOrWithdrawAlertFontSize === '14px' ||
+                  depositOrWithdrawAlertFontSize === '15px'
+                    ? 'confirm-button-disable-font-size-scale'
+                    : ''
+                }
+                onClick={onConfirm}
+                isDisabled={!amountIsValid}
+                height={16}
+              >
+                {depositOrWithdrawAlert ?? 'Confirm'}
+              </Button>
+            )}
           </Column>
         </>
       )}
@@ -455,12 +566,16 @@ const TabBar = ({
   setMode,
   setUserEnteredAmount,
   setAmount,
+  asset,
+  supplyBalanceFiat,
 }: {
   mode: FundOperationMode;
   setMode: (mode: FundOperationMode) => void;
   color?: string;
   setUserEnteredAmount: (value: string) => void;
   setAmount: (value: BigNumber) => void;
+  asset: MarketData;
+  supplyBalanceFiat?: number;
 }) => {
   const isSupplySide = mode < 2;
 
@@ -522,16 +637,30 @@ const TabBar = ({
             }
           }}
         >
-          <TabList>
+          <TabList height={10}>
             {isSupplySide ? (
               <>
-                <AmountTab mr={2}>Supply</AmountTab>
-                <AmountTab>Withdraw</AmountTab>
+                <AmountTab className="supplyTab" mr={2} isDisabled={asset.isSupplyPaused}>
+                  Supply
+                </AmountTab>
+                <AmountTab className="withdrawTab" isDisabled={asset.supplyBalanceFiat === 0}>
+                  Withdraw
+                </AmountTab>
               </>
             ) : (
               <>
-                <AmountTab mr={2}>Borrow</AmountTab>
-                <AmountTab>Repay</AmountTab>
+                <AmountTab
+                  className="borrowTab"
+                  mr={2}
+                  isDisabled={
+                    asset.isBorrowPaused || (supplyBalanceFiat && supplyBalanceFiat === 0)
+                  }
+                >
+                  Borrow
+                </AmountTab>
+                <AmountTab className="repayTab" isDisabled={asset.borrowBalanceFiat === 0}>
+                  Repay
+                </AmountTab>
               </>
             )}
           </TabList>
@@ -618,7 +747,7 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
             width="100%"
             // color={color}
           >
-            <Text fontWeight="bold" flexShrink={0}>
+            <Text variant="smText" fontWeight="bold" flexShrink={0}>
               Supply Balance:
             </Text>
             <SimpleTooltip
@@ -629,7 +758,7 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
               <Text
                 fontWeight="bold"
                 flexShrink={0}
-                fontSize={isSupplyingOrWithdrawing ? 'sm' : 'lg'}
+                variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}
               >
                 {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
                 {isSupplyingOrWithdrawing ? (
@@ -644,10 +773,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" flexShrink={0}>
+            <Text fontWeight="bold" flexShrink={0} variant="smText">
               {isSupplyingOrWithdrawing ? 'Supply APY' : 'Borrow APR'}:
             </Text>
-            <Text fontWeight="bold" fontSize={updatedAPYDiffIsLarge ? 'sm' : 'lg'}>
+            <Text fontWeight="bold" variant={updatedAPYDiffIsLarge ? 'xsText' : 'mdText'}>
               {isSupplyingOrWithdrawing ? supplyAPY.toFixed(2) : borrowAPR.toFixed(2)}%
               {updatedAPYDiffIsLarge ? (
                 <>
@@ -662,10 +791,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" flexShrink={0}>
+            <Text fontWeight="bold" flexShrink={0} variant="smText">
               Borrow Limit:
             </Text>
-            <Text fontWeight="bold" fontSize={isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
+            <Text fontWeight="bold" variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}>
               {smallUsdFormatter(borrowLimit)}
               {isSupplyingOrWithdrawing ? (
                 <>
@@ -677,8 +806,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           </Row>
 
           <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold">Debt Balance:</Text>
-            <Text fontWeight="bold" fontSize={!isSupplyingOrWithdrawing ? 'sm' : 'lg'}>
+            <Text fontWeight="bold" variant="smText">
+              Debt Balance:
+            </Text>
+            <Text fontWeight="bold" variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}>
               {smallUsdFormatter(asset.borrowBalanceFiat)}
               {!isSupplyingOrWithdrawing ? (
                 <>
@@ -702,10 +833,12 @@ const TokenNameAndMaxButton = ({
   updateAmount,
   asset,
   mode,
+  optionToWrap,
 }: {
   asset: NativePricedFuseAsset;
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
+  optionToWrap: boolean | undefined;
 }) => {
   const { midasSdk, address } = useMidas();
 
@@ -720,7 +853,12 @@ const TokenNameAndMaxButton = ({
     setIsLoading(true);
 
     try {
-      const maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
+      let maxBN;
+      if (optionToWrap) {
+        maxBN = await midasSdk.signer.getBalance();
+      } else {
+        maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
+      }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
@@ -751,25 +889,33 @@ const TokenNameAndMaxButton = ({
     }
   };
 
-  const { cSolidBtn } = useColors();
-
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-        <Box height="32px" width="32px" mr={1}>
+        <Box height={8} width={8} mr={1}>
           <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
         </Box>
-        <Heading fontSize="18px" mr={2} flexShrink={0} color={cSolidBtn.primary.bgColor}>
-          {asset.underlyingSymbol}
-        </Heading>
+        <Text variant="mdText" fontWeight="bold" mr={2} flexShrink={0}>
+          {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+        </Text>
       </Row>
 
       {mode !== FundOperationMode.BORROW ? (
-        <Button height={8} onClick={setToMax} isLoading={isLoading} fontSize={14} p={2}>
+        <Button
+          height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+          px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+          onClick={setToMax}
+          isLoading={isLoading}
+        >
           MAX
         </Button>
       ) : (
-        <Button height={8} onClick={setToMin} isLoading={isLoading} fontSize={14} p={2}>
+        <Button
+          height={{ lg: 8, md: 8, sm: 8, base: 8 }}
+          px={{ lg: 2, md: 2, sm: 2, base: 2 }}
+          onClick={setToMin}
+          isLoading={isLoading}
+        >
           MIN
         </Button>
       )}
@@ -789,6 +935,7 @@ const AmountInput = ({
 } & InputProps) => {
   return (
     <Input
+      id="fundInput"
       type="number"
       inputMode="decimal"
       fontSize={22}

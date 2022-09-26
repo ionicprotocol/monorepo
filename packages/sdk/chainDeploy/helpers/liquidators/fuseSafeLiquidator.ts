@@ -2,7 +2,7 @@ import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@
 import { ChainConfig } from "@midas-capital/types";
 import { constants } from "ethers";
 
-import { FuseSafeLiquidator } from "../../../lib/contracts/typechain";
+import { FuseSafeLiquidator } from "../../../lib/contracts/typechain/FuseSafeLiquidator";
 import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
 
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {

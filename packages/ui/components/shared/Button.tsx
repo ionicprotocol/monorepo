@@ -1,14 +1,14 @@
 import { Button, ButtonProps, IconButton, IconButtonProps, useStyleConfig } from '@chakra-ui/react';
 import React from 'react';
 
-export const FilterButton = ({
+export const CButton = ({
   isSelected,
   children,
   onClick,
   variant,
   ...props
 }: {
-  isSelected: boolean;
+  isSelected?: boolean;
 } & ButtonProps) => {
   const styles = useStyleConfig('Button', { isSelected, variant });
 
@@ -19,13 +19,13 @@ export const FilterButton = ({
   );
 };
 
-export const FilterIconButton = ({
+export const CIconButton = ({
   isSelected,
   variant,
   ...props
 }: {
-  isSelected: boolean;
-  variant: string;
+  isSelected?: boolean;
+  variant?: string;
 } & IconButtonProps) => {
   const styles = useStyleConfig('IconButton', { isSelected, variant });
 

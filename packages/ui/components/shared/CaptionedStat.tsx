@@ -1,6 +1,8 @@
-import { Heading, SystemProps, Text, TextProps } from '@chakra-ui/react';
+import { QuestionIcon } from '@chakra-ui/icons';
+import { HStack, SystemProps, Text, TextProps } from '@chakra-ui/react';
 
 import { Column } from '@ui/components/shared/Flex';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useColors } from '@ui/hooks/useColors';
 import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
 import { CaptionedStatProps } from '@ui/types/ComponentPropsType';
@@ -8,12 +10,9 @@ import { CaptionedStatProps } from '@ui/types/ComponentPropsType';
 const CaptionedStat = ({
   stat,
   caption,
-  captionSize,
   spacing,
-  statSize,
   crossAxisAlignment,
-  captionFirst,
-  captionColor,
+  tooltip,
 }: CaptionedStatProps) => {
   const crossAxisAlignmentStatic = useMaybeResponsiveProp(crossAxisAlignment);
   const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as SystemProps['textAlign'];
@@ -22,50 +21,43 @@ const CaptionedStat = ({
 
   return (
     <Column mainAxisAlignment="center" crossAxisAlignment={crossAxisAlignment}>
-      {captionFirst ?? true ? (
-        <>
-          <Caption
-            size={captionSize}
-            mt={spacing ?? 0}
-            textAlign={textAlign}
-            color={captionColor ?? cCard.txtColor}
-          >
-            {caption}
-          </Caption>
-          <Stat size={statSize} text={stat} />
-        </>
-      ) : (
-        <>
-          <Stat size={statSize} text={stat} />
-          <Caption
-            size={captionSize}
-            mt={spacing ?? 0}
-            textAlign={textAlign}
-            color={captionColor ?? cCard.txtColor}
-          >
-            {caption}
-          </Caption>
-        </>
-      )}
+      <HStack>
+        <Caption mt={spacing ?? 0} textAlign={textAlign}>
+          {caption}
+        </Caption>
+        {tooltip && (
+          <SimpleTooltip label={tooltip}>
+            <Text fontWeight="bold">
+              <QuestionIcon
+                color={cCard.txtColor}
+                bg={cCard.bgColor}
+                borderRadius={'50%'}
+                ml={1}
+                mb="4px"
+              />
+            </Text>
+          </SimpleTooltip>
+        )}
+      </HStack>
+      <Stat text={stat} />
     </Column>
   );
 };
 
-const Stat = ({ size, text }: { size: { md: string; xs: string } | string; text: string }) => {
+const Stat = ({ text }: { text: string }) => {
   return (
-    <Heading fontSize={size} lineHeight="2.5rem">
+    <Text variant="smText" fontWeight="bold" lineHeight="2.5rem">
       {text}
-    </Heading>
+    </Text>
   );
 };
 
-const Caption = ({ size, textAlign, children, color = '#858585', ...restOfProps }: TextProps) => {
+const Caption = ({ textAlign, children, ...restOfProps }: TextProps) => {
   return (
     <Text
-      textTransform="uppercase"
+      textTransform="capitalize"
       letterSpacing="wide"
-      color={color}
-      fontSize={size}
+      variant="smText"
       textAlign={textAlign}
       {...restOfProps}
     >

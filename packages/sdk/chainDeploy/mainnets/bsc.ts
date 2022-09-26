@@ -166,6 +166,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.JCHF,
+    aggregator: "0x964261740356cB4aaD0C3D2003Ce808A4176a46d",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.BRZ,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -225,6 +230,12 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.BRZ),
       underlying(assets, assetSymbols.BRZw),
     ],
+  },
+  {
+    // eps BUSD jCHF
+    lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
+    pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
+    underlyings: [underlying(assets, assetSymbols.JCHF), underlying(assets, assetSymbols.BUSD)],
   },
 ];
 

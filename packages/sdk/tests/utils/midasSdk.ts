@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { arbitrum, bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -202,10 +202,9 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.bsc:
         chainConfig = bsc;
-        if (process.env.FORK_CHAIN_ID!) {
-          chainDeployment = await getBscForkDeployments();
-          chainConfig.chainDeployments = chainDeployment;
-        }
+        break;
+      case SupportedChains.chapel:
+        chainConfig = chapel;
         break;
       case SupportedChains.moonbeam:
         chainConfig = moonbeam;
@@ -219,6 +218,12 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
       case SupportedChains.arbitrum:
         chainConfig = arbitrum;
         break;
+    }
+
+    // Override for when in SIMULATION
+    if (process.env.SIMULATION!) {
+      chainDeployment = await getBscForkDeployments();
+      chainConfig.chainDeployments = chainDeployment;
     }
 
     midasSdk = new MidasSdk(signer, chainConfig);

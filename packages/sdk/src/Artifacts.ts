@@ -48,6 +48,7 @@ const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const MidasFlywheel: Artifact = MidasFlywheelArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
+const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -79,6 +80,7 @@ const ARTIFACTS = {
   MidasFlywheel,
   JumpRateModel,
   JumpRateModel_MIMO_002_004_4_08,
+  JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
   MasterPriceOracle,
   FixedNativePriceOracle,
@@ -114,6 +116,7 @@ export {
   MidasFlywheel,
   JumpRateModel,
   JumpRateModel_MIMO_002_004_4_08,
+  JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
   MasterPriceOracle,
   RewardsDistributorDelegate,

@@ -5,7 +5,6 @@ import { BigNumber, utils } from 'ethers';
 
 import { useMidas } from '@ui/context/MidasContext';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
-import { toFixedNoRound } from '@ui/utils/formatNumber';
 
 export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
   const {
@@ -63,15 +62,10 @@ export const fetchMaxAmount = async (
   }
 
   if (mode === FundOperationMode.WITHDRAW) {
-    let maxRedeem = await midasSdk.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
+    const maxRedeem = await midasSdk.contracts.FusePoolLensSecondary.callStatic.getMaxRedeem(
       address,
       asset.cToken,
       { from: address }
-    );
-
-    maxRedeem = utils.parseUnits(
-      toFixedNoRound(utils.formatUnits(maxRedeem, asset.underlyingDecimals), 7),
-      asset.underlyingDecimals
     );
 
     if (maxRedeem) {

@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Flex,
   Link,
   Modal,
   ModalCloseButton,
@@ -68,19 +69,21 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader display="flex" alignItems="baseline">
-            Account
-            <Text fontSize={20} fontWeight="light" ml={2}>
-              {`( ${shortAddress(address, 6, 4)} )`}
-            </Text>
+          <ModalHeader>
+            <Flex display="flex" alignItems="baseline">
+              <Text variant="title">Account</Text>
+              <Text variant="mdText" ml={2}>
+                {`( ${shortAddress(address, 6, 4)} )`}
+              </Text>
+            </Flex>
           </ModalHeader>
           <ModalCloseButton top={4} />
           <ModalDivider />
           <Column width="100%" mainAxisAlignment="flex-start" crossAxisAlignment="center" p={4}>
-            <Button width="100%" size="lg" onClick={onSwitchWallet} mb={4}>
+            <Button width="100%" onClick={onSwitchWallet} mb={4}>
               Switch Wallet
             </Button>
-            <Button width="100%" variant="silver" size="lg" onClick={handleDisconnectClick} mb={4}>
+            <Button width="100%" variant="silver" onClick={handleDisconnectClick} mb={4}>
               Disconnect
             </Button>
             <Column

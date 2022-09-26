@@ -101,7 +101,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             <Heading size="md">Flywheels</Heading>
 
             <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-              <Button variant="ghost" onClick={openAdd} ml="auto">
+              <Button variant="_ghost" onClick={openAdd} ml="auto">
                 Add existing Flywheel
               </Button>
               <Button onClick={openCreate} ml="auto">
@@ -170,7 +170,11 @@ const FlywheelRow = ({
   const { cCard } = useColors();
 
   return (
-    <Tr _hover={{ background: 'grey', cursor: 'pointer' }} p={4} onClick={() => onClick(flywheel)}>
+    <Tr
+      _hover={{ background: cCard.hoverBgColor, cursor: 'pointer' }}
+      p={4}
+      onClick={() => onClick(flywheel)}
+    >
       <Td>
         <ClipboardValue label={shortAddress(flywheel.address)} value={flywheel.address} />
       </Td>

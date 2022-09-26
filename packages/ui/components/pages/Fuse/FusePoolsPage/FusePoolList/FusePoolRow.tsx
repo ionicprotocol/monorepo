@@ -5,9 +5,7 @@ import {
   Button,
   Link as ChakraLink,
   Flex,
-  Heading,
   HStack,
-  IconButton,
   Spinner,
   Text,
   VStack,
@@ -17,6 +15,7 @@ import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
 import { useCallback, useMemo, useState } from 'react';
 
+import { CIconButton } from '@ui/components/shared/Button';
 import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -30,7 +29,7 @@ import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
 import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { longFormat, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -53,7 +52,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
   const scoreGradient = usePoolRiskScoreGradient(rssScore);
   const poolDetails = usePoolDetails(data.assets);
   const rewardTokens = useRewardTokensOfPool(data.comptroller);
-  const { cCard, cOutlineBtn } = useColors();
+  const { cCard } = useColors();
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const toggleDetails = useCallback(() => {
     setShowDetails((previous) => !previous);
@@ -100,14 +99,13 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
       >
         <VStack flex={5} alignItems={'flex-start'} spacing={1}>
           <Flex>
-            <Heading mt={rewardTokens.length ? 2 : 0} fontWeight="bold" fontSize={'xl'} mr={2}>
+            <Text variant="lgText" fontWeight="bold" mt={rewardTokens.length ? 2 : 0} mr={2}>
               {data.name}
-            </Heading>
+            </Text>
           </Flex>
-
           {rewardTokens.length && (
             <HStack m={0}>
-              <Text fontWeight="bold">This pool is offering rewards</Text>
+              <Text>This pool is offering rewards</Text>
               <AvatarGroup size="xs" max={5}>
                 {rewardTokens.map((token) => (
                   <CTokenIcon key={token} address={token} />
@@ -126,7 +124,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
             >
               <Box background={scoreGradient} px="4" py="2" borderRadius="5px">
-                <Text fontSize="lg" textColor="white" fontWeight="semibold">
+                <Text variant="smText" fontWeight="semibold">
                   {rssScore}
                 </Text>
               </Box>
@@ -146,11 +144,8 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
 
         <VStack flex={2}>
           {usdPrice ? (
-            <SimpleTooltip
-              label={(data.totalSuppliedNative * usdPrice).toString()}
-              isDisabled={data.totalSuppliedNative * usdPrice === 0}
-            >
-              <Text fontWeight="bold" textAlign="center">
+            <SimpleTooltip label={`$${longFormat(data.totalSuppliedNative * usdPrice)}`}>
+              <Text variant="smText" fontWeight="bold" textAlign="center">
                 {smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
                 {data.totalSuppliedNative * usdPrice > 0 &&
                   data.totalSuppliedNative * usdPrice < 0.01 &&
@@ -164,11 +159,8 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
 
         <VStack flex={2}>
           {usdPrice ? (
-            <SimpleTooltip
-              label={(data.totalBorrowedNative * usdPrice).toString()}
-              isDisabled={data.totalBorrowedNative * usdPrice === 0}
-            >
-              <Text fontWeight="bold" textAlign="center">
+            <SimpleTooltip label={`$${longFormat(data.totalBorrowedNative * usdPrice)}`}>
+              <Text variant="smText" fontWeight="bold" textAlign="center">
                 {smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
                 {data.totalBorrowedNative * usdPrice > 0 &&
                   data.totalBorrowedNative * usdPrice < 0.01 &&
@@ -181,27 +173,19 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
         </VStack>
 
         <VStack flex={1}>
-          <IconButton
+          <CIconButton
+            aria-label="detail View"
             alignSelf="flex-end"
+            variant="_outline"
             onClick={(e) => {
               e.stopPropagation();
               toggleDetails();
             }}
-            disabled={!poolDetails ? true : false}
-            variant="outline"
-            color={cOutlineBtn.primary.txtColor}
-            aria-label="detail view"
-            borderRadius="50%"
-            borderWidth={3}
-            borderColor={cOutlineBtn.primary.borderColor}
-            background={cOutlineBtn.primary.bgColor}
             icon={
               !showDetails ? <ChevronDownIcon fontSize={30} /> : <ChevronUpIcon fontSize={30} />
             }
-            _hover={{
-              background: cOutlineBtn.primary.hoverBgColor,
-              color: cOutlineBtn.primary.hoverTxtColor,
-            }}
+            borderRadius="50%"
+            disabled={!poolDetails ? true : false}
           />
         </VStack>
       </HStack>
@@ -218,7 +202,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
             <Row crossAxisAlignment="center" mainAxisAlignment="space-between" width="100%">
               <Column mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold" textAlign="center">
+                  <Text variant="smText" textAlign="center">
                     Your Borrow Balance
                   </Text>
                 </Row>
@@ -228,7 +212,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                       label={(data.totalBorrowBalanceNative * usdPrice).toString()}
                       isDisabled={data.totalBorrowBalanceNative * usdPrice === 0}
                     >
-                      <Text fontWeight="bold" textAlign="center">
+                      <Text variant="smText" textAlign="center">
                         {smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)}
                         {data.totalBorrowBalanceNative * usdPrice > 0 &&
                           data.totalBorrowBalanceNative * usdPrice < 0.01 &&
@@ -242,7 +226,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
                 <Row crossAxisAlignment="center" mainAxisAlignment="center" width="100%">
-                  <Text fontWeight="bold" textAlign="center">
+                  <Text variant="smText" textAlign="center">
                     Your Supply Balance
                   </Text>
                 </Row>
@@ -252,7 +236,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                       label={(data.totalSupplyBalanceNative * usdPrice).toString()}
                       isDisabled={data.totalSupplyBalanceNative * usdPrice === 0}
                     >
-                      <Text fontWeight="bold" textAlign="center">
+                      <Text variant="smText" textAlign="center">
                         {smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)}
                         {data.totalSupplyBalanceNative * usdPrice > 0 &&
                           data.totalSupplyBalanceNative * usdPrice < 0.01 &&
@@ -268,7 +252,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={8}>
               {rewardTokens.length > 0 && (
                 <>
-                  <Text fontWeight="bold" textAlign="center" mr={4}>
+                  <Text variant="smText" textAlign="center" mr={4}>
                     Rewards:
                   </Text>
                   <AvatarGroup size="sm" max={30}>
@@ -283,7 +267,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
           <Column mainAxisAlignment="center" crossAxisAlignment="center">
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%">
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width={52}>
-                <Text fontWeight="bold" textAlign="center">
+                <Text variant="smText" textAlign="center">
                   Most Supplied Asset
                 </Text>
               </Column>
@@ -298,7 +282,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                 )}
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
-                <Text fontWeight="bold" textAlign="center">
+                <Text variant="smText" textAlign="center">
                   {poolDetails?.mostSuppliedAsset &&
                     usdPrice &&
                     smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative * usdPrice)}
@@ -307,7 +291,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
             </Row>
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={2}>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width={52}>
-                <Text fontWeight="bold" textAlign="center">
+                <Text variant="smText" textAlign="center">
                   Top Lending APY
                 </Text>
               </Column>
@@ -322,7 +306,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                 )}
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
-                <Text fontWeight="bold" textAlign="center">
+                <Text variant="smText" textAlign="center">
                   {poolDetails?.topLendingAPYAsset &&
                     midasSdk
                       .ratePerBlockToAPY(
@@ -336,7 +320,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
             </Row>
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={2}>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width={52}>
-                <Text fontWeight="bold">Top Stable Borrow APR</Text>
+                <Text variant="smText">Top Stable Borrow APR</Text>
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" mr={6}>
                 {poolDetails?.topBorrowAPRAsset && (
@@ -349,7 +333,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                 )}
               </Column>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
-                <Text fontWeight="bold" textAlign="center">
+                <Text variant="smText" textAlign="center">
                   {poolDetails?.topBorrowAPRAsset &&
                     midasSdk
                       .ratePerBlockToAPY(
@@ -363,7 +347,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
             </Row>
             <Row crossAxisAlignment="center" mainAxisAlignment="flex-start" width="100%" pt={2}>
               <Column mainAxisAlignment="center" crossAxisAlignment="flex-start" width="268px">
-                <Text fontWeight="bold" textAlign="center">
+                <Text variant="smText" textAlign="center">
                   Pool Address
                 </Text>
               </Column>
@@ -371,11 +355,11 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                 <Column mainAxisAlignment="center" crossAxisAlignment="flex-start">
                   <Row crossAxisAlignment="center" mainAxisAlignment="flex-start">
                     <ClipboardValue
-                      fontWeight="bold"
                       textAlign="center"
                       component={Text}
+                      variant="smText"
                       value={data.comptroller}
-                      label={shortAddress(data.comptroller, 4, 4)}
+                      label={shortAddress(data.comptroller, 6, 4)}
                     />
                     <SimpleTooltip
                       placement="top-start"
