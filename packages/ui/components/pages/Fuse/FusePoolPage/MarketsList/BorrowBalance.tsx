@@ -28,7 +28,7 @@ export const BorrowBalance = ({ asset }: { asset: MarketData }) => {
       <SimpleTooltip
         label={`${longFormat(borrowBalance)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
       >
-        <Text color={cCard.txtColor} mt={1} variant="xsText">
+        <Text color={cCard.txtColor} mt={1} variant="smText">
           {smallUsdFormatter(borrowBalance).replace('$', '')}
           {borrowBalance > DOWN_LIMIT && borrowBalance < UP_LIMIT && '+'}{' '}
           {tokenData?.symbol ?? asset.underlyingSymbol}
