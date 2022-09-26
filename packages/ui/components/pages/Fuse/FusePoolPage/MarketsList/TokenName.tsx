@@ -33,30 +33,30 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <CTokenIcon size="md" address={asset.underlyingToken} />
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
-        <PopoverTooltip
-          placement="top-start"
-          body={
-            <div
-              dangerouslySetInnerHTML={{
-                __html: asset.extraDocs || asset.underlyingSymbol,
-              }}
-            />
-          }
-        >
-          <Text textAlign={'left'} fontWeight="bold" variant="mdText">
-            {tokenData?.symbol ?? asset.underlyingSymbol}
-          </Text>
-        </PopoverTooltip>
-        <PopoverTooltip
-          placement="top-start"
-          body={
-            'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
-          }
-        >
-          <Text color={cCard.txtColor} variant="smText">
-            {utils.formatUnits(asset.collateralFactor, 16)}% LTV
-          </Text>
-        </PopoverTooltip>
+        <HStack>
+          <PopoverTooltip
+            placement="top-start"
+            body={
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: asset.extraDocs || asset.underlyingSymbol,
+                }}
+              />
+            }
+          >
+            <Text fontWeight="bold" variant="mdText">
+              {tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+          </PopoverTooltip>
+          <PopoverTooltip
+            placement="top-start"
+            body={
+              'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
+            }
+          >
+            <Text variant="xsText">{utils.formatUnits(asset.collateralFactor, 16)}% LTV</Text>
+          </PopoverTooltip>
+        </HStack>
         <VStack alignItems={'flex-start'} ml={2} spacing={1}>
           {claimableRewards && claimableRewards.length > 0 && (
             <SimpleTooltip label="This asset has rewards!">

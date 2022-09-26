@@ -31,7 +31,7 @@ export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
           tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol
         }`}
       >
-        <Text color={cCard.txtColor} mt={1} variant="xsText">
+        <Text color={cCard.txtColor} mt={1} variant="smText">
           {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}
           {supplyBalance > DOWN_LIMIT && supplyBalance < UP_LIMIT && '+'}{' '}
           {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}
