@@ -411,9 +411,11 @@ export const MarketsList = ({
         flexDirection={{ base: 'column', sm: 'row' }}
         gap={4}
       >
-        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={8}>
+        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={{ base: 4, lg: 8 }}>
           <HStack>
-            <Text variant="mdText">Your Supply Balance :</Text>
+            <Text variant="mdText" width="max-content">
+              Your Supply Balance :
+            </Text>
             <SimpleTooltip
               label={supplyBalanceFiat.toString()}
               isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
@@ -425,7 +427,9 @@ export const MarketsList = ({
             </SimpleTooltip>
           </HStack>
           <HStack>
-            <Text variant="mdText">Your Borrow Balance :</Text>
+            <Text variant="mdText" width="max-content">
+              Your Borrow Balance :
+            </Text>
             <SimpleTooltip
               label={borrowBalanceFiat.toString()}
               isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
