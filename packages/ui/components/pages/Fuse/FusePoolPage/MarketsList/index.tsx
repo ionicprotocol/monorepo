@@ -50,6 +50,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   BORROWABLE,
   COLLATERAL,
+  DEPRECARED,
   DOWN_LIMIT,
   MARKETS_COUNT_PER_PAGE,
   PROTECTED,
@@ -97,11 +98,15 @@ export const MarketsList = ({
     assetsAddress: assets.map((asset) => asset.cToken),
   });
 
-  const [collateralCounts, protectedCounts, borrowableCounts] = useMemo(() => {
+  const [collateralCounts, protectedCounts, borrowableCounts, deprecatedCounts] = useMemo(() => {
+    const availableAssets = assets.filter(
+      (asset) => !asset.isSupplyPaused || (asset.isSupplyPaused && asset.supplyBalanceFiat !== 0)
+    );
     return [
-      assets.filter((asset) => asset.membership).length,
-      assets.filter((asset) => asset.isBorrowPaused).length,
-      assets.filter((asset) => !asset.isBorrowPaused).length,
+      availableAssets.filter((asset) => asset.membership).length,
+      availableAssets.filter((asset) => asset.isBorrowPaused && !asset.isSupplyPaused).length,
+      availableAssets.filter((asset) => !asset.isBorrowPaused).length,
+      availableAssets.filter((asset) => asset.isBorrowPaused && asset.isSupplyPaused).length,
     ];
   }, [assets]);
 
@@ -118,8 +123,13 @@ export const MarketsList = ({
           allClaimableRewards &&
           allClaimableRewards[row.original.market.cToken]) ||
         (value.includes(COLLATERAL) && row.original.market.membership) ||
-        (value.includes(PROTECTED) && row.original.market.isBorrowPaused) ||
-        (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused)
+        (value.includes(PROTECTED) &&
+          row.original.market.isBorrowPaused &&
+          !row.original.market.isSupplyPaused) ||
+        (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused) ||
+        (value.includes(DEPRECARED) &&
+          row.original.market.isBorrowPaused &&
+          row.original.market.isSupplyPaused)
       ) {
         return true;
       } else {
@@ -173,7 +183,10 @@ export const MarketsList = ({
   };
 
   const data: Market[] = useMemo(() => {
-    return sortAssets(assets).map((asset) => {
+    const availableAssets = assets.filter(
+      (asset) => !asset.isSupplyPaused || (asset.isSupplyPaused && asset.supplyBalanceFiat !== 0)
+    );
+    return sortAssets(availableAssets).map((asset) => {
       return {
         market: asset,
         supplyApy: asset,
@@ -305,12 +318,14 @@ export const MarketsList = ({
   const [isCollateralFiltered, setIsCollateralFiltered] = useState<boolean>(true);
   const [isRewardsFiltered, setIsRewardsFiltered] = useState<boolean>(true);
   const [isProtectedFiltered, setIsProtectedFiltered] = useState<boolean>(true);
+  const [isDeprecatedFiltered, setIsDeprecatedFiltered] = useState<boolean>(true);
   const [isBorrowableFiltered, setIsBorrowableFiltered] = useState<boolean>(true);
   const [globalFilter, setGlobalFilter] = useState<string[]>([
     REWARDS,
     COLLATERAL,
     PROTECTED,
     BORROWABLE,
+    DEPRECARED,
   ]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [searchText, setSearchText] = useState('');
@@ -377,6 +392,16 @@ export const MarketsList = ({
     }
 
     setIsProtectedFiltered(!isProtectedFiltered);
+  };
+
+  const onDeprecatedFiltered = () => {
+    if (!isDeprecatedFiltered) {
+      setGlobalFilter([...globalFilter, DEPRECARED]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== DEPRECARED));
+    }
+
+    setIsDeprecatedFiltered(!isDeprecatedFiltered);
   };
 
   const onBorrowableFiltered = () => {
@@ -509,8 +534,9 @@ export const MarketsList = ({
           <Grid
             templateColumns={{
               base: 'repeat(1, 1fr)',
-              lg: 'repeat(4, 1fr)',
               sm: 'repeat(2, 1fr)',
+              md: 'repeat(2, 1fr)',
+              lg: 'repeat(5, 1fr)',
             }}
             gap={2}
           >
@@ -570,28 +596,6 @@ export const MarketsList = ({
                 <Center fontWeight="bold" pt="2px">{`${collateralCounts} Collateral`}</Center>
               </Button>
             </PopoverTooltip>
-
-            <PopoverTooltip
-              body={
-                <VStack alignItems="flex-start">
-                  <Text fontSize={18} fontWeight="bold">
-                    Protected Asset
-                  </Text>
-                  <Text>Assets cannot be borrowed.</Text>
-                  <Text>Click to filter</Text>
-                </VStack>
-              }
-            >
-              <Button
-                variant={isProtectedFiltered ? 'outline' : 'ghost'}
-                colorScheme="purple"
-                onClick={onProtectedFiltered}
-                width="140px"
-                disabled={protectedCounts === 0}
-              >
-                <Center fontWeight="bold" pt="2px">{`${protectedCounts} Protected`}</Center>
-              </Button>
-            </PopoverTooltip>
             <PopoverTooltip
               body={
                 <VStack alignItems="flex-start">
@@ -614,6 +618,49 @@ export const MarketsList = ({
                 <Center fontWeight="bold">{`${borrowableCounts} Borrowable`}</Center>
               </Button>
             </PopoverTooltip>
+            <PopoverTooltip
+              body={
+                <VStack alignItems="flex-start">
+                  <Text fontSize={18} fontWeight="bold">
+                    Protected Asset
+                  </Text>
+                  <Text>Assets that cannot be borrowed.</Text>
+                  <Text>Click to filter</Text>
+                </VStack>
+              }
+            >
+              <Button
+                variant={isProtectedFiltered ? 'outline' : 'ghost'}
+                colorScheme="purple"
+                onClick={onProtectedFiltered}
+                width="140px"
+                disabled={protectedCounts === 0}
+              >
+                <Center fontWeight="bold" pt="2px">{`${protectedCounts} Protected`}</Center>
+              </Button>
+            </PopoverTooltip>
+            {deprecatedCounts !== 0 && (
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start">
+                    <Text fontSize={18} fontWeight="bold">
+                      Deprecated Asset
+                    </Text>
+                    <Text>Assets that cannot be supplied and borrowed.</Text>
+                    <Text>Click to filter</Text>
+                  </VStack>
+                }
+              >
+                <Button
+                  variant={isDeprecatedFiltered ? 'outline' : 'ghost'}
+                  colorScheme="grey"
+                  onClick={onDeprecatedFiltered}
+                  width="140px"
+                >
+                  <Center fontWeight="bold" pt="2px">{`${deprecatedCounts} Deprecated`}</Center>
+                </Button>
+              </PopoverTooltip>
+            )}
           </Grid>
         </Flex>
         <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
