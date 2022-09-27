@@ -301,7 +301,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
             width="100%"
             pb={1}
           >
-            <Skeleton width="100%" height="100%"></Skeleton>
+            <Skeleton width="100%" height={200}></Skeleton>
           </Column>
         )}
       </Column>
