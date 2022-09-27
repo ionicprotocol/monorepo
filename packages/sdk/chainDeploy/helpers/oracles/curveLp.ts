@@ -36,14 +36,11 @@ export const deployCurveLpOracle = async ({
   for (const pool of curvePools) {
     const registered = await curveOracle.poolOf(pool.lpToken);
 
-    // TODO revert temporary fix
-    const isWrongPool =
-      pool.lpToken === "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC" &&
-      registered === "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d";
-    if (!isWrongPool && registered !== constants.AddressZero) {
+    if (registered !== constants.AddressZero) {
       console.log("Pool already registered", pool);
       continue;
     }
+
     tx = await curveOracle.registerPool(pool.lpToken, pool.pool, pool.underlyings);
     console.log("registerPool sent: ", tx.hash);
     receipt = await tx.wait();
@@ -94,11 +91,11 @@ export const deployCurveV2LpOracle = async ({
   for (const pool of curveV2Pools) {
     const registered = await curveOracle.poolOf(pool.lpToken);
 
-    // TODO revert temporary fix
     if (registered !== constants.AddressZero) {
       console.log("Pool already registered", pool);
       continue;
     }
+
     tx = await curveOracle.registerPool(pool.lpToken, pool.pool);
     console.log("registerPool sent: ", tx.hash);
     receipt = await tx.wait();

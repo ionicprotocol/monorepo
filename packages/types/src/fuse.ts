@@ -55,6 +55,9 @@ export interface NativePricedFuseAsset extends FuseAsset {
   utilization: number;
 
   extraDocs?: string;
+
+  borrowGuardianPaused: boolean;
+  mintGuardianPaused: boolean;
 }
 
 export interface FusePoolData {
