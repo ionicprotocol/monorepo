@@ -80,7 +80,6 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
         crossAxisAlignment="flex-start"
         height="100%"
         width="100%"
-        pb={2}
       >
         <Row
           mainAxisAlignment="space-between"
@@ -115,29 +114,28 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
               md: 'repeat(2, 1fr)',
               lg: 'repeat(4, 1fr)',
             }}
-            gap={2}
             width="100%"
             gridArea={{ borderTopWidth: 1, borderColor: 'red' }}
           >
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Total Supplied</Text>
               <Text variant="smText" fontWeight="bold">
                 {shortUsdFormatter(totalSuppliedFiat)}
               </Text>
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Total Borrowed</Text>
               <Text variant="smText" fontWeight="bold">
                 {shortUsdFormatter(totalBorrowedFiat)}
               </Text>
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Available Liquidity</Text>
               <Text variant="smText" fontWeight="bold">
                 {shortUsdFormatter(totalAvailableLiquidityFiat)}
               </Text>
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Pool Utilization</Text>
               <Text variant="smText" fontWeight="bold">
                 {totalSuppliedFiat.toString() === '0'
@@ -146,13 +144,13 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
               </Text>
             </HStack>
 
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Upgradeable</Text>
               <Text variant="smText" fontWeight="bold">
                 {data ? (data.upgradeable ? 'Yes' : 'No') : '?'}
               </Text>
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Admin</Text>
               {data?.admin ? (
                 <HStack>
@@ -166,6 +164,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                       href={`${scanUrl}/address/${data.admin}`}
                       isExternal
                       fontSize={{ base: 14, md: 16 }}
+                      height="auto"
                     >
                       {shortAddress(data.admin, 6, 4)}
                     </Button>
@@ -174,10 +173,11 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                   <Button
                     variant="_link"
                     minW={0}
-                    mt="-4px !important"
+                    mt="-8px !important"
                     p={0}
                     onClick={() => setCopiedText(data.admin)}
                     fontSize={18}
+                    height="auto"
                   >
                     {copiedText === data.admin ? (
                       <SimpleTooltip label="Copied">
@@ -196,7 +196,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                 </Text>
               )}
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Platform Fee</Text>
               <Text variant="smText" fontWeight="bold">
                 {assets.length > 0
@@ -204,7 +204,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                   : '10%'}
               </Text>
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Average Admin Fee</Text>
               <Text variant="smText" fontWeight="bold">
                 {assets
@@ -216,7 +216,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
               </Text>
             </HStack>
 
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Close Factor</Text>
               <Text variant="smText" fontWeight="bold">
                 {data?.closeFactor
@@ -224,7 +224,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                   : '?%'}
               </Text>
             </HStack>
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Liquidation Incentive</Text>
               <Text variant="smText" fontWeight="bold">
                 {data?.liquidationIncentive
@@ -233,14 +233,14 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
               </Text>
             </HStack>
 
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Oracle</Text>
               <Text variant="smText" fontWeight="bold">
                 {data ? data.oracle : '?'}
               </Text>
             </HStack>
 
-            <HStack px={4} py={2} borderTopWidth={1} borderColor={cCard.dividerColor}>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Whitelist</Text>
               <Text variant="smText" fontWeight="bold">
                 {data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
@@ -250,7 +250,8 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
               <HStack
                 aria-colspan={4}
                 px={4}
-                py={2}
+                pt={4}
+                pb={3}
                 wrap="wrap"
                 borderTopWidth={1}
                 borderColor={cCard.dividerColor}
@@ -267,6 +268,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                       href={`${scanUrl}/address/${comptroller}`}
                       isExternal
                       fontSize={{ base: 14, md: 16 }}
+                      height="auto"
                     >
                       {shortAddress(comptroller, 6, 4)}
                     </Button>
@@ -274,10 +276,11 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
                   <Button
                     variant="_link"
                     minW={0}
-                    mt="-4px !important"
+                    mt="-8px !important"
                     p={0}
                     onClick={() => setCopiedText(comptroller)}
                     fontSize={18}
+                    height="auto"
                   >
                     {copiedText === comptroller ? (
                       <SimpleTooltip label="Copied">
