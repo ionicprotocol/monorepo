@@ -236,13 +236,6 @@ const FusePoolList = () => {
                       </Text>
                     </VStack>
                     <VStack flex={3}></VStack>
-                    {config.isRssScoreEnabled && (
-                      <VStack flex={2}>
-                        <Text variant="smText" textAlign="center">
-                          Risk Score
-                        </Text>
-                      </VStack>
-                    )}
                     <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
                       <Text variant="smText" textAlign="center">
                         Assets
