@@ -115,6 +115,33 @@ export const TextStyleConfig: ComponentStyleConfig = {
       },
       color: mode('raisinBlack', 'raisinBlack')(props),
     }),
+    toastLgText: (props) => ({
+      fontSize: {
+        base: 18,
+        sm: 18,
+        md: 20,
+        lg: 20,
+      },
+      color: mode('whiteBg', 'raisinBlack')(props),
+    }),
+    toastMdText: (props) => ({
+      fontSize: {
+        base: 16,
+        sm: 16,
+        md: 18,
+        lg: 18,
+      },
+      color: mode('whiteBg', 'raisinBlack')(props),
+    }),
+    toastSmText: (props) => ({
+      fontSize: {
+        base: 14,
+        sm: 14,
+        md: 16,
+        lg: 16,
+      },
+      color: mode('whiteBg', 'raisinBlack')(props),
+    }),
   },
   defaultProps: {
     variant: 'default',
