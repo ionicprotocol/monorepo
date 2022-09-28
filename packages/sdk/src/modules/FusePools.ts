@@ -45,6 +45,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
+
         asset.isBorrowPaused = asset.borrowGuardianPaused;
         asset.isSupplyPaused = asset.mintGuardianPaused;
 
