@@ -7,6 +7,7 @@ const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
 const xcDOT = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
 const multiWBTC = "0x922D641a426DcFFaeF11680e5358F34d97d112E1";
 const stDOT = "0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108";
+const wstDOT = "0x191cf2602Ca2e534c5Ccae7BCBF4C46a704bb949";
 const ETH = "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f";
 const BNB = "0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055";
 const multiDAI = "0x765277EebeCA2e31912C9946eAe1021199B39C61";
@@ -60,9 +61,18 @@ export const assets: SupportedAsset[] = [
     underlying: stDOT,
     name: "Staked ERC20 DOT",
     decimals: 10,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.DiaStDotPriceOracle,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
     <p>You can get stDOT by staking your xcDOT on <a href="https://polkadot.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a></p>`,
+  },
+  {
+    symbol: assetSymbols.wstDOT,
+    underlying: wstDOT,
+    name: "Wrapped Liquid Staked ERC20 DOT",
+    decimals: 10,
+    oracle: OracleTypes.DiaStDotPriceOracle,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>You can get wstDOT by staking your xcDOT on <a href="https://polkadot.lido.fi/wrap" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a></p>`,
   },
   {
     symbol: assetSymbols.ETH,

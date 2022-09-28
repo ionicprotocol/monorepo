@@ -14,7 +14,8 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
+import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
 
 const assets = bsc.assets;
 const wbnb = underlying(assets, assetSymbols.WBNB);
@@ -231,11 +232,13 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.BRZw),
     ],
   },
+];
+
+const curveV2Pools: CurveV2PoolConfig[] = [
   {
     // eps BUSD jCHF
     lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
     pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
-    underlyings: [underlying(assets, assetSymbols.JCHF), underlying(assets, assetSymbols.BUSD)],
   },
 ];
 
@@ -302,6 +305,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  //// Curve V2 LP Oracle
+  await deployCurveV2LpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curveV2Pools,
   });
 
   //// Ankr BNB Certificate oracle
