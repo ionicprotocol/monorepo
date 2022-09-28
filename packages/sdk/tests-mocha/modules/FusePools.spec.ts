@@ -45,17 +45,18 @@ describe("FusePools", () => {
     FusePools = withFusePools(MidasBase);
 
     ganache.chainDeployments = {
+      CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
+      CErc20PluginDelegate: { abi: [], address: CErc20PluginDelegateAddress },
+      CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
       Comptroller: { abi: [], address: mkAddress("0xabc") },
+      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
+      FuseFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       FuseSafeLiquidator: { abi: [], address: mkAddress("0xecc") },
-      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
-      CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
-      CErc20PluginDelegate: { abi: [], address: CErc20PluginDelegateAddress },
-      CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
     };
 
     fusePools = new FusePools(mockProvider, ganache);

@@ -87,7 +87,7 @@ const ClaimRewardsModal = ({
       try {
         setIsClaiming(true);
         if (!signer) return;
-        const fwLensRouter = midasSdk.contracts['FuseFlywheelLensRouter'];
+        const fwLensRouter = midasSdk.contracts.FuseFlywheelLensRouter;
 
         for (const reward of rewards) {
           const markets = reward.rewards.map((reward) => reward.market);
