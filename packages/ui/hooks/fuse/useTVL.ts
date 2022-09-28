@@ -5,11 +5,11 @@ import { utils } from 'ethers';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useUSDPrices } from '@ui/hooks/useUSDPrices';
 
-export const fetchFuseNumberTVL = async (midasSdk: MidasSdk, usdPrice: number) => {
+export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
   const tvlNative = await midasSdk.getTotalValueLocked(false);
   const decimals = midasSdk.chainSpecificParams.metadata.wrappedNativeCurrency.decimals;
 
-  return Number(utils.formatUnits(tvlNative, decimals)) * usdPrice;
+  return Number(utils.formatUnits(tvlNative, decimals));
 };
 
 interface CrossChainTVL {
@@ -35,7 +35,7 @@ export const useTVL = () => {
           Object.entries(sdks).map(
             async ([chainId, sdk]): Promise<CrossChainTVL> => ({
               [chainId as string]: {
-                value: (await fetchFuseNumberTVL(sdk, 1)) * prices[chainId].value,
+                value: (await fetchFuseNumberTVL(sdk)) * prices[chainId].value,
                 symbol: prices[chainId].symbol,
                 name: sdk.chainSpecificParams.metadata.name,
                 logo: sdk.chainSpecificParams.metadata.img,

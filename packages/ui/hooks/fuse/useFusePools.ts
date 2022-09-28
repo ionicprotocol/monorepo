@@ -1,25 +1,13 @@
-import { FusePoolData } from '@midas-capital/types';
+import { FusePoolData, SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
-
-const poolSort = (pools: FusePoolData[]) => {
-  return pools.sort((a, b) => {
-    if (b.totalSuppliedNative > a.totalSuppliedNative) {
-      return 1;
-    }
-
-    if (b.totalSuppliedNative < a.totalSuppliedNative) {
-      return -1;
-    }
-
-    // They're equal, let's sort by pool number:
-    return b.id > a.id ? 1 : -1;
-  });
-};
+import { CrossFusePools } from '@ui/types/ChainMetaData';
+import { poolSort } from '@ui/utils/sorts';
 
 // returns impersonal data about fuse pools ( can filter by your supplied/created pools )
 export const useFusePools = (
@@ -88,4 +76,37 @@ export const useFusePools = (
   }, [pools, filter, isCreatedPools, isAllPools]);
 
   return { pools, filteredPools, ...queryResultRest };
+};
+
+export const useCrossFusePools = (
+  filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null,
+  chainIds: SupportedChains[]
+) => {
+  const { data, ...queryResultRest } = useQuery(
+    ['useCrossFusePools', chainIds, filter],
+    async () => {
+      try {
+        const res = await axios.post('/api/pools', {
+          chains: chainIds,
+        });
+
+        return {
+          allPools: res.data.allPools as FusePoolData[],
+          chainPools: res.data.chainPools as CrossFusePools,
+        };
+      } catch (e) {
+        console.error(e);
+
+        return undefined;
+      }
+    },
+    {
+      enabled: chainIds.length !== 0,
+    }
+  );
+
+  return {
+    ...data,
+    ...queryResultRest,
+  };
 };

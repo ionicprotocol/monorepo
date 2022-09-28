@@ -66,7 +66,7 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { sortAssets } from '@ui/utils/sortAssets';
+import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
   market: MarketData;

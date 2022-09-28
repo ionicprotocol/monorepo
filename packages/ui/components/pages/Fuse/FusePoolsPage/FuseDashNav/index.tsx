@@ -14,8 +14,10 @@ import {
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 
+import { CrossFilterButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav/CrossFilterButtons';
 import { PoolButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav/PoolButtons';
 import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
@@ -35,6 +37,8 @@ export const FuseDashNav = () => {
 
   const [viewMode, setViewMode] = useState<string>('');
   const { setViewMode: _setViewMode, currentChain } = useMidas();
+  const { chainIds } = useMultiMidas();
+  const [chainFiltered, setChainFiltered] = useState<string[]>([...chainIds]);
   const { cPage, cInput } = useColors();
 
   const debouncedSearchTerm = useDebounce(searchText, 400);
@@ -130,6 +134,7 @@ export const FuseDashNav = () => {
             </span>
           </Box>
         </Flex>
+        <CrossFilterButtons chainFiltered={chainFiltered} setChainFiltered={setChainFiltered} />
       </Box>
     </>
   );

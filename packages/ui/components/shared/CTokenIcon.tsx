@@ -29,17 +29,19 @@ const PlaceholderIcon = ({ color, ...restOfProps }: PlaceholderIconProps) => {
 
 interface CTokenIconProps extends AvatarProps {
   address: string;
+  chainId: number;
   withTooltip?: boolean;
   withMotion?: boolean;
 }
 export const CTokenIcon = ({
   address,
+  chainId,
   withTooltip = true,
   withMotion = true,
   ...avatarProps
 }: CTokenIconProps) => {
   const iconColor = useColorModeValue('#333', '#ddd');
-  const { data: tokenData, isLoading } = useTokenData(address);
+  const { data: tokenData, isLoading } = useTokenData(address, chainId);
 
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>

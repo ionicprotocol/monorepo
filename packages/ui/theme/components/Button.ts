@@ -65,7 +65,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       mr: '-px',
       _active: { opacity: 0.8 },
       _hover: {
-        bg: mode('ecru', 'ecru')(props),
+        bg: props.isSelected ? mode('ecru', 'ecru')(props) : mode('ecru80', 'ecru80')(props),
         color: mode('raisinBlack', 'raisinBlack')(props),
         borderColor: mode('ecru', 'ecru')(props),
       },

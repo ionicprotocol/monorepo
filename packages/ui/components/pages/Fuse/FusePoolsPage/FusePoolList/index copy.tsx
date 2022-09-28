@@ -25,9 +25,9 @@ import PoolCard from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FuseP
 import PoolRow from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow';
 import { AlertHero } from '@ui/components/shared/Alert';
 import { config } from '@ui/config/index';
-import { ENABLED_CHAINS, POOLS_PER_PAGE } from '@ui/constants/index';
+import { POOLS_PER_PAGE } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { useCrossFusePools, useFusePools } from '@ui/hooks/fuse/useFusePools';
+import { useFusePools } from '@ui/hooks/fuse/useFusePools';
 import usePoolSorting from '@ui/hooks/fuse/usePoolSorting';
 import { useColors } from '@ui/hooks/useColors';
 import { useFilter } from '@ui/hooks/useFilter';
@@ -40,12 +40,11 @@ const FusePoolList = () => {
   const filter = useFilter();
   const sortBy = useSort();
   const isMobile = useIsSmallScreen();
-  // const { filteredPools: filteredPoolsList, error } = useFusePools(filter);
-  const { isLoading, chainPools, allPools, error } = useCrossFusePools(filter, [...ENABLED_CHAINS]);
+  const { isLoading, filteredPools: filteredPoolsList, error } = useFusePools(filter);
   const [err, setErr] = useState<Err | undefined>(error as Err);
   const [poolsUserSupplied, setPoolsUserSupplied] = useState<FusePoolData[]>();
   const [poolsUserNotSupplied, setPoolsUserNotSupplied] = useState<FusePoolData[]>();
-  const filteredPools = usePoolSorting(allPools ? allPools : [], sortBy);
+  const filteredPools = usePoolSorting(filteredPoolsList, sortBy);
 
   const { viewMode } = useMidas();
   const { cPage, cOutlineBtn } = useColors();
@@ -75,31 +74,29 @@ const FusePoolList = () => {
   }, [error]);
 
   useEffect(() => {
-    if (filteredPools.length !== 0) {
-      const res = filteredPools.reduce<{
-        poolsUserSupplied: FusePoolData[];
-        poolsUserNotSupplied: FusePoolData[];
-      }>(
-        (r, pool) => {
-          let totalSuppliedAmount = 0;
+    const res = filteredPools.reduce<{
+      poolsUserSupplied: FusePoolData[];
+      poolsUserNotSupplied: FusePoolData[];
+    }>(
+      (r, pool) => {
+        let totalSuppliedAmount = 0;
 
-          pool.assets.map((asset) => {
-            totalSuppliedAmount += asset.supplyBalanceNative;
-          });
+        pool.assets.map((asset) => {
+          totalSuppliedAmount += asset.supplyBalanceNative;
+        });
 
-          r[totalSuppliedAmount !== 0 ? 'poolsUserSupplied' : 'poolsUserNotSupplied'].push(pool);
+        r[totalSuppliedAmount !== 0 ? 'poolsUserSupplied' : 'poolsUserNotSupplied'].push(pool);
 
-          return r;
-        },
-        {
-          poolsUserSupplied: [],
-          poolsUserNotSupplied: [],
-        }
-      );
+        return r;
+      },
+      {
+        poolsUserSupplied: [],
+        poolsUserNotSupplied: [],
+      }
+    );
 
-      setPoolsUserSupplied(res.poolsUserSupplied);
-      setPoolsUserNotSupplied(res.poolsUserNotSupplied);
-    }
+    setPoolsUserSupplied(res.poolsUserSupplied);
+    setPoolsUserNotSupplied(res.poolsUserNotSupplied);
   }, [filteredPools]);
 
   if (err && err.code !== 'NETWORK_ERROR') {

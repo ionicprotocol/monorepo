@@ -27,13 +27,13 @@ const ChainSupportedAssets: ChainSupportedAssetsType = {
 
 export const fetchTokenData = async (
   addresses: string[],
-  chainId: number | undefined
+  chainId: number
 ): Promise<TokenData[]> => {
   let data: Partial<TokenData>[] = [];
 
   const apiAddresses: string[] = [];
 
-  if (chainId && addresses.length !== 0) {
+  if (addresses.length !== 0) {
     addresses.map(async (address) => {
       const wrappedNativeCurrencyConfig =
         chainIdToConfig[chainId].specificParams.metadata.wrappedNativeCurrency;
@@ -72,11 +72,7 @@ export const fetchTokenData = async (
   return data as TokenData[];
 };
 
-export const useTokenData = (address: string | undefined) => {
-  const {
-    currentChain: { id },
-  } = useMidas();
-
+export const useTokenData = (address: string, chainId?: number) => {
   const validAddress = useMemo(() => {
     if (address) {
       try {
@@ -88,17 +84,17 @@ export const useTokenData = (address: string | undefined) => {
   }, [address]);
 
   return useQuery<TokenData | null>(
-    ['useTokenData', id, validAddress],
+    ['useTokenData', chainId, validAddress],
     async () => {
-      if (validAddress && id) {
-        const res = await fetchTokenData([validAddress], id);
+      if (chainId && validAddress) {
+        const res = await fetchTokenData([validAddress], chainId);
 
         return res[0];
       } else {
         return null;
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!id }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!chainId }
   );
 };
 

@@ -30,7 +30,7 @@ import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { sortSupportedAssets } from '@ui/utils/sortAssets';
+import { sortSupportedAssets } from '@ui/utils/sorts';
 
 interface AddAssetProps {
   comptrollerAddress: string;
@@ -52,7 +52,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
   const [addedAssets, setAddedAssets] = useState<string[] | undefined>();
   const { data: poolData } = useFusePoolData(poolID);
 
-  const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress);
+  const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress, poolData?.chainId);
 
   const { cPage } = useColors();
 
@@ -76,7 +76,14 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
     <VStack py={4}>
       <VStack px={4} width="100%">
         <VStack>
-          {tokenData && <CTokenIcon size="lg" address={tokenData.address} my={4}></CTokenIcon>}
+          {tokenData && (
+            <CTokenIcon
+              size="lg"
+              address={tokenData.address}
+              chainId={poolData?.chainId}
+              my={4}
+            ></CTokenIcon>
+          )}
           <Heading as="h1" size="lg">
             {error && 'Invalid Address!'}
             {tokenData && tokenData.symbol}

@@ -108,7 +108,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
               <Text>This pool is offering rewards</Text>
               <AvatarGroup size="xs" max={5}>
                 {rewardTokens.map((token) => (
-                  <CTokenIcon key={token} address={token} />
+                  <CTokenIcon key={token} address={token} chainId={data.chainId} />
                 ))}
               </AvatarGroup>
             </HStack>
@@ -136,7 +136,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
           {data.underlyingTokens.length === 0 ? null : (
             <AvatarGroup size="sm" max={30}>
               {tokens.slice(0, 10).map((token, i) => (
-                <CTokenIcon key={i} address={token.address} />
+                <CTokenIcon key={i} address={token.address} chainId={data.chainId} />
               ))}
             </AvatarGroup>
           )}
@@ -257,7 +257,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   </Text>
                   <AvatarGroup size="sm" max={30}>
                     {rewardTokens.map((token, i) => (
-                      <CTokenIcon key={i} address={token} />
+                      <CTokenIcon key={i} address={token} chainId={data.chainId} />
                     ))}
                   </AvatarGroup>
                 </>
@@ -276,6 +276,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   <CTokenIcon
                     key={poolDetails.mostSuppliedAsset.underlyingToken}
                     address={poolDetails.mostSuppliedAsset.underlyingToken}
+                    chainId={data.chainId}
                     width={35}
                     height={35}
                   />
@@ -300,6 +301,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   <CTokenIcon
                     key={poolDetails.topLendingAPYAsset.underlyingToken}
                     address={poolDetails.topLendingAPYAsset.underlyingToken}
+                    chainId={data.chainId}
                     width={35}
                     height={35}
                   />
@@ -327,6 +329,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
                   <CTokenIcon
                     key={poolDetails.topBorrowAPRAsset.underlyingToken}
                     address={poolDetails.topBorrowAPRAsset.underlyingToken}
+                    chainId={data.chainId}
                     width={35}
                     height={35}
                   />

@@ -59,6 +59,7 @@ export interface NativePricedFuseAsset extends FuseAsset {
 
 export interface FusePoolData {
   id: number;
+  chainId: number;
   assets: NativePricedFuseAsset[];
   creator: string;
   comptroller: string;

@@ -7,7 +7,7 @@ import {
   neondevnet,
   polygon,
 } from '@midas-capital/chains';
-import { ChainConfig } from '@midas-capital/types';
+import { ChainConfig, FusePoolData } from '@midas-capital/types';
 
 import { config } from '@ui/config/index';
 
@@ -38,3 +38,7 @@ export const supportedChainIdToConfig: {
   [chapel.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
 };
+
+export interface CrossFusePools {
+  [chainId: string]: FusePoolData[];
+}
