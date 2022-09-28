@@ -79,7 +79,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     }),
     panelLink: (props) => ({
       ...theme.components.Button.variants?.link,
-      color: mode('raisinBlack', 'raisinBlack')(props),
+      color: mode('whiteBg', 'raisinBlack')(props),
       _hover: {
         color: mode('ecru', 'ecru')(props),
       },

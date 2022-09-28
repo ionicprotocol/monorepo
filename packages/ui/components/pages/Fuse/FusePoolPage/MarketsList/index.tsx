@@ -530,7 +530,9 @@ export const MarketsList = ({
         gap={4}
       >
         <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
-          <Text variant="title">Assets</Text>
+          <Text paddingTop="2px" variant="title">
+            Assets
+          </Text>
           <Grid
             templateColumns={{
               base: 'repeat(1, 1fr)',

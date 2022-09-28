@@ -88,6 +88,11 @@ export type CurvePoolConfig = {
   underlyings: string[];
 };
 
+export type CurveV2PoolConfig = {
+  lpToken: string;
+  pool: string;
+};
+
 export type ChainDeployFnParams = {
   ethers: HardhatRuntimeEnvironment["ethers"];
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
@@ -132,6 +137,15 @@ export type UniswaV3DeployFnParams = ChainDeployFnParams & {
 export type CurveLpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   curvePools: CurvePoolConfig[];
+};
+
+export type CurveV2LpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  curveV2Pools: CurveV2PoolConfig[];
+};
+
+export type DiaStDotFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
 };
 
 export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {

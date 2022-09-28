@@ -40,6 +40,9 @@ export const deployFlywheelWithDynamicRewards = async ({
         },
         waitConfirmations: 1,
       });
+      if (fwc.transactionHash) {
+        await ethers.provider.waitForTransaction(fwc.transactionHash);
+      }
       console.log("MidasFlywheel: ", fwc.address);
 
       const fdr = await deployments.deploy(`FuseFlywheelDynamicRewardsPlugin_${config.name}`, {
@@ -49,6 +52,9 @@ export const deployFlywheelWithDynamicRewards = async ({
         log: true,
         waitConfirmations: 1,
       });
+      if (fdr.transactionHash) {
+        await ethers.provider.waitForTransaction(fdr.transactionHash);
+      }
       console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
       const flywheelCore = (await ethers.getContract(`MidasFlywheel_${config.name}`, deployer)) as MidasFlywheel;

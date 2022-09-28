@@ -7,8 +7,6 @@ import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "../lib/contracts/out/CErc20PluginDelegate.sol/CErc20PluginDelegate.json";
 import CErc20PluginRewardsDelegateArtifact from "../lib/contracts/out/CErc20PluginRewardsDelegate.sol/CErc20PluginRewardsDelegate.json";
-import CEtherDelegateArtifact from "../lib/contracts/out/CEtherDelegate.sol/CEtherDelegate.json";
-import CEtherDelegatorArtifact from "../lib/contracts/out/CEtherDelegator.sol/CEtherDelegator.json";
 import ChainlinkPriceOracleV2Artifact from "../lib/contracts/out/ChainlinkPriceOracleV2.sol/ChainlinkPriceOracleV2.json";
 import ComptrollerArtifact from "../lib/contracts/out/Comptroller.sol/Comptroller.json";
 import CTokenInterfaceArtifact from "../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
@@ -35,8 +33,6 @@ const CErc20Delegate: Artifact = CErc20DelegateArtifact;
 const CErc20Delegator: Artifact = CErc20DelegatorArtifact;
 const CErc20PluginDelegate: Artifact = CErc20PluginDelegateArtifact;
 const CErc20PluginRewardsDelegate: Artifact = CErc20PluginRewardsDelegateArtifact;
-const CEtherDelegate: Artifact = CEtherDelegateArtifact;
-const CEtherDelegator: Artifact = CEtherDelegatorArtifact;
 const ChainlinkPriceOracleV2: Artifact = ChainlinkPriceOracleV2Artifact;
 const Comptroller: Artifact = ComptrollerArtifact;
 const CTokenInterface: Artifact = CTokenInterfaceArtifact;
@@ -67,8 +63,6 @@ const ARTIFACTS = {
   CErc20Delegator,
   CErc20PluginDelegate,
   CErc20PluginRewardsDelegate,
-  CEtherDelegate,
-  CEtherDelegator,
   ChainlinkPriceOracleV2,
   Comptroller,
   CTokenInterface,
@@ -103,8 +97,6 @@ export {
   CErc20Delegator,
   CErc20PluginDelegate,
   CErc20PluginRewardsDelegate,
-  CEtherDelegate,
-  CEtherDelegator,
   ChainlinkPriceOracleV2,
   Comptroller,
   CTokenInterface,

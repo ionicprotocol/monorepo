@@ -114,19 +114,27 @@ export const MidasProvider = ({
         const tx = await midasSdk.provider.getTransaction(hash);
         if (tx.from === address) {
           infoToast({
-            title: <>Pending!</>,
-            description: <>Transaction is pending now.</>,
+            title: (
+              <Text variant="toastLgText" fontWeight="bold">
+                Complete!
+              </Text>
+            ),
+            description: <Text variant="toastSmText">Transaction is pending now.</Text>,
           });
           const res = await tx.wait();
 
           if (res.blockNumber) {
             mounted.current && setFinishedTxHash(hash);
             successToast({
-              title: <>Complete!</>,
+              title: (
+                <Text variant="toastLgText" fontWeight="bold">
+                  Complete!
+                </Text>
+              ),
               description: (
                 <VStack alignItems="flex-start" mt={1} spacing={0}>
                   <HStack>
-                    <Text variant="panelSmText">Your can check transaction </Text>
+                    <Text variant="toastSmText">Your can check transaction </Text>
                     <Button
                       href={`${scanUrl}/tx/${tx.hash}`}
                       rightIcon={<ExternalLinkIcon />}
@@ -140,15 +148,19 @@ export const MidasProvider = ({
                     </Button>
                   </HStack>
                   <HStack>
-                    <Text variant="panelSmText">Your data is being updated! Please wait...</Text>
+                    <Text variant="toastSmText">Your data is being updated! Please wait...</Text>
                   </HStack>
                 </VStack>
               ),
             });
             await queryClient.refetchQueries();
             successToast({
-              title: <>Complete!</>,
-              description: <Text variant="panelSmText">Data is fully updated!</Text>,
+              title: (
+                <Text variant="toastLgText" fontWeight="bold">
+                  Complete!
+                </Text>
+              ),
+              description: <Text variant="toastSmText">Data is fully updated!</Text>,
             });
           }
         }
