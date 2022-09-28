@@ -22,11 +22,7 @@ export async function getAsset(
 }
 
 export function getCToken(asset: NativePricedFuseAsset, sdk: MidasSdk, signer: SignerWithAddress) {
-  if (asset.underlyingToken === constants.AddressZero) {
-    return new Contract(asset.cToken, sdk.chainDeployment.CEtherDelegate.abi, signer);
-  } else {
-    return new Contract(asset.cToken, sdk.chainDeployment.CErc20Delegate.abi, signer);
-  }
+  return new Contract(asset.cToken, sdk.chainDeployment.CErc20Delegate.abi, signer);
 }
 
 export async function addCollateral(
