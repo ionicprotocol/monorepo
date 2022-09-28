@@ -24463,6 +24463,24 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_usdToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_masterPriceOracle",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -24519,7 +24537,7 @@
       ]
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0x6Cc774592B417500DE9e43cd8D11f2f5f29De787",
+      "address": "0x5fa2aea712cE3eD177321A7AFFD8518a86cd3929",
       "abi": [
         {
           "anonymous": false,
@@ -24761,7 +24779,7 @@
               "type": "address"
             },
             {
-              "internalType": "contract MasterPriceOracle",
+              "internalType": "address",
               "name": "_masterPriceOracle",
               "type": "address"
             }
