@@ -93,9 +93,7 @@ const ClaimRewardsModal = ({
           const markets = reward.rewards.map((reward) => reward.market);
           const tx = await fwLensRouter
             .connect(signer)
-            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true], {
-              from: address,
-            });
+            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
 
           await tx.wait();
           successToast({
