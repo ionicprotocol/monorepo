@@ -79,7 +79,7 @@ export const deployCurveV2LpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], [], mpo.address, deployConfig.stableToken],
+          args: [[], [], deployConfig.stableToken, mpo.address],
         },
       },
       owner: deployer,
