@@ -43,20 +43,10 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
       const promises: Promise<any>[] = [];
 
-      const comptrollerContract = getContract(comptroller, this.chainDeployment.Comptroller.abi, this.provider);
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
-
         asset.isBorrowPaused = asset.borrowGuardianPaused;
-
-        // TODO: when deploying new FPL to all chains, remove call to comptroller
-        asset.mintGuardianPaused === undefined
-          ? promises.push(
-              comptrollerContract.callStatic
-                .mintGuardianPaused(asset.cToken)
-                .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
-            )
-          : (asset.isSupplyPaused = asset.mintGuardianPaused);
+        asset.isSupplyPaused = asset.mintGuardianPaused;
 
         promises.push(
           (async () => {
