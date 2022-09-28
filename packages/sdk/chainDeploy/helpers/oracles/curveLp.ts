@@ -61,11 +61,14 @@ export const deployCurveV2LpOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
+  deployConfig,
   curveV2Pools,
 }: CurveV2LpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   let tx: providers.TransactionResponse;
   let receipt: providers.TransactionReceipt;
+
+  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
   //// CurveLpTokenPriceOracleNoRegistry
   const cpo = await deployments.deploy("CurveV2LpTokenPriceOracleNoRegistry", {
@@ -76,7 +79,7 @@ export const deployCurveV2LpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], [], []],
+          args: [[], [], mpo.address, deployConfig.stableToken],
         },
       },
       owner: deployer,
@@ -105,7 +108,6 @@ export const deployCurveV2LpOracle = async ({
   const underlyings = curveV2Pools.map((c) => c.lpToken);
   const oracles = Array(curveV2Pools.length).fill(curveOracle.address);
 
-  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
   tx = await mpo.add(underlyings, oracles);
   await tx.wait();
 
