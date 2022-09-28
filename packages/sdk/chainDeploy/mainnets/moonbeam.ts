@@ -11,6 +11,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployDiaWstDotPriceOracle } from "../helpers/oracles/diaWstDot";
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
@@ -202,6 +203,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  // dia stDOT and swtDOT price oracle
+  deployDiaWstDotPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
   });
 
   // Liquidators

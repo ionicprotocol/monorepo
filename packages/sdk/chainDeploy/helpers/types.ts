@@ -144,6 +144,10 @@ export type CurveV2LpFnParams = ChainDeployFnParams & {
   curveV2Pools: CurveV2PoolConfig[];
 };
 
+export type DiaStDotFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+};
+
 export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
