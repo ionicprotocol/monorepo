@@ -87,14 +87,6 @@ describe("FusePools", () => {
 
     fusePools.contracts = { FusePoolDirectory: mockFusePoolDirectoryContract, FusePoolLens: mockFusePoolLensContract };
 
-    mockComptrollerContract = createStubInstance(Contract);
-    Object.defineProperty(mockComptrollerContract, "callStatic", {
-      value: {
-        borrowGuardianPaused: stub().resolves(true),
-        mintGuardianPaused: stub().resolves(false),
-      },
-    });
-
     mockGetAssetContract = createStubInstance(Contract);
     Object.defineProperty(mockGetAssetContract, "callStatic", {
       value: {
@@ -103,15 +95,7 @@ describe("FusePools", () => {
       },
     });
 
-    stub(utilsFns, "getContract")
-      .onCall(0)
-      .returns(mockComptrollerContract)
-      .onCall(1)
-      .returns(mockGetAssetContract)
-      .onCall(2)
-      .returns(mockComptrollerContract)
-      .onCall(3)
-      .returns(mockGetAssetContract);
+    stub(utilsFns, "getContract").onCall(0).returns(mockGetAssetContract);
   });
 
   it("fetchFusePoolData", async () => {

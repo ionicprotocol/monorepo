@@ -39528,7 +39528,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x10126C12EB9ce1Eb06E3F5C3EFad00748A82066a",
+      "address": "0x0eC2F1fC9BB1AD56a4bBc7a9E99e14D527A70Bd7",
       "abi": [
         {
           "anonymous": false,
@@ -39682,6 +39682,11 @@
                   "internalType": "bool",
                   "name": "borrowGuardianPaused",
                   "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "mintGuardianPaused",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct FusePoolLens.FusePoolAsset[]",
@@ -39812,6 +39817,11 @@
                 {
                   "internalType": "bool",
                   "name": "borrowGuardianPaused",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "mintGuardianPaused",
                   "type": "bool"
                 }
               ],
