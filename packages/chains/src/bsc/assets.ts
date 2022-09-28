@@ -21,10 +21,12 @@ const twoBRL = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
 const threeBRL = "0x27b5Fc5333246F63280dA8e3e533512EfA747c13";
 const val3EPS = "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5";
 const valdai3EPS = "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC";
+const epsBUSD_jCHF = "0x5887cEa5e2bb7dD36F0C06Da47A8Df918c289A29";
 const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
 const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
 const aBNBc = "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
+const jCHF = "0x7c869b5A294b1314E985283d01C702B62224a05f";
 const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
 const BRZw = "0x5b1a9850f55d9282a7C4Bf23A2a21B050e3Beb2f";
 const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
@@ -39,6 +41,8 @@ const USDC_BUSD = "0x2354ef4DF11afacb85a5C7f98B624072ECcddbB1";
 const USDC_ETH = "0xEa26B78255Df2bBC31C1eBf60010D78670185bD0";
 const CAKE_WBNB = "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0";
 const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
+const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
+const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 
 const assets: SupportedAsset[] = [
   {
@@ -197,6 +201,14 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", "3brl", threeBRL),
   },
+  {
+    symbol: assetSymbols["JCHF-BUSD"],
+    underlying: epsBUSD_jCHF,
+    name: "Ellipsis.finance JCHF-BUSD",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", "eps BUSD jCHF", epsBUSD_jCHF),
+  },
   // Bomb
   {
     symbol: assetSymbols.BOMB,
@@ -234,6 +246,14 @@ const assets: SupportedAsset[] = [
     symbol: assetSymbols.jBRL,
     underlying: jBRL,
     name: "Jarvis Synthetic Brazilian Real",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
+    symbol: assetSymbols.JCHF,
+    underlying: jCHF,
+    name: "Jarvis Synthetic Swiss Franc",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v1"),
@@ -343,6 +363,22 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: pancakeSwapDocs(BTCB, ETH, "BTCB-ETH", BTCB_ETH),
+  },
+  {
+    symbol: assetSymbols.EPX,
+    underlying: EPX,
+    name: "Ellipsis X",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", EPX),
+  },
+  {
+    symbol: assetSymbols.DDD,
+    underlying: DDD,
+    name: "DotDot",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", DDD),
   },
 ];
 

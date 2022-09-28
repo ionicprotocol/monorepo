@@ -43,8 +43,10 @@ export enum OracleTypes {
   SimplePriceOracle = "SimplePriceOracle",
   UniswapLpTokenPriceOracle = "UniswapLpTokenPriceOracle",
   UniswapTwapPriceOracleV2 = "UniswapTwapPriceOracleV2",
+  UniswapV3PriceOracle = "UniswapV3PriceOracle",
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
+  DiaStDotPriceOracle = "DiaStDotPriceOracle",
 }
 
 export enum IrmTypes {
@@ -52,6 +54,7 @@ export enum IrmTypes {
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
   JumpRateModel_MIMO_2_004_4_08 = "JumpRateModel_MIMO_2_004_4_08",
+  JumpRateModel_JARVIS_2_004_4_08 = "JumpRateModel_JARVIS_2_004_4_08",
 }
 
 export enum LiquidationStrategy {
@@ -189,6 +192,9 @@ export enum assetSymbols {
 
   "CAKE-WBNB" = "CAKE-WBNB",
 
+  DDD = "DDD",
+  EPX = "EPX",
+
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
   saddleOptUSD = "saddleOptUSD",
@@ -202,18 +208,15 @@ export enum assetSymbols {
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
   "WGLMR-xcDOT" = "WGLMR-xcDOT",
-  "GLMR-madUSDC" = "GLMR-madUSDC",
   DOT = "DOT",
   xcDOT = "xcDOT",
   stDOT = "stDOT",
+  wstDOT = "wstDOT",
   xcKSM = "xcKSM",
   stKSM = "stKSM",
-  madWBTC = "madWBTC",
-  madUSDC = "madUSDC",
+  multiWBTC = "multiWBTC",
   multiUSDC = "multiUSDC",
-  madUSDT = "madUSDT",
   multiUSDT = "multiUSDT",
-  madDAI = "madDAI",
   multiDAI = "multiDAI",
   "3pool" = "3pool",
   "xcDOT-stDOT" = "xcDOT-stDOT",
@@ -245,8 +248,11 @@ export enum assetSymbols {
   "JCAD-CADC" = "JCAD-CADC",
   "JSGD-XSGD" = "JSGD-XSGD",
   "JNZD-NZDS" = "JNZD-NZDS",
+  "EURE-JEUR" = "EURE-JEUR",
+  "JCHF-BUSD" = "JCHF-BUSD",
   AGEUR = "AGEUR",
   EURT = "EURT",
+  EURE = "EURE",
   CADC = "CADC",
   JSGD = "JSGD",
   JJPY = "JJPY",
@@ -290,6 +296,11 @@ export enum assetSymbols {
 
   // Arbitrum
   "2pool" = "2pool",
+  GOHM = "GOHM",
+  "WETH-GOHM" = "WETH-GOHM",
+  DPX = "DPX",
+  MAGIC = "MAGIC",
+  GMX = "GMX",
 }
 
 export default assetSymbols;

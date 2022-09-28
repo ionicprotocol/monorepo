@@ -1,6 +1,6 @@
 import { constants, providers } from "ethers";
 
-import { CurveLpFnParams } from "../types";
+import { CurveLpFnParams, CurveV2LpFnParams } from "../types";
 
 export const deployCurveLpOracle = async ({
   ethers,
@@ -36,14 +36,11 @@ export const deployCurveLpOracle = async ({
   for (const pool of curvePools) {
     const registered = await curveOracle.poolOf(pool.lpToken);
 
-    // TODO revert temporary fix
-    const isWrongPool =
-      pool.lpToken === "0x8087a94FFE6bcF08DC4b4EBB3d28B4Ed75a792aC" &&
-      registered === "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d";
-    if (!isWrongPool && registered !== constants.AddressZero) {
+    if (registered !== constants.AddressZero) {
       console.log("Pool already registered", pool);
       continue;
     }
+
     tx = await curveOracle.registerPool(pool.lpToken, pool.pool, pool.underlyings);
     console.log("registerPool sent: ", tx.hash);
     receipt = await tx.wait();
@@ -54,6 +51,67 @@ export const deployCurveLpOracle = async ({
   const oracles = Array(curvePools.length).fill(curveOracle.address);
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+  tx = await mpo.add(underlyings, oracles);
+  await tx.wait();
+
+  console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
+};
+
+export const deployCurveV2LpOracle = async ({
+  ethers,
+  getNamedAccounts,
+  deployments,
+  deployConfig,
+  curveV2Pools,
+}: CurveV2LpFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
+  let tx: providers.TransactionResponse;
+  let receipt: providers.TransactionReceipt;
+
+  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+
+  //// CurveLpTokenPriceOracleNoRegistry
+  const cpo = await deployments.deploy("CurveV2LpTokenPriceOracleNoRegistry", {
+    from: deployer,
+    args: [],
+    log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [[], [], deployConfig.stableToken, mpo.address],
+        },
+        onUpgrade: {
+          methodName: "reinitialize",
+          args: [deployConfig.stableToken, mpo.address],
+        },
+      },
+      owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy",
+    },
+  });
+  if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
+  console.log("CurveV2LpTokenPriceOracleNoRegistry: ", cpo.address);
+
+  const curveOracle = await ethers.getContract("CurveV2LpTokenPriceOracleNoRegistry", deployer);
+
+  for (const pool of curveV2Pools) {
+    const registered = await curveOracle.poolOf(pool.lpToken);
+
+    if (registered !== constants.AddressZero) {
+      console.log("Pool already registered", pool);
+      continue;
+    }
+
+    tx = await curveOracle.registerPool(pool.lpToken, pool.pool);
+    console.log("registerPool sent: ", tx.hash);
+    receipt = await tx.wait();
+    console.log("registerPool mined: ", receipt.transactionHash);
+  }
+
+  const underlyings = curveV2Pools.map((c) => c.lpToken);
+  const oracles = Array(curveV2Pools.length).fill(curveOracle.address);
+
   tx = await mpo.add(underlyings, oracles);
   await tx.wait();
 

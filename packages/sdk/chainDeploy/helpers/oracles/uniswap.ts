@@ -52,6 +52,19 @@ export const deployUniswapOracle = async ({
   }
   console.log("UniswapTwapPriceOracleV2Resolver: ", twapPriceOracleResolver.address);
 
+  const resolverContract = await ethers.getContract("UniswapTwapPriceOracleV2Resolver", deployer);
+
+  for (const uniConfig of deployConfig.uniswap.uniswapOracleInitialDeployTokens) {
+    const tx = await resolverContract.addPair({
+      pair: uniConfig.pair,
+      baseToken: uniConfig.baseToken,
+      minPeriod: uniConfig.minPeriod,
+      deviationThreshold: uniConfig.deviationThreshold,
+    });
+    await tx.wait();
+    console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${uniConfig.pair}`);
+  }
+
   const uniTwapOracleFactory = (await ethers.getContract(
     "UniswapTwapPriceOracleV2Factory",
     deployer

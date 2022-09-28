@@ -2,12 +2,12 @@ import { Web3Provider } from "@ethersproject/providers";
 import { InterestRateModel } from "@midas-capital/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import AnkrBNBINterestRateModelartifact from "../../../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
+import AnkrBNBInterestRateModelArtifact from "../../../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import { getContract } from "../utils";
 
 export default class AnkrBNBInterestRateModel implements InterestRateModel {
-  static RUNTIME_BYTECODE_HASH = utils.keccak256(AnkrBNBINterestRateModelartifact.deployedBytecode.object);
+  static RUNTIME_BYTECODE_HASH = utils.keccak256(AnkrBNBInterestRateModelArtifact.deployedBytecode.object);
 
   initialized: boolean | undefined;
   baseRatePerBlock: BigNumber | undefined;
@@ -17,7 +17,7 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
   reserveFactorMantissa: BigNumber | undefined;
 
   async init(interestRateModelAddress: string, assetAddress: string, provider: Web3Provider): Promise<void> {
-    const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBINterestRateModelartifact.abi, provider);
+    const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBInterestRateModelArtifact.abi, provider);
     this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getMultiplierPerBlock());
     this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
     this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getBaseRatePerBlock());
@@ -40,7 +40,7 @@ export default class AnkrBNBInterestRateModel implements InterestRateModel {
     fuseFeeMantissa: BigNumberish,
     provider: Web3Provider
   ): Promise<void> {
-    const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBINterestRateModelartifact.abi, provider);
+    const jumpRateModelContract = getContract(interestRateModelAddress, AnkrBNBInterestRateModelArtifact.abi, provider);
     this.multiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getMultiplierPerBlock());
     this.jumpMultiplierPerBlock = BigNumber.from(await jumpRateModelContract.callStatic.jumpMultiplierPerBlock());
     this.baseRatePerBlock = BigNumber.from(await jumpRateModelContract.callStatic.getBaseRatePerBlock());

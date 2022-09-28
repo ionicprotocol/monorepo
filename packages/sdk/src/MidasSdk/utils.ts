@@ -35,13 +35,13 @@ export const getBytecodeHash = (fuseFeeDistributorAddress: string): string => {
 export const getPoolAddress = (
   from: string,
   poolName: string,
-  blockNumber: number,
+  marketsCounter: number,
   fuseFeeDistributorAddress: string,
   fusePoolDirectoryAddress: string
 ): string => {
   return utils.getCreate2Address(
     fusePoolDirectoryAddress,
-    getSaltsHash(from, poolName, blockNumber),
+    getSaltsHash(from, poolName, marketsCounter),
     getBytecodeHash(fuseFeeDistributorAddress)
   );
 };

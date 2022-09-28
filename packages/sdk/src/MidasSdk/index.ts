@@ -48,6 +48,14 @@ import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } fr
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
+export type StaticContracts = {
+  FuseFeeDistributor: FuseFeeDistributor;
+  FusePoolDirectory: FusePoolDirectory;
+  FusePoolLens: FusePoolLens;
+  FusePoolLensSecondary: FusePoolLensSecondary;
+  FuseSafeLiquidator: FuseSafeLiquidator;
+  [contractName: string]: Contract;
+};
 
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
@@ -63,14 +71,7 @@ export class MidasBase {
     return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
   }
 
-  public contracts: {
-    FuseFeeDistributor: FuseFeeDistributor;
-    FusePoolDirectory: FusePoolDirectory;
-    FusePoolLens: FusePoolLens;
-    FusePoolLensSecondary: FusePoolLensSecondary;
-    FuseSafeLiquidator: FuseSafeLiquidator;
-    [contractName: string]: Contract;
-  };
+  public _contracts: StaticContracts | undefined;
   public chainConfig: ChainConfig;
   public availableOracles: Array<string>;
   public availableIrms: Array<string>;
@@ -98,11 +99,44 @@ export class MidasBase {
     return this._signer;
   }
 
+  public set contracts(newContracts: Partial<StaticContracts>) {
+    this._contracts = { ...this._contracts, ...newContracts } as StaticContracts;
+  }
+
+  public get contracts(): StaticContracts {
+    return {
+      FusePoolDirectory: new Contract(
+        this.chainDeployment.FusePoolDirectory.address,
+        this.chainDeployment.FusePoolDirectory.abi,
+        this.provider
+      ) as FusePoolDirectory,
+      FusePoolLens: new Contract(
+        this.chainDeployment.FusePoolLens.address,
+        this.chainDeployment.FusePoolLens.abi,
+        this.provider
+      ) as FusePoolLens,
+      FusePoolLensSecondary: new Contract(
+        this.chainDeployment.FusePoolLensSecondary.address,
+        this.chainDeployment.FusePoolLensSecondary.abi,
+        this.provider
+      ) as FusePoolLensSecondary,
+      FuseSafeLiquidator: new Contract(
+        this.chainDeployment.FuseSafeLiquidator.address,
+        this.chainDeployment.FuseSafeLiquidator.abi,
+        this.provider
+      ) as FuseSafeLiquidator,
+      FuseFeeDistributor: new Contract(
+        this.chainDeployment.FuseFeeDistributor.address,
+        this.chainDeployment.FuseFeeDistributor.abi,
+        this.provider
+      ) as FuseFeeDistributor,
+      ...this._contracts,
+    };
+  }
+
   setSigner(signer: Signer) {
     this._provider = signer.provider as SupportedProvider;
     this._signer = signer;
-
-    this.initStaticContracts();
     return this;
   }
 
@@ -132,34 +166,6 @@ export class MidasBase {
     this.fundingStrategies = chainConfig.fundingStrategies;
     this.artifacts = ARTIFACTS;
 
-    this.contracts = {
-      FusePoolDirectory: new Contract(
-        this.chainDeployment.FusePoolDirectory.address,
-        this.chainDeployment.FusePoolDirectory.abi,
-        this.provider
-      ) as FusePoolDirectory,
-      FusePoolLens: new Contract(
-        this.chainDeployment.FusePoolLens.address,
-        this.chainDeployment.FusePoolLens.abi,
-        this.provider
-      ) as FusePoolLens,
-      FusePoolLensSecondary: new Contract(
-        this.chainDeployment.FusePoolLensSecondary.address,
-        this.chainDeployment.FusePoolLensSecondary.abi,
-        this.provider
-      ) as FusePoolLensSecondary,
-      FuseSafeLiquidator: new Contract(
-        this.chainDeployment.FuseSafeLiquidator.address,
-        this.chainDeployment.FuseSafeLiquidator.abi,
-        this.provider
-      ) as FuseSafeLiquidator,
-      FuseFeeDistributor: new Contract(
-        this.chainDeployment.FuseFeeDistributor.address,
-        this.chainDeployment.FuseFeeDistributor.abi,
-        this.provider
-      ) as FuseFeeDistributor,
-    };
-
     if (this.chainDeployment.FuseFlywheelLensRouter) {
       this.contracts["FuseFlywheelLensRouter"] = new Contract(
         this.chainDeployment.FuseFlywheelLensRouter?.address || constants.AddressZero,
@@ -186,36 +192,6 @@ export class MidasBase {
     });
     this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
     this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
-  }
-
-  initStaticContracts() {
-    this.contracts = {
-      FusePoolDirectory: new Contract(
-        this.chainDeployment.FusePoolDirectory.address,
-        this.chainDeployment.FusePoolDirectory.abi,
-        this.provider
-      ) as FusePoolDirectory,
-      FusePoolLens: new Contract(
-        this.chainDeployment.FusePoolLens.address,
-        this.chainDeployment.FusePoolLens.abi,
-        this.provider
-      ) as FusePoolLens,
-      FusePoolLensSecondary: new Contract(
-        this.chainDeployment.FusePoolLensSecondary.address,
-        this.chainDeployment.FusePoolLensSecondary.abi,
-        this.provider
-      ) as FusePoolLensSecondary,
-      FuseSafeLiquidator: new Contract(
-        this.chainDeployment.FuseSafeLiquidator.address,
-        this.chainDeployment.FuseSafeLiquidator.abi,
-        this.provider
-      ) as FuseSafeLiquidator,
-      FuseFeeDistributor: new Contract(
-        this.chainDeployment.FuseFeeDistributor.address,
-        this.chainDeployment.FuseFeeDistributor.abi,
-        this.provider
-      ) as FuseFeeDistributor,
-    };
   }
 
   async deployPool(
@@ -298,6 +274,7 @@ export class MidasBase {
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
+      JumpRateModel_JARVIS_002_004_4_08: JumpRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 

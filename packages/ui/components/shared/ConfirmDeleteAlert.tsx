@@ -36,7 +36,7 @@ export default function ConfirmDeleteAlert({
           <AlertDialogBody>{description}</AlertDialogBody>
 
           <AlertDialogFooter>
-            <Button ref={cancelRef} onClick={onClose} variant="outline">
+            <Button ref={cancelRef} onClick={onClose} variant="_outline">
               Cancel
             </Button>
             <Button onClick={onConfirm} ml={3}>

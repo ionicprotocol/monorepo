@@ -1,4 +1,5 @@
 import { SupportedAsset } from "@midas-capital/types";
+import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
 export enum ChainlinkFeedBaseCurrency {
@@ -11,16 +12,31 @@ export type TokenPair = {
   baseToken: string;
 };
 
+export type UniswapOracleDeployConfig = {
+  token: string;
+  baseToken: string;
+  pair: string;
+  minPeriod: number;
+  deviationThreshold: string;
+};
+
+export type UniswapV3OracleConfig = {
+  assetAddress: string;
+  poolAddress: string;
+  twapWindowSeconds: BigNumber;
+};
+
 export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;
     uniswapV2FactoryAddress: string;
-    uniswapOracleInitialDeployTokens: Array<TokenPair>;
+    uniswapOracleInitialDeployTokens: Array<UniswapOracleDeployConfig>;
     pairInitHashCode?: string;
     hardcoded: { name: string; symbol: string; address: string }[];
     uniswapData: { lpName: string; lpSymbol: string; lpDisplayName: string }[];
     uniswapOracleLpTokens?: Array<string>;
     flashSwapFee: number;
+    uniswapV3OracleTokens?: Array<UniswapV3OracleConfig>;
   };
   wtoken: string;
   nativeTokenUsdChainlinkFeed?: string;
@@ -72,6 +88,11 @@ export type CurvePoolConfig = {
   underlyings: string[];
 };
 
+export type CurveV2PoolConfig = {
+  lpToken: string;
+  pool: string;
+};
+
 export type ChainDeployFnParams = {
   ethers: HardhatRuntimeEnvironment["ethers"];
   getNamedAccounts: HardhatRuntimeEnvironment["getNamedAccounts"];
@@ -109,18 +130,26 @@ export type UniswapDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
+export type UniswaV3DeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+};
+
 export type CurveLpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   curvePools: CurvePoolConfig[];
 };
 
-export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
+export type CurveV2LpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  curveV2Pools: CurveV2PoolConfig[];
+};
+
+export type DiaStDotFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
-export type Erc4626PluginDeployFnParams = ChainDeployFnParams & {
+export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
-  dynamicFlywheels: Array<string>;
 };
 
 export type aBNBcDeployParams = ChainDeployFnParams & {
@@ -130,11 +159,4 @@ export type aBNBcDeployParams = ChainDeployFnParams & {
 export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gelatoAssets: GelatoGUniAsset[];
-};
-
-export type UniswapOracleV2ResolverPairParams = {
-  pair: string;
-  baseToken: string;
-  minPeriod: number;
-  deviationThreshold: string;
 };

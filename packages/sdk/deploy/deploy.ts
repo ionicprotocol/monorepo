@@ -52,14 +52,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("FuseFeeDistributor: ", ffd.address);
   const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
-  const ffdFee = await fuseFeeDistributor.defaultInterestFeeRate();
+  const ffdFee = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);
   if (ffdFee.isZero()) {
     tx = await fuseFeeDistributor._setDefaultInterestFeeRate(ethers.utils.parseEther("0.1"));
     await tx.wait();
     console.log(`updated the FFD fee with tx ${tx.hash}`);
 
-    const feeAfter = await fuseFeeDistributor.defaultInterestFeeRate();
+    const feeAfter = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
     console.log(`ffd fee updated to ${feeAfter}`);
   }
 
@@ -110,15 +110,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
 
-  const ethDel = await deployments.deploy("CEtherDelegate", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (ethDel.transactionHash) await ethers.provider.waitForTransaction(ethDel.transactionHash);
-  console.log("CEtherDelegate: ", ethDel.address);
-
   const rewards = await deployments.deploy("RewardsDistributorDelegate", {
     from: deployer,
     args: [],
@@ -126,8 +117,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     waitConfirmations: 1,
   });
   if (rewards.transactionHash) await ethers.provider.waitForTransaction(rewards.transactionHash);
-  // const rewardsDistributorDelegate = await ethers.getContract("RewardsDistributorDelegate", deployer);
-  // await rewardsDistributorDelegate.initialize(constants.AddressZero);
   console.log("RewardsDistributorDelegate: ", rewards.address);
   ////
 
@@ -358,16 +347,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   } else {
     console.log(`No old delegates implementations to whitelist the upgrade for`);
   }
-
-  const autoImplementation = await comptroller.callStatic.autoImplementation();
-  console.log("autoImplementation: ", autoImplementation);
-  if (!autoImplementation) {
-    tx = await comptroller._toggleAutoImplementations(true);
-    await tx.wait();
-    console.log("Toggled comptroller AutoImplementation", tx.hash);
-  } else {
-    console.log("Comptroller AutoImplementation already set");
-  }
   ////
 
   ////
@@ -520,6 +499,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
+
+  // upgrade any of the pools if necessary
+  await run("pools:all:upgrade");
+
+  // upgrade any of the markets if necessary
+  await run("markets:all:upgrade");
 };
 
 func.tags = ["prod"];

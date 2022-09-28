@@ -15,6 +15,7 @@
       "@ui/styles/*": ["ui/styles/*"],
       "@ui/images/*": ["ui/public/images/*"],
       "@ui/icons/*": ["ui/public/icons/*"],
+      "@ui/test/*": ["ui/test/*"],
       "@chains/polygon/*": ["chains/src/polygon/*"],
       "@chains/bsc/*": ["chains/src/bsc/*"],
       "@chains/moonbeam/*": ["chains/src/moonbeam/*"],

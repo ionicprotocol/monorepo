@@ -26,8 +26,8 @@ import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { useMidas } from '@ui/context/MidasContext';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
+import { useCTokensUnderlying } from '@ui/hooks/rewards/useCTokensUnderlying';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
-import { useCTokensUnderlying } from '@ui/hooks/rewards/usePoolIncentives';
 import { useColors } from '@ui/hooks/useColors';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -101,7 +101,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             <Heading size="md">Flywheels</Heading>
 
             <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-              <Button variant="ghost" onClick={openAdd} ml="auto">
+              <Button variant="_ghost" onClick={openAdd} ml="auto">
                 Add existing Flywheel
               </Button>
               <Button onClick={openCreate} ml="auto">
@@ -170,7 +170,11 @@ const FlywheelRow = ({
   const { cCard } = useColors();
 
   return (
-    <Tr _hover={{ background: 'grey', cursor: 'pointer' }} p={4} onClick={() => onClick(flywheel)}>
+    <Tr
+      _hover={{ background: cCard.hoverBgColor, cursor: 'pointer' }}
+      p={4}
+      onClick={() => onClick(flywheel)}
+    >
       <Td>
         <ClipboardValue label={shortAddress(flywheel.address)} value={flywheel.address} />
       </Td>

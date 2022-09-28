@@ -86,6 +86,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
 
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
     const pools = await fusePoolDirectory.callStatic.getAllPools();
     for (let i = 0; i < pools.length; i++) {
@@ -98,26 +99,58 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       )) as Comptroller;
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
+      if (admin == signer.address) {
+        const autoImplOn = await comptroller.callStatic.autoImplementation();
+        if (!autoImplOn) {
+          const tx = await comptroller._toggleAutoImplementations(true);
+          await tx.wait();
+          console.log(`turned autoimpl on ${tx.hash}`);
+        }
+      } else {
+        console.log(`signer is not the admin of this pool ${admin}`);
+      }
 
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
+      const markets = await comptroller.callStatic.getAllMarkets();
+      const marketsToUpgrade = [];
+      for (let j = 0; j < markets.length; j++) {
+        const market = markets[j];
+        const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market)) as CErc20Delegate;
 
-      if (autoImplOn) {
-        const markets = await comptroller.callStatic.getAllMarkets();
-        // console.log("pool assets", assets);
-        for (let j = 0; j < markets.length; j++) {
-          const market = markets[j];
+        console.log("market", {
+          cToken: market,
+          cTokenName: await cTokenInstance.callStatic.name(),
+          cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
+        });
+
+        const implBefore = await cTokenInstance.callStatic.implementation();
+        console.log(`implementation before ${implBefore}`);
+        const [latestImpl] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(implBefore);
+        if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
+          console.log(`No auto upgrade with latest implementation ${latestImpl}`);
+        } else {
+          console.log(`will upgrade ${market} to ${latestImpl}`);
+          marketsToUpgrade.push(market);
+        }
+      }
+
+      if (marketsToUpgrade.length > 0) {
+        if (admin == signer.address) {
+          const autoImplOn = await comptroller.callStatic.autoImplementation();
+          if (!autoImplOn) {
+            const tx = await comptroller._toggleAutoImplementations(true);
+            await tx.wait();
+            console.log(`turned autoimpl on ${tx.hash}`);
+          }
+        } else {
+          console.log(`signer is not the admin of this pool ${admin}`);
+        }
+
+        for (let k = 0; k < marketsToUpgrade.length; k++) {
+          const market = marketsToUpgrade[k];
           try {
             const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
 
-            console.log("market", {
-              cToken: market,
-              cTokenName: await cTokenInstance.callStatic.name(),
-              cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
-            });
-
-            const implBefore = await cTokenInstance.callStatic.implementation();
-            console.log(`implementation before ${implBefore}`);
-
+            console.log(`upgrading ${market}`);
             const tx = await cTokenInstance.accrueInterest();
             const receipt: TransactionReceipt = await tx.wait();
             console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
@@ -128,8 +161,12 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
             console.error(`failed to upgrade market ${market}`, e);
           }
         }
-      } else {
-        console.log(`autoimplementations for the pool is off`);
+
+        if (admin == signer.address) {
+          const tx = await comptroller._toggleAutoImplementations(false);
+          await tx.wait();
+          console.log(`turned autoimpl off ${tx.hash}`);
+        }
       }
     }
   });
@@ -200,7 +237,7 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
 
     if (oldErc20Delegate) {
       // CErc20Delegate
-      const [latestCErc20Delegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20Delegate);
+      const [latestCErc20Delegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(oldErc20Delegate);
       if (latestCErc20Delegate === constants.AddressZero || latestCErc20Delegate !== erc20Del.address) {
         tx = await fuseFeeDistributor._setLatestCErc20Delegate(
           oldErc20Delegate,
@@ -217,7 +254,9 @@ task("markets:setlatestimpl", "Sets the latest implementations for the CErc20 De
 
     if (oldErc20PluginDelegate) {
       // CErc20PluginDelegate
-      const [latestCErc20PluginDelegate] = await fuseFeeDistributor.latestCErc20Delegate(oldErc20PluginDelegate);
+      const [latestCErc20PluginDelegate] = await fuseFeeDistributor.callStatic.latestCErc20Delegate(
+        oldErc20PluginDelegate
+      );
       if (
         latestCErc20PluginDelegate === constants.AddressZero ||
         latestCErc20PluginDelegate !== erc20PluginDel.address

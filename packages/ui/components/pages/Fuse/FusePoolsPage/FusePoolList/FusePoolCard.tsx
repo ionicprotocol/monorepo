@@ -1,4 +1,4 @@
-import { AvatarGroup, Box, Button, chakra, Flex, Heading, Text, Tooltip } from '@chakra-ui/react';
+import { AvatarGroup, Box, Button, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
@@ -56,9 +56,9 @@ const PoolCard = ({ data }: PoolCardProps) => {
           mx="6"
           justifyContent="center"
         >
-          <Heading fontWeight="bold" fontSize={'xl'} ml="2" color={cCard.txtColor}>
+          <Text fontWeight="bold" variant="lgText" ml="2" color={cCard.txtColor}>
             {data.name}
-          </Heading>
+          </Text>
         </Row>
         <Row crossAxisAlignment="center" mainAxisAlignment="space-between" mx="6">
           {data.underlyingTokens.length === 0 ? null : (
@@ -87,19 +87,19 @@ const PoolCard = ({ data }: PoolCardProps) => {
         <chakra.div w="100%" h="1px" bgColor={cCard.dividerColor} />
         <Row mx="6" mainAxisAlignment="center" crossAxisAlignment="center" gridGap="6">
           <Column mainAxisAlignment="flex-start" crossAxisAlignment="center" color={cCard.txtColor}>
-            <Text fontWeight="normal" textAlign="center">
+            <Text variant="smText" textAlign="center">
               Total Supply
             </Text>
-            <Text mt="1.5" fontWeight="bold">
+            <Text mt="1.5" fontWeight="bold" variant="smText">
               {usdPrice && smallUsdFormatter(data.totalSuppliedNative * usdPrice)}
             </Text>
           </Column>
           <chakra.div h="16" w="1px" bgColor={cCard.dividerColor} />
           <Column mainAxisAlignment="flex-start" crossAxisAlignment="center" color={cCard.txtColor}>
-            <Text fontWeight="normal" textAlign="center">
+            <Text variant="smText" textAlign="center">
               Total borrowed
             </Text>
-            <Text mt="1.5" fontWeight="bold">
+            <Text mt="1.5" fontWeight="bold" variant="smText">
               {usdPrice && smallUsdFormatter(data.totalBorrowedNative * usdPrice)}
             </Text>
           </Column>
@@ -107,19 +107,19 @@ const PoolCard = ({ data }: PoolCardProps) => {
         <chakra.div w="100%" h="1px" bgColor={cCard.dividerColor} />
         <Row mx="6" mainAxisAlignment="center" crossAxisAlignment="center" gridGap="6">
           <Column mainAxisAlignment="flex-start" crossAxisAlignment="center" color={cCard.txtColor}>
-            <Text fontWeight="normal" textAlign="center">
+            <Text variant="smText" textAlign="center">
               Your Supply <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold">
+            <Text mt="1.5" fontWeight="bold" variant="smText">
               {usdPrice && smallUsdFormatter(data.totalSupplyBalanceNative * usdPrice)}
             </Text>
           </Column>
           <chakra.div h="16" w="1px" bgColor={cCard.dividerColor} />
           <Column mainAxisAlignment="flex-start" crossAxisAlignment="center" color={cCard.txtColor}>
-            <Text fontWeight="normal" textAlign="center">
+            <Text variant="smText" textAlign="center">
               Your borrowed <br></br> Balance
             </Text>
-            <Text mt="1.5" fontWeight="bold">
+            <Text mt="1.5" fontWeight="bold" variant="smText">
               {usdPrice && smallUsdFormatter(data.totalBorrowBalanceNative * usdPrice)}
             </Text>
           </Column>

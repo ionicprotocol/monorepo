@@ -40,7 +40,9 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose} isCentered size={'xl'}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select a Wallet</ModalHeader>
+        <ModalHeader>
+          <Text variant="title">Select a Wallet</Text>
+        </ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <ModalBody py={12}>
@@ -50,8 +52,9 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           >
             {connectors.map((connector) => (
               <Button
-                variant="ghost"
-                height="100%"
+                id={connector.name}
+                variant="_ghost"
+                height={40}
                 key={connector.id}
                 disabled={!connector.ready}
                 onClick={() => {
@@ -67,7 +70,7 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                     />
                   </Row>
                   <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" mt={4} mb={4}>
-                    <Text fontSize={20}>
+                    <Text variant="lgText">
                       {connector.name}
                       {!connector.ready && ' (unsupported)'}
                     </Text>

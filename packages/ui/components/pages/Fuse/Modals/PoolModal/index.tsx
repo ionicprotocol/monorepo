@@ -9,9 +9,10 @@ interface PoolModalProps {
   isOpen: boolean;
   onClose: () => void;
   defaultMode: FundOperationMode;
-  index: number;
+  asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
+  supplyBalanceFiat?: number;
 }
 
 const PoolModal = (props: PoolModalProps) => {
@@ -29,9 +30,10 @@ const PoolModal = (props: PoolModalProps) => {
             comptrollerAddress={props.comptrollerAddress}
             onClose={props.onClose}
             assets={props.assets}
-            index={props.index}
+            asset={props.asset}
             mode={mode}
             setMode={setMode}
+            supplyBalanceFiat={props?.supplyBalanceFiat}
           />
         </ModalBody>
       </ModalContent>

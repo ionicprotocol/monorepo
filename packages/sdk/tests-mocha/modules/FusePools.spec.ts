@@ -17,6 +17,8 @@ describe("FusePools", () => {
   let mockFusePoolDirectoryContract: SinonStubbedInstance<Contract>;
   let mockComptrollerContract: SinonStubbedInstance<Contract>;
   let mockGetAssetContract: SinonStubbedInstance<Contract>;
+  const CErc20PluginDelegateAddress = mkAddress("0xCErc20PluginDelegate");
+  const PluginAddress = mkAddress("0xPlugin");
 
   const poolSummaryRawData = [BigNumber.from(1), BigNumber.from(1), [], [], true];
   const poolSummaryStruct = [
@@ -52,7 +54,7 @@ describe("FusePools", () => {
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
       CErc20Delegate: { abi: [], address: mkAddress("0xabc") },
-      CErc20PluginDelegate: { abi: [], address: mkAddress("0xabc") },
+      CErc20PluginDelegate: { abi: [], address: CErc20PluginDelegateAddress },
       CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
     };
 
@@ -67,7 +69,6 @@ describe("FusePools", () => {
         getWhitelistedPoolsByAccountWithData: stub().resolves([[]]),
       },
     });
-    fusePools.contracts.FusePoolLens = mockFusePoolLensContract;
 
     mockFusePoolDirectoryContract = createStubInstance(Contract);
     Object.defineProperty(mockFusePoolDirectoryContract, "callStatic", {
@@ -83,32 +84,18 @@ describe("FusePools", () => {
         getAllPools: stub().resolves(["0"]),
       },
     });
-    fusePools.contracts.FusePoolDirectory = mockFusePoolDirectoryContract;
 
-    mockComptrollerContract = createStubInstance(Contract);
-    Object.defineProperty(mockComptrollerContract, "callStatic", {
-      value: {
-        borrowGuardianPaused: stub().resolves(true),
-        mintGuardianPaused: stub().resolves(false),
-      },
-    });
+    fusePools.contracts = { FusePoolDirectory: mockFusePoolDirectoryContract, FusePoolLens: mockFusePoolLensContract };
 
     mockGetAssetContract = createStubInstance(Contract);
     Object.defineProperty(mockGetAssetContract, "callStatic", {
       value: {
-        plugin: stub().resolves({ plugin: "Hello" }),
+        implementation: stub().resolves(CErc20PluginDelegateAddress),
+        plugin: stub().resolves(PluginAddress),
       },
     });
 
-    stub(utilsFns, "getContract")
-      .onCall(0)
-      .returns(mockComptrollerContract)
-      .onCall(1)
-      .returns(mockGetAssetContract)
-      .onCall(2)
-      .returns(mockComptrollerContract)
-      .onCall(3)
-      .returns(mockGetAssetContract);
+    stub(utilsFns, "getContract").onCall(0).returns(mockGetAssetContract);
   });
 
   it("fetchFusePoolData", async () => {

@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { Flex, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { Flex, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React, { memo } from 'react';
@@ -9,7 +9,7 @@ import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConf
 import AddAssetModal from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal';
 import FlywheelEdit from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit';
 import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
-import FuseNavbar from '@ui/components/pages/Layout/FuseNavbar';
+import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { AdminAlert } from '@ui/components/shared/Alert';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
@@ -52,9 +52,7 @@ const FusePoolEditPage = memo(() => {
         <title key="title">{`Edit: ${data.name}`}</title>
       </Head>
       <PageTransitionLayout>
-        <Flex minH="100vh" flexDir="column" alignItems="flex-start" justifyContent="flex-start">
-          <FuseNavbar />
-
+        <FusePageLayout>
           <AddAssetModal
             comptrollerAddress={data.comptroller}
             poolName={data.name}
@@ -82,9 +80,9 @@ const FusePoolEditPage = memo(() => {
                   router.back();
                 }}
               />
-              <Heading textAlign="left" fontSize="xl" fontWeight="bold">
+              <Text textAlign="left" variant="lgText" fontWeight="bold">
                 Back
-              </Heading>
+              </Text>
             </HStack>
             {!!data && (
               <AdminAlert
@@ -136,7 +134,7 @@ const FusePoolEditPage = memo(() => {
             </RowOrColumn>
             <FlywheelEdit pool={data} />
           </Flex>
-        </Flex>
+        </FusePageLayout>
       </PageTransitionLayout>
     </>
   );

@@ -39,20 +39,7 @@ export const deployConfig: ChainDeployConfig = {
       assets.find((a) => a.symbol === assetSymbols["WBNB-DAI"])!.underlying, // WBNB-DAI PCS LP
       assets.find((a) => a.symbol === assetSymbols["WBNB-BUSD"])!.underlying, // WBNB-BUSD PCS LP
     ],
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.DAI)!.underlying,
-        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-      },
-      {
-        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.SAFEMOON)!.underlying,
-        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WBNB)!.underlying,
-      },
-      {
-        token: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.USDT)!.underlying,
-        baseToken: assets.find((a: SupportedAsset) => a.symbol === assetSymbols.BUSD)!.underlying,
-      },
-    ],
+    uniswapOracleInitialDeployTokens: [],
     flashSwapFee: 30,
   },
   cgId: chapel.specificParams.cgId,

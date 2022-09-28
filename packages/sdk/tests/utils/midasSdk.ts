@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/types";
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
@@ -27,10 +27,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
     abi: CErc20PluginRewardsArtifact.abi,
     address: CErc20PluginRewardsDelegate.address,
   };
-
-  const CEtherDelegate = await ethers.getContract("CEtherDelegate");
-  const CEtherDelegateArtifact = await deployments.getArtifact("CEtherDelegate");
-  chainDeployment.CEtherDelegate = { abi: CEtherDelegateArtifact.abi, address: CEtherDelegate.address };
   const Comptroller = await ethers.getContract("Comptroller");
   const ComptrollerArtifact = await deployments.getArtifact("Comptroller.sol:Comptroller");
   chainDeployment.Comptroller = { abi: ComptrollerArtifact.abi, address: Comptroller.address };
@@ -202,10 +198,9 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
         break;
       case SupportedChains.bsc:
         chainConfig = bsc;
-        if (process.env.FORK_CHAIN_ID!) {
-          chainDeployment = await getBscForkDeployments();
-          chainConfig.chainDeployments = chainDeployment;
-        }
+        break;
+      case SupportedChains.chapel:
+        chainConfig = chapel;
         break;
       case SupportedChains.moonbeam:
         chainConfig = moonbeam;
@@ -216,6 +211,15 @@ export const getOrCreateMidas = async (signerOrProviderOrSignerName?: unknown | 
       case SupportedChains.polygon:
         chainConfig = polygon;
         break;
+      case SupportedChains.arbitrum:
+        chainConfig = arbitrum;
+        break;
+    }
+
+    // Override for when in SIMULATION
+    if (process.env.SIMULATION!) {
+      chainDeployment = await getBscForkDeployments();
+      chainConfig.chainDeployments = chainDeployment;
     }
 
     midasSdk = new MidasSdk(signer, chainConfig);
