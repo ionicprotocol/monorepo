@@ -28,3 +28,9 @@ export const poolSort = (pools: FusePoolData[]) => {
     return b.id > a.id ? 1 : -1;
   });
 };
+
+export const poolSortByAddress = (pools: FusePoolData[]) => {
+  return pools.sort((a, b) => {
+    return a.comptroller.localeCompare(b.comptroller);
+  });
+};

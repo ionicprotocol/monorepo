@@ -3,7 +3,7 @@ import { MidasSdk } from '@midas-capital/sdk';
 import { SupportedChains } from '@midas-capital/types';
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 
-import { ENABLED_CHAINS } from '@ui/constants/index';
+import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
 
 export interface MultiMidasContextData {
@@ -18,9 +18,10 @@ interface MultiMidasProviderProps {
 }
 
 export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { children: null }) => {
+  const enabledChains = useEnabledChains();
   const sdks = useMemo(() => {
     const newSDKs: Partial<Record<SupportedChains, MidasSdk>> = {};
-    ENABLED_CHAINS.forEach((chainId) => {
+    enabledChains.forEach((chainId) => {
       const config = chainIdToConfig[chainId];
       newSDKs[chainId] = new MidasSdk(
         new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default),
@@ -29,7 +30,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     });
 
     return newSDKs;
-  }, []);
+  }, [enabledChains]);
 
   const chainIds = useMemo(() => Object.keys(sdks).sort(), [sdks]);
 

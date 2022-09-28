@@ -33,8 +33,6 @@ const MotionFlex = motion<FlexProps>(Flex);
 const FuseStatsBar = () => {
   const { data: tvlData, isLoading } = useTVL();
 
-  console.log(tvlData, isLoading);
-
   const totalTVL = useMemo(() => {
     if (tvlData) {
       return Object.values(tvlData).reduce((a, c) => a + c.value, 0);
