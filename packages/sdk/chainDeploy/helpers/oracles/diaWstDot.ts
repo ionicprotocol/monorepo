@@ -18,7 +18,6 @@ export const deployDiaWstDotPriceOracle = async ({
   const wstDot = underlying(moonbeam.assets, assetSymbols.wstDOT);
   const diaOracleAddress = "0xFEfe38321199e016c8d5e734A40eCCC0DBeC3711";
 
-  //// CurveLpTokenPriceOracleNoRegistry
   const dspo = await deployments.deploy("DiaStDotPriceOracle", {
     from: deployer,
     args: [stDot, wstDot],
