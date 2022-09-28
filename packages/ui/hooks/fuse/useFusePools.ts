@@ -6,7 +6,7 @@ import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { CrossFusePools } from '@ui/types/ChainMetaData';
+import { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import { poolSort } from '@ui/utils/sorts';
 
 // returns impersonal data about fuse pools ( can filter by your supplied/created pools )
@@ -92,7 +92,7 @@ export const useCrossFusePools = (
 
         return {
           allPools: res.data.allPools as FusePoolData[],
-          chainPools: res.data.chainPools as CrossFusePools,
+          chainPools: res.data.chainPools as FusePoolsPerChain,
         };
       } catch (e) {
         console.error(e);

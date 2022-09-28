@@ -6,7 +6,7 @@ import * as yup from 'yup';
 
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX } from '@ui/constants/index';
-import { chainIdToConfig, CrossFusePools } from '@ui/types/ChainMetaData';
+import { chainIdToConfig, FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import { poolSort } from '@ui/utils/sorts';
 
 const querySchema = yup.object().shape({
@@ -17,7 +17,7 @@ const querySchema = yup.object().shape({
 
 const handler = async (
   request: NextApiRequest,
-  response: NextApiResponse<{ chainPools: CrossFusePools; allPools: FusePoolData[] }>
+  response: NextApiResponse<{ chainPools: FusePoolsPerChain; allPools: FusePoolData[] }>
 ) => {
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Cache-Control', 'max-age=86400, s-maxage=86400');
@@ -35,7 +35,7 @@ const handler = async (
     );
   });
 
-  const chainPools: CrossFusePools = {};
+  const chainPools: FusePoolsPerChain = {};
   const allPools: FusePoolData[] = [];
 
   try {

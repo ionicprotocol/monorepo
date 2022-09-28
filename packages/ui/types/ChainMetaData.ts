@@ -39,6 +39,6 @@ export const supportedChainIdToConfig: {
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
 };
 
-export interface CrossFusePools {
+export interface FusePoolsPerChain {
   [chainId: string]: FusePoolData[];
 }
