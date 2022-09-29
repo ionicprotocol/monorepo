@@ -50,18 +50,18 @@ export const AdditionalInfo = ({
     <Box>
       <HStack justifyContent={'space-between'}>
         <HStack>
-          <a href={`${scanUrl}/address/${asset.underlyingToken}`} target="_blank">
+          <a href={`${scanUrl}/address/${asset.underlyingToken}`} target="_blank" rel="noreferrer">
             <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
               Token Contract
             </Button>
           </a>
-          <a href={`${scanUrl}/address/${asset.cToken}`} target="_blank">
+          <a href={`${scanUrl}/address/${asset.cToken}`} target="_blank" rel="noreferrer">
             <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
               Market Contract
             </Button>
           </a>
           {asset.plugin && (
-            <a href={`${scanUrl}/address/${asset.plugin}`} target="_blank">
+            <a href={`${scanUrl}/address/${asset.plugin}`} target="_blank" rel="noreferrer">
               <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
                 Plugin Contract
               </Button>
