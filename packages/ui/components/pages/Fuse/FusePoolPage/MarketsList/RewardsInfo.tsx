@@ -1,8 +1,10 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { HStack, Link, Skeleton, Text } from '@chakra-ui/react';
 
 import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ApyInformTooltip';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';

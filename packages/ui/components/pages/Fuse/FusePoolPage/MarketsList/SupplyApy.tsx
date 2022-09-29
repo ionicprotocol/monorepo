@@ -1,5 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { HStack, Link, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { Web3Provider } from '@ethersproject/providers';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
@@ -9,16 +8,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
-import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import {
-  aBNBcContractABI,
-  aBNBcContractAddress,
-  aprDays,
-  MIDAS_DOCS_URL,
-} from '@ui/constants/index';
+import { aBNBcContractABI, aBNBcContractAddress, aprDays } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
-import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -45,8 +37,6 @@ export const SupplyApy = ({
   );
 
   const [aBNBcApr, setaBNBcApr] = useState('');
-
-  const { data: pluginInfo } = usePluginInfo(asset.plugin);
 
   useEffect(() => {
     const func = async () => {
