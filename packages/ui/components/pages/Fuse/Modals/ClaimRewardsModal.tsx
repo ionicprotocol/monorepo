@@ -12,7 +12,6 @@ import {
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
-import { useSigner } from 'wagmi';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center } from '@ui/components/shared/Flex';
@@ -85,19 +84,17 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchRewards: any;
 }) => {
-  const { currentSdk, address } = useMultiMidas();
+  const { currentSdk, address, signer } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
-  const { data: signer } = useSigner();
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[]) => async () => {
-      if (!currentSdk) return;
+      if (!currentSdk || !address || !signer) return;
 
       try {
         setIsClaiming(true);
-        if (!signer) return;
         const fwLensRouter = currentSdk.contracts.FuseFlywheelLensRouter;
 
         for (const reward of rewards) {

@@ -88,12 +88,7 @@ const AddAsset = ({
       <VStack px={4} width="100%">
         <VStack>
           {tokenData && poolData && (
-            <CTokenIcon
-              size="lg"
-              address={tokenData.address}
-              chainId={poolData.chainId}
-              my={4}
-            ></CTokenIcon>
+            <CTokenIcon size="lg" address={tokenData.address} chainId={poolData.chainId} my={4} />
           )}
           <Heading as="h1" size="lg">
             {error && 'Invalid Address!'}

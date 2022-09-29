@@ -49,6 +49,7 @@ import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolL
 import { CIconButton } from '@ui/components/shared/Button';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { MARKETS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -67,6 +68,7 @@ export type PoolRowData = {
 
 export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   const enabledChains = useEnabledChains();
+  const { setGlobalLoading } = useMultiMidas();
   const router = useRouter();
   const countsOf = useMemo(() => {
     const countsPerChain: { [key: string]: number } = {};
@@ -332,6 +334,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   }, [searchText]);
 
   const handleClickRow = async (pool: FusePoolData) => {
+    setGlobalLoading(true);
     await router.push(`/${pool.chainId}/pool/${pool.id}`);
   };
 

@@ -14,10 +14,12 @@ const AssetConfiguration = ({
   openAddAssetModal,
   assets,
   comptrollerAddress,
+  poolChainId,
 }: {
   openAddAssetModal: () => void;
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
+  poolChainId: number;
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -66,7 +68,7 @@ const AssetConfiguration = ({
                   }}
                   px={2}
                 >
-                  <CTokenIcon size="sm" address={asset.underlyingToken} />
+                  <CTokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
                   <Center px={1} fontWeight="bold">
                     {asset.underlyingSymbol}
                   </Center>
