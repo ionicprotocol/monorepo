@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCgId } from '@ui/hooks/useChainConfig';
@@ -6,16 +7,15 @@ import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string, poolChainId: number) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { address, getSdk } = useMultiMidas();
+  const sdk = useMemo(() => getSdk(poolChainId), [getSdk, poolChainId]);
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
-
   return useQuery<PoolData | undefined>(
-    ['useFusePoolData', currentChain?.id, poolId, address, currentSdk?.chainId],
+    ['useFusePoolData', poolId, address, sdk?.chainId],
     async () => {
-      if (!usdPrice || !currentChain || !currentSdk) return;
-
-      const response = await currentSdk.fetchFusePoolData(poolId, { from: address });
+      if (!usdPrice || !sdk) return;
+      const response = await sdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];
       const { underlyingTokens, assets } = response;
 
@@ -48,7 +48,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!poolId && !!usdPrice && !!address && !!currentChain && !!currentSdk,
+      enabled: !!poolId && !!usdPrice && !!sdk,
     }
   );
 };

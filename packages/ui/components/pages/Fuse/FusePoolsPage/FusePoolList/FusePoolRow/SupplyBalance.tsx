@@ -14,7 +14,7 @@ export const SupplyBalance = ({ pool }: { pool: FusePoolData }) => {
   const { getSdk } = useMultiMidas();
 
   const supplyBalance = useMemo(() => {
-    const sdk = getSdk(pool.chainId.toString());
+    const sdk = getSdk(pool.chainId);
     if (sdk?._signer && usdPrice) {
       return pool.totalSupplyBalanceNative * usdPrice;
     }

@@ -33,7 +33,7 @@ export interface MultiMidasContextData {
     unsupported?: boolean | undefined;
   };
   currentSdk?: MidasSdk;
-  getSdk: (chainId: string) => MidasSdk | undefined;
+  getSdk: (chainId: number) => MidasSdk | undefined;
   address?: string;
   pendingTxHash: string;
   setPendingTxHash: Dispatch<string>;
@@ -90,9 +90,9 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [sdks, chain]);
 
   const getSdk = useCallback(
-    (chainId: string) => {
+    (chainId: number) => {
       if (SupportedChainsArray.includes(chainId)) {
-        return sdks.find((sdk) => sdk.chainId.toString() === chainId);
+        return sdks.find((sdk) => sdk.chainId === chainId);
       }
     },
     [sdks]
