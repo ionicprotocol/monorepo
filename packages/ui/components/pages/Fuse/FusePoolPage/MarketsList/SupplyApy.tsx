@@ -1,4 +1,5 @@
-import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { HStack, Link, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { Web3Provider } from '@ethersproject/providers';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
@@ -8,9 +9,16 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
-import { aBNBcContractABI, aBNBcContractAddress, aprDays } from '@ui/constants/index';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import {
+  aBNBcContractABI,
+  aBNBcContractAddress,
+  aprDays,
+  MIDAS_DOCS_URL,
+} from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -37,6 +45,8 @@ export const SupplyApy = ({
   );
 
   const [aBNBcApr, setaBNBcApr] = useState('');
+
+  const { data: pluginInfo } = usePluginInfo(asset.plugin);
 
   useEffect(() => {
     const func = async () => {
@@ -65,33 +75,81 @@ export const SupplyApy = ({
           + {Number(aBNBcApr).toFixed(2)}%
         </Text>
       )}
-
-      {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
-        rewardsOfThisMarket?.rewardsInfo.map((info) =>
-          asset.plugin ? (
-            <RewardsInfo
-              key={info.rewardToken}
-              underlyingAddress={asset.underlyingToken}
-              pluginAddress={asset.plugin}
-              rewardAddress={info.rewardToken}
-            />
-          ) : (
-            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-              <HStack mr={2}>
-                <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                <TokenWithLabel address={info.rewardToken} size="2xs" />
-              </HStack>
-              {info.formattedAPR && (
-                <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-                  {aprFormatter(info.formattedAPR)}%
-                </Text>
-              )}
-            </HStack>
-          )
-        )
-      ) : asset.plugin ? (
-        <RewardsInfo underlyingAddress={asset.underlyingToken} pluginAddress={asset.plugin} />
-      ) : null}
+      <PopoverTooltip
+        placement={'top-start'}
+        body={
+          <>
+            <Text>
+              This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
+            </Text>
+            {pluginInfo?.apyDocsUrl ? (
+              <Link
+                href={pluginInfo?.apyDocsUrl}
+                isExternal
+                variant={'color'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                Vault Details
+              </Link>
+            ) : (
+              <>
+                Read more about it{' '}
+                <Link
+                  href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
+                  isExternal
+                  variant={'color'}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                  }}
+                >
+                  in our Docs <ExternalLinkIcon mx="2px" />
+                </Link>
+              </>
+            )}
+          </>
+        }
+      >
+        <div>
+          {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
+            rewardsOfThisMarket?.rewardsInfo.map((info) =>
+              asset.plugin ? (
+                <>
+                  <div>
+                    <RewardsInfo
+                      key={info.rewardToken}
+                      underlyingAddress={asset.underlyingToken}
+                      pluginAddress={asset.plugin}
+                      rewardAddress={info.rewardToken}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+                    <HStack mr={2}>
+                      <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+                      <TokenWithLabel address={info.rewardToken} size="2xs" />
+                    </HStack>
+                    {info.formattedAPR && (
+                      <Text
+                        color={cCard.txtColor}
+                        fontSize={{ base: '2.8vw', sm: '0.8rem' }}
+                        ml={1}
+                      >
+                        {aprFormatter(info.formattedAPR)}%
+                      </Text>
+                    )}
+                  </HStack>
+                </>
+              )
+            )
+          ) : asset.plugin ? (
+            <RewardsInfo underlyingAddress={asset.underlyingToken} pluginAddress={asset.plugin} />
+          ) : null}
+        </div>
+      </PopoverTooltip>
     </VStack>
   );
 };
