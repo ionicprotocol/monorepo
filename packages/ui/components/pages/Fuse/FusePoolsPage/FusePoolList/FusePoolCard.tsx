@@ -1,4 +1,4 @@
-import { AvatarGroup, Box, Button, chakra, Flex, Text, Tooltip } from '@chakra-ui/react';
+import { AvatarGroup, Button, chakra, Flex, Text } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/types';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/router';
@@ -6,11 +6,8 @@ import { useMemo } from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Column, Row } from '@ui/components/shared/Flex';
-import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
-import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useColors } from '@ui/hooks/useColors';
-import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
@@ -20,15 +17,12 @@ interface PoolCardProps {
 }
 
 const PoolCard = ({ data }: PoolCardProps) => {
-  const { data: rss, error: rssError } = usePoolRSS(data.id);
-  const rssScore = !rssError && rss ? letterScore(rss.totalScore) : '?';
   const tokens = useMemo(() => {
     return data.underlyingTokens.map((address, index) => ({
       address,
       symbol: data.underlyingSymbols[index],
     }));
   }, [data.underlyingSymbols, data.underlyingTokens]);
-  const scoreGradient = usePoolRiskScoreGradient(rssScore);
 
   const { cCard } = useColors();
 
@@ -67,21 +61,6 @@ const PoolCard = ({ data }: PoolCardProps) => {
                 return <CTokenIcon key={address} address={address} />;
               })}
             </AvatarGroup>
-          )}
-          {config.isRssScoreEnabled && (
-            <Row mainAxisAlignment="center" crossAxisAlignment="center">
-              <Tooltip
-                label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
-                placement="top"
-                hasArrow
-              >
-                <Box ml="4" background={scoreGradient} px="4" py="2" borderRadius="5px">
-                  <Text fontSize="lg" textColor="white" fontWeight="semibold">
-                    {rssScore}
-                  </Text>
-                </Box>
-              </Tooltip>
-            </Row>
           )}
         </Row>
         <chakra.div w="100%" h="1px" bgColor={cCard.dividerColor} />
