@@ -99,6 +99,12 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   );
 
   useEffect(() => {
+    if (currentSdk && signer) {
+      currentSdk.setSigner(signer);
+    }
+  }, [signer, currentSdk]);
+
+  useEffect(() => {
     mounted.current = true;
 
     const pendingStr = localStorage.getItem('pendingTxHashes');
