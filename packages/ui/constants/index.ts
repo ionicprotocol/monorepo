@@ -83,7 +83,7 @@ export const REWARDS = 'Rewards';
 export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
-export const DEPRECARED = 'Deprecated';
+export const DEPRECATED = 'Deprecated';
 export const SEARCH = 'Search';
 
 //Pool Filters

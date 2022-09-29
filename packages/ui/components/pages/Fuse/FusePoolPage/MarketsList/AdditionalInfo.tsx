@@ -1,4 +1,5 @@
-import { Box, Center, Grid, HStack, Spinner, Text } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, Button, Center, Grid, HStack, Spinner, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
@@ -19,6 +20,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { shortUsdFormatter } from '@ui/utils/bigUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -35,6 +37,7 @@ export const AdditionalInfo = ({
   supplyBalanceFiat: number;
   poolChainId: number;
 }) => {
+  const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
   const asset: MarketData = row.original.market;
   const assets: MarketData[] = rows.map((row) => row.original.market);
 
@@ -47,41 +50,62 @@ export const AdditionalInfo = ({
 
   return (
     <Box>
-      <HStack justifyContent="flex-end">
-        <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
-        <FundButton
-          mode={FundOperationMode.SUPPLY}
-          comptrollerAddress={comptrollerAddress}
-          assets={assets}
-          asset={asset}
-          isDisabled={asset.isSupplyPaused}
-          supplyBalanceFiat={supplyBalanceFiat}
-          poolChainId={poolChainId}
-        />
-        <FundButton
-          mode={FundOperationMode.WITHDRAW}
-          comptrollerAddress={comptrollerAddress}
-          assets={assets}
-          asset={asset}
-          isDisabled={asset.supplyBalanceFiat === 0}
-          poolChainId={poolChainId}
-        />
-        <FundButton
-          mode={FundOperationMode.BORROW}
-          comptrollerAddress={comptrollerAddress}
-          assets={assets}
-          asset={asset}
-          isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
-          poolChainId={poolChainId}
-        />
-        <FundButton
-          mode={FundOperationMode.REPAY}
-          comptrollerAddress={comptrollerAddress}
-          assets={assets}
-          asset={asset}
-          isDisabled={asset.borrowBalanceFiat === 0}
-          poolChainId={poolChainId}
-        />
+      <HStack justifyContent={'space-between'}>
+        <HStack>
+          <a href={`${scanUrl}/address/${asset.underlyingToken}`} target="_blank" rel="noreferrer">
+            <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+              Token Contract
+            </Button>
+          </a>
+          <a href={`${scanUrl}/address/${asset.cToken}`} target="_blank" rel="noreferrer">
+            <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+              Market Contract
+            </Button>
+          </a>
+          {asset.plugin && (
+            <a href={`${scanUrl}/address/${asset.plugin}`} target="_blank" rel="noreferrer">
+              <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                Plugin Contract
+              </Button>
+            </a>
+          )}
+        </HStack>
+        <HStack>
+          <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
+          <FundButton
+            mode={FundOperationMode.SUPPLY}
+            comptrollerAddress={comptrollerAddress}
+            assets={assets}
+            asset={asset}
+            isDisabled={asset.isSupplyPaused}
+            supplyBalanceFiat={supplyBalanceFiat}
+            poolChainId={poolChainId}
+          />
+          <FundButton
+            mode={FundOperationMode.WITHDRAW}
+            comptrollerAddress={comptrollerAddress}
+            assets={assets}
+            asset={asset}
+            isDisabled={asset.supplyBalanceFiat === 0}
+            poolChainId={poolChainId}
+          />
+          <FundButton
+            mode={FundOperationMode.BORROW}
+            comptrollerAddress={comptrollerAddress}
+            assets={assets}
+            asset={asset}
+            isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
+            poolChainId={poolChainId}
+          />
+          <FundButton
+            mode={FundOperationMode.REPAY}
+            comptrollerAddress={comptrollerAddress}
+            assets={assets}
+            asset={asset}
+            isDisabled={asset.borrowBalanceFiat === 0}
+            poolChainId={poolChainId}
+          />
+        </HStack>
       </HStack>
       <Grid
         templateColumns={{

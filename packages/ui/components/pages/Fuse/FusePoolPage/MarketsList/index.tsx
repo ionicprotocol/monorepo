@@ -50,7 +50,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   BORROWABLE,
   COLLATERAL,
-  DEPRECARED,
+  DEPRECATED,
   DOWN_LIMIT,
   MARKETS_COUNT_PER_PAGE,
   PROTECTED,
@@ -129,7 +129,7 @@ export const MarketsList = ({
           row.original.market.isBorrowPaused &&
           !row.original.market.isSupplyPaused) ||
         (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused) ||
-        (value.includes(DEPRECARED) &&
+        (value.includes(DEPRECATED) &&
           row.original.market.isBorrowPaused &&
           row.original.market.isSupplyPaused)
       ) {
@@ -333,7 +333,7 @@ export const MarketsList = ({
     COLLATERAL,
     PROTECTED,
     BORROWABLE,
-    DEPRECARED,
+    DEPRECATED,
   ]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [searchText, setSearchText] = useState('');
@@ -404,9 +404,9 @@ export const MarketsList = ({
 
   const onDeprecatedFiltered = () => {
     if (!isDeprecatedFiltered) {
-      setGlobalFilter([...globalFilter, DEPRECARED]);
+      setGlobalFilter([...globalFilter, DEPRECATED]);
     } else {
-      setGlobalFilter(globalFilter.filter((f) => f !== DEPRECARED));
+      setGlobalFilter(globalFilter.filter((f) => f !== DEPRECATED));
     }
 
     setIsDeprecatedFiltered(!isDeprecatedFiltered);

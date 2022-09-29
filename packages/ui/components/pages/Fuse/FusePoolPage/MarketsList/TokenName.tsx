@@ -1,16 +1,5 @@
-import { LinkIcon } from '@chakra-ui/icons';
-import {
-  Badge,
-  Box,
-  Button,
-  Center,
-  Link as ChakraLink,
-  HStack,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
+import { Badge, Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useMemo } from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
@@ -18,10 +7,8 @@ import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import { useColors } from '@ui/hooks/useColors';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export const TokenName = ({
   asset,
@@ -32,11 +19,7 @@ export const TokenName = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
   const { data: tokenData } = useTokenData(asset.underlyingToken);
-
-  const { cCard } = useColors();
-
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
@@ -123,24 +106,6 @@ export const TokenName = ({
           )}
         </VStack>
       </VStack>
-
-      <HStack ml={2}>
-        <PopoverTooltip placement="top-start" body={`${scanUrl}/address/${asset.underlyingToken}`}>
-          <Button
-            minWidth={6}
-            m={0}
-            variant={'link'}
-            as={ChakraLink}
-            href={`${scanUrl}/address/${asset.underlyingToken}`}
-            isExternal
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
-          </Button>
-        </PopoverTooltip>
-      </HStack>
     </Row>
   );
 };

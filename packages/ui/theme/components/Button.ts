@@ -42,7 +42,6 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       },
       _active: { opacity: 0.8 },
     }),
-
     _outline: (props) => ({
       ...theme.components.Button.variants?.outline,
       bg: mode('whiteBg', 'raisinBlack')(props),
@@ -93,6 +92,16 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       },
       _active: {
         bg: mode('silverMetallic80', 'ecru80')(props),
+      },
+    }),
+    external: (props) => ({
+      ...theme.components.Button.variants?.solid,
+      bg: mode('whiteBg', 'raisinBlack')(props),
+      color: mode('raisinBlack', 'bone')(props),
+      borderRadius: 'md',
+      _hover: {
+        bg: mode('bone', 'raisinBlack80')(props),
+        color: mode('raisinBlack', 'bone')(props),
       },
     }),
   },
