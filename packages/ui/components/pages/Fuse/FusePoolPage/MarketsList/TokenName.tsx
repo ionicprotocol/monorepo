@@ -106,24 +106,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
           )}
         </VStack>
       </VStack>
-
-      <HStack ml={2}>
-        <PopoverTooltip placement="top-start" body={`${scanUrl}/address/${asset.underlyingToken}`}>
-          <Button
-            minWidth={6}
-            m={0}
-            variant={'link'}
-            as={ChakraLink}
-            href={`${scanUrl}/address/${asset.underlyingToken}`}
-            isExternal
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
-          </Button>
-        </PopoverTooltip>
-      </HStack>
     </Row>
   );
 };
