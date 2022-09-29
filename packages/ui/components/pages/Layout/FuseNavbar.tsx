@@ -7,10 +7,12 @@ import {
   Link,
   useBreakpointValue,
   useColorMode,
+  useDisclosure,
   VStack,
 } from '@chakra-ui/react';
 
 import { AccountButton } from '@ui/components/shared/AccountButton';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
@@ -23,6 +25,7 @@ const FuseNavbar = () => {
     md: '/images/midas-',
   });
   const { address, signer } = useMultiMidas();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <HStack w={'100%'} alignItems="flex-start" mb={8}>
@@ -36,7 +39,16 @@ const FuseNavbar = () => {
       </Link>
       <VStack w={'100%'}>
         <HStack w={'100%'} justifyContent="flex-end" pt={2}>
-          {signer && address ? <AccountButton /> : <Button variant="_solid">Connect Wallet</Button>}
+          {signer && address ? (
+            <AccountButton />
+          ) : (
+            <>
+              <Button variant="_solid" onClick={onOpen}>
+                Connect Wallet
+              </Button>
+              <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+            </>
+          )}
           <Button variant="_solid" ml={2} px={2} onClick={toggleColorMode}>
             {colorMode === 'light' ? (
               <MoonIcon color="gray.700" w={5} h={5} />

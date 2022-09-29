@@ -33,6 +33,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
@@ -66,6 +67,7 @@ export type PoolRowData = {
 
 export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   const enabledChains = useEnabledChains();
+  const router = useRouter();
   const countsOf = useMemo(() => {
     const countsPerChain: { [key: string]: number } = {};
 
@@ -329,6 +331,10 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
 
+  const handleClickRow = async (pool: FusePoolData) => {
+    await router.push(`/${pool.chainId}/pool/${pool.id}`);
+  };
+
   return (
     <Box>
       <Flex
@@ -481,7 +487,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
                   borderTopWidth={1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
-                  onClick={() => row.toggleExpanded()}
+                  onClick={() => handleClickRow(row.original.chain)}
                   cursor="pointer"
                 >
                   {row.getVisibleCells().map((cell) => {

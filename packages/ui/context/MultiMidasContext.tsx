@@ -16,7 +16,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Chain, useAccount, useDisconnect, useNetwork, useSigner, useSwitchNetwork } from 'wagmi';
+import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -52,9 +52,11 @@ interface MultiMidasProviderProps {
 
 export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { children: null }) => {
   const enabledChains = useEnabledChains();
-  const { chain, chains } = useNetwork();
-  const { address, isConnecting, isReconnecting, isConnected } = useAccount();
-  const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
+  const { chain } = useNetwork();
+  // const { chain, chains } = useNetwork();
+  const { address, isConnected } = useAccount();
+  // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
+  // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
