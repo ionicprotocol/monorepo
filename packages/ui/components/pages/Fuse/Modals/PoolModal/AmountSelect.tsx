@@ -59,6 +59,7 @@ interface AmountSelectProps {
   mode: FundOperationMode;
   onClose: () => void;
   setMode: (mode: FundOperationMode) => void;
+  supplyBalanceFiat?: number;
 }
 const AmountSelect = ({
   assets,
@@ -68,6 +69,7 @@ const AmountSelect = ({
   mode,
   onClose,
   setMode,
+  supplyBalanceFiat,
 }: AmountSelectProps) => {
   const { midasSdk, setPendingTxHash, address, currentChain } = useMidas();
 
@@ -234,7 +236,13 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const resp = await midasSdk.withdraw(asset.cToken, amount);
+        const maxAmount = await fetchMaxAmount(mode, midasSdk, address, asset);
+        let resp;
+        if (maxAmount.eq(amount)) {
+          resp = await midasSdk.withdraw(asset.cToken, constants.MaxUint256);
+        } else {
+          resp = await midasSdk.withdraw(asset.cToken, amount);
+        }
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode, minBorrowUSD);
@@ -333,6 +341,8 @@ const AmountSelect = ({
                 setMode={setMode}
                 setUserEnteredAmount={_setUserEnteredAmount}
                 setAmount={_setAmount}
+                asset={asset}
+                supplyBalanceFiat={supplyBalanceFiat}
               />
 
               {/* Asset Balance */}
@@ -556,12 +566,16 @@ const TabBar = ({
   setMode,
   setUserEnteredAmount,
   setAmount,
+  asset,
+  supplyBalanceFiat,
 }: {
   mode: FundOperationMode;
   setMode: (mode: FundOperationMode) => void;
   color?: string;
   setUserEnteredAmount: (value: string) => void;
   setAmount: (value: BigNumber) => void;
+  asset: MarketData;
+  supplyBalanceFiat?: number;
 }) => {
   const isSupplySide = mode < 2;
 
@@ -626,17 +640,27 @@ const TabBar = ({
           <TabList height={10}>
             {isSupplySide ? (
               <>
-                <AmountTab className="supplyTab" mr={2}>
+                <AmountTab className="supplyTab" mr={2} isDisabled={asset.isSupplyPaused}>
                   Supply
                 </AmountTab>
-                <AmountTab className="withdrawTab">Withdraw</AmountTab>
+                <AmountTab className="withdrawTab" isDisabled={asset.supplyBalanceFiat === 0}>
+                  Withdraw
+                </AmountTab>
               </>
             ) : (
               <>
-                <AmountTab className="borrowTab" mr={2}>
+                <AmountTab
+                  className="borrowTab"
+                  mr={2}
+                  isDisabled={
+                    asset.isBorrowPaused || (supplyBalanceFiat && supplyBalanceFiat === 0)
+                  }
+                >
                   Borrow
                 </AmountTab>
-                <AmountTab className="repayTab">Repay</AmountTab>
+                <AmountTab className="repayTab" isDisabled={asset.borrowBalanceFiat === 0}>
+                  Repay
+                </AmountTab>
               </>
             )}
           </TabList>

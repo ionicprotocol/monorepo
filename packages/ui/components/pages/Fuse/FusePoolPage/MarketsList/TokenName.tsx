@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
+import { LinkIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import * as React from 'react';
@@ -8,11 +8,9 @@ import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
-import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -22,8 +20,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
 
   const { cCard } = useColors();
 
-  const { data: pluginInfo } = usePluginInfo(asset.plugin);
-
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
@@ -31,7 +27,20 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
 
   return (
     <Row id="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
-      <CTokenIcon size="md" address={asset.underlyingToken} />
+      <PopoverTooltip
+        placement="top-start"
+        body={
+          <div
+            dangerouslySetInnerHTML={{
+              __html: asset.extraDocs || asset.underlyingSymbol,
+            }}
+          />
+        }
+      >
+        <div>
+          <CTokenIcon size="md" address={asset.underlyingToken} withTooltip={false} />
+        </div>
+      </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>
           <PopoverTooltip
@@ -79,11 +88,19 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             </SimpleTooltip>
           )}
           {asset.isBorrowPaused ? (
-            <SimpleTooltip label="This asset cannot be borrowed">
-              <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
-                Protected
-              </Badge>
-            </SimpleTooltip>
+            asset.isSupplyPaused ? (
+              <SimpleTooltip label="This asset cannot be supplied and borrowed">
+                <Badge variant="outline" colorScheme="gray" textTransform="capitalize">
+                  Deprecated
+                </Badge>
+              </SimpleTooltip>
+            ) : (
+              <SimpleTooltip label="This asset cannot be borrowed">
+                <Badge variant="outline" colorScheme="purple" textTransform="capitalize">
+                  Protected
+                </Badge>
+              </SimpleTooltip>
+            )
           ) : (
             <SimpleTooltip label="This asset can be borrowed">
               <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
@@ -95,13 +112,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
       </VStack>
 
       <HStack ml={2}>
-        {asset.underlyingSymbol &&
-          tokenData?.symbol &&
-          asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() && (
-            <PopoverTooltip body={asset.underlyingSymbol}>
-              <QuestionIcon />
-            </PopoverTooltip>
-          )}
         <PopoverTooltip placement="top-start" body={`${scanUrl}/address/${asset.underlyingToken}`}>
           <Button
             minWidth={6}
@@ -117,49 +127,6 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
             <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
           </Button>
         </PopoverTooltip>
-
-        {asset.plugin && (
-          <PopoverTooltip
-            placement="top-start"
-            body={
-              <Text lineHeight="base">
-                This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
-                <br />
-                {pluginInfo?.apyDocsUrl ? (
-                  <ChakraLink
-                    href={pluginInfo.apyDocsUrl}
-                    isExternal
-                    variant={'color'}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    Vault details
-                  </ChakraLink>
-                ) : (
-                  <>
-                    Read more about it{' '}
-                    <ChakraLink
-                      href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
-                      isExternal
-                      variant={'color'}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      in our Docs <ExternalLinkIcon mx="2px" />
-                    </ChakraLink>
-                  </>
-                )}
-                .
-              </Text>
-            }
-          >
-            <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
-              🔌
-            </span>
-          </PopoverTooltip>
-        )}
       </HStack>
     </Row>
   );

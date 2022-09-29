@@ -46,6 +46,7 @@ export enum OracleTypes {
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
+  DiaStDotPriceOracle = "DiaStDotPriceOracle",
 }
 
 export enum IrmTypes {
@@ -53,6 +54,7 @@ export enum IrmTypes {
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
   JumpRateModel_MIMO_2_004_4_08 = "JumpRateModel_MIMO_2_004_4_08",
+  JumpRateModel_JARVIS_2_004_4_08 = "JumpRateModel_JARVIS_2_004_4_08",
 }
 
 export enum LiquidationStrategy {
@@ -209,6 +211,7 @@ export enum assetSymbols {
   DOT = "DOT",
   xcDOT = "xcDOT",
   stDOT = "stDOT",
+  wstDOT = "wstDOT",
   xcKSM = "xcKSM",
   stKSM = "stKSM",
   multiWBTC = "multiWBTC",

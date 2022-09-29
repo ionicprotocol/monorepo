@@ -3,7 +3,8 @@ import { assetSymbols, DeployedPlugins, underlying } from "@midas-capital/types"
 import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
-  "0xB6a8f36746BcCC1025Ec54eb2c6DCEF8EeE8df2f": { // still the same, failing to change to new 0x43fa05d9D56c44d7a697Ac458CC16707A545183B
+  "0xB6a8f36746BcCC1025Ec54eb2c6DCEF8EeE8df2f": {
+    // still the same, failing to change to new 0x43fa05d9D56c44d7a697Ac458CC16707A545183B
     market: "0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871",
     name: "Beefy EURE-jEUR Vault",
     strategy: "BeefyERC4626",
@@ -21,7 +22,8 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["AGEUR-JEUR"]),
     otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "10"],
   },
-  "0x74bA0D32B7430a2aad36e48B7aAD57bf233bDDa6": { // still the same, failing to change to new 0x9F82D802FB4940743C543041b86220A9096A7522
+  "0x74bA0D32B7430a2aad36e48B7aAD57bf233bDDa6": {
+    // still the same, failing to change to new 0x9F82D802FB4940743C543041b86220A9096A7522
     market: "0xCC7eab2605972128752396241e46C281e0405a27",
     name: "Beefy jEUR-PAR Vault",
     strategy: "BeefyERC4626",

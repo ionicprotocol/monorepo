@@ -50,6 +50,7 @@ export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export type StaticContracts = {
   FuseFeeDistributor: FuseFeeDistributor;
+  FuseFlywheelLensRouter: FuseFlywheelLensRouter;
   FusePoolDirectory: FusePoolDirectory;
   FusePoolLens: FusePoolLens;
   FusePoolLensSecondary: FusePoolLensSecondary;
@@ -130,6 +131,11 @@ export class MidasBase {
         this.chainDeployment.FuseFeeDistributor.abi,
         this.provider
       ) as FuseFeeDistributor,
+      FuseFlywheelLensRouter: new Contract(
+        this.chainDeployment.FuseFlywheelLensRouter.address,
+        this.chainDeployment.FuseFlywheelLensRouter.abi,
+        this.provider
+      ) as FuseFlywheelLensRouter,
       ...this._contracts,
     };
   }
@@ -165,16 +171,6 @@ export class MidasBase {
     this.redemptionStrategies = chainConfig.redemptionStrategies;
     this.fundingStrategies = chainConfig.fundingStrategies;
     this.artifacts = ARTIFACTS;
-
-    if (this.chainDeployment.FuseFlywheelLensRouter) {
-      this.contracts["FuseFlywheelLensRouter"] = new Contract(
-        this.chainDeployment.FuseFlywheelLensRouter?.address || constants.AddressZero,
-        this.chainDeployment.FuseFlywheelLensRouter.abi,
-        this.provider
-      ) as FuseFlywheelLensRouter;
-    } else {
-      console.warn(`FuseFlywheelLensRouter not deployed to chain ${this.chainId}`);
-    }
 
     this.availableIrms = chainConfig.irms.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
@@ -274,6 +270,7 @@ export class MidasBase {
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
+      JumpRateModel_JARVIS_002_004_4_08: JumpRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 

@@ -4,7 +4,6 @@ import { BigNumberish, CallOverrides, utils } from "ethers";
 import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { filterOnlyObjectProperties, filterPoolName, getContract } from "../MidasSdk/utils";
@@ -44,38 +43,26 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
       const promises: Promise<any>[] = [];
 
-      const comptrollerContract = getContract(comptroller, this.chainDeployment.Comptroller.abi, this.provider);
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
-        const isBorrowPaused: boolean = await comptrollerContract.callStatic.borrowGuardianPaused(asset.cToken);
-        asset.isBorrowPaused = isBorrowPaused;
-        // @todo aggregate the borrow/supply guardian paused into 1
-        promises.push(
-          comptrollerContract.callStatic
-            .mintGuardianPaused(asset.cToken)
-            .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
-        );
+        asset.isBorrowPaused = asset.borrowGuardianPaused;
+        asset.isSupplyPaused = asset.mintGuardianPaused;
 
         promises.push(
           (async () => {
-            let plugin: string | undefined = undefined;
-
-            plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
-              .callStatic.plugin()
-              .catch(() => undefined);
-            if (!plugin) {
-              // @ts-ignore
-              plugin = await this.getAssetInstance<CErc20PluginRewardsDelegate>(
-                asset.cToken,
-                "CErc20PluginRewardsDelegate"
-              )
-                .callStatic.plugin()
-                .catch(() => undefined);
+            const ctoken = this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate");
+            const implementation = await ctoken.callStatic.implementation();
+            if (
+              [
+                this.chainDeployment["CErc20PluginRewardsDelegate"].address,
+                this.chainDeployment["CErc20PluginDelegate"].address,
+              ].includes(implementation)
+            ) {
+              const plugin = await ctoken.callStatic.plugin().catch(() => undefined);
+              if (!plugin) return;
+              asset.plugin = plugin;
             }
-            if (!plugin) return;
-
-            asset.plugin = plugin;
           })()
         );
 

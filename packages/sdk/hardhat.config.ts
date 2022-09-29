@@ -23,7 +23,6 @@ import "./tasks/fluxFeed";
 import "./tasks/flywheel";
 import "./tasks/getPoolData";
 import "./tasks/liquidation";
-import "./tasks/pauseMarketMinting";
 import "./tasks/sendTestTokens";
 import "./tasks/upgradeMarket";
 import "./tasks/updateFuseFee";
@@ -40,6 +39,7 @@ dotEnvConfig();
 
 const urlOverride = process.env.ETH_PROVIDER_URL;
 
+console.log("urlOverride: ", urlOverride);
 console.log("FORK_RPC_URL: ", process.env.FORK_RPC_URL);
 
 const mnemonic =
@@ -159,7 +159,7 @@ const config: HardhatUserConfig = {
       chainId: 245022926,
     },
     polygon: {
-      url: urlOverride || `https://matic-mainnet.chainstacklabs.com`,
+      url: urlOverride || `https://polygon-rpc.com/`,
       accounts: { mnemonic },
       chainId: 137,
     },

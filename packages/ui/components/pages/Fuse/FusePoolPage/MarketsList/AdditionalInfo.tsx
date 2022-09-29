@@ -52,6 +52,8 @@ export const AdditionalInfo = ({
           comptrollerAddress={comptrollerAddress}
           assets={assets}
           asset={asset}
+          isDisabled={asset.isSupplyPaused}
+          supplyBalanceFiat={supplyBalanceFiat}
         />
         <FundButton
           mode={FundOperationMode.WITHDRAW}
