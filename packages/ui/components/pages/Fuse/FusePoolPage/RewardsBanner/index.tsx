@@ -5,7 +5,13 @@ import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 
-export const RewardsBanner = ({ tokens = [] }: { tokens: string[] }) => {
+export const RewardsBanner = ({
+  tokens = [],
+  poolChainId,
+}: {
+  tokens: string[];
+  poolChainId: number;
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -18,7 +24,13 @@ export const RewardsBanner = ({ tokens = [] }: { tokens: string[] }) => {
           <Text variant="smText" ml={2}>
             This pool is offering rewards
           </Text>
-          <CTokenAvatarGroup tokenAddresses={tokens} ml={2} mr={2} popOnHover={true} />
+          <CTokenAvatarGroup
+            tokenAddresses={tokens}
+            ml={2}
+            mr={2}
+            popOnHover={true}
+            chainId={poolChainId}
+          />
         </Row>
       </GlowingBox>
     </motion.div>

@@ -191,7 +191,11 @@ const FlywheelRow = ({
       </Td>
       <Td>
         {!!underlyings.length ? (
-          <CTokenAvatarGroup tokenAddresses={underlyings} popOnHover={true} />
+          <CTokenAvatarGroup
+            tokenAddresses={underlyings}
+            popOnHover={true}
+            chainId={pool.chainId}
+          />
         ) : (
           <Badge>None</Badge>
         )}

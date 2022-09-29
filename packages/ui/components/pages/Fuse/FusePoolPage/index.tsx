@@ -71,7 +71,9 @@ const FusePoolPage = memo(() => {
             ) : null}
           </HStack>
 
-          {rewardTokens.length > 0 && <RewardsBanner tokens={rewardTokens} />}
+          {rewardTokens.length > 0 && data && (
+            <RewardsBanner tokens={rewardTokens} poolChainId={data.chainId} />
+          )}
 
           <PoolStats poolData={data} />
 
