@@ -32,11 +32,11 @@ function MidasDapp({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <MultiMidasProvider>
             {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
-            <CheckConnection>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </CheckConnection>
+            {/* <CheckConnection> */}
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+            {/* </CheckConnection> */}
           </MultiMidasProvider>
         </QueryClientProvider>
       </WagmiConfig>

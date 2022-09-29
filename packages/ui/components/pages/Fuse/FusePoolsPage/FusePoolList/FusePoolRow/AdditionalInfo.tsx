@@ -18,25 +18,24 @@ import { PoolRowData } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLis
 import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMidas } from '@ui/context/MidasContext';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { getBlockTimePerMinuteByChainId, getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   const pool: FusePoolData = row.original.poolName;
-  const { sdks } = useMultiMidas();
-  const { scanUrl } = useMidas();
+  const { getSdk } = useMultiMidas();
   const cgId = useCgId(pool.chainId);
   const { data: usdPrice } = useUSDPrice(cgId);
   const rewardTokens = useRewardTokensOfPool(pool.comptroller);
   const poolDetails = usePoolDetails(pool.assets);
-  const sdk = Object.values(sdks).find((sdk) => sdk.chainId === pool.chainId);
+  const sdk = getSdk(pool.chainId.toString());
+  const scanUrl = useMemo(() => getScanUrlByChainId(pool.chainId), [pool.chainId]);
 
   const topLendingApy = useMemo(() => {
     if (sdk && poolDetails) {

@@ -33,7 +33,7 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -43,15 +43,17 @@ const PoolConfiguration = ({
   assets,
   comptrollerAddress,
   poolName,
+  poolChainId,
 }: {
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
   poolName: string;
+  poolChainId: number;
 }) => {
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
   const { cSwitch } = useColors();
 
   const queryClient = useQueryClient();
@@ -91,7 +93,9 @@ const PoolConfiguration = ({
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -113,7 +117,9 @@ const PoolConfiguration = ({
   };
 
   const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -145,7 +151,9 @@ const PoolConfiguration = ({
   };
 
   const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -184,10 +192,12 @@ const PoolConfiguration = ({
   };
 
   const renounceOwnership = async () => {
+    if (!currentSdk) return;
+
     const unitroller = new Contract(
       comptrollerAddress,
-      midasSdk.artifacts.Unitroller.abi,
-      midasSdk.provider as Web3Provider
+      currentSdk.artifacts.Unitroller.abi,
+      currentSdk.provider as Web3Provider
     );
 
     try {
@@ -222,11 +232,13 @@ const PoolConfiguration = ({
   }, [data, setValue]);
 
   const updateCloseFactor = async ({ closeFactor }: { closeFactor: number }) => {
+    if (!currentSdk) return;
+
     setIsUpdating(true);
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -257,12 +269,14 @@ const PoolConfiguration = ({
   }: {
     liquidationIncentive: number;
   }) => {
+    if (!currentSdk) return;
+
     // 8% -> 1.08 * 1e8
     const bigLiquidationIncentive: BigNumber = utils.parseUnits(
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(
@@ -289,6 +303,8 @@ const PoolConfiguration = ({
   };
 
   const onSave = async () => {
+    if (!currentSdk) return;
+
     if (!inputPoolName) {
       handleGenericError('Input pool name', errorToast);
       return;
@@ -296,9 +312,9 @@ const PoolConfiguration = ({
     try {
       setIsSaving(true);
       const FusePoolDirectory = new Contract(
-        midasSdk.chainDeployment.FusePoolDirectory.address,
-        midasSdk.chainDeployment.FusePoolDirectory.abi,
-        midasSdk.provider as Web3Provider
+        currentSdk.chainDeployment.FusePoolDirectory.address,
+        currentSdk.chainDeployment.FusePoolDirectory.abi,
+        currentSdk.provider as Web3Provider
       );
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
@@ -382,7 +398,9 @@ const PoolConfiguration = ({
               <>
                 <AvatarGroup size="sm" max={30}>
                   {assets.map(({ underlyingToken, cToken }) => {
-                    return <CTokenIcon key={cToken} address={underlyingToken} />;
+                    return (
+                      <CTokenIcon key={cToken} address={underlyingToken} chainId={poolChainId} />
+                    );
                   })}
                 </AvatarGroup>
                 <Text ml={2} flexShrink={0}>

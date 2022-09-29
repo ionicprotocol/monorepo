@@ -22,29 +22,28 @@ interface CrossChainTVL {
 }
 
 export const useTVL = () => {
-  const { sdks } = useMultiMidas();
-  const chainIds = Object.keys(sdks);
+  const { sdks, chainIds } = useMultiMidas();
   const { data: prices, isLoading, error } = useUSDPrices(chainIds);
 
-  return useQuery<CrossChainTVL>(
-    ['useTVL', ...chainIds.sort()],
+  return useQuery<CrossChainTVL | undefined>(
+    ['useTVL', ...chainIds, prices && Object.values(prices).sort(), isLoading],
     async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
       if (!isLoading && prices) {
-        const chainTVLs: CrossChainTVL[] = await Promise.all(
-          Object.entries(sdks).map(
-            async ([chainId, sdk]): Promise<CrossChainTVL> => ({
-              [chainId as string]: {
-                value: (await fetchFuseNumberTVL(sdk)) * prices[chainId].value,
-                symbol: prices[chainId].symbol,
-                name: sdk.chainSpecificParams.metadata.name,
-                logo: sdk.chainSpecificParams.metadata.img,
-              },
-            })
-          )
+        const chainTVLs: CrossChainTVL = {};
+
+        await Promise.all(
+          sdks.map(async (sdk) => {
+            chainTVLs[sdk.chainId.toString()] = {
+              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
+              symbol: prices[sdk.chainId.toString()].symbol,
+              name: sdk.chainSpecificParams.metadata.name,
+              logo: sdk.chainSpecificParams.metadata.img,
+            };
+          })
         );
 
-        return Object.assign({}, ...chainTVLs);
+        return chainTVLs;
       }
     },
     { enabled: !!prices && !isLoading }

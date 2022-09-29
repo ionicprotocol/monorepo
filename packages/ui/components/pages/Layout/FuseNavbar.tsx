@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react';
 
 import { AccountButton } from '@ui/components/shared/AccountButton';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
 const FuseNavbar = () => {
@@ -21,6 +22,7 @@ const FuseNavbar = () => {
     sm: '/images/midas-mobile-',
     md: '/images/midas-',
   });
+  const { address, signer } = useMultiMidas();
 
   return (
     <HStack w={'100%'} alignItems="flex-start" mb={8}>
@@ -34,7 +36,7 @@ const FuseNavbar = () => {
       </Link>
       <VStack w={'100%'}>
         <HStack w={'100%'} justifyContent="flex-end" pt={2}>
-          <AccountButton />
+          {signer && address ? <AccountButton /> : <Button variant="_solid">Connect Wallet</Button>}
           <Button variant="_solid" ml={2} px={2} onClick={toggleColorMode}>
             {colorMode === 'light' ? (
               <MoonIcon color="gray.700" w={5} h={5} />

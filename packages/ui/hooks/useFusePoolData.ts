@@ -1,19 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
-export const useFusePoolData = (poolId: string) => {
-  const { midasSdk, address, coingeckoId, currentChain } = useMidas();
+export const useFusePoolData = (poolId: string, poolChainId: number) => {
+  const { currentSdk, address, currentChain } = useMultiMidas();
+  const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   return useQuery<PoolData | undefined>(
-    ['useFusePoolData', currentChain.id, poolId, address],
+    ['useFusePoolData', currentChain?.id, poolId, address, currentSdk?.chainId],
     async () => {
-      if (!usdPrice) return;
+      if (!usdPrice || !currentChain || !currentSdk) return;
 
-      const response = await midasSdk.fetchFusePoolData(poolId, { from: address });
+      const response = await currentSdk.fetchFusePoolData(poolId, { from: address });
       const assetsWithPrice: MarketData[] = [];
       const { underlyingTokens, assets } = response;
 
@@ -46,7 +48,7 @@ export const useFusePoolData = (poolId: string) => {
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!poolId && !!usdPrice && !!address && !!currentChain.id,
+      enabled: !!poolId && !!usdPrice && !!address && !!currentChain && !!currentSdk,
     }
   );
 };

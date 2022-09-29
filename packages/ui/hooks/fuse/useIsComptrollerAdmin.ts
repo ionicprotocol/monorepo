@@ -1,20 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const useIsComptrollerAdmin = (comptrollerAddress?: string): boolean => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
   const { data } = useQuery(
-    ['isComptrollerAdmin', comptrollerAddress],
+    ['isComptrollerAdmin', comptrollerAddress, currentSdk?.chainId],
     async () => {
-      if (!comptrollerAddress) return undefined;
+      if (!comptrollerAddress || !currentSdk) return undefined;
 
-      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
       return await comptroller.callStatic.admin();
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress && !!currentSdk }
   );
 
   return address === data;

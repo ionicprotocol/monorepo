@@ -9,7 +9,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { aBNBcContractABI, aBNBcContractAddress, aprDays } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter } from '@ui/utils/bigUtils';
@@ -22,11 +22,15 @@ export const SupplyApy = ({
   asset: MarketData;
   rewards: FlywheelMarketRewardsInfo[];
 }) => {
-  const { midasSdk, currentChain } = useMidas();
-  const supplyAPY = midasSdk.ratePerBlockToAPY(
-    asset.supplyRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id)
-  );
+  const { currentSdk, currentChain } = useMultiMidas();
+  const supplyAPY = useMemo(() => {
+    if (currentSdk && currentChain) {
+      return currentSdk.ratePerBlockToAPY(
+        asset.supplyRatePerBlock,
+        getBlockTimePerMinuteByChainId(currentChain.id)
+      );
+    }
+  }, [currentChain, currentSdk, asset.supplyRatePerBlock]);
 
   const { cCard } = useColors();
   const supplyApyColor = useColorModeValue('cyan.500', 'cyan');
@@ -40,25 +44,27 @@ export const SupplyApy = ({
 
   useEffect(() => {
     const func = async () => {
-      const contract = new Contract(
-        aBNBcContractAddress,
-        aBNBcContractABI,
-        midasSdk.provider as Web3Provider
-      );
+      if (currentSdk) {
+        const contract = new Contract(
+          aBNBcContractAddress,
+          aBNBcContractABI,
+          currentSdk.provider as Web3Provider
+        );
 
-      const apr = await contract.callStatic.averagePercentageRate(aprDays);
-      setaBNBcApr(utils.formatUnits(apr));
+        const apr = await contract.callStatic.averagePercentageRate(aprDays);
+        setaBNBcApr(utils.formatUnits(apr));
+      }
     };
 
-    if (asset.underlyingSymbol === assetSymbols.aBNBc) {
+    if (asset.underlyingSymbol === assetSymbols.aBNBc && currentSdk) {
       func();
     }
-  }, [asset, midasSdk.provider]);
+  }, [asset, currentSdk]);
 
   return (
     <VStack alignItems={'flex-end'}>
       <Text color={supplyApyColor} fontWeight="bold" variant="smText">
-        {supplyAPY.toFixed(2)}%
+        {supplyAPY && supplyAPY.toFixed(2)}%
       </Text>
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
         <Text color={cCard.txtColor} variant="smText">

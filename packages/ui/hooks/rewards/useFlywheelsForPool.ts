@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheelsForPool = (comptrollerAddress?: string) => {
-  const { midasSdk, currentChain } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   const queryResult = useQuery(
-    ['useFlywheelsForPool', currentChain.id, comptrollerAddress],
+    ['useFlywheelsForPool', currentSdk?.chainId, comptrollerAddress],
     async () => {
-      if (!comptrollerAddress) return [];
-      if (!midasSdk) return [];
+      if (!comptrollerAddress || !currentSdk) return [];
 
-      const flywheelCores = await midasSdk.getFlywheelsByPool(comptrollerAddress);
+      const flywheelCores = await currentSdk.getFlywheelsByPool(comptrollerAddress);
 
       if (!flywheelCores.length) return [];
 
@@ -42,7 +41,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string) => {
     },
     {
       initialData: [],
-      enabled: !!comptrollerAddress && !!currentChain && !!midasSdk,
+      enabled: !!comptrollerAddress && !!currentSdk,
     }
   );
   return queryResult;

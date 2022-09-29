@@ -1,7 +1,7 @@
 import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import * as React from 'react';
+import { useMemo } from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
@@ -9,15 +9,23 @@ import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { MIDAS_DOCS_URL } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 
-export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddress: string }) => {
-  const { scanUrl } = useMidas();
+export const TokenName = ({
+  asset,
+  poolAddress,
+  poolChainId,
+}: {
+  asset: MarketData;
+  poolAddress: string;
+  poolChainId: number;
+}) => {
+  const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
   const { data: tokenData } = useTokenData(asset.underlyingToken);
 
   const { cCard } = useColors();
@@ -31,7 +39,7 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
 
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-      <CTokenIcon size="md" address={asset.underlyingToken} />
+      <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>
           <PopoverTooltip

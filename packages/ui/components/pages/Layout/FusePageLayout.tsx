@@ -7,6 +7,7 @@ import { FusePageLayoutProps } from '@ui/types/ComponentPropsType';
 
 const FusePageLayout = ({ children }: FusePageLayoutProps) => {
   const { cPage } = useColors();
+
   return (
     <Flex
       minH="100vh"

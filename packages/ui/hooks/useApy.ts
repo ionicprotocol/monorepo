@@ -1,26 +1,29 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { APYResult } from '@ui/types/ComponentPropsType';
 
 export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
-  const {
-    currentChain: { id: currentChainId },
-  } = useMidas();
+  const { currentChain } = useMultiMidas();
+
   return useQuery<APYResult>(
-    ['useApy', currentChainId, underlyingAddress, pluginAddress, rewardAddress],
+    ['useApy', currentChain, underlyingAddress, pluginAddress, rewardAddress],
     async () => {
-      return await fetch(
-        `/api/apyData?chain=${currentChainId}&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
-          rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
-        }`
-      ).then((response) => {
-        if (response.status === 200) return response.json();
-        throw 'APY Response was not ok';
-      });
+      if (currentChain) {
+        return await fetch(
+          `/api/apyData?chain=${
+            currentChain.id
+          }&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
+            rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
+          }`
+        ).then((response) => {
+          if (response.status === 200) return response.json();
+          throw 'APY Response was not ok';
+        });
+      }
     },
     {
-      enabled: !!underlyingAddress && !!pluginAddress && !!currentChainId,
+      enabled: !!underlyingAddress && !!pluginAddress && !!currentChain,
     }
   );
 }

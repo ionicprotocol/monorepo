@@ -5,7 +5,7 @@ import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import { poolSort } from '@ui/utils/sorts';
 
@@ -13,22 +13,24 @@ import { poolSort } from '@ui/utils/sorts';
 export const useFusePools = (
   filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null
 ) => {
-  const { midasSdk, currentChain, address } = useMidas();
+  const { currentSdk, currentChain, address } = useMultiMidas();
 
   const isCreatedPools = filter === 'created-pools';
   const isAllPools = filter === '';
 
   const { data: pools, ...queryResultRest } = useQuery(
-    ['useFusePools', currentChain.id, filter, address],
+    ['useFusePools', currentChain?.id, filter, address, currentSdk?.chainId],
     async () => {
+      if (!currentChain || !currentSdk || !address) return;
+
       let res;
 
       if (!filter) {
-        res = await midasSdk.fetchPoolsManual({
+        res = await currentSdk.fetchPoolsManual({
           from: address,
         });
       } else {
-        res = await midasSdk.fetchPools({
+        res = await currentSdk.fetchPools({
           filter,
           options: { from: address },
         });
@@ -52,7 +54,7 @@ export const useFusePools = (
       return data;
     },
     {
-      enabled: !!currentChain.id,
+      enabled: !!currentChain?.id && !!currentSdk,
     }
   );
 

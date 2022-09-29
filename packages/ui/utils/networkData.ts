@@ -50,8 +50,8 @@ export function getEnabledChains() {
   if (config.isPolygonEnabled) {
     enabledChains.push(SupportedChains.polygon);
   }
-  if (config.isEvmosEnabled) {
-    enabledChains.push(SupportedChains.evmos);
+  if (config.isMoonbeamEnabled) {
+    enabledChains.push(SupportedChains.moonbeam);
   }
 
   return enabledChains.sort();

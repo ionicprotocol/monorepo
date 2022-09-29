@@ -27,11 +27,13 @@ export const AdditionalInfo = ({
   rows,
   comptrollerAddress,
   supplyBalanceFiat,
+  poolChainId,
 }: {
   row: Row<Market>;
   rows: Row<Market>[];
   comptrollerAddress: string;
   supplyBalanceFiat: number;
+  poolChainId: number;
 }) => {
   const asset: MarketData = row.original.market;
   const assets: MarketData[] = rows.map((row) => row.original.market);
@@ -54,6 +56,7 @@ export const AdditionalInfo = ({
           asset={asset}
           isDisabled={asset.isSupplyPaused}
           supplyBalanceFiat={supplyBalanceFiat}
+          poolChainId={poolChainId}
         />
         <FundButton
           mode={FundOperationMode.WITHDRAW}
@@ -61,6 +64,7 @@ export const AdditionalInfo = ({
           assets={assets}
           asset={asset}
           isDisabled={asset.supplyBalanceFiat === 0}
+          poolChainId={poolChainId}
         />
         <FundButton
           mode={FundOperationMode.BORROW}
@@ -68,6 +72,7 @@ export const AdditionalInfo = ({
           assets={assets}
           asset={asset}
           isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
+          poolChainId={poolChainId}
         />
         <FundButton
           mode={FundOperationMode.REPAY}
@@ -75,6 +80,7 @@ export const AdditionalInfo = ({
           assets={assets}
           asset={asset}
           isDisabled={asset.borrowBalanceFiat === 0}
+          poolChainId={poolChainId}
         />
       </HStack>
       <Grid

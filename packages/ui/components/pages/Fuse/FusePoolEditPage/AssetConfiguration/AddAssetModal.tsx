@@ -26,7 +26,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -37,20 +37,31 @@ interface AddAssetProps {
   onSuccess?: () => void;
   poolID: string;
   poolName: string;
+  poolChainId: number;
 }
 
-const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetProps) => {
-  const { midasSdk } = useMidas();
+const AddAsset = ({
+  comptrollerAddress,
+  onSuccess,
+  poolID,
+  poolName,
+  poolChainId,
+}: AddAssetProps) => {
+  const { currentSdk } = useMultiMidas();
 
   const supportedAssets = useMemo(() => {
-    return midasSdk.supportedAssets.filter((asset) => !asset.disabled);
-  }, [midasSdk.supportedAssets]);
+    if (currentSdk) {
+      return currentSdk.supportedAssets.filter((asset) => !asset.disabled);
+    } else {
+      return [];
+    }
+  }, [currentSdk]);
 
   const [nameOrAddress, setNameOrAddress] = useState<string>('');
 
   const [availableAssets, setAvailableAssets] = useState<SupportedAsset[] | []>([]);
   const [addedAssets, setAddedAssets] = useState<string[] | undefined>();
-  const { data: poolData } = useFusePoolData(poolID);
+  const { data: poolData } = useFusePoolData(poolID, poolChainId);
 
   const { data: tokenData, isLoading, error } = useTokenData(nameOrAddress, poolData?.chainId);
 
@@ -76,11 +87,11 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
     <VStack py={4}>
       <VStack px={4} width="100%">
         <VStack>
-          {tokenData && (
+          {tokenData && poolData && (
             <CTokenIcon
               size="lg"
               address={tokenData.address}
-              chainId={poolData?.chainId}
+              chainId={poolData.chainId}
               my={4}
             ></CTokenIcon>
           )}
@@ -143,7 +154,11 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                 return (
                   <WrapItem key={index}>
                     <Button variant="_solid" px={2}>
-                      <CTokenIcon size="sm" address={asset.underlyingToken} />
+                      <CTokenIcon
+                        size="sm"
+                        address={asset.underlyingToken}
+                        chainId={poolData.chainId}
+                      />
                       <Center pl={1} fontWeight="bold">
                         {asset.underlyingSymbol}
                       </Center>
@@ -153,7 +168,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
               })}
           </Wrap>
 
-          {availableAssets.length !== 0 ? (
+          {poolData && availableAssets.length !== 0 ? (
             <>
               <Box width="100%">
                 <Text textAlign="left" variant="smText" fontWeight="bold" px={6} mt={4}>
@@ -197,7 +212,7 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
                       height="max-content"
                     >
                       <Flex direction="row" alignContent="center" py={2}>
-                        <CTokenIcon address={asset.underlying} />
+                        <CTokenIcon address={asset.underlying} chainId={poolData.chainId} />
                         <Flex ml={6} direction="column">
                           <Text variant="lgText" textAlign="left">
                             {asset.symbol}
@@ -231,9 +246,11 @@ const AddAsset = ({ comptrollerAddress, onSuccess, poolID, poolName }: AddAssetP
 const AddAssetModal = ({
   isOpen,
   onClose,
+  poolChainId,
   ...addAssetProps
 }: {
   isOpen: boolean;
+  poolChainId: number;
   onClose: () => void;
 } & AddAssetProps) => {
   return (
@@ -247,7 +264,7 @@ const AddAssetModal = ({
         </ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
-        <AddAsset onSuccess={onClose} {...addAssetProps} />
+        <AddAsset onSuccess={onClose} poolChainId={poolChainId} {...addAssetProps} />
       </ModalContent>
     </Modal>
   );

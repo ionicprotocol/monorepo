@@ -1,26 +1,23 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const useRewardTokensOfPool = (poolAddress?: string) => {
-  const {
-    midasSdk,
-    currentChain: { id },
-  } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
 
   const { data } = useQuery(
-    ['useRewardTokensOfPool', id, poolAddress],
+    ['useRewardTokensOfPool', currentChain?.id, poolAddress],
     async () => {
-      if (!poolAddress) return undefined;
+      if (!poolAddress || !currentSdk) return undefined;
 
-      const rewards = await midasSdk.getFlywheelMarketRewardsByPool(poolAddress);
+      const rewards = await currentSdk.getFlywheelMarketRewardsByPool(poolAddress);
 
       return rewards
         .flatMap((r) => r.rewardsInfo)
         .map((ri) => ri.rewardToken)
         .filter((value, index, self) => self.indexOf(value) === index);
     },
-    { enabled: !!poolAddress, placeholderData: [] }
+    { enabled: !!poolAddress && !!currentSdk, placeholderData: [] }
   );
 
   return data || [];

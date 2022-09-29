@@ -1,28 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useChartData(market: string) {
-  const {
-    midasSdk,
-    currentChain: { id: currentChainId },
-  } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
+
   return useQuery(
-    ['useChartData', currentChainId, market],
+    ['useChartData', currentChain?.id, market, currentSdk?.chainId],
     async () => {
-      const interestRateModel = await midasSdk.getInterestRateModel(market);
+      if (currentSdk && currentChain) {
+        const interestRateModel = await currentSdk.getInterestRateModel(market);
 
-      if (interestRateModel === null) {
-        return { borrowerRates: null, supplierRates: null };
+        if (interestRateModel === null) {
+          return { borrowerRates: null, supplierRates: null };
+        }
+
+        return convertIRMtoCurve(currentSdk, interestRateModel, currentChain.id);
       }
-
-      return convertIRMtoCurve(midasSdk, interestRateModel, currentChainId);
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!midasSdk && !!currentChainId && !!market,
+      enabled: !!currentSdk && !!currentChain && !!market,
     }
   );
 }

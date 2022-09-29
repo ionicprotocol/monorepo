@@ -180,6 +180,9 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <SupplyBalance pool={getValue<FusePoolData>()} />,
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
+            <Text variant="smText" fontWeight="bold">
+              Your
+            </Text>
             <Text variant="smText" fontWeight="bold" lineHeight={6}>
               Supply
             </Text>
@@ -197,6 +200,9 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <BorrowBalance pool={getValue<FusePoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
+            <Text variant="smText" fontWeight="bold">
+              Your
+            </Text>
             <Text variant="smText" fontWeight="bold" lineHeight={6}>
               Borrow
             </Text>
@@ -214,11 +220,14 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <TotalSupplied pool={getValue<FusePoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold">
               Total
             </Text>
+            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+              Supply
+            </Text>
             <Text variant="smText" fontWeight="bold">
-              Supply Balance
+              Balance
             </Text>
           </VStack>
         ),
@@ -231,11 +240,14 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <TotalBorrowed pool={getValue<FusePoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold">
               Total
             </Text>
+            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+              Borrow
+            </Text>
             <Text variant="smText" fontWeight="bold">
-              Borrow Balance
+              Balance
             </Text>
           </VStack>
         ),
@@ -320,67 +332,59 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   return (
     <Box>
       <Flex
-        px="4"
-        mt={6}
-        justifyContent="space-between"
-        flexDirection={{ base: 'column', sm: 'row' }}
+        className="pagination"
+        flexDirection={{ base: 'column', lg: 'row' }}
         gap={4}
+        justifyContent="flex-end"
+        alignItems="flex-end"
       >
-        <Flex
-          className="pagination"
-          flexDirection={{ base: 'column', lg: 'row' }}
-          gap={4}
-          justifyContent="flex-end"
-          alignItems="flex-end"
-        >
+        <HStack>
+          <Text variant="smText">Rows Per Page :</Text>
+          <Select
+            value={pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            maxW="max-content"
+          >
+            {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+        <HStack gap={2}>
+          <Text variant="smText">
+            {table.getFilteredRowModel().rows.length === 0
+              ? 0
+              : pagination.pageIndex * pagination.pageSize + 1}{' '}
+            -{' '}
+            {(pagination.pageIndex + 1) * pagination.pageSize >
+            table.getFilteredRowModel().rows.length
+              ? table.getFilteredRowModel().rows.length
+              : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+            of {table.getFilteredRowModel().rows.length}
+          </Text>
           <HStack>
-            <Text variant="smText">Rows Per Page :</Text>
-            <Select
-              value={pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              maxW="max-content"
-            >
-              {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </Select>
+            <CIconButton
+              variant="_outline"
+              aria-label="toPrevious"
+              icon={<ChevronLeftIcon fontSize={30} />}
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              isRound
+            />
+            <CIconButton
+              variant="_outline"
+              aria-label="toNext"
+              icon={<ChevronRightIcon fontSize={30} />}
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              isRound
+            />
           </HStack>
-          <HStack gap={2}>
-            <Text variant="smText">
-              {table.getFilteredRowModel().rows.length === 0
-                ? 0
-                : pagination.pageIndex * pagination.pageSize + 1}{' '}
-              -{' '}
-              {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getFilteredRowModel().rows.length
-                ? table.getFilteredRowModel().rows.length
-                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getFilteredRowModel().rows.length}
-            </Text>
-            <HStack>
-              <CIconButton
-                variant="_outline"
-                aria-label="toPrevious"
-                icon={<ChevronLeftIcon fontSize={30} />}
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                isRound
-              />
-              <CIconButton
-                variant="_outline"
-                aria-label="toNext"
-                icon={<ChevronRightIcon fontSize={30} />}
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                isRound
-              />
-            </HStack>
-          </HStack>
-        </Flex>
+        </HStack>
       </Flex>
       <Flex
         justifyContent="space-between"
@@ -438,28 +442,28 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
                     textTransform="capitalize"
                     py={2}
                     cursor="pointer"
-                    px={{ base: 2, lg: 4 }}
+                    px={header.column.id === 'chain' ? 0 : { base: 2, lg: 4 }}
                   >
                     <HStack
                       gap={0}
                       justifyContent={
-                        header.index === 0
+                        header.column.id === 'chain' ||
+                        header.column.id === 'poolName' ||
+                        header.column.id === 'assets'
                           ? 'flex-start'
-                          : header.column.id === 'collateral'
-                          ? 'center'
                           : 'flex-end'
                       }
                     >
-                      <Box width={3} mb={1}>
+                      <Box width={header.column.id === 'assets' ? 0 : 3} mb={1}>
                         <Box hidden={header.column.getIsSorted() ? false : true}>
                           {header.column.getIsSorted() === 'desc' ? (
-                            <ArrowDownIcon aria-label="sorted descending" />
+                            <ArrowDownIcon fontSize={16} aria-label="sorted descending" />
                           ) : (
-                            <ArrowUpIcon aria-label="sorted ascending" />
+                            <ArrowUpIcon fontSize={16} aria-label="sorted ascending" />
                           )}
                         </Box>
                       </Box>
-                      <>{flexRender(header.column.columnDef.header, header.getContext())}</>
+                      <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
                     </HStack>
                   </Th>
                 );
@@ -567,9 +571,8 @@ const ChainFilterButton = ({
     <SimpleTooltip key={chainId} label={chainConfig.specificParams.metadata.name}>
       <Button
         variant={globalFilter.includes(chainId) ? '_solid' : '_outline'}
-        colorScheme="cyan"
         onClick={() => onFilter(chainId)}
-        // width="140px"
+        px={0}
         disabled={countsOf[chainId.toString()] === 0}
       >
         <Img

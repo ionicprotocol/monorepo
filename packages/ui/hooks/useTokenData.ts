@@ -9,7 +9,7 @@ import { ethers } from 'ethers';
 import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
@@ -99,19 +99,19 @@ export const useTokenData = (address: string, chainId?: number) => {
 };
 
 export const useTokensDataAsMap = (addresses: string[] = []): TokensDataMap => {
-  const { currentChain } = useMidas();
+  const { currentChain } = useMultiMidas();
 
   const { data: tokensData } = useQuery(
-    ['useTokensDataAsMap', addresses, currentChain.id],
+    ['useTokensDataAsMap', addresses, currentChain?.id],
     async () => {
-      if (addresses && currentChain.id) {
+      if (addresses && currentChain?.id) {
         return await fetchTokenData(addresses, currentChain.id);
       }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!addresses && addresses.length !== 0 && !!currentChain.id,
+      enabled: !!addresses && addresses.length !== 0 && !!currentChain?.id,
     }
   );
 

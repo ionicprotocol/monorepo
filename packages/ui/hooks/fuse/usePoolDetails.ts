@@ -1,18 +1,18 @@
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useMemo } from 'react';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
-  const {
-    midasSdk,
-    currentChain: { id: chainId },
-  } = useMidas();
-  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
+  const { currentSdk, currentChain } = useMultiMidas();
+  const blocksPerMinute = useMemo(
+    () => currentChain && getBlockTimePerMinuteByChainId(currentChain.id),
+    [currentChain]
+  );
 
   return useMemo(() => {
-    if (assets && assets.length) {
+    if (assets && assets.length && currentSdk && blocksPerMinute) {
       let mostSuppliedAsset = assets[0];
       let topLendingAPYAsset = assets[0];
       let topBorrowAPRAsset = assets[0];
@@ -21,14 +21,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          midasSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
-          midasSdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
+          currentSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          currentSdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
-          midasSdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
+          currentSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          currentSdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -42,5 +42,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets, midasSdk, blocksPerMinute]);
+  }, [assets, currentSdk, blocksPerMinute]);
 };

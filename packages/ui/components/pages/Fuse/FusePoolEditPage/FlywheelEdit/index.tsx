@@ -24,7 +24,7 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/useCTokensUnderlying';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
@@ -150,7 +150,7 @@ const FlywheelRow = ({
   pool: PoolData;
   onClick: (fw: Flywheel) => void;
 }) => {
-  const { address } = useMidas();
+  const { address } = useMultiMidas();
 
   // TODO check authority here as well.
   const isAdmin = address === flywheel.owner;

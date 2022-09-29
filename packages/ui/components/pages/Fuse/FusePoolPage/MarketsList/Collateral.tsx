@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
@@ -19,7 +19,7 @@ export const Collateral = ({
   asset: MarketData;
   comptrollerAddress: string;
 }) => {
-  const { midasSdk, setPendingTxHash } = useMidas();
+  const { currentSdk, setPendingTxHash } = useMultiMidas();
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -27,7 +27,9 @@ export const Collateral = ({
   const isMobile = useIsMobile();
 
   const onToggleCollateral = async () => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     let call: ContractTransaction;
     if (asset.membership) {

@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   const { data } = useQuery(
-    ['CTokenData', cTokenAddress, comptrollerAddress],
+    ['CTokenData', cTokenAddress, comptrollerAddress, currentSdk?.chainId],
     async () => {
-      if (comptrollerAddress && cTokenAddress) {
-        const comptroller = midasSdk.createComptroller(comptrollerAddress);
-        const cToken = midasSdk.createCToken(cTokenAddress);
+      if (comptrollerAddress && cTokenAddress && currentSdk) {
+        const comptroller = currentSdk.createComptroller(comptrollerAddress);
+        const cToken = currentSdk.createCToken(cTokenAddress);
 
         const [
           adminFeeMantissa,
@@ -34,7 +34,11 @@ export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: strin
         return undefined;
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!cTokenAddress && !!comptrollerAddress }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!cTokenAddress && !!comptrollerAddress && !!currentSdk,
+    }
   );
 
   return data;

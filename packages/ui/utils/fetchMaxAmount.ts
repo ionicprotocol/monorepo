@@ -3,26 +3,25 @@ import { FundOperationMode, NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber, utils } from 'ethers';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
 export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
-  const {
-    midasSdk,
-    address,
-    currentChain: { id: chainId },
-  } = useMidas();
-  return useQuery<{ bigNumber: BigNumber; number: number }>(
-    ['useMaxAmount', asset.cToken, chainId],
+  const { currentSdk, address } = useMultiMidas();
+  return useQuery(
+    ['useMaxAmount', asset.cToken, currentSdk?.chainId],
     async () => {
-      const bigNumber = await fetchMaxAmount(mode, midasSdk, address, asset);
-      return {
-        bigNumber: bigNumber,
-        number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
-      };
+      if (currentSdk && address) {
+        const bigNumber = await fetchMaxAmount(mode, currentSdk, address, asset);
+
+        return {
+          bigNumber: bigNumber,
+          number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
+        };
+      }
     },
     {
-      enabled: !!midasSdk && !!address && !!chainId && !!asset,
+      enabled: !!address && !!asset && !!currentSdk,
     }
   );
 }

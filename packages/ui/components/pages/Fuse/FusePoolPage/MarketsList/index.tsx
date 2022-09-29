@@ -58,7 +58,7 @@ import {
   SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -84,14 +84,16 @@ export const MarketsList = ({
   comptrollerAddress,
   supplyBalanceFiat,
   borrowBalanceFiat,
+  poolChainId,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
   comptrollerAddress: string;
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
+  poolChainId: number;
 }) => {
-  const { midasSdk, currentChain } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -141,26 +143,28 @@ export const MarketsList = ({
   };
 
   const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
+    if (!currentSdk || !currentChain) return 0;
+
     if (columnId === 'market') {
       return rowB.original.market.underlyingSymbol.localeCompare(
         rowA.original.market.underlyingSymbol
       );
     } else if (columnId === 'supplyApy') {
-      const rowASupplyAPY = midasSdk.ratePerBlockToAPY(
+      const rowASupplyAPY = currentSdk.ratePerBlockToAPY(
         rowA.original.market.supplyRatePerBlock,
         getBlockTimePerMinuteByChainId(currentChain.id)
       );
-      const rowBSupplyAPY = midasSdk.ratePerBlockToAPY(
+      const rowBSupplyAPY = currentSdk.ratePerBlockToAPY(
         rowB.original.market.supplyRatePerBlock,
         getBlockTimePerMinuteByChainId(currentChain.id)
       );
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
     } else if (columnId === 'borrowApy') {
-      const rowABorrowAPY = midasSdk.ratePerBlockToAPY(
+      const rowABorrowAPY = currentSdk.ratePerBlockToAPY(
         rowA.original.market.borrowRatePerBlock,
         getBlockTimePerMinuteByChainId(currentChain.id)
       );
-      const rowBBorrowAPY = midasSdk.ratePerBlockToAPY(
+      const rowBBorrowAPY = currentSdk.ratePerBlockToAPY(
         rowB.original.market.borrowRatePerBlock,
         getBlockTimePerMinuteByChainId(currentChain.id)
       );
@@ -209,7 +213,11 @@ export const MarketsList = ({
           </Text>
         ),
         cell: ({ getValue }) => (
-          <TokenName asset={getValue<MarketData>()} poolAddress={comptrollerAddress} />
+          <TokenName
+            asset={getValue<MarketData>()}
+            poolAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         footer: (props) => props.column.id,
         filterFn: assetFilter,
@@ -753,6 +761,7 @@ export const MarketsList = ({
                         rows={table.getCoreRowModel().rows}
                         comptrollerAddress={comptrollerAddress}
                         supplyBalanceFiat={supplyBalanceFiat}
+                        poolChainId={poolChainId}
                       />
                     </Td>
                   </Tr>

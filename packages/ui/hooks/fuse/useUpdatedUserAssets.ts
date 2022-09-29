@@ -3,7 +3,8 @@ import { useQuery, UseQueryResult } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { useMemo } from 'react';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -13,30 +14,34 @@ interface UseUpdatedUserAssetsResult<T> {
   assets: Array<T> | undefined;
   index: number;
   amount: BigNumber;
+  poolChainId: number;
 }
 const useUpdatedUserAssets = <T extends MarketData>({
   mode,
   index,
   assets,
   amount,
+  poolChainId,
 }: UseUpdatedUserAssetsResult<T>) => {
-  const { midasSdk, currentChain, coingeckoId } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
+  const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
   const { data: updatedAssets }: UseQueryResult<MarketData[]> = useQuery(
     [
       'useUpdatedUserAssets',
-      currentChain.id,
+      currentChain?.id,
       mode,
       index,
       assets?.map((a) => a.cToken),
       amount,
       usdPrice,
+      currentSdk?.chainId,
     ],
     async () => {
-      if (!assets || !assets.length || !usdPrice) return [];
+      if (!assets || !assets.length || !usdPrice || !currentSdk) return [];
 
-      const resAssets = await midasSdk.getUpdatedAssets(mode, index, assets, amount);
+      const resAssets = await currentSdk.getUpdatedAssets(mode, index, assets, amount);
       const assetsWithPrice: MarketData[] = [];
       if (resAssets && resAssets.length !== 0) {
         resAssets.map((asset) => {

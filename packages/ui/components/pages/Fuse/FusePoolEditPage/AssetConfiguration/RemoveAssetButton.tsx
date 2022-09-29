@@ -5,7 +5,7 @@ import LogRocket from 'logrocket';
 import { useState } from 'react';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -17,7 +17,7 @@ const RemoveAssetButton = ({
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
 }) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk } = useMultiMidas();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const isUpgradeable = useIsUpgradeable(comptrollerAddress);
@@ -31,8 +31,10 @@ const RemoveAssetButton = ({
   };
 
   const remove = async () => {
+    if (!currentSdk) return;
+
     setIsRemoving(true);
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
     const response = await comptroller.callStatic._unsupportMarket(asset.cToken);
 
     if (!response.eq(0)) {

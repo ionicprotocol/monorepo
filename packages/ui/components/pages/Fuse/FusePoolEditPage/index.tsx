@@ -14,7 +14,7 @@ import { AdminAlert } from '@ui/components/shared/Alert';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
@@ -30,11 +30,13 @@ const FusePoolEditPage = memo(() => {
     onClose: closeAddAssetModal,
   } = useDisclosure();
 
-  const { setLoading, coingeckoId } = useMidas();
+  const { setGlobalLoading, currentSdk } = useMultiMidas();
+
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const { data } = useFusePoolData(poolId);
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const poolChainId = router.query.poolChainId as string;
+  const { data } = useFusePoolData(poolId, Number(poolChainId));
+  const { data: usdPrice } = useUSDPrice(currentSdk?.chainSpecificParams.cgId || '');
   const isAdmin = useIsComptrollerAdmin(data?.comptroller);
   const { cPage } = useColors();
 
@@ -59,6 +61,7 @@ const FusePoolEditPage = memo(() => {
             poolID={poolId}
             isOpen={isAddAssetModalOpen}
             onClose={closeAddAssetModal}
+            poolChainId={Number(poolChainId)}
           />
 
           <Flex
@@ -76,7 +79,7 @@ const FusePoolEditPage = memo(() => {
                 fontWeight="extrabold"
                 cursor="pointer"
                 onClick={() => {
-                  setLoading(true);
+                  setGlobalLoading(true);
                   router.back();
                 }}
               />
@@ -105,6 +108,7 @@ const FusePoolEditPage = memo(() => {
                     assets={data.assets}
                     comptrollerAddress={data.comptroller}
                     poolName={data.name}
+                    poolChainId={data.chainId}
                   />
                 ) : (
                   <Center height="100%" py={48}>

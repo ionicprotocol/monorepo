@@ -30,7 +30,7 @@ import { CButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -41,21 +41,25 @@ import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { shortAddress } from '@ui/utils/shortAddress';
-
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useRewardsInfo', flywheelAddress, marketAddress],
+    ['useRewardsInfo', flywheelAddress, marketAddress, currentSdk?.chainId],
     async () => {
-      if (flywheelAddress && marketAddress) {
-        return midasSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
+      if (flywheelAddress && marketAddress && currentSdk) {
+        return currentSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
       }
+
       return undefined;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!flywheelAddress && !!marketAddress }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!flywheelAddress && !!marketAddress && !!currentSdk,
+    }
   );
 };
 
@@ -70,7 +74,7 @@ const EditFlywheelModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
   const { data: tokenData } = useTokenData(flywheel.rewardToken);
   const isAdmin = address === flywheel.owner;
@@ -108,10 +112,12 @@ const EditFlywheelModal = ({
   }, [rewardsInfo]);
 
   const fund = useCallback(async () => {
+    if (!currentSdk) return;
+
     const token = new Contract(
       flywheel.rewardToken,
-      midasSdk.artifacts.EIP20Interface.abi,
-      midasSdk.provider as Web3Provider
+      currentSdk.artifacts.EIP20Interface.abi,
+      currentSdk.provider as Web3Provider
     );
 
     setTransactionPending(true);
@@ -128,21 +134,22 @@ const EditFlywheelModal = ({
   }, [
     flywheel.rewardToken,
     flywheel.rewards,
-    midasSdk.artifacts.EIP20Interface.abi,
-    midasSdk.provider,
+    currentSdk,
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
   ]);
 
   const updateRewardInfo = useCallback(async () => {
+    if (!currentSdk) return;
+
     try {
       if (!isAdmin) throw new Error('User is not admin of this Flywheel!');
       if (!selectedMarket) throw new Error('No asset selected!');
 
       setTransactionPending(true);
 
-      const tx = await midasSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
+      const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
         // TODO use rewardsTokens decimals here
         rewardsPerSecond: utils.parseUnits(supplySpeed),
         // TODO enable in UI
@@ -162,7 +169,7 @@ const EditFlywheelModal = ({
     supplySpeed,
     endDate,
     flywheel.rewards,
-    midasSdk,
+    currentSdk,
     isAdmin,
     selectedMarket,
     refetchRewardsInfo,
@@ -171,9 +178,11 @@ const EditFlywheelModal = ({
 
   const enableForRewards = useCallback(
     (market: string) => async () => {
+      if (!currentSdk) return;
+
       try {
         setTransactionPending(true);
-        const tx = await midasSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
+        const tx = await currentSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
         await tx.wait();
         refetchRewardsInfo();
         setTransactionPending(false);
@@ -183,7 +192,7 @@ const EditFlywheelModal = ({
         setTransactionPending(false);
       }
     },
-    [flywheel.address, midasSdk, errorToast, refetchRewardsInfo]
+    [flywheel.address, currentSdk, errorToast, refetchRewardsInfo]
   );
 
   return (

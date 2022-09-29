@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const useExtraPoolInfo = (comptrollerAddress?: string) => {
-  const { midasSdk, currentChain, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
   return useQuery(
-    ['useExtraPoolInfo', currentChain.id, comptrollerAddress],
+    ['useExtraPoolInfo', comptrollerAddress, currentSdk?.chainId],
     async () => {
-      if (!comptrollerAddress) return;
+      if (!comptrollerAddress || !currentSdk || !address) return;
 
-      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      const comptroller = currentSdk.createComptroller(comptrollerAddress);
       const [
         { 0: admin, 1: upgradeable },
         closeFactor,
@@ -20,7 +20,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         pendingAdmin,
         oracle,
       ] = await Promise.all([
-        midasSdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+        currentSdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
         comptroller.callStatic.closeFactorMantissa(),
         comptroller.callStatic.liquidationIncentiveMantissa(),
         comptroller.callStatic
@@ -34,7 +34,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         comptroller.callStatic.pendingAdmin(),
         comptroller.callStatic
           .oracle()
-          .then((oracleAddress) => midasSdk.getPriceOracle(oracleAddress)),
+          .then((oracleAddress) => currentSdk.getPriceOracle(oracleAddress)),
       ]);
 
       return {
@@ -50,6 +50,8 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         isPendingAdmin: pendingAdmin.toLowerCase() === address.toLowerCase(),
       };
     },
-    { enabled: !!comptrollerAddress && comptrollerAddress.length > 0 }
+    {
+      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!address && !!currentSdk,
+    }
   );
 };

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { FuseIRMDemoChartOptions } from '@ui/utils/chartOptions';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
@@ -17,11 +17,13 @@ interface IRMChartProps {
 }
 const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChartProps) => {
   const { cChart } = useColors();
-  const { midasSdk, currentChain } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
   const { data, isLoading, error } = useQuery(
     ['irmCurve', interestRateModelAddress, adminFee, reserveFactor],
     async () => {
-      const IRM = await midasSdk.identifyInterestRateModel(interestRateModelAddress);
+      if (!currentChain || !currentSdk) return undefined;
+
+      const IRM = await currentSdk.identifyInterestRateModel(interestRateModelAddress);
       if (IRM === null) {
         return null;
       }
@@ -38,15 +40,20 @@ const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChar
 
         // hardcoded 10% Fuse fee
         utils.parseEther((10 / 100).toString()),
-        midasSdk.provider
+        currentSdk.provider
       );
 
-      return convertIRMtoCurve(midasSdk, IRM, currentChain.id);
+      return convertIRMtoCurve(currentSdk, IRM, currentChain.id);
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!interestRateModelAddress && !!adminFee.toString() && !!reserveFactor.toString(),
+      enabled:
+        !!interestRateModelAddress &&
+        !!adminFee.toString() &&
+        !!reserveFactor.toString() &&
+        !!currentSdk &&
+        !!currentChain,
     }
   );
 

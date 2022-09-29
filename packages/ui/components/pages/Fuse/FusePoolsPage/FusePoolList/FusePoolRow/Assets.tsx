@@ -13,7 +13,7 @@ export const Assets = ({ pool }: { pool: FusePoolData }) => {
   }, [pool.underlyingSymbols, pool.underlyingTokens]);
 
   return (
-    <VStack alignItems={'flex-end'}>
+    <VStack alignItems={'flex-start'}>
       {pool.underlyingTokens.length === 0 ? null : (
         <AvatarGroup size="sm" max={30}>
           {tokens.slice(0, 10).map((token, i) => (
