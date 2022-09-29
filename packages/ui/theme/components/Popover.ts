@@ -1,5 +1,6 @@
 import type { ComponentStyleConfig } from '@chakra-ui/theme';
-import { mode } from '@chakra-ui/theme-tools';
+import { mode, cssVar } from '@chakra-ui/theme-tools';
+const $arrowBg = cssVar('popper-arrow-bg');
 
 export const PopoverStyleConfig: ComponentStyleConfig = {
   parts: ['popper', 'content', 'arrow'],
@@ -8,13 +9,13 @@ export const PopoverStyleConfig: ComponentStyleConfig = {
       borderRadius: 0,
     },
     content: {
-      borderRadius: 8,
+      [$arrowBg.variable]: mode('#F6F4F1', '#282828')(props),
+      borderRadius: 'sm',
       backgroundColor: mode('whiteBg', 'raisinBlack')(props),
       borderWidth: 1,
       borderColor: mode('ecru', 'ecru')(props),
     },
     arrow: {
-      backgroundColor: mode('whiteBg', 'raisinBlack')(props),
       borderWidth: 1,
       borderColor: mode('ecru', 'ecru')(props),
     },
