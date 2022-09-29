@@ -1,5 +1,14 @@
 import { LinkIcon } from '@chakra-ui/icons';
-import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Button,
+  Center,
+  Link as ChakraLink,
+  HStack,
+  Text,
+  VStack,
+} from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
@@ -45,7 +54,9 @@ export const TokenName = ({
           />
         }
       >
-        <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
+        <Center>
+          <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
+        </Center>
       </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>
