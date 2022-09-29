@@ -51,7 +51,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
   const readyToDeploy = useMemo(() => {
     if (!rewardTokenData) return false;
     return rewardTokenData.address.toLowerCase() === rewardToken.toLowerCase();
-  }, [rewardToken, isLoading, rewardTokenData?.address]);
+  }, [rewardToken, rewardTokenData]);
 
   const handleDeploy = async () => {
     if (!currentSdk) return;
