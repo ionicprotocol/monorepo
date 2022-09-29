@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, LinkIcon, QuestionIcon } from '@chakra-ui/icons';
+import { LinkIcon } from '@chakra-ui/icons';
 import { Badge, Box, Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
@@ -8,10 +8,8 @@ import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
-import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
@@ -30,8 +28,6 @@ export const TokenName = ({
 
   const { cCard } = useColors();
 
-  const { data: pluginInfo } = usePluginInfo(asset.plugin);
-
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
@@ -39,7 +35,18 @@ export const TokenName = ({
 
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
-      <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
+      <PopoverTooltip
+        placement="top-start"
+        body={
+          <div
+            dangerouslySetInnerHTML={{
+              __html: asset.extraDocs || asset.underlyingSymbol,
+            }}
+          />
+        }
+      >
+        <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
+      </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>
           <PopoverTooltip
@@ -107,13 +114,6 @@ export const TokenName = ({
       </VStack>
 
       <HStack ml={2}>
-        {asset.underlyingSymbol &&
-          tokenData?.symbol &&
-          asset.underlyingSymbol.toLowerCase() !== tokenData?.symbol?.toLowerCase() && (
-            <PopoverTooltip body={asset.underlyingSymbol}>
-              <QuestionIcon />
-            </PopoverTooltip>
-          )}
         <PopoverTooltip placement="top-start" body={`${scanUrl}/address/${asset.underlyingToken}`}>
           <Button
             minWidth={6}
@@ -129,49 +129,6 @@ export const TokenName = ({
             <LinkIcon h={{ base: 3, sm: 6 }} color={cCard.txtColor} />
           </Button>
         </PopoverTooltip>
-
-        {asset.plugin && (
-          <PopoverTooltip
-            placement="top-start"
-            body={
-              <Text lineHeight="base">
-                This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
-                <br />
-                {pluginInfo?.apyDocsUrl ? (
-                  <ChakraLink
-                    href={pluginInfo.apyDocsUrl}
-                    isExternal
-                    variant={'color'}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    Vault details
-                  </ChakraLink>
-                ) : (
-                  <>
-                    Read more about it{' '}
-                    <ChakraLink
-                      href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
-                      isExternal
-                      variant={'color'}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                      }}
-                    >
-                      in our Docs <ExternalLinkIcon mx="2px" />
-                    </ChakraLink>
-                  </>
-                )}
-                .
-              </Text>
-            }
-          >
-            <span role="img" aria-label="plugin" style={{ fontSize: 18 }}>
-              🔌
-            </span>
-          </PopoverTooltip>
-        )}
       </HStack>
     </Row>
   );

@@ -38,11 +38,12 @@ describe("Fuse Index", () => {
     (mockProvider as any).getCode = (address: string) => address;
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
     ganache.chainDeployments = {
+      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
+      FuseFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },
       FuseSafeLiquidator: { abi: [], address: mkAddress("0xecc") },
-      FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
       JumpRateModel: { abi: [], address: mkAddress("0xaac") },
       WhitePaperInterestRateModel: { abi: [], address: mkAddress("0xabc") },
     };

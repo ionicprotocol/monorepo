@@ -11,6 +11,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployDiaWstDotPriceOracle } from "../helpers/oracles/diaWstDot";
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
@@ -25,6 +26,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: underlying(assets, assetSymbols.WGLMR),
   nativeTokenName: "Moonbeam",
   nativeTokenSymbol: "GLMR",
+  stableToken: underlying(assets, assetSymbols.multiUSDC),
   nativeTokenUsdChainlinkFeed: "0x4497B606be93e773bbA5eaCFCb2ac5E2214220Eb",
   blocksPerYear: moonbeam.specificParams.blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
@@ -103,11 +105,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.xcDOT,
-    aggregator: "0x1466b4bD0C4B6B8e1164991909961e0EE6a66d8c",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
-    symbol: assetSymbols.stDOT,
     aggregator: "0x1466b4bD0C4B6B8e1164991909961e0EE6a66d8c",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
@@ -202,6 +199,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  // dia stDOT and swtDOT price oracle
+  deployDiaWstDotPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
   });
 
   // Liquidators

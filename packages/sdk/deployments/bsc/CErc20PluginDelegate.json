@@ -1,5 +1,5 @@
 {
-  "address": "0x996d52Eb08D80E9d7FcFA6C61A6e7d7f38ab0F0b",
+  "address": "0x49fE8775BF35D56BE323dD453a140aeF8b5531D7",
   "abi": [
     {
       "anonymous": false,
@@ -1507,24 +1507,24 @@
       "type": "function"
     }
   ],
-  "transactionHash": "0x3342c561b4ef5900d66b8e6781d3f4ea7b40436e4772e02e118df8bc3ede41cf",
+  "transactionHash": "0x6cbf0549a10e4cf27c987c58153e9be8d9d454bf0f6af98fc652ab42ea26129a",
   "receipt": {
     "to": null,
     "from": "0x82eDcFe00bd0ce1f3aB968aF09d04266Bc092e0E",
-    "contractAddress": "0x996d52Eb08D80E9d7FcFA6C61A6e7d7f38ab0F0b",
-    "transactionIndex": 80,
+    "contractAddress": "0x49fE8775BF35D56BE323dD453a140aeF8b5531D7",
+    "transactionIndex": 217,
     "gasUsed": "5286413",
     "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0x3857c46b8fed17dac355db3a9e57b9be643ad67fd3b33ccf50f549445b873a34",
-    "transactionHash": "0x3342c561b4ef5900d66b8e6781d3f4ea7b40436e4772e02e118df8bc3ede41cf",
+    "blockHash": "0x1230a3ee84b7621ddc0ca1af41d1d585bef9a7bd65969b8998b9460f097041c2",
+    "transactionHash": "0x6cbf0549a10e4cf27c987c58153e9be8d9d454bf0f6af98fc652ab42ea26129a",
     "logs": [],
-    "blockNumber": 21578307,
-    "cumulativeGasUsed": "11676177",
+    "blockNumber": 21748373,
+    "cumulativeGasUsed": "34762809",
     "status": 1,
     "byzantium": true
   },
   "args": [],
-  "numDeployments": 18,
+  "numDeployments": 20,
   "metadata": {
     "compiler": {
       "version": "0.8.10+commit.fc410830"
@@ -3580,10 +3580,10 @@
         "license": "UNLICENSED"
       },
       "contracts/compound/ComptrollerStorage.sol": {
-        "keccak256": "0x3e86d161c9e8b12daef3508c01600819ecf2eefb1c30f3a9143dc78d6bb0bdb1",
+        "keccak256": "0xb94c8d7e77466371c1d6a9cb0aaa6978bcdef178a504132c01fa1bffabaf375b",
         "urls": [
-          "bzz-raw://73be006186ba57608c766e93518e67b68316489baf8dd97edd611522eaba2314",
-          "dweb:/ipfs/QmZbwChzQZYe5Z7U4hUK9JnX2L8219oywttGAs2WZAAorb"
+          "bzz-raw://36f719f54fbc726025138a386305d98d10acb34784f9534b1a14d57d52914615",
+          "dweb:/ipfs/QmWGEAq2Zt81s1jVAf6o5VLqG9w4yCFjh1TfuaERcM329e"
         ],
         "license": "UNLICENSED"
       },

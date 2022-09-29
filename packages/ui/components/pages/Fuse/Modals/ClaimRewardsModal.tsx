@@ -98,15 +98,13 @@ const ClaimRewardsModal = ({
       try {
         setIsClaiming(true);
         if (!signer) return;
-        const fwLensRouter = currentSdk.contracts['FuseFlywheelLensRouter'];
+        const fwLensRouter = currentSdk.contracts.FuseFlywheelLensRouter;
 
         for (const reward of rewards) {
           const markets = reward.rewards.map((reward) => reward.market);
           const tx = await fwLensRouter
             .connect(signer)
-            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true], {
-              from: address,
-            });
+            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
 
           await tx.wait();
           successToast({

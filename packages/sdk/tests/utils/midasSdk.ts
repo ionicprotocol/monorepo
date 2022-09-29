@@ -27,10 +27,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
     abi: CErc20PluginRewardsArtifact.abi,
     address: CErc20PluginRewardsDelegate.address,
   };
-
-  const CEtherDelegate = await ethers.getContract("CEtherDelegate");
-  const CEtherDelegateArtifact = await deployments.getArtifact("CEtherDelegate");
-  chainDeployment.CEtherDelegate = { abi: CEtherDelegateArtifact.abi, address: CEtherDelegate.address };
   const Comptroller = await ethers.getContract("Comptroller");
   const ComptrollerArtifact = await deployments.getArtifact("Comptroller.sol:Comptroller");
   chainDeployment.Comptroller = { abi: ComptrollerArtifact.abi, address: Comptroller.address };

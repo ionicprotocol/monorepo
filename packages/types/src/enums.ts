@@ -46,6 +46,7 @@ export enum OracleTypes {
   UniswapV3PriceOracle = "UniswapV3PriceOracle",
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
+  DiaStDotPriceOracle = "DiaStDotPriceOracle",
 }
 
 export enum IrmTypes {
@@ -210,6 +211,7 @@ export enum assetSymbols {
   DOT = "DOT",
   xcDOT = "xcDOT",
   stDOT = "stDOT",
+  wstDOT = "wstDOT",
   xcKSM = "xcKSM",
   stKSM = "stKSM",
   multiWBTC = "multiWBTC",
