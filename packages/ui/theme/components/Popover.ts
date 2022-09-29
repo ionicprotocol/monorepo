@@ -1,5 +1,5 @@
 import type { ComponentStyleConfig } from '@chakra-ui/theme';
-import { mode, cssVar } from '@chakra-ui/theme-tools';
+import { cssVar, mode } from '@chakra-ui/theme-tools';
 const $arrowBg = cssVar('popper-arrow-bg');
 
 export const PopoverStyleConfig: ComponentStyleConfig = {
