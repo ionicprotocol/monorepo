@@ -16600,7 +16600,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x562BeeB84Ec7ec09DbE369FD963ccC54D25C83b5",
+      "address": "0x49fE8775BF35D56BE323dD453a140aeF8b5531D7",
       "abi": [
         {
           "anonymous": false,
