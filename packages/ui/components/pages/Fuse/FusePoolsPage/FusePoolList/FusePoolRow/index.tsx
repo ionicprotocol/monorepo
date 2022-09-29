@@ -184,13 +184,10 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <SupplyBalance pool={getValue<FusePoolData>()} />,
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
-            <Text variant="smText" fontWeight="bold">
-              Your
-            </Text>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Supply
             </Text>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
             </Text>
           </Box>
@@ -204,13 +201,10 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <BorrowBalance pool={getValue<FusePoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold">
-              Your
-            </Text>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Borrow
             </Text>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
             </Text>
           </VStack>
@@ -224,14 +218,11 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <TotalSupplied pool={getValue<FusePoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Total
             </Text>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Supply
-            </Text>
-            <Text variant="smText" fontWeight="bold">
-              Balance
             </Text>
           </VStack>
         ),
@@ -244,14 +235,11 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
         cell: ({ getValue }) => <TotalBorrowed pool={getValue<FusePoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Total
             </Text>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Borrow
-            </Text>
-            <Text variant="smText" fontWeight="bold">
-              Balance
             </Text>
           </VStack>
         ),
