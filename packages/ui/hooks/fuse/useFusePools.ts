@@ -80,14 +80,11 @@ export const useFusePools = (
   return { pools, filteredPools, ...queryResultRest };
 };
 
-export const useCrossFusePools = (
-  filter: 'created-pools' | 'verified-pools' | 'unverified-pools' | string | null,
-  chainIds: SupportedChains[]
-) => {
+export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address } = useMultiMidas();
 
   const { data, ...queryResultRest } = useQuery(
-    ['useCrossFusePools', chainIds, filter, address],
+    ['useCrossFusePools', chainIds, address],
     async () => {
       try {
         const res = await axios.post('/api/pools', {

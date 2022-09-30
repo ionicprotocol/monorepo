@@ -33,7 +33,6 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
-import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
@@ -50,7 +49,6 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { CIconButton } from '@ui/components/shared/Button';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -69,8 +67,6 @@ export type PoolRowData = {
 
 export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   const enabledChains = useEnabledChains();
-  const { setGlobalLoading } = useMultiMidas();
-  const router = useRouter();
   const countsOf = useMemo(() => {
     const countsPerChain: { [key: string]: number } = {};
 
@@ -264,7 +260,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyBalance', desc: true }]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'poolName', desc: true }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0],
@@ -321,11 +317,6 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
     onSearchFiltered();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
-
-  const handleClickRow = async (pool: FusePoolData) => {
-    setGlobalLoading(true);
-    await router.push(`/${pool.chainId}/pool/${pool.id}`);
-  };
 
   return (
     <MidasBox overflowX="auto" width="100%" mb="4">
@@ -480,12 +471,11 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
                   borderTopWidth={1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
-                  onClick={() => handleClickRow(row.original.chain)}
                   cursor="pointer"
                 >
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} border="none" px={{ base: 2, lg: 4 }} py={2}>
+                      <Td key={cell.id} border="none" p={0} height={16}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </Td>
                     );

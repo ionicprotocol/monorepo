@@ -1,6 +1,7 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
 import { FusePoolData, SupportedChains } from '@midas-capital/types';
+import { utils } from 'ethers';
 import { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 
@@ -26,6 +27,7 @@ const handler = async (
   querySchema.validateSync(request.body);
 
   const { chains, address }: { chains: SupportedChains[]; address?: string } = request.body;
+  const validAddress = address ? utils.getAddress(address) : undefined;
 
   const sdks = chains.map((id) => {
     const config = chainIdToConfig[id];
@@ -42,7 +44,8 @@ const handler = async (
   try {
     await Promise.all(
       sdks.map(async (sdk) => {
-        const pools = await sdk.fetchPoolsManual({ from: address });
+        const pools = await sdk.fetchPoolsManual(validAddress ? { from: validAddress } : {});
+
         let visiblePools: FusePoolData[] = [];
         if (pools && pools.length !== 0) {
           type configKey = keyof typeof config;

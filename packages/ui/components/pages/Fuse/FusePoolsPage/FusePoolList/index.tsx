@@ -5,14 +5,12 @@ import { PoolsRowList } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLi
 import { AlertHero } from '@ui/components/shared/Alert';
 import { useCrossFusePools } from '@ui/hooks/fuse/useFusePools';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { useFilter } from '@ui/hooks/useFilter';
 
 export type Err = Error & { code?: string; reason?: string };
 
 const FusePoolList = () => {
-  const filter = useFilter();
   const enabledChains = useEnabledChains();
-  const { isLoading, allPools, error } = useCrossFusePools(filter, [...enabledChains]);
+  const { isLoading, allPools, error } = useCrossFusePools([...enabledChains]);
   const [err, setErr] = useState<Err | undefined>(error as Err);
 
   useEffect(() => {

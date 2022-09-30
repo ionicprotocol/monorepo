@@ -1,4 +1,4 @@
-import { Spinner, Text, VStack } from '@chakra-ui/react';
+import { Link, Spinner, Text, VStack } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/types';
 import { useMemo } from 'react';
 
@@ -19,23 +19,25 @@ export const BorrowBalance = ({ pool }: { pool: FusePoolData }) => {
   }, [address, pool, usdPrice]);
 
   return (
-    <VStack alignItems={'flex-end'}>
-      {borrowBalance !== undefined ? (
-        <SimpleTooltip label={`$${longFormat(borrowBalance)}`}>
-          <Text variant="smText" fontWeight="bold" textAlign="center">
-            {smallUsdFormatter(borrowBalance)}
-            {borrowBalance > 0 && borrowBalance < 0.01 && '+'}
-          </Text>
-        </SimpleTooltip>
-      ) : usdPrice ? (
-        <SimpleTooltip label="Connect your wallet">
-          <Text variant="smText" fontWeight="bold" textAlign="center">
-            -
-          </Text>
-        </SimpleTooltip>
-      ) : (
-        <Spinner />
-      )}
-    </VStack>
+    <Link href={`/${pool.chainId}/pool/${pool.id}`} isExternal _hover={{ textDecoration: 'none' }}>
+      <VStack alignItems={'flex-end'} px={{ base: 2, lg: 4 }} justifyContent="center" height="100%">
+        {borrowBalance !== undefined ? (
+          <SimpleTooltip label={`$${longFormat(borrowBalance)}`}>
+            <Text variant="smText" fontWeight="bold" textAlign="center">
+              {smallUsdFormatter(borrowBalance)}
+              {borrowBalance > 0 && borrowBalance < 0.01 && '+'}
+            </Text>
+          </SimpleTooltip>
+        ) : usdPrice ? (
+          <SimpleTooltip label="Connect your wallet">
+            <Text variant="smText" fontWeight="bold" textAlign="center">
+              -
+            </Text>
+          </SimpleTooltip>
+        ) : (
+          <Spinner />
+        )}
+      </VStack>
+    </Link>
   );
 };
