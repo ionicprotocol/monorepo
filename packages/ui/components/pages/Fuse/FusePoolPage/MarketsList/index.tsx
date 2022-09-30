@@ -231,7 +231,7 @@ export const MarketsList = ({
         ),
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Supply APY
             </Text>
           </Box>
@@ -247,7 +247,7 @@ export const MarketsList = ({
         ),
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Borrow APY
             </Text>
           </Box>
@@ -261,10 +261,10 @@ export const MarketsList = ({
         cell: ({ getValue }) => <SupplyBalance asset={getValue<MarketData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Supply
             </Text>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
             </Text>
           </VStack>
@@ -278,10 +278,10 @@ export const MarketsList = ({
         cell: ({ getValue }) => <BorrowBalance asset={getValue<MarketData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Borrow
             </Text>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
             </Text>
           </VStack>
