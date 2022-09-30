@@ -4,11 +4,13 @@ import {
   Box,
   Button,
   Grid,
+  GridItem,
   HStack,
   Link,
   Spinner,
   Text,
   useClipboard,
+  VStack,
 } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
@@ -32,9 +34,9 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   const { getSdk } = useMultiMidas();
   const cgId = useCgId(pool.chainId);
   const { data: usdPrice } = useUSDPrice(cgId);
-  const rewardTokens = useRewardTokensOfPool(pool.comptroller);
-  const poolDetails = usePoolDetails(pool.assets);
-  const sdk = getSdk(pool.chainId);
+  const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
+  const poolDetails = usePoolDetails(pool.assets, pool.chainId);
+  const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);
   const scanUrl = useMemo(() => getScanUrlByChainId(pool.chainId), [pool.chainId]);
 
   const topLendingApy = useMemo(() => {
@@ -85,165 +87,235 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
         }}
         w="100%"
         gap={4}
-        alignItems="flex-end"
+        alignItems="stretch"
       >
-        <Box
-          height="200px"
-          width="100%"
-          overflow="hidden"
-          className="hide-bottom-tooltip"
-          flexShrink={0}
-        >
-          <Text variant="smText" textAlign="center">
-            Your Borrow Balance
-          </Text>
-
-          {usdPrice ? (
-            <SimpleTooltip
-              label={(pool.totalBorrowBalanceNative * usdPrice).toString()}
-              isDisabled={pool.totalBorrowBalanceNative * usdPrice === 0}
-            >
+        <VStack spacing={{ base: 4, lg: 8 }} ml={{ base: 0, lg: 24 }}>
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              lg: 'repeat(2, 1fr)',
+            }}
+            w="100%"
+            gap={4}
+            alignItems="flex-start"
+          >
+            <VStack>
               <Text variant="smText" textAlign="center">
-                {smallUsdFormatter(pool.totalBorrowBalanceNative * usdPrice)}
-                {pool.totalBorrowBalanceNative * usdPrice > 0 &&
-                  pool.totalBorrowBalanceNative * usdPrice < 0.01 &&
-                  '+'}
+                Your Borrow Balance
               </Text>
-            </SimpleTooltip>
-          ) : (
-            <Spinner />
-          )}
 
-          <Text variant="smText" textAlign="center">
-            Your Supply Balance
-          </Text>
-
-          {usdPrice ? (
-            <SimpleTooltip
-              label={(pool.totalSupplyBalanceNative * usdPrice).toString()}
-              isDisabled={pool.totalSupplyBalanceNative * usdPrice === 0}
-            >
+              {usdPrice ? (
+                <SimpleTooltip
+                  label={(pool.totalBorrowBalanceNative * usdPrice).toString()}
+                  isDisabled={pool.totalBorrowBalanceNative * usdPrice === 0}
+                >
+                  <Text variant="smText" textAlign="center">
+                    {smallUsdFormatter(pool.totalBorrowBalanceNative * usdPrice)}
+                    {pool.totalBorrowBalanceNative * usdPrice > 0 &&
+                      pool.totalBorrowBalanceNative * usdPrice < 0.01 &&
+                      '+'}
+                  </Text>
+                </SimpleTooltip>
+              ) : (
+                <Spinner />
+              )}
+            </VStack>
+            <VStack>
               <Text variant="smText" textAlign="center">
-                {smallUsdFormatter(pool.totalSupplyBalanceNative * usdPrice)}
-                {pool.totalSupplyBalanceNative * usdPrice > 0 &&
-                  pool.totalSupplyBalanceNative * usdPrice < 0.01 &&
-                  '+'}
+                Your Supply Balance
               </Text>
-            </SimpleTooltip>
-          ) : (
-            <Spinner />
-          )}
-          {rewardTokens.length > 0 && (
-            <>
-              <Text variant="smText" textAlign="center" mr={4}>
-                Rewards:
+
+              {usdPrice ? (
+                <SimpleTooltip
+                  label={(pool.totalSupplyBalanceNative * usdPrice).toString()}
+                  isDisabled={pool.totalSupplyBalanceNative * usdPrice === 0}
+                >
+                  <Text variant="smText" textAlign="center">
+                    {smallUsdFormatter(pool.totalSupplyBalanceNative * usdPrice)}
+                    {pool.totalSupplyBalanceNative * usdPrice > 0 &&
+                      pool.totalSupplyBalanceNative * usdPrice < 0.01 &&
+                      '+'}
+                  </Text>
+                </SimpleTooltip>
+              ) : (
+                <Spinner />
+              )}
+            </VStack>
+          </Grid>
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              lg: 'repeat(2, 1fr)',
+            }}
+            w="100%"
+            gap={4}
+            alignItems="flex-start"
+          >
+            {rewardTokens.length > 0 && (
+              <VStack>
+                <Text variant="smText" textAlign="center" mr={4}>
+                  Offering Rewards
+                </Text>
+                <AvatarGroup size="sm" max={30}>
+                  {rewardTokens.map((token, i) => (
+                    <CTokenIcon key={i} address={token} chainId={pool.chainId} />
+                  ))}
+                </AvatarGroup>
+              </VStack>
+            )}
+          </Grid>
+        </VStack>
+        <VStack>
+          <Grid
+            templateColumns={{
+              base: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)',
+            }}
+            w="100%"
+            gap={2}
+          >
+            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="end">
+                Most Supplied Asset
               </Text>
-              <AvatarGroup size="sm" max={30}>
-                {rewardTokens.map((token, i) => (
-                  <CTokenIcon key={i} address={token} chainId={pool.chainId} />
-                ))}
-              </AvatarGroup>
-            </>
-          )}
+            </GridItem>
+            <GridItem colSpan={1} textAlign="center">
+              {poolDetails?.mostSuppliedAsset && (
+                <CTokenIcon
+                  address={poolDetails.mostSuppliedAsset.underlyingToken}
+                  chainId={pool.chainId}
+                  width={35}
+                  height={35}
+                />
+              )}
+            </GridItem>
+            <GridItem colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="left">
+                {poolDetails?.mostSuppliedAsset &&
+                  usdPrice &&
+                  smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative * usdPrice)}
+              </Text>
+            </GridItem>
+          </Grid>
+          <Grid
+            templateColumns={{
+              base: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)',
+            }}
+            w="100%"
+            gap={2}
+          >
+            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="end">
+                Top Lending APY
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} textAlign="center">
+              {poolDetails?.topLendingAPYAsset && (
+                <CTokenIcon
+                  address={poolDetails.topLendingAPYAsset.underlyingToken}
+                  chainId={pool.chainId}
+                  width={35}
+                  height={35}
+                />
+              )}
+            </GridItem>
+            <GridItem colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="left">
+                {topLendingApy}% APY
+              </Text>
+            </GridItem>
+          </Grid>
+          <Grid
+            templateColumns={{
+              base: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)',
+            }}
+            w="100%"
+            gap={2}
+          >
+            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="end">
+                Top Stable Borrow APR
+              </Text>
+            </GridItem>
+            <GridItem colSpan={1} textAlign="center">
+              {poolDetails?.topBorrowAPRAsset && (
+                <CTokenIcon
+                  address={poolDetails.topBorrowAPRAsset.underlyingToken}
+                  chainId={pool.chainId}
+                  width={35}
+                  height={35}
+                />
+              )}
+            </GridItem>
+            <GridItem colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="left">
+                {topBorrowApr}% APR
+              </Text>
+            </GridItem>
+          </Grid>
+          <Grid
+            templateColumns={{
+              base: 'repeat(13, 1fr)',
+              lg: 'repeat(13, 1fr)',
+            }}
+            w="100%"
+            gap={4}
+            py={2}
+          >
+            <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
+              <Text variant="smText" textAlign="end">
+                Pool Address
+              </Text>
+            </GridItem>
+            <GridItem colSpan={7} textAlign="center">
+              {pool.comptroller ? (
+                <HStack>
+                  <SimpleTooltip label={`${scanUrl}/address/${pool.comptroller}`}>
+                    <Button
+                      minWidth={6}
+                      m={0}
+                      p={0}
+                      variant="_link"
+                      as={Link}
+                      href={`${scanUrl}/address/${pool.comptroller}`}
+                      isExternal
+                      fontSize={{ base: 14, md: 16 }}
+                      height="auto"
+                    >
+                      {shortAddress(pool.comptroller, 6, 4)}
+                    </Button>
+                  </SimpleTooltip>
 
-          <Text variant="smText" textAlign="center">
-            Most Supplied Asset
-          </Text>
-
-          {poolDetails?.mostSuppliedAsset && (
-            <CTokenIcon
-              address={poolDetails.mostSuppliedAsset.underlyingToken}
-              chainId={pool.chainId}
-              width={35}
-              height={35}
-            />
-          )}
-
-          <Text variant="smText" textAlign="center">
-            {poolDetails?.mostSuppliedAsset &&
-              usdPrice &&
-              smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative * usdPrice)}
-          </Text>
-
-          <Text variant="smText" textAlign="center">
-            Top Lending APY
-          </Text>
-
-          {poolDetails?.topLendingAPYAsset && (
-            <CTokenIcon
-              address={poolDetails.topLendingAPYAsset.underlyingToken}
-              chainId={pool.chainId}
-              width={35}
-              height={35}
-            />
-          )}
-
-          <Text variant="smText" textAlign="center">
-            {topLendingApy}% APY
-          </Text>
-
-          <Text variant="smText">Top Stable Borrow APR</Text>
-
-          {poolDetails?.topBorrowAPRAsset && (
-            <CTokenIcon
-              address={poolDetails.topBorrowAPRAsset.underlyingToken}
-              chainId={pool.chainId}
-              width={35}
-              height={35}
-            />
-          )}
-
-          <Text variant="smText" textAlign="center">
-            {topBorrowApr}% APR
-          </Text>
-
-          <HStack px={4} pt={4} pb={3}>
-            <Text variant="smText">Pool Address</Text>
-            {pool.comptroller ? (
-              <HStack>
-                <SimpleTooltip label={`${scanUrl}/address/${pool.comptroller}`}>
                   <Button
-                    minWidth={6}
-                    m={0}
-                    p={0}
                     variant="_link"
-                    as={Link}
-                    href={`${scanUrl}/address/${pool.comptroller}`}
-                    isExternal
-                    fontSize={{ base: 14, md: 16 }}
+                    minW={0}
+                    mt="-8px !important"
+                    p={0}
+                    onClick={() => setCopiedText(pool.comptroller)}
+                    fontSize={18}
                     height="auto"
                   >
-                    {shortAddress(pool.comptroller, 6, 4)}
+                    {copiedText === pool.comptroller ? (
+                      <SimpleTooltip label="Copied">
+                        <CheckIcon />
+                      </SimpleTooltip>
+                    ) : (
+                      <SimpleTooltip label="Click to copy">
+                        <CopyIcon />
+                      </SimpleTooltip>
+                    )}
                   </Button>
-                </SimpleTooltip>
-
-                <Button
-                  variant="_link"
-                  minW={0}
-                  mt="-8px !important"
-                  p={0}
-                  onClick={() => setCopiedText(pool.comptroller)}
-                  fontSize={18}
-                  height="auto"
-                >
-                  {copiedText === pool.comptroller ? (
-                    <SimpleTooltip label="Copied">
-                      <CheckIcon />
-                    </SimpleTooltip>
-                  ) : (
-                    <SimpleTooltip label="Click to copy">
-                      <CopyIcon />
-                    </SimpleTooltip>
-                  )}
-                </Button>
-              </HStack>
-            ) : (
-              <Text variant="smText" fontWeight="bold">
-                ?
-              </Text>
-            )}
-          </HStack>
-        </Box>
+                </HStack>
+              ) : (
+                <Text variant="smText" fontWeight="bold">
+                  ?
+                </Text>
+              )}
+            </GridItem>
+          </Grid>
+        </VStack>
       </Grid>
     </Box>
   );

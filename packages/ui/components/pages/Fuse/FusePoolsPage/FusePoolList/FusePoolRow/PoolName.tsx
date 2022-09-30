@@ -6,7 +6,7 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 
 export const PoolName = ({ pool }: { pool: FusePoolData }) => {
-  const rewardTokens = useRewardTokensOfPool(pool.comptroller);
+  const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
 
   return (
     <VStack alignItems={'flex-start'} spacing={1} ml={3}>

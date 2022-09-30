@@ -1,23 +1,27 @@
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
-export const useRewardTokensOfPool = (poolAddress?: string) => {
-  const { currentSdk, currentChain } = useMultiMidas();
+export const useRewardTokensOfPool = (poolAddress?: string, poolChainid?: number) => {
+  const { getSdk } = useMultiMidas();
+  const sdk = useMemo(() => {
+    if (poolChainid) return getSdk(poolChainid);
+  }, [getSdk, poolChainid]);
 
   const { data } = useQuery(
-    ['useRewardTokensOfPool', currentChain?.id, poolAddress],
+    ['useRewardTokensOfPool', sdk?.chainId, poolAddress],
     async () => {
-      if (!poolAddress || !currentSdk) return undefined;
+      if (poolAddress && sdk) {
+        const rewards = await sdk.getFlywheelMarketRewardsByPool(poolAddress);
 
-      const rewards = await currentSdk.getFlywheelMarketRewardsByPool(poolAddress);
-
-      return rewards
-        .flatMap((r) => r.rewardsInfo)
-        .map((ri) => ri.rewardToken)
-        .filter((value, index, self) => self.indexOf(value) === index);
+        return rewards
+          .flatMap((r) => r.rewardsInfo)
+          .map((ri) => ri.rewardToken)
+          .filter((value, index, self) => self.indexOf(value) === index);
+      }
     },
-    { enabled: !!poolAddress && !!currentSdk, placeholderData: [] }
+    { enabled: !!poolAddress && !!sdk, placeholderData: [] }
   );
 
   return data || [];
