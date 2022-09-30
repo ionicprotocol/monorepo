@@ -5,7 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 
 import { config } from '@ui/config/index';
-import { SUPPORTED_NETWORKS_REGEX } from '@ui/constants/index';
+import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 import { chainIdToConfig, FusePoolsPerChain } from '@ui/types/ChainMetaData';
 import { poolSort } from '@ui/utils/sorts';
 
@@ -13,6 +13,7 @@ const querySchema = yup.object().shape({
   chains: yup
     .array()
     .of(yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required()),
+  address: yup.string().matches(VALID_ADDRESS_REGEX, 'Not a valid address'),
 });
 
 const handler = async (
@@ -24,7 +25,7 @@ const handler = async (
 
   querySchema.validateSync(request.body);
 
-  const { chains }: { chains: SupportedChains[] } = request.body;
+  const { chains, address }: { chains: SupportedChains[]; address?: string } = request.body;
 
   const sdks = chains.map((id) => {
     const config = chainIdToConfig[id];
@@ -41,7 +42,7 @@ const handler = async (
   try {
     await Promise.all(
       sdks.map(async (sdk) => {
-        const pools = await sdk.fetchPoolsManual();
+        const pools = await sdk.fetchPoolsManual({ from: address });
         let visiblePools: FusePoolData[] = [];
         if (pools && pools.length !== 0) {
           type configKey = keyof typeof config;

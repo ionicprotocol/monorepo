@@ -31,13 +31,15 @@ import { shortAddress } from '@ui/utils/shortAddress';
 
 export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   const pool: FusePoolData = row.original.poolName;
-  const { getSdk } = useMultiMidas();
+  const { getSdk, address } = useMultiMidas();
   const cgId = useCgId(pool.chainId);
   const { data: usdPrice } = useUSDPrice(cgId);
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
   const poolDetails = usePoolDetails(pool.assets, pool.chainId);
   const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);
   const scanUrl = useMemo(() => getScanUrlByChainId(pool.chainId), [pool.chainId]);
+  const [copiedText, setCopiedText] = useState<string>('');
+  const { hasCopied, onCopy } = useClipboard(copiedText);
 
   const topLendingApy = useMemo(() => {
     if (sdk && poolDetails) {
@@ -61,8 +63,17 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
     }
   }, [sdk, poolDetails]);
 
-  const [copiedText, setCopiedText] = useState<string>('');
-  const { hasCopied, onCopy } = useClipboard(copiedText);
+  const supplyBalance = useMemo(() => {
+    if (address && usdPrice) {
+      return pool.totalSupplyBalanceNative * usdPrice;
+    }
+  }, [address, pool, usdPrice]);
+
+  const borrowBalance = useMemo(() => {
+    if (address && usdPrice) {
+      return pool.totalBorrowBalanceNative * usdPrice;
+    }
+  }, [address, pool, usdPrice]);
 
   useEffect(() => {
     if (copiedText) {
@@ -79,7 +90,6 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
 
   return (
     <Box>
-      <ClaimPoolRewardsButton poolAddress={pool.comptroller} />
       <Grid
         templateColumns={{
           base: 'repeat(1, 1fr)',
@@ -101,19 +111,19 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
           >
             <VStack>
               <Text variant="smText" textAlign="center">
-                Your Borrow Balance
+                Your Supply Balance
               </Text>
-
-              {usdPrice ? (
-                <SimpleTooltip
-                  label={(pool.totalBorrowBalanceNative * usdPrice).toString()}
-                  isDisabled={pool.totalBorrowBalanceNative * usdPrice === 0}
-                >
+              {supplyBalance !== undefined ? (
+                <SimpleTooltip label={`$${supplyBalance.toString()}`}>
                   <Text variant="smText" textAlign="center">
-                    {smallUsdFormatter(pool.totalBorrowBalanceNative * usdPrice)}
-                    {pool.totalBorrowBalanceNative * usdPrice > 0 &&
-                      pool.totalBorrowBalanceNative * usdPrice < 0.01 &&
-                      '+'}
+                    {smallUsdFormatter(supplyBalance)}
+                    {supplyBalance > 0 && supplyBalance < 0.01 && '+'}
+                  </Text>
+                </SimpleTooltip>
+              ) : usdPrice ? (
+                <SimpleTooltip label="Connect your wallet">
+                  <Text variant="smText" fontWeight="bold" textAlign="center">
+                    -
                   </Text>
                 </SimpleTooltip>
               ) : (
@@ -122,19 +132,19 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             </VStack>
             <VStack>
               <Text variant="smText" textAlign="center">
-                Your Supply Balance
+                Your Borrow Balance
               </Text>
-
-              {usdPrice ? (
-                <SimpleTooltip
-                  label={(pool.totalSupplyBalanceNative * usdPrice).toString()}
-                  isDisabled={pool.totalSupplyBalanceNative * usdPrice === 0}
-                >
+              {borrowBalance !== undefined ? (
+                <SimpleTooltip label={`$${borrowBalance.toString()}`}>
                   <Text variant="smText" textAlign="center">
-                    {smallUsdFormatter(pool.totalSupplyBalanceNative * usdPrice)}
-                    {pool.totalSupplyBalanceNative * usdPrice > 0 &&
-                      pool.totalSupplyBalanceNative * usdPrice < 0.01 &&
-                      '+'}
+                    {smallUsdFormatter(borrowBalance)}
+                    {borrowBalance > 0 && borrowBalance < 0.01 && '+'}
+                  </Text>
+                </SimpleTooltip>
+              ) : usdPrice ? (
+                <SimpleTooltip label="Connect your wallet">
+                  <Text variant="smText" fontWeight="bold" textAlign="center">
+                    -
                   </Text>
                 </SimpleTooltip>
               ) : (
@@ -163,6 +173,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 </AvatarGroup>
               </VStack>
             )}
+            <ClaimPoolRewardsButton poolAddress={pool.comptroller} />
           </Grid>
         </VStack>
         <VStack>

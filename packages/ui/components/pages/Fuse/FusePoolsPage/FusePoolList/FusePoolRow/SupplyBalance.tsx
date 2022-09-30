@@ -11,18 +11,16 @@ import { longFormat, smallUsdFormatter } from '@ui/utils/bigUtils';
 export const SupplyBalance = ({ pool }: { pool: FusePoolData }) => {
   const cgId = useCgId(pool.chainId);
   const { data: usdPrice } = useUSDPrice(cgId);
-  const { getSdk } = useMultiMidas();
-
+  const { address } = useMultiMidas();
   const supplyBalance = useMemo(() => {
-    const sdk = getSdk(pool.chainId);
-    if (sdk?._signer && usdPrice) {
+    if (address && usdPrice) {
       return pool.totalSupplyBalanceNative * usdPrice;
     }
-  }, [usdPrice, pool, getSdk]);
+  }, [address, pool, usdPrice]);
 
   return (
     <VStack alignItems={'flex-end'}>
-      {supplyBalance ? (
+      {supplyBalance !== undefined ? (
         <SimpleTooltip label={`$${longFormat(supplyBalance)}`}>
           <Text variant="smText" fontWeight="bold" textAlign="center">
             {smallUsdFormatter(supplyBalance)}
