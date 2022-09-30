@@ -76,17 +76,13 @@ export const SupplyApy = ({
       {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
         rewardsOfThisMarket?.rewardsInfo.map((info) =>
           asset.plugin ? (
-            <>
-              <div>
-                <RewardsInfo
-                  key={info.rewardToken}
-                  underlyingAddress={asset.underlyingToken}
-                  pluginAddress={asset.plugin}
-                  rewardAddress={info.rewardToken}
-                  poolChainId={poolChainId}
-                />
-              </div>
-            </>
+            <RewardsInfo
+              key={info.rewardToken}
+              underlyingAddress={asset.underlyingToken}
+              pluginAddress={asset.plugin}
+              rewardAddress={info.rewardToken}
+              poolChainId={poolChainId}
+            />
           ) : (
             <>
               <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>

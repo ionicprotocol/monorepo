@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { HStack, Link, Skeleton, Text } from '@chakra-ui/react';
+import { Box, HStack, Link, Skeleton, Text } from '@chakra-ui/react';
 
 import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ApyInformTooltip';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -70,7 +70,7 @@ export const RewardsInfo = ({
             </>
           }
         >
-          <div>
+          <Box>
             {rewardAddress ? (
               <TokenWithLabel address={rewardAddress} poolChainId={poolChainId} size="2xs" />
             ) : (
@@ -78,7 +78,7 @@ export const RewardsInfo = ({
                 🔌
               </span>
             )}
-          </div>
+          </Box>
         </PopoverTooltip>
         {!apyLoading && apyResponse && apyResponse.apy === undefined && (
           <ApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
