@@ -7,23 +7,18 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
+import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 
 export const RewardsInfo = ({
   underlyingAddress,
   pluginAddress,
   rewardAddress,
   poolChainId,
-  pluginInfoName,
-  pluginInfoApyDocsUrl,
-  pluginInfoStrategyDocsUrl,
 }: {
   underlyingAddress: string;
   pluginAddress: string;
   rewardAddress?: string;
   poolChainId: number;
-  pluginInfoName?: string;
-  pluginInfoApyDocsUrl?: string;
-  pluginInfoStrategyDocsUrl?: string;
 }) => {
   const { data: apyResponse, isLoading: apyLoading } = useApy(
     underlyingAddress,
@@ -33,20 +28,22 @@ export const RewardsInfo = ({
   );
 
   const { cCard } = useColors();
+  const { data: pluginInfo } = usePluginInfo(poolChainId, pluginAddress);
 
   return (
     <HStack key={rewardAddress} justifyContent={'flex-end'} spacing={0}>
       <HStack mr={2}>
+        <Text variant="smText">+</Text>
         <PopoverTooltip
           placement={'top-start'}
           body={
             <>
               <Text>
-                This market is using the <b>{pluginInfoName}</b> ERC4626 Strategy.
+                This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
               </Text>
-              {pluginInfoApyDocsUrl ? (
+              {pluginInfo?.apyDocsUrl ? (
                 <Link
-                  href={pluginInfoApyDocsUrl}
+                  href={pluginInfo?.apyDocsUrl}
                   isExternal
                   variant={'color'}
                   onClick={(e) => {
@@ -59,7 +56,7 @@ export const RewardsInfo = ({
                 <>
                   Read more about it{' '}
                   <Link
-                    href={pluginInfoStrategyDocsUrl || MIDAS_DOCS_URL}
+                    href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
                     isExternal
                     variant={'color'}
                     onClick={(e) => {
@@ -73,8 +70,7 @@ export const RewardsInfo = ({
             </>
           }
         >
-          <HStack>
-            <Text variant="smText">+</Text>
+          <div>
             {rewardAddress ? (
               <TokenWithLabel address={rewardAddress} poolChainId={poolChainId} size="2xs" />
             ) : (
@@ -82,7 +78,7 @@ export const RewardsInfo = ({
                 🔌
               </span>
             )}
-          </HStack>
+          </div>
         </PopoverTooltip>
         {!apyLoading && apyResponse && apyResponse.apy === undefined && (
           <ApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
