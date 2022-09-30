@@ -9,25 +9,22 @@ export const FuseDashNav = () => {
   const isMobile = useIsSmallScreen();
 
   return (
-    <>
-      <Box
-        color={cPage.primary.txtColor}
-        overflowX="visible"
-        overflowY="visible"
-        w="100%"
-        alignSelf="center"
-        backgroundColor={cPage.primary.bgColor}
+    <Box
+      color={cPage.primary.txtColor}
+      overflowX="visible"
+      overflowY="visible"
+      // w="100%"
+      alignSelf="center"
+      backgroundColor={cPage.primary.bgColor}
+    >
+      <Flex
+        direction={isMobile ? 'column' : 'row'}
+        justifyContent={isMobile ? 'center' : 'space-between'}
+        alignItems={isMobile ? 'center' : 'space-between'}
+        flexFlow={isMobile ? 'column wrap' : 'row wrap'}
       >
-        <Flex
-          direction={isMobile ? 'column' : 'row'}
-          justifyContent={isMobile ? 'center' : 'space-between'}
-          alignItems={isMobile ? 'center' : 'space-between'}
-          flexFlow={isMobile ? 'column wrap' : 'row wrap'}
-          pt={2}
-        >
-          <PoolButtons />
-        </Flex>
-      </Box>
-    </>
+        <PoolButtons />
+      </Flex>
+    </Box>
   );
 };
