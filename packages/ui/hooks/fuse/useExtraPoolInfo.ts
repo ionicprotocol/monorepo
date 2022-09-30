@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useExtraPoolInfo = (comptrollerAddress?: string) => {
-  const { currentSdk, address } = useMultiMidas();
+export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: number) => {
+  const { address } = useMultiMidas();
+  const { data: sdk } = useSdk(poolChainId);
 
   return useQuery(
-    ['useExtraPoolInfo', comptrollerAddress, currentSdk?.chainId],
+    ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
     async () => {
-      if (!comptrollerAddress || !currentSdk || !address) return;
+      if (!comptrollerAddress || !sdk) return;
 
-      const comptroller = currentSdk.createComptroller(comptrollerAddress);
+      const comptroller = sdk.createComptroller(comptrollerAddress);
       const [
         { 0: admin, 1: upgradeable },
         closeFactor,
@@ -20,7 +22,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         pendingAdmin,
         oracle,
       ] = await Promise.all([
-        currentSdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+        sdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
         comptroller.callStatic.closeFactorMantissa(),
         comptroller.callStatic.liquidationIncentiveMantissa(),
         comptroller.callStatic
@@ -32,9 +34,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
           .then((x: string[]) => x)
           .catch(() => []),
         comptroller.callStatic.pendingAdmin(),
-        comptroller.callStatic
-          .oracle()
-          .then((oracleAddress) => currentSdk.getPriceOracle(oracleAddress)),
+        comptroller.callStatic.oracle().then((oracleAddress) => sdk.getPriceOracle(oracleAddress)),
       ]);
 
       return {
@@ -42,16 +42,16 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         upgradeable,
         enforceWhitelist,
         whitelist: whitelist as string[],
-        isPowerfulAdmin: admin.toLowerCase() === address.toLowerCase() && upgradeable,
+        isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
         oracle,
         closeFactor,
         liquidationIncentive,
         pendingAdmin,
-        isPendingAdmin: pendingAdmin.toLowerCase() === address.toLowerCase(),
+        isPendingAdmin: pendingAdmin.toLowerCase() === address?.toLowerCase(),
       };
     },
     {
-      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!address && !!currentSdk,
+      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
     }
   );
 };

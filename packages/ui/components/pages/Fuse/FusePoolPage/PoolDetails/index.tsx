@@ -23,7 +23,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { shortUsdFormatter } from '@ui/utils/bigUtils';
+import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -40,7 +40,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
   const { cCard } = useColors();
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const { data } = useExtraPoolInfo(poolData?.comptroller);
+  const { data } = useExtraPoolInfo(poolData?.comptroller, poolData?.chainId);
 
   const [copiedText, setCopiedText] = useState<string>('');
   const { hasCopied, onCopy } = useClipboard(copiedText);
@@ -129,19 +129,19 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Total Supplied</Text>
               <Text variant="smText" fontWeight="bold">
-                {shortUsdFormatter(totalSuppliedFiat)}
+                {midUsdFormatter(totalSuppliedFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Total Borrowed</Text>
               <Text variant="smText" fontWeight="bold">
-                {shortUsdFormatter(totalBorrowedFiat)}
+                {midUsdFormatter(totalBorrowedFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Available Liquidity</Text>
               <Text variant="smText" fontWeight="bold">
-                {shortUsdFormatter(totalAvailableLiquidityFiat)}
+                {midUsdFormatter(totalAvailableLiquidityFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
