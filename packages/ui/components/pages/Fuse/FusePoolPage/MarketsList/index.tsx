@@ -812,7 +812,8 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
         type="text"
         value={searchText}
         onChange={onSearch}
-        placeholder="Search token name, symbol or address"
+        placeholder="token or symbol"
+        maxWidth={60}
         _focusVisible={{}}
       />
     </HStack>

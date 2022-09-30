@@ -543,7 +543,8 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
         type="text"
         value={searchText}
         onChange={onSearch}
-        placeholder="Search pool name or address"
+        placeholder="pool name"
+        maxW={80}
         _focusVisible={{}}
       />
     </HStack>
