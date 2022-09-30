@@ -8,7 +8,6 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
     const deployedPlugins = plugins[chainId];
-
     for (const plugin of deployedPlugins) {
       try {
         const pluginContract = new ethers.Contract(plugin, ERC4626_ABI, provider);
@@ -21,7 +20,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
 
         // Don't save anything if the plugin is empty
         if (totalSupply.eq(0)) {
-          return;
+          continue;
         }
 
         const { error } = await supabase.from(config.supabasePluginTableName).insert([
@@ -51,7 +50,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
     }
   } catch (err) {
     console.error(err);
-    functionsAlert('Generic Error', err);
+    functionsAlert('Generic Error', JSON.stringify(err));
   }
 };
 
