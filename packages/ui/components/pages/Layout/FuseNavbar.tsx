@@ -1,5 +1,6 @@
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 import {
+  Box,
   Button,
   Divider,
   HStack,
@@ -13,6 +14,7 @@ import {
 
 import { AccountButton } from '@ui/components/shared/AccountButton';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
+import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
@@ -24,7 +26,7 @@ const FuseNavbar = () => {
     sm: '/images/midas-mobile-',
     md: '/images/midas-',
   });
-  const { address, signer } = useMultiMidas();
+  const { currentChain } = useMultiMidas();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -39,15 +41,22 @@ const FuseNavbar = () => {
       </Link>
       <VStack w={'100%'}>
         <HStack w={'100%'} justifyContent="flex-end" pt={2}>
-          {signer && address ? (
-            <AccountButton />
-          ) : (
-            <>
+          {!currentChain ? (
+            <Box>
               <Button variant="_solid" onClick={onOpen}>
                 Connect Wallet
               </Button>
               <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
-            </>
+            </Box>
+          ) : currentChain.unsupported ? (
+            <Box>
+              <Button variant="_solid" onClick={onOpen}>
+                Switch network
+              </Button>
+              <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
+            </Box>
+          ) : (
+            <AccountButton />
           )}
           <Button variant="_solid" ml={2} px={2} onClick={toggleColorMode}>
             {colorMode === 'light' ? (
