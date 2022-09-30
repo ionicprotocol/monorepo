@@ -4,7 +4,7 @@ import { PoolButtons } from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
-export const FuseDashNav = () => {
+const FuseDashNav = () => {
   const { cPage } = useColors();
   const isMobile = useIsSmallScreen();
 
@@ -28,3 +28,5 @@ export const FuseDashNav = () => {
     </Box>
   );
 };
+
+export default FuseDashNav;
