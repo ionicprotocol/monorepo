@@ -20,7 +20,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Web3Provider } from '@ethersproject/providers';
 import { useQuery } from '@tanstack/react-query';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
