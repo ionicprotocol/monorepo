@@ -1,19 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { APYResult } from '@ui/types/ComponentPropsType';
 
-export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
-  const { currentChain } = useMultiMidas();
-
+export function useApy(
+  underlyingAddress: string,
+  pluginAddress: string,
+  rewardAddress?: string,
+  poolChainId?: number
+) {
   return useQuery<APYResult>(
-    ['useApy', currentChain, underlyingAddress, pluginAddress, rewardAddress],
+    ['useApy', poolChainId, underlyingAddress, pluginAddress, rewardAddress],
     async () => {
-      if (currentChain) {
+      if (poolChainId) {
         return await fetch(
-          `/api/apyData?chain=${
-            currentChain.id
-          }&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
+          `/api/apyData?chain=${poolChainId}&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
             rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
           }`
         ).then((response) => {
@@ -23,7 +23,7 @@ export function useApy(underlyingAddress: string, pluginAddress: string, rewardA
       }
     },
     {
-      enabled: !!underlyingAddress && !!pluginAddress && !!currentChain,
+      enabled: !!underlyingAddress && !!pluginAddress && !!poolChainId,
     }
   );
 }

@@ -226,7 +226,9 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.supplyApy,
         id: 'supplyApy',
-        cell: ({ getValue }) => <SupplyApy asset={getValue<MarketData>()} rewards={rewards} />,
+        cell: ({ getValue }) => (
+          <SupplyApy asset={getValue<MarketData>()} rewards={rewards} poolChainId={poolChainId} />
+        ),
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
             <Text variant="smText" fontWeight="bold" lineHeight={6}>
@@ -240,7 +242,9 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.borrowApy,
         id: 'borrowApy',
-        cell: ({ getValue }) => <BorrowApy asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <BorrowApy asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
             <Text variant="smText" fontWeight="bold" lineHeight={6}>

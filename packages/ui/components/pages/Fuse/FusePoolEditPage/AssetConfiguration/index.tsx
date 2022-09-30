@@ -81,7 +81,11 @@ const AssetConfiguration = ({
 
       <ModalDivider />
 
-      <EditAssetSettings comptrollerAddress={comptrollerAddress} selectedAsset={selectedAsset} />
+      <EditAssetSettings
+        comptrollerAddress={comptrollerAddress}
+        selectedAsset={selectedAsset}
+        poolChainId={poolChainId}
+      />
     </Column>
   );
 };

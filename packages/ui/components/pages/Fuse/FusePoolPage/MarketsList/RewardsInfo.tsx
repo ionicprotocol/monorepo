@@ -9,15 +9,18 @@ export const RewardsInfo = ({
   underlyingAddress,
   pluginAddress,
   rewardAddress,
+  poolChainId,
 }: {
   underlyingAddress: string;
   pluginAddress: string;
   rewardAddress?: string;
+  poolChainId: number;
 }) => {
   const { data: apyResponse, isLoading: apyLoading } = useApy(
     underlyingAddress,
     pluginAddress,
-    rewardAddress
+    rewardAddress,
+    poolChainId
   );
 
   const { cCard } = useColors();
@@ -34,7 +37,7 @@ export const RewardsInfo = ({
           </span>
         )}
         {!apyLoading && apyResponse && apyResponse.apy === undefined && (
-          <ApyInformTooltip pluginAddress={pluginAddress} />
+          <ApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
         )}
       </HStack>
       {!apyLoading && apyResponse && apyResponse.apy && (

@@ -1,16 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
-export const usePluginInfo = (pluginAddress?: string) => {
-  const { currentSdk } = useMultiMidas();
+export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
+  const { getSdk } = useMultiMidas();
+  const sdk = useMemo(() => getSdk(poolChainId), [poolChainId, getSdk]);
 
   return useQuery(
-    ['usePluginInfo', pluginAddress, currentSdk?.chainId],
+    ['usePluginInfo', pluginAddress, sdk?.chainId],
     () => {
-      if (currentSdk) {
-        return pluginAddress && currentSdk.deployedPlugins[pluginAddress]
-          ? currentSdk.deployedPlugins[pluginAddress]
+      if (sdk) {
+        return pluginAddress && sdk.deployedPlugins[pluginAddress]
+          ? sdk.deployedPlugins[pluginAddress]
           : {
               name: `Unnamed (${pluginAddress})`,
               market: '',
@@ -22,7 +24,7 @@ export const usePluginInfo = (pluginAddress?: string) => {
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!pluginAddress && !!currentSdk,
+      enabled: !!pluginAddress && !!sdk,
     }
   );
 };

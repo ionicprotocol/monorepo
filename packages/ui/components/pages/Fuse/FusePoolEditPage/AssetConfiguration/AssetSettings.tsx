@@ -93,9 +93,14 @@ interface AssetSettingsProps {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
   tokenData: TokenData;
+  poolChainId: number;
 }
 
-export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
+export const AssetSettings = ({
+  comptrollerAddress,
+  selectedAsset,
+  poolChainId,
+}: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { currentSdk, setPendingTxHash } = useMultiMidas();
 
@@ -131,7 +136,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
     currentSdk.chainDeployment.JumpRateModel.address
   );
 
-  const { data: pluginInfo } = usePluginInfo(selectedAsset.plugin);
+  const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
   useEffect(() => {

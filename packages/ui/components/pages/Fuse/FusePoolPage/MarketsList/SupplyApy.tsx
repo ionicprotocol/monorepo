@@ -16,7 +16,7 @@ import {
   aprDays,
   MIDAS_DOCS_URL,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -26,19 +26,21 @@ import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 export const SupplyApy = ({
   asset,
   rewards,
+  poolChainId,
 }: {
   asset: MarketData;
   rewards: FlywheelMarketRewardsInfo[];
+  poolChainId: number;
 }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { data: sdk } = useSdk(poolChainId);
   const supplyAPY = useMemo(() => {
-    if (currentSdk && currentChain) {
-      return currentSdk.ratePerBlockToAPY(
+    if (sdk) {
+      return sdk.ratePerBlockToAPY(
         asset.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
+        getBlockTimePerMinuteByChainId(sdk.chainId)
       );
     }
-  }, [currentChain, currentSdk, asset.supplyRatePerBlock]);
+  }, [sdk, asset.supplyRatePerBlock]);
 
   const { cCard } = useColors();
   const supplyApyColor = useColorModeValue('cyan.500', 'cyan');
@@ -50,15 +52,15 @@ export const SupplyApy = ({
 
   const [aBNBcApr, setaBNBcApr] = useState('');
 
-  const { data: pluginInfo } = usePluginInfo(asset.plugin);
+  const { data: pluginInfo } = usePluginInfo(poolChainId, asset.plugin);
 
   useEffect(() => {
     const func = async () => {
-      if (currentSdk) {
+      if (sdk) {
         const contract = new Contract(
           aBNBcContractAddress,
           aBNBcContractABI,
-          currentSdk.provider as Web3Provider
+          sdk.provider as Web3Provider
         );
 
         const apr = await contract.callStatic.averagePercentageRate(aprDays);
@@ -66,15 +68,15 @@ export const SupplyApy = ({
       }
     };
 
-    if (asset.underlyingSymbol === assetSymbols.aBNBc && currentSdk) {
+    if (asset.underlyingSymbol === assetSymbols.aBNBc && sdk) {
       func();
     }
-  }, [asset, currentSdk]);
+  }, [asset, sdk]);
 
   return (
     <VStack alignItems={'flex-end'}>
       <Text color={supplyApyColor} fontWeight="bold" variant="smText">
-        {supplyAPY && supplyAPY.toFixed(2)}%
+        {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
       </Text>
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
         <Text color={cCard.txtColor} variant="smText">
@@ -128,6 +130,7 @@ export const SupplyApy = ({
                       underlyingAddress={asset.underlyingToken}
                       pluginAddress={asset.plugin}
                       rewardAddress={info.rewardToken}
+                      poolChainId={poolChainId}
                     />
                   </div>
                 </>
@@ -152,7 +155,11 @@ export const SupplyApy = ({
               )
             )
           ) : asset.plugin ? (
-            <RewardsInfo underlyingAddress={asset.underlyingToken} pluginAddress={asset.plugin} />
+            <RewardsInfo
+              underlyingAddress={asset.underlyingToken}
+              pluginAddress={asset.plugin}
+              poolChainId={poolChainId}
+            />
           ) : null}
         </div>
       </PopoverTooltip>

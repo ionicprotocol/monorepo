@@ -9,9 +9,11 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 const EditAssetSettings = ({
   comptrollerAddress,
   selectedAsset,
+  poolChainId,
 }: {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
+  poolChainId: number;
 }) => {
   const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken);
   if (isLoading) {
@@ -28,6 +30,7 @@ const EditAssetSettings = ({
         comptrollerAddress={comptrollerAddress}
         selectedAsset={selectedAsset}
         tokenData={tokenData}
+        poolChainId={poolChainId}
       />
     );
   }
