@@ -111,7 +111,7 @@ const EditFlywheelModal = ({
     const token = new Contract(
       flywheel.rewardToken,
       midasSdk.artifacts.EIP20Interface.abi,
-      midasSdk.provider as Web3Provider
+      midasSdk.signer
     );
 
     setTransactionPending(true);
