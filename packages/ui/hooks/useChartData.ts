@@ -1,28 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
-export function useChartData(market: string) {
-  const { currentSdk, currentChain } = useMultiMidas();
+export function useChartData(market: string, poolChainId: number) {
+  const { data: sdk } = useSdk(poolChainId);
 
   return useQuery(
-    ['useChartData', currentChain?.id, market, currentSdk?.chainId],
+    ['useChartData', market, sdk?.chainId],
     async () => {
-      if (currentSdk && currentChain) {
-        const interestRateModel = await currentSdk.getInterestRateModel(market);
+      if (sdk) {
+        const interestRateModel = await sdk.getInterestRateModel(market);
 
         if (interestRateModel === null) {
           return { borrowerRates: null, supplierRates: null };
         }
 
-        return convertIRMtoCurve(currentSdk, interestRateModel, currentChain.id);
+        return convertIRMtoCurve(sdk, interestRateModel, sdk.chainId);
       }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!currentSdk && !!currentChain && !!market,
+      enabled: !!sdk && !!market,
     }
   );
 }

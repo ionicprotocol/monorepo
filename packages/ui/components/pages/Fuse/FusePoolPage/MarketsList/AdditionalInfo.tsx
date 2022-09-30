@@ -15,10 +15,11 @@ import {
   COLLATERAL_FACTOR_TOOLTIP,
   RESERVE_FACTOR_TOOLTIP,
 } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { shortUsdFormatter } from '@ui/utils/bigUtils';
+import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 
@@ -41,12 +42,13 @@ export const AdditionalInfo = ({
   const asset: MarketData = row.original.market;
   const assets: MarketData[] = rows.map((row) => row.original.market);
 
-  const { data } = useChartData(asset.cToken);
+  const { data } = useChartData(asset.cToken, poolChainId);
   const { cChart } = useColors();
   const assetUtilization = useMemo(
     () => parseFloat(asset.utilization.toFixed(0)),
     [asset.utilization]
   );
+  const { address } = useMultiMidas();
 
   return (
     <Box>
@@ -77,7 +79,7 @@ export const AdditionalInfo = ({
             comptrollerAddress={comptrollerAddress}
             assets={assets}
             asset={asset}
-            isDisabled={asset.isSupplyPaused}
+            isDisabled={asset.isSupplyPaused || !address}
             supplyBalanceFiat={supplyBalanceFiat}
             poolChainId={poolChainId}
           />
@@ -86,7 +88,7 @@ export const AdditionalInfo = ({
             comptrollerAddress={comptrollerAddress}
             assets={assets}
             asset={asset}
-            isDisabled={asset.supplyBalanceFiat === 0}
+            isDisabled={asset.supplyBalanceFiat === 0 || !address}
             poolChainId={poolChainId}
           />
           <FundButton
@@ -94,7 +96,7 @@ export const AdditionalInfo = ({
             comptrollerAddress={comptrollerAddress}
             assets={assets}
             asset={asset}
-            isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
+            isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0 || !address}
             poolChainId={poolChainId}
           />
           <FundButton
@@ -102,7 +104,7 @@ export const AdditionalInfo = ({
             comptrollerAddress={comptrollerAddress}
             assets={assets}
             asset={asset}
-            isDisabled={asset.borrowBalanceFiat === 0}
+            isDisabled={asset.borrowBalanceFiat === 0 || !address}
             poolChainId={poolChainId}
           />
         </HStack>
@@ -207,12 +209,12 @@ export const AdditionalInfo = ({
             mb={8}
           >
             <CaptionedStat
-              stat={shortUsdFormatter(asset.totalSupplyFiat)}
+              stat={midUsdFormatter(asset.totalSupplyFiat)}
               caption={'Asset Supplied'}
               crossAxisAlignment="center"
             />
             <CaptionedStat
-              stat={asset.isBorrowPaused ? '-' : shortUsdFormatter(asset.totalBorrowFiat)}
+              stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
               caption={'Asset Borrowed'}
               crossAxisAlignment="center"
             />

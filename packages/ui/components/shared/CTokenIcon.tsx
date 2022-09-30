@@ -65,14 +65,16 @@ export const CTokenIcon = ({
 
 export const TokenWithLabel = ({
   address,
+  poolChainId,
   ...avatarProps
 }: {
   address: string;
+  poolChainId: number;
 } & Partial<AvatarProps>) => {
-  const { data: tokenData, isLoading } = useTokenData(address);
+  const { data: tokenData, isLoading } = useTokenData(address, poolChainId);
   const fallbackImage = useColorModeValue(
     '/images/help-circle-dark.svg',
-    "'/images/help-circle-light.svg'"
+    '/images/help-circle-light.svg'
   );
 
   return (

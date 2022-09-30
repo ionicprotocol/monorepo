@@ -19,7 +19,7 @@ export const Collateral = ({
   asset: MarketData;
   comptrollerAddress: string;
 }) => {
-  const { currentSdk, setPendingTxHash } = useMultiMidas();
+  const { currentSdk, setPendingTxHash, address } = useMultiMidas();
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -77,6 +77,7 @@ export const Collateral = ({
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}
         ml={4}
+        isDisabled={!address}
       />
     </Row>
   );
