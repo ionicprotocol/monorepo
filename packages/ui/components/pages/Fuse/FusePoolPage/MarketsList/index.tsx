@@ -305,7 +305,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.collateral,
         id: 'collateral',
         cell: ({ getValue }) => (
-          <Collateral asset={getValue<MarketData>()} comptrollerAddress={comptrollerAddress} />
+          <Collateral
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: () => (
           <Text py={2} variant="smText" fontWeight="bold">

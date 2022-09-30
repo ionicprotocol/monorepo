@@ -15,11 +15,13 @@ import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 export const Collateral = ({
   asset,
   comptrollerAddress,
+  poolChainId,
 }: {
   asset: MarketData;
   comptrollerAddress: string;
+  poolChainId: number;
 }) => {
-  const { currentSdk, setPendingTxHash, address } = useMultiMidas();
+  const { currentSdk, setPendingTxHash, currentChain } = useMultiMidas();
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -77,7 +79,7 @@ export const Collateral = ({
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}
         ml={4}
-        isDisabled={!address}
+        isDisabled={!currentChain || currentChain.unsupported || currentChain.id !== poolChainId}
       />
     </Row>
   );
