@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { Contract } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -12,7 +13,12 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
     async () => {
       if (!comptrollerAddress || !sdk) return;
 
-      const comptroller = sdk.createComptroller(comptrollerAddress);
+      const comptroller = new Contract(
+        comptrollerAddress,
+        sdk.chainDeployment.Comptroller.abi,
+        sdk.provider
+      );
+
       const [
         { 0: admin, 1: upgradeable },
         closeFactor,
