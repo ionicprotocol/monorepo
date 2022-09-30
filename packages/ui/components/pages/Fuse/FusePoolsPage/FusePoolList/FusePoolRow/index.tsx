@@ -334,10 +334,10 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
           </Text>
           <Grid
             templateColumns={{
-              base: 'repeat(1, 1fr)',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(2, 1fr)',
-              lg: 'repeat(5, 1fr)',
+              base: 'repeat(5, 1fr)',
+              sm: 'repeat(5, 1fr)',
+              md: 'repeat(10, 1fr)',
+              lg: 'repeat(10, 1fr)',
             }}
             gap={2}
           >
