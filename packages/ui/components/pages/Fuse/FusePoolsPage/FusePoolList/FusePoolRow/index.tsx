@@ -49,6 +49,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { CIconButton } from '@ui/components/shared/Button';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -67,6 +68,7 @@ export type PoolRowData = {
 
 export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   const enabledChains = useEnabledChains();
+  const { address } = useMultiMidas();
   const countsOf = useMemo(() => {
     const countsPerChain: { [key: string]: number } = {};
 
@@ -260,7 +262,9 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'poolName', desc: true }]);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
+  ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0],
