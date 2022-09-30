@@ -14,7 +14,7 @@ export const Assets = ({ pool }: { pool: FusePoolData }) => {
 
   return (
     <Link href={`/${pool.chainId}/pool/${pool.id}`} isExternal _hover={{ textDecoration: 'none' }}>
-      <VStack alignItems={'flex-start'} px={{ base: 2, lg: 4 }} py={4}>
+      <VStack alignItems={'flex-start'} px={{ base: 2, lg: 4 }} py={4} width="250px">
         {pool.underlyingTokens.length === 0 ? null : (
           <AvatarGroup size="sm" max={30}>
             {tokens.slice(0, 10).map((token, i) => (

@@ -45,7 +45,6 @@ const handler = async (
     await Promise.all(
       sdks.map(async (sdk) => {
         const pools = await sdk.fetchPoolsManual(validAddress ? { from: validAddress } : {});
-
         let visiblePools: FusePoolData[] = [];
         if (pools && pools.length !== 0) {
           type configKey = keyof typeof config;
@@ -65,8 +64,9 @@ const handler = async (
         allPools.push(...visiblePools);
       })
     );
-  } catch {
-    console.warn(`Unable to fetch pools data`);
+  } catch (e) {
+    console.error(`Unable to fetch pools data`);
+    console.error(e);
   }
 
   response.json({ chainPools, allPools });

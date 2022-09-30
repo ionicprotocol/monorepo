@@ -1,8 +1,8 @@
-import { AvatarGroup, Flex, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Link, Text, VStack } from '@chakra-ui/react';
 import { FusePoolData } from '@midas-capital/types';
-import * as React from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 
 export const PoolName = ({ pool }: { pool: FusePoolData }) => {
@@ -18,18 +18,20 @@ export const PoolName = ({ pool }: { pool: FusePoolData }) => {
         height="100%"
         px={{ base: 2, lg: 4 }}
       >
-        <Flex>
+        <SimpleTooltip label={pool.name} placement="top-start">
           <Text
             variant="lgText"
             fontWeight="bold"
             mt={rewardTokens.length ? 2 : 0}
             mr={2}
-            width="100%"
-            height="100%"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            textOverflow="ellipsis"
+            width="350px"
           >
             {pool.name}
           </Text>
-        </Flex>
+        </SimpleTooltip>
         {rewardTokens.length && (
           <HStack m={0}>
             <Text>This pool is offering rewards</Text>
