@@ -99,7 +99,9 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   };
 
   const poolSort: SortingFn<PoolRowData> = (rowA, rowB, columnId) => {
-    if (columnId === 'poolName') {
+    if (columnId === 'chain') {
+      return rowB.original.poolName.chainId > rowA.original.poolName.chainId ? 1 : -1;
+    } else if (columnId === 'poolName') {
       return rowB.original.poolName.name.localeCompare(rowA.original.poolName.name);
     } else if (columnId === 'supplyBalance') {
       return rowA.original.poolName.totalSupplyBalanceNative >
