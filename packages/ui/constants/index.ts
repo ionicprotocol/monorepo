@@ -77,6 +77,7 @@ export const aBNBcContractABI = [
 ];
 
 export const MARKETS_COUNT_PER_PAGE = [10, 20, 30, 50];
+export const POOLS_COUNT_PER_PAGE = [20, 30, 50];
 
 //Assets Filters
 export const REWARDS = 'Rewards';

@@ -46,9 +46,10 @@ import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/F
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/SupplyBalance';
 import { TotalBorrowed } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalBorrowed';
 import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupplied';
+import { MidasBox } from '@ui/components/shared/Box';
 import { CIconButton } from '@ui/components/shared/Button';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { MARKETS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
+import { POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
@@ -266,7 +267,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   const [sorting, setSorting] = useState<SortingState>([{ id: 'supplyBalance', desc: true }]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
-    pageSize: MARKETS_COUNT_PER_PAGE[0],
+    pageSize: POOLS_COUNT_PER_PAGE[0],
   });
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([
     ...enabledChains,
@@ -327,13 +328,14 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   };
 
   return (
-    <Box>
+    <MidasBox overflowX="auto" width="100%" mb="4">
       <Flex
         className="pagination"
         flexDirection={{ base: 'column', lg: 'row' }}
         gap={4}
         justifyContent="flex-end"
         alignItems="flex-end"
+        p={4}
       >
         <HStack>
           <Text variant="smText">Rows Per Page :</Text>
@@ -344,7 +346,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
             }}
             maxW="max-content"
           >
-            {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
+            {POOLS_COUNT_PER_PAGE.map((pageSize) => (
               <option key={pageSize} value={pageSize}>
                 {pageSize}
               </option>
@@ -386,7 +388,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
       <Flex
         justifyContent="space-between"
         px="4"
-        py="8"
+        py="4"
         flexDirection={{ base: 'column', sm: 'row' }}
         gap={4}
       >
@@ -520,7 +522,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
           )}
         </Tbody>
       </Table>
-    </Box>
+    </MidasBox>
   );
 };
 
