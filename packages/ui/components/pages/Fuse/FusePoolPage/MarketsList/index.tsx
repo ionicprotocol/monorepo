@@ -474,61 +474,6 @@ export const MarketsList = ({
             </SimpleTooltip>
           </HStack>
         </Flex>
-        <Flex
-          className="pagination"
-          flexDirection={{ base: 'column', lg: 'row' }}
-          gap={4}
-          justifyContent="flex-end"
-          alignItems="flex-end"
-        >
-          <HStack>
-            {!isMobile && <Text variant="smText">Rows Per Page :</Text>}
-            <Select
-              value={pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              maxW="max-content"
-            >
-              {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </Select>
-          </HStack>
-          <HStack gap={2}>
-            <Text variant="smText">
-              {table.getFilteredRowModel().rows.length === 0
-                ? 0
-                : pagination.pageIndex * pagination.pageSize + 1}{' '}
-              -{' '}
-              {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getFilteredRowModel().rows.length
-                ? table.getFilteredRowModel().rows.length
-                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getFilteredRowModel().rows.length}
-            </Text>
-            <HStack>
-              <CIconButton
-                variant="_outline"
-                aria-label="toPrevious"
-                icon={<ChevronLeftIcon fontSize={30} />}
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                isRound
-              />
-              <CIconButton
-                variant="_outline"
-                aria-label="toNext"
-                icon={<ChevronRightIcon fontSize={30} />}
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                isRound
-              />
-            </HStack>
-          </HStack>
-        </Flex>
       </Flex>
       <Flex
         justifyContent="space-between"
@@ -732,7 +677,7 @@ export const MarketsList = ({
                 <Tr
                   key={row.id}
                   borderColor={cCard.dividerColor}
-                  borderTopWidth={1}
+                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
                   onClick={() => row.toggleExpanded()}
@@ -783,6 +728,62 @@ export const MarketsList = ({
           )}
         </Tbody>
       </Table>
+      <Flex
+        className="pagination"
+        flexDirection={{ base: 'column', lg: 'row' }}
+        gap={4}
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        p={4}
+      >
+        <HStack>
+          {!isMobile && <Text variant="smText">Markets Per Page :</Text>}
+          <Select
+            value={pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            maxW="max-content"
+          >
+            {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+        <HStack gap={2}>
+          <Text variant="smText">
+            {table.getFilteredRowModel().rows.length === 0
+              ? 0
+              : pagination.pageIndex * pagination.pageSize + 1}{' '}
+            -{' '}
+            {(pagination.pageIndex + 1) * pagination.pageSize >
+            table.getFilteredRowModel().rows.length
+              ? table.getFilteredRowModel().rows.length
+              : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+            of {table.getFilteredRowModel().rows.length}
+          </Text>
+          <HStack>
+            <CIconButton
+              variant="_outline"
+              aria-label="toPrevious"
+              icon={<ChevronLeftIcon fontSize={30} />}
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              isRound
+            />
+            <CIconButton
+              variant="_outline"
+              aria-label="toNext"
+              icon={<ChevronRightIcon fontSize={30} />}
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              isRound
+            />
+          </HStack>
+        </HStack>
+      </Flex>
     </Box>
   );
 };

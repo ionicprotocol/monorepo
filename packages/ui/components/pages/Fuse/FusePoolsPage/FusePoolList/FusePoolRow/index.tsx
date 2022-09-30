@@ -321,65 +321,10 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
   return (
     <MidasBox overflowX="auto" width="100%" mb="4">
       <Flex
-        className="pagination"
-        flexDirection={{ base: 'column', lg: 'row' }}
-        gap={4}
-        justifyContent="flex-end"
-        alignItems="flex-end"
-        p={4}
-      >
-        <HStack>
-          <Text variant="smText">Rows Per Page :</Text>
-          <Select
-            value={pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
-            maxW="max-content"
-          >
-            {POOLS_COUNT_PER_PAGE.map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
-            ))}
-          </Select>
-        </HStack>
-        <HStack gap={2}>
-          <Text variant="smText">
-            {table.getFilteredRowModel().rows.length === 0
-              ? 0
-              : pagination.pageIndex * pagination.pageSize + 1}{' '}
-            -{' '}
-            {(pagination.pageIndex + 1) * pagination.pageSize >
-            table.getFilteredRowModel().rows.length
-              ? table.getFilteredRowModel().rows.length
-              : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-            of {table.getFilteredRowModel().rows.length}
-          </Text>
-          <HStack>
-            <CIconButton
-              variant="_outline"
-              aria-label="toPrevious"
-              icon={<ChevronLeftIcon fontSize={30} />}
-              onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
-              isRound
-            />
-            <CIconButton
-              variant="_outline"
-              aria-label="toNext"
-              icon={<ChevronRightIcon fontSize={30} />}
-              onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
-              isRound
-            />
-          </HStack>
-        </HStack>
-      </Flex>
-      <Flex
         justifyContent="space-between"
-        px="4"
-        py="4"
+        px={4}
+        pt={8}
+        pb={4}
         flexDirection={{ base: 'column', sm: 'row' }}
         gap={4}
       >
@@ -467,7 +412,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
                 <Tr
                   key={row.id}
                   borderColor={cCard.dividerColor}
-                  borderTopWidth={1}
+                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
                   cursor="pointer"
@@ -511,6 +456,62 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
           )}
         </Tbody>
       </Table>
+      <Flex
+        className="pagination"
+        flexDirection={{ base: 'column', lg: 'row' }}
+        gap={4}
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        p={4}
+      >
+        <HStack>
+          <Text variant="smText">Pools Per Page :</Text>
+          <Select
+            value={pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            maxW="max-content"
+          >
+            {POOLS_COUNT_PER_PAGE.map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+        <HStack gap={2}>
+          <Text variant="smText">
+            {table.getFilteredRowModel().rows.length === 0
+              ? 0
+              : pagination.pageIndex * pagination.pageSize + 1}{' '}
+            -{' '}
+            {(pagination.pageIndex + 1) * pagination.pageSize >
+            table.getFilteredRowModel().rows.length
+              ? table.getFilteredRowModel().rows.length
+              : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+            of {table.getFilteredRowModel().rows.length}
+          </Text>
+          <HStack>
+            <CIconButton
+              variant="_outline"
+              aria-label="toPrevious"
+              icon={<ChevronLeftIcon fontSize={30} />}
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              isRound
+            />
+            <CIconButton
+              variant="_outline"
+              aria-label="toNext"
+              icon={<ChevronRightIcon fontSize={30} />}
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              isRound
+            />
+          </HStack>
+        </HStack>
+      </Flex>
     </MidasBox>
   );
 };
