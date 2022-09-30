@@ -385,7 +385,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
       >
         <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
           <Text paddingTop="2px" variant="title">
-            Chains
+            Pools
           </Text>
           <Grid
             templateColumns={{

@@ -1,8 +1,10 @@
-import { SimpleGrid as Grid, Skeleton, Stack, Text } from '@chakra-ui/react';
+import { SimpleGrid as Grid, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 import { PoolsRowList } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import { AlertHero } from '@ui/components/shared/Alert';
+import { MidasBox } from '@ui/components/shared/Box';
+import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { useCrossFusePools } from '@ui/hooks/fuse/useFusePools';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
@@ -41,11 +43,9 @@ const FusePoolList = () => {
           )}
         </>
       ) : (
-        <Stack width="100%" mx="auto" mt={2}>
-          <Skeleton height="80px" borderRadius={12} />
-          <Skeleton height="80px" borderRadius={12} />
-          <Skeleton height="80px" borderRadius={12} />
-        </Stack>
+        <MidasBox overflowX="auto" width="100%" mb="4">
+          <TableSkeleton tableHeading="Pools" />
+        </MidasBox>
       )}
     </Grid>
   );
