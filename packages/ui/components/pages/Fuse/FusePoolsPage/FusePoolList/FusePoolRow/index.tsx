@@ -380,6 +380,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
                     px={header.column.id === 'chain' ? 0 : { base: 2, lg: 4 }}
                   >
                     <HStack
+                      spacing={header.column.id === 'assets' ? 0 : 1}
                       justifyContent={
                         header.column.id === 'chain' ||
                         header.column.id === 'poolName' ||

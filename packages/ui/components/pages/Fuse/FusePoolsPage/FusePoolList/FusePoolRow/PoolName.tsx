@@ -13,7 +13,7 @@ export const PoolName = ({ pool }: { pool: FusePoolData }) => {
       <VStack
         alignItems={'flex-start'}
         spacing={1}
-        ml={3}
+        ml={4}
         justifyContent="center"
         height="100%"
         px={{ base: 2, lg: 4 }}
