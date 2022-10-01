@@ -12,7 +12,7 @@ export const useIsComptrollerAdmin = (
   const { data: sdk } = useSdk(poolChainId);
 
   const { data } = useQuery(
-    ['isComptrollerAdmin', comptrollerAddress, sdk?.chainId],
+    ['isComptrollerAdmin', comptrollerAddress || '', sdk?.chainId || ''],
     async () => {
       if (!comptrollerAddress || !sdk) return undefined;
 

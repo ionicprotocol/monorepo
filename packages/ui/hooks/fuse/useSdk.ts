@@ -7,7 +7,7 @@ export const useSdk = (chainId?: number) => {
   const { getSdk } = useMultiMidas();
 
   return useQuery<MidasSdk | undefined>(
-    ['useSdk', chainId],
+    ['useSdk', chainId || ''],
     () => {
       if (chainId) {
         const sdk = getSdk(chainId);

@@ -102,7 +102,7 @@ export const useTokensDataAsMap = (addresses: string[] = []): TokensDataMap => {
   const { currentChain } = useMultiMidas();
 
   const { data: tokensData } = useQuery(
-    ['useTokensDataAsMap', addresses, currentChain?.id],
+    ['useTokensDataAsMap', addresses, currentChain?.id || ''],
     async () => {
       if (addresses && currentChain?.id) {
         return await fetchTokenData(addresses, currentChain.id);

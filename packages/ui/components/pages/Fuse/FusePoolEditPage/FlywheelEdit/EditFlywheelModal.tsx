@@ -47,7 +47,7 @@ const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string
   const { currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useRewardsInfo', flywheelAddress, marketAddress, currentSdk?.chainId],
+    ['useRewardsInfo', flywheelAddress, marketAddress || '', currentSdk?.chainId || ''],
     async () => {
       if (flywheelAddress && marketAddress && currentSdk) {
         return currentSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);

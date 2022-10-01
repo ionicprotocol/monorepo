@@ -10,10 +10,10 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
   const { data } = useQuery(
     [
       'useIsEditableAdmin',
-      comptrollerAddress,
-      poolInfo?.isPowerfulAdmin,
-      currentChain?.id,
-      poolChainId,
+      comptrollerAddress || '',
+      poolInfo?.isPowerfulAdmin || '',
+      currentChain?.id || '',
+      poolChainId || '',
     ],
     async () => {
       if (
@@ -28,7 +28,8 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!comptrollerAddress && !!poolInfo && !!currentChain && !!poolChainId,
+      enabled:
+        !!comptrollerAddress && !!poolInfo?.isPowerfulAdmin && !!currentChain?.id && !!poolChainId,
     }
   );
 

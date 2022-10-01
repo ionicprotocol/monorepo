@@ -19,7 +19,13 @@ export const useFusePools = (
   const isAllPools = filter === '';
 
   const { data: pools, ...queryResultRest } = useQuery(
-    ['useFusePools', currentChain?.id, filter, address, currentSdk?.chainId],
+    [
+      'useFusePools',
+      currentChain?.id || '',
+      filter || '',
+      address || '',
+      currentSdk?.chainId || '',
+    ],
     async () => {
       if (!currentChain || !currentSdk || !address) return;
 
@@ -84,7 +90,7 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address } = useMultiMidas();
 
   const { data, ...queryResultRest } = useQuery(
-    ['useCrossFusePools', chainIds, address],
+    ['useCrossFusePools', chainIds, address || ''],
     async () => {
       try {
         const res = await axios.post('/api/pools', {

@@ -30,13 +30,13 @@ const useUpdatedUserAssets = <T extends MarketData>({
   const { data: updatedAssets }: UseQueryResult<MarketData[]> = useQuery(
     [
       'useUpdatedUserAssets',
-      currentChain?.id,
+      currentChain?.id || '',
       mode,
       index,
-      assets?.map((a) => a.cToken),
+      assets?.map((a) => a.cToken) || '',
       amount,
-      usdPrice,
-      currentSdk?.chainId,
+      usdPrice || '',
+      currentSdk?.chainId || '',
     ],
     async () => {
       if (!assets || !assets.length || !usdPrice || !currentSdk) return [];

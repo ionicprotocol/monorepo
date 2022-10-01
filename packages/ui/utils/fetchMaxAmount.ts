@@ -9,7 +9,7 @@ import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
   const { currentSdk, address } = useMultiMidas();
   return useQuery(
-    ['useMaxAmount', asset.cToken, currentSdk?.chainId],
+    ['useMaxAmount', asset.cToken, currentSdk?.chainId || ''],
     async () => {
       if (currentSdk && address) {
         const bigNumber = await fetchMaxAmount(mode, currentSdk, address, asset);

@@ -9,7 +9,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
   const { data: sdk } = useSdk(poolChainId);
 
   return useQuery(
-    ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
+    ['useExtraPoolInfo', comptrollerAddress || '', sdk?.chainId || '', address || ''],
     async () => {
       if (!comptrollerAddress || !sdk) return;
 

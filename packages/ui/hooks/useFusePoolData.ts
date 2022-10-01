@@ -12,7 +12,7 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return useQuery<PoolData | undefined>(
-    ['useFusePoolData', poolId, address, sdk?.chainId],
+    ['useFusePoolData', poolId, address || '', sdk?.chainId || ''],
     async () => {
       if (!usdPrice || !sdk) return;
       const response = await sdk.fetchFusePoolData(poolId, { from: address });

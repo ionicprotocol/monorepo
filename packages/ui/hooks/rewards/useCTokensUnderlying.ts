@@ -7,7 +7,7 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
   const { currentSdk } = useMultiMidas();
 
   const { data: cTokensUnderlying } = useQuery(
-    ['useCTokensUnderlying', cTokenAddresses?.join(','), currentSdk?.chainId],
+    ['useCTokensUnderlying', cTokenAddresses?.join(','), currentSdk?.chainId || ''],
     async () => {
       const _map: CTokensUnderlyingMap = {};
       if (cTokenAddresses && cTokenAddresses.length && currentSdk) {

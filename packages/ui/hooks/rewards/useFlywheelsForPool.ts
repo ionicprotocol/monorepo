@@ -7,7 +7,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
   const { data: sdk } = useSdk(poolChainId);
 
   const queryResult = useQuery(
-    ['useFlywheelsForPool', sdk?.chainId, comptrollerAddress],
+    ['useFlywheelsForPool', sdk?.chainId || '', comptrollerAddress || ''],
     async () => {
       if (!comptrollerAddress || !sdk) return [];
 

@@ -6,7 +6,7 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
   const { currentSdk, currentChain } = useMultiMidas();
 
   const { data } = useQuery(
-    ['useIsUpgradeable', currentChain?.id, comptrollerAddress, currentSdk?.chainId],
+    ['useIsUpgradeable', currentChain?.id || '', comptrollerAddress, currentSdk?.chainId || ''],
     async () => {
       if (currentSdk) {
         const comptroller = currentSdk.createComptroller(comptrollerAddress);

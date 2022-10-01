@@ -7,7 +7,7 @@ export function useChartData(market: string, poolChainId: number) {
   const { data: sdk } = useSdk(poolChainId);
 
   return useQuery(
-    ['useChartData', market, sdk?.chainId],
+    ['useChartData', market, sdk?.chainId || ''],
     async () => {
       if (sdk) {
         const interestRateModel = await sdk.getInterestRateModel(market);
