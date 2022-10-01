@@ -21,13 +21,7 @@ export const useFusePools = (
   const isAllPools = filter === '';
 
   const { data: pools, ...queryResultRest } = useQuery(
-    [
-      'useFusePools',
-      currentChain?.id || '',
-      filter || '',
-      address || '',
-      currentSdk?.chainId || '',
-    ],
+    ['useFusePools', currentChain?.id, filter, address, currentSdk?.chainId],
     async () => {
       if (!currentChain || !currentSdk || !address) return;
 
@@ -91,9 +85,8 @@ export const useFusePools = (
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address } = useMultiMidas();
   const { data: prices } = useUSDPrices(chainIds);
-
   const { data, ...queryResultRest } = useQuery(
-    ['useCrossFusePools', chainIds, address || '', prices || ''],
+    ['useCrossFusePools', chainIds, address, prices],
     async () => {
       if (prices) {
         try {

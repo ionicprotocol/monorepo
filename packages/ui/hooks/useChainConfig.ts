@@ -2,11 +2,15 @@ import { useMemo } from 'react';
 
 import { getChainConfig, getEnabledChains } from '@ui/utils/networkData';
 
-export function useCgId(chainId: number) {
+export function useCgId(chainId?: number) {
   return useMemo(() => {
-    const chainConfig = getChainConfig(chainId);
+    if (chainId) {
+      const chainConfig = getChainConfig(chainId);
 
-    return chainConfig ? chainConfig.specificParams.cgId : '';
+      return chainConfig ? chainConfig.specificParams.cgId : '';
+    } else {
+      return '';
+    }
   }, [chainId]);
 }
 

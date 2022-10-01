@@ -132,7 +132,7 @@ const AmountSelect = ({
   } = useBorrowMinimum(asset, poolChainId);
 
   const { data: amountIsValid } = useQuery(
-    ['ValidAmount', mode, amount, minBorrowAsset || '', currentSdk.chainId, address || ''],
+    ['ValidAmount', mode, amount, minBorrowAsset, currentSdk.chainId, address],
     async () => {
       if (!currentSdk || !address) return;
 

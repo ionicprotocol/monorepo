@@ -8,7 +8,7 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
   const sdk = useMemo(() => getSdk(poolChainId), [poolChainId, getSdk]);
 
   return useQuery(
-    ['usePluginInfo', pluginAddress || '', sdk?.chainId || ''],
+    ['usePluginInfo', pluginAddress, sdk?.chainId],
     () => {
       if (sdk) {
         return pluginAddress && sdk.deployedPlugins[pluginAddress]

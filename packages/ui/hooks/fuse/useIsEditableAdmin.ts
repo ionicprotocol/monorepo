@@ -10,10 +10,10 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
   const { data } = useQuery(
     [
       'useIsEditableAdmin',
-      comptrollerAddress || '',
-      poolInfo?.isPowerfulAdmin || '',
-      currentChain?.id || '',
-      poolChainId || '',
+      comptrollerAddress,
+      poolInfo?.isPowerfulAdmin,
+      currentChain?.id,
+      poolChainId,
     ],
     async () => {
       if (

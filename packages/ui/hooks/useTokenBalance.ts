@@ -30,13 +30,7 @@ export function useTokenBalance(tokenAddress: string, customAddress?: string) {
   const addressToCheck = customAddress ?? address;
 
   return useQuery(
-    [
-      'TokenBalance',
-      currentChain?.id || '',
-      tokenAddress,
-      addressToCheck || '',
-      currentSdk?.chainId || '',
-    ],
+    ['TokenBalance', currentChain?.id, tokenAddress, addressToCheck, currentSdk?.chainId],
     () => currentSdk && fetchTokenBalance(tokenAddress, currentSdk, addressToCheck),
     {
       cacheTime: Infinity,

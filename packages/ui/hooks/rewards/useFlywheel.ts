@@ -7,7 +7,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
   const { currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useFlywheel', currentSdk?.chainId || '', flywheelAddress || ''],
+    ['useFlywheel', currentSdk?.chainId, flywheelAddress],
     async () => {
       if (!flywheelAddress || !currentSdk) return undefined;
 

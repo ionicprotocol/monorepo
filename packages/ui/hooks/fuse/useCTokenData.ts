@@ -11,7 +11,7 @@ export const useCTokenData = (
   const { data: sdk } = useSdk(poolChainId);
 
   const { data } = useQuery(
-    ['CTokenData', cTokenAddress || '', comptrollerAddress || '', sdk?.chainId || ''],
+    ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
     async () => {
       if (comptrollerAddress && cTokenAddress && sdk) {
         const comptroller = getComptrollerContract(comptrollerAddress, sdk);

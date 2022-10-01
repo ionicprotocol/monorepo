@@ -7,7 +7,7 @@ export const useFlywheelRewardsForPool = (poolAddress?: string) => {
   const { currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useFlywheelRewardsForPool', currentSdk?.chainId || '', poolAddress || ''],
+    ['useFlywheelRewardsForPool', currentSdk?.chainId, poolAddress],
     async () => {
       if (!poolAddress || !currentSdk) return undefined;
 

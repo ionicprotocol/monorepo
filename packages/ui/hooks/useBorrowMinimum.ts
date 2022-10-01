@@ -13,7 +13,7 @@ export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const response = useQuery(
-    [`useBorrowMinimum`, currentSdk?.chainId || ''],
+    [`useBorrowMinimum`, currentSdk?.chainId],
     async () => currentSdk && currentSdk.contracts.FuseFeeDistributor.callStatic.minBorrowEth(),
     {
       cacheTime: Infinity,

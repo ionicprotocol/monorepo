@@ -7,7 +7,7 @@ export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number
   const { data: sdk } = useSdk(poolChainId);
 
   const { data } = useQuery(
-    ['useIsUpgradeable', comptrollerAddress, sdk?.chainId || ''],
+    ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
     async () => {
       if (sdk) {
         const comptroller = getComptrollerContract(comptrollerAddress, sdk);
