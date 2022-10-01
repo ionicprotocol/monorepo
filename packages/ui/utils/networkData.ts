@@ -53,9 +53,6 @@ export function getEnabledChains() {
   if (config.isMoonbeamEnabled) {
     enabledChains.push(SupportedChains.moonbeam);
   }
-  if (config.isDevelopment) {
-    enabledChains.push(SupportedChains.chapel);
-  }
 
   return enabledChains.sort();
 }
