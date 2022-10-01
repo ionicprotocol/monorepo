@@ -1,6 +1,6 @@
 import { FusePoolData, SupportedAsset } from '@midas-capital/types';
 
-import { MarketData } from '@ui/types/TokensDataMap';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const sortAssets = (assets: MarketData[]) => {
   return assets.sort((a, b) => {
@@ -29,7 +29,7 @@ export const poolSort = (pools: FusePoolData[]) => {
   });
 };
 
-export const poolSortByAddress = (pools: FusePoolData[]) => {
+export const poolSortByAddress = (pools: PoolData[]) => {
   return pools.sort((a, b) => {
     return a.comptroller.localeCompare(b.comptroller);
   });

@@ -1,11 +1,11 @@
 import { AvatarGroup, HStack, Link, Text, VStack } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/types';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
+import { PoolData } from '@ui/types/TokensDataMap';
 
-export const PoolName = ({ pool }: { pool: FusePoolData }) => {
+export const PoolName = ({ pool }: { pool: PoolData }) => {
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
 
   return (

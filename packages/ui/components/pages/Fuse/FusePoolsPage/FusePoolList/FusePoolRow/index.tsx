@@ -18,7 +18,7 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { FusePoolData, SupportedChains } from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import {
   ColumnDef,
   FilterFn,
@@ -54,19 +54,20 @@ import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
 
 export type PoolRowData = {
-  chain: FusePoolData;
-  poolName: FusePoolData;
-  assets: FusePoolData;
-  supplyBalance: FusePoolData;
-  borrowBalance: FusePoolData;
-  totalSupplied: FusePoolData;
-  totalBorrowed: FusePoolData;
+  chain: PoolData;
+  poolName: PoolData;
+  assets: PoolData;
+  supplyBalance: PoolData;
+  borrowBalance: PoolData;
+  totalSupplied: PoolData;
+  totalBorrowed: PoolData;
 };
 
-export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
+export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
   const enabledChains = useEnabledChains();
   const { address } = useMultiMidas();
   const countsOf = useMemo(() => {
@@ -104,21 +105,21 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
     } else if (columnId === 'poolName') {
       return rowB.original.poolName.name.localeCompare(rowA.original.poolName.name);
     } else if (columnId === 'supplyBalance') {
-      return rowA.original.poolName.totalSupplyBalanceNative >
-        rowB.original.poolName.totalSupplyBalanceNative
+      return rowA.original.poolName.totalSupplyBalanceFiat >
+        rowB.original.poolName.totalSupplyBalanceFiat
         ? 1
         : -1;
     } else if (columnId === 'borrowBalance') {
-      return rowA.original.poolName.totalBorrowBalanceNative >
-        rowB.original.poolName.totalBorrowBalanceNative
+      return rowA.original.poolName.totalBorrowBalanceFiat >
+        rowB.original.poolName.totalBorrowBalanceFiat
         ? 1
         : -1;
     } else if (columnId === 'totalSupplied') {
-      return rowA.original.poolName.totalSuppliedNative > rowB.original.poolName.totalSuppliedNative
+      return rowA.original.poolName.totalSuppliedFiat > rowB.original.poolName.totalSuppliedFiat
         ? 1
         : -1;
     } else if (columnId === 'totalBorrowed') {
-      return rowA.original.poolName.totalBorrowedNative > rowB.original.poolName.totalBorrowedNative
+      return rowA.original.poolName.totalBorrowedFiat > rowB.original.poolName.totalBorrowedFiat
         ? 1
         : -1;
     } else {
@@ -149,7 +150,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
             Chain
           </Text>
         ),
-        cell: ({ getValue }) => <Chain pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <Chain pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         filterFn: poolFilter,
         sortingFn: poolSort,
@@ -161,14 +162,14 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
             Pool Name
           </Text>
         ),
-        cell: ({ getValue }) => <PoolName pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
       {
         accessorFn: (row) => row.assets,
         id: 'assets',
-        cell: ({ getValue }) => <Assets pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <Assets pool={getValue<PoolData>()} />,
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
             <Text variant="smText" fontWeight="bold" lineHeight={6}>
@@ -182,7 +183,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
       {
         accessorFn: (row) => row.supplyBalance,
         id: 'supplyBalance',
-        cell: ({ getValue }) => <SupplyBalance pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -199,7 +200,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
       {
         accessorFn: (row) => row.borrowBalance,
         id: 'borrowBalance',
-        cell: ({ getValue }) => <BorrowBalance pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -216,7 +217,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
       {
         accessorFn: (row) => row.totalSupplied,
         id: 'totalSupplied',
-        cell: ({ getValue }) => <TotalSupplied pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <TotalSupplied pool={getValue<PoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -233,7 +234,7 @@ export const PoolsRowList = ({ allPools }: { allPools: FusePoolData[] }) => {
       {
         accessorFn: (row) => row.totalBorrowed,
         id: 'totalBorrowed',
-        cell: ({ getValue }) => <TotalBorrowed pool={getValue<FusePoolData>()} />,
+        cell: ({ getValue }) => <TotalBorrowed pool={getValue<PoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>

@@ -6,7 +6,9 @@ import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useUSDPrices } from '@ui/hooks/useUSDPrices';
 import { FusePoolsPerChain } from '@ui/types/ChainMetaData';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { poolSort } from '@ui/utils/sorts';
 
 // returns impersonal data about fuse pools ( can filter by your supplied/created pools )
@@ -88,28 +90,73 @@ export const useFusePools = (
 
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address } = useMultiMidas();
+  const { data: prices } = useUSDPrices(chainIds);
 
   const { data, ...queryResultRest } = useQuery(
-    ['useCrossFusePools', chainIds, address || ''],
+    ['useCrossFusePools', chainIds, address || '', prices || ''],
     async () => {
-      try {
-        const res = await axios.post('/api/pools', {
-          chains: chainIds,
-          address,
-        });
+      if (prices) {
+        try {
+          const res = await axios.post('/api/pools', {
+            chains: chainIds,
+            address,
+          });
 
-        return {
-          allPools: res.data.allPools as FusePoolData[],
-          chainPools: res.data.chainPools as FusePoolsPerChain,
-        };
-      } catch (e) {
-        console.error(e);
+          const _allPools = res.data.allPools as FusePoolData[];
 
-        return undefined;
+          const allPools: PoolData[] = await Promise.all(
+            _allPools.map((pool) => {
+              const assetsWithPrice: MarketData[] = [];
+              const { assets } = pool;
+
+              if (assets && assets.length !== 0) {
+                assets.map((asset) => {
+                  assetsWithPrice.push({
+                    ...asset,
+                    supplyBalanceFiat:
+                      asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
+                    borrowBalanceFiat:
+                      asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
+                    totalSupplyFiat:
+                      asset.totalSupplyNative * prices[pool.chainId.toString()].value,
+                    totalBorrowFiat:
+                      asset.totalBorrowNative * prices[pool.chainId.toString()].value,
+                    liquidityFiat: asset.liquidityNative * prices[pool.chainId.toString()].value,
+                  });
+                });
+              }
+              const adaptedFusePoolData: PoolData = {
+                ...pool,
+                assets: assetsWithPrice,
+                totalLiquidityFiat:
+                  pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
+                totalAvailableLiquidityFiat:
+                  pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
+                totalSuppliedFiat: pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
+                totalBorrowedFiat: pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
+                totalSupplyBalanceFiat:
+                  pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
+                totalBorrowBalanceFiat:
+                  pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
+              };
+
+              return adaptedFusePoolData;
+            })
+          );
+
+          return {
+            allPools: allPools as PoolData[],
+            chainPools: res.data.chainPools as FusePoolsPerChain,
+          };
+        } catch (e) {
+          console.error(e);
+
+          return undefined;
+        }
       }
     },
     {
-      enabled: chainIds.length !== 0,
+      enabled: chainIds.length !== 0 && !!prices,
     }
   );
 

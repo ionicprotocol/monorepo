@@ -1,10 +1,10 @@
 import { AvatarGroup, Link, VStack } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/types';
 import { useMemo } from 'react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { PoolData } from '@ui/types/TokensDataMap';
 
-export const Assets = ({ pool }: { pool: FusePoolData }) => {
+export const Assets = ({ pool }: { pool: PoolData }) => {
   const tokens = useMemo(() => {
     return pool.underlyingTokens.map((address, index) => ({
       address,

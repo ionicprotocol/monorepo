@@ -7,12 +7,10 @@ import {
   GridItem,
   HStack,
   Link,
-  Spinner,
   Text,
   useClipboard,
   VStack,
 } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -25,12 +23,13 @@ import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { PoolData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId, getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
-  const pool: FusePoolData = row.original.poolName;
+  const pool: PoolData = row.original.poolName;
   const { getSdk, address } = useMultiMidas();
   const cgId = useCgId(pool.chainId);
   const { data: usdPrice } = useUSDPrice(cgId);
@@ -62,18 +61,6 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
         .toFixed(2);
     }
   }, [sdk, poolDetails]);
-
-  const supplyBalance = useMemo(() => {
-    if (address && usdPrice) {
-      return pool.totalSupplyBalanceNative * usdPrice;
-    }
-  }, [address, pool, usdPrice]);
-
-  const borrowBalance = useMemo(() => {
-    if (address && usdPrice) {
-      return pool.totalBorrowBalanceNative * usdPrice;
-    }
-  }, [address, pool, usdPrice]);
 
   useEffect(() => {
     if (copiedText) {
@@ -113,42 +100,38 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               <Text variant="smText" textAlign="center">
                 Your Supply Balance
               </Text>
-              {supplyBalance !== undefined ? (
-                <SimpleTooltip label={`$${supplyBalance.toString()}`}>
+              {address ? (
+                <SimpleTooltip label={`$${pool.totalSupplyBalanceFiat.toString()}`}>
                   <Text variant="smText" textAlign="center">
-                    {smallUsdFormatter(supplyBalance)}
-                    {supplyBalance > 0 && supplyBalance < 0.01 && '+'}
+                    {smallUsdFormatter(pool.totalSupplyBalanceFiat)}
+                    {pool.totalSupplyBalanceFiat > 0 && pool.totalSupplyBalanceFiat < 0.01 && '+'}
                   </Text>
                 </SimpleTooltip>
-              ) : usdPrice ? (
+              ) : (
                 <SimpleTooltip label="Connect your wallet">
                   <Text variant="smText" fontWeight="bold" textAlign="center">
                     -
                   </Text>
                 </SimpleTooltip>
-              ) : (
-                <Spinner />
               )}
             </VStack>
             <VStack>
               <Text variant="smText" textAlign="center">
                 Your Borrow Balance
               </Text>
-              {borrowBalance !== undefined ? (
-                <SimpleTooltip label={`$${borrowBalance.toString()}`}>
+              {address ? (
+                <SimpleTooltip label={`$${pool.totalBorrowBalanceFiat.toString()}`}>
                   <Text variant="smText" textAlign="center">
-                    {smallUsdFormatter(borrowBalance)}
-                    {borrowBalance > 0 && borrowBalance < 0.01 && '+'}
+                    {smallUsdFormatter(pool.totalBorrowBalanceFiat)}
+                    {pool.totalBorrowBalanceFiat > 0 && pool.totalBorrowBalanceFiat < 0.01 && '+'}
                   </Text>
                 </SimpleTooltip>
-              ) : usdPrice ? (
+              ) : (
                 <SimpleTooltip label="Connect your wallet">
                   <Text variant="smText" fontWeight="bold" textAlign="center">
                     -
                   </Text>
                 </SimpleTooltip>
-              ) : (
-                <Spinner />
               )}
             </VStack>
           </Grid>

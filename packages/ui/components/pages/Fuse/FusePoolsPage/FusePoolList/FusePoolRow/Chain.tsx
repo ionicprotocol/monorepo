@@ -1,10 +1,10 @@
 import { HStack, Img, Link } from '@chakra-ui/react';
-import { FusePoolData } from '@midas-capital/types';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
+import { PoolData } from '@ui/types/TokensDataMap';
 
-export const Chain = ({ pool }: { pool: FusePoolData }) => {
+export const Chain = ({ pool }: { pool: PoolData }) => {
   const chainConfig = useChainConfig(pool.chainId);
 
   return (
