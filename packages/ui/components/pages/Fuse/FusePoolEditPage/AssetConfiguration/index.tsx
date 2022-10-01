@@ -9,6 +9,7 @@ import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 
 const AssetConfiguration = ({
   openAddAssetModal,
@@ -23,6 +24,7 @@ const AssetConfiguration = ({
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   useEffect(() => {
     setSelectedAsset(assets[selectedIndex]);
@@ -45,6 +47,7 @@ const AssetConfiguration = ({
           <AddAssetButton
             comptrollerAddress={comptrollerAddress}
             openAddAssetModal={openAddAssetModal}
+            poolChainId={poolChainId}
           />
         </Box>
       </ConfigRow>
@@ -67,6 +70,7 @@ const AssetConfiguration = ({
                     setSelectedIndex(index);
                   }}
                   px={2}
+                  isDisabled={!isEditableAdmin}
                 >
                   <CTokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
                   <Center px={1} fontWeight="bold">

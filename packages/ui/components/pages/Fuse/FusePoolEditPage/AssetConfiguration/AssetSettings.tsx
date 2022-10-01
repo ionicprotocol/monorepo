@@ -44,6 +44,9 @@ import {
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -103,15 +106,15 @@ export const AssetSettings = ({
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { currentSdk, setPendingTxHash } = useMultiMidas();
-
-  if (!currentSdk) throw new Error("SDK doesn't exist!");
+  const { data: sdk } = useSdk(poolChainId);
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect, cSwitch } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-
+  const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const {
     control,
     handleSubmit,
@@ -124,7 +127,7 @@ export const AssetSettings = ({
       collateralFactor: COLLATERAL_FACTOR.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
-      interestRateModel: currentSdk.chainDeployment.JumpRateModel.address,
+      interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
     },
   });
 
@@ -133,12 +136,12 @@ export const AssetSettings = ({
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
   const watchInterestRateModel = watch(
     'interestRateModel',
-    currentSdk.chainDeployment.JumpRateModel.address
+    sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
-  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
+  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   useEffect(() => {
     if (cTokenData) {
       setValue(
@@ -152,7 +155,7 @@ export const AssetSettings = ({
   }, [cTokenData, setValue]);
 
   const updateCollateralFactor = async ({ collateralFactor }: { collateralFactor: number }) => {
-    if (!cTokenAddress) return;
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
     const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
@@ -187,6 +190,7 @@ export const AssetSettings = ({
   };
 
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
     const cToken = currentSdk.createCToken(cTokenAddress || '');
 
@@ -214,6 +218,7 @@ export const AssetSettings = ({
   };
 
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
     const cToken = currentSdk.createCToken(cTokenAddress || '');
 
@@ -241,6 +246,7 @@ export const AssetSettings = ({
   };
 
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
     const cToken = currentSdk.createCToken(cTokenAddress || '');
 
@@ -265,10 +271,7 @@ export const AssetSettings = ({
   };
 
   const setBorrowingStatus = async () => {
-    if (!cTokenAddress) {
-      console.warn('No cTokenAddress');
-      return;
-    }
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
 
     const comptroller = currentSdk.createComptroller(comptrollerAddress);
@@ -351,6 +354,7 @@ export const AssetSettings = ({
                 isChecked={!isPaused}
                 onChange={setBorrowingStatus}
                 className="switch-borrowing"
+                isDisabled={!isEditableAdmin}
               />
             </Row>
           </Flex>
@@ -412,6 +416,9 @@ export const AssetSettings = ({
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        poolChainId={poolChainId}
+                        isEditPool={true}
+                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
                       />
                     )}
                   />
@@ -497,6 +504,9 @@ export const AssetSettings = ({
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        poolChainId={poolChainId}
+                        isEditPool={true}
+                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
                       />
                     )}
                   />
@@ -574,6 +584,9 @@ export const AssetSettings = ({
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        poolChainId={poolChainId}
+                        isEditPool={true}
+                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
                       />
                     )}
                   />
@@ -682,15 +695,16 @@ export const AssetSettings = ({
                       ml="auto"
                       cursor="pointer"
                       mt={{ base: 2, sm: 0 }}
+                      isDisabled={!isEditableAdmin}
                     >
                       <option
-                        value={currentSdk.chainDeployment.JumpRateModel.address}
+                        value={sdk ? sdk.chainDeployment.JumpRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
                       >
                         JumpRateModel
                       </option>
                       <option
-                        value={currentSdk.chainDeployment.WhitePaperInterestRateModel.address}
+                        value={sdk ? sdk.chainDeployment.WhitePaperInterestRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
                       >
                         WhitePaperInterestRateModel
@@ -725,9 +739,14 @@ export const AssetSettings = ({
             adminFee={watchAdminFee}
             reserveFactor={watchReserveFactor}
             interestRateModelAddress={watchInterestRateModel}
+            poolChainId={poolChainId}
           />
           <ConfigRow>
-            <RemoveAssetButton comptrollerAddress={comptrollerAddress} asset={selectedAsset} />
+            <RemoveAssetButton
+              comptrollerAddress={comptrollerAddress}
+              asset={selectedAsset}
+              poolChainId={poolChainId}
+            />
           </ConfigRow>
         </>
       )}

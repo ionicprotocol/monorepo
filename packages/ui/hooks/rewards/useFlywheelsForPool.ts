@@ -1,17 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
-export const useFlywheelsForPool = (comptrollerAddress?: string) => {
-  const { currentSdk } = useMultiMidas();
+export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: number) => {
+  const { data: sdk } = useSdk(poolChainId);
 
   const queryResult = useQuery(
-    ['useFlywheelsForPool', currentSdk?.chainId, comptrollerAddress],
+    ['useFlywheelsForPool', sdk?.chainId, comptrollerAddress],
     async () => {
-      if (!comptrollerAddress || !currentSdk) return [];
+      if (!comptrollerAddress || !sdk) return [];
 
-      const flywheelCores = await currentSdk.getFlywheelsByPool(comptrollerAddress);
+      const flywheelCores = await sdk.getFlywheelsByPool(comptrollerAddress);
 
       if (!flywheelCores.length) return [];
 
@@ -41,7 +41,7 @@ export const useFlywheelsForPool = (comptrollerAddress?: string) => {
     },
     {
       initialData: [],
-      enabled: !!comptrollerAddress && !!currentSdk,
+      enabled: !!comptrollerAddress && !!sdk,
     }
   );
   return queryResult;

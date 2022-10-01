@@ -15,7 +15,7 @@ const EditAssetSettings = ({
   selectedAsset: NativePricedFuseAsset;
   poolChainId: number;
 }) => {
-  const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken);
+  const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken, poolChainId);
   if (isLoading) {
     return (
       <Center width="100%" height="100%">

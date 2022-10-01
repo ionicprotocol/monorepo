@@ -21,7 +21,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
-import { Contract, utils } from 'ethers';
+import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
@@ -37,6 +37,7 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { getRewardTokenContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { shortAddress } from '@ui/utils/shortAddress';
@@ -113,11 +114,7 @@ const EditFlywheelModal = ({
   const fund = useCallback(async () => {
     if (!currentSdk) return;
 
-    const token = new Contract(
-      flywheel.rewardToken,
-      currentSdk.artifacts.EIP20Interface.abi,
-      currentSdk.signer
-    );
+    const token = getRewardTokenContract(flywheel.rewardToken, currentSdk);
 
     setTransactionPending(true);
     try {

@@ -2,7 +2,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons';
 import { Flex, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 
 import AssetConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration';
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
@@ -16,6 +16,8 @@ import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
@@ -30,15 +32,23 @@ const FusePoolEditPage = memo(() => {
     onClose: closeAddAssetModal,
   } = useDisclosure();
 
-  const { setGlobalLoading, currentSdk } = useMultiMidas();
+  const { setGlobalLoading } = useMultiMidas();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const poolChainId = router.query.poolChainId as string;
+  const poolChainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(poolChainId));
-  const { data: usdPrice } = useUSDPrice(currentSdk?.chainSpecificParams.cgId || '');
-  const isAdmin = useIsComptrollerAdmin(data?.comptroller);
+  const cg = useCgId(Number(poolChainId));
+  const { data: usdPrice } = useUSDPrice(cg || '');
+  const isAdmin = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
+  const isEditableAdmin = useIsEditableAdmin(data?.comptroller, Number(poolChainId));
   const { cPage } = useColors();
+
+  useEffect(() => {
+    if (!isEditableAdmin) {
+      closeAddAssetModal();
+    }
+  }, [isEditableAdmin, closeAddAssetModal]);
 
   if (!data || !usdPrice) {
     return (
@@ -132,6 +142,7 @@ const FusePoolEditPage = memo(() => {
                     <AddAssetButton
                       comptrollerAddress={data.comptroller}
                       openAddAssetModal={openAddAssetModal}
+                      poolChainId={data.chainId}
                     />
                   </Column>
                 )}

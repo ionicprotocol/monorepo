@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -13,17 +14,20 @@ import { handleGenericError } from '@ui/utils/errorHandling';
 const RemoveAssetButton = ({
   comptrollerAddress,
   asset,
+  poolChainId,
 }: {
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
+  poolChainId: number;
 }) => {
   const { currentSdk } = useMultiMidas();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
-  const isUpgradeable = useIsUpgradeable(comptrollerAddress);
+  const isUpgradeable = useIsUpgradeable(comptrollerAddress, poolChainId);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const queryClient = useQueryClient();
   const [isRemoving, setIsRemoving] = useState(false);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   const removeAsset = () => {
     onClose();
@@ -64,7 +68,7 @@ const RemoveAssetButton = ({
 
   return isUpgradeable ? (
     <Box ml="auto">
-      <Button ml={2} onClick={onOpen} isLoading={isRemoving}>
+      <Button ml={2} onClick={onOpen} isLoading={isRemoving} isDisabled={!isEditableAdmin}>
         Remove {asset.underlyingSymbol}
       </Button>
       <ConfirmDeleteAlert

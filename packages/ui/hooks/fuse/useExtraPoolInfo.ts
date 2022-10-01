@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
-import { Contract } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { getComptrollerContract } from '@ui/utils/contracts';
 
 export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: number) => {
   const { address } = useMultiMidas();
@@ -13,11 +13,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
     async () => {
       if (!comptrollerAddress || !sdk) return;
 
-      const comptroller = new Contract(
-        comptrollerAddress,
-        sdk.chainDeployment.Comptroller.abi,
-        sdk.provider
-      );
+      const comptroller = getComptrollerContract(comptrollerAddress, sdk);
 
       const [
         { 0: admin, 1: upgradeable },

@@ -1,17 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { getComptrollerContract, getCTokenContract } from '@ui/utils/contracts';
 
-export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
-  const { currentSdk } = useMultiMidas();
+export const useCTokenData = (
+  comptrollerAddress?: string,
+  cTokenAddress?: string,
+  poolChainId?: number
+) => {
+  const { data: sdk } = useSdk(poolChainId);
 
   const { data } = useQuery(
-    ['CTokenData', cTokenAddress, comptrollerAddress, currentSdk?.chainId],
+    ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
     async () => {
-      if (comptrollerAddress && cTokenAddress && currentSdk) {
-        const comptroller = currentSdk.createComptroller(comptrollerAddress);
-        const cToken = currentSdk.createCToken(cTokenAddress);
-
+      if (comptrollerAddress && cTokenAddress && sdk) {
+        const comptroller = getComptrollerContract(comptrollerAddress, sdk);
+        const cToken = getCTokenContract(cTokenAddress, sdk);
         const [
           adminFeeMantissa,
           reserveFactorMantissa,
@@ -37,7 +41,7 @@ export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: strin
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!cTokenAddress && !!comptrollerAddress && !!currentSdk,
+      enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
     }
   );
 

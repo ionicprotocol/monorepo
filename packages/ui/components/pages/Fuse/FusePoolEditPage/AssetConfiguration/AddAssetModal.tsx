@@ -133,6 +133,7 @@ const AddAsset = ({
           onSuccess={onSuccess}
           poolName={poolName}
           poolID={poolID}
+          poolChainId={poolChainId}
         />
       ) : (
         <>

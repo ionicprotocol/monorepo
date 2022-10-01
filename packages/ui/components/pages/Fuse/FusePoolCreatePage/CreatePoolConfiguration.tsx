@@ -51,7 +51,7 @@ export const CreatePoolConfiguration = () => {
 
   const { currentSdk, currentChain, address } = useMultiMidas();
   const router = useRouter();
-
+  const chainId = router.query.chainId as string;
   const [isCreating, setIsCreating] = useState(false);
 
   const { cCard, cSolidBtn, cSwitch } = useColors();
@@ -294,6 +294,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      poolChainId={Number(chainId)}
                     />
                   )}
                 />
@@ -342,6 +343,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      poolChainId={Number(chainId)}
                     />
                   )}
                 />

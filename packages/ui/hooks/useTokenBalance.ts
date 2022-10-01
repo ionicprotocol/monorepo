@@ -1,10 +1,9 @@
-import { Web3Provider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber, Contract } from 'ethers';
-import { erc20ABI } from 'wagmi';
+import { BigNumber } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { getCTokenContract } from '@ui/utils/contracts';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
@@ -18,7 +17,7 @@ export const fetchTokenBalance = async (
   } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
     balance = await currentSdk.provider.getBalance(address);
   } else {
-    const contract = new Contract(tokenAddress, erc20ABI, currentSdk.provider as Web3Provider);
+    const contract = getCTokenContract(tokenAddress, currentSdk);
     balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
   }
 

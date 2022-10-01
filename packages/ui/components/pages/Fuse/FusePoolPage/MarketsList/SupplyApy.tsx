@@ -1,17 +1,17 @@
 import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import { Web3Provider } from '@ethersproject/providers';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
-import { Contract, utils } from 'ethers';
+import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
-import { aBNBcContractABI, aBNBcContractAddress, aprDays } from '@ui/constants/index';
+import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter } from '@ui/utils/bigUtils';
+import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const SupplyApy = ({
@@ -46,11 +46,7 @@ export const SupplyApy = ({
   useEffect(() => {
     const func = async () => {
       if (sdk) {
-        const contract = new Contract(
-          aBNBcContractAddress,
-          aBNBcContractABI,
-          sdk.provider as Web3Provider
-        );
+        const contract = getABNBcContract(sdk);
 
         const apr = await contract.callStatic.averagePercentageRate(aprDays);
         setaBNBcApr(utils.formatUnits(apr));

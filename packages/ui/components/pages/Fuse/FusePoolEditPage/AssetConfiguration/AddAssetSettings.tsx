@@ -31,6 +31,7 @@ import {
   RESERVE_FACTOR,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
@@ -57,18 +58,21 @@ export const AddAssetSettings = ({
   poolID,
   poolName,
   tokenData,
+  poolChainId,
 }: {
   comptrollerAddress: string;
   onSuccess?: () => void;
   poolID: string;
   poolName: string;
   tokenData: TokenData;
+  poolChainId: number;
 }) => {
   const { currentSdk } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect } = useColors();
+  const { data } = useExtraPoolInfo(comptrollerAddress, poolChainId);
 
   const [isDeploying, setIsDeploying] = useState(false);
   const [isPossible, setIsPossible] = useState<boolean>(true);
@@ -209,6 +213,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
+                  poolChainId={poolChainId}
+                  isEditPool={true}
+                  isPowerfulAdmin={data?.isPowerfulAdmin}
                 />
               )}
             />
@@ -262,6 +269,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
+                  poolChainId={poolChainId}
+                  isEditPool={true}
+                  isPowerfulAdmin={data?.isPowerfulAdmin}
                 />
               )}
             />
@@ -311,6 +321,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
+                  poolChainId={poolChainId}
+                  isEditPool={true}
+                  isPowerfulAdmin={data?.isPowerfulAdmin}
                 />
               )}
             />
@@ -428,6 +441,7 @@ export const AddAssetSettings = ({
         adminFee={watchAdminFee}
         reserveFactor={watchReserveFactor}
         interestRateModelAddress={watchInterestRateModel}
+        poolChainId={poolChainId}
       />
       <Center px={4} mt={4} width="100%">
         <Button

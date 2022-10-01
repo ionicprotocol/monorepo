@@ -44,8 +44,8 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
     data: flywheels,
     refetch: refetchFlywheels,
     isLoading,
-  } = useFlywheelsForPool(pool.comptroller);
-  const isUpgradeable = useIsUpgradeable(pool.comptroller);
+  } = useFlywheelsForPool(pool.comptroller, pool.chainId);
+  const isUpgradeable = useIsUpgradeable(pool.comptroller, pool.chainId);
 
   const [flywheel, setFlywheel] = useState<Flywheel | undefined>();
 
