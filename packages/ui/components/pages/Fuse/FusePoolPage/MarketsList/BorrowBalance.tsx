@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -16,32 +17,43 @@ export const BorrowBalance = ({ asset }: { asset: MarketData }) => {
     return Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals));
   }, [asset.borrowBalance, asset.underlyingDecimals]);
   const { cCard } = useColors();
+  const { address } = useMultiMidas();
 
   return (
     <VStack alignItems={'flex-end'}>
-      <SimpleTooltip label={`$${longFormat(asset.borrowBalanceFiat)}`}>
-        <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
-          {smallUsdFormatter(asset.borrowBalanceFiat)}
-          {asset.borrowBalanceFiat > DOWN_LIMIT && asset.borrowBalanceFiat < UP_LIMIT && '+'}
-        </Text>
-      </SimpleTooltip>
-      <SimpleTooltip
-        label={`${longFormat(borrowBalance)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
-      >
-        <Text
-          color={cCard.txtColor}
-          mt={1}
-          variant="smText"
-          maxWidth={'90px'}
-          textOverflow={'ellipsis'}
-          noOfLines={[1, 2]}
-          align={'right'}
-        >
-          {smallUsdFormatter(borrowBalance).replace('$', '')}
-          {borrowBalance > DOWN_LIMIT && borrowBalance < UP_LIMIT && '+'}{' '}
-          {tokenData?.symbol ?? asset.underlyingSymbol}
-        </Text>
-      </SimpleTooltip>
+      {address ? (
+        <>
+          <SimpleTooltip label={`$${longFormat(asset.borrowBalanceFiat)}`}>
+            <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
+              {smallUsdFormatter(asset.borrowBalanceFiat)}
+              {asset.borrowBalanceFiat > DOWN_LIMIT && asset.borrowBalanceFiat < UP_LIMIT && '+'}
+            </Text>
+          </SimpleTooltip>
+          <SimpleTooltip
+            label={`${longFormat(borrowBalance)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
+          >
+            <Text
+              color={cCard.txtColor}
+              mt={1}
+              variant="smText"
+              maxWidth={'90px'}
+              textOverflow={'ellipsis'}
+              noOfLines={[1, 2]}
+              align={'right'}
+            >
+              {smallUsdFormatter(borrowBalance).replace('$', '')}
+              {borrowBalance > DOWN_LIMIT && borrowBalance < UP_LIMIT && '+'}{' '}
+              {tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+          </SimpleTooltip>
+        </>
+      ) : (
+        <SimpleTooltip label="Connect your wallet">
+          <Text variant="smText" fontWeight="bold" textAlign="center">
+            -
+          </Text>
+        </SimpleTooltip>
+      )}
     </VStack>
   );
 };

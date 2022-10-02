@@ -58,7 +58,7 @@ import {
   SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -93,7 +93,7 @@ export const MarketsList = ({
   borrowBalanceFiat: number;
   poolChainId: number;
 }) => {
-  const { currentSdk, currentChain } = useMultiMidas();
+  const { data: sdk } = useSdk(poolChainId);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -143,30 +143,30 @@ export const MarketsList = ({
   };
 
   const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
-    if (!currentSdk || !currentChain) return 0;
+    if (!sdk) return 0;
 
     if (columnId === 'market') {
       return rowB.original.market.underlyingSymbol.localeCompare(
         rowA.original.market.underlyingSymbol
       );
     } else if (columnId === 'supplyApy') {
-      const rowASupplyAPY = currentSdk.ratePerBlockToAPY(
+      const rowASupplyAPY = sdk.ratePerBlockToAPY(
         rowA.original.market.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
+        getBlockTimePerMinuteByChainId(poolChainId)
       );
-      const rowBSupplyAPY = currentSdk.ratePerBlockToAPY(
+      const rowBSupplyAPY = sdk.ratePerBlockToAPY(
         rowB.original.market.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
+        getBlockTimePerMinuteByChainId(poolChainId)
       );
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
     } else if (columnId === 'borrowApy') {
-      const rowABorrowAPY = currentSdk.ratePerBlockToAPY(
+      const rowABorrowAPY = sdk.ratePerBlockToAPY(
         rowA.original.market.borrowRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
+        getBlockTimePerMinuteByChainId(poolChainId)
       );
-      const rowBBorrowAPY = currentSdk.ratePerBlockToAPY(
+      const rowBBorrowAPY = sdk.ratePerBlockToAPY(
         rowB.original.market.borrowRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
+        getBlockTimePerMinuteByChainId(poolChainId)
       );
       return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
     } else if (columnId === 'supplyBalance') {

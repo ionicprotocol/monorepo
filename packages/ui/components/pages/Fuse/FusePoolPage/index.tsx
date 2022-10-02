@@ -26,7 +26,7 @@ const FusePoolPage = memo(() => {
   const poolId = router.query.poolId as string;
   const chainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(chainId));
-  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller);
+  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller, data?.chainId);
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
 
   return (

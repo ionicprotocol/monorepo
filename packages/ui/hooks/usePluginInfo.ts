@@ -1,11 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
-  const { getSdk } = useMultiMidas();
-  const sdk = useMemo(() => getSdk(poolChainId), [poolChainId, getSdk]);
+  const { data: sdk } = useSdk(poolChainId);
 
   return useQuery(
     ['usePluginInfo', pluginAddress, sdk?.chainId],

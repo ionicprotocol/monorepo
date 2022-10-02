@@ -1,13 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
 
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useRewardTokensOfPool = (poolAddress?: string, poolChainid?: number) => {
-  const { getSdk } = useMultiMidas();
-  const sdk = useMemo(() => {
-    if (poolChainid) return getSdk(poolChainid);
-  }, [getSdk, poolChainid]);
+  const { data: sdk } = useSdk(poolChainid);
 
   const { data } = useQuery(
     ['useRewardTokensOfPool', sdk?.chainId, poolAddress],

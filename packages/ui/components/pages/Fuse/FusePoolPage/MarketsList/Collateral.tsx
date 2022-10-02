@@ -6,6 +6,7 @@ import * as React from 'react';
 import { Row } from '@ui/components/shared/Flex';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
@@ -21,7 +22,8 @@ export const Collateral = ({
   comptrollerAddress: string;
   poolChainId: number;
 }) => {
-  const { currentSdk, setPendingTxHash, currentChain } = useMultiMidas();
+  const { setPendingTxHash, currentChain } = useMultiMidas();
+  const { data: sdk } = useSdk(poolChainId);
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -29,9 +31,9 @@ export const Collateral = ({
   const isMobile = useIsMobile();
 
   const onToggleCollateral = async () => {
-    if (!currentSdk) return;
+    if (!sdk) return;
 
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = sdk.createComptroller(comptrollerAddress);
 
     let call: ContractTransaction;
     if (asset.membership) {
