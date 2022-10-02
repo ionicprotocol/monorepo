@@ -12,7 +12,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
     ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
     async () => {
       if (!comptrollerAddress || !sdk) {
-        return new Promise(() => undefined);
+        return null;
       }
 
       const comptroller = getComptrollerContract(comptrollerAddress, sdk);

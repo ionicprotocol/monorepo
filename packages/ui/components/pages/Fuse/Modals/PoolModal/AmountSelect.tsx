@@ -134,7 +134,7 @@ const AmountSelect = ({
   const { data: amountIsValid } = useQuery(
     ['ValidAmount', mode, amount, minBorrowAsset, currentSdk.chainId, address],
     async () => {
-      if (!currentSdk || !address) return;
+      if (!currentSdk || !address) return null;
 
       if (amount === null || amount.isZero() || !minBorrowAsset) {
         return false;

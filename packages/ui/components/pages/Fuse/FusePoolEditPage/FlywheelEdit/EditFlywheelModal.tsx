@@ -51,9 +51,9 @@ const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string
     async () => {
       if (flywheelAddress && marketAddress && currentSdk) {
         return currentSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
+      } else {
+        return null;
       }
-
-      return undefined;
     },
     {
       cacheTime: Infinity,

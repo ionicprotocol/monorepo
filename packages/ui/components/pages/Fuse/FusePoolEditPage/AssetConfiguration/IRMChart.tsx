@@ -49,6 +49,8 @@ const IRMChart = ({
         );
 
         return convertIRMtoCurve(sdk, IRM, sdk.chainId);
+      } else {
+        return null;
       }
     },
     {

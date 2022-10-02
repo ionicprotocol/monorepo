@@ -21,7 +21,7 @@ export const useFlywheelRewardsForPool = (poolAddress?: string, poolChainId?: nu
           return sdk.getFlywheelMarketRewardsByPool(poolAddress);
         }
       } else {
-        return new Promise(() => undefined);
+        return null;
       }
     },
     { enabled: !!poolAddress && !!sdk, initialData: [] }
