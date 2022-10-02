@@ -27,7 +27,7 @@ import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
+const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   const { assets, totalSuppliedFiat, totalBorrowedFiat, totalAvailableLiquidityFiat, comptroller } =
     poolData || {
       assets: [] as Array<MarketData>,
