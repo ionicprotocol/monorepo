@@ -58,6 +58,7 @@ import {
   SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
@@ -94,6 +95,7 @@ export const MarketsList = ({
   poolChainId: number;
 }) => {
   const { data: sdk } = useSdk(poolChainId);
+  const { address } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -170,19 +172,22 @@ export const MarketsList = ({
       );
       return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
     } else if (columnId === 'supplyBalance') {
+      if (!address) return 0;
       return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
         ? 1
         : -1;
     } else if (columnId === 'borrowBalance') {
+      if (!address) return 0;
       return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
         ? 1
         : -1;
     } else if (columnId === 'liquidity') {
       return rowA.original.market.liquidityFiat > rowB.original.market.liquidityFiat ? 1 : -1;
     } else if (columnId === 'collateral') {
+      if (!address) return 0;
       return rowA.original.market.membership ? 1 : -1;
     } else {
-      return 1;
+      return 0;
     }
   };
 
