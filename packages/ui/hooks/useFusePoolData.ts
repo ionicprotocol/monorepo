@@ -43,6 +43,8 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
         };
 
         return adaptedFusePoolData;
+      } else {
+        return new Promise(() => undefined);
       }
     },
     {

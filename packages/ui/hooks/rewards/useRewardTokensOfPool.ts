@@ -15,6 +15,8 @@ export const useRewardTokensOfPool = (poolAddress?: string, poolChainid?: number
           .flatMap((r) => r.rewardsInfo)
           .map((ri) => ri.rewardToken)
           .filter((value, index, self) => self.indexOf(value) === index);
+      } else {
+        return new Promise(() => undefined);
       }
     },
     { enabled: !!poolAddress && !!sdk, placeholderData: [] }

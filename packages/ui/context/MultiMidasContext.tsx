@@ -151,6 +151,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
             if (res.blockNumber) {
               mounted.current && setFinishedTxHash(hash);
               successToast({
+                id: 'completedTx',
                 title: (
                   <Text variant="toastLgText" fontWeight="bold">
                     Complete!
@@ -180,6 +181,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
               });
               await queryClient.refetchQueries();
               successToast({
+                id: 'updated',
                 title: (
                   <Text variant="toastLgText" fontWeight="bold">
                     Complete!

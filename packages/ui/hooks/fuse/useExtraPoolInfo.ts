@@ -11,7 +11,9 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
   return useQuery(
     ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
     async () => {
-      if (!comptrollerAddress || !sdk) return;
+      if (!comptrollerAddress || !sdk) {
+        return new Promise(() => undefined);
+      }
 
       const comptroller = getComptrollerContract(comptrollerAddress, sdk);
 

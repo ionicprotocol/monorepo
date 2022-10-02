@@ -20,6 +20,8 @@ export const useFlywheelRewardsForPool = (poolAddress?: string, poolChainId?: nu
           // Fallback to rewards without APRs
           return sdk.getFlywheelMarketRewardsByPool(poolAddress);
         }
+      } else {
+        return new Promise(() => undefined);
       }
     },
     { enabled: !!poolAddress && !!sdk, initialData: [] }
