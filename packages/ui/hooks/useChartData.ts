@@ -4,7 +4,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
 
 export function useChartData(market: string, poolChainId: number) {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
     ['useChartData', market, sdk?.chainId],

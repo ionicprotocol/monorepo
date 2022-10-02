@@ -94,7 +94,7 @@ export const MarketsList = ({
   borrowBalanceFiat: number;
   poolChainId: number;
 }) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
   const { address } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({

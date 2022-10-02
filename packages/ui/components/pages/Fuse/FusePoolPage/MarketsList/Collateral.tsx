@@ -23,7 +23,7 @@ export const Collateral = ({
   poolChainId: number;
 }) => {
   const { setPendingTxHash, currentChain } = useMultiMidas();
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 

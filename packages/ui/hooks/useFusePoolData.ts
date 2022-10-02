@@ -8,7 +8,7 @@ import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string, poolChainId: number) => {
   const { address } = useMultiMidas();
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return useQuery(

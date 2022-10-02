@@ -4,7 +4,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: number) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   const queryResult = useQuery(
     ['useFlywheelsForPool', sdk?.chainId, comptrollerAddress],

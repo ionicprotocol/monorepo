@@ -8,7 +8,7 @@ export const useCTokenData = (
   cTokenAddress?: string,
   poolChainId?: number
 ) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
     ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],

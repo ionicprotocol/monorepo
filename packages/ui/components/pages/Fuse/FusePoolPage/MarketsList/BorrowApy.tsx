@@ -7,7 +7,7 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 export const BorrowApy = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
   const borrowApyColor = useColorModeValue('orange.500', 'orange');
 
   const borrowAPR = useMemo(() => {

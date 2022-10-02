@@ -23,7 +23,7 @@ export const SupplyApy = ({
   rewards: FlywheelMarketRewardsInfo[];
   poolChainId: number;
 }) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
   const supplyAPY = useMemo(() => {
     if (sdk) {
       return sdk.ratePerBlockToAPY(

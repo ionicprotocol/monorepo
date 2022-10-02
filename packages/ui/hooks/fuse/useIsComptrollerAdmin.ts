@@ -9,7 +9,7 @@ export const useIsComptrollerAdmin = (
   poolChainId?: number
 ): boolean => {
   const { address } = useMultiMidas();
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
     ['isComptrollerAdmin', comptrollerAddress, sdk?.chainId],

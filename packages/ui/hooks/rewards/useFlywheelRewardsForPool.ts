@@ -4,7 +4,7 @@ import LogRocket from 'logrocket';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useFlywheelRewardsForPool = (poolAddress?: string, poolChainId?: number) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
     ['useFlywheelRewardsForPool', sdk?.chainId, poolAddress],

@@ -23,7 +23,7 @@ const IRMChart = ({
   poolChainId,
 }: IRMChartProps) => {
   const { cChart } = useColors();
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
   const { data, isLoading, error } = useQuery(
     ['irmCurve', interestRateModelAddress, adminFee, reserveFactor, poolChainId],
     async () => {

@@ -106,7 +106,7 @@ export const AssetSettings = ({
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { currentSdk, setPendingTxHash } = useMultiMidas();
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();

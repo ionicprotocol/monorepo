@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
     ['usePluginInfo', pluginAddress, sdk?.chainId],

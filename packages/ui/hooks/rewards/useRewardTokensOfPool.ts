@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
 export const useRewardTokensOfPool = (poolAddress?: string, poolChainid?: number) => {
-  const { data: sdk } = useSdk(poolChainid);
+  const sdk = useSdk(poolChainid);
 
   const { data } = useQuery(
     ['useRewardTokensOfPool', sdk?.chainId, poolAddress],

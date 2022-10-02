@@ -4,7 +4,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { getComptrollerContract } from '@ui/utils/contracts';
 
 export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number) => {
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
     ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],

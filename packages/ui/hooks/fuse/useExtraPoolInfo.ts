@@ -6,7 +6,7 @@ import { getComptrollerContract } from '@ui/utils/contracts';
 
 export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: number) => {
   const { address } = useMultiMidas();
-  const { data: sdk } = useSdk(poolChainId);
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
     ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
