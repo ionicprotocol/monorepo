@@ -2,7 +2,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
-import { SupportedChains, SupportedChainsArray } from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FetchSignerResult, Signer } from '@wagmi/core';
 import {
@@ -91,9 +91,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
 
   const getSdk = useCallback(
     (chainId: number) => {
-      if (SupportedChainsArray.includes(chainId)) {
-        return sdks.find((sdk) => sdk.chainId === chainId);
-      }
+      return sdks.find((sdk) => sdk.chainId === chainId);
     },
     [sdks]
   );
@@ -103,6 +101,15 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
       currentSdk.setSigner(signer);
     }
   }, [signer, currentSdk]);
+
+  useEffect(() => {
+    if (sdks.length > 0 && !signer) {
+      sdks.map((sdk) => {
+        const config = chainIdToConfig[sdk.chainId];
+        sdk.removeSigner(new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default));
+      });
+    }
+  }, [signer, sdks]);
 
   useEffect(() => {
     mounted.current = true;
