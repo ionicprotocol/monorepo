@@ -20,7 +20,6 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Web3Provider } from '@ethersproject/providers';
 import { useQuery } from '@tanstack/react-query';
 import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
@@ -111,7 +110,7 @@ const EditFlywheelModal = ({
     const token = new Contract(
       flywheel.rewardToken,
       midasSdk.artifacts.EIP20Interface.abi,
-      midasSdk.provider as Web3Provider
+      midasSdk.signer
     );
 
     setTransactionPending(true);

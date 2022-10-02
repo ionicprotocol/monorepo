@@ -69,24 +69,30 @@ export const SupplyApy = ({
       {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
         rewardsOfThisMarket?.rewardsInfo.map((info) =>
           asset.plugin ? (
-            <RewardsInfo
-              key={info.rewardToken}
-              underlyingAddress={asset.underlyingToken}
-              pluginAddress={asset.plugin}
-              rewardAddress={info.rewardToken}
-            />
+            <>
+              <div>
+                <RewardsInfo
+                  key={info.rewardToken}
+                  underlyingAddress={asset.underlyingToken}
+                  pluginAddress={asset.plugin}
+                  rewardAddress={info.rewardToken}
+                />
+              </div>
+            </>
           ) : (
-            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-              <HStack mr={2}>
-                <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                <TokenWithLabel address={info.rewardToken} size="2xs" />
+            <>
+              <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+                <HStack mr={2}>
+                  <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
+                  <TokenWithLabel address={info.rewardToken} size="2xs" />
+                </HStack>
+                {info.formattedAPR && (
+                  <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+                    {aprFormatter(info.formattedAPR)}%
+                  </Text>
+                )}
               </HStack>
-              {info.formattedAPR && (
-                <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
-                  {aprFormatter(info.formattedAPR)}%
-                </Text>
-              )}
-            </HStack>
+            </>
           )
         )
       ) : asset.plugin ? (

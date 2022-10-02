@@ -1,7 +1,6 @@
 import { ChevronDownIcon, ChevronUpIcon, LinkIcon } from '@chakra-ui/icons';
 import {
   AvatarGroup,
-  Box,
   Button,
   Link as ChakraLink,
   Flex,
@@ -21,13 +20,10 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { config } from '@ui/config/index';
 import { useMidas } from '@ui/context/MidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
-import { usePoolRiskScoreGradient } from '@ui/hooks/fuse/usePoolRiskScoreGradient';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useColors } from '@ui/hooks/useColors';
-import { letterScore, usePoolRSS } from '@ui/hooks/useRSS';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { longFormat, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -40,8 +36,6 @@ interface PoolRowProps {
 
 const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
   const router = useRouter();
-  const { data: rss, error: rssError } = usePoolRSS(data.id);
-  const rssScore = !rssError && rss ? letterScore(rss.totalScore) : '?';
   const tokens = useMemo(() => {
     return data.underlyingTokens.map((address, index) => ({
       address,
@@ -49,7 +43,6 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
     }));
   }, [data.underlyingSymbols, data.underlyingTokens]);
 
-  const scoreGradient = usePoolRiskScoreGradient(rssScore);
   const poolDetails = usePoolDetails(data.assets);
   const rewardTokens = useRewardTokensOfPool(data.comptroller);
   const { cCard } = useColors();
@@ -60,6 +53,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
 
   const { midasSdk, scanUrl, setLoading, currentChain, coingeckoId } = useMidas();
   const { data: usdPrice } = useUSDPrice(coingeckoId);
+
   return (
     <VStack
       borderWidth={4}
@@ -118,21 +112,7 @@ const PoolRow = ({ data, isMostSupplied }: PoolRowProps) => {
           <ClaimPoolRewardsButton poolAddress={data.comptroller} />
         </VStack>
 
-        {config.isRssScoreEnabled && (
-          <VStack flex={2}>
-            <SimpleTooltip
-              label={'Underlying RSS: ' + (rss ? rss.totalScore.toFixed(2) : '?') + '%'}
-            >
-              <Box background={scoreGradient} px="4" py="2" borderRadius="5px">
-                <Text variant="smText" fontWeight="semibold">
-                  {rssScore}
-                </Text>
-              </Box>
-            </SimpleTooltip>
-          </VStack>
-        )}
-
-        <VStack flex={config.isRssScoreEnabled ? 4 : 6} alignItems="flex-start">
+        <VStack flex={6} alignItems="flex-start">
           {data.underlyingTokens.length === 0 ? null : (
             <AvatarGroup size="sm" max={30}>
               {tokens.slice(0, 10).map((token, i) => (
