@@ -1,9 +1,9 @@
 import { MidasSdk } from '@midas-capital/sdk';
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useUSDPrices } from '@ui/hooks/useUSDPrices';
 
 export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
   const tvlNative = await midasSdk.getTotalValueLocked(false);
@@ -22,30 +22,21 @@ interface CrossChainTVL {
 }
 
 export const useTVL = () => {
-  const { sdks, chainIds } = useMultiMidas();
-  const { data: prices, isLoading, error } = useUSDPrices(chainIds);
+  const { chainIds } = useMultiMidas();
 
-  return useQuery<CrossChainTVL | undefined>(
-    ['useTVL', ...chainIds, prices && Object.values(prices).sort(), isLoading],
+  return useQuery<CrossChainTVL | null | undefined>(
+    ['useTVL', ...chainIds],
     async () => {
-      if (!isLoading && error) throw new Error('Could not get USD price');
-      if (!isLoading && prices) {
-        const chainTVLs: CrossChainTVL = {};
+      if (chainIds.length > 0) {
+        const { data } = await axios.post('/api/tvl', {
+          chains: chainIds,
+        });
 
-        await Promise.all(
-          sdks.map(async (sdk) => {
-            chainTVLs[sdk.chainId.toString()] = {
-              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
-              symbol: prices[sdk.chainId.toString()].symbol,
-              name: sdk.chainSpecificParams.metadata.name,
-              logo: sdk.chainSpecificParams.metadata.img,
-            };
-          })
-        );
-
-        return chainTVLs;
+        return data.chainTVLs as CrossChainTVL;
+      } else {
+        return null;
       }
     },
-    { enabled: !!prices && !isLoading }
+    { enabled: chainIds.length > 0 }
   );
 };

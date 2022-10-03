@@ -146,7 +146,7 @@ const FuseStatsBar = () => {
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
                     <Text fontWeight="bold">{smallUsdFormatter(chainTVL.value)}</Text>
-                    <Text fontSize="sm">{chainTVL.name}</Text>
+                    <Text>{chainTVL.name}</Text>
                   </Box>
                 </Flex>
               ))}
