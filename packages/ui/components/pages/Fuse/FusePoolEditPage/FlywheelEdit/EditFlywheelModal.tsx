@@ -26,7 +26,6 @@ import { Contract, utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { CButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -129,7 +128,7 @@ const EditFlywheelModal = ({
     flywheel.rewardToken,
     flywheel.rewards,
     midasSdk.artifacts.EIP20Interface.abi,
-    midasSdk.provider,
+    midasSdk.signer,
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
