@@ -101,10 +101,14 @@ const EditFlywheelModal = ({
     if (rewardsInfo?.rewardsPerSecond) {
       setSupplySpeed(toFixedNoRound(utils.formatEther(rewardsInfo.rewardsPerSecond), 8));
     }
-    if (rewardsInfo?.rewardsEndTimestamp && rewardsInfo.rewardsEndTimestamp > 0) {
-      setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+    if (rewardsInfo?.rewardsEndTimestamp !== undefined && rewardsInfo?.rewardsEndTimestamp >= 0) {
+      if (rewardsInfo?.rewardsEndTimestamp === 0) {
+        setEndDate(null);
+      } else {
+        setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+      }
     }
-  }, [rewardsInfo]);
+  }, [rewardsInfo, selectedMarket]);
 
   const fund = useCallback(async () => {
     const token = new Contract(
@@ -273,6 +277,8 @@ const EditFlywheelModal = ({
                 onChange={(e) => {
                   const assetIndex = parseInt(e.target.value);
                   selectMarket(pool.assets[assetIndex]);
+                  setDateEditable(false);
+                  setSpeedEditable(false);
                 }}
               >
                 {pool.assets.map((asset, index) => (
@@ -368,15 +374,18 @@ const EditFlywheelModal = ({
                         cursor: auto;
                     }`}
                       </style>
-
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        timeInputLabel="Time:"
-                        dateFormat="MM/dd/yyyy h:mm aa"
-                        showTimeInput
-                        readOnly={!isDateEditable}
-                      />
+                      {rewardsInfo?.rewardsEndTimestamp === 0 && !isDateEditable ? (
+                        <Text width={'100%'}>End Time/Date Has Not Yet Been Set</Text>
+                      ) : (
+                        <DatePicker
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          timeInputLabel="Time:"
+                          dateFormat="MM/dd/yyyy h:mm aa"
+                          showTimeInput
+                          readOnly={!isDateEditable}
+                        />
+                      )}
                       <Button
                         onClick={() => setDateEditable(true)}
                         disabled={isTransactionPending}
