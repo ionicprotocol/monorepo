@@ -269,20 +269,6 @@ const EditFlywheelModal = ({
               <Heading fontSize={'xl'} mb={2}>
                 Set Speed and End Time for Market Suppliers
               </Heading>
-
-              {/* <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
-                {pool.assets.map((asset, index) => (
-                  <CButton
-                    key={index}
-                    isSelected={asset.cToken === selectedMarket?.cToken}
-                    variant="filter"
-                    onClick={() => selectMarket(asset)}
-                    flex={1}
-                  >
-                    {asset.underlyingSymbol}
-                  </CButton>
-                ))}
-              </HStack> */}
               <Select
                 onChange={(e) => {
                   const assetIndex = parseInt(e.target.value);
