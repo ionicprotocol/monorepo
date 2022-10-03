@@ -160,14 +160,18 @@ export const MarketsList = ({
       );
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
     } else if (columnId === 'borrowApy') {
-      const rowABorrowAPY = sdk.ratePerBlockToAPY(
-        rowA.original.market.borrowRatePerBlock,
-        getBlockTimePerMinuteByChainId(poolChainId)
-      );
-      const rowBBorrowAPY = sdk.ratePerBlockToAPY(
-        rowB.original.market.borrowRatePerBlock,
-        getBlockTimePerMinuteByChainId(poolChainId)
-      );
+      const rowABorrowAPY = !rowA.original.market.isBorrowPaused
+        ? sdk.ratePerBlockToAPY(
+            rowA.original.market.borrowRatePerBlock,
+            getBlockTimePerMinuteByChainId(poolChainId)
+          )
+        : -1;
+      const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
+        ? sdk.ratePerBlockToAPY(
+            rowB.original.market.borrowRatePerBlock,
+            getBlockTimePerMinuteByChainId(poolChainId)
+          )
+        : -1;
       return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
     } else if (columnId === 'supplyBalance') {
       return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
