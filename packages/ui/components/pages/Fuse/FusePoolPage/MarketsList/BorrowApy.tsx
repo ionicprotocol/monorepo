@@ -20,9 +20,15 @@ export const BorrowApy = ({ asset }: { asset: MarketData }) => {
 
   return (
     <VStack alignItems={'flex-end'}>
-      <Text color={borrowApyColor} fontWeight="bold" variant="smText">
-        {borrowAPR.toFixed(3)}%
-      </Text>
+      {asset.isBorrowPaused ? (
+        <Text color={borrowApyColor} fontWeight="bold" variant="smText">
+          -
+        </Text>
+      ) : (
+        <Text color={borrowApyColor} fontWeight="bold" variant="smText">
+          {borrowAPR.toFixed(3)}%
+        </Text>
+      )}
     </VStack>
   );
 };
