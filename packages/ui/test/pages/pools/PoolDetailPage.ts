@@ -5,8 +5,8 @@ import { Page } from 'puppeteer';
 import { AppPage } from '@ui/test/pages/AppPage';
 
 export class PoolDetailPage extends AppPage {
-  private SupplyListAssetSymbol = '#supplyList .';
-  private SupplyAssetBalance = '#supplyTokenBalance';
+  private marketColumn = '#marketName';
+  private SupplyAssetBalance = '#supplyBalance';
   private ModalTokenSymbol = '#fundOperationModal #symbol';
   private ModalWithdrawTab = '#fundOperationModal .withdrawTab';
   private FundInput = '#fundInput';
@@ -45,12 +45,16 @@ export class PoolDetailPage extends AppPage {
   }
 
   private async _openModal(symbol: string): Promise<void> {
-    const supplyListAssetRow = await this.Page.waitForSelector(this.SupplyListAssetSymbol + symbol);
-    if (supplyListAssetRow) {
-      await supplyListAssetRow.click();
-      await this.Page.waitForSelector(this.ModalTokenSymbol);
-      const _symbol = await this.Page.$eval(this.ModalTokenSymbol, (el) => el.textContent);
-      expect(_symbol).toEqual(symbol);
+    const marketName = await this.Page.waitForSelector(this.marketColumn + ' .' + symbol);
+    if (marketName) {
+      await marketName.click();
+      const supplyBtn = await this.Page.waitForSelector('.' + symbol + '.supply');
+      if (supplyBtn) {
+        await supplyBtn.click();
+        await this.Page.waitForSelector(this.ModalTokenSymbol);
+        const _symbol = await this.Page.$eval(this.ModalTokenSymbol, (el) => el.textContent);
+        expect(_symbol).toEqual(symbol);
+      }
     }
   }
 
@@ -65,17 +69,19 @@ export class PoolDetailPage extends AppPage {
     const confirmFundButton = await this.Page.waitForSelector(this.ConfirmFundButton);
     if (confirmFundButton) {
       await confirmFundButton.click();
-      let finished = false;
-      while (!finished) {
-        await this.Metamask.page.waitForTimeout(1000);
-        await this.Metamask.confirmTransaction();
+      // let finished = false;
+      // while (!finished) {
+      await this.Metamask.page.waitForTimeout(1000);
+      await this.Metamask.confirmTransaction();
+      await this.Metamask.confirmTransaction();
+      await this.Metamask.confirmTransaction();
 
-        try {
-          await this.Page.bringToFront();
-          await this.Page.waitForSelector(this.SuccessToast, { timeout: 4000 });
-          finished = true;
-        } catch {}
-      }
+      try {
+        await this.Page.bringToFront();
+        await this.Page.waitForSelector(this.SuccessToast, { timeout: 10000 });
+        // finished = true;
+      } catch {}
+      // }
 
       if (mode === FundOperationMode.SUPPLY) {
         await this.Page.waitForSelector(this.SupplyAssetBalance);

@@ -9,18 +9,21 @@ dotenv.config();
 const testChainId = process.env.TEST_CHAIN_ID;
 
 export type FundOperationConfig = {
-  chainId: number;
-  networkName: string;
-  symbol: string;
-  rpc: string;
-  testUrl: string;
   supplyAmount: string;
   assetSymbol: string;
   asset: SupportedAsset | undefined;
 };
 
+export type InitConfig = {
+  chainId: number;
+  networkName: string;
+  symbol: string;
+  rpc: string;
+  testUrl: string;
+};
+
 export class Config {
-  public static fundOperation(): FundOperationConfig {
+  public static init(): InitConfig {
     switch (Number(testChainId)) {
       case SupportedChains.chapel:
         return {
@@ -29,9 +32,6 @@ export class Config {
           symbol: 'BNB',
           rpc: chapel.specificParams.metadata.rpcUrls.default,
           testUrl: `${BASE_URL}/97/pool/25`,
-          supplyAmount: DEFAULT_AMOUNT,
-          assetSymbol: assetSymbols.WBNB,
-          asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
         };
       case SupportedChains.bsc:
         return {
@@ -39,10 +39,7 @@ export class Config {
           networkName: 'ForkedBSC',
           symbol: 'FORK',
           rpc: FORKED_RPC,
-          testUrl: `${BASE_URL}/56/pool/4`,
-          supplyAmount: DEFAULT_AMOUNT,
-          assetSymbol: assetSymbols.WBNB,
-          asset: bsc.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
+          testUrl: `${BASE_URL}/56/pool/1`, // Jarvis pool
         };
       case SupportedChains.polygon:
         return {
@@ -51,11 +48,7 @@ export class Config {
           symbol: 'MATIC',
           rpc: FORKED_RPC,
           testUrl: `${BASE_URL}/137/pool/1`,
-          supplyAmount: DEFAULT_AMOUNT,
-          assetSymbol: assetSymbols.WMATIC,
-          asset: polygon.assets.find((asset) => asset.symbol === assetSymbols.WMATIC),
         };
-      // use chapel as default
       default:
         return {
           chainId: SupportedChains.chapel,
@@ -63,6 +56,32 @@ export class Config {
           symbol: 'BNB',
           rpc: chapel.specificParams.metadata.rpcUrls.default,
           testUrl: `${BASE_URL}/97/pool/25`,
+        };
+    }
+  }
+  public static fundOperation(): FundOperationConfig {
+    switch (Number(testChainId)) {
+      case SupportedChains.chapel:
+        return {
+          supplyAmount: DEFAULT_AMOUNT,
+          assetSymbol: assetSymbols.WBNB,
+          asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
+        };
+      case SupportedChains.bsc:
+        return {
+          supplyAmount: DEFAULT_AMOUNT,
+          assetSymbol: assetSymbols.WBNB,
+          asset: bsc.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
+        };
+      case SupportedChains.polygon:
+        return {
+          supplyAmount: DEFAULT_AMOUNT,
+          assetSymbol: assetSymbols.WMATIC,
+          asset: polygon.assets.find((asset) => asset.symbol === assetSymbols.WMATIC),
+        };
+      // use chapel as default
+      default:
+        return {
           supplyAmount: DEFAULT_AMOUNT,
           assetSymbol: assetSymbols.WBNB,
           asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
