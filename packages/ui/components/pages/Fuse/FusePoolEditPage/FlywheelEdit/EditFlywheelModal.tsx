@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Select,
   Spinner,
   Stat,
   StatHelpText,
@@ -270,7 +271,7 @@ const EditFlywheelModal = ({
                 Set Speed and End Time for Market Suppliers
               </Heading>
 
-              <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
+              {/* <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
                 {pool.assets.map((asset, index) => (
                   <CButton
                     key={index}
@@ -282,7 +283,19 @@ const EditFlywheelModal = ({
                     {asset.underlyingSymbol}
                   </CButton>
                 ))}
-              </HStack>
+              </HStack> */}
+              <Select
+                onChange={(e) => {
+                  const assetIndex = parseInt(e.target.value);
+                  selectMarket(pool.assets[assetIndex]);
+                }}
+              >
+                {pool.assets.map((asset, index) => (
+                  <option key={index} value={index}>
+                    {asset.underlyingSymbol}
+                  </option>
+                ))}
+              </Select>
 
               {rewardsInfo && !rewardsInfo.enabled && selectedMarket && (
                 <Center width={'100%'} p={4}>
