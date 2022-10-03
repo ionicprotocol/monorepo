@@ -155,6 +155,7 @@ export const MidasProvider = ({
             });
             await queryClient.refetchQueries();
             successToast({
+              id: 'toast-success',
               title: (
                 <Text variant="toastLgText" fontWeight="bold">
                   Complete!

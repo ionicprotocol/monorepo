@@ -79,15 +79,15 @@ export const TokenWithLabel = ({
 
   return (
     <Skeleton isLoaded={!isLoading} m={0}>
-      <HStack width={'100%'} alignItems="flex-start" justifyContent={'flex-start'}>
+      <HStack width={'100%'} alignItems="center" justifyContent={'flex-start'}>
         <Avatar
           name={tokenData?.symbol ?? 'Loading...'}
           src={tokenData?.logoURL || fallbackImage}
           m={0}
           {...avatarProps}
         />
-        {!tokenData && <Text>LOAD</Text>}
-        <Text fontSize={'sm'}>{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
+        {!tokenData && <Text variant="smText">LOAD</Text>}
+        <Text variant="smText">{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
       </HStack>
     </Skeleton>
   );

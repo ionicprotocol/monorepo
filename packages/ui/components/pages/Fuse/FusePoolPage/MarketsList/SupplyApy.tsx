@@ -83,11 +83,16 @@ export const SupplyApy = ({
             <>
               <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
                 <HStack mr={2}>
-                  <Text fontSize={{ base: '3.2vw', sm: '0.9rem' }}>+</Text>
-                  <TokenWithLabel address={info.rewardToken} poolChainId={poolChainId} size="2xs" />
+                  <Text variant="smText">+</Text>
+                  <TokenWithLabel
+                    address={info.rewardToken}
+                    poolChainId={poolChainId}
+                    size="2xs"
+                    border="0"
+                  />
                 </HStack>
                 {info.formattedAPR && (
-                  <Text color={cCard.txtColor} fontSize={{ base: '2.8vw', sm: '0.8rem' }} ml={1}>
+                  <Text variant="smText" ml={1}>
                     {aprFormatter(info.formattedAPR)}%
                   </Text>
                 )}
