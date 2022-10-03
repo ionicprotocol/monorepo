@@ -32,6 +32,7 @@ export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
         }`}
       >
         <Text
+          id="supplyBalance"
           color={cCard.txtColor}
           mt={1}
           variant="smText"
