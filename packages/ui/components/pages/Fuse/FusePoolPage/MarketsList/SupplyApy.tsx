@@ -80,24 +80,22 @@ export const SupplyApy = ({
               poolChainId={poolChainId}
             />
           ) : (
-            <>
-              <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-                <HStack mr={2}>
-                  <Text variant="smText">+</Text>
-                  <TokenWithLabel
-                    address={info.rewardToken}
-                    poolChainId={poolChainId}
-                    size="2xs"
-                    border="0"
-                  />
-                </HStack>
-                {info.formattedAPR && (
-                  <Text variant="smText" ml={1}>
-                    {aprFormatter(info.formattedAPR)}%
-                  </Text>
-                )}
+            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+              <HStack mr={2}>
+                <Text variant="smText">+</Text>
+                <TokenWithLabel
+                  address={info.rewardToken}
+                  poolChainId={poolChainId}
+                  size="2xs"
+                  border="0"
+                />
               </HStack>
-            </>
+              {info.formattedAPR && (
+                <Text variant="smText" ml={1}>
+                  {aprFormatter(info.formattedAPR)}%
+                </Text>
+              )}
+            </HStack>
           )
         )
       ) : asset.plugin ? (
