@@ -108,7 +108,7 @@ const EditFlywheelModal = ({
         setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
       }
     }
-  }, [rewardsInfo, selectedMarket]);
+  }, [rewardsInfo]);
 
   const fund = useCallback(async () => {
     const token = new Contract(
@@ -258,7 +258,18 @@ const EditFlywheelModal = ({
                 </NumberInput>
                 <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
               </InputGroup>
-              <Button onClick={fund} disabled={isTransactionPending} ml={4} width="15%">
+              <Button
+                onClick={fund}
+                disabled={
+                  isTransactionPending ||
+                  (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
+                  fundingAmount === 0 ||
+                  isNaN(fundingAmount) ||
+                  fundingAmount < 0
+                }
+                ml={4}
+                width="15%"
+              >
                 {isTransactionPending ? <Spinner /> : 'Send'}
               </Button>
             </HStack>
