@@ -570,16 +570,20 @@ const ChainFilterButton = ({
       <Button
         variant={globalFilter.includes(chainId) ? '_solid' : '_outline'}
         onClick={() => onFilter(chainId)}
-        px={0}
+        px={2}
         disabled={countsOf[chainId.toString()] === 0}
+        width={16}
       >
-        <Img
-          width="25px"
-          height="25px"
-          borderRadius="50%"
-          src={chainConfig.specificParams.metadata.img}
-          alt=""
-        />
+        <HStack>
+          <Img
+            width={6}
+            height={6}
+            borderRadius="50%"
+            src={chainConfig.specificParams.metadata.img}
+            alt=""
+          />
+          <Text variant="mdText">{countsOf[chainId.toString()]}</Text>
+        </HStack>
       </Button>
     </SimpleTooltip>
   ) : null;
