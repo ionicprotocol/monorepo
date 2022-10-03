@@ -156,14 +156,18 @@ export const MarketsList = ({
       );
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
     } else if (columnId === 'borrowApy') {
-      const rowABorrowAPY = midasSdk.ratePerBlockToAPY(
-        rowA.original.market.borrowRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
-      );
-      const rowBBorrowAPY = midasSdk.ratePerBlockToAPY(
-        rowB.original.market.borrowRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChain.id)
-      );
+      const rowABorrowAPY = !rowA.original.market.isBorrowPaused
+        ? midasSdk.ratePerBlockToAPY(
+            rowA.original.market.borrowRatePerBlock,
+            getBlockTimePerMinuteByChainId(currentChain.id)
+          )
+        : -1;
+      const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
+        ? midasSdk.ratePerBlockToAPY(
+            rowB.original.market.borrowRatePerBlock,
+            getBlockTimePerMinuteByChainId(currentChain.id)
+          )
+        : -1;
       return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
     } else if (columnId === 'supplyBalance') {
       return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat

@@ -3,6 +3,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useMemo } from 'react';
 
 import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 export const FundButton = ({
@@ -21,7 +22,7 @@ export const FundButton = ({
   supplyBalanceFiat?: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
-
+  const { data: tokenData } = useTokenData(asset.underlyingToken);
   const modeName = useMemo(() => {
     const enumName = FundOperationMode[mode].toLowerCase();
     const name = enumName.charAt(0).toUpperCase() + enumName.slice(1);
@@ -31,7 +32,11 @@ export const FundButton = ({
 
   return (
     <Box>
-      <Button onClick={openModal} isDisabled={isDisabled}>
+      <Button
+        className={`${tokenData?.symbol ?? asset.underlyingSymbol} ${modeName.toLowerCase()}`}
+        onClick={openModal}
+        isDisabled={isDisabled}
+      >
         {modeName}
       </Button>
       <PoolModal
