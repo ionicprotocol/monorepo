@@ -1,5 +1,5 @@
 import { FusePoolData, SupportedChains } from '@midas-capital/types';
-import { useQuery } from '@tanstack/react-query';
+import { useQueries, useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import FuseJS from 'fuse.js';
 import { useMemo } from 'react';
@@ -85,76 +85,96 @@ export const useFusePools = (
 export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address } = useMultiMidas();
   const { data: prices } = useUSDPrices(chainIds);
-  const { data, ...queryResultRest } = useQuery(
-    ['useCrossFusePools', chainIds, address, prices],
-    async () => {
-      if (prices) {
-        try {
-          const res = await axios.post('/api/pools', {
-            chains: chainIds,
-            address,
-          });
 
-          const _allPools = res.data.allPools as FusePoolData[];
+  const poolsPerChain = useQueries({
+    queries: chainIds.map((chainId) => {
+      return {
+        queryKey: ['useCrossFusePools', chainId, address, prices && prices[chainId.toString()]],
+        queryFn: async () => {
+          if (chainId && prices && prices[chainId.toString()]) {
+            try {
+              const res = await axios.post('/api/pools', {
+                chains: [chainId],
+                address,
+              });
 
-          const allPools: PoolData[] = await Promise.all(
-            _allPools.map((pool) => {
-              const assetsWithPrice: MarketData[] = [];
-              const { assets } = pool;
+              const _allPools = res.data.allPools as FusePoolData[];
 
-              if (assets && assets.length !== 0) {
-                assets.map((asset) => {
-                  assetsWithPrice.push({
-                    ...asset,
-                    supplyBalanceFiat:
-                      asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
-                    borrowBalanceFiat:
-                      asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
-                    totalSupplyFiat:
-                      asset.totalSupplyNative * prices[pool.chainId.toString()].value,
-                    totalBorrowFiat:
-                      asset.totalBorrowNative * prices[pool.chainId.toString()].value,
-                    liquidityFiat: asset.liquidityNative * prices[pool.chainId.toString()].value,
-                  });
-                });
-              }
-              const adaptedFusePoolData: PoolData = {
-                ...pool,
-                assets: assetsWithPrice,
-                totalLiquidityFiat:
-                  pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
-                totalAvailableLiquidityFiat:
-                  pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
-                totalSuppliedFiat: pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
-                totalBorrowedFiat: pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
-                totalSupplyBalanceFiat:
-                  pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
-                totalBorrowBalanceFiat:
-                  pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
+              const allPools: PoolData[] = await Promise.all(
+                _allPools.map((pool) => {
+                  const assetsWithPrice: MarketData[] = [];
+                  const { assets } = pool;
+
+                  if (assets && assets.length !== 0) {
+                    assets.map((asset) => {
+                      assetsWithPrice.push({
+                        ...asset,
+                        supplyBalanceFiat:
+                          asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
+                        borrowBalanceFiat:
+                          asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
+                        totalSupplyFiat:
+                          asset.totalSupplyNative * prices[pool.chainId.toString()].value,
+                        totalBorrowFiat:
+                          asset.totalBorrowNative * prices[pool.chainId.toString()].value,
+                        liquidityFiat:
+                          asset.liquidityNative * prices[pool.chainId.toString()].value,
+                      });
+                    });
+                  }
+                  const adaptedFusePoolData: PoolData = {
+                    ...pool,
+                    assets: assetsWithPrice,
+                    totalLiquidityFiat:
+                      pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
+                    totalAvailableLiquidityFiat:
+                      pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
+                    totalSuppliedFiat:
+                      pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
+                    totalBorrowedFiat:
+                      pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
+                    totalSupplyBalanceFiat:
+                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
+                    totalBorrowBalanceFiat:
+                      pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
+                  };
+
+                  return adaptedFusePoolData;
+                })
+              );
+
+              return {
+                allPools: allPools as PoolData[],
+                chainPools: res.data.chainPools as FusePoolsPerChain,
               };
+            } catch (e) {
+              console.error(e);
 
-              return adaptedFusePoolData;
-            })
-          );
+              return undefined;
+            }
+          }
+        },
+        enabled: !!chainId && !!prices && !!prices[chainId.toString()],
+      };
+    }),
+  });
 
-          return {
-            allPools: allPools as PoolData[],
-            chainPools: res.data.chainPools as FusePoolsPerChain,
-          };
-        } catch (e) {
-          console.error(e);
-
-          return undefined;
-        }
+  const [allPools, isLoading, error] = useMemo(() => {
+    const _allPools: PoolData[] = [];
+    let isLoading = true;
+    let isError = true;
+    let error: Error | undefined;
+    poolsPerChain.map((pools) => {
+      isLoading = isLoading && pools.isLoading;
+      isError = isError && pools.isError;
+      error = isError ? (pools.error as Error) : undefined;
+      if (pools.data) {
+        _allPools.push(...pools.data.allPools);
       }
-    },
-    {
-      enabled: chainIds.length !== 0 && !!prices,
-    }
-  );
+    });
 
-  return {
-    ...data,
-    ...queryResultRest,
-  };
+    return [_allPools.filter((pool) => !!pool), isLoading, error];
+  }, [poolsPerChain]);
+
+  return { allPools, isLoading, error };
 };
