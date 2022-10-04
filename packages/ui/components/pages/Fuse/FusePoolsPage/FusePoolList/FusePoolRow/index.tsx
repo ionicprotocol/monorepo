@@ -434,9 +434,10 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
                 {row.getIsExpanded() && (
                   <Tr
                     borderColor={cCard.dividerColor}
-                    borderBottomWidth={0}
+                    borderBottomWidth={1}
                     borderTopWidth={1}
-                    borderStyle="dashed"
+                    borderTopStyle="dashed"
+                    borderBottomStyle="solid"
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   >
                     {/* 2nd row is a custom 1 cell row */}
