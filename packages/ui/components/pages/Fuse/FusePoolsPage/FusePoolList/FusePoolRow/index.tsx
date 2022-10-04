@@ -473,7 +473,7 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
         p={4}
       >
         <HStack>
-          <Text variant="smText">Pools Per Page :</Text>
+          <Text variant="smText">Pools Per Page:</Text>
           <Select
             value={pagination.pageSize}
             onChange={(e) => {
@@ -544,7 +544,7 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
         type="text"
         value={searchText}
         onChange={onSearch}
-        placeholder="pool name"
+        placeholder="Asset, Pool Name"
         maxW={80}
         _focusVisible={{}}
       />
