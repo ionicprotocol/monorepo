@@ -1,5 +1,5 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Box, HStack, Link, Skeleton, Text } from '@chakra-ui/react';
+import { HStack, Link, Skeleton, Text } from '@chakra-ui/react';
 
 import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ApyInformTooltip';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -70,7 +70,7 @@ export const RewardsInfo = ({
             </>
           }
         >
-          <Box>
+          <HStack>
             {rewardAddress ? (
               <TokenWithLabel address={rewardAddress} poolChainId={poolChainId} size="2xs" />
             ) : (
@@ -78,17 +78,22 @@ export const RewardsInfo = ({
                 🔌
               </span>
             )}
-          </Box>
+            {!apyLoading && apyResponse && apyResponse.apy && (
+              <Text
+                color={cCard.txtColor}
+                title={apyResponse.apy.toString()}
+                variant="smText"
+                ml={1}
+              >
+                {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
+              </Text>
+            )}
+          </HStack>
         </PopoverTooltip>
         {!apyLoading && apyResponse && apyResponse.apy === undefined && (
           <ApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
         )}
       </HStack>
-      {!apyLoading && apyResponse && apyResponse.apy && (
-        <Text color={cCard.txtColor} title={apyResponse.apy.toString()} variant="smText" ml={1}>
-          {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
-        </Text>
-      )}
       {apyLoading && (
         <Skeleton height={'1em'} ml={1}>
           0.00%

@@ -46,17 +46,26 @@ export const TokenName = ({
           <PopoverTooltip
             placement="top-start"
             body={
-              <div
-                dangerouslySetInnerHTML={{
-                  __html: asset.extraDocs || asset.underlyingSymbol,
-                }}
-              />
+              <VStack>
+                <Text alignSelf="flex-start" variant="mdText">
+                  {tokenData?.symbol ?? asset.underlyingSymbol}
+                </Text>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: asset.extraDocs || asset.underlyingSymbol,
+                  }}
+                />
+              </VStack>
             }
           >
             <Text
               className={tokenData?.symbol ?? asset.underlyingSymbol}
               fontWeight="bold"
               variant="mdText"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              maxWidth="120px"
+              textOverflow={'ellipsis'}
             >
               {tokenData?.symbol ?? asset.underlyingSymbol}
             </Text>
