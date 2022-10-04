@@ -95,7 +95,6 @@ export const PoolButtons = () => {
             router.push(`${currentChain.id}/create-pool`);
           }
         }}
-        isDisabled={!currentChain || currentChain.unsupported}
       >
         + Create Pool
       </Button>
