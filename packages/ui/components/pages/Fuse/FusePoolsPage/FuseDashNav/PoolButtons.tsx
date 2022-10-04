@@ -5,7 +5,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const PoolButtons = () => {
   const router = useRouter();
-  const { setGlobalLoading, currentChain } = useMultiMidas();
+  const { setGlobalLoading } = useMultiMidas();
 
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
@@ -90,10 +90,8 @@ export const PoolButtons = () => {
       <Button
         ml={4}
         onClick={() => {
-          if (currentChain && !currentChain.unsupported) {
-            setGlobalLoading(true);
-            router.push(`${currentChain.id}/create-pool`);
-          }
+          setGlobalLoading(true);
+          router.push('/create-pool');
         }}
       >
         + Create Pool
