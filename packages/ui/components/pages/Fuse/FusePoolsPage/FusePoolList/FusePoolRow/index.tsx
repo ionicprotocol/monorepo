@@ -329,9 +329,7 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
     <MidasBox overflowX="auto" width="100%" mb="4">
       <Flex
         justifyContent="space-between"
-        px={4}
-        pt={8}
-        pb={4}
+        p={4}
         flexDirection={{ base: 'column', sm: 'row' }}
         gap={4}
       >

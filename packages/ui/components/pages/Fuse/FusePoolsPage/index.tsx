@@ -1,4 +1,3 @@
-import { Divider } from '@chakra-ui/react';
 import { memo } from 'react';
 
 import FusePoolList from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList';
@@ -11,7 +10,6 @@ const FusePoolsPage = memo(() => {
     <PageTransitionLayout>
       <FusePageLayout>
         <FuseStatsBar />
-        <Divider />
         <FusePoolList />
       </FusePageLayout>
     </PageTransitionLayout>

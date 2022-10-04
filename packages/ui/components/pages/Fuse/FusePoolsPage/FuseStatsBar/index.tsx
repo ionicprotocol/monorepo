@@ -54,7 +54,7 @@ const FuseStatsBar = () => {
       alignItems="flex-end"
       justifyContent="center"
       pt={{ base: '72px', md: '0px' }}
-      pb={{ base: 12, md: 12 }}
+      pb={{ base: 6, md: 6 }}
       px={{ base: 0, lg: 0 }}
       w="100%"
       gridGap="1.5rem"
