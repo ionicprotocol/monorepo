@@ -42,13 +42,14 @@ export const Liquidity = ({ asset }: { asset: MarketData }) => {
           label={`${longFormat(liquidity)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
         >
           <Text
-            color={cCard.txtColor}
+            id="liquidity"
             mt={1}
             variant="smText"
             maxWidth={'90px'}
             textOverflow={'ellipsis'}
-            noOfLines={[1, 2]}
             align={'right'}
+            whiteSpace="nowrap"
+            overflow="hidden"
           >
             {shortUsdFormatter(liquidity).replace('$', '')}
             {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
