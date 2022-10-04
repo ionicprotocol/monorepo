@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Select,
   Spinner,
   Stat,
   StatHelpText,
@@ -25,7 +26,6 @@ import { utils } from 'ethers';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { CButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -106,8 +106,12 @@ const EditFlywheelModal = ({
     if (rewardsInfo?.rewardsPerSecond) {
       setSupplySpeed(toFixedNoRound(utils.formatEther(rewardsInfo.rewardsPerSecond), 8));
     }
-    if (rewardsInfo?.rewardsEndTimestamp && rewardsInfo.rewardsEndTimestamp > 0) {
-      setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+    if (rewardsInfo?.rewardsEndTimestamp !== undefined && rewardsInfo?.rewardsEndTimestamp >= 0) {
+      if (rewardsInfo?.rewardsEndTimestamp === 0) {
+        setEndDate(null);
+      } else {
+        setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+      }
     }
   }, [rewardsInfo]);
 
@@ -260,7 +264,18 @@ const EditFlywheelModal = ({
                 </NumberInput>
                 <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
               </InputGroup>
-              <Button onClick={fund} disabled={isTransactionPending} ml={4} width="15%">
+              <Button
+                onClick={fund}
+                disabled={
+                  isTransactionPending ||
+                  (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
+                  fundingAmount === 0 ||
+                  isNaN(fundingAmount) ||
+                  fundingAmount < 0
+                }
+                ml={4}
+                width="15%"
+              >
                 {isTransactionPending ? <Spinner /> : 'Send'}
               </Button>
             </HStack>
@@ -275,20 +290,20 @@ const EditFlywheelModal = ({
               <Heading fontSize={'xl'} mb={2}>
                 Set Speed and End Time for Market Suppliers
               </Heading>
-
-              <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
+              <Select
+                onChange={(e) => {
+                  const assetIndex = parseInt(e.target.value);
+                  selectMarket(pool.assets[assetIndex]);
+                  setDateEditable(false);
+                  setSpeedEditable(false);
+                }}
+              >
                 {pool.assets.map((asset, index) => (
-                  <CButton
-                    key={index}
-                    isSelected={asset.cToken === selectedMarket?.cToken}
-                    variant="filter"
-                    onClick={() => selectMarket(asset)}
-                    flex={1}
-                  >
+                  <option key={index} value={index}>
                     {asset.underlyingSymbol}
-                  </CButton>
+                  </option>
                 ))}
-              </HStack>
+              </Select>
 
               {rewardsInfo && !rewardsInfo.enabled && selectedMarket && (
                 <Center width={'100%'} p={4}>
@@ -376,15 +391,18 @@ const EditFlywheelModal = ({
                         cursor: auto;
                     }`}
                       </style>
-
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        timeInputLabel="Time:"
-                        dateFormat="MM/dd/yyyy h:mm aa"
-                        showTimeInput
-                        readOnly={!isDateEditable}
-                      />
+                      {rewardsInfo?.rewardsEndTimestamp === 0 && !isDateEditable ? (
+                        <Text width={'100%'}>End Time/Date Has Not Yet Been Set</Text>
+                      ) : (
+                        <DatePicker
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          timeInputLabel="Time:"
+                          dateFormat="MM/dd/yyyy h:mm aa"
+                          showTimeInput
+                          readOnly={!isDateEditable}
+                        />
+                      )}
                       <Button
                         onClick={() => setDateEditable(true)}
                         disabled={isTransactionPending}
