@@ -72,7 +72,7 @@ const config: HardhatUserConfig = {
     tests: "./tests",
     artifacts: "./lib/contracts/out",
   },
-  defaultNetwork: "hardhat",
+
   namedAccounts: {
     deployer: { default: 0 },
     alice: { default: 1 },
@@ -81,17 +81,10 @@ const config: HardhatUserConfig = {
   },
   networks: {
     hardhat: {
-      forking: process.env.FORK_RPC_URL
-        ? {
-            url: process.env.FORK_RPC_URL,
-            blockNumber: process.env.FORK_BLOCK_NUMBER ? Number(process.env.FORK_BLOCK_NUMBER) : undefined,
-          }
-        : undefined,
-      saveDeployments: true,
       chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
+      accounts: { mnemonic },
       gasPrice: 20e10,
       gas: 25e6,
-      accounts: { mnemonic },
     },
     localhost: {
       url: urlOverride || "http://localhost:8545",
@@ -101,9 +94,16 @@ const config: HardhatUserConfig = {
       gas: 25e6,
       accounts: { mnemonic },
     },
-    fork: {
+    fpolygon: {
+      url: "http://localhost:8546",
       accounts: { mnemonic },
-      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
+      chainId: 137,
+      // gasPrice: 20e9,
+      // gas: 7500000,
+    },
+    fbsc: {
+      accounts: { mnemonic },
+      chainId: 56,
       gasPrice: 20e9,
       gas: 7500000,
       url: "http://localhost:8545",
