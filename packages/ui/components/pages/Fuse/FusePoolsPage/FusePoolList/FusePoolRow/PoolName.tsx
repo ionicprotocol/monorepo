@@ -9,7 +9,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
 
   return (
-    <Link href={`/${pool.chainId}/pool/${pool.id}`} isExternal _hover={{ textDecoration: 'none' }}>
+    <Link href={`/${pool.chainId}/pool/${pool.id}`} _hover={{ textDecoration: 'none' }}>
       <VStack
         alignItems={'flex-start'}
         spacing={1}

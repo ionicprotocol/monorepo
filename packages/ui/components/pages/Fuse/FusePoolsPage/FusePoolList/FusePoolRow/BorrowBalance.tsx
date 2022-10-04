@@ -9,7 +9,7 @@ export const BorrowBalance = ({ pool }: { pool: PoolData }) => {
   const { address } = useMultiMidas();
 
   return (
-    <Link href={`/${pool.chainId}/pool/${pool.id}`} isExternal _hover={{ textDecoration: 'none' }}>
+    <Link href={`/${pool.chainId}/pool/${pool.id}`} _hover={{ textDecoration: 'none' }}>
       <VStack alignItems={'flex-end'} px={{ base: 2, lg: 4 }} justifyContent="center" height="100%">
         {address ? (
           <SimpleTooltip label={`$${longFormat(pool.totalBorrowBalanceFiat)}`}>
