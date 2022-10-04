@@ -13,7 +13,7 @@ export const Assets = ({ pool }: { pool: PoolData }) => {
   }, [pool.underlyingSymbols, pool.underlyingTokens]);
 
   return (
-    <Link href={`/${pool.chainId}/pool/${pool.id}`} isExternal _hover={{ textDecoration: 'none' }}>
+    <Link href={`/${pool.chainId}/pool/${pool.id}`} _hover={{ textDecoration: 'none' }}>
       <VStack alignItems={'flex-start'} px={{ base: 2, lg: 4 }} py={4} width="250px">
         {pool.underlyingTokens.length === 0 ? null : (
           <AvatarGroup size="sm" max={30}>
