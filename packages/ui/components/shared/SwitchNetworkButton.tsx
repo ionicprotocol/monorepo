@@ -23,7 +23,7 @@ const SwitchNetworkButton: React.FC = () => {
   return (
     <Button variant="_solid" onClick={onOpen} tabIndex={0} ml={2} px={2}>
       <Center>
-        {chainMetadata && (
+        {chainMetadata ? (
           <>
             {chainMetadata.specificParams.metadata.img && (
               <Img
@@ -36,6 +36,8 @@ const SwitchNetworkButton: React.FC = () => {
             )}
             {!isMobile && <Text ml={2}>{chainMetadata.specificParams.metadata.name}</Text>}
           </>
+        ) : (
+          <Text>Unsupported Network</Text>
         )}
       </Center>
       <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
