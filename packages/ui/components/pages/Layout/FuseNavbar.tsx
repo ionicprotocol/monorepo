@@ -14,7 +14,6 @@ import {
 
 import { AccountButton } from '@ui/components/shared/AccountButton';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
-import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
@@ -47,13 +46,6 @@ const FuseNavbar = () => {
                 Connect Wallet
               </Button>
               <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
-            </Box>
-          ) : currentChain.unsupported ? (
-            <Box>
-              <Button variant="_solid" onClick={onOpen}>
-                Switch network
-              </Button>
-              <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
             </Box>
           ) : (
             <AccountButton />
