@@ -750,7 +750,7 @@ export const MarketsList = ({
         p={4}
       >
         <HStack>
-          {!isMobile && <Text variant="smText">Markets Per Page :</Text>}
+          {!isMobile && <Text variant="smText">Markets Per Page</Text>}
           <Select
             value={pagination.pageSize}
             onChange={(e) => {
@@ -821,7 +821,7 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
         type="text"
         value={searchText}
         onChange={onSearch}
-        placeholder="token or symbol"
+        placeholder="Symbol, Token Name"
         maxWidth={60}
         _focusVisible={{}}
       />

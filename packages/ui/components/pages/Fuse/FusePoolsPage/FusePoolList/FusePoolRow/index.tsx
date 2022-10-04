@@ -472,7 +472,7 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
         p={4}
       >
         <HStack>
-          <Text variant="smText">Pools Per Page:</Text>
+          <Text variant="smText">Pools Per Page</Text>
           <Select
             value={pagination.pageSize}
             onChange={(e) => {
