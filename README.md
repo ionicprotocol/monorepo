@@ -72,7 +72,6 @@ To run `forge` commands inside the `sdk` package, run:
 - `yarn` from top-level to update dependencies/symlinks.
 ```
 
-
 ## Working with Mainnet Fork
 
 Make sure to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
@@ -91,29 +90,67 @@ For convenience we have a Hardhat task to make some token swaps to on the forked
 > yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
 ```
 
-
 ## Running UI Tests
 
 We are using [ChainSafe/dappeteer](https://github.com/ChainSafe/dappeteer) to test our UI with Metamask. The test are expecting to work on a fork of BSC mainnet for now.
 
 Follow this step to run the UI test locally
 
-1) Start local forked BSC node
+1. Start local forked BSC node
+
 ```
 > yarn dev:node:fork
 ```
 
-2) Start local UI dev server
+2. Start local UI dev server
+
 ```
 > yarn dev:ui
 ```
 
-3) Fund test accounts
+3. Fund test accounts
+
 ```
 > yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
 ```
 
-4) Run dAppateer
+4. Run dAppateer
+
 ```
 > yarn test:ui
+```
+
+### UI Test With WSL2
+
+If you are on windows you need an X-server to run dappeteer.
+These instructions were taken from here: https://www.rickmakes.com/windows-subsystem-for-linux-2-installing-vcxrv-x-server/
+
+Follow these steps before running `yarn test:ui`
+
+1. Download VcXsrv, this is your X-server that will display the GUI
+   https://sourceforge.net/projects/vcxsrv/
+2. Run VcXsrv. Use these settings
+
+```
+Multiple Windows -> Start No Client -> Check All Boxes in Extra Settings -> Finish
+```
+
+If Windows Defender Firewall prompts you, check both Private & Public Networks and Allow Access
+
+3. Find your Windows IP Address by running the following command
+
+```
+cat /etc/resolv.conf
+```
+
+4. Set DISPLAY Variable (replace ip_address with your IP Address found above)
+
+```
+export DISPLAY=ip_address:0.0
+```
+
+5. export opengl Variable
+
+```
+export LIBGL_ALWAYS_INDIRECT=1
 ```
