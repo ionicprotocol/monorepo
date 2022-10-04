@@ -1,4 +1,4 @@
-import { AvatarGroup, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Link, Stack, Text, VStack } from '@chakra-ui/react';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -18,20 +18,21 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
         height="100%"
         px={{ base: 2, lg: 4 }}
       >
-        <SimpleTooltip label={pool.name} placement="top-start">
-          <Text
-            variant="lgText"
-            fontWeight="bold"
-            mt={rewardTokens.length ? 2 : 0}
-            mr={2}
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-            width="350px"
-          >
-            {pool.name}
-          </Text>
-        </SimpleTooltip>
+        <Stack width="350px" mt={rewardTokens.length ? 2 : 0}>
+          <SimpleTooltip label={pool.name}>
+            <Text
+              variant="lgText"
+              fontWeight="bold"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              maxWidth="100%"
+              width="fit-content"
+            >
+              {pool.name}
+            </Text>
+          </SimpleTooltip>
+        </Stack>
         {rewardTokens.length && (
           <HStack m={0}>
             <Text>This pool is offering rewards</Text>
