@@ -3,6 +3,7 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "baseUrl": "./packages",
+    "noEmit": true,
     "paths": {
       "@ui/components/*": ["ui/components/*"],
       "@ui/config/*": ["ui/config/*"],
