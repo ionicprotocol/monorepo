@@ -20,7 +20,7 @@ export const deployDiaWstDotPriceOracle = async ({
 
   const dspo = await deployments.deploy("DiaStDotPriceOracle", {
     from: deployer,
-    args: [stDot, wstDot],
+    args: [],
     log: true,
     proxy: {
       execute: {
@@ -30,7 +30,7 @@ export const deployDiaWstDotPriceOracle = async ({
         },
         onUpgrade: {
           methodName: "reinitialize",
-          args: [mpo.address, diaOracleAddress, deployConfig.stableToken],
+          args: [],
         },
       },
       owner: deployer,
