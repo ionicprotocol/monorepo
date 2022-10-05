@@ -34,10 +34,13 @@ describe("FundOperation", () => {
     it("calculate correct gas fee", async () => {
       const gasPriceAvg = 5;
       axiosStub = stub(axios, "get").resolves({ data: { average: gasPriceAvg } });
+      
       const { gasWEI, gasPrice, estimatedGas } = await fundOperations.fetchGasForCall(
         BigNumber.from(1),
         mkAddress("0x123")
       );
+
+      console.log({gasWEI, gasPrice, estimatedGas})
 
       expect(axiosStub).be.calledOnce;
       expect(estimatedGas.toNumber()).to.be.equal(9);
@@ -78,6 +81,12 @@ describe("FundOperation", () => {
         },
       });
 
+      Object.defineProperty(mockcTokenContract, "estimateGas", {
+        value: {
+          mint: stub().resolves(BigNumber.from(mintResponse)),
+        },
+      });
+
       stub(utilsFns, "getContract")
         .onFirstCall()
         .returns(mockTokenContract)
@@ -106,6 +115,12 @@ describe("FundOperation", () => {
         },
       });
 
+      Object.defineProperty(mockcTokenContract, "estimateGas", {
+        value: {
+          mint: stub().resolves(BigNumber.from(mintResponse)),
+        },
+      });
+
       stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
 
       const { tx, errorCode } = await fundOperations.supply(
@@ -122,6 +137,12 @@ describe("FundOperation", () => {
 
     it("Not has approved enough", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
+        value: {
+          mint: stub().resolves(BigNumber.from(mintResponse)),
+        },
+      });
+
+      Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
           mint: stub().resolves(BigNumber.from(mintResponse)),
         },
@@ -145,6 +166,12 @@ describe("FundOperation", () => {
     it("Mint fail", async () => {
       mintResponse = 2;
       Object.defineProperty(mockcTokenContract, "callStatic", {
+        value: {
+          mint: stub().resolves(BigNumber.from(mintResponse)),
+        },
+      });
+
+      Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
           mint: stub().resolves(BigNumber.from(mintResponse)),
         },
