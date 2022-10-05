@@ -80,6 +80,16 @@ const PoolsRowList = ({
   const enabledChains = useEnabledChains();
   const { address } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
+  ]);
+  const [pagination, onPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: POOLS_COUNT_PER_PAGE[0],
+  });
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
+  const [columnVisibility, setColumnVisibility] = useState({});
+  const [searchText, setSearchText] = useState('');
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -165,7 +175,9 @@ const PoolsRowList = ({
             Pool Name
           </Text>
         ),
-        cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
+        cell: ({ getValue }) => (
+          <PoolName pool={getValue<PoolData>()} globalFilter={globalFilter} />
+        ),
         footer: (props) => props.column.id,
         filterFn: poolFilter,
         sortingFn: poolSort,
@@ -267,18 +279,7 @@ const PoolsRowList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
-  ]);
-  const [pagination, onPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: POOLS_COUNT_PER_PAGE[0],
-  });
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
-  const [columnVisibility, setColumnVisibility] = useState({});
-  const [searchText, setSearchText] = useState('');
+  }, [globalFilter]);
 
   const table = useReactTable({
     columns,
@@ -368,6 +369,7 @@ const PoolsRowList = ({
               onClick={() => onFilter(ALL)}
               variant="filter"
               disabled={isLoading}
+              px={2}
             >
               <HStack>
                 {isLoading && <Spinner />}
@@ -412,7 +414,8 @@ const PoolsRowList = ({
                       py={2}
                       cursor="pointer"
                       px={
-                        header.column.id === 'poolName' || header.column.id === 'chain'
+                        (globalFilter.includes(ALL) && header.column.id === 'poolName') ||
+                        header.column.id === 'chain'
                           ? 0
                           : { base: 2, lg: 4 }
                       }
