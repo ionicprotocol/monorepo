@@ -34,7 +34,7 @@ describe("FundOperation", () => {
     it("calculate correct gas fee", async () => {
       const gasPriceAvg = 5;
       axiosStub = stub(axios, "get").resolves({ data: { average: gasPriceAvg } });
-      
+
       const { gasWEI, gasPrice, estimatedGas } = await fundOperations.fetchGasForCall(
         BigNumber.from(1),
         mkAddress("0x123")
