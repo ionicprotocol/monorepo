@@ -30,7 +30,7 @@ export const deployDiaWstDotPriceOracle = async ({
         },
         onUpgrade: {
           methodName: "reinitialize",
-          args: [mpo.address, diaOracleAddress, deployConfig.stableToken],
+          args: [],
         },
       },
       owner: deployer,
