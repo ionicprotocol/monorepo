@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { config } from '@ui/config/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useUSDPrices } from '@ui/hooks/useUSDPrices';
-import { FusePoolsPerChain } from '@ui/types/ChainMetaData';
+import { PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { poolSort } from '@ui/utils/sorts';
 
@@ -56,6 +56,8 @@ export const useFusePools = (
       return data;
     },
     {
+      cacheTime: Infinity,
+      staleTime: Infinity,
       enabled: !!currentChain?.id && !!currentSdk,
     }
   );
@@ -86,7 +88,7 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
   const { address } = useMultiMidas();
   const { data: prices } = useUSDPrices(chainIds);
 
-  const poolsPerChain = useQueries({
+  const poolsQueries = useQueries({
     queries: chainIds.map((chainId) => {
       return {
         queryKey: ['useCrossFusePools', chainId, address, prices && prices[chainId.toString()]],
@@ -143,10 +145,7 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
                 })
               );
 
-              return {
-                allPools: allPools as PoolData[],
-                chainPools: res.data.chainPools as FusePoolsPerChain,
-              };
+              return allPools;
             } catch (e) {
               console.error(e);
 
@@ -154,27 +153,34 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
             }
           }
         },
+        cacheTime: Infinity,
+        staleTime: Infinity,
         enabled: !!chainId && !!prices && !!prices[chainId.toString()],
       };
     }),
   });
 
-  const [allPools, isLoading, error] = useMemo(() => {
-    const _allPools: PoolData[] = [];
+  const [poolsPerChain, isLoading, error] = useMemo(() => {
+    const _poolsPerChain: PoolsPerChainStatus = {};
+
     let isLoading = true;
     let isError = true;
     let error: Error | undefined;
-    poolsPerChain.map((pools) => {
+
+    poolsQueries.map((pools, index) => {
       isLoading = isLoading && pools.isLoading;
       isError = isError && pools.isError;
       error = isError ? (pools.error as Error) : undefined;
-      if (pools.data) {
-        _allPools.push(...pools.data.allPools);
-      }
+      const _chainId = chainIds[index];
+      _poolsPerChain[_chainId.toString()] = {
+        isLoading: pools.isLoading,
+        error: pools.error as Error | undefined,
+        data: pools.data,
+      };
     });
 
-    return [_allPools.filter((pool) => !!pool), isLoading, error];
-  }, [poolsPerChain]);
+    return [_poolsPerChain, isLoading, error];
+  }, [poolsQueries, chainIds]);
 
-  return { allPools, isLoading, error };
+  return { poolsPerChain, isLoading, error };
 };

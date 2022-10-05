@@ -1,4 +1,4 @@
-import { SupportedChains, SupportedChainsArray } from '@midas-capital/types';
+import { SupportedChainsArray } from '@midas-capital/types';
 
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(SupportedChainsArray.join('|'));
 export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
@@ -79,16 +79,13 @@ export const aBNBcContractABI = [
 export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
 export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
-//Assets Filters
 export const REWARDS = 'Rewards';
 export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
 export const DEPRECATED = 'Deprecated';
 export const SEARCH = 'Search';
-
-//Pool Filters
-export const BSC = SupportedChains.bsc;
+export const ALL = 'All';
 
 export const RESERVE_FACTOR_TOOLTIP =
   'The reserve factor defines the portion of borrower interest that is converted into reserves.';

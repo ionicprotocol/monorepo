@@ -1,14 +1,16 @@
 import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
+  ButtonGroup,
   Center,
   Flex,
-  Grid,
   HStack,
   Img,
   Input,
   Select,
+  Skeleton,
+  Spinner,
+  Stack,
   Table,
   Tbody,
   Td,
@@ -45,15 +47,16 @@ import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/F
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/SupplyBalance';
 import { TotalBorrowed } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalBorrowed';
 import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupplied';
+import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
-import { CIconButton } from '@ui/components/shared/Button';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
+import { CButton, CIconButton } from '@ui/components/shared/Button';
+import { ALL, POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
 
@@ -67,20 +70,16 @@ export type PoolRowData = {
   totalBorrowed: PoolData;
 };
 
-export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
+const PoolsRowList = ({
+  poolsPerChain,
+  isLoading,
+}: {
+  poolsPerChain: PoolsPerChainStatus;
+  isLoading: boolean;
+}) => {
   const enabledChains = useEnabledChains();
   const { address } = useMultiMidas();
-  const countsOf = useMemo(() => {
-    const countsPerChain: { [key: string]: number } = {};
-
-    enabledChains.map((chainId) => {
-      countsPerChain[chainId.toString()] = allPools.filter(
-        (pool) => pool.chainId === chainId
-      ).length;
-    });
-
-    return countsPerChain;
-  }, [allPools, enabledChains]);
+  const [err, setErr] = useState<Err | undefined>();
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -89,7 +88,7 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
         (row.original.poolName.comptroller.toLowerCase().includes(searchText.toLowerCase()) ||
           row.original.poolName.name.toLowerCase().includes(searchText.toLowerCase())))
     ) {
-      if (value.includes(row.original.chain.chainId)) {
+      if (value.includes(ALL) || value.includes(row.original.chain.chainId)) {
         return true;
       } else {
         return false;
@@ -126,6 +125,15 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
       return 1;
     }
   };
+
+  const allPools = useMemo(() => {
+    return Object.values(poolsPerChain).reduce((res, pools) => {
+      if (pools.data && pools.data.length > 0) {
+        res.push(...pools.data);
+      }
+      return res;
+    }, [] as PoolData[]);
+  }, [poolsPerChain]);
 
   const data: PoolRowData[] = useMemo(() => {
     return poolSortByAddress(allPools).map((pool) => {
@@ -272,9 +280,7 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0],
   });
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([
-    ...enabledChains,
-  ]);
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [searchText, setSearchText] = useState('');
 
@@ -302,6 +308,14 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
     },
   });
 
+  useEffect(() => {
+    if (globalFilter.includes(ALL)) {
+      table.getColumn('chain').toggleVisibility(true);
+    } else {
+      table.getColumn('chain').toggleVisibility(false);
+    }
+  }, [globalFilter, table]);
+
   const { cCard } = useColors();
 
   const onSearchFiltered = () => {
@@ -312,11 +326,11 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
     }
   };
 
-  const onFilter = (chainId: SupportedChains) => {
-    if (!globalFilter.includes(chainId)) {
-      setGlobalFilter([...globalFilter, chainId]);
+  const onFilter = (filter: SupportedChains | string) => {
+    if (globalFilter.includes(SEARCH)) {
+      setGlobalFilter([filter, SEARCH]);
     } else {
-      setGlobalFilter(globalFilter.filter((f) => f !== chainId));
+      setGlobalFilter([filter]);
     }
   };
 
@@ -324,6 +338,17 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
     onSearchFiltered();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
+
+  useEffect(() => {
+    const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
+      globalFilter.includes(chainId)
+    );
+    if (selectedChainId) {
+      setErr(poolsPerChain[selectedChainId].error);
+    } else {
+      setErr(undefined);
+    }
+  }, [globalFilter, poolsPerChain]);
 
   return (
     <MidasBox overflowX="auto" width="100%" mb="4">
@@ -334,18 +359,25 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
         gap={4}
       >
         <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
-          <Text paddingTop="2px" variant="title">
-            Pools
-          </Text>
-          <Grid
-            templateColumns={{
-              base: 'repeat(5, 1fr)',
-              sm: 'repeat(5, 1fr)',
-              md: 'repeat(10, 1fr)',
-              lg: 'repeat(10, 1fr)',
-            }}
-            gap={2}
+          <ButtonGroup
+            isAttached
+            spacing={0}
+            flexFlow={'row wrap'}
+            justifyContent="center"
+            mx={4}
+            mt={2}
           >
+            <CButton
+              isSelected={globalFilter.includes(ALL)}
+              onClick={() => onFilter(ALL)}
+              variant="filter"
+              disabled={isLoading}
+            >
+              <HStack>
+                {isLoading && <Spinner />}
+                <Text pt="2px">All Pools</Text>{' '}
+              </HStack>
+            </CButton>
             {enabledChains.map((chainId) => {
               return (
                 <ChainFilterButton
@@ -353,116 +385,136 @@ export const PoolsRowList = ({ allPools }: { allPools: PoolData[] }) => {
                   chainId={chainId}
                   globalFilter={globalFilter}
                   onFilter={onFilter}
-                  countsOf={countsOf}
+                  isLoading={poolsPerChain[chainId.toString()].isLoading}
                 />
               );
             })}
-          </Grid>
+          </ButtonGroup>
         </Flex>
         <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
         </Flex>
       </Flex>
-      <Table>
-        <Thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Tr
-              key={headerGroup.id}
-              borderColor={cCard.dividerColor}
-              borderBottomWidth={1}
-              borderTopWidth={2}
-            >
-              {headerGroup.headers.map((header) => {
-                return (
-                  <Th
-                    key={header.id}
-                    onClick={header.column.getToggleSortingHandler()}
-                    border="none"
-                    color={cCard.txtColor}
-                    textTransform="capitalize"
-                    py={2}
-                    cursor="pointer"
-                    px={header.column.id === 'chain' ? 0 : { base: 2, lg: 4 }}
-                  >
-                    <HStack
-                      spacing={header.column.id === 'assets' ? 0 : 1}
-                      justifyContent={
-                        header.column.id === 'chain' ||
-                        header.column.id === 'poolName' ||
-                        header.column.id === 'assets'
-                          ? 'flex-start'
-                          : 'flex-end'
-                      }
+      {!isLoading ? (
+        <Table>
+          <Thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Tr
+                key={headerGroup.id}
+                borderColor={cCard.dividerColor}
+                borderBottomWidth={1}
+                borderTopWidth={2}
+              >
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <Th
+                      key={header.id}
+                      onClick={header.column.getToggleSortingHandler()}
+                      border="none"
+                      color={cCard.txtColor}
+                      textTransform="capitalize"
+                      py={2}
+                      cursor="pointer"
+                      pl={{ base: 2, lg: 4 }}
+                      pr={header.column.id === 'chain' ? 0 : { base: 2, lg: 4 }}
                     >
-                      <Box width={header.column.id === 'assets' ? 0 : 3} mb={1}>
-                        <Box hidden={header.column.getIsSorted() ? false : true}>
-                          {header.column.getIsSorted() === 'desc' ? (
-                            <ArrowDownIcon fontSize={16} aria-label="sorted descending" />
-                          ) : (
-                            <ArrowUpIcon fontSize={16} aria-label="sorted ascending" />
-                          )}
+                      <HStack
+                        spacing={header.column.id === 'assets' ? 0 : 1}
+                        justifyContent={
+                          header.column.id === 'chain' ||
+                          header.column.id === 'poolName' ||
+                          header.column.id === 'assets'
+                            ? 'flex-start'
+                            : 'flex-end'
+                        }
+                      >
+                        <Box width={header.column.id === 'assets' ? 0 : 3} mb={1}>
+                          <Box hidden={header.column.getIsSorted() ? false : true}>
+                            {header.column.getIsSorted() === 'desc' ? (
+                              <ArrowDownIcon fontSize={16} aria-label="sorted descending" />
+                            ) : (
+                              <ArrowUpIcon fontSize={16} aria-label="sorted ascending" />
+                            )}
+                          </Box>
                         </Box>
-                      </Box>
-                      <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
-                    </HStack>
-                  </Th>
-                );
-              })}
-            </Tr>
-          ))}
-        </Thead>
-        <Tbody>
-          {table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
-            table.getRowModel().rows.map((row) => (
-              <Fragment key={row.id}>
-                <Tr
-                  key={row.id}
-                  borderColor={cCard.dividerColor}
-                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
-                  background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
-                  _hover={{ bg: cCard.hoverBgColor }}
-                  cursor="pointer"
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <Td key={cell.id} border="none" p={0} height={16}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Td>
-                    );
-                  })}
-                </Tr>
-                {row.getIsExpanded() && (
+                        <Box>{flexRender(header.column.columnDef.header, header.getContext())}</Box>
+                      </HStack>
+                    </Th>
+                  );
+                })}
+              </Tr>
+            ))}
+          </Thead>
+          <Tbody>
+            {err && err.code !== 'NETWORK_ERROR' ? (
+              <Tr>
+                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <AlertHero
+                    status="warning"
+                    variant="subtle"
+                    title={err.reason ? err.reason : 'Unexpected Error'}
+                    description="Unable to retrieve Pools. Please try again later."
+                  />
+                </Td>
+              </Tr>
+            ) : table.getRowModel().rows && table.getRowModel().rows.length !== 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <Fragment key={row.id}>
                   <Tr
+                    key={row.id}
                     borderColor={cCard.dividerColor}
-                    borderBottomWidth={1}
-                    borderTopWidth={1}
-                    borderTopStyle="dashed"
-                    borderBottomStyle="solid"
+                    borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                    _hover={{ bg: cCard.hoverBgColor }}
+                    cursor="pointer"
                   >
-                    {/* 2nd row is a custom 1 cell row */}
-                    <Td border="none" colSpan={row.getVisibleCells().length}>
-                      <AdditionalInfo row={row} />
-                    </Td>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <Td key={cell.id} border="none" p={0} height={16}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </Td>
+                      );
+                    })}
                   </Tr>
-                )}
-              </Fragment>
-            ))
-          ) : allPools.length === 0 ? (
-            <Tr>
-              <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                <Center py={8}>There are no pools.</Center>
-              </Td>
-            </Tr>
-          ) : (
-            <Tr>
-              <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
-                <Center py={8}>There are no results</Center>
-              </Td>
-            </Tr>
-          )}
-        </Tbody>
-      </Table>
+                  {row.getIsExpanded() && (
+                    <Tr
+                      borderColor={cCard.dividerColor}
+                      borderBottomWidth={1}
+                      borderTopWidth={1}
+                      borderTopStyle="dashed"
+                      borderBottomStyle="solid"
+                      background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
+                    >
+                      {/* 2nd row is a custom 1 cell row */}
+                      <Td border="none" colSpan={row.getVisibleCells().length}>
+                        <AdditionalInfo row={row} />
+                      </Td>
+                    </Tr>
+                  )}
+                </Fragment>
+              ))
+            ) : allPools.length === 0 ? (
+              <Tr>
+                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <Center py={8}>There are no pools.</Center>
+                </Td>
+              </Tr>
+            ) : (
+              <Tr>
+                <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
+                  <Center py={8}>There are no results</Center>
+                </Td>
+              </Tr>
+            )}
+          </Tbody>
+        </Table>
+      ) : (
+        <Stack>
+          <Skeleton height={16} />
+          <Skeleton height={60} />
+        </Stack>
+      )}
+
       <Flex
         className="pagination"
         flexDirection={{ base: 'column', lg: 'row' }}
@@ -555,25 +607,27 @@ const ChainFilterButton = ({
   chainId,
   onFilter,
   globalFilter,
-  countsOf,
+  isLoading,
 }: {
   chainId: SupportedChains;
   onFilter: (chainId: SupportedChains) => void;
   globalFilter: (string | SupportedChains)[];
-  countsOf: { [key: string]: number };
+  isLoading: boolean;
 }) => {
   const chainConfig = useChainConfig(chainId);
 
   return chainConfig ? (
-    <SimpleTooltip key={chainId} label={chainConfig.specificParams.metadata.name}>
-      <Button
-        variant={globalFilter.includes(chainId) ? '_solid' : '_outline'}
-        onClick={() => onFilter(chainId)}
-        px={2}
-        disabled={countsOf[chainId.toString()] === 0}
-        width={16}
-      >
-        <HStack>
+    <CButton
+      isSelected={globalFilter.includes(chainId)}
+      onClick={() => onFilter(chainId)}
+      variant="filter"
+      disabled={isLoading}
+      px={2}
+    >
+      <HStack>
+        {isLoading ? (
+          <Spinner />
+        ) : (
           <Img
             width={6}
             height={6}
@@ -581,9 +635,12 @@ const ChainFilterButton = ({
             src={chainConfig.specificParams.metadata.img}
             alt=""
           />
-          <Text variant="mdText">{countsOf[chainId.toString()]}</Text>
-        </HStack>
-      </Button>
-    </SimpleTooltip>
+        )}
+
+        <Text pt="2px">{chainConfig.specificParams.metadata.shortName}</Text>
+      </HStack>
+    </CButton>
   ) : null;
 };
+
+export default PoolsRowList;
