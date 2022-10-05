@@ -40,8 +40,6 @@ describe("FundOperation", () => {
         mkAddress("0x123")
       );
 
-      console.log({gasWEI, gasPrice, estimatedGas})
-
       expect(axiosStub).be.calledOnce;
       expect(estimatedGas.toNumber()).to.be.equal(9);
       expect(gasPrice.toNumber()).to.be.equal(gasPriceAvg * 1000000000);
