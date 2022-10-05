@@ -20,7 +20,7 @@ export const deployDiaWstDotPriceOracle = async ({
 
   const dspo = await deployments.deploy("DiaStDotPriceOracle", {
     from: deployer,
-    args: [stDot, wstDot],
+    args: [],
     log: true,
     proxy: {
       execute: {

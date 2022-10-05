@@ -202,7 +202,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   // dia stDOT and swtDOT price oracle
-  deployDiaWstDotPriceOracle({
+  await deployDiaWstDotPriceOracle({
     run,
     ethers,
     getNamedAccounts,
