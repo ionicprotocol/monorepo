@@ -153,15 +153,10 @@ const PoolsRowList = ({
     return [
       {
         accessorKey: 'chain',
-        header: () => (
-          <Text variant="smText" fontWeight="bold" py={2}>
-            Chain
-          </Text>
-        ),
+        header: () => null,
         cell: ({ getValue }) => <Chain pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
-        filterFn: poolFilter,
-        sortingFn: poolSort,
+        enableSorting: false,
       },
       {
         accessorKey: 'poolName',
@@ -172,6 +167,7 @@ const PoolsRowList = ({
         ),
         cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
+        filterFn: poolFilter,
         sortingFn: poolSort,
       },
       {
@@ -415,11 +411,14 @@ const PoolsRowList = ({
                       textTransform="capitalize"
                       py={2}
                       cursor="pointer"
-                      pl={{ base: 2, lg: 4 }}
-                      pr={header.column.id === 'chain' ? 0 : { base: 2, lg: 4 }}
+                      px={
+                        header.column.id === 'poolName' || header.column.id === 'chain'
+                          ? 0
+                          : { base: 2, lg: 4 }
+                      }
                     >
                       <HStack
-                        spacing={header.column.id === 'assets' ? 0 : 1}
+                        spacing={header.column.id === 'assets' ? 0 : 2}
                         justifyContent={
                           header.column.id === 'chain' ||
                           header.column.id === 'poolName' ||
@@ -428,7 +427,7 @@ const PoolsRowList = ({
                             : 'flex-end'
                         }
                       >
-                        <Box width={header.column.id === 'assets' ? 0 : 3} mb={1}>
+                        <Box width={header.column.id === 'assets' ? 0 : 4} mb={1}>
                           <Box hidden={header.column.getIsSorted() ? false : true}>
                             {header.column.getIsSorted() === 'desc' ? (
                               <ArrowDownIcon fontSize={16} aria-label="sorted descending" />

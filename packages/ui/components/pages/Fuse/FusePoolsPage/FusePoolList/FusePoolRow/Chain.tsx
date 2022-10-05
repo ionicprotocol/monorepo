@@ -9,7 +9,7 @@ export const Chain = ({ pool }: { pool: PoolData }) => {
 
   return (
     <Link href={`/${pool.chainId}/pool/${pool.id}`} _hover={{ textDecoration: 'none' }}>
-      <HStack justifyContent="center" ml={3} height="100%">
+      <HStack justifyContent="flex-end" height="100%" width={12}>
         {chainConfig && (
           <SimpleTooltip label={chainConfig.specificParams.metadata.name}>
             <Img

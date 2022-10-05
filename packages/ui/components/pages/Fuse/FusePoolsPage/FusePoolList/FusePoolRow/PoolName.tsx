@@ -13,10 +13,10 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
       <VStack
         alignItems={'flex-start'}
         spacing={1}
-        ml={4}
         justifyContent="center"
         height="100%"
         px={{ base: 2, lg: 4 }}
+        ml={2}
       >
         <Stack width="350px" mt={rewardTokens.length ? 2 : 0}>
           <SimpleTooltip label={pool.name}>
