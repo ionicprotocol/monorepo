@@ -67,7 +67,7 @@ export const RewardsInfo = ({
             </>
           }
         >
-          <div>
+          <HStack>
             {rewardAddress ? (
               <TokenWithLabel address={rewardAddress} size="2xs" />
             ) : (
@@ -75,17 +75,22 @@ export const RewardsInfo = ({
                 🔌
               </span>
             )}
-          </div>
+            {!apyLoading && apyResponse && apyResponse.apy && (
+              <Text
+                color={cCard.txtColor}
+                title={apyResponse.apy.toString()}
+                variant="smText"
+                ml={1}
+              >
+                {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
+              </Text>
+            )}
+          </HStack>
         </PopoverTooltip>
         {!apyLoading && apyResponse && apyResponse.apy === undefined && (
           <ApyInformTooltip pluginAddress={pluginAddress} />
         )}
       </HStack>
-      {!apyLoading && apyResponse && apyResponse.apy && (
-        <Text color={cCard.txtColor} title={apyResponse.apy.toString()} variant="smText" ml={1}>
-          {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
-        </Text>
-      )}
       {apyLoading && (
         <Skeleton height={'1em'} ml={1}>
           0.00%
