@@ -92,6 +92,7 @@ const PoolsRowList = ({
 }) => {
   const enabledChains = useEnabledChains();
   const [err, setErr] = useState<Err | undefined>();
+  const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [sorting, setSorting] = useState<SortingState>(preSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -365,12 +366,14 @@ const PoolsRowList = ({
 
   useEffect(() => {
     const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
-      globalFilter.includes(chainId)
+      globalFilter.includes(Number(chainId))
     );
     if (selectedChainId) {
       setErr(poolsPerChain[selectedChainId].error);
+      setIsLoadingPerChain(poolsPerChain[selectedChainId].isLoading);
     } else {
       setErr(undefined);
+      setIsLoadingPerChain(false);
     }
   }, [globalFilter, poolsPerChain]);
 
@@ -432,7 +435,7 @@ const PoolsRowList = ({
           />
         </Flex>
       </Flex>
-      {!isLoading ? (
+      {!isLoading && !isLoadingPerChain ? (
         <Table>
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
