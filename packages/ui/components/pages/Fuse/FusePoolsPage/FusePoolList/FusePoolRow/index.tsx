@@ -55,7 +55,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
-import { useIsMobile } from '@ui/hooks/useScreenSize';
+import { useIsMobile, useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
@@ -90,6 +90,7 @@ const PoolsRowList = ({
   const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState({});
   const [searchText, setSearchText] = useState('');
+  const isSmallScreen = useIsSmallScreen();
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -355,12 +356,13 @@ const PoolsRowList = ({
         flexDirection={{ base: 'column', sm: 'row' }}
         gap={4}
       >
-        <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
+        <Flex className="pagination">
           <ButtonGroup
-            isAttached
+            isAttached={!isSmallScreen ? true : false}
+            gap={!isSmallScreen ? 0 : 2}
             spacing={0}
             flexFlow={'row wrap'}
-            justifyContent="center"
+            justifyContent="flex-start"
             mx={4}
             mt={2}
           >
@@ -389,7 +391,7 @@ const PoolsRowList = ({
             })}
           </ButtonGroup>
         </Flex>
-        <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
+        <Flex className="searchAsset" justifyContent="center" alignItems="flex-end">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
         </Flex>
       </Flex>
