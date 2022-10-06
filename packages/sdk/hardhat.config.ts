@@ -37,11 +37,6 @@ import "./tasks/one-time/arrakis-polygon-plugins";
 
 dotEnvConfig();
 
-const urlOverride = process.env.ETH_PROVIDER_URL;
-
-console.log("urlOverride: ", urlOverride);
-console.log("FORK_RPC_URL: ", process.env.FORK_RPC_URL);
-
 const mnemonic =
   process.env.SUGAR_DADDY ||
   process.env.MNEMONIC ||
@@ -80,33 +75,27 @@ const config: HardhatUserConfig = {
     rando: { default: 3 },
   },
   networks: {
+    // This is the unchangeable default network which is started with `hardhat node`
     hardhat: {
-      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
       accounts: { mnemonic },
+      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
+      gas: 25e6,
       gasPrice: 20e10,
-      gas: 25e6,
+      // url: is passed in via --fork when forking
     },
-    localhost: {
-      url: urlOverride || "http://localhost:8545",
-      saveDeployments: true,
-      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
-      gasPrice: 20e9,
-      gas: 25e6,
-      accounts: { mnemonic },
-    },
-    fpolygon: {
-      url: "http://localhost:8546",
-      accounts: { mnemonic },
-      chainId: 137,
-      // gasPrice: 20e9,
-      // gas: 7500000,
-    },
-    fbsc: {
+    localbsc: {
       accounts: { mnemonic },
       chainId: 56,
-      gasPrice: 20e9,
-      gas: 7500000,
+      gas: 25e6,
+      gasPrice: 20e10,
       url: "http://localhost:8545",
+    },
+    localpolygon: {
+      accounts: { mnemonic },
+      chainId: 137,
+      gas: 25e6,
+      gasPrice: 20e10,
+      url: "http://localhost:8546",
     },
     rinkeby: {
       accounts: { mnemonic },
