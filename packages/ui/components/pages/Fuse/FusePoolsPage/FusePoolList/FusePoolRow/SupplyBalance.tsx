@@ -1,4 +1,4 @@
-import { Link, Text, VStack } from '@chakra-ui/react';
+import { Text, VStack } from '@chakra-ui/react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -9,23 +9,21 @@ export const SupplyBalance = ({ pool }: { pool: PoolData }) => {
   const { address } = useMultiMidas();
 
   return (
-    <Link href={`/${pool.chainId}/pool/${pool.id}`} _hover={{ textDecoration: 'none' }}>
-      <VStack alignItems={'flex-end'} px={{ base: 2, lg: 4 }} justifyContent="center" height="100%">
-        {address ? (
-          <SimpleTooltip label={`$${longFormat(pool.totalSupplyBalanceFiat)}`}>
-            <Text variant="smText" fontWeight="bold" textAlign="center">
-              {smallUsdFormatter(pool.totalSupplyBalanceFiat)}
-              {pool.totalSupplyBalanceFiat > 0 && pool.totalSupplyBalanceFiat < 0.01 && '+'}
-            </Text>
-          </SimpleTooltip>
-        ) : (
-          <SimpleTooltip label="Connect your wallet">
-            <Text variant="smText" fontWeight="bold" textAlign="center">
-              -
-            </Text>
-          </SimpleTooltip>
-        )}
-      </VStack>
-    </Link>
+    <VStack alignItems={'flex-end'} px={{ base: 2, lg: 4 }} justifyContent="center" height="100%">
+      {address ? (
+        <SimpleTooltip label={`$${longFormat(pool.totalSupplyBalanceFiat)}`}>
+          <Text variant="smText" fontWeight="bold" textAlign="center">
+            {smallUsdFormatter(pool.totalSupplyBalanceFiat)}
+            {pool.totalSupplyBalanceFiat > 0 && pool.totalSupplyBalanceFiat < 0.01 && '+'}
+          </Text>
+        </SimpleTooltip>
+      ) : (
+        <SimpleTooltip label="Connect your wallet">
+          <Text variant="smText" fontWeight="bold" textAlign="center">
+            -
+          </Text>
+        </SimpleTooltip>
+      )}
+    </VStack>
   );
 };

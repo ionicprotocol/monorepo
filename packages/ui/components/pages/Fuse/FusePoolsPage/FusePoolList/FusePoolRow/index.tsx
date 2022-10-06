@@ -35,6 +35,7 @@ import {
   SortingState,
   useReactTable,
 } from '@tanstack/react-table';
+import { useRouter } from 'next/router';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
@@ -78,7 +79,7 @@ const PoolsRowList = ({
   isLoading: boolean;
 }) => {
   const enabledChains = useEnabledChains();
-  const { address } = useMultiMidas();
+  const { address, setGlobalLoading } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [sorting, setSorting] = useState<SortingState>([
@@ -93,6 +94,7 @@ const PoolsRowList = ({
   const [searchText, setSearchText] = useState('');
   const isSmallScreen = useIsSmallScreen();
   const mounted = useRef(false);
+  const router = useRouter();
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -506,6 +508,12 @@ const PoolsRowList = ({
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                     _hover={{ bg: cCard.hoverBgColor }}
                     cursor="pointer"
+                    onClick={() => {
+                      setGlobalLoading(true);
+                      router.push(
+                        `/${row.original.poolName.chainId}/pool/${row.original.poolName.id}`
+                      );
+                    }}
                   >
                     {row.getVisibleCells().map((cell) => {
                       return (
