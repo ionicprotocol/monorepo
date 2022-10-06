@@ -13,11 +13,11 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import FuseDashNav from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   MIDAS_DISCORD_URL,
@@ -28,10 +28,6 @@ import {
 import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
-
-const FuseDashNav = dynamic(() => import('@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav'), {
-  ssr: false,
-});
 
 const MotionFlex = motion<FlexProps>(Flex);
 
