@@ -7,6 +7,7 @@ export {
   pancakeSwapDocs,
   quickSwapDocs,
   ankrBNBDocs,
+  stkBNBDocs,
   curveFinancePolygonDocs,
   curveFinanceArbitrumDocs,
   jarvisDocs,

@@ -15,6 +15,7 @@ import {
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
+import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
 
 const assets = bsc.assets;
@@ -77,6 +78,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["BUSD-USDT"]), // BUSD-USDT PCS LP
       underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB-BTC PCS LP
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
+      underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
     ],
     flashSwapFee: 25,
   },
@@ -315,6 +317,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curveV2Pools,
+  });
+
+  //// stk BNB  oracle
+  await deployStkBNBOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
   });
 
   //// Ankr BNB Certificate oracle

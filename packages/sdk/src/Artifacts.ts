@@ -2,6 +2,7 @@
 
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
+import AnkrBNBcPriceOracleArtifact from "../lib/contracts/out/AnkrBNBcPriceOracle.sol/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
@@ -54,6 +55,7 @@ const UniswapTwapPriceOracleV2Root: Artifact = UniswapTwapPriceOracleV2RootArtif
 const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
+const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
 const WhitePaperInterestRateModel: Artifact = WhitePaperInterestRateModelArtifact;
@@ -84,6 +86,7 @@ const ARTIFACTS = {
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,
+  AnkrBNBcPriceOracle,
   UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
@@ -114,6 +117,7 @@ export {
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,
+  AnkrBNBcPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,
   Unitroller,
