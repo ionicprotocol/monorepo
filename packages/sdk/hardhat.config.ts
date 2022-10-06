@@ -164,7 +164,7 @@ const config: HardhatUserConfig = {
       chainId: 137,
     },
     arbitrum: {
-      url: urlOverride || `https://rpc.ankr.com/arbitrum`,
+      url: urlOverride || `https://arb1.arbitrum.io/rpc`,
       accounts: { mnemonic },
       chainId: 42161,
     },
