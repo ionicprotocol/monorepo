@@ -58,6 +58,7 @@ import {
   SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useTotalApy } from '@ui/hooks/useApy';
@@ -95,6 +96,7 @@ export const MarketsList = ({
   poolChainId: number;
 }) => {
   const sdk = useSdk(poolChainId);
+  const { address } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -379,6 +381,16 @@ export const MarketsList = ({
       table.getColumn('collateral').toggleVisibility(true);
     }
   }, [isMobile, table]);
+
+  useEffect(() => {
+    if (address) {
+      table.getColumn('supplyBalance').toggleVisibility(true);
+      table.getColumn('borrowBalance').toggleVisibility(true);
+    } else {
+      table.getColumn('supplyBalance').toggleVisibility(false);
+      table.getColumn('borrowBalance').toggleVisibility(false);
+    }
+  }, [address, table]);
 
   const { cCard } = useColors();
 
