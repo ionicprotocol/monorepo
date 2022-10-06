@@ -50,15 +50,8 @@ import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolL
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
-import {
-  ALL,
-  MIDAS_POOL_FILTER,
-  MIDAS_POOL_SEARCH,
-  MIDAS_POOL_SORT_DESC,
-  MIDAS_POOL_SORT_ID,
-  POOLS_COUNT_PER_PAGE,
-  SEARCH,
-} from '@ui/constants/index';
+import { ALL, MIDAS_LOCALSTORAGE_KEYS, POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -80,27 +73,24 @@ export type PoolRowData = {
 const PoolsRowList = ({
   poolsPerChain,
   isLoading,
-  preFilter,
-  preSearchText,
-  preSorting,
 }: {
   poolsPerChain: PoolsPerChainStatus;
   isLoading: boolean;
-  preFilter: (string | SupportedChains)[];
-  preSearchText: string;
-  preSorting: SortingState;
 }) => {
   const enabledChains = useEnabledChains();
+  const { address } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
-  const [sorting, setSorting] = useState<SortingState>(preSorting);
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
+  ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0],
   });
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>(preFilter);
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
   const [columnVisibility, setColumnVisibility] = useState({});
-  const [searchText, setSearchText] = useState(preSearchText);
+  const [searchText, setSearchText] = useState('');
   const isSmallScreen = useIsSmallScreen();
   const mounted = useRef(false);
 
@@ -326,6 +316,16 @@ const PoolsRowList = ({
     }
   }, [globalFilter, table]);
 
+  useEffect(() => {
+    if (address) {
+      table.getColumn('supplyBalance').toggleVisibility(true);
+      table.getColumn('borrowBalance').toggleVisibility(true);
+    } else {
+      table.getColumn('supplyBalance').toggleVisibility(false);
+      table.getColumn('borrowBalance').toggleVisibility(false);
+    }
+  }, [address, table]);
+
   const { cCard } = useColors();
 
   const onFilter = (filter: SupportedChains | string) => {
@@ -347,22 +347,10 @@ const PoolsRowList = ({
 
   useEffect(() => {
     if (mounted.current) {
-      localStorage.setItem(MIDAS_POOL_SEARCH, searchText);
+      const data = { searchText, globalFilter, sorting };
+      localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
-  }, [searchText]);
-
-  useEffect(() => {
-    if (mounted.current) {
-      localStorage.setItem(MIDAS_POOL_FILTER, JSON.stringify(globalFilter));
-    }
-  }, [globalFilter]);
-
-  useEffect(() => {
-    if (mounted.current) {
-      localStorage.setItem(MIDAS_POOL_SORT_ID, sorting[0].id);
-      localStorage.setItem(MIDAS_POOL_SORT_DESC, sorting[0].desc ? 'true' : 'false');
-    }
-  }, [sorting]);
+  }, [searchText, globalFilter, sorting]);
 
   useEffect(() => {
     const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
@@ -379,6 +367,16 @@ const PoolsRowList = ({
 
   useEffect(() => {
     mounted.current = true;
+
+    const data = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    if (data && mounted.current) {
+      const obj = JSON.parse(data);
+      const _globalFilter = (obj.globalFilter as (string | SupportedChains)[]) || [ALL];
+      const _sorting = (obj.sorting as SortingState) || [{ id: 'totalSupplied', desc: true }];
+
+      setGlobalFilter(_globalFilter);
+      setSorting(_sorting);
+    }
 
     return () => {
       mounted.current = false;
@@ -429,10 +427,7 @@ const PoolsRowList = ({
           </ButtonGroup>
         </Flex>
         <Flex className="searchAsset" justifyContent="center" alignItems="flex-end">
-          <ControlledSearchInput
-            onUpdate={(searchText) => setSearchText(searchText)}
-            preSearchText={preSearchText}
-          />
+          <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
         </Flex>
       </Flex>
       {!isLoading && !isLoadingPerChain ? (
@@ -619,20 +614,31 @@ const PoolsRowList = ({
   );
 };
 
-const ControlledSearchInput = ({
-  onUpdate,
-  preSearchText,
-}: {
-  onUpdate: (value: string) => void;
-  preSearchText: string;
-}) => {
-  const [searchText, setSearchText] = useState(preSearchText);
+const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void }) => {
+  const [searchText, setSearchText] = useState('');
   const isMobile = useIsMobile();
+  const mounted = useRef(false);
   const debouncedText = useDebounce(searchText, 400);
 
   useEffect(() => {
     onUpdate(debouncedText);
   }, [debouncedText, onUpdate]);
+
+  useEffect(() => {
+    mounted.current = true;
+
+    const data = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    if (data && mounted.current) {
+      const obj = JSON.parse(data);
+      const _searchText = obj.searchText || '';
+
+      setSearchText(_searchText);
+    }
+
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   const onSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(e.target.value);

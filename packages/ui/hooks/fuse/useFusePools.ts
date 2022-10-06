@@ -7,7 +7,7 @@ import { useMemo } from 'react';
 import { config } from '@ui/config/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useUSDPrices } from '@ui/hooks/useUSDPrices';
-import { PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
+import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { poolSort } from '@ui/utils/sorts';
 
@@ -165,16 +165,16 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
 
     let isLoading = true;
     let isError = true;
-    let error: Error | undefined;
+    let error: Err | undefined;
 
     poolsQueries.map((pools, index) => {
       isLoading = isLoading && pools.isLoading;
       isError = isError && pools.isError;
-      error = isError ? (pools.error as Error) : undefined;
+      error = isError ? (pools.error as Err) : undefined;
       const _chainId = chainIds[index];
       _poolsPerChain[_chainId.toString()] = {
         isLoading: pools.isLoading,
-        error: pools.error as Error | undefined,
+        error: pools.error as Err | undefined,
         data: pools.data,
       };
     });

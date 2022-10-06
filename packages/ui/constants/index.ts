@@ -94,7 +94,4 @@ export const COLLATERAL_FACTOR_TOOLTIP =
 export const ADMIN_FEE_TOOLTIP =
   "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee.";
 
-export const MIDAS_POOL_SEARCH = 'midas_pool_search';
-export const MIDAS_POOL_FILTER = 'midas_pool_filter';
-export const MIDAS_POOL_SORT_ID = 'midas_pool_sort_id';
-export const MIDAS_POOL_SORT_DESC = 'midas_pool_sort_desc';
+export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
