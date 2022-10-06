@@ -3,7 +3,7 @@ name: UI - deploy UI
 on:
   pull_request:
     branches: [main, development]
-    types: [ labeled ]
+    types: [labeled, opened,synchronize,reopened]
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
@@ -16,7 +16,7 @@ on:
 
 jobs:
   deploy-preview:
-    if: ${{ github.event.label.name == 'preview' }}
+    if: contains(github.event.pull_request.labels.*.name, 'preview')
     runs-on: ubuntu-latest
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
