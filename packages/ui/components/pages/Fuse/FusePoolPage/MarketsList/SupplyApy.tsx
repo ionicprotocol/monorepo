@@ -3,7 +3,6 @@ import { Web3Provider } from '@ethersproject/providers';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
 import { Contract, utils } from 'ethers';
-import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
@@ -23,9 +22,14 @@ export const SupplyApy = ({
   rewards: FlywheelMarketRewardsInfo[];
 }) => {
   const { midasSdk, currentChain } = useMidas();
-  const supplyAPY = midasSdk.ratePerBlockToAPY(
-    asset.supplyRatePerBlock,
-    getBlockTimePerMinuteByChainId(currentChain.id)
+
+  const supplyAPY = useMemo(
+    () =>
+      midasSdk.ratePerBlockToAPY(
+        asset.supplyRatePerBlock,
+        getBlockTimePerMinuteByChainId(currentChain.id)
+      ),
+    [asset.supplyRatePerBlock, currentChain.id, midasSdk]
   );
 
   const { cCard } = useColors();
@@ -69,30 +73,24 @@ export const SupplyApy = ({
       {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
         rewardsOfThisMarket?.rewardsInfo.map((info) =>
           asset.plugin ? (
-            <>
-              <div>
-                <RewardsInfo
-                  key={info.rewardToken}
-                  underlyingAddress={asset.underlyingToken}
-                  pluginAddress={asset.plugin}
-                  rewardAddress={info.rewardToken}
-                />
-              </div>
-            </>
+            <RewardsInfo
+              key={info.rewardToken}
+              underlyingAddress={asset.underlyingToken}
+              pluginAddress={asset.plugin}
+              rewardAddress={info.rewardToken}
+            />
           ) : (
-            <>
-              <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-                <HStack mr={2}>
-                  <Text variant="smText">+</Text>
-                  <TokenWithLabel address={info.rewardToken} size="2xs" border="0" />
-                </HStack>
-                {info.formattedAPR && (
-                  <Text variant="smText" ml={1}>
-                    {aprFormatter(info.formattedAPR)}%
-                  </Text>
-                )}
+            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+              <HStack mr={2}>
+                <Text variant="smText">+</Text>
+                <TokenWithLabel address={info.rewardToken} size="2xs" border="0" />
               </HStack>
-            </>
+              {info.formattedAPR && (
+                <Text variant="smText" ml={1}>
+                  {aprFormatter(info.formattedAPR)}%
+                </Text>
+              )}
+            </HStack>
           )
         )
       ) : asset.plugin ? (
