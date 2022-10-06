@@ -66,7 +66,7 @@ const FuseStatsBar = () => {
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
         <Text variant="heading" fontWeight="bold">
-          PREVIEW deployed
+          Unleash the power of your assets
         </Text>
         <Text variant="mdText" my={4} zIndex="100" lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
