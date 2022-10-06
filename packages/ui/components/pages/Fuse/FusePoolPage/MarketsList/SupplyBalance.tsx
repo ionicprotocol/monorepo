@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -17,35 +18,46 @@ export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
   }, [asset.supplyBalance, asset.underlyingDecimals]);
 
   const { cCard } = useColors();
+  const { address } = useMultiMidas();
 
   return (
     <VStack alignItems="flex-end">
-      <SimpleTooltip label={`$${longFormat(asset.supplyBalanceFiat)}`}>
-        <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
-          {smallUsdFormatter(asset.supplyBalanceFiat)}
-          {asset.supplyBalanceFiat > DOWN_LIMIT && asset.supplyBalanceFiat < UP_LIMIT && '+'}
-        </Text>
-      </SimpleTooltip>
-      <SimpleTooltip
-        label={`${longFormat(supplyBalance)} ${
-          tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol
-        }`}
-      >
-        <Text
-          id="supplyBalance"
-          mt={1}
-          variant="smText"
-          maxWidth="90px"
-          textOverflow={'ellipsis'}
-          align={'right'}
-          whiteSpace="nowrap"
-          overflow="hidden"
-        >
-          {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}
-          {supplyBalance > DOWN_LIMIT && supplyBalance < UP_LIMIT && '+'}{' '}
-          {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}
-        </Text>
-      </SimpleTooltip>
+      {address ? (
+        <>
+          <SimpleTooltip label={`$${longFormat(asset.supplyBalanceFiat)}`}>
+            <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
+              {smallUsdFormatter(asset.supplyBalanceFiat)}
+              {asset.supplyBalanceFiat > DOWN_LIMIT && asset.supplyBalanceFiat < UP_LIMIT && '+'}
+            </Text>
+          </SimpleTooltip>
+          <SimpleTooltip
+            label={`${longFormat(supplyBalance)} ${
+              tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol
+            }`}
+          >
+            <Text
+              id="supplyBalance"
+              mt={1}
+              variant="smText"
+              maxWidth="90px"
+              textOverflow={'ellipsis'}
+              align={'right'}
+              whiteSpace="nowrap"
+              overflow="hidden"
+            >
+              {tokenFormatter(asset.supplyBalance, asset.underlyingDecimals)}
+              {supplyBalance > DOWN_LIMIT && supplyBalance < UP_LIMIT && '+'}{' '}
+              {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+          </SimpleTooltip>
+        </>
+      ) : (
+        <SimpleTooltip label="Connect your wallet">
+          <Text variant="smText" fontWeight="bold" textAlign="center">
+            -
+          </Text>
+        </SimpleTooltip>
+      )}
     </VStack>
   );
 };

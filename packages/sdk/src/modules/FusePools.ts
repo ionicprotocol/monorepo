@@ -123,6 +123,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       assets.sort((a, b) => b.liquidityNative - a.liquidityNative);
       return {
         id: Number(poolId),
+        chainId: this.chainId,
         assets,
         creator,
         comptroller,

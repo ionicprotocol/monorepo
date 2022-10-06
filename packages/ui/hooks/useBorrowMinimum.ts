@@ -3,19 +3,22 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useCgId } from './useChainConfig';
+
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
-export const useBorrowMinimum = (asset: FuseAsset) => {
-  const { midasSdk, coingeckoId } = useMidas();
+export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
+  const { currentSdk } = useMultiMidas();
+  const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   const response = useQuery(
-    [`useBorrowMinimum`, midasSdk.chainId],
-    async () => midasSdk.contracts.FuseFeeDistributor.callStatic.minBorrowEth(),
+    [`useBorrowMinimum`, currentSdk?.chainId],
+    async () => currentSdk && currentSdk.contracts.FuseFeeDistributor.callStatic.minBorrowEth(),
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!midasSdk.chainId,
+      enabled: !!currentSdk,
     }
   );
 

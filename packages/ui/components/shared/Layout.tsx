@@ -4,17 +4,17 @@ import { ReactNode } from 'react';
 import { Banner } from '@ui/components/shared/Banner';
 import { Column } from '@ui/components/shared/Flex';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 
 const Layout = ({ children }: { children: ReactNode }) => {
-  const { loading } = useMidas();
+  const { isGlobalLoading } = useMultiMidas();
   const { cPage } = useColors();
   const isMobile = useIsSmallScreen();
 
   return (
-    <LoadingOverlay isLoading={loading}>
+    <LoadingOverlay isLoading={isGlobalLoading}>
       <Column
         height="100%"
         flex={1}

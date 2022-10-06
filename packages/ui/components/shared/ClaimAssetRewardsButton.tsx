@@ -5,6 +5,7 @@ import React from 'react';
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
@@ -22,7 +23,7 @@ const ClaimAssetRewardsButton = ({
     onClose: closeClaimModal,
   } = useDisclosure();
   const { cCard } = useColors();
-
+  const { currentChain } = useMultiMidas();
   const isMobile = useIsSemiSmallScreen();
 
   const { data: claimableRewards, refetch: refetchRewards } = useAssetClaimableRewards({
@@ -51,11 +52,15 @@ const ClaimAssetRewardsButton = ({
               Claim Rewards
             </Text>
           )}
-          <AvatarGroup size="xs" max={30} my={2}>
-            {claimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
-              return <CTokenIcon key={index} address={rD.rewardToken} />;
-            })}
-          </AvatarGroup>
+          {currentChain && (
+            <AvatarGroup size="xs" max={30} my={2}>
+              {claimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
+                return (
+                  <CTokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />
+                );
+              })}
+            </AvatarGroup>
+          )}
         </HStack>
       </GlowingBox>
       <Box position="absolute">

@@ -24,7 +24,8 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
 import { useCTokensUnderlying } from '@ui/hooks/rewards/useCTokensUnderlying';
 import { useFlywheelsForPool } from '@ui/hooks/rewards/useFlywheelsForPool';
@@ -44,10 +45,11 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
     data: flywheels,
     refetch: refetchFlywheels,
     isLoading,
-  } = useFlywheelsForPool(pool.comptroller);
-  const isUpgradeable = useIsUpgradeable(pool.comptroller);
+  } = useFlywheelsForPool(pool.comptroller, pool.chainId);
+  const isUpgradeable = useIsUpgradeable(pool.comptroller, pool.chainId);
 
   const [flywheel, setFlywheel] = useState<Flywheel | undefined>();
+  const isEditableAdmin = useIsEditableAdmin(pool.comptroller, pool.chainId);
 
   const onFlywheelEdit = useCallback(
     (fw: Flywheel) => {
@@ -101,10 +103,10 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             <Heading size="md">Flywheels</Heading>
 
             <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-              <Button variant="_ghost" onClick={openAdd} ml="auto">
+              <Button variant="_ghost" onClick={openAdd} ml="auto" isDisabled={!isEditableAdmin}>
                 Add existing Flywheel
               </Button>
-              <Button onClick={openCreate} ml="auto">
+              <Button onClick={openCreate} ml="auto" isDisabled={!isEditableAdmin}>
                 Deploy new Flywheel
               </Button>
             </Flex>
@@ -150,7 +152,7 @@ const FlywheelRow = ({
   pool: PoolData;
   onClick: (fw: Flywheel) => void;
 }) => {
-  const { address } = useMidas();
+  const { address } = useMultiMidas();
 
   // TODO check authority here as well.
   const isAdmin = address === flywheel.owner;
@@ -191,7 +193,11 @@ const FlywheelRow = ({
       </Td>
       <Td>
         {!!underlyings.length ? (
-          <CTokenAvatarGroup tokenAddresses={underlyings} popOnHover={true} />
+          <CTokenAvatarGroup
+            tokenAddresses={underlyings}
+            popOnHover={true}
+            chainId={pool.chainId}
+          />
         ) : (
           <Badge>None</Badge>
         )}

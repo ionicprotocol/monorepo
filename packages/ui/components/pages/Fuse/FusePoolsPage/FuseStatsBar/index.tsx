@@ -13,6 +13,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
@@ -27,6 +28,10 @@ import {
 import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
+
+const FuseDashNav = dynamic(() => import('@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav'), {
+  ssr: false,
+});
 
 const MotionFlex = motion<FlexProps>(Flex);
 
@@ -49,7 +54,7 @@ const FuseStatsBar = () => {
       alignItems="flex-end"
       justifyContent="center"
       pt={{ base: '72px', md: '0px' }}
-      pb={{ base: '72px', md: '72px' }}
+      pb={{ base: 6, md: 6 }}
       px={{ base: 0, lg: 0 }}
       w="100%"
       gridGap="1.5rem"
@@ -97,6 +102,8 @@ const FuseStatsBar = () => {
               </motion.div>
             </Link>
           </SimpleTooltip>
+
+          <FuseDashNav />
         </HStack>
       </Flex>
 
@@ -139,7 +146,7 @@ const FuseStatsBar = () => {
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
                     <Text fontWeight="bold">{smallUsdFormatter(chainTVL.value)}</Text>
-                    <Text fontSize="sm">{chainTVL.name}</Text>
+                    <Text>{chainTVL.name}</Text>
                   </Box>
                 </Flex>
               ))}

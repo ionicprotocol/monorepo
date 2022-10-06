@@ -2,7 +2,7 @@ name: UI - deploy UI
 
 on:
   push:
-    branches: [main, development, preview]
+    branches: [main, development]
     paths:
       - 'packages/ui/**'
       - 'packages/sdk/**'
@@ -39,13 +39,6 @@ jobs:
         env:
           # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
           YARN_CHECKSUM_BEHAVIOR: update
-
-      - name: Deploy `Preview`
-        if: github.ref == 'refs/heads/preview'
-        run: |
-          netlify link --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
-          netlify deploy --prod --build --context branch-deploy
-
 
       - name: Deploy `Development`
         if: github.ref == 'refs/heads/development'
