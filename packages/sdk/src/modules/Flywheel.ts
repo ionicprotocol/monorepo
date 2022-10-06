@@ -210,7 +210,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         fwRewardsInstance.callStatic.rewardsInfo(marketAddress),
       ]);
       return {
-        enabled: marketState.lastUpdatedTimestamp > 0,
+        enabled: marketState[1] > 0,
         ...rewardsInfo,
       };
     }
