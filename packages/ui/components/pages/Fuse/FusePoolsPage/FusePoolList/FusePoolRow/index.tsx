@@ -338,7 +338,7 @@ const PoolsRowList = ({
 
   useEffect(() => {
     if (searchText) {
-      if (!globalFilter.includes(SEARCH)) setGlobalFilter([...globalFilter, SEARCH]);
+      setGlobalFilter([...globalFilter, SEARCH]);
     } else {
       setGlobalFilter(globalFilter.filter((f) => f !== SEARCH));
     }
