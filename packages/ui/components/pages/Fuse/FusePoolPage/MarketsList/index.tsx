@@ -60,6 +60,7 @@ import {
 } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useTotalApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
@@ -112,6 +113,8 @@ export const MarketsList = ({
     ];
   }, [assets]);
 
+  const { data: totalApy } = useTotalApy(rewards, assets, poolChainId);
+
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
       !searchText ||
@@ -150,14 +153,8 @@ export const MarketsList = ({
         rowA.original.market.underlyingSymbol
       );
     } else if (columnId === 'supplyApy') {
-      const rowASupplyAPY = sdk.ratePerBlockToAPY(
-        rowA.original.market.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(poolChainId)
-      );
-      const rowBSupplyAPY = sdk.ratePerBlockToAPY(
-        rowB.original.market.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(poolChainId)
-      );
+      const rowASupplyAPY = totalApy ? totalApy[rowA.original.market.cToken] : 0;
+      const rowBSupplyAPY = totalApy ? totalApy[rowB.original.market.cToken] : 0;
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
     } else if (columnId === 'borrowApy') {
       const rowABorrowAPY = !rowA.original.market.isBorrowPaused
@@ -242,6 +239,7 @@ export const MarketsList = ({
         ),
         footer: (props) => props.column.id,
         sortingFn: assetSort,
+        enableSorting: !!totalApy,
       },
       {
         accessorFn: (row) => row.borrowApy,
@@ -326,7 +324,7 @@ export const MarketsList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress]);
+  }, [rewards, comptrollerAddress, totalApy]);
 
   const [sorting, setSorting] = useState<SortingState>([{ id: 'market', desc: true }]);
   const [pagination, onPagination] = useState<PaginationState>({
