@@ -37,6 +37,16 @@ import "./tasks/one-time/arrakis-polygon-plugins";
 
 dotEnvConfig();
 
+const OVERRIDE_RPC_URL = process.env.OVERRIDE_RPC_URL || process.env.ETH_PROVIDER_URL; // Deprecated: ETH_PROVIDER_URL
+const FORK_RPC_URL = process.env.FORK_RPC_URL;
+const FORK_CHAIN_ID = process.env.FORK_CHAIN_ID;
+
+console.info({
+  OVERRIDE_RPC_URL,
+  FORK_RPC_URL,
+  FORK_CHAIN_ID,
+});
+
 const mnemonic =
   process.env.SUGAR_DADDY ||
   process.env.MNEMONIC ||
@@ -78,10 +88,21 @@ const config: HardhatUserConfig = {
     // This is the unchangeable default network which is started with `hardhat node`
     hardhat: {
       accounts: { mnemonic },
-      chainId: process.env.FORK_CHAIN_ID ? Number(process.env.FORK_CHAIN_ID) : 1337,
+      chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gas: 25e6,
       gasPrice: 20e10,
-      // url: is passed in via --fork when forking
+      forking: FORK_RPC_URL
+        ? {
+            url: FORK_RPC_URL,
+          }
+        : undefined,
+    },
+    fork: {
+      accounts: { mnemonic },
+      chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
+      gasPrice: 20e9,
+      gas: 7500000,
+      url: "http://localhost:8545",
     },
     localbsc: {
       accounts: { mnemonic },
@@ -100,7 +121,7 @@ const config: HardhatUserConfig = {
     rinkeby: {
       accounts: { mnemonic },
       chainId: 4,
-      url: urlOverride || process.env.RINKEBY_ETH_PROVIDER_URL || "https://rpc.ankr.com/eth_rinkeby",
+      url: OVERRIDE_RPC_URL || process.env.RINKEBY_ETH_PROVIDER_URL || "https://rpc.ankr.com/eth_rinkeby",
     },
     kovan: {
       accounts: { mnemonic },
@@ -110,18 +131,18 @@ const config: HardhatUserConfig = {
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
-      url: urlOverride || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
+      url: OVERRIDE_RPC_URL || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
     },
 
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
-      url: urlOverride || "https://data-seed-prebsc-1-s1.binance.org:8545/",
+      url: OVERRIDE_RPC_URL || "https://data-seed-prebsc-1-s1.binance.org:8545/",
     },
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: urlOverride || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: OVERRIDE_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
     },
     evmostestnet: {
       accounts: { mnemonic },
@@ -129,7 +150,7 @@ const config: HardhatUserConfig = {
       url: "https://eth.bd.evmos.dev:8545",
     },
     moonbase: {
-      url: urlOverride || `https://rpc.api.moonbase.moonbeam.network`,
+      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbase.moonbeam.network`,
       accounts: { mnemonic },
       chainId: 1287,
       saveDeployments: true,
@@ -137,23 +158,23 @@ const config: HardhatUserConfig = {
       gas: 8000000,
     },
     moonbeam: {
-      url: urlOverride || `https://rpc.api.moonbeam.network`,
+      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
       accounts: { mnemonic },
       chainId: 1284,
       saveDeployments: true,
     },
     neondevnet: {
-      url: urlOverride || `https://proxy.devnet.neonlabs.org/solana`,
+      url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
       accounts: { mnemonic },
       chainId: 245022926,
     },
     polygon: {
-      url: urlOverride || `https://polygon-rpc.com/`,
+      url: OVERRIDE_RPC_URL || `https://polygon-rpc.com/`,
       accounts: { mnemonic },
       chainId: 137,
     },
     arbitrum: {
-      url: urlOverride || `https://rpc.ankr.com/arbitrum`,
+      url: OVERRIDE_RPC_URL || `https://rpc.ankr.com/arbitrum`,
       accounts: { mnemonic },
       chainId: 42161,
     },

@@ -73,11 +73,13 @@ To run `forge` commands inside the `sdk` package, run:
 ```
 
 
-## Working with Mainnet Fork
+## Working with Forks
 
-Make sure to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
+Forking requires access to a archive RPC node. For BSC we had a great experience using an RPC Node from NodeReals MegaNode service - https://nodereal.io/meganode .
 
-We had a great experience using an RPC Node from NodeReals MegaNode service - https://nodereal.io/meganode .
+For forking Polygon we haven't found a free service to use an archive node yet.
+
+You general purpose forking you have to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
 
 And than start a forked local node by running.
 
@@ -85,12 +87,41 @@ And than start a forked local node by running.
 > yarn dev:node:fork
 ```
 
+In order to start multiple forks at once we streamlined the process a bit. In your executing shell make sure to set `BSC_RPC_URL` and or `POLYGON_RPC_URL`.
+
+
+```
+> yarn dev:node:bsc
+// Will start a CHAIN_ID=56 fork using $BSC_RPC_URL at https://localhost:8545
+```
+
+```
+> yarn dev:node:polygon
+// Will start a CHAIN_ID=137 fork using $POLYGON_RPC_URL at https://localhost:8546
+```
+
+The idea is to increase the port number with each fork we want to support.
+
+```
+8545: BSC
+8546: Polygon
+8547: Moonbeam?
+```
+
+
+
 For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
 
 ```
 > yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
-```
+// Works with https://localhost:8545
 
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network localbsc
+// Works with https://localhost:8545
+
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network localpolygon
+// Works with https://localhost:8546
+```
 
 ## Running UI Tests
 
