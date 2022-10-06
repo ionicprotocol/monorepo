@@ -108,8 +108,6 @@ The idea is to increase the port number with each fork we want to support.
 8547: Moonbeam?
 ```
 
-
-
 For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
 
 ```
