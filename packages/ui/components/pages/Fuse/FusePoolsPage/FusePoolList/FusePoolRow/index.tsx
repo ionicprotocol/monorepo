@@ -36,7 +36,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import * as React from 'react';
-import { Fragment, useEffect, useMemo, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AdditionalInfo } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/AdditionalInfo';
 import { Assets } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/Assets';
@@ -50,8 +50,15 @@ import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolL
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
-import { ALL, POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import {
+  ALL,
+  MIDAS_POOL_FILTER,
+  MIDAS_POOL_SEARCH,
+  MIDAS_POOL_SORT_DESC,
+  MIDAS_POOL_SORT_ID,
+  POOLS_COUNT_PER_PAGE,
+  SEARCH,
+} from '@ui/constants/index';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
@@ -73,24 +80,28 @@ export type PoolRowData = {
 const PoolsRowList = ({
   poolsPerChain,
   isLoading,
+  preFilter,
+  preSearchText,
+  preSorting,
 }: {
   poolsPerChain: PoolsPerChainStatus;
   isLoading: boolean;
+  preFilter: (string | SupportedChains)[];
+  preSearchText: string;
+  preSorting: SortingState;
 }) => {
   const enabledChains = useEnabledChains();
-  const { address } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>(preSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: POOLS_COUNT_PER_PAGE[0],
   });
-  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>([ALL]);
+  const [globalFilter, setGlobalFilter] = useState<(SupportedChains | string)[]>(preFilter);
   const [columnVisibility, setColumnVisibility] = useState({});
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState(preSearchText);
   const isSmallScreen = useIsSmallScreen();
+  const mounted = useRef(false);
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -316,14 +327,6 @@ const PoolsRowList = ({
 
   const { cCard } = useColors();
 
-  const onSearchFiltered = () => {
-    if (searchText) {
-      setGlobalFilter([...globalFilter, SEARCH]);
-    } else {
-      setGlobalFilter(globalFilter.filter((f) => f !== SEARCH));
-    }
-  };
-
   const onFilter = (filter: SupportedChains | string) => {
     if (globalFilter.includes(SEARCH)) {
       setGlobalFilter([filter, SEARCH]);
@@ -333,9 +336,32 @@ const PoolsRowList = ({
   };
 
   useEffect(() => {
-    onSearchFiltered();
+    if (searchText) {
+      if (!globalFilter.includes(SEARCH)) setGlobalFilter([...globalFilter, SEARCH]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== SEARCH));
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
+
+  useEffect(() => {
+    if (mounted.current) {
+      localStorage.setItem(MIDAS_POOL_SEARCH, searchText);
+    }
+  }, [searchText]);
+
+  useEffect(() => {
+    if (mounted.current) {
+      localStorage.setItem(MIDAS_POOL_FILTER, JSON.stringify(globalFilter));
+    }
+  }, [globalFilter]);
+
+  useEffect(() => {
+    if (mounted.current) {
+      localStorage.setItem(MIDAS_POOL_SORT_ID, sorting[0].id);
+      localStorage.setItem(MIDAS_POOL_SORT_DESC, sorting[0].desc ? 'true' : 'false');
+    }
+  }, [sorting]);
 
   useEffect(() => {
     const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
@@ -347,6 +373,14 @@ const PoolsRowList = ({
       setErr(undefined);
     }
   }, [globalFilter, poolsPerChain]);
+
+  useEffect(() => {
+    mounted.current = true;
+
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
 
   return (
     <MidasBox overflowX="auto" width="100%" mb="4">
@@ -392,7 +426,10 @@ const PoolsRowList = ({
           </ButtonGroup>
         </Flex>
         <Flex className="searchAsset" justifyContent="center" alignItems="flex-end">
-          <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
+          <ControlledSearchInput
+            onUpdate={(searchText) => setSearchText(searchText)}
+            preSearchText={preSearchText}
+          />
         </Flex>
       </Flex>
       {!isLoading ? (
@@ -579,8 +616,14 @@ const PoolsRowList = ({
   );
 };
 
-const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void }) => {
-  const [searchText, setSearchText] = useState('');
+const ControlledSearchInput = ({
+  onUpdate,
+  preSearchText,
+}: {
+  onUpdate: (value: string) => void;
+  preSearchText: string;
+}) => {
+  const [searchText, setSearchText] = useState(preSearchText);
   const isMobile = useIsMobile();
   const debouncedText = useDebounce(searchText, 400);
 

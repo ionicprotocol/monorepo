@@ -93,3 +93,8 @@ export const COLLATERAL_FACTOR_TOOLTIP =
   'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.';
 export const ADMIN_FEE_TOOLTIP =
   "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee.";
+
+export const MIDAS_POOL_SEARCH = 'midas_pool_search';
+export const MIDAS_POOL_FILTER = 'midas_pool_filter';
+export const MIDAS_POOL_SORT_ID = 'midas_pool_sort_id';
+export const MIDAS_POOL_SORT_DESC = 'midas_pool_sort_desc';
