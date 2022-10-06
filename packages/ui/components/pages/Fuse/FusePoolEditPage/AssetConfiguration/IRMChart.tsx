@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import Chart from 'react-apexcharts';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { FuseIRMDemoChartOptions } from '@ui/utils/chartOptions';
 import { convertIRMtoCurve } from '@ui/utils/convertIRMtoCurve';
@@ -14,39 +14,50 @@ interface IRMChartProps {
   interestRateModelAddress: string;
   reserveFactor: number;
   adminFee: number;
+  poolChainId: number;
 }
-const IRMChart = ({ interestRateModelAddress, reserveFactor, adminFee }: IRMChartProps) => {
+const IRMChart = ({
+  interestRateModelAddress,
+  reserveFactor,
+  adminFee,
+  poolChainId,
+}: IRMChartProps) => {
   const { cChart } = useColors();
-  const { midasSdk, currentChain } = useMidas();
+  const sdk = useSdk(poolChainId);
   const { data, isLoading, error } = useQuery(
-    ['irmCurve', interestRateModelAddress, adminFee, reserveFactor],
+    ['irmCurve', interestRateModelAddress, adminFee, reserveFactor, poolChainId],
     async () => {
-      const IRM = await midasSdk.identifyInterestRateModel(interestRateModelAddress);
-      if (IRM === null) {
+      if (sdk) {
+        const IRM = await sdk.identifyInterestRateModel(interestRateModelAddress);
+        if (IRM === null) {
+          return null;
+        }
+
+        await IRM._init(
+          interestRateModelAddress,
+          // reserve factor
+          // reserveFactor * 1e16,
+          utils.parseEther((reserveFactor / 100).toString()),
+
+          // admin fee
+          // adminFee * 1e16,
+          utils.parseEther((adminFee / 100).toString()),
+
+          // hardcoded 10% Fuse fee
+          utils.parseEther((10 / 100).toString()),
+          sdk.provider
+        );
+
+        return convertIRMtoCurve(sdk, IRM, sdk.chainId);
+      } else {
         return null;
       }
-
-      await IRM._init(
-        interestRateModelAddress,
-        // reserve factor
-        // reserveFactor * 1e16,
-        utils.parseEther((reserveFactor / 100).toString()),
-
-        // admin fee
-        // adminFee * 1e16,
-        utils.parseEther((adminFee / 100).toString()),
-
-        // hardcoded 10% Fuse fee
-        utils.parseEther((10 / 100).toString()),
-        midasSdk.provider
-      );
-
-      return convertIRMtoCurve(midasSdk, IRM, currentChain.id);
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!interestRateModelAddress && !!adminFee.toString() && !!reserveFactor.toString(),
+      enabled:
+        !!interestRateModelAddress && !!adminFee.toString() && !!reserveFactor.toString() && !!sdk,
     }
   );
 

@@ -1,26 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const usePluginInfo = (pluginAddress?: string) => {
-  const { midasSdk } = useMidas();
+export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
-    ['usePluginInfo', pluginAddress, midasSdk.chainId],
+    ['usePluginInfo', pluginAddress, sdk?.chainId],
     () => {
-      return pluginAddress && midasSdk.deployedPlugins[pluginAddress]
-        ? midasSdk.deployedPlugins[pluginAddress]
-        : {
-            name: `Unnamed (${pluginAddress})`,
-            market: '',
-            apyDocsUrl: '',
-            strategyDocsUrl: '',
-          };
+      if (sdk) {
+        return pluginAddress && sdk.deployedPlugins[pluginAddress]
+          ? sdk.deployedPlugins[pluginAddress]
+          : {
+              name: `Unnamed (${pluginAddress})`,
+              market: '',
+              apyDocsUrl: '',
+              strategyDocsUrl: '',
+            };
+      }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!pluginAddress,
+      enabled: !!pluginAddress && !!sdk,
     }
   );
 };

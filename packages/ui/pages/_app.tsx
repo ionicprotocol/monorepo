@@ -6,7 +6,6 @@ import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
 import { createClient, WagmiConfig } from 'wagmi';
 
-import CheckConnection from '@ui/components/shared/CheckConnection';
 import Layout from '@ui/components/shared/Layout';
 import { config } from '@ui/config/index';
 import { MultiMidasProvider } from '@ui/context/MultiMidasContext';
@@ -31,13 +30,11 @@ function MidasDapp({ Component, pageProps }: AppProps) {
       <WagmiConfig client={client}>
         <QueryClientProvider client={queryClient}>
           <MultiMidasProvider>
-            {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
-            <CheckConnection>
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            </CheckConnection>
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
           </MultiMidasProvider>
+          {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
         </QueryClientProvider>
       </WagmiConfig>
     </ChakraProvider>

@@ -82,10 +82,6 @@ export function useColors() {
     bgColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
   };
 
-  const cRssScore = {
-    bgColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
-  };
-
   const cSlider = {
     thumbBgColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.raisinBlack),
     thumbBorderColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
@@ -105,7 +101,6 @@ export function useColors() {
     cChart,
     cInput,
     cOutlineBtn,
-    cRssScore,
     cSelect,
     cSlider,
     cSwitch,

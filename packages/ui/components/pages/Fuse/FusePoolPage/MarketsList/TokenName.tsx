@@ -1,4 +1,4 @@
-import { Badge, Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -10,7 +10,15 @@ import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRew
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
-export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddress: string }) => {
+export const TokenName = ({
+  asset,
+  poolAddress,
+  poolChainId,
+}: {
+  asset: MarketData;
+  poolAddress: string;
+  poolChainId: number;
+}) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken);
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
@@ -29,9 +37,9 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
           />
         }
       >
-        <div>
-          <CTokenIcon size="md" address={asset.underlyingToken} withTooltip={false} />
-        </div>
+        <Center>
+          <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
+        </Center>
       </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>

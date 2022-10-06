@@ -13,22 +13,26 @@ import {
   Text,
   UnorderedList,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const Terms = () => {
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState<boolean>(
-    localStorage.getItem('MidasTandCAccepted') === 'true'
-  );
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState<boolean>(true);
 
-  const isOpen = !hasAcceptedTerms;
   const accept = () => {
-    localStorage.setItem('MidasTandCAccepted', 'true');
     setHasAcceptedTerms(true);
   };
 
+  useEffect(() => {
+    setHasAcceptedTerms(localStorage.getItem('MidasTandCAccepted') === 'true');
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('MidasTandCAccepted', 'true');
+  }, [hasAcceptedTerms]);
+
   return (
     <Modal
-      isOpen={isOpen}
+      isOpen={!hasAcceptedTerms}
       closeOnOverlayClick={false}
       onClose={accept}
       scrollBehavior="inside"

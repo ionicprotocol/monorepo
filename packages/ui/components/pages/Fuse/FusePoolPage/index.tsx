@@ -14,19 +14,20 @@ import { MidasBox } from '@ui/components/shared/Box';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
 const FusePoolPage = memo(() => {
-  const { setLoading } = useMidas();
+  const { setGlobalLoading } = useMultiMidas();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const { data } = useFusePoolData(poolId);
-  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller);
-  const rewardTokens = useRewardTokensOfPool(data?.comptroller);
+  const chainId = router.query.chainId as string;
+  const { data } = useFusePoolData(poolId, Number(chainId));
+  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller, data?.chainId);
+  const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
 
   return (
     <>
@@ -44,7 +45,7 @@ const FusePoolPage = memo(() => {
               fontWeight="extrabold"
               cursor="pointer"
               onClick={() => {
-                setLoading(true);
+                setGlobalLoading(true);
                 router.back();
               }}
             />
@@ -60,7 +61,9 @@ const FusePoolPage = memo(() => {
                 <AvatarGroup size="sm" max={30}>
                   {data?.assets.map(
                     ({ underlyingToken, cToken }: { underlyingToken: string; cToken: string }) => {
-                      return <CTokenIcon key={cToken} address={underlyingToken} />;
+                      return (
+                        <CTokenIcon key={cToken} address={underlyingToken} chainId={data.chainId} />
+                      );
                     }
                   )}
                 </AvatarGroup>
@@ -68,7 +71,9 @@ const FusePoolPage = memo(() => {
             ) : null}
           </HStack>
 
-          {rewardTokens.length > 0 && <RewardsBanner tokens={rewardTokens} />}
+          {rewardTokens.length > 0 && data && (
+            <RewardsBanner tokens={rewardTokens} poolChainId={data.chainId} />
+          )}
 
           <PoolStats poolData={data} />
 
@@ -76,6 +81,7 @@ const FusePoolPage = memo(() => {
             <CollateralRatioBar
               assets={data.assets}
               borrowFiat={data.totalBorrowBalanceFiat}
+              poolChainId={data.chainId}
               mb={4}
             />
           )}
@@ -88,6 +94,7 @@ const FusePoolPage = memo(() => {
                 comptrollerAddress={data.comptroller}
                 supplyBalanceFiat={data.totalSupplyBalanceFiat}
                 borrowBalanceFiat={data.totalBorrowBalanceFiat}
+                poolChainId={data.chainId}
               />
             ) : (
               <TableSkeleton tableHeading="Assets" />

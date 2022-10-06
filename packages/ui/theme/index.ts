@@ -23,7 +23,7 @@ export const COLOR_PALETTE = {
   ecru10: '#373532',
   ecru20: '#46423b',
   ecru30: '#4E4A45',
-  ecru80: '#BCAC83cc', // alpha 0.8
+  ecru80: '#9e9173', // alpha 0.8
   bone: '#EBE6E0',
   white: '#FFFFFF',
   white50: '#FFFFFF80',

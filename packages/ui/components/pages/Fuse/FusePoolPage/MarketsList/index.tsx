@@ -58,7 +58,8 @@ import {
   SEARCH,
   UP_LIMIT,
 } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useTotalApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
@@ -67,7 +68,7 @@ import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { sortAssets } from '@ui/utils/sortAssets';
+import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
   market: MarketData;
@@ -85,14 +86,17 @@ export const MarketsList = ({
   comptrollerAddress,
   supplyBalanceFiat,
   borrowBalanceFiat,
+  poolChainId,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
   comptrollerAddress: string;
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
+  poolChainId: number;
 }) => {
-  const { midasSdk, currentChain } = useMidas();
+  const sdk = useSdk(poolChainId);
+  const { address } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -111,7 +115,7 @@ export const MarketsList = ({
     ];
   }, [assets]);
 
-  const { data: totalApy } = useTotalApy(rewards, assets);
+  const { data: totalApy } = useTotalApy(rewards, assets, poolChainId);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -144,6 +148,8 @@ export const MarketsList = ({
   };
 
   const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
+    if (!sdk) return 0;
+
     if (columnId === 'market') {
       return rowB.original.market.underlyingSymbol.localeCompare(
         rowA.original.market.underlyingSymbol
@@ -154,15 +160,15 @@ export const MarketsList = ({
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
     } else if (columnId === 'borrowApy') {
       const rowABorrowAPY = !rowA.original.market.isBorrowPaused
-        ? midasSdk.ratePerBlockToAPY(
+        ? sdk.ratePerBlockToAPY(
             rowA.original.market.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id)
+            getBlockTimePerMinuteByChainId(poolChainId)
           )
         : -1;
       const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
-        ? midasSdk.ratePerBlockToAPY(
+        ? sdk.ratePerBlockToAPY(
             rowB.original.market.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(currentChain.id)
+            getBlockTimePerMinuteByChainId(poolChainId)
           )
         : -1;
       return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
@@ -179,7 +185,7 @@ export const MarketsList = ({
     } else if (columnId === 'collateral') {
       return rowA.original.market.membership ? 1 : -1;
     } else {
-      return 1;
+      return 0;
     }
   };
 
@@ -210,7 +216,11 @@ export const MarketsList = ({
           </Text>
         ),
         cell: ({ getValue }) => (
-          <TokenName asset={getValue<MarketData>()} poolAddress={comptrollerAddress} />
+          <TokenName
+            asset={getValue<MarketData>()}
+            poolAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         footer: (props) => props.column.id,
         filterFn: assetFilter,
@@ -219,10 +229,12 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.supplyApy,
         id: 'supplyApy',
-        cell: ({ getValue }) => <SupplyApy asset={getValue<MarketData>()} rewards={rewards} />,
+        cell: ({ getValue }) => (
+          <SupplyApy asset={getValue<MarketData>()} rewards={rewards} poolChainId={poolChainId} />
+        ),
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Supply APY
             </Text>
           </Box>
@@ -234,10 +246,12 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.borrowApy,
         id: 'borrowApy',
-        cell: ({ getValue }) => <BorrowApy asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <BorrowApy asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Borrow APY
             </Text>
           </Box>
@@ -251,10 +265,10 @@ export const MarketsList = ({
         cell: ({ getValue }) => <SupplyBalance asset={getValue<MarketData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Supply
             </Text>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
             </Text>
           </VStack>
@@ -268,10 +282,10 @@ export const MarketsList = ({
         cell: ({ getValue }) => <BorrowBalance asset={getValue<MarketData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
-            <Text variant="smText" fontWeight="bold" lineHeight={6}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Borrow
             </Text>
-            <Text variant="smText" fontWeight="bold">
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
             </Text>
           </VStack>
@@ -295,7 +309,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.collateral,
         id: 'collateral',
         cell: ({ getValue }) => (
-          <Collateral asset={getValue<MarketData>()} comptrollerAddress={comptrollerAddress} />
+          <Collateral
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: () => (
           <Text py={2} variant="smText" fontWeight="bold">
@@ -363,6 +381,16 @@ export const MarketsList = ({
       table.getColumn('collateral').toggleVisibility(true);
     }
   }, [isMobile, table]);
+
+  useEffect(() => {
+    if (address) {
+      table.getColumn('supplyBalance').toggleVisibility(true);
+      table.getColumn('borrowBalance').toggleVisibility(true);
+    } else {
+      table.getColumn('supplyBalance').toggleVisibility(false);
+      table.getColumn('borrowBalance').toggleVisibility(false);
+    }
+  }, [address, table]);
 
   const { cCard } = useColors();
 
@@ -466,61 +494,6 @@ export const MarketsList = ({
                 {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
               </Text>
             </SimpleTooltip>
-          </HStack>
-        </Flex>
-        <Flex
-          className="pagination"
-          flexDirection={{ base: 'column', lg: 'row' }}
-          gap={4}
-          justifyContent="flex-end"
-          alignItems="flex-end"
-        >
-          <HStack>
-            {!isMobile && <Text variant="smText">Rows Per Page :</Text>}
-            <Select
-              value={pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-              maxW="max-content"
-            >
-              {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  {pageSize}
-                </option>
-              ))}
-            </Select>
-          </HStack>
-          <HStack gap={2}>
-            <Text variant="smText">
-              {table.getFilteredRowModel().rows.length === 0
-                ? 0
-                : pagination.pageIndex * pagination.pageSize + 1}{' '}
-              -{' '}
-              {(pagination.pageIndex + 1) * pagination.pageSize >
-              table.getFilteredRowModel().rows.length
-                ? table.getFilteredRowModel().rows.length
-                : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
-              of {table.getFilteredRowModel().rows.length}
-            </Text>
-            <HStack>
-              <CIconButton
-                variant="_outline"
-                aria-label="toPrevious"
-                icon={<ChevronLeftIcon fontSize={30} />}
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-                isRound
-              />
-              <CIconButton
-                variant="_outline"
-                aria-label="toNext"
-                icon={<ChevronRightIcon fontSize={30} />}
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-                isRound
-              />
-            </HStack>
           </HStack>
         </Flex>
       </Flex>
@@ -726,7 +699,7 @@ export const MarketsList = ({
                 <Tr
                   key={row.id}
                   borderColor={cCard.dividerColor}
-                  borderTopWidth={1}
+                  borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   _hover={{ bg: cCard.hoverBgColor }}
                   onClick={() => row.toggleExpanded()}
@@ -743,9 +716,10 @@ export const MarketsList = ({
                 {row.getIsExpanded() && (
                   <Tr
                     borderColor={cCard.dividerColor}
-                    borderBottomWidth={0}
+                    borderBottomWidth={1}
                     borderTopWidth={1}
-                    borderStyle="dashed"
+                    borderTopStyle="dashed"
+                    borderBottomStyle="solid"
                     background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}
                   >
                     {/* 2nd row is a custom 1 cell row */}
@@ -755,6 +729,7 @@ export const MarketsList = ({
                         rows={table.getCoreRowModel().rows}
                         comptrollerAddress={comptrollerAddress}
                         supplyBalanceFiat={supplyBalanceFiat}
+                        poolChainId={poolChainId}
                       />
                     </Td>
                   </Tr>
@@ -776,6 +751,62 @@ export const MarketsList = ({
           )}
         </Tbody>
       </Table>
+      <Flex
+        className="pagination"
+        flexDirection={{ base: 'column', lg: 'row' }}
+        gap={4}
+        justifyContent="flex-end"
+        alignItems="flex-end"
+        p={4}
+      >
+        <HStack>
+          {!isMobile && <Text variant="smText">Markets Per Page</Text>}
+          <Select
+            value={pagination.pageSize}
+            onChange={(e) => {
+              table.setPageSize(Number(e.target.value));
+            }}
+            maxW="max-content"
+          >
+            {MARKETS_COUNT_PER_PAGE.map((pageSize) => (
+              <option key={pageSize} value={pageSize}>
+                {pageSize}
+              </option>
+            ))}
+          </Select>
+        </HStack>
+        <HStack gap={2}>
+          <Text variant="smText">
+            {table.getFilteredRowModel().rows.length === 0
+              ? 0
+              : pagination.pageIndex * pagination.pageSize + 1}{' '}
+            -{' '}
+            {(pagination.pageIndex + 1) * pagination.pageSize >
+            table.getFilteredRowModel().rows.length
+              ? table.getFilteredRowModel().rows.length
+              : (pagination.pageIndex + 1) * pagination.pageSize}{' '}
+            of {table.getFilteredRowModel().rows.length}
+          </Text>
+          <HStack>
+            <CIconButton
+              variant="_outline"
+              aria-label="toPrevious"
+              icon={<ChevronLeftIcon fontSize={30} />}
+              onClick={() => table.previousPage()}
+              disabled={!table.getCanPreviousPage()}
+              isRound
+            />
+            <CIconButton
+              variant="_outline"
+              aria-label="toNext"
+              icon={<ChevronRightIcon fontSize={30} />}
+              onClick={() => table.nextPage()}
+              disabled={!table.getCanNextPage()}
+              isRound
+            />
+          </HStack>
+        </HStack>
+      </Flex>
     </Box>
   );
 };
@@ -800,7 +831,8 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
         type="text"
         value={searchText}
         onChange={onSearch}
-        placeholder="Search token name, symbol or address"
+        placeholder="Symbol, Token Name"
+        maxWidth={60}
         _focusVisible={{}}
       />
     </HStack>

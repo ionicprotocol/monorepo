@@ -3,14 +3,15 @@ import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 export const useBorrowLimit = <T extends NativePricedFuseAsset>(
   assets: T[],
+  poolChainId: number,
   options?: { ignoreIsEnabledCheckFor?: string }
 ): number => {
-  const { coingeckoId } = useMidas();
+  const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
   return useMemo(() => {
     if (!usdPrice) return 0;

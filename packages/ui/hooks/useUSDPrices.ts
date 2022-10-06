@@ -1,6 +1,7 @@
 import * as ChainConfigs from '@midas-capital/chains';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { SupportedChains } from 'types/dist/cjs';
 
 const ChainIdCoingeckoIdMapping = Object.entries(ChainConfigs)
   .map(([, config]): [string, string] => [config.chainId.toString(), config.specificParams.cgId])
@@ -27,7 +28,7 @@ interface Price {
 }
 
 // TODO Make currency agnostic
-async function getUSDPriceOf(chainIds: string[]): Promise<Record<string, Price>> {
+async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string, Price>> {
   const cgIds = chainIds.map((id) => ChainIdCoingeckoIdMapping[id]);
 
   const { data } = await axios.get(
@@ -57,7 +58,7 @@ async function getUSDPriceOf(chainIds: string[]): Promise<Record<string, Price>>
     }, {});
 }
 
-export function useUSDPrices(chainIds: string[]) {
+export function useUSDPrices(chainIds: SupportedChains[]) {
   return useQuery(
     ['useUSDPrice', ...chainIds.sort()],
     async () => {
