@@ -44,7 +44,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
             />
           </Flex>
         </PopoverTrigger>
-        {topSuppliedAssets.length > 0 && (
+        {topSuppliedAssets.length > 0 && topSuppliedAssets[0].totalSupplyFiat > 0 && (
           <PopoverContent p={2}>
             <PopoverArrow />
             <PopoverBody>
@@ -83,7 +83,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
             />
           </Flex>
         </PopoverTrigger>
-        {topBorrowedAssets.length > 0 && (
+        {topBorrowedAssets.length > 0 && topBorrowedAssets[0].totalBorrowFiat > 0 && (
           <PopoverContent p={2}>
             <PopoverArrow />
             <PopoverBody>
