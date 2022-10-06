@@ -1,9 +1,9 @@
 import { Button, Center, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
-import React, { LegacyRef } from 'react';
+import React from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import AccountModal from '@ui/components/shared/AccountModal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { shortAddress } from '@ui/utils/shortAddress';
 
@@ -12,23 +12,16 @@ const ConnectWalletButton: React.FC = () => {
 
   const isMobile = useIsSmallScreen();
 
-  const { pendingTxHashes, accountBtnElement, address } = useMidas();
+  const { pendingTxHashes, address } = useMultiMidas();
 
   return (
-    <Button
-      id="walletBtn"
-      variant="_solid"
-      onClick={onOpen}
-      ref={accountBtnElement as LegacyRef<HTMLButtonElement>}
-      ml={2}
-      px={2}
-    >
+    <Button id="walletBtn" variant="_solid" onClick={onOpen} ml={2} px={2}>
       <Center>
         {pendingTxHashes.length === 0 ? (
           <>
             <HStack>
-              <Jazzicon diameter={23} seed={jsNumberForAddress(address)} />
-              {!isMobile && <Text>{shortAddress(address)}</Text>}
+              {address && <Jazzicon diameter={23} seed={jsNumberForAddress(address)} />}
+              {!isMobile && address && <Text>{shortAddress(address)}</Text>}
             </HStack>
           </>
         ) : (

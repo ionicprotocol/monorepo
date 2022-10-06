@@ -1,23 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { getComptrollerContract } from '@ui/utils/contracts';
 
-export const useIsUpgradeable = (comptrollerAddress: string) => {
-  const {
-    midasSdk,
-    currentChain: { id },
-  } = useMidas();
+export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number) => {
+  const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
-    ['useIsUpgradeable', id, comptrollerAddress],
+    ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
     async () => {
-      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      if (sdk) {
+        const comptroller = getComptrollerContract(comptrollerAddress, sdk);
+        const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 
-      const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
-
-      return isUpgradeable;
+        return isUpgradeable;
+      }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress && !!sdk }
   );
 
   return data;

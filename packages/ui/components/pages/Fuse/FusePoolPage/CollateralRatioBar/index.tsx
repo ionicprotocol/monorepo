@@ -11,14 +11,16 @@ import { smallUsdFormatter } from '@ui/utils/bigUtils';
 interface CollateralRatioBarProps {
   assets: MarketData[];
   borrowFiat: number;
+  poolChainId: number;
 }
 
 export const CollateralRatioBar = ({
   assets,
   borrowFiat,
+  poolChainId,
   ...midasBoxProps
 }: CollateralRatioBarProps & MidasBoxProps) => {
-  const maxBorrow = useBorrowLimit(assets);
+  const maxBorrow = useBorrowLimit(assets, poolChainId);
 
   const ratio = (borrowFiat / maxBorrow) * 100;
 

@@ -9,7 +9,7 @@ import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { longFormat, shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { longFormat, midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 
 export const Liquidity = ({ asset }: { asset: MarketData }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken);
@@ -51,7 +51,7 @@ export const Liquidity = ({ asset }: { asset: MarketData }) => {
             whiteSpace="nowrap"
             overflow="hidden"
           >
-            {shortUsdFormatter(liquidity).replace('$', '')}
+            {midUsdFormatter(liquidity).replace('$', '')}
             {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
             {tokenData?.symbol ?? asset.underlyingSymbol}
           </Text>

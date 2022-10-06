@@ -143,6 +143,14 @@ export class MidasBase {
   setSigner(signer: Signer) {
     this._provider = signer.provider as SupportedProvider;
     this._signer = signer;
+
+    return this;
+  }
+
+  removeSigner(provider: SupportedProvider) {
+    this._provider = provider;
+    this._signer = null;
+
     return this;
   }
 

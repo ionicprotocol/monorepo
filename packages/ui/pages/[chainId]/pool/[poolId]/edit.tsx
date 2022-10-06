@@ -3,13 +3,13 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 
 import FusePoolEditPage from '@ui/components/pages/Fuse/FusePoolEditPage';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 const FusePoolEditPageNext: NextPage = () => {
-  const { setLoading } = useMidas();
+  const { setGlobalLoading } = useMultiMidas();
   useEffect(() => {
-    setLoading(false);
-  }, [setLoading]);
+    setGlobalLoading(false);
+  }, [setGlobalLoading]);
 
   return (
     <>

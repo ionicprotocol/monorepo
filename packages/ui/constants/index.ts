@@ -76,15 +76,16 @@ export const aBNBcContractABI = [
   },
 ];
 
-export const MARKETS_COUNT_PER_PAGE = [25, 40, 60];
+export const MARKETS_COUNT_PER_PAGE = [25, 50, 75];
+export const POOLS_COUNT_PER_PAGE = [25, 50, 75];
 
-//Assets Filters
 export const REWARDS = 'Rewards';
 export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
 export const DEPRECATED = 'Deprecated';
 export const SEARCH = 'Search';
+export const ALL = 'All';
 
 export const RESERVE_FACTOR_TOOLTIP =
   'The reserve factor defines the portion of borrower interest that is converted into reserves.';
@@ -92,3 +93,5 @@ export const COLLATERAL_FACTOR_TOOLTIP =
   'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.';
 export const ADMIN_FEE_TOOLTIP =
   "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee.";
+
+export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';

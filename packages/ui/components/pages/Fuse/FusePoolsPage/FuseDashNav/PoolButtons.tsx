@@ -1,97 +1,53 @@
-import { Button, ButtonGroup, Grid, Icon } from '@chakra-ui/react';
+import { Button, ButtonGroup } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { Dispatch } from 'react';
-import { MdViewList, MdViewModule } from 'react-icons/md';
 
-import { CButton, CIconButton } from '@ui/components/shared/Button';
-import { useMidas } from '@ui/context/MidasContext';
-import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
-export const PoolButtons = ({
-  searchText,
-  viewMode,
-  setSearchText,
-  setViewMode,
-}: {
-  searchText: string;
-  viewMode: string;
-  setSearchText: Dispatch<string>;
-  setViewMode: Dispatch<string>;
-}) => {
-  const isAllPoolSelected = searchText === '';
-  const isCreatedPoolSelected = searchText === 'created-pools';
-  const isVerifiedPoolSelected = searchText === 'verified-pools';
-  const isUnverifiedPoolSelected = searchText === 'unverified-pools';
+export const PoolButtons = () => {
   const router = useRouter();
-  const isMobile = useIsSmallScreen();
-  const { setLoading, currentChain } = useMidas();
+  const { setGlobalLoading } = useMultiMidas();
 
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
-      {!isMobile && (
-        <>
-          <ButtonGroup
-            mr={4}
-            isAttached
-            spacing={0}
-            flexFlow={'row wrap'}
-            justifyContent="center"
-            mt={2}
+      {/* {!isMobile && (
+        <ButtonGroup
+          isAttached
+          spacing={0}
+          flexFlow={'row wrap'}
+          justifyContent="center"
+          mx={4}
+          mt={2}
+          hidden
+        >
+          <CButton
+            isSelected={isAllPoolSelected}
+            onClick={() => setSearchText('')}
+            variant="filter"
           >
-            <CIconButton
-              aria-label="List View"
-              variant="filter"
-              isSelected={viewMode === 'list'}
-              onClick={() => setViewMode('list')}
-              icon={<Icon as={MdViewList} w={8} h={8} />}
-            />
-            <CIconButton
-              aria-label="List View"
-              variant="filter"
-              isSelected={viewMode === 'card'}
-              onClick={() => setViewMode('card')}
-              icon={<Icon as={MdViewModule} w={8} h={8} />}
-            />
-          </ButtonGroup>
-          <ButtonGroup
-            isAttached
-            spacing={0}
-            flexFlow={'row wrap'}
-            justifyContent="center"
-            mx={4}
-            mt={2}
-            hidden
+            All Pools
+          </CButton>
+          <CButton
+            isSelected={isCreatedPoolSelected}
+            onClick={() => setSearchText('created-pools')}
+            variant="filter"
           >
-            <CButton
-              isSelected={isAllPoolSelected}
-              onClick={() => setSearchText('')}
-              variant="filter"
-            >
-              All Pools
-            </CButton>
-            <CButton
-              isSelected={isCreatedPoolSelected}
-              onClick={() => setSearchText('created-pools')}
-              variant="filter"
-            >
-              Created Pools
-            </CButton>
-            <CButton
-              isSelected={isVerifiedPoolSelected}
-              onClick={() => setSearchText('verified-pools')}
-              variant="filter"
-            >
-              Verified Pools
-            </CButton>
-            <CButton
-              isSelected={isUnverifiedPoolSelected}
-              onClick={() => setSearchText('unverified-pools')}
-              variant="filter"
-            >
-              Unverified Pools
-            </CButton>
-          </ButtonGroup>
-        </>
+            Created Pools
+          </CButton>
+          <CButton
+            isSelected={isVerifiedPoolSelected}
+            onClick={() => setSearchText('verified-pools')}
+            variant="filter"
+          >
+            Verified Pools
+          </CButton>
+          <CButton
+            isSelected={isUnverifiedPoolSelected}
+            onClick={() => setSearchText('unverified-pools')}
+            variant="filter"
+          >
+            Unverified Pools
+          </CButton>
+        </ButtonGroup>
       )}
       {isMobile && (
         <Grid
@@ -130,12 +86,12 @@ export const PoolButtons = ({
             Unverified Pools
           </CButton>
         </Grid>
-      )}
+      )} */}
       <Button
-        mt={2}
+        ml={4}
         onClick={() => {
-          setLoading(true);
-          router.push(`${currentChain.id}/create-pool`);
+          setGlobalLoading(true);
+          router.push('/create-pool');
         }}
       >
         + Create Pool

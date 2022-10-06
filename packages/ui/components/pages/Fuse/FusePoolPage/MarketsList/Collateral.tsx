@@ -5,7 +5,8 @@ import * as React from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
@@ -15,11 +16,14 @@ import { errorCodeToMessage } from '@ui/utils/errorCodeToMessage';
 export const Collateral = ({
   asset,
   comptrollerAddress,
+  poolChainId,
 }: {
   asset: MarketData;
   comptrollerAddress: string;
+  poolChainId: number;
 }) => {
-  const { midasSdk, setPendingTxHash } = useMidas();
+  const { setPendingTxHash, currentChain } = useMultiMidas();
+  const sdk = useSdk(poolChainId);
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
 
@@ -27,7 +31,9 @@ export const Collateral = ({
   const isMobile = useIsMobile();
 
   const onToggleCollateral = async () => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!sdk) return;
+
+    const comptroller = sdk.createComptroller(comptrollerAddress);
 
     let call: ContractTransaction;
     if (asset.membership) {
@@ -75,6 +81,7 @@ export const Collateral = ({
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}
         ml={4}
+        isDisabled={!currentChain || currentChain.unsupported || currentChain.id !== poolChainId}
       />
     </Row>
   );

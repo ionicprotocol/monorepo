@@ -1,9 +1,9 @@
 import { Button, Center, Img, Text, useDisclosure } from '@chakra-ui/react';
 import { ChainConfig } from '@midas-capital/types';
-import React, { LegacyRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -12,23 +12,18 @@ const SwitchNetworkButton: React.FC = () => {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = useIsSmallScreen();
-  const { networkBtnElement, currentChain } = useMidas();
+  const { currentChain } = useMultiMidas();
 
   useEffect(() => {
-    setChainConfig(getChainConfig(currentChain.id));
+    if (currentChain) {
+      setChainConfig(getChainConfig(currentChain.id));
+    }
   }, [currentChain]);
 
   return (
-    <Button
-      variant="_solid"
-      onClick={onOpen}
-      tabIndex={0}
-      ref={networkBtnElement as LegacyRef<HTMLButtonElement>}
-      ml={2}
-      px={2}
-    >
+    <Button variant="_solid" onClick={onOpen} tabIndex={0} ml={2} px={2}>
       <Center>
-        {chainMetadata && (
+        {chainMetadata ? (
           <>
             {chainMetadata.specificParams.metadata.img && (
               <Img
@@ -41,6 +36,8 @@ const SwitchNetworkButton: React.FC = () => {
             )}
             {!isMobile && <Text ml={2}>{chainMetadata.specificParams.metadata.name}</Text>}
           </>
+        ) : (
+          <Text>Unsupported Network</Text>
         )}
       </Center>
       <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />

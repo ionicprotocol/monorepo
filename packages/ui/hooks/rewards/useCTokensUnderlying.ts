@@ -1,19 +1,19 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { CTokensUnderlyingMap } from '@ui/types/ComponentPropsType';
 
 export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyingMap => {
-  const { midasSdk, currentChain } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   const { data: cTokensUnderlying } = useQuery(
-    ['useCTokensUnderlying', currentChain.id, cTokenAddresses?.join(',')],
+    ['useCTokensUnderlying', cTokenAddresses?.join(','), currentSdk?.chainId],
     async () => {
       const _map: CTokensUnderlyingMap = {};
-      if (cTokenAddresses && cTokenAddresses.length) {
+      if (cTokenAddresses && cTokenAddresses.length && currentSdk) {
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
-            const cTokenInstance = midasSdk.createCToken(cTokenAddress);
+            const cTokenInstance = currentSdk.createCToken(cTokenAddress);
             _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
           })
         );
