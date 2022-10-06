@@ -10561,7 +10561,7 @@
       ]
     },
     "DiaStDotPriceOracle_Implementation": {
-      "address": "0x0D9B5e0637da5f790C372987593f1cE152b4d70D",
+      "address": "0x899fCbB43597F376c32904d61CDe5BE51e7a00b5",
       "abi": [
         {
           "anonymous": false,
@@ -15881,7 +15881,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0xf0dD53c2AE4879CD4121c7255b1A7DFECf1a39EF",
+      "address": "0x10d8eE199fa81bC56222554d7fa974D07cE354b3",
       "abi": [
         {
           "anonymous": false,
