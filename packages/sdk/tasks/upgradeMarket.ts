@@ -99,16 +99,6 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       )) as Comptroller;
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
-      if (admin == signer.address) {
-        const autoImplOn = await comptroller.callStatic.autoImplementation();
-        if (!autoImplOn) {
-          const tx = await comptroller._toggleAutoImplementations(true);
-          await tx.wait();
-          console.log(`turned autoimpl on ${tx.hash}`);
-        }
-      } else {
-        console.log(`signer is not the admin of this pool ${admin}`);
-      }
 
       const markets = await comptroller.callStatic.getAllMarkets();
       const marketsToUpgrade = [];

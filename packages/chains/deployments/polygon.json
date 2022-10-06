@@ -30740,7 +30740,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xD69B457E9b3AdEB3776994FFb18E9197579d3EbD",
+      "address": "0x152BF2bC5392A5924Cd4282BC8C4860DfbBA220D",
       "abi": [
         {
           "inputs": [
@@ -30923,7 +30923,7 @@
               "type": "address[]"
             },
             {
-              "internalType": "contract AggregatorV3Interface[]",
+              "internalType": "address[]",
               "name": "feeds",
               "type": "address[]"
             },
@@ -30954,7 +30954,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x3e757C2251bDB5D3239ECaA3C8dAaF4D9E188626",
+      "address": "0x9faE719fEA81938697984A7104aB6beaD9f76eec",
       "abi": [
         {
           "inputs": [
@@ -30991,7 +30991,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31067,7 +31067,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31086,7 +31086,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31105,7 +31105,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -31118,7 +31118,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -31131,7 +31131,7 @@
           "inputs": [
             {
               "indexed": true,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31188,7 +31188,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31270,7 +31270,7 @@
           "inputs": [
             {
               "indexed": true,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31421,7 +31421,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31464,7 +31464,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31507,7 +31507,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "cTokens",
               "type": "address[]"
             },
@@ -31525,7 +31525,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "cTokens",
               "type": "address[]"
             },
@@ -31543,7 +31543,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -31705,7 +31705,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -31737,7 +31737,7 @@
           "name": "accountAssets",
           "outputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "",
               "type": "address"
             }
@@ -31820,7 +31820,7 @@
           "name": "allMarkets",
           "outputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "",
               "type": "address"
             }
@@ -31956,7 +31956,7 @@
           "name": "cTokensByUnderlying",
           "outputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "",
               "type": "address"
             }
@@ -31972,7 +31972,7 @@
               "type": "address"
             },
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -32109,7 +32109,7 @@
           "name": "getAllMarkets",
           "outputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "",
               "type": "address[]"
             }
@@ -32128,7 +32128,7 @@
           "name": "getAssetsIn",
           "outputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "",
               "type": "address[]"
             }
@@ -32251,7 +32251,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -39528,7 +39528,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x0eC2F1fC9BB1AD56a4bBc7a9E99e14D527A70Bd7",
+      "address": "0x9028Cd925782703209c488A8317Dbf345eA5971F",
       "abi": [
         {
           "anonymous": false,
@@ -47831,21 +47831,14 @@
           "name": "marketState",
           "outputs": [
             {
-              "components": [
-                {
-                  "internalType": "uint224",
-                  "name": "index",
-                  "type": "uint224"
-                },
-                {
-                  "internalType": "uint32",
-                  "name": "lastUpdatedTimestamp",
-                  "type": "uint32"
-                }
-              ],
-              "internalType": "struct MidasFlywheelCore.RewardsState",
+              "internalType": "uint224",
               "name": "",
-              "type": "tuple"
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -48058,7 +48051,7 @@
       ]
     },
     "MidasFlywheel_JRT_MIMO_SEP22_Implementation": {
-      "address": "0x27eD74a7cb0eE88D8A5787E746e40388581ea4b2",
+      "address": "0xcafDAA3A2401710E05c8178681687aFCbecA875B",
       "abi": [
         {
           "anonymous": false,
@@ -48594,21 +48587,14 @@
           "name": "marketState",
           "outputs": [
             {
-              "components": [
-                {
-                  "internalType": "uint224",
-                  "name": "index",
-                  "type": "uint224"
-                },
-                {
-                  "internalType": "uint32",
-                  "name": "lastUpdatedTimestamp",
-                  "type": "uint32"
-                }
-              ],
-              "internalType": "struct MidasFlywheelCore.RewardsState",
+              "internalType": "uint224",
               "name": "",
-              "type": "tuple"
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -49608,21 +49594,14 @@
           "name": "marketState",
           "outputs": [
             {
-              "components": [
-                {
-                  "internalType": "uint224",
-                  "name": "index",
-                  "type": "uint224"
-                },
-                {
-                  "internalType": "uint32",
-                  "name": "lastUpdatedTimestamp",
-                  "type": "uint32"
-                }
-              ],
-              "internalType": "struct MidasFlywheelCore.RewardsState",
+              "internalType": "uint224",
               "name": "",
-              "type": "tuple"
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -49835,7 +49814,7 @@
       ]
     },
     "MidasFlywheel_MIMO_Implementation": {
-      "address": "0x575207C9c81346a515877E56930449AFA28D5136",
+      "address": "0x7171B1BD2D1278b5614D00F16F0b3A7FD013c637",
       "abi": [
         {
           "anonymous": false,
@@ -50371,21 +50350,14 @@
           "name": "marketState",
           "outputs": [
             {
-              "components": [
-                {
-                  "internalType": "uint224",
-                  "name": "index",
-                  "type": "uint224"
-                },
-                {
-                  "internalType": "uint32",
-                  "name": "lastUpdatedTimestamp",
-                  "type": "uint32"
-                }
-              ],
-              "internalType": "struct MidasFlywheelCore.RewardsState",
+              "internalType": "uint224",
               "name": "",
-              "type": "tuple"
+              "type": "uint224"
+            },
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
             }
           ],
           "stateMutability": "view",
@@ -51480,7 +51452,7 @@
       ]
     },
     "SimplePriceOracle": {
-      "address": "0xdF444DbAfb4014dE841b44F5561dA19927FCBb3d",
+      "address": "0x71689d100d9dBc4E93A54dea01492e143f7B27aD",
       "abi": [
         {
           "anonymous": false,
@@ -51535,7 +51507,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -51604,7 +51576,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
