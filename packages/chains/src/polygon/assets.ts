@@ -29,6 +29,7 @@ const SOL = "0xd93f7E271cB87c23AaA73edC008A79646d1F9912";
 const SUSHI = "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a";
 const YFI = "0xDA537104D6A5edd53c6fBba9A898708E465260b6";
 const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
+const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
 const WMATIC_USDT = "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3";
@@ -290,6 +291,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: defaultDocs("https://polygonscan.com", WMATIC),
+  },
+  {
+    symbol: assetSymbols.MIMO,
+    underlying: MIMO,
+    name: "MIMO Parallel Governance Token (PoS) ",
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: defaultDocs("https://polygonscan.com", MIMO),
   },
   // QuickSwap LPs
   {
