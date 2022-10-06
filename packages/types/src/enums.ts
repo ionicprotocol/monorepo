@@ -47,6 +47,7 @@ export enum OracleTypes {
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
+  BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -273,6 +274,9 @@ export enum assetSymbols {
   NZDS = "NZDS",
   XSGD = "XSGD",
   MIMO = "MIMO",
+
+  // Balancer
+  MIMO_PAR_80_20 = "MIMO_PAR_80_20",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "arrakis_USDC_WETH_005",

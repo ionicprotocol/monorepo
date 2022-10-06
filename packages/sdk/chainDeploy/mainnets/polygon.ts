@@ -14,8 +14,16 @@ import {
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployMIMOIrm } from "../helpers/irms";
+import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset, GelatoGUniAsset } from "../helpers/types";
+import {
+  BalancerLpAsset,
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  CurvePoolConfig,
+  DiaAsset,
+  GelatoGUniAsset,
+} from "../helpers/types";
 
 const assets = polygon.assets;
 const wmatic = underlying(assets, assetSymbols.WMATIC);
@@ -419,6 +427,12 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+const balancerLpAssets: BalancerLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.MIMO_PAR_80_20),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -483,6 +497,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     diaAssets,
     deployConfig,
     diaNativeFeed: { feed: ethers.constants.AddressZero, key: "" },
+  });
+  /// Dia Price Oracle
+  await deployBalancerLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLpAssets,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {

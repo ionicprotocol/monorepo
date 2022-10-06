@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-import { arrakisDocs, curveFinancePolygonDocs, defaultDocs, jarvisDocs, quickSwapDocs } from "../common";
+import { arrakisDocs, balacerDocs, curveFinancePolygonDocs, defaultDocs, jarvisDocs, quickSwapDocs } from "../common";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -31,6 +31,10 @@ const YFI = "0xDA537104D6A5edd53c6fBba9A898708E465260b6";
 const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 
+// Balancer
+const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
+
+// Swaps
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
 const WMATIC_USDT = "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3";
 const WMATIC_ETH = "0xadbF1854e5883eB8aa7BAf50705338739e558E5b";
@@ -397,6 +401,20 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs(304, "EURE-JEUR", EURE_JEUR, true),
+  },
+  // Balancer
+  {
+    symbol: assetSymbols["MIMO_PAR_80_20"],
+    underlying: MIMO_PAR_80_20,
+    name: "80MIMO-20PAR",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    extraDocs: balacerDocs(
+      "polygon",
+      "0x82d7f08026e21c7713cfad1071df7c8271b17eae0002000000000000000004b6",
+      "80MIMO-20PAR",
+      MIMO_PAR_80_20
+    ),
   },
   // stable forex
   {
