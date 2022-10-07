@@ -33,13 +33,11 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
-import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { getFPDContract, getUnitrollerContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -60,7 +58,6 @@ const PoolConfiguration = ({
   const poolId = router.query.poolId as string;
 
   const { currentSdk, address, currentChain } = useMultiMidas();
-  const { cSwitch } = useColors();
 
   const queryClient = useQueryClient();
   const errorToast = useErrorToast();
@@ -446,7 +443,6 @@ const PoolConfiguration = ({
           <ModalDivider />
           <ConfigRow>
             <Text variant="smText">Whitelist:</Text>
-            <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
             <Switch
               ml="auto"
               h="20px"

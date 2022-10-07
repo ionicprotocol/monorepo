@@ -3,8 +3,8 @@ import * as RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import React, { MouseEventHandler } from 'react';
 
-import { AccountButton } from '@ui/components/shared/AccountButton';
 import { Row } from '@ui/components/shared/Flex';
+import { WalletButtons } from '@ui/components/shared/WalletButtons';
 
 export const Header = ({
   isAuthed,
@@ -59,7 +59,7 @@ export const Header = ({
         <UtilsLink ml={4} isAuthed={isAuthed} />
       </Row>
 
-      <AccountButton />
+      <WalletButtons />
     </Row>
   );
 };

@@ -8,6 +8,18 @@ export const sortAssets = (assets: MarketData[]) => {
   });
 };
 
+export const sortTopBorrowedAssets = (assets: MarketData[]) => {
+  return [...assets].sort((a, b) => {
+    return b.totalBorrowFiat - a.totalBorrowFiat;
+  });
+};
+
+export const sortTopSuppliedAssets = (assets: MarketData[]) => {
+  return [...assets].sort((a, b) => {
+    return b.totalSupplyFiat - a.totalSupplyFiat;
+  });
+};
+
 export const sortSupportedAssets = (assets: SupportedAsset[]) => {
   return assets.sort((a, b) => {
     return a.symbol.localeCompare(b.symbol);

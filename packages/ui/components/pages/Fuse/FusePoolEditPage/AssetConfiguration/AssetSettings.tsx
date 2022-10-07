@@ -34,7 +34,6 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
@@ -111,7 +110,7 @@ export const AssetSettings = ({
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();
-  const { cCard, cSelect, cSwitch } = useColors();
+  const { cCard, cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
@@ -347,7 +346,6 @@ export const AssetSettings = ({
             </HStack>
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
-              <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
               <Switch
                 ml="auto"
                 h="20px"
