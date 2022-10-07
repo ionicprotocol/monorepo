@@ -390,13 +390,13 @@ const PoolsRowList = ({
       <Flex
         justifyContent="space-between"
         p={4}
-        flexDirection={{ base: 'column', sm: 'row' }}
+        flexDirection={{ base: 'column', md: 'row' }}
         gap={4}
       >
-        <Flex className="pagination">
+        <Flex className="pagination" justifyContent="center">
           <ButtonGroup
-            isAttached={!isSmallScreen ? true : false}
-            gap={!isSmallScreen ? 0 : 2}
+            isAttached
+            gap={0}
             spacing={0}
             flexFlow={'row wrap'}
             justifyContent="flex-start"
@@ -411,7 +411,7 @@ const PoolsRowList = ({
               px={2}
             >
               <HStack>
-                <Text pt="2px">All Pools</Text>
+                <Text pt="2px">{isSmallScreen ? 'All' : 'All Pools'}</Text>
               </HStack>
             </CButton>
             {enabledChains.map((chainId) => {
@@ -678,6 +678,7 @@ const ChainFilterButton = ({
   isLoading: boolean;
 }) => {
   const chainConfig = useChainConfig(chainId);
+  const isSmallScreen = useIsSmallScreen();
 
   return chainConfig ? (
     <CButton
@@ -699,8 +700,7 @@ const ChainFilterButton = ({
             alt=""
           />
         )}
-
-        <Text pt="2px">{chainConfig.specificParams.metadata.shortName}</Text>
+        {!isSmallScreen && <Text pt="2px">{chainConfig.specificParams.metadata.shortName}</Text>}
       </HStack>
     </CButton>
   ) : null;
