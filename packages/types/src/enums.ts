@@ -48,6 +48,7 @@ export enum OracleTypes {
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
+  StkBNBPriceOracle = "StkBNBPriceOracle",
 }
 
 export enum IrmTypes {
@@ -176,6 +177,7 @@ export enum assetSymbols {
   BOMB = "BOMB",
   xBOMB = "xBOMB",
   aBNBc = "aBNBc",
+  stkBNB = "stkBNB",
   SAFEMOON = "SAFEMOON",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
@@ -192,6 +194,7 @@ export enum assetSymbols {
   "BTCB-ETH" = "BTCB-ETH",
 
   "CAKE-WBNB" = "CAKE-WBNB",
+  "stkBNB-WBNB" = "stkBNB-WBNB",
 
   DDD = "DDD",
   EPX = "EPX",
