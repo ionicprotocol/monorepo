@@ -1,5 +1,5 @@
 import { bsc } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset, underlying } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
