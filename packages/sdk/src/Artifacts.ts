@@ -19,6 +19,7 @@ import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
 import FixedNativePriceOracleArtifact from "../lib/contracts/out/FixedNativePriceOracle.sol/FixedNativePriceOracle.json";
 import FlywheelStaticRewardsArtifact from "../lib/contracts/out/FlywheelStaticRewards.sol/FlywheelStaticRewards.json";
 import FuseFlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FuseFlywheelDynamicRewards.sol/FuseFlywheelDynamicRewards.json";
+import GelatoGUniPriceOracleArtifact from "../lib/contracts/out/GelatoGUniPriceOracle.sol/GelatoGUniPriceOracle.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
 import MidasFlywheelArtifact from "../lib/contracts/out/MidasFlywheel.sol/MidasFlywheel.json";
@@ -60,6 +61,7 @@ const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
 const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
 const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
+const GelatoGUniPriceOracle: Artifact = GelatoGUniPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
 const WhitePaperInterestRateModel: Artifact = WhitePaperInterestRateModelArtifact;
@@ -93,6 +95,7 @@ const ARTIFACTS = {
   BalancerLpTokenPriceOracle,
   AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
+  GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
@@ -123,9 +126,10 @@ export {
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,
+  BalancerLpTokenPriceOracle,
   AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
-  BalancerLpTokenPriceOracle,
+  GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,
   Unitroller,
