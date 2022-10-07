@@ -17,7 +17,7 @@ export const FuseNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const { cPage } = useColors();
   const logoPrefix = useBreakpointValue({
-    base: '/images/midas-',
+    base: '/images/midas-mobile-',
     sm: '/images/midas-mobile-',
     md: '/images/midas-',
   });
