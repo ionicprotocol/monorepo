@@ -26,10 +26,10 @@ import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
@@ -54,8 +54,9 @@ export const CreatePoolConfiguration = () => {
   const chainId = router.query.chainId as string;
   const [isCreating, setIsCreating] = useState(false);
 
-  const { cCard, cSolidBtn, cSwitch } = useColors();
+  const { cCard, cSolidBtn } = useColors();
   const isMobile = useIsSmallScreen();
+  const sdk = useSdk(currentChain?.id);
 
   const {
     control,
@@ -184,10 +185,10 @@ export const CreatePoolConfiguration = () => {
                     required: 'Oracle is required',
                   })}
                 >
-                  {currentSdk && (
+                  {sdk && (
                     <option
                       className="white-bg-option"
-                      value={currentSdk.chainDeployment.MasterPriceOracle.address}
+                      value={sdk.chainDeployment.MasterPriceOracle.address}
                     >
                       MasterPriceOracle
                     </option>
@@ -219,21 +220,18 @@ export const CreatePoolConfiguration = () => {
                   control={control}
                   name="isWhitelisted"
                   render={({ field: { ref, name, value, onChange } }) => (
-                    <>
-                      <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
-                      <Switch
-                        className="switch-whitelist"
-                        id="isWhitelisted"
-                        size={isMobile ? 'sm' : 'md'}
-                        cursor={'pointer'}
-                        _focus={{ boxShadow: 'none' }}
-                        _hover={{}}
-                        name={name}
-                        ref={ref}
-                        isChecked={value}
-                        onChange={onChange}
-                      />
-                    </>
+                    <Switch
+                      className="switch-whitelist"
+                      id="isWhitelisted"
+                      size={isMobile ? 'sm' : 'md'}
+                      cursor={'pointer'}
+                      _focus={{ boxShadow: 'none' }}
+                      _hover={{}}
+                      name={name}
+                      ref={ref}
+                      isChecked={value}
+                      onChange={onChange}
+                    />
                   )}
                 />
               </Column>
