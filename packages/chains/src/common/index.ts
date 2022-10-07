@@ -9,6 +9,7 @@ export {
   ankrBNBDocs,
   stkBNBDocs,
   curveFinancePolygonDocs,
+  balacerDocs,
   curveFinanceArbitrumDocs,
   jarvisDocs,
 } from "./docs";

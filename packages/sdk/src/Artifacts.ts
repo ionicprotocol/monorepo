@@ -4,6 +4,7 @@ import { Artifact, ChainDeployment } from "@midas-capital/types";
 
 import AnkrBNBcPriceOracleArtifact from "../lib/contracts/out/AnkrBNBcPriceOracle.sol/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
+import BalancerLpTokenPriceOracleArtifact from "../lib/contracts/out/BalancerLpTokenPriceOracle.sol/BalancerLpTokenPriceOracle.json";
 import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "../lib/contracts/out/CErc20PluginDelegate.sol/CErc20PluginDelegate.json";
@@ -56,6 +57,7 @@ const UniswapTwapPriceOracleV2Root: Artifact = UniswapTwapPriceOracleV2RootArtif
 const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
+const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
 const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
 const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
@@ -88,6 +90,7 @@ const ARTIFACTS = {
   RewardsDistributorDelegate,
   RewardsDistributorDelegator,
   SimplePriceOracle,
+  BalancerLpTokenPriceOracle,
   AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
   UniswapTwapPriceOracleV2,
@@ -122,6 +125,7 @@ export {
   SimplePriceOracle,
   AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
+  BalancerLpTokenPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,
   Unitroller,

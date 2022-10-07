@@ -86,6 +86,15 @@ export const curveFinancePolygonDocs = (
   `;
 };
 
+export const balacerDocs = (chain: string, poolAddress: string, poolName: string, tokenAddress: string) => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://${chain}.balancer.fi/#/pool/${poolAddress}" target="_blank"> Balancer ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p> 
+  <p>You will get back the <a href="https://polygonscan.com/address/${tokenAddress}" target="_blank"> Balancer ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
 export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string) => {
   return `<p><b>How to acquire this token</b><p/><br />
   <p> 1. Head over to the <a href="https://arbitrum.curve.fi/${poolName}/deposit" target="_blank"> Curve ${poolName} Pool</a>.</p><br />
