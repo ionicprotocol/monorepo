@@ -1,38 +1,18 @@
-import { Button, Center, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react';
+import { Button, useDisclosure } from '@chakra-ui/react';
 import React from 'react';
-import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
-import AccountModal from '@ui/components/shared/AccountModal';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
-import { shortAddress } from '@ui/utils/shortAddress';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 
 const ConnectWalletButton: React.FC = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const isMobile = useIsSmallScreen();
-
-  const { pendingTxHashes, address } = useMultiMidas();
-
   return (
-    <Button id="walletBtn" variant="_solid" onClick={onOpen} ml={2} px={2}>
-      <Center>
-        {pendingTxHashes.length === 0 ? (
-          <>
-            <HStack>
-              {address && <Jazzicon diameter={23} seed={jsNumberForAddress(address)} />}
-              {!isMobile && address && <Text>{shortAddress(address)}</Text>}
-            </HStack>
-          </>
-        ) : (
-          <>
-            <Text mr={2}>{pendingTxHashes.length} Pending</Text>
-            <Spinner w={5} h={5} />
-          </>
-        )}
-      </Center>
-      <AccountModal isOpen={isOpen} onClose={onClose} />
-    </Button>
+    <>
+      <Button id="connectWalletBtn" variant="_solid" onClick={onOpen} px={2}>
+        Connect Wallet
+      </Button>
+      <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+    </>
   );
 };
 

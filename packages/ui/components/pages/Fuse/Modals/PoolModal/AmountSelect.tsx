@@ -33,7 +33,6 @@ import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
@@ -91,7 +90,7 @@ const AmountSelect = ({
 
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
-  const { cCard, cSwitch } = useColors();
+  const { cCard } = useColors();
 
   const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
@@ -492,13 +491,8 @@ const AmountSelect = ({
                       <Text variant="smText" fontWeight="bold">
                         Enable As Collateral:
                       </Text>
-                      <SwitchCSS
-                        symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
-                        color={cSwitch.bgColor}
-                      />
                       <Switch
                         h="20px"
-                        className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                         isChecked={enableAsCollateral}
                         onChange={() => {
                           setEnableAsCollateral((past) => !past);

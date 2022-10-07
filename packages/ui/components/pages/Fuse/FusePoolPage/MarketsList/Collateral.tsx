@@ -4,10 +4,8 @@ import LogRocket from 'logrocket';
 import * as React from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useInfoToast } from '@ui/hooks/useToast';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -26,8 +24,6 @@ export const Collateral = ({
   const sdk = useSdk(poolChainId);
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
-
-  const { cSwitch } = useColors();
   const isMobile = useIsMobile();
 
   const onToggleCollateral = async () => {
@@ -73,10 +69,8 @@ export const Collateral = ({
   };
   return (
     <Row mainAxisAlignment="center" crossAxisAlignment="center">
-      <SwitchCSS symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')} color={cSwitch.bgColor} />
       <Switch
         isChecked={asset.membership}
-        className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
         onChange={onToggleCollateral}
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}

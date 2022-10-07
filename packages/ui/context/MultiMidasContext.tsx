@@ -54,11 +54,18 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   const enabledChains = useEnabledChains();
   const { chain } = useNetwork();
   // const { chain, chains } = useNetwork();
-  const { address, isConnected } = useAccount();
+  const { address: wagmiAddress, isConnected } = useAccount();
   // const { address, isConnecting, isReconnecting, isConnected } = useAccount();
   // const { isLoading: isNetworkLoading, isIdle, switchNetworkAsync } = useSwitchNetwork();
   const { data: signer } = useSigner();
   const { disconnect } = useDisconnect();
+  const [address, setAddress] = useState<string | undefined>();
+  const [currentChain, setCurrentChain] = useState<
+    | (Chain & {
+        unsupported?: boolean | undefined;
+      })
+    | undefined
+  >();
   const [isGlobalLoading, setGlobalLoading] = useState<boolean>(false);
   const [pendingTxHashes, setPendingTxHashes] = useState<string[]>([]);
   const [pendingTxHash, setPendingTxHash] = useState<string>('');
@@ -218,13 +225,21 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     }
   }, [finishedTxHash]);
 
+  useEffect(() => {
+    setAddress(wagmiAddress);
+  }, [wagmiAddress]);
+
+  useEffect(() => {
+    setCurrentChain(chain);
+  }, [chain]);
+
   const value = useMemo(() => {
     return {
       sdks,
       chainIds,
       isGlobalLoading,
       setGlobalLoading,
-      currentChain: chain,
+      currentChain,
       currentSdk,
       getSdk,
       address,
@@ -241,7 +256,7 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     chainIds,
     isGlobalLoading,
     setGlobalLoading,
-    chain,
+    currentChain,
     currentSdk,
     getSdk,
     address,
