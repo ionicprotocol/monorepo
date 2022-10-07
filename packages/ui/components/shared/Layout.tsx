@@ -1,7 +1,6 @@
 import { Container } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
-import { Banner } from '@ui/components/shared/Banner';
 import { Column } from '@ui/components/shared/Flex';
 import LoadingOverlay from '@ui/components/shared/LoadingOverlay';
 import { useMidas } from '@ui/context/MidasContext';
@@ -22,12 +21,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
         crossAxisAlignment="center"
         bgColor={cPage.primary.bgColor}
       >
-        <Banner
-          text="Midas just launched, use at your own risk. "
-          linkText="Read about our Audit with Zellic here."
-          linkUrl="https://medium.com/midas-capital/audit-with-zellic-29b63f1be25a"
-          status="warning"
-        />
         <Container maxWidth="8xl" px={{ base: 2, md: 4 }}>
           <Column
             width={isMobile ? '100%' : '96%'}
