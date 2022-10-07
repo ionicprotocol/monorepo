@@ -88,16 +88,6 @@ const deployedPlugins: DeployedPlugins = {
       ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"], // _rewardTokens
     ],
   },
-  "0xcfB267a90974a172c38Af238b1010672DE4479Ad": {
-    market: "0x906Ab4476221ADc91Dc112c25081A374E0bd29C0",
-    name: "Beefy stkBNB-WBNB Vault",
-    strategy: "BeefyERC4626",
-    apyDocsUrl: "https://app.beefy.com/vault/cakev2-wbnb-stkbnb",
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
-    underlying: underlying(assets, assetSymbols["stkBNB-WBNB"]),
-    otherParams: ["0xd23ef71883a98c55Eb7ED67ED61fABF554aDEd21", "0"],
-  },
 };
 
 export default deployedPlugins;
