@@ -400,7 +400,7 @@ const PoolsRowList = ({
             spacing={0}
             flexFlow={'row wrap'}
             justifyContent="flex-start"
-            mx={4}
+            mx={2}
             mt={2}
           >
             <CButton
@@ -411,8 +411,7 @@ const PoolsRowList = ({
               px={2}
             >
               <HStack>
-                {isLoading && <Spinner />}
-                <Text pt="2px">All Pools</Text>{' '}
+                <Text pt="2px">All Pools</Text>
               </HStack>
             </CButton>
             {enabledChains.map((chainId) => {
