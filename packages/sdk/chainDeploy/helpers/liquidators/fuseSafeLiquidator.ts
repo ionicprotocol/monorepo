@@ -2,6 +2,7 @@ import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@
 import { ChainConfig } from "@midas-capital/types";
 import { constants } from "ethers";
 
+import { AddressesProvider } from "../../../lib/contracts/typechain/AddressesProvider";
 import { FuseSafeLiquidator } from "../../../lib/contracts/typechain/FuseSafeLiquidator";
 import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
 
@@ -94,5 +95,59 @@ export const configureFuseSafeLiquidator = async ({
     console.log("_whitelistRedemptionStrategies: ", tx.hash);
   } else {
     console.log("no redemption strategies for whitelisting");
+  }
+};
+
+export const configureAddressesProviderStrategies = async ({
+  ethers,
+  getNamedAccounts,
+  chainId,
+}: LiquidatorConfigFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
+
+  const redemptionStrategiesToUpdate: [string, string, string][] = [];
+  const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
+
+  for (const assetAddress in chainIdToConfig[chainId].redemptionStrategies) {
+    const [redemptionStrategyType] = chainIdToConfig[chainId].redemptionStrategies[assetAddress];
+    const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
+
+    const [onChainStrategyAddress, onChainContractType] = await ap.redemptionStrategies(assetAddress);
+    if (onChainStrategyAddress != redemptionStrategy.address) {
+      redemptionStrategiesToUpdate.push([assetAddress, redemptionStrategyType, redemptionStrategy.address]);
+    }
+  }
+
+  if (redemptionStrategiesToUpdate.length > 0) {
+    for (const [asset, type, strategy] in redemptionStrategiesToUpdate) {
+      console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
+      const tx = await ap.setRedemptionStrategy(asset, strategy, type);
+      await tx.wait();
+      console.log("setRedemptionStrategy: ", tx.hash);
+    }
+  } else {
+    console.log("no redemption strategies to configure");
+  }
+
+  const fundingStrategiesToUpdate: [string, string, string][] = [];
+  for (const assetAddress in chainIdToConfig[chainId].fundingStrategies) {
+    const [fundingStrategyType] = chainIdToConfig[chainId].fundingStrategies[assetAddress];
+    const fundingStrategy = await ethers.getContract(fundingStrategyType);
+
+    const [onChainStrategyAddress, onChainContractType] = await ap.fundingStrategies(assetAddress);
+    if (onChainStrategyAddress != fundingStrategy.address) {
+      fundingStrategiesToUpdate.push([assetAddress, fundingStrategyType, fundingStrategy.address]);
+    }
+  }
+
+  if (fundingStrategiesToUpdate.length > 0) {
+    for (const [asset, type, strategy] in fundingStrategiesToUpdate) {
+      console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
+      const tx = await ap.setFundingStrategy(asset, strategy, type);
+      await tx.wait();
+      console.log("setFundingStrategy: ", tx.hash);
+    }
+  } else {
+    console.log("no funding strategies to configure");
   }
 };
