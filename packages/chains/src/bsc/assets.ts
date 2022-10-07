@@ -256,7 +256,7 @@ const assets: SupportedAsset[] = [
     underlying: stkBNB_WBNB,
     name: "stkBNB-WBNB PCS LP",
     decimals: 18,
-    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    oracle: OracleTypes.StkBNBPriceOracle,
     extraDocs: pancakeSwapDocs(WBNB, stkBNB, "stkBNB-WBNB", stkBNB_WBNB),
   },
   // Jarvis

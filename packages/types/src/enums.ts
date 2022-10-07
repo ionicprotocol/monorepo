@@ -47,6 +47,7 @@ export enum OracleTypes {
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
+  BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   StkBNBPriceOracle = "StkBNBPriceOracle",
 }
 

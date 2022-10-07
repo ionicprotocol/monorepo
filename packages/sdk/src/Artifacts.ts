@@ -24,6 +24,7 @@ import MidasFlywheelArtifact from "../lib/contracts/out/MidasFlywheel.sol/MidasF
 import RewardsDistributorDelegateArtifact from "../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
 import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
 import SimplePriceOracleArtifact from "../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
+import StkBNBPriceOracleArtifact from "../lib/contracts/out/StkBNBPriceOracle.sol/StkBNBPriceOracle.json";
 import UniswapLpTokenPriceOracleArtifact from "../lib/contracts/out/UniswapLpTokenPriceOracle.sol/UniswapLpTokenPriceOracle.json";
 import UniswapTwapPriceOracleV2Artifact from "../lib/contracts/out/UniswapTwapPriceOracleV2.sol/UniswapTwapPriceOracleV2.json";
 import UniswapTwapPriceOracleV2RootArtifact from "../lib/contracts/out/UniswapTwapPriceOracleV2Root.sol/UniswapTwapPriceOracleV2Root.json";
@@ -56,6 +57,7 @@ const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
+const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
 const WhitePaperInterestRateModel: Artifact = WhitePaperInterestRateModelArtifact;
@@ -87,6 +89,7 @@ const ARTIFACTS = {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   AnkrBNBcPriceOracle,
+  StkBNBPriceOracle,
   UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
@@ -118,6 +121,7 @@ export {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   AnkrBNBcPriceOracle,
+  StkBNBPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,
   Unitroller,
