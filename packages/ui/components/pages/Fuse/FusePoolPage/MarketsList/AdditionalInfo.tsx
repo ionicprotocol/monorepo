@@ -38,6 +38,10 @@ import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+const UtilizationChart = dynamic(
+  () => import('@ui/components/pages/Fuse/FusePoolPage/MarketsList/UtilizationChart'),
+  { ssr: false }
+);
 
 export const AdditionalInfo = ({
   row,
@@ -165,7 +169,7 @@ export const AdditionalInfo = ({
         alignItems="flex-end"
       >
         <Box
-          height="200px"
+          height="250px"
           width="100%"
           color="#000000"
           overflow="hidden"
@@ -177,69 +181,72 @@ export const AdditionalInfo = ({
               <Center height="100%">
                 <Text variant="smText">This asset is not borrowable.</Text>
               </Center>
-            ) : data.supplierRates === null ? (
+            ) : data.rates === null ? (
               <Center height="100%">
                 <Text variant="smText">
                   No graph is available for this asset(&apos)s interest curves.
                 </Text>
               </Center>
             ) : (
-              <Chart
-                options={{
-                  ...FuseUtilizationChartOptions,
-                  annotations: {
-                    points: [
-                      {
-                        x: assetUtilization,
-                        y: data.borrowerRates[assetUtilization].y,
-                        marker: {
-                          size: 6,
-                          fillColor: '#FFF',
-                          strokeColor: '#DDDCDC',
-                        },
-                      },
-                      {
-                        x: assetUtilization,
-                        y: data.supplierRates[assetUtilization].y,
-                        marker: {
-                          size: 6,
-                          fillColor: cChart.tokenColor,
-                          strokeColor: '#FFF',
-                        },
-                      },
-                    ],
-                    xaxis: [
-                      {
-                        x: assetUtilization,
-                        label: {
-                          text: 'Current Utilization',
-                          orientation: 'horizontal',
-                          style: {
-                            background: cChart.labelBgColor,
-                            color: '#000',
+              <>
+                <UtilizationChart irmToCurve={data} />
+                {/* <Chart
+                  options={{
+                    ...FuseUtilizationChartOptions,
+                    annotations: {
+                      points: [
+                        {
+                          x: assetUtilization,
+                          y: data.borrowerRates[assetUtilization].y,
+                          marker: {
+                            size: 6,
+                            fillColor: '#FFF',
+                            strokeColor: '#DDDCDC',
                           },
-                          // offsetX: 40,
                         },
-                      },
-                    ],
-                  },
+                        {
+                          x: assetUtilization,
+                          y: data.supplierRates[assetUtilization].y,
+                          marker: {
+                            size: 6,
+                            fillColor: cChart.tokenColor,
+                            strokeColor: '#FFF',
+                          },
+                        },
+                      ],
+                      xaxis: [
+                        {
+                          x: assetUtilization,
+                          label: {
+                            text: 'Current Utilization',
+                            orientation: 'horizontal',
+                            style: {
+                              background: cChart.labelBgColor,
+                              color: '#000',
+                            },
+                            // offsetX: 40,
+                          },
+                        },
+                      ],
+                    },
 
-                  colors: [cChart.borrowColor, cChart.tokenColor],
-                }}
-                type="line"
-                width="100%"
-                height="100%"
-                series={[
-                  {
-                    name: 'Borrow Rate',
-                    data: data.borrowerRates,
-                  },
-                  {
-                    name: 'Deposit Rate',
-                    data: data.supplierRates,
-                  },
-                ]}
-              />
+                    colors: [cChart.borrowColor, cChart.tokenColor],
+                  }}
+                  type="line"
+                  width="100%"
+                  height="100%"
+                  series={[
+                    {
+                      name: 'Borrow Rate',
+                      data: data.borrowerRates,
+                    },
+                    {
+                      name: 'Deposit Rate',
+                      data: data.supplierRates,
+                    },
+                  ]}
+                /> */}
+              </>
             )
           ) : (
             <Center height="100%" color="#FFFFFF">
