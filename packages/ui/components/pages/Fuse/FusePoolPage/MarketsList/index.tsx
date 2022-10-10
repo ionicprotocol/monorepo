@@ -262,7 +262,9 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.supplyBalance,
         id: 'supplyBalance',
-        cell: ({ getValue }) => <SupplyBalance asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <SupplyBalance asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -279,7 +281,9 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.borrowBalance,
         id: 'borrowBalance',
-        cell: ({ getValue }) => <BorrowBalance asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <BorrowBalance asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -296,7 +300,9 @@ export const MarketsList = ({
       {
         accessorFn: (row) => row.liquidity,
         id: 'liquidity',
-        cell: ({ getValue }) => <Liquidity asset={getValue<MarketData>()} />,
+        cell: ({ getValue }) => (
+          <Liquidity asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
         header: () => (
           <Text textAlign="end" py={2} variant="smText" fontWeight="bold">
             Liquidity

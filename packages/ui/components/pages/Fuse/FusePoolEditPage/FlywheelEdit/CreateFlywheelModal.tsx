@@ -46,7 +46,11 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
   const [isDeploying, setIsDeploying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
-  const { data: rewardTokenData, error, isLoading } = useTokenData(rewardToken);
+  const {
+    data: rewardTokenData,
+    error,
+    isLoading,
+  } = useTokenData(rewardToken, currentSdk?.chainId);
 
   const readyToDeploy = useMemo(() => {
     if (!rewardTokenData) return false;
