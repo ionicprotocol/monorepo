@@ -280,7 +280,8 @@ export class MidasBase {
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
       JumpRateModel_JARVIS_002_004_4_08: JumpRateModel,
-      AdjustableJumpRateModel_PSTAKE_002_005_3_08: AdjustableJumpRateModel,
+      AdjustableJumpRateModel_PSTAKE_WBNB: AdjustableJumpRateModel,
+      AdjustableJumpRateModel_MIXBYTES_XCDOT: AdjustableJumpRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 
