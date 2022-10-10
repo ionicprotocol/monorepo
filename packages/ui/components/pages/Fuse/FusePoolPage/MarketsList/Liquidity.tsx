@@ -11,8 +11,8 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { longFormat, midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 
-export const Liquidity = ({ asset }: { asset: MarketData }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const liquidity = useMemo(() => {
     return Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals));
   }, [asset.liquidity, asset.underlyingDecimals]);

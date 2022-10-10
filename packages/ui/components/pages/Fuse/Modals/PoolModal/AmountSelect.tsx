@@ -78,7 +78,7 @@ const AmountSelect = ({
 
   const errorToast = useErrorToast();
 
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   const [userAction, setUserAction] = useState(UserAction.NO_ACTION);
 

@@ -152,11 +152,11 @@ const FlywheelRow = ({
   pool: PoolData;
   onClick: (fw: Flywheel) => void;
 }) => {
-  const { address } = useMultiMidas();
+  const { address, currentSdk } = useMultiMidas();
 
   // TODO check authority here as well.
   const isAdmin = address === flywheel.owner;
-  const { data: tokenData } = useTokenData(flywheel.rewardToken);
+  const { data: tokenData } = useTokenData(flywheel.rewardToken, currentSdk?.chainId);
   // TODO filter out rewards of markets of other pools!
 
   // Balances
