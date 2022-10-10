@@ -208,7 +208,7 @@ const assets: SupportedAsset[] = [
     underlying: epsBUSD_jCHF,
     name: "Ellipsis.finance JCHF-BUSD",
     decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    oracle: OracleTypes.CurveV2LpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", "eps BUSD jCHF", epsBUSD_jCHF),
   },
   // Bomb

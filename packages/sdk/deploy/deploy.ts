@@ -5,6 +5,7 @@ import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
+  configureAddressesProviderStrategies,
   configureFuseSafeLiquidator,
   deployFuseSafeLiquidator,
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
@@ -499,6 +500,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
+
+  await configureAddressesProviderStrategies({
+    ethers,
+    getNamedAccounts,
+    chainId,
+  });
 
   // upgrade any of the pools if necessary
   await run("pools:all:upgrade");
