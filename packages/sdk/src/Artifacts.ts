@@ -51,6 +51,7 @@ const JumpRateModel: Artifact = JumpRateModelArtifact;
 const AdjustableJumpRateModel: Artifact = AdjustableJumpRateModelArtifact;
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModelArtifact;
+const AdjustableJumpRateModel_PSTAKE_002_005_3_08: Artifact = AdjustableJumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -84,6 +85,7 @@ const ARTIFACTS = {
   MidasFlywheel,
   JumpRateModel,
   AdjustableJumpRateModel,
+  AdjustableJumpRateModel_PSTAKE_002_005_3_08,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -123,6 +125,7 @@ export {
   MidasFlywheel,
   JumpRateModel,
   AdjustableJumpRateModel,
+  AdjustableJumpRateModel_PSTAKE_002_005_3_08,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
