@@ -1,4 +1,11 @@
-import { FusePoolData, NativePricedFuseAsset, SupportedAsset } from "@midas-capital/types";
+import { bsc, moonbeam, polygon } from "@midas-capital/chains";
+import {
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  FusePoolData,
+  NativePricedFuseAsset,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumberish, CallOverrides, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
@@ -14,6 +21,17 @@ export type LensPoolsWithData = [
   fusePoolsData: FusePoolLens.FusePoolDataStructOutput[],
   errors: boolean[]
 ];
+
+const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.bsc]: bsc.assets,
+  [SupportedChains.polygon]: polygon.assets,
+  [SupportedChains.ganache]: [],
+  [SupportedChains.evmos]: [],
+  [SupportedChains.chapel]: [],
+  [SupportedChains.moonbeam]: moonbeam.assets,
+  [SupportedChains.neon_devnet]: [],
+  [SupportedChains.arbitrum]: [],
+};
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
@@ -65,6 +83,14 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
             }
           })()
         );
+
+        const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+          (ass) => ass.underlying === asset.underlyingToken
+        );
+
+        if (_asset) {
+          asset.underlyingSymbol = _asset.symbol;
+        }
 
         asset.supplyBalanceNative =
           Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
