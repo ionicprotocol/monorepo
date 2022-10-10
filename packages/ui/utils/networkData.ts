@@ -54,5 +54,5 @@ export function getEnabledChains() {
     enabledChains.push(SupportedChains.moonbeam);
   }
 
-  return enabledChains.sort();
+  return enabledChains;
 }

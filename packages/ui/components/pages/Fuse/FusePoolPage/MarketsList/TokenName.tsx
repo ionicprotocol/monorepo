@@ -19,7 +19,7 @@ export const TokenName = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
@@ -30,15 +30,25 @@ export const TokenName = ({
       <PopoverTooltip
         placement="top-start"
         body={
-          <div
-            dangerouslySetInnerHTML={{
-              __html: asset.extraDocs || asset.underlyingSymbol,
-            }}
-          />
+          <VStack>
+            <Text alignSelf="flex-start" variant="mdText">
+              {tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: asset.extraDocs || asset.underlyingSymbol,
+              }}
+            />
+          </VStack>
         }
       >
         <Center>
-          <CTokenIcon size="md" address={asset.underlyingToken} chainId={poolChainId} />
+          <CTokenIcon
+            size="md"
+            address={asset.underlyingToken}
+            chainId={poolChainId}
+            withTooltip={false}
+          />
         </Center>
       </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>

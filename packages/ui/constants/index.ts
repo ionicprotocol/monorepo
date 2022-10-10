@@ -95,3 +95,4 @@ export const ADMIN_FEE_TOOLTIP =
   "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee.";
 
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
+export const SHRINK_ASSETS = 10;

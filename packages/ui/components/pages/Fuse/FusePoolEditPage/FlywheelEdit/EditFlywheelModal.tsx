@@ -76,7 +76,7 @@ const EditFlywheelModal = ({
 }) => {
   const { currentSdk, address } = useMultiMidas();
 
-  const { data: tokenData } = useTokenData(flywheel.rewardToken);
+  const { data: tokenData } = useTokenData(flywheel.rewardToken, currentSdk?.chainId);
   const isAdmin = address === flywheel.owner;
 
   const { data: flywheelRewardsBalance, refetch: refetchRewardsBalance } = useTokenBalance(

@@ -1,7 +1,6 @@
 import {
   Button,
   Flex,
-  Heading,
   ListItem,
   Modal,
   ModalBody,
@@ -12,6 +11,7 @@ import {
   Spacer,
   Text,
   UnorderedList,
+  VStack,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
@@ -40,15 +40,20 @@ const Terms = () => {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>
-          <Flex>
-            <Heading>Terms & Conditions</Heading>
+        <ModalHeader alignSelf="center" width="100%">
+          <Flex alignItems="flex-end">
+            <Text variant="title">Terms & Conditions</Text>
             <Spacer />
-            <Text>Last Revised: 7/16/2022</Text>
+            <VStack spacing={0}>
+              <Text>Last Revised: </Text>
+              <Text>7/16/2022</Text>
+            </VStack>
           </Flex>
         </ModalHeader>
-        <ModalBody>
-          <Heading>1. Acceptance of Terms</Heading>
+        <ModalBody maxHeight="60vh">
+          <Text variant="lgText" fontWeight="bold">
+            1. Acceptance of Terms
+          </Text>
           <Text>
             The Midas Capital system and software (the “Midas Capital Protocol”) is an autonomous
             system of smart contracts on various blockchains that permits, among other things,
@@ -65,7 +70,9 @@ const Terms = () => {
             additional terms, rules and conditions of participation issued from time to time. If you
             do not agree to the Terms, then you may not access or use the Content or Site.
           </Text>
-          <Heading>2. Modification of Terms of Use</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            2. Modification of Terms of Use
+          </Text>
           <Text>
             These Terms may be discretionarily modified or replaced at any time, unless stated
             otherwise herein. The most current version of these Terms will be posted on the
@@ -77,7 +84,9 @@ const Terms = () => {
             Terms constitutes your acceptance of the Terms as modified. If you do not agree to the
             Terms in effect when you access or use the Interface, you must stop using the Interface.
           </Text>
-          <Heading>3. Eligibility</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            3. Eligibility
+          </Text>
           <Text>
             You hereby represent and warrant that you are fully able and competent to enter into the
             terms, conditions, obligations, affirmations, representations and warranties set forth
@@ -92,7 +101,9 @@ const Terms = () => {
             for your compliance with such laws. Finally, you represent and warrant that you will not
             use the Service for any illegal activity.
           </Text>
-          <Heading>4. Representations, Warranties, and Risks</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            4. Representations, Warranties, and Risks
+          </Text>
           <Text textDecoration={'underline'}>4.1. No Representation or Warranty.</Text>
           <Text>
             You expressly understand and agree that your use of the Service is at your sole risk.
@@ -222,7 +233,9 @@ const Terms = () => {
             appreciate inherent risks, including those listed above. You represent and warrant that
             you possess relevant knowledge and skills.
           </Text>
-          <Heading>5. Indemnity</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            5. Indemnity
+          </Text>
           <Text>
             You agree to release and to indemnify, defend and hold harmless Midas Labs Ltd. & Midas
             Labs FZE LLC and any related entities, as well as the officers, directors, employees,
@@ -237,7 +250,9 @@ const Terms = () => {
             matter otherwise subject to indemnification by you and, in such case, you agree to
             cooperate with Midas Labs Ltd. & Midas Labs FZE LLC in the defense of such matter.
           </Text>
-          <Heading>6. Limitation on liability</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            6. Limitation on liability
+          </Text>
           <Text>
             YOU ACKNOWLEDGE AND AGREE THAT YOU ASSUME FULL RESPONSIBILITY FOR YOUR USE OF THE SITE
             AND SERVICE. YOU ACKNOWLEDGE AND AGREE THAT ANY INFORMATION YOU SEND OR RECEIVE DURING
@@ -266,7 +281,9 @@ const Terms = () => {
             OR THE LIMITATION OR EXCLUSION OF LIABILITY FOR INCIDENTAL OR CONSEQUENTIAL DAMAGES.
             ACCORDINGLY, SOME OF THE ABOVE LIMITATIONS MAY NOT APPLY TO YOU.
           </Text>
-          <Heading>7. Proprietary Rights</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            7. Proprietary Rights
+          </Text>
           <Text>
             All title, ownership and intellectual property rights in and to the Interface and Midas
             Capital Protocol are owned by Midas Labs Ltd. & Midas Labs FZE LLC, related entities or
@@ -277,7 +294,9 @@ const Terms = () => {
             perform, display or create derivative works based on the Midas Capital Protocol,
             Interface and Content, in whole or in part.
           </Text>
-          <Heading>8. Links</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            8. Links
+          </Text>
           <Text>
             The Service provides, or third parties may provide, links to other World Wide Web or
             accessible sites, applications or resources. Because none of the Midas Labs Ltd. & Midas
@@ -291,7 +310,9 @@ const Terms = () => {
             to be caused by or in connection with use of or reliance on any such content, goods or
             services available on or through any such site or resource.
           </Text>
-          <Heading>9. Termination and Suspension</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            9. Termination and Suspension
+          </Text>
           <Text>
             Midas Labs Ltd. & Midas Labs FZE LLC may terminate or suspend access to the Interface
             immediately, without prior notice or liability, if you breach any of the terms or
@@ -301,12 +322,16 @@ const Terms = () => {
             OUR PROPRIETARY RIGHTS; LINKS; TERMINATION; NO THIRD-PARTY BENEFICIARIES; BINDING
             ARBITRATION AND CLASS ACTION WAIVER; GENERAL INFORMATION.
           </Text>
-          <Heading>10. No Third-Party Beneficiaries</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            10. No Third-Party Beneficiaries
+          </Text>
           <Text>
             You agree that, except as otherwise expressly provided in these Terms, there shall be no
             third party beneficiaries to the Terms.
           </Text>
-          <Heading>11. Notice and Procedure For Making Claims of Copyright Infringement</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            11. Notice and Procedure For Making Claims of Copyright Infringement
+          </Text>
           <Text>
             If you believe that your copyright or the copyright of a person on whose behalf you are
             authorized to act has been infringed, please provide a written Notice
@@ -341,7 +366,9 @@ const Terms = () => {
               authorized to act on the copyright or intellectual property owner&apos;s behalf.
             </ListItem>
           </UnorderedList>
-          <Heading>12. Arbitration and Class Action Waiver</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            12. Arbitration and Class Action Waiver
+          </Text>
           <Text textDecoration={'underline'}>12.1. Initial Dispute Resolution</Text>
 
           <Text>
@@ -391,7 +418,9 @@ const Terms = () => {
             Midas Labs FZE LLC shall be governed by the laws of BVI without regard to conflict of
             law provisions.
           </Text>
-          <Heading>13. General Provisions</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            13. General Provisions
+          </Text>
           <Text textDecoration={'underline'}>13.1. Entire Agreement</Text>
           <Text>
             These Terms (and any additional terms, rules and conditions of participation that may be
@@ -428,7 +457,9 @@ const Terms = () => {
             Users with questions, complaints or claims with respect to the Service may contact us
             using the relevant contact information set forth above and at contact@midaslabsltd.xyz.
           </Text>
-          <Heading>14. Prohibited Use</Heading>
+          <Text variant="lgText" fontWeight="bold">
+            14. Prohibited Use
+          </Text>
           <Text>
             You may not use the Service to engage in the following categories of activity
             (&quot;Prohibited Uses&quot;). The specific types of use listed below are
