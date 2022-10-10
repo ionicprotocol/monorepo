@@ -34,7 +34,7 @@ const ClaimableToken = ({
 }) => {
   const { currentChain } = useMultiMidas();
   const { rewards, rewardToken } = useMemo(() => data, [data]);
-  const { data: tokenData } = useTokenData(rewardToken);
+  const { data: tokenData } = useTokenData(rewardToken, currentChain?.id);
 
   const totalRewardsString = useMemo(
     () =>

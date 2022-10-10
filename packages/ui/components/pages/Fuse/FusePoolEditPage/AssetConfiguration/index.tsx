@@ -10,6 +10,47 @@ import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useTokenData } from '@ui/hooks/useTokenData';
+
+const AssetButton = ({
+  asset,
+  selectedAsset,
+  setSelectedAsset,
+  setSelectedIndex,
+  index,
+  isEditableAdmin,
+  poolChainId,
+}: {
+  asset: NativePricedFuseAsset;
+  selectedAsset: NativePricedFuseAsset;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  setSelectedIndex: (value: number) => void;
+  index: number;
+  isEditableAdmin?: boolean;
+  poolChainId: number;
+}) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
+
+  return (
+    <Box mr={2} key={asset.cToken} mb={2}>
+      <CButton
+        variant="filter"
+        isSelected={asset.cToken === selectedAsset.cToken}
+        onClick={() => {
+          setSelectedAsset(asset);
+          setSelectedIndex(index);
+        }}
+        px={2}
+        isDisabled={!isEditableAdmin}
+      >
+        <CTokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
+        <Center px={1} fontWeight="bold">
+          {tokenData?.symbol ?? asset.underlyingSymbol}
+        </Center>
+      </CButton>
+    </Box>
+  );
+};
 
 const AssetConfiguration = ({
   openAddAssetModal,
@@ -61,23 +102,16 @@ const AssetConfiguration = ({
         <Flex wrap="wrap">
           {assets.map((asset, index) => {
             return (
-              <Box mr={2} key={asset.cToken} mb={2}>
-                <CButton
-                  variant="filter"
-                  isSelected={asset.cToken === selectedAsset.cToken}
-                  onClick={() => {
-                    setSelectedAsset(asset);
-                    setSelectedIndex(index);
-                  }}
-                  px={2}
-                  isDisabled={!isEditableAdmin}
-                >
-                  <CTokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
-                  <Center px={1} fontWeight="bold">
-                    {asset.underlyingSymbol}
-                  </Center>
-                </CButton>
-              </Box>
+              <AssetButton
+                key={index}
+                asset={asset}
+                selectedAsset={selectedAsset}
+                setSelectedAsset={setSelectedAsset}
+                setSelectedIndex={setSelectedIndex}
+                index={index}
+                isEditableAdmin={isEditableAdmin}
+                poolChainId={poolChainId}
+              />
             );
           })}
         </Flex>
