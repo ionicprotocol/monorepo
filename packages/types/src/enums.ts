@@ -286,7 +286,7 @@ export enum assetSymbols {
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "arrakis_USDC_WETH_005",
   arrakis_WBTC_WETH_005 = "arrakis_WBTC_WETH_005",
-  arrakis_USDC_PAR_005 = "arrakis_USDC_PAR_005",
+  arrakis_USDC_PAR_005 = "G-UNI USDC-PAR Vault (0.05)",
   arrakis_WMATIC_USDC_005 = "arrakis_WMATIC_USDC_005",
   arrakis_USDC_agEUR_001 = "arrakis_USDC_agEUR_001",
   arrakis_WMATIC_WETH_005 = "arrakis_WMATIC_WETH_005",

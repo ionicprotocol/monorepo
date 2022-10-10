@@ -19,7 +19,7 @@ export const TokenName = ({
   poolAddress: string;
   poolChainId: number;
 }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
