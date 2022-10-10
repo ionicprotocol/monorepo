@@ -119,7 +119,8 @@ export const configureAddressesProviderStrategies = async ({
   }
 
   if (redemptionStrategiesToUpdate.length > 0) {
-    for (const [asset, type, strategy] in redemptionStrategiesToUpdate) {
+    for (const key in redemptionStrategiesToUpdate) {
+      const [asset, type, strategy] = redemptionStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
       const tx = await ap.setRedemptionStrategy(asset, strategy, type);
       await tx.wait();
@@ -141,7 +142,8 @@ export const configureAddressesProviderStrategies = async ({
   }
 
   if (fundingStrategiesToUpdate.length > 0) {
-    for (const [asset, type, strategy] in fundingStrategiesToUpdate) {
+    for (const key in fundingStrategiesToUpdate) {
+      const [asset, type, strategy] = fundingStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
       const tx = await ap.setFundingStrategy(asset, strategy, type);
       await tx.wait();
