@@ -11,8 +11,14 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { longFormat, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 
-export const SupplyBalance = ({ asset }: { asset: MarketData }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+export const SupplyBalance = ({
+  asset,
+  poolChainId,
+}: {
+  asset: MarketData;
+  poolChainId: number;
+}) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const supplyBalance = useMemo(() => {
     return Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals));
   }, [asset.supplyBalance, asset.underlyingDecimals]);

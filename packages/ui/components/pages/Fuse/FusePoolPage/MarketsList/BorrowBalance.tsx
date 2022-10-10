@@ -11,8 +11,14 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { longFormat, smallUsdFormatter } from '@ui/utils/bigUtils';
 
-export const BorrowBalance = ({ asset }: { asset: MarketData }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+export const BorrowBalance = ({
+  asset,
+  poolChainId,
+}: {
+  asset: MarketData;
+  poolChainId: number;
+}) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const borrowBalance = useMemo(() => {
     return Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals));
   }, [asset.borrowBalance, asset.underlyingDecimals]);
