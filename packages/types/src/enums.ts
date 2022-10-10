@@ -281,7 +281,7 @@ export enum assetSymbols {
   MIMO = "MIMO",
 
   // Balancer
-  MIMO_PAR_80_20 = "MIMO_PAR_80_20",
+  MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
