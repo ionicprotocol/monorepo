@@ -238,6 +238,7 @@ export enum assetSymbols {
 
   // neon
   WNEON = "WNEON",
+  MORA = "MORA",
 
   // polygon
   WMATIC = "WMATIC",
