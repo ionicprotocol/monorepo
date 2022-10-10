@@ -2,6 +2,7 @@
 
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
+import AdjustableJumpRateModelArtifact from "../lib/contracts/out/AdjustableJumpRateModel.sol/AdjustableJumpRateModel.json";
 import AnkrBNBcPriceOracleArtifact from "../lib/contracts/out/AnkrBNBcPriceOracle.sol/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import BalancerLpTokenPriceOracleArtifact from "../lib/contracts/out/BalancerLpTokenPriceOracle.sol/BalancerLpTokenPriceOracle.json";
@@ -47,6 +48,7 @@ const FuseFlywheelDynamicRewards: Artifact = FuseFlywheelDynamicRewardsArtifacts
 const FlywheelStaticRewards: Artifact = FlywheelStaticRewardsArtifact;
 const MidasFlywheel: Artifact = MidasFlywheelArtifact;
 const JumpRateModel: Artifact = JumpRateModelArtifact;
+const AdjustableJumpRateModel: Artifact = AdjustableJumpRateModelArtifact;
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
@@ -81,6 +83,7 @@ const ARTIFACTS = {
   FlywheelStaticRewards,
   MidasFlywheel,
   JumpRateModel,
+  AdjustableJumpRateModel,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -119,6 +122,7 @@ export {
   FlywheelStaticRewards,
   MidasFlywheel,
   JumpRateModel,
+  AdjustableJumpRateModel,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
