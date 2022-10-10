@@ -15,6 +15,7 @@ import {
 import { ReactNode } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 
 export const SliderWithLabel = ({
@@ -24,6 +25,9 @@ export const SliderWithLabel = ({
   value,
   reff,
   onChange,
+  poolChainId,
+  isEditPool,
+  isPowerfulAdmin,
   ...others
 }: {
   min: number;
@@ -32,9 +36,13 @@ export const SliderWithLabel = ({
   value: number;
   reff: any;
   onChange: (...event: any[]) => void;
+  poolChainId: number;
+  isEditPool?: boolean;
+  isPowerfulAdmin?: boolean;
   [key: string]: ReactNode;
 }) => {
   const { cSlider } = useColors();
+  const { currentChain } = useMultiMidas();
 
   return (
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" {...others}>
@@ -47,6 +55,9 @@ export const SliderWithLabel = ({
           min={min}
           max={max}
           allowMouseWheel
+          isDisabled={
+            (isEditPool && !isPowerfulAdmin) || !currentChain || currentChain.id !== poolChainId
+          }
         >
           <NumberInputField
             paddingLeft={2}
@@ -72,6 +83,9 @@ export const SliderWithLabel = ({
         min={min}
         max={max}
         step={1}
+        isDisabled={
+          (isEditPool && !isPowerfulAdmin) || !currentChain || currentChain.id !== poolChainId
+        }
       >
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
           <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />

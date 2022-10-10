@@ -1,4 +1,4 @@
-import { Badge, Box, HStack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
@@ -10,8 +10,16 @@ import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRew
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
-export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddress: string }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+export const TokenName = ({
+  asset,
+  poolAddress,
+  poolChainId,
+}: {
+  asset: MarketData;
+  poolAddress: string;
+  poolChainId: number;
+}) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const { data: claimableRewards } = useAssetClaimableRewards({
     poolAddress,
     assetAddress: asset.cToken,
@@ -22,16 +30,26 @@ export const TokenName = ({ asset, poolAddress }: { asset: MarketData; poolAddre
       <PopoverTooltip
         placement="top-start"
         body={
-          <div
-            dangerouslySetInnerHTML={{
-              __html: asset.extraDocs || asset.underlyingSymbol,
-            }}
-          />
+          <VStack>
+            <Text alignSelf="flex-start" variant="mdText">
+              {tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: asset.extraDocs || asset.underlyingSymbol,
+              }}
+            />
+          </VStack>
         }
       >
-        <div>
-          <CTokenIcon size="md" address={asset.underlyingToken} withTooltip={false} />
-        </div>
+        <Center>
+          <CTokenIcon
+            size="md"
+            address={asset.underlyingToken}
+            chainId={poolChainId}
+            withTooltip={false}
+          />
+        </Center>
       </PopoverTooltip>
       <VStack alignItems={'flex-start'} ml={2} spacing={1}>
         <HStack>

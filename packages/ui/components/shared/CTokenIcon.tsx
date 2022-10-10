@@ -29,17 +29,19 @@ const PlaceholderIcon = ({ color, ...restOfProps }: PlaceholderIconProps) => {
 
 interface CTokenIconProps extends AvatarProps {
   address: string;
+  chainId: number;
   withTooltip?: boolean;
   withMotion?: boolean;
 }
 export const CTokenIcon = ({
   address,
+  chainId,
   withTooltip = true,
   withMotion = true,
   ...avatarProps
 }: CTokenIconProps) => {
   const iconColor = useColorModeValue('#333', '#ddd');
-  const { data: tokenData, isLoading } = useTokenData(address);
+  const { data: tokenData, isLoading } = useTokenData(address, chainId);
 
   return (
     <motion.div whileHover={withMotion ? { scale: 1.2 } : undefined}>
@@ -63,14 +65,16 @@ export const CTokenIcon = ({
 
 export const TokenWithLabel = ({
   address,
+  poolChainId,
   ...avatarProps
 }: {
   address: string;
+  poolChainId: number;
 } & Partial<AvatarProps>) => {
-  const { data: tokenData, isLoading } = useTokenData(address);
+  const { data: tokenData, isLoading } = useTokenData(address, poolChainId);
   const fallbackImage = useColorModeValue(
     '/images/help-circle-dark.svg',
-    "'/images/help-circle-light.svg'"
+    '/images/help-circle-light.svg'
   );
 
   return (
@@ -92,10 +96,12 @@ export const TokenWithLabel = ({
 export const CTokenAvatarGroup = ({
   tokenAddresses,
   popOnHover = false,
+  chainId,
   ...avatarGroupProps
 }: {
   tokenAddresses: string[];
   popOnHover: boolean;
+  chainId: number;
 } & Partial<AvatarGroupProps>) => {
   return (
     <AvatarGroup size="xs" max={30} {...avatarGroupProps}>
@@ -104,6 +110,7 @@ export const CTokenAvatarGroup = ({
           <CTokenIcon
             key={index}
             address={tokenAddress}
+            chainId={chainId}
             _hover={popOnHover ? { transform: 'scale(1.2)', zIndex: 5 } : undefined}
           />
         );

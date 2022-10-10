@@ -1,18 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 
 export const useFlywheel = (flywheelAddress?: string) => {
-  const { midasSdk, currentChain } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useFlywheel', currentChain.id, flywheelAddress],
+    ['useFlywheel', currentSdk?.chainId, flywheelAddress],
     async () => {
-      if (!flywheelAddress) return undefined;
-      if (!midasSdk) return undefined;
+      if (!flywheelAddress || !currentSdk) return undefined;
 
-      const flywheel = midasSdk.createMidasFlywheel(flywheelAddress);
+      const flywheel = currentSdk.createMidasFlywheel(flywheelAddress);
 
       // TODO add function to FlywheelLensRouter to get all info in one call
       const [booster, rewards, markets, owner, rewardToken] = await Promise.all([
@@ -34,7 +33,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
     },
     {
       initialData: undefined,
-      enabled: !!flywheelAddress && !!currentChain && !!midasSdk,
+      enabled: !!flywheelAddress && !!currentSdk,
     }
   );
 };

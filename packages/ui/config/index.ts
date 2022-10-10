@@ -1,5 +1,4 @@
 type CONFIG = {
-  isRssScoreEnabled: boolean;
   iconServerURL: string | undefined;
   isDevelopment: boolean;
   isBscEnabled: boolean;
@@ -20,11 +19,10 @@ type CONFIG = {
 };
 
 const config: CONFIG = {
-  isRssScoreEnabled: process.env.FEATURE_RSS === 'true',
   iconServerURL: process.env.ICON_SERVER,
   isDevelopment: process.env.NODE_ENV === 'development',
   isBscEnabled: process.env.BSC === 'true',
-  isEvmosEnabled: process.env.EVMOS === 'ture',
+  isEvmosEnabled: process.env.EVMOS === 'true',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
   isArbitrumEnabled: process.env.ARBITRUM === 'true',

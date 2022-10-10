@@ -3,7 +3,7 @@ import { NativePricedFuseAsset } from '@midas-capital/types';
 import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 
-import { TokensDataMap } from '@ui/types/TokensDataMap';
+import { PoolData, TokensDataMap } from '@ui/types/TokensDataMap';
 
 export type FusePageLayoutProps = {
   children?: ReactNode;
@@ -231,3 +231,13 @@ export interface TokenDataResponse {
 }
 
 export type APYResult = { apy: number } | { apy?: undefined; error: string };
+
+export type PoolsPerChainStatus = {
+  [chainId: string]: {
+    isLoading: boolean;
+    error: Error | undefined;
+    data?: PoolData[] | undefined;
+  };
+};
+
+export type Err = Error & { code?: string; reason?: string };

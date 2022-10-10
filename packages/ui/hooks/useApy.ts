@@ -4,7 +4,7 @@ import axios from 'axios';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { APYResult } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
@@ -26,28 +26,33 @@ export const fetchApy = async (
   throw 'APY Response was not ok';
 };
 
-export function useApy(underlyingAddress: string, pluginAddress: string, rewardAddress?: string) {
-  const {
-    currentChain: { id: currentChainId },
-  } = useMidas();
+export function useApy(
+  underlyingAddress: string,
+  pluginAddress: string,
+  rewardAddress?: string,
+  poolChainId?: number
+) {
   return useQuery<APYResult>(
-    ['useApy', currentChainId, underlyingAddress, pluginAddress, rewardAddress],
+    ['useApy', poolChainId, underlyingAddress, pluginAddress, rewardAddress],
     async () => {
-      return await fetchApy(currentChainId, underlyingAddress, pluginAddress, rewardAddress);
+      if (poolChainId) {
+        return await fetchApy(poolChainId, underlyingAddress, pluginAddress, rewardAddress);
+      }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!underlyingAddress && !!pluginAddress && !!currentChainId,
+      enabled: !!underlyingAddress && !!pluginAddress && !!poolChainId,
     }
   );
 }
 
-export const useTotalApy = (rewards: FlywheelMarketRewardsInfo[], assets: MarketData[]) => {
-  const {
-    midasSdk,
-    currentChain: { id: currentChainId },
-  } = useMidas();
+export const useTotalApy = (
+  rewards: FlywheelMarketRewardsInfo[],
+  assets: MarketData[],
+  poolChainId: number
+) => {
+  const sdk = useSdk(poolChainId);
 
   const rewardsPerMarket = useMemo(() => {
     const _rewardsPerMarket: { [cToken: string]: FlywheelMarketRewardsInfo | undefined } = {};
@@ -63,17 +68,19 @@ export const useTotalApy = (rewards: FlywheelMarketRewardsInfo[], assets: Market
     const _supplyApyPerMarket: { [cToken: string]: number } = {};
 
     assets.map((asset) => {
-      _supplyApyPerMarket[asset.cToken] = midasSdk.ratePerBlockToAPY(
-        asset.supplyRatePerBlock,
-        getBlockTimePerMinuteByChainId(currentChainId)
-      );
+      _supplyApyPerMarket[asset.cToken] = sdk
+        ? sdk.ratePerBlockToAPY(
+            asset.supplyRatePerBlock,
+            getBlockTimePerMinuteByChainId(poolChainId)
+          )
+        : 0;
     });
 
     return _supplyApyPerMarket;
-  }, [assets, currentChainId, midasSdk]);
+  }, [assets, poolChainId, sdk]);
 
   return useQuery(
-    ['useTotalApy', currentChainId, rewardsPerMarket, supplyApyPerMarket, assets],
+    ['useTotalApy', poolChainId, rewardsPerMarket, supplyApyPerMarket, assets],
     async () => {
       const totalApyPerMarket: { [ctoken: string]: number } = {};
       assets.map(async (asset) => {
@@ -86,7 +93,7 @@ export const useTotalApy = (rewards: FlywheelMarketRewardsInfo[], assets: Market
             if (asset.plugin) {
               const plugin = asset.plugin;
               const res = await fetchApy(
-                currentChainId,
+                poolChainId,
                 asset.underlyingToken,
                 plugin,
                 reward.rewardToken
@@ -98,7 +105,7 @@ export const useTotalApy = (rewards: FlywheelMarketRewardsInfo[], assets: Market
           });
         } else if (asset.plugin) {
           const plugin = asset.plugin;
-          const res = await fetchApy(currentChainId, asset.underlyingToken, plugin);
+          const res = await fetchApy(poolChainId, asset.underlyingToken, plugin);
           if (!res.error && res.apy) totalApy += Number(res.apy) * 100;
         }
 
@@ -110,7 +117,7 @@ export const useTotalApy = (rewards: FlywheelMarketRewardsInfo[], assets: Market
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: assets.length > 0 && !!currentChainId,
+      enabled: assets.length > 0 && !!poolChainId,
     }
   );
 };

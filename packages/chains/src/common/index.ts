@@ -7,7 +7,9 @@ export {
   pancakeSwapDocs,
   quickSwapDocs,
   ankrBNBDocs,
+  stkBNBDocs,
   curveFinancePolygonDocs,
+  balacerDocs,
   curveFinanceArbitrumDocs,
   jarvisDocs,
 } from "./docs";

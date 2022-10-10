@@ -1,16 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { getComptrollerContract } from '@ui/utils/contracts';
 
-export const useExtraPoolInfo = (comptrollerAddress?: string) => {
-  const { midasSdk, currentChain, address } = useMidas();
+export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: number) => {
+  const { address } = useMultiMidas();
+  const sdk = useSdk(poolChainId);
 
   return useQuery(
-    ['useExtraPoolInfo', currentChain.id, comptrollerAddress],
+    ['useExtraPoolInfo', comptrollerAddress, sdk?.chainId, address],
     async () => {
-      if (!comptrollerAddress) return;
+      if (!comptrollerAddress || !sdk) {
+        return null;
+      }
 
-      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      const comptroller = getComptrollerContract(comptrollerAddress, sdk);
+
       const [
         { 0: admin, 1: upgradeable },
         closeFactor,
@@ -20,7 +26,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         pendingAdmin,
         oracle,
       ] = await Promise.all([
-        midasSdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
+        sdk.contracts.FusePoolLensSecondary.callStatic.getPoolOwnership(comptrollerAddress),
         comptroller.callStatic.closeFactorMantissa(),
         comptroller.callStatic.liquidationIncentiveMantissa(),
         comptroller.callStatic
@@ -32,9 +38,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
           .then((x: string[]) => x)
           .catch(() => []),
         comptroller.callStatic.pendingAdmin(),
-        comptroller.callStatic
-          .oracle()
-          .then((oracleAddress) => midasSdk.getPriceOracle(oracleAddress)),
+        comptroller.callStatic.oracle().then((oracleAddress) => sdk.getPriceOracle(oracleAddress)),
       ]);
 
       return {
@@ -42,14 +46,16 @@ export const useExtraPoolInfo = (comptrollerAddress?: string) => {
         upgradeable,
         enforceWhitelist,
         whitelist: whitelist as string[],
-        isPowerfulAdmin: admin.toLowerCase() === address.toLowerCase() && upgradeable,
+        isPowerfulAdmin: admin.toLowerCase() === address?.toLowerCase() && upgradeable,
         oracle,
         closeFactor,
         liquidationIncentive,
         pendingAdmin,
-        isPendingAdmin: pendingAdmin.toLowerCase() === address.toLowerCase(),
+        isPendingAdmin: pendingAdmin.toLowerCase() === address?.toLowerCase(),
       };
     },
-    { enabled: !!comptrollerAddress && comptrollerAddress.length > 0 }
+    {
+      enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
+    }
   );
 };

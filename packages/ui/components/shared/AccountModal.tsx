@@ -12,17 +12,21 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { TransactionResponse } from '@ethersproject/providers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { pendingTxHashes, midasSdk, scanUrl, disconnect, address } = useMidas();
+  const { pendingTxHashes, currentSdk, currentChain, disconnect, address } = useMultiMidas();
+  const scanUrl = useMemo(() => {
+    if (currentChain) return getScanUrlByChainId(currentChain.id);
+  }, [currentChain]);
   const { cCard } = useColors();
   const {
     isOpen: isConnectWalletModalOpen,
@@ -44,18 +48,20 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
   useEffect(() => {
     const func = async () => {
-      const info = await Promise.all(
-        pendingTxHashes.map(async (hash) => {
-          return await midasSdk.provider.getTransaction(hash);
-        })
-      );
-      setTxInfo(info);
+      if (currentSdk) {
+        const info = await Promise.all(
+          pendingTxHashes.map(async (hash) => {
+            return await currentSdk.provider.getTransaction(hash);
+          })
+        );
+        setTxInfo(info);
+      }
     };
 
-    if (pendingTxHashes.length) {
+    if (pendingTxHashes.length > 0 && currentSdk) {
       func();
     }
-  }, [pendingTxHashes, midasSdk]);
+  }, [pendingTxHashes, currentSdk]);
 
   return (
     <>
@@ -73,7 +79,7 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             <Flex display="flex" alignItems="baseline">
               <Text variant="title">Account</Text>
               <Text variant="mdText" ml={2}>
-                {`( ${shortAddress(address, 6, 4)} )`}
+                {`( ${address && shortAddress(address, 6, 4)} )`}
               </Text>
             </Flex>
           </ModalHeader>

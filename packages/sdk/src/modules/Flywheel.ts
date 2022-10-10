@@ -73,10 +73,10 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelsByPool(poolAddress: string): Promise<MidasFlywheel[]> {
-      const comptrollerInstance = this.getComptrollerInstance(poolAddress);
+      const comptrollerInstance = new Contract(poolAddress, this.artifacts.Comptroller.abi, this.provider);
       const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
-        return new Contract(address, this.artifacts.MidasFlywheel.abi, this.signer) as MidasFlywheel;
+        return new Contract(address, this.artifacts.MidasFlywheel.abi, this.provider) as MidasFlywheel;
       });
 
       const filterList = await Promise.all(
@@ -93,12 +93,16 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelRewardsInfos(flywheelAddress: string) {
-      const flywheelCoreInstance = this.createMidasFlywheel(flywheelAddress);
+      const flywheelCoreInstance = new Contract(
+        flywheelAddress,
+        this.artifacts.MidasFlywheel.abi,
+        this.provider
+      ) as MidasFlywheel;
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(),
         flywheelCoreInstance.callStatic.getAllStrategies(),
       ]);
-      const fwStatic = this.createFlywheelStaticRewards(fwStaticAddress);
+      const fwStatic = new Contract(fwStaticAddress, this.artifacts.FlywheelStaticRewards.abi, this.provider);
       const rewardsInfos = {};
       await Promise.all(
         enabledMarkets.map(async (m) => {

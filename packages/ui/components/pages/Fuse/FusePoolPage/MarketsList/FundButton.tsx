@@ -13,6 +13,7 @@ export const FundButton = ({
   mode,
   isDisabled,
   supplyBalanceFiat,
+  poolChainId,
 }: {
   comptrollerAddress: string;
   assets: MarketData[];
@@ -20,9 +21,10 @@ export const FundButton = ({
   mode: FundOperationMode;
   isDisabled?: boolean;
   supplyBalanceFiat?: number;
+  poolChainId: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const modeName = useMemo(() => {
     const enumName = FundOperationMode[mode].toLowerCase();
     const name = enumName.charAt(0).toUpperCase() + enumName.slice(1);
@@ -47,6 +49,7 @@ export const FundButton = ({
         isOpen={isModalOpen}
         onClose={closeModal}
         supplyBalanceFiat={supplyBalanceFiat}
+        poolChainId={poolChainId}
       />
     </Box>
   );

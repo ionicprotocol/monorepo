@@ -34,7 +34,6 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
@@ -42,8 +41,11 @@ import {
   COLLATERAL_FACTOR_TOOLTIP,
   RESERVE_FACTOR,
 } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -93,17 +95,25 @@ interface AssetSettingsProps {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
   tokenData: TokenData;
+  poolChainId: number;
 }
 
-export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
+export const AssetSettings = ({
+  comptrollerAddress,
+  selectedAsset,
+  poolChainId,
+}: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { midasSdk, setPendingTxHash } = useMidas();
+  const { currentSdk, setPendingTxHash } = useMultiMidas();
+  const sdk = useSdk(poolChainId);
+
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();
-  const { cCard, cSelect, cSwitch } = useColors();
+  const { cCard, cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-
+  const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const {
     control,
     handleSubmit,
@@ -116,7 +126,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
       collateralFactor: COLLATERAL_FACTOR.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
-      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
+      interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
     },
   });
 
@@ -125,12 +135,12 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
   const watchInterestRateModel = watch(
     'interestRateModel',
-    midasSdk.chainDeployment.JumpRateModel.address
+    sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
 
-  const { data: pluginInfo } = usePluginInfo(selectedAsset.plugin);
+  const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
-  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
+  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   useEffect(() => {
     if (cTokenData) {
       setValue(
@@ -144,9 +154,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   }, [cTokenData, setValue]);
 
   const updateCollateralFactor = async ({ collateralFactor }: { collateralFactor: number }) => {
-    if (!cTokenAddress) return;
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -179,8 +189,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = midasSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -206,8 +217,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = midasSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -233,8 +245,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = midasSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCToken(cTokenAddress || '');
 
     try {
       const tx: ContractTransaction = await testForCTokenErrorAndSend(
@@ -257,13 +270,10 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const setBorrowingStatus = async () => {
-    if (!cTokenAddress) {
-      console.warn('No cTokenAddress');
-      return;
-    }
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
@@ -336,13 +346,13 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             </HStack>
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
-              <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
               <Switch
                 ml="auto"
                 h="20px"
                 isChecked={!isPaused}
                 onChange={setBorrowingStatus}
                 className="switch-borrowing"
+                isDisabled={!isEditableAdmin}
               />
             </Row>
           </Flex>
@@ -404,6 +414,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        poolChainId={poolChainId}
+                        isEditPool={true}
+                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
                       />
                     )}
                   />
@@ -489,6 +502,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        poolChainId={poolChainId}
+                        isEditPool={true}
+                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
                       />
                     )}
                   />
@@ -566,6 +582,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        poolChainId={poolChainId}
+                        isEditPool={true}
+                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
                       />
                     )}
                   />
@@ -674,15 +693,16 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                       ml="auto"
                       cursor="pointer"
                       mt={{ base: 2, sm: 0 }}
+                      isDisabled={!isEditableAdmin}
                     >
                       <option
-                        value={midasSdk.chainDeployment.JumpRateModel.address}
+                        value={sdk ? sdk.chainDeployment.JumpRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
                       >
                         JumpRateModel
                       </option>
                       <option
-                        value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
+                        value={sdk ? sdk.chainDeployment.WhitePaperInterestRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
                       >
                         WhitePaperInterestRateModel
@@ -717,9 +737,14 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             adminFee={watchAdminFee}
             reserveFactor={watchReserveFactor}
             interestRateModelAddress={watchInterestRateModel}
+            poolChainId={poolChainId}
           />
           <ConfigRow>
-            <RemoveAssetButton comptrollerAddress={comptrollerAddress} asset={selectedAsset} />
+            <RemoveAssetButton
+              comptrollerAddress={comptrollerAddress}
+              asset={selectedAsset}
+              poolChainId={poolChainId}
+            />
           </ConfigRow>
         </>
       )}

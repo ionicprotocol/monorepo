@@ -26,10 +26,10 @@ import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
@@ -49,13 +49,14 @@ export const CreatePoolConfiguration = () => {
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
-  const { midasSdk, currentChain, address } = useMidas();
+  const { currentSdk, currentChain, address } = useMultiMidas();
   const router = useRouter();
-
+  const chainId = router.query.chainId as string;
   const [isCreating, setIsCreating] = useState(false);
 
-  const { cCard, cSolidBtn, cSwitch } = useColors();
+  const { cCard, cSolidBtn } = useColors();
   const isMobile = useIsSmallScreen();
+  const sdk = useSdk(currentChain?.id);
 
   const {
     control,
@@ -78,6 +79,11 @@ export const CreatePoolConfiguration = () => {
   const watchWhitelist = watch('whitelist', []);
 
   const onDeploy = async (data: FormData) => {
+    if (!currentSdk || !address || !currentChain) {
+      warningToast({ description: 'Connect your wallet!' });
+
+      return;
+    }
     if (!config.allowedAddresses.includes(address.toLowerCase())) {
       warningToast({ description: 'Pool creation is limited!' });
 
@@ -94,7 +100,7 @@ export const CreatePoolConfiguration = () => {
     const bigLiquidationIncentive = utils.parseUnits((liquidationIncentive + 100).toString(), 16);
 
     try {
-      const deployResult = await midasSdk.deployPool(
+      const deployResult = await currentSdk.deployPool(
         name,
         isWhitelisted,
         bigCloseFactor,
@@ -136,7 +142,7 @@ export const CreatePoolConfiguration = () => {
         <Text fontWeight="bold" variant="title" px={4} py={4}>
           Create Pool
         </Text>
-        {!config.allowedAddresses.includes(address.toLowerCase()) && (
+        {(!address || !config.allowedAddresses.includes(address.toLowerCase())) && (
           <Banner
             text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
             linkText="please contact us via Discord."
@@ -179,22 +185,13 @@ export const CreatePoolConfiguration = () => {
                     required: 'Oracle is required',
                   })}
                 >
-                  {currentChain.id === 1337 ? (
+                  {sdk && (
                     <option
                       className="white-bg-option"
-                      value={midasSdk.chainDeployment.MasterPriceOracle.address}
+                      value={sdk.chainDeployment.MasterPriceOracle.address}
                     >
                       MasterPriceOracle
                     </option>
-                  ) : (
-                    <>
-                      <option
-                        className="white-bg-option"
-                        value={midasSdk.chainDeployment.MasterPriceOracle.address}
-                      >
-                        MasterPriceOracle
-                      </option>
-                    </>
                   )}
                 </Select>
                 <FormErrorMessage marginBottom="-10px">
@@ -223,21 +220,18 @@ export const CreatePoolConfiguration = () => {
                   control={control}
                   name="isWhitelisted"
                   render={({ field: { ref, name, value, onChange } }) => (
-                    <>
-                      <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
-                      <Switch
-                        className="switch-whitelist"
-                        id="isWhitelisted"
-                        size={isMobile ? 'sm' : 'md'}
-                        cursor={'pointer'}
-                        _focus={{ boxShadow: 'none' }}
-                        _hover={{}}
-                        name={name}
-                        ref={ref}
-                        isChecked={value}
-                        onChange={onChange}
-                      />
-                    </>
+                    <Switch
+                      className="switch-whitelist"
+                      id="isWhitelisted"
+                      size={isMobile ? 'sm' : 'md'}
+                      cursor={'pointer'}
+                      _focus={{ boxShadow: 'none' }}
+                      _hover={{}}
+                      name={name}
+                      ref={ref}
+                      isChecked={value}
+                      onChange={onChange}
+                    />
                   )}
                 />
               </Column>
@@ -298,6 +292,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      poolChainId={Number(chainId)}
                     />
                   )}
                 />
@@ -346,6 +341,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      poolChainId={Number(chainId)}
                     />
                   )}
                 />
@@ -368,6 +364,7 @@ export const CreatePoolConfiguration = () => {
           fontSize="xl"
           maxWidth={'550px'}
           disabled={
+            !address ||
             isCreating ||
             !!errors.name ||
             !!errors.oracle ||
@@ -377,7 +374,7 @@ export const CreatePoolConfiguration = () => {
           }
         >
           <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-            {!config.allowedAddresses.includes(address.toLowerCase()) ? (
+            {!address || !config.allowedAddresses.includes(address.toLowerCase()) ? (
               'Creation limited!'
             ) : isCreating ? (
               <Spinner />

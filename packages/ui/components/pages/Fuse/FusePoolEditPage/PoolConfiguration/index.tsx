@@ -1,5 +1,6 @@
 import {
   AvatarGroup,
+  Box,
   Button,
   ButtonGroup,
   Flex,
@@ -15,51 +16,64 @@ import {
   Text,
   useDisclosure,
 } from '@chakra-ui/react';
-import { Web3Provider } from '@ethersproject/providers';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
-import { BigNumber, Contract, ContractTransaction, utils } from 'ethers';
+import { BigNumber, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useSwitchNetwork } from 'wagmi';
 
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
+import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
-import { useColors } from '@ui/hooks/useColors';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { getFPDContract, getUnitrollerContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { getChainConfig } from '@ui/utils/networkData';
 
 const PoolConfiguration = ({
   assets,
   comptrollerAddress,
   poolName,
+  poolChainId,
 }: {
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
   poolName: string;
+  poolChainId: number;
 }) => {
   const router = useRouter();
   const poolId = router.query.poolId as string;
 
-  const { midasSdk, address } = useMidas();
-  const { cSwitch } = useColors();
+  const { currentSdk, address, currentChain } = useMultiMidas();
 
   const queryClient = useQueryClient();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
-
-  const { data } = useExtraPoolInfo(comptrollerAddress);
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const handleSwitch = async () => {
+    if (chainConfig && switchNetworkAsync) {
+      await switchNetworkAsync(chainConfig.chainId);
+    } else {
+      onOpen();
+    }
+  };
+  const { data } = useExtraPoolInfo(comptrollerAddress, poolChainId);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const [inputPoolName, setInputPoolName] = useState<string>(poolName);
   const [isEditable, setIsEditable] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
@@ -91,7 +105,9 @@ const PoolConfiguration = ({
   } = useDisclosure();
 
   const changeWhitelistStatus = async (enforce: boolean) => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -113,7 +129,9 @@ const PoolConfiguration = ({
   };
 
   const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -145,7 +163,9 @@ const PoolConfiguration = ({
   };
 
   const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    if (!currentSdk) return;
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -184,11 +204,9 @@ const PoolConfiguration = ({
   };
 
   const renounceOwnership = async () => {
-    const unitroller = new Contract(
-      comptrollerAddress,
-      midasSdk.artifacts.Unitroller.abi,
-      midasSdk.provider as Web3Provider
-    );
+    if (!currentSdk) return;
+
+    const unitroller = getUnitrollerContract(comptrollerAddress, currentSdk);
 
     try {
       const response = await unitroller.callStatic._toggleAdminRights(false);
@@ -222,11 +240,13 @@ const PoolConfiguration = ({
   }, [data, setValue]);
 
   const updateCloseFactor = async ({ closeFactor }: { closeFactor: number }) => {
+    if (!currentSdk) return;
+
     setIsUpdating(true);
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -257,12 +277,14 @@ const PoolConfiguration = ({
   }: {
     liquidationIncentive: number;
   }) => {
+    if (!currentSdk) return;
+
     // 8% -> 1.08 * 1e8
     const bigLiquidationIncentive: BigNumber = utils.parseUnits(
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(
@@ -289,17 +311,15 @@ const PoolConfiguration = ({
   };
 
   const onSave = async () => {
+    if (!currentSdk) return;
+
     if (!inputPoolName) {
       handleGenericError('Input pool name', errorToast);
       return;
     }
     try {
       setIsSaving(true);
-      const FusePoolDirectory = new Contract(
-        midasSdk.chainDeployment.FusePoolDirectory.address,
-        midasSdk.chainDeployment.FusePoolDirectory.abi,
-        midasSdk.provider as Web3Provider
-      );
+      const FusePoolDirectory = getFPDContract(currentSdk);
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
       });
@@ -334,7 +354,24 @@ const PoolConfiguration = ({
   return (
     <Column height="100%">
       <ConfigRow>
-        <Text variant="mdText" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
+        <Flex alignItems="center" justifyContent="space-between" width="100%">
+          <Text variant="mdText" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
+          {!currentChain ? (
+            <Box>
+              <Button variant="_solid" onClick={onOpen}>
+                Connect Wallet
+              </Button>
+              <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+            </Box>
+          ) : currentChain.id !== poolChainId ? (
+            <Box>
+              <Button variant="_solid" onClick={handleSwitch}>
+                Switch{chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
+              </Button>
+              <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
+            </Box>
+          ) : null}
+        </Flex>
       </ConfigRow>
       <ModalDivider />
       {data ? (
@@ -368,7 +405,13 @@ const PoolConfiguration = ({
                 </Button>
               </ButtonGroup>
             ) : (
-              <Button ml="auto" mt={{ base: 2, sm: 0 }} px={6} onClick={() => setIsEditable(true)}>
+              <Button
+                ml="auto"
+                mt={{ base: 2, sm: 0 }}
+                px={6}
+                onClick={() => setIsEditable(true)}
+                isDisabled={!isEditableAdmin}
+              >
                 <Center fontWeight="bold">Edit</Center>
               </Button>
             )}
@@ -382,7 +425,9 @@ const PoolConfiguration = ({
               <>
                 <AvatarGroup size="sm" max={30}>
                   {assets.map(({ underlyingToken, cToken }) => {
-                    return <CTokenIcon key={cToken} address={underlyingToken} />;
+                    return (
+                      <CTokenIcon key={cToken} address={underlyingToken} chainId={poolChainId} />
+                    );
                   })}
                 </AvatarGroup>
                 <Text ml={2} flexShrink={0}>
@@ -398,7 +443,6 @@ const PoolConfiguration = ({
           <ModalDivider />
           <ConfigRow>
             <Text variant="smText">Whitelist:</Text>
-            <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
             <Switch
               ml="auto"
               h="20px"
@@ -408,6 +452,7 @@ const PoolConfiguration = ({
                 changeWhitelistStatus(!data.enforceWhitelist);
               }}
               className="switch-whitelist"
+              disabled={!isEditableAdmin}
             />
           </ConfigRow>
           {data.enforceWhitelist && (
@@ -447,7 +492,12 @@ const PoolConfiguration = ({
               <Text variant="smText">Upgradeable:</Text>
               {data.upgradeable ? (
                 <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
-                  <Button height="35px" ml="auto" onClick={openTransferOwnershipModalOpen}>
+                  <Button
+                    height="35px"
+                    ml="auto"
+                    onClick={openTransferOwnershipModalOpen}
+                    isDisabled={!isEditableAdmin}
+                  >
                     <Center fontWeight="bold">Transfer Ownership</Center>
                   </Button>
                   <TransferOwnershipModal
@@ -455,7 +505,12 @@ const PoolConfiguration = ({
                     onClose={closeTransferOwnershipModalOpen}
                     comptrollerAddress={comptrollerAddress}
                   />
-                  <Button height="35px" onClick={renounceOwnership} ml="auto">
+                  <Button
+                    height="35px"
+                    onClick={renounceOwnership}
+                    ml="auto"
+                    isDisabled={!isEditableAdmin}
+                  >
                     <Center fontWeight="bold">Renounce Ownership</Center>
                   </Button>
                 </Flex>
@@ -509,6 +564,9 @@ const PoolConfiguration = ({
                           reff={ref}
                           onChange={onChange}
                           mt={{ base: 2, sm: 0 }}
+                          poolChainId={poolChainId}
+                          isEditPool={true}
+                          isPowerfulAdmin={data.isPowerfulAdmin}
                         />
                       )}
                     />
@@ -573,6 +631,9 @@ const PoolConfiguration = ({
                           reff={ref}
                           onChange={onChange}
                           mt={{ base: 2, sm: 0 }}
+                          poolChainId={poolChainId}
+                          isEditPool={true}
+                          isPowerfulAdmin={data.isPowerfulAdmin}
                         />
                       )}
                     />

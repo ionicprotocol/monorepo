@@ -36,6 +36,7 @@ export enum DelegateContractName {
 export enum OracleTypes {
   ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
   CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
+  CurveV2LpTokenPriceOracleNoRegistry = "CurveV2LpTokenPriceOracleNoRegistry",
   DiaPriceOracle = "DiaPriceOracle",
   FixedNativePriceOracle = "FixedNativePriceOracle",
   FluxPriceOracle = "FluxPriceOracle",
@@ -47,6 +48,8 @@ export enum OracleTypes {
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
+  BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
+  StkBNBPriceOracle = "StkBNBPriceOracle",
 }
 
 export enum IrmTypes {
@@ -175,6 +178,7 @@ export enum assetSymbols {
   BOMB = "BOMB",
   xBOMB = "xBOMB",
   aBNBc = "aBNBc",
+  stkBNB = "stkBNB",
   SAFEMOON = "SAFEMOON",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
@@ -191,6 +195,7 @@ export enum assetSymbols {
   "BTCB-ETH" = "BTCB-ETH",
 
   "CAKE-WBNB" = "CAKE-WBNB",
+  "stkBNB-WBNB" = "stkBNB-WBNB",
 
   DDD = "DDD",
   EPX = "EPX",
@@ -272,11 +277,15 @@ export enum assetSymbols {
   PAR = "PAR",
   NZDS = "NZDS",
   XSGD = "XSGD",
+  MIMO = "MIMO",
+
+  // Balancer
+  MIMO_PAR_80_20 = "MIMO_PAR_80_20",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "arrakis_USDC_WETH_005",
   arrakis_WBTC_WETH_005 = "arrakis_WBTC_WETH_005",
-  arrakis_USDC_PAR_005 = "arrakis_USDC_PAR_005",
+  arrakis_USDC_PAR_005 = "G-UNI USDC-PAR Vault (0.05)",
   arrakis_WMATIC_USDC_005 = "arrakis_WMATIC_USDC_005",
   arrakis_USDC_agEUR_001 = "arrakis_USDC_agEUR_001",
   arrakis_WMATIC_WETH_005 = "arrakis_WMATIC_WETH_005",

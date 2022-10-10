@@ -68,3 +68,7 @@ export function aprFormatter(value: BigNumber, decimals: BigNumberish = 18, symb
 export function longFormat(num: number) {
   return longFormatter.format(num);
 }
+
+export function midFormat(num: number) {
+  return midFormatter.format(num);
+}
