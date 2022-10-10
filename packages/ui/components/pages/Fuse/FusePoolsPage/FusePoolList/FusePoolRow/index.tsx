@@ -687,6 +687,7 @@ const ChainFilterButton = ({
       variant="filter"
       disabled={isLoading}
       px={2}
+      mx={'-1px'}
     >
       <HStack>
         {isLoading ? (
