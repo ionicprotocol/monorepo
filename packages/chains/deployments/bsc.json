@@ -761,8 +761,8 @@
         }
       ]
     },
-    "AdjustableJumpRateModel_PSTAKE_002_005_3_08": {
-      "address": "0x04E412a279a919918938aEb1a3b87427928781b1",
+    "AdjustableJumpRateModel_PSTAKE_WBNB": {
+      "address": "0x8Aa6DD595F4924FE751B7130AC70E8EbC8688CCe",
       "abi": [
         {
           "inputs": [

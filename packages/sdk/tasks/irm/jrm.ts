@@ -33,6 +33,7 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
         jumpMultiplierPerYear.toString(),
         kink.toString(),
       ];
+      console.log(`Deploying JRM with arguments: ${args.join(", ")}`);
     } else if (_irm === "AdjustableJumpRateModel") {
       args = [
         {
@@ -43,13 +44,14 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
           kink: kink.toString(),
         },
       ];
+      console.log(`Deploying JRM with arguments: ${args[0]}`);
     } else {
       throw new Error("Unknown irm");
     }
 
     const deploymentName = [_irm, "_", _postfix].join("");
+    console.log(`Deploying JRM as ${deploymentName}`);
 
-    console.log(`Deploying JRM as ${deploymentName} with arguments: ${{ args }}`);
     const deployment = await deployments.deploy(_irm + "_" + _postfix, {
       contract: _irm,
       from: deployer.address,
