@@ -12,13 +12,14 @@ export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
   return Number(utils.formatUnits(tvlNative, decimals));
 };
 
-interface CrossChainTVL {
-  [chainId: string]: {
+type CrossChainTVL = Map<
+  string,
+  {
     value: number;
     name: string;
     logo: string;
-  };
-}
+  }
+>;
 
 export const useTVL = () => {
   const { sdks, chainIds } = useMultiMidas();
@@ -29,19 +30,20 @@ export const useTVL = () => {
     async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
       if (!isLoading && prices) {
-        const chainTVLs: CrossChainTVL = {};
-
+        const chainTVLs: CrossChainTVL = new Map();
         await Promise.all(
           sdks.map(async (sdk) => {
-            chainTVLs[sdk.chainId.toString()] = {
+            chainTVLs.set(sdk.chainId.toString(), {
               value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()],
               name: sdk.chainSpecificParams.metadata.name,
               logo: sdk.chainSpecificParams.metadata.img,
-            };
+            });
           })
         );
 
-        return chainTVLs;
+        const sortedChainTVLs = new Map([...chainTVLs].sort((a, b) => b[1].value - a[1].value));
+
+        return sortedChainTVLs;
       }
     },
     { enabled: !!prices && !isLoading }
