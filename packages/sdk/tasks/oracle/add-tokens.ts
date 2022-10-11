@@ -15,7 +15,7 @@ task("oracle:add-tokens", "Initialize MasterPriceOracle with underlying oracle f
 
     let underlyingOracles: Array<string>;
     if (underlyingOracleInput.length === 1) {
-      underlyingOracles = Array(underlyingTokens.length).fill(underlyingOracles[0]);
+      underlyingOracles = Array(underlyingTokens.length).fill(underlyingOracleInput[0]);
     } else {
       underlyingOracles = underlyingOracleInput;
     }

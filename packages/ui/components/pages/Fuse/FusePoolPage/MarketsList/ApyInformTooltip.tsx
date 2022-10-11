@@ -8,7 +8,7 @@ export const ApyInformTooltip = ({
   pluginAddress,
   poolChainId,
 }: {
-  pluginAddress: string;
+  pluginAddress?: string;
   poolChainId: number;
 }) => {
   const { data: pluginInfo } = usePluginInfo(poolChainId, pluginAddress);

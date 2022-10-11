@@ -2,7 +2,10 @@ import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
+
+import { ApyInformTooltip } from './ApyInformTooltip';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -63,6 +66,7 @@ export const SupplyApy = ({
       <Text color={supplyApyColor} fontWeight="bold" variant="smText">
         {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
       </Text>
+
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
         <Text color={cCard.txtColor} variant="smText">
           + {Number(aBNBcApr).toFixed(2)}%
@@ -70,39 +74,35 @@ export const SupplyApy = ({
       )}
 
       {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
-        rewardsOfThisMarket?.rewardsInfo.map((info) =>
-          asset.plugin ? (
-            <RewardsInfo
-              key={info.rewardToken}
-              underlyingAddress={asset.underlyingToken}
-              pluginAddress={asset.plugin}
-              rewardAddress={info.rewardToken}
-              poolChainId={poolChainId}
-            />
-          ) : (
-            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-              <HStack mr={2}>
-                <Text variant="smText">+</Text>
-                <TokenWithLabel
-                  address={info.rewardToken}
-                  poolChainId={poolChainId}
-                  size="2xs"
-                  border="0"
-                />
-              </HStack>
-              {info.formattedAPR && (
-                <Text variant="smText" ml={1}>
-                  {aprFormatter(info.formattedAPR)}%
-                </Text>
-              )}
+        rewardsOfThisMarket?.rewardsInfo.map((info) => (
+          <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+            <HStack mr={2}>
+              <Text variant="smText">+</Text>
+              <TokenWithLabel
+                address={info.rewardToken}
+                poolChainId={poolChainId}
+                size="2xs"
+                border="0"
+              />
             </HStack>
-          )
-        )
+            {info.formattedAPR ? (
+              <Text
+                variant="smText"
+                ml={1}
+                title={formatUnits(info.formattedAPR, 18).toString() + '%'}
+              >
+                {aprFormatter(info.formattedAPR)}%
+              </Text>
+            ) : (
+              <ApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
+            )}
+          </HStack>
+        ))
       ) : asset.plugin ? (
         <RewardsInfo
-          underlyingAddress={asset.underlyingToken}
           pluginAddress={asset.plugin}
           poolChainId={poolChainId}
+          underlyingAddress={asset.underlyingToken}
         />
       ) : null}
     </VStack>

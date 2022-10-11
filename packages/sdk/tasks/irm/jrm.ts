@@ -64,7 +64,7 @@ export default task("irm:deploy:custom-jrm", "deploys custom JRM")
     console.log("IRM Deployed: ", deployment.address);
   });
 
-task("irm:deploy:edit-adjustable-jrm-params", "Edit adjustable JRM parameters")
+task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
   .addParam("irmAddress", "IRM address to adjust", undefined, types.string)
   .addParam("args", "args to use", undefined, types.string)
   .setAction(async ({ irmAddress: _irm, args: _args }, { ethers }) => {
@@ -88,7 +88,9 @@ task("irm:deploy:edit-adjustable-jrm-params", "Edit adjustable JRM parameters")
       irm.callStatic.kink(),
     ];
 
-    [blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_] = await Promise.all(promises);
+    [blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_] = await (
+      await Promise.all(promises)
+    ).map((v) => v.toString());
     console.log("Params before: ", { blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_ });
 
     const [baseRatePerYear, multiplierPerYear, jumpMultiplierPerYear, kink] = _args
@@ -105,7 +107,7 @@ task("irm:deploy:edit-adjustable-jrm-params", "Edit adjustable JRM parameters")
 
     console.log({ args });
 
-    const tx = irm._setInterestRateModelParameters(args);
+    const tx = await irm._setIrmParameters(args);
     await tx.wait();
     console.log(`IRM ${_irm} updated`);
 
@@ -116,6 +118,8 @@ task("irm:deploy:edit-adjustable-jrm-params", "Edit adjustable JRM parameters")
       irm.callStatic.kink(),
     ];
 
-    [blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_] = await Promise.all(promises);
-    console.log("Params before: ", { blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_ });
+    [blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_] = await (
+      await Promise.all(promises)
+    ).map((v) => v.toString());
+    console.log("Params after: ", { blocksPerYear, multiplierPerBlock, baseRatePerBlock, kink_ });
   });

@@ -81,7 +81,7 @@ export const RewardsInfo = ({
             {!apyLoading && apyResponse && apyResponse.apy && (
               <Text
                 color={cCard.txtColor}
-                title={apyResponse.apy.toString()}
+                title={apyResponse.apy * 100 + '%'}
                 variant="smText"
                 ml={1}
               >
