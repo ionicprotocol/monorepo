@@ -15,7 +15,6 @@ export const fetchFuseNumberTVL = async (midasSdk: MidasSdk) => {
 interface CrossChainTVL {
   [chainId: string]: {
     value: number;
-    symbol: string;
     name: string;
     logo: string;
   };
@@ -35,8 +34,7 @@ export const useTVL = () => {
         await Promise.all(
           sdks.map(async (sdk) => {
             chainTVLs[sdk.chainId.toString()] = {
-              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
-              symbol: prices[sdk.chainId.toString()].symbol,
+              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()],
               name: sdk.chainSpecificParams.metadata.name,
               logo: sdk.chainSpecificParams.metadata.img,
             };

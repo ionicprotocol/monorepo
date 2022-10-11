@@ -3,59 +3,34 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { SupportedChains } from 'types/dist/cjs';
 
-const ChainIdCoingeckoIdMapping = Object.entries(ChainConfigs)
-  .map(([, config]): [string, string] => [config.chainId.toString(), config.specificParams.cgId])
-  .reduce<Record<string, string>>((acc, cur) => {
-    acc[cur[0]] = cur[1];
-    acc[cur[1]] = cur[0];
-    return acc;
-  }, {});
-
-const ChainIdNativeSymbolMapping = Object.entries(ChainConfigs)
-  .map(([, config]): [string, string] => [
-    config.chainId.toString(),
-    config.specificParams.metadata.nativeCurrency.symbol,
-  ])
-  .reduce<Record<string, string>>((acc, cur) => {
-    acc[cur[0]] = cur[1];
-    acc[cur[1]] = cur[0];
-    return acc;
-  }, {});
-
-interface Price {
-  value: number;
-  symbol: string;
-}
-
 // TODO Make currency agnostic
-async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string, Price>> {
-  const cgIds = chainIds.map((id) => ChainIdCoingeckoIdMapping[id]);
+async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string, number>> {
+  const prices: Record<string, number> = {};
 
-  const { data } = await axios.get(
-    `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${cgIds.join(',')}`
+  await Promise.all(
+    chainIds.map(async (id) => {
+      const config = Object.values(ChainConfigs).find(
+        (config) => config.chainId.toString() === id.toString()
+      );
+
+      if (config) {
+        if (config.chainId === ChainConfigs.neondevnet.chainId) {
+          prices[id.toString()] = 0.05;
+        } else {
+          const _cgId = config.specificParams.cgId;
+          const { data } = await axios.get(
+            `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${_cgId}`
+          );
+
+          prices[id.toString()] = data[_cgId].usd;
+        }
+      } else {
+        prices[id.toString()] = 1;
+      }
+    })
   );
 
-  return cgIds
-    .map((cgId): [string, Price] => {
-      if (data[cgId])
-        return [ChainIdCoingeckoIdMapping[cgId], { value: data[cgId].usd, symbol: '$' }];
-      console.warn("No price data in response for '${cgId}', setting to 1");
-      if (cgId === ChainConfigs.neondevnet.specificParams.cgId) {
-        return [
-          ChainIdCoingeckoIdMapping[cgId],
-          { value: 0.05, symbol: ChainIdNativeSymbolMapping[ChainIdCoingeckoIdMapping[cgId]] },
-        ];
-      }
-
-      return [
-        ChainIdCoingeckoIdMapping[cgId],
-        { value: 1, symbol: ChainIdNativeSymbolMapping[ChainIdCoingeckoIdMapping[cgId]] },
-      ];
-    })
-    .reduce<Record<string, Price>>((acc, cur) => {
-      acc[cur[0]] = cur[1];
-      return acc;
-    }, {});
+  return prices;
 }
 
 export function useUSDPrices(chainIds: SupportedChains[]) {
