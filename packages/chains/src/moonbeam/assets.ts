@@ -19,6 +19,7 @@ const GLINT = "0xcd3B51D98478D53F4515A306bE565c6EebeF1D58";
 const FTM = "0xC19281F22A075E0F10351cd5D6Ea9f0AC63d4327";
 const STELLA = "0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2";
 const CELR = "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283";
+const LDO = "0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0";
 
 // StellaSwap
 const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
@@ -30,6 +31,7 @@ const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
 const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
 const STELLA_GLMR = "0x7F5Ac0FC127bcf1eAf54E3cd01b00300a0861a62";
 const CELR_GLMR = "0xd47BeC28365a82C0C006f3afd617012B02b129D6";
+const LDO_GLMR = "0x00870B0e6994fFb142a91173a882d2F6a9a8Ac4a";
 
 export const assets: SupportedAsset[] = [
   {
@@ -219,6 +221,14 @@ export const assets: SupportedAsset[] = [
     extraDocs: stellaSwapDocs("ETH", ATOM, "ATOM-GLMR", GLMR_ATOM),
   },
   {
+    symbol: assetSymbols["LDO-GLMR"],
+    underlying: LDO_GLMR,
+    name: "Stella Swap LDO/GLMR LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", LDO, "LDO-GLMR", LDO_GLMR),
+  },
+  {
     symbol: assetSymbols.STELLA,
     underlying: STELLA,
     name: "Stellaswap Token",
@@ -233,6 +243,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", CELR),
+  },
+  {
+    symbol: assetSymbols.LDO,
+    underlying: LDO,
+    name: "LDO Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", LDO),
   },
 ];
 
