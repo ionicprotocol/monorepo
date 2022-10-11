@@ -5,6 +5,8 @@ import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ApyInformTooltip } from './ApyInformTooltip';
+
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
 import { aprDays } from '@ui/constants/index';
@@ -14,7 +16,6 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter } from '@ui/utils/bigUtils';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { ApyInformTooltip } from './ApyInformTooltip';
 
 export const SupplyApy = ({
   asset,
