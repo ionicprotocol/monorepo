@@ -3,6 +3,7 @@ import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modul
 import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
+import { formatUnits } from 'ethers/lib/utils';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -70,34 +71,28 @@ export const SupplyApy = ({
       )}
 
       {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
-        rewardsOfThisMarket?.rewardsInfo.map((info) =>
-          asset.plugin ? (
-            <RewardsInfo
-              key={info.rewardToken}
-              underlyingAddress={asset.underlyingToken}
-              pluginAddress={asset.plugin}
-              rewardAddress={info.rewardToken}
-              poolChainId={poolChainId}
-            />
-          ) : (
-            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-              <HStack mr={2}>
-                <Text variant="smText">+</Text>
-                <TokenWithLabel
-                  address={info.rewardToken}
-                  poolChainId={poolChainId}
-                  size="2xs"
-                  border="0"
-                />
-              </HStack>
-              {info.formattedAPR && (
-                <Text variant="smText" ml={1}>
-                  {aprFormatter(info.formattedAPR)}%
-                </Text>
-              )}
+        rewardsOfThisMarket?.rewardsInfo.map((info) => (
+          <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+            <HStack mr={2}>
+              <Text variant="smText">+</Text>
+              <TokenWithLabel
+                address={info.rewardToken}
+                poolChainId={poolChainId}
+                size="2xs"
+                border="0"
+              />
             </HStack>
-          )
-        )
+            {info.formattedAPR && (
+              <Text
+                variant="smText"
+                ml={1}
+                title={formatUnits(info.formattedAPR, 18).toString() + '%'}
+              >
+                {aprFormatter(info.formattedAPR)}%
+              </Text>
+            )}
+          </HStack>
+        ))
       ) : asset.plugin ? (
         <RewardsInfo
           underlyingAddress={asset.underlyingToken}
