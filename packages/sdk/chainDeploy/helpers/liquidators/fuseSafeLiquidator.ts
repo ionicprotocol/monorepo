@@ -104,12 +104,13 @@ export const configureAddressesProviderStrategies = async ({
   chainId,
 }: LiquidatorConfigFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
+  const chainConfig = chainIdToConfig[chainId];
 
   const redemptionStrategiesToUpdate: [string, string, string][] = [];
   const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
-  for (const assetAddress in chainIdToConfig[chainId].redemptionStrategies) {
-    const [redemptionStrategyType] = chainIdToConfig[chainId].redemptionStrategies[assetAddress];
+  for (const assetAddress in chainConfig.redemptionStrategies) {
+    const [redemptionStrategyType] = chainConfig.redemptionStrategies[assetAddress];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
 
     const [onChainStrategyAddress, onChainContractType] = await ap.redemptionStrategies(assetAddress);
@@ -131,8 +132,8 @@ export const configureAddressesProviderStrategies = async ({
   }
 
   const fundingStrategiesToUpdate: [string, string, string][] = [];
-  for (const assetAddress in chainIdToConfig[chainId].fundingStrategies) {
-    const [fundingStrategyType] = chainIdToConfig[chainId].fundingStrategies[assetAddress];
+  for (const assetAddress in chainConfig.fundingStrategies) {
+    const [fundingStrategyType] = chainConfig.fundingStrategies[assetAddress];
     const fundingStrategy = await ethers.getContract(fundingStrategyType);
 
     const [onChainStrategyAddress, onChainContractType] = await ap.fundingStrategies(assetAddress);
@@ -151,5 +152,29 @@ export const configureAddressesProviderStrategies = async ({
     }
   } else {
     console.log("no funding strategies to configure");
+  }
+
+  for (const key in chainConfig.liquidationDefaults.jarvisPools) {
+    const jarvisPool = chainConfig.liquidationDefaults.jarvisPools[key];
+
+    const currenConfig = await ap.jarvisPools(jarvisPool.syntheticToken);
+
+    if (
+      currenConfig.collateralToken != jarvisPool.collateralToken ||
+      currenConfig.liquidityPool != jarvisPool.liquidityPoolAddress ||
+      currenConfig.expirationTime != jarvisPool.expirationTime
+    ) {
+      const tx = await ap.setJarvisPool(
+        jarvisPool.syntheticToken,
+        jarvisPool.collateralToken,
+        jarvisPool.liquidityPoolAddress,
+        jarvisPool.expirationTime
+      );
+
+      await tx.wait();
+      console.log("jarvis pool configured: ", tx.hash);
+    } else {
+      console.log(`no need to update jarvis pool config for ${jarvisPool.syntheticToken}`);
+    }
   }
 };
