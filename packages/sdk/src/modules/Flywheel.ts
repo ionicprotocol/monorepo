@@ -177,27 +177,18 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         .filter((value, index, self) => self.indexOf(value) === index); // Unique Array;
     }
 
-    async getFlywheelMarketRewardsByPoolWithAPR(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<FlywheelMarketRewardsInfo[]> {
+    async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
         this.contracts.FuseFlywheelLensRouter as FuseFlywheelLensRouter
-      ).callStatic.getMarketRewardsInfo(pool, overrides);
+      ).callStatic.getMarketRewardsInfo(pool);
 
-      const adaptedMarketRewards = marketRewards.map((marketReward) => ({
-        underlyingPrice: marketReward.underlyingPrice,
-        market: marketReward.market,
-        rewardsInfo: marketReward.rewardsInfo
-          .filter((info) => info.rewardSpeedPerSecondPerToken.gt(0))
-          .map((info) => ({
-            rewardToken: info.rewardToken,
-            flywheel: info.flywheel,
-            rewardSpeedPerSecondPerToken: info.rewardSpeedPerSecondPerToken,
-            rewardTokenPrice: info.rewardTokenPrice,
-            formattedAPR: info.formattedAPR,
-          })),
-      }));
+      const adaptedMarketRewards = marketRewards
+        .map((marketReward) => ({
+          underlyingPrice: marketReward.underlyingPrice,
+          market: marketReward.market,
+          rewardsInfo: marketReward.rewardsInfo.filter((info) => info.rewardSpeedPerSecondPerToken.gt(0)),
+        }))
+        .filter((marketReward) => marketReward.rewardsInfo.length > 0);
       return adaptedMarketRewards;
     }
 
