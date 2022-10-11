@@ -112,27 +112,33 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
                       assetsWithPrice.push({
                         ...asset,
                         supplyBalanceFiat:
-                          asset.supplyBalanceNative * prices[pool.chainId.toString()],
+                          asset.supplyBalanceNative * prices[pool.chainId.toString()].value,
                         borrowBalanceFiat:
-                          asset.borrowBalanceNative * prices[pool.chainId.toString()],
-                        totalSupplyFiat: asset.totalSupplyNative * prices[pool.chainId.toString()],
-                        totalBorrowFiat: asset.totalBorrowNative * prices[pool.chainId.toString()],
-                        liquidityFiat: asset.liquidityNative * prices[pool.chainId.toString()],
+                          asset.borrowBalanceNative * prices[pool.chainId.toString()].value,
+                        totalSupplyFiat:
+                          asset.totalSupplyNative * prices[pool.chainId.toString()].value,
+                        totalBorrowFiat:
+                          asset.totalBorrowNative * prices[pool.chainId.toString()].value,
+                        liquidityFiat:
+                          asset.liquidityNative * prices[pool.chainId.toString()].value,
                       });
                     });
                   }
                   const adaptedFusePoolData: PoolData = {
                     ...pool,
                     assets: assetsWithPrice,
-                    totalLiquidityFiat: pool.totalLiquidityNative * prices[pool.chainId.toString()],
+                    totalLiquidityFiat:
+                      pool.totalLiquidityNative * prices[pool.chainId.toString()].value,
                     totalAvailableLiquidityFiat:
-                      pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()],
-                    totalSuppliedFiat: pool.totalSuppliedNative * prices[pool.chainId.toString()],
-                    totalBorrowedFiat: pool.totalBorrowedNative * prices[pool.chainId.toString()],
+                      pool.totalAvailableLiquidityNative * prices[pool.chainId.toString()].value,
+                    totalSuppliedFiat:
+                      pool.totalSuppliedNative * prices[pool.chainId.toString()].value,
+                    totalBorrowedFiat:
+                      pool.totalBorrowedNative * prices[pool.chainId.toString()].value,
                     totalSupplyBalanceFiat:
-                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()],
+                      pool.totalSupplyBalanceNative * prices[pool.chainId.toString()].value,
                     totalBorrowBalanceFiat:
-                      pool.totalBorrowBalanceNative * prices[pool.chainId.toString()],
+                      pool.totalBorrowBalanceNative * prices[pool.chainId.toString()].value,
                   };
 
                   return adaptedFusePoolData;

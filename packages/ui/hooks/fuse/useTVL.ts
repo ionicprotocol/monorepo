@@ -34,7 +34,7 @@ export const useTVL = () => {
         await Promise.all(
           sdks.map(async (sdk) => {
             chainTVLs.set(sdk.chainId.toString(), {
-              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()],
+              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
               name: sdk.chainSpecificParams.metadata.name,
               logo: sdk.chainSpecificParams.metadata.img,
             });

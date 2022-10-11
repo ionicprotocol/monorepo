@@ -3,9 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { SupportedChains } from 'types/dist/cjs';
 
+interface Price {
+  value: number;
+  symbol: string;
+}
+
 // TODO Make currency agnostic
-async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string, number>> {
-  const prices: Record<string, number> = {};
+async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string, Price>> {
+  const prices: Record<string, Price> = {};
 
   await Promise.all(
     chainIds.map(async (id) => {
@@ -14,18 +19,27 @@ async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string
       );
 
       if (config) {
-        if (config.chainId === ChainConfigs.neondevnet.chainId) {
-          prices[id.toString()] = 0.05;
-        } else {
-          const _cgId = config.specificParams.cgId;
-          const { data } = await axios.get(
-            `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${_cgId}`
-          );
+        const _cgId = config.specificParams.cgId;
+        const { data } = await axios.get(
+          `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${_cgId}`
+        );
 
-          prices[id.toString()] = data[_cgId].usd;
+        if (data[_cgId]) {
+          prices[id.toString()] = { value: data[_cgId].usd, symbol: '$' };
+        } else {
+          // for neondevnet set 0.05
+          if (config.chainId === ChainConfigs.neondevnet.chainId) {
+            prices[id.toString()] = {
+              value: 0.05,
+              symbol: config.specificParams.metadata.nativeCurrency.symbol,
+            };
+          } else {
+            prices[id.toString()] = {
+              value: 1,
+              symbol: config.specificParams.metadata.nativeCurrency.symbol,
+            };
+          }
         }
-      } else {
-        prices[id.toString()] = 1;
       }
     })
   );
