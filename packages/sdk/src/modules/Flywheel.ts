@@ -261,6 +261,10 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       )) as FlywheelStaticRewards;
     }
 
+    getFlywheelEnabledMarkets(flywheelAddress: string) {
+      return this.createMidasFlywheel(flywheelAddress).callStatic.getAllStrategies();
+    }
+
     setStaticRewardInfo(
       staticRewardsAddress: string,
       marketAddress: string,
