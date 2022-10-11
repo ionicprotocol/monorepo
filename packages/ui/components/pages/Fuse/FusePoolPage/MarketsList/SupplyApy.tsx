@@ -2,8 +2,8 @@ import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
-import { useEffect, useMemo, useState } from 'react';
 import { formatUnits } from 'ethers/lib/utils';
+import { useEffect, useMemo, useState } from 'react';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
@@ -14,6 +14,7 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { aprFormatter } from '@ui/utils/bigUtils';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { ApyInformTooltip } from './ApyInformTooltip';
 
 export const SupplyApy = ({
   asset,
@@ -64,6 +65,7 @@ export const SupplyApy = ({
       <Text color={supplyApyColor} fontWeight="bold" variant="smText">
         {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
       </Text>
+
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
         <Text color={cCard.txtColor} variant="smText">
           + {Number(aBNBcApr).toFixed(2)}%
@@ -82,7 +84,7 @@ export const SupplyApy = ({
                 border="0"
               />
             </HStack>
-            {info.formattedAPR && (
+            {info.formattedAPR ? (
               <Text
                 variant="smText"
                 ml={1}
@@ -90,14 +92,16 @@ export const SupplyApy = ({
               >
                 {aprFormatter(info.formattedAPR)}%
               </Text>
+            ) : (
+              <ApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
             )}
           </HStack>
         ))
       ) : asset.plugin ? (
         <RewardsInfo
-          underlyingAddress={asset.underlyingToken}
           pluginAddress={asset.plugin}
           poolChainId={poolChainId}
+          underlyingAddress={asset.underlyingToken}
         />
       ) : null}
     </VStack>
