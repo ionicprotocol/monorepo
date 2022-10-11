@@ -82,6 +82,7 @@ const PoolsRowList = ({
   const { address, setGlobalLoading } = useMultiMidas();
   const [err, setErr] = useState<Err | undefined>();
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
+  const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
     { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
   ]);
@@ -95,6 +96,18 @@ const PoolsRowList = ({
   const isSmallScreen = useIsSmallScreen();
   const mounted = useRef(false);
   const router = useRouter();
+  useEffect(() => {
+    const pools: PoolData[] = [];
+
+    globalFilter.map((filter) => {
+      const data = poolsPerChain[filter.toString()]?.data;
+      if (data) {
+        pools.push(...data);
+      }
+    });
+
+    setSelectedFilteredPools(pools);
+  }, [globalFilter, poolsPerChain]);
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -539,7 +552,7 @@ const PoolsRowList = ({
                   )}
                 </Fragment>
               ))
-            ) : allPools.length === 0 ? (
+            ) : selectedFilteredPools.length === 0 ? (
               <Tr>
                 <Td border="none" colSpan={table.getHeaderGroups()[0].headers.length}>
                   <Center py={8}>There are no pools.</Center>
