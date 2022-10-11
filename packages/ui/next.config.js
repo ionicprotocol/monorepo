@@ -21,6 +21,7 @@ nextConfig = {
     SUPABASE_NATIVE_PRICES_TABLE_NAME: process.env.SUPABASE_NATIVE_PRICES_TABLE_NAME,
     HIDE_POOLS_56: process.env.HIDE_POOLS_56,
     HIDE_POOLS_97: process.env.HIDE_POOLS_97,
+    HIDE_POOLS_137: process.env.HIDE_POOLS_137,
   },
 };
 

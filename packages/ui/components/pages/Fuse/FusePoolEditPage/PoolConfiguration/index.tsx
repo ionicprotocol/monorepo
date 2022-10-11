@@ -564,9 +564,11 @@ const PoolConfiguration = ({
                           reff={ref}
                           onChange={onChange}
                           mt={{ base: 2, sm: 0 }}
-                          poolChainId={poolChainId}
-                          isEditPool={true}
-                          isPowerfulAdmin={data.isPowerfulAdmin}
+                          isDisabled={
+                            !data.isPowerfulAdmin ||
+                            !currentChain ||
+                            currentChain.id !== poolChainId
+                          }
                         />
                       )}
                     />
@@ -631,9 +633,11 @@ const PoolConfiguration = ({
                           reff={ref}
                           onChange={onChange}
                           mt={{ base: 2, sm: 0 }}
-                          poolChainId={poolChainId}
-                          isEditPool={true}
-                          isPowerfulAdmin={data.isPowerfulAdmin}
+                          isDisabled={
+                            !data.isPowerfulAdmin ||
+                            !currentChain ||
+                            currentChain.id !== poolChainId
+                          }
                         />
                       )}
                     />
