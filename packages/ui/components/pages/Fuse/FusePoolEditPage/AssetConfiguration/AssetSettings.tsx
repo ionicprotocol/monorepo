@@ -104,7 +104,7 @@ export const AssetSettings = ({
   poolChainId,
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { currentSdk, setPendingTxHash } = useMultiMidas();
+  const { currentSdk, setPendingTxHash, currentChain } = useMultiMidas();
   const sdk = useSdk(poolChainId);
 
   const errorToast = useErrorToast();
@@ -414,9 +414,11 @@ export const AssetSettings = ({
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
-                        poolChainId={poolChainId}
-                        isEditPool={true}
-                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
                       />
                     )}
                   />
@@ -502,9 +504,11 @@ export const AssetSettings = ({
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
-                        poolChainId={poolChainId}
-                        isEditPool={true}
-                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
                       />
                     )}
                   />
@@ -582,9 +586,11 @@ export const AssetSettings = ({
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
-                        poolChainId={poolChainId}
-                        isEditPool={true}
-                        isPowerfulAdmin={poolInfo?.isPowerfulAdmin}
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
                       />
                     )}
                   />
