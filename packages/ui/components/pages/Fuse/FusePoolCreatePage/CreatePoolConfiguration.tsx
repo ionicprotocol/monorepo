@@ -12,16 +12,18 @@ import {
   Spinner,
   Switch,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -51,12 +53,15 @@ export const CreatePoolConfiguration = () => {
 
   const { currentSdk, currentChain, address } = useMultiMidas();
   const router = useRouter();
-  const chainId = router.query.chainId as string;
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isCreating, setIsCreating] = useState(false);
 
   const { cCard, cSolidBtn } = useColors();
   const isMobile = useIsSmallScreen();
   const sdk = useSdk(currentChain?.id);
+  const isAllowedAddress = useMemo(() => {
+    return address ? config.allowedAddresses.includes(address.toLowerCase()) : false;
+  }, [address]);
 
   const {
     control,
@@ -84,7 +89,7 @@ export const CreatePoolConfiguration = () => {
 
       return;
     }
-    if (!config.allowedAddresses.includes(address.toLowerCase())) {
+    if (!isAllowedAddress) {
       warningToast({ description: 'Pool creation is limited!' });
 
       return;
@@ -117,11 +122,7 @@ export const CreatePoolConfiguration = () => {
 
       LogRocket.track('Fuse-CreatePool');
 
-      if (typeof poolId === 'number') {
-        await router.push(`/${currentChain.id}/pool/${poolId}`);
-      } else {
-        await router.push(`/${currentChain.id}?filter=created-pools`);
-      }
+      await router.push(`/${currentChain.id}/pool/${poolId}`);
     } catch (e) {
       handleGenericError(e, errorToast);
       setIsCreating(false);
@@ -142,7 +143,7 @@ export const CreatePoolConfiguration = () => {
         <Text fontWeight="bold" variant="title" px={4} py={4}>
           Create Pool
         </Text>
-        {(!address || !config.allowedAddresses.includes(address.toLowerCase())) && (
+        {address && !isAllowedAddress && (
           <Banner
             text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
             linkText="please contact us via Discord."
@@ -164,6 +165,7 @@ export const CreatePoolConfiguration = () => {
                   {...register('name', {
                     required: 'Pool name is required',
                   })}
+                  isDisabled={!address || !currentChain || !isAllowedAddress}
                 />
                 <FormErrorMessage marginBottom="-10px">
                   {errors.name && errors.name.message}
@@ -184,6 +186,7 @@ export const CreatePoolConfiguration = () => {
                   {...register('oracle', {
                     required: 'Oracle is required',
                   })}
+                  isDisabled={!address || !currentChain || !isAllowedAddress}
                 >
                   {sdk && (
                     <option
@@ -231,6 +234,7 @@ export const CreatePoolConfiguration = () => {
                       ref={ref}
                       isChecked={value}
                       onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -292,7 +296,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
-                      poolChainId={Number(chainId)}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -341,7 +345,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
-                      poolChainId={Number(chainId)}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -354,35 +358,52 @@ export const CreatePoolConfiguration = () => {
         </Column>
       </DashboardBox>
       <Center>
-        <Button
-          id="createPool"
-          type="submit"
-          isLoading={isCreating}
-          width="100%"
-          height={12}
-          mt={4}
-          fontSize="xl"
-          maxWidth={'550px'}
-          disabled={
-            !address ||
-            isCreating ||
-            !!errors.name ||
-            !!errors.oracle ||
-            !!errors.closeFactor ||
-            !!errors.liquidationIncentive ||
-            !config.allowedAddresses.includes(address.toLowerCase())
-          }
-        >
-          <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-            {!address || !config.allowedAddresses.includes(address.toLowerCase()) ? (
-              'Creation limited!'
-            ) : isCreating ? (
-              <Spinner />
-            ) : (
-              'Create'
-            )}
-          </Center>
-        </Button>
+        {currentChain?.id && address ? (
+          <Button
+            id="createPool"
+            type="submit"
+            isLoading={isCreating}
+            width="100%"
+            height={12}
+            mt={4}
+            fontSize="xl"
+            maxWidth={'550px'}
+            disabled={
+              !address ||
+              isCreating ||
+              !!errors.name ||
+              !!errors.oracle ||
+              !!errors.closeFactor ||
+              !!errors.liquidationIncentive ||
+              !isAllowedAddress
+            }
+          >
+            <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
+              {!address || !isAllowedAddress ? (
+                'Creation limited!'
+              ) : isCreating ? (
+                <Spinner />
+              ) : (
+                'Create'
+              )}
+            </Center>
+          </Button>
+        ) : (
+          <>
+            <Button
+              id="connectWalletToCreate"
+              width="100%"
+              height={12}
+              mt={4}
+              fontSize="xl"
+              maxWidth={'550px'}
+              onClick={onOpen}
+            >
+              Connect wallet
+            </Button>
+            <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+          </>
+        )}
       </Center>
     </Box>
   );
