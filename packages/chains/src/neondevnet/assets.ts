@@ -1,6 +1,6 @@
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-const WNEON = "0xCaDA7B93FDd60787aF0Dfc9A5eC9861D621aB1EF";
+const WNEON = "0xf1041596da0499c3438e3B1Eb7b95354C6Aed1f5";
 const MORA = "0x6Ab1F83c0429A1322D7ECDFdDf54CE6D179d911f";
 const USDC = "0x7ff459CE3092e8A866aA06DA88D291E2E31230C1";
 
@@ -22,7 +22,7 @@ export const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.USDC,
     underlying: USDC,
-    name: "Wrapped Ethereum (Sollet)",
+    name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.SimplePriceOracle,
   },

@@ -108,7 +108,7 @@ export const TokenName = ({
           )}
           {asset.isBorrowPaused ? (
             asset.isSupplyPaused ? (
-              <SimpleTooltip label="This asset cannot be supplied and borrowed">
+              <SimpleTooltip label="This asset cannot be supplied and borrowed anymore, please withdraw all your tokens from this market.">
                 <Badge variant="outline" colorScheme="gray" textTransform="capitalize">
                   Deprecated
                 </Badge>
