@@ -96,18 +96,31 @@ const PoolsRowList = ({
   const isSmallScreen = useIsSmallScreen();
   const mounted = useRef(false);
   const router = useRouter();
+  const allPools = useMemo(() => {
+    return Object.values(poolsPerChain).reduce((res, pools) => {
+      if (pools.data && pools.data.length > 0) {
+        res.push(...pools.data);
+      }
+      return res;
+    }, [] as PoolData[]);
+  }, [poolsPerChain]);
+
   useEffect(() => {
     const pools: PoolData[] = [];
 
-    globalFilter.map((filter) => {
-      const data = poolsPerChain[filter.toString()]?.data;
-      if (data) {
-        pools.push(...data);
-      }
-    });
+    if (globalFilter.includes(ALL)) {
+      setSelectedFilteredPools([...allPools]);
+    } else {
+      globalFilter.map((filter) => {
+        const data = poolsPerChain[filter.toString()]?.data;
+        if (data) {
+          pools.push(...data);
+        }
+      });
 
-    setSelectedFilteredPools(pools);
-  }, [globalFilter, poolsPerChain]);
+      setSelectedFilteredPools(pools);
+    }
+  }, [globalFilter, poolsPerChain, allPools]);
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
     if (
@@ -153,15 +166,6 @@ const PoolsRowList = ({
       return 1;
     }
   };
-
-  const allPools = useMemo(() => {
-    return Object.values(poolsPerChain).reduce((res, pools) => {
-      if (pools.data && pools.data.length > 0) {
-        res.push(...pools.data);
-      }
-      return res;
-    }, [] as PoolData[]);
-  }, [poolsPerChain]);
 
   const data: PoolRowData[] = useMemo(() => {
     return poolSortByAddress(allPools).map((pool) => {
