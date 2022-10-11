@@ -54,5 +54,9 @@ export function getEnabledChains() {
     enabledChains.push(SupportedChains.moonbeam);
   }
 
+  if (config.isTestnetEnabled) {
+    enabledChains.push(SupportedChains.neon_devnet);
+  }
+
   return enabledChains;
 }
