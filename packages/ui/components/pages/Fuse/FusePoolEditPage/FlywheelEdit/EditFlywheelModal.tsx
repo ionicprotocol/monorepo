@@ -63,6 +63,24 @@ const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string
   );
 };
 
+const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
+  const { currentSdk } = useMultiMidas();
+
+  return useQuery(
+    ['useFlywheelEnabledMarkets', flywheelAddress, currentSdk?.chainId],
+    async () => {
+      if (flywheelAddress && currentSdk) {
+        return currentSdk.getFlywheelEnabledMarkets(flywheelAddress);
+      }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!flywheelAddress && !!currentSdk,
+    }
+  );
+};
+
 const EditFlywheelModal = ({
   flywheel,
   pool,
@@ -98,6 +116,9 @@ const EditFlywheelModal = ({
   const { data: rewardsInfo, refetch: refetchRewardsInfo } = useRewardsInfoForMarket(
     flywheel.address,
     selectedMarket?.cToken
+  );
+  const { data: enabledMarkets, refetch: refetchEnabledMarkets } = useFlywheelEnabledMarkets(
+    flywheel.address
   );
 
   const { cPage } = useColors();
@@ -185,6 +206,7 @@ const EditFlywheelModal = ({
         const tx = await currentSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
         await tx.wait();
         refetchRewardsInfo();
+        refetchEnabledMarkets();
         setTransactionPending(false);
       } catch (err) {
         handleGenericError(err, errorToast);
@@ -300,12 +322,14 @@ const EditFlywheelModal = ({
               >
                 {pool.assets.map((asset, index) => (
                   <option key={index} value={index}>
-                    {asset.underlyingSymbol}
+                    {`${asset.underlyingSymbol} ${
+                      enabledMarkets?.includes(asset.cToken) ? '(enabled)' : ''
+                    }`}
                   </option>
                 ))}
               </Select>
 
-              {rewardsInfo && !rewardsInfo.enabled && selectedMarket && (
+              {selectedMarket && enabledMarkets && !enabledMarkets.includes(selectedMarket.cToken) && (
                 <Center width={'100%'} p={4}>
                   <Button
                     onClick={enableForRewards(selectedMarket.cToken)}

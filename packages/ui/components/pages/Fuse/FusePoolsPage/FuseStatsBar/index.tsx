@@ -36,7 +36,7 @@ const FuseStatsBar = () => {
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
-      return Object.values(tvlData).reduce((a, c) => a + c.value, 0);
+      return [...tvlData.values()].reduce((a, c) => a + c.value, 0);
     }
   }, [tvlData]);
   const { cPage } = useColors();
@@ -137,7 +137,7 @@ const FuseStatsBar = () => {
         {tvlData && (
           <PopoverContent p={2}>
             <VStack width={'100%'} alignItems="flex-start">
-              {Object.values(tvlData).map((chainTVL, index) => (
+              {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">

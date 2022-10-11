@@ -37,16 +37,23 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x68A384D826D3678f78BB9FB1533c7E9577dACc0E",
     uniswapOracleInitialDeployTokens: [
       {
-        token: underlying(assets, assetSymbols.STELLA),
+        token: underlying(assets, assetSymbols.CELR),
         baseToken: underlying(assets, assetSymbols.WGLMR),
         pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
       },
       {
-        token: underlying(assets, assetSymbols.CELR),
+        token: underlying(assets, assetSymbols.STELLA),
         baseToken: underlying(assets, assetSymbols.WGLMR),
         pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000", // 1%
+      },
+      {
+        token: underlying(assets, assetSymbols.LDO),
+        baseToken: underlying(assets, assetSymbols.WGLMR),
+        pair: underlying(assets, assetSymbols["LDO-GLMR"]),
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
       },
@@ -58,6 +65,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["STELLA-GLMR"]),
       underlying(assets, assetSymbols["CELR-GLMR"]),
       underlying(assets, assetSymbols["ATOM-GLMR"]),
+      underlying(assets, assetSymbols["LDO-GLMR"]),
     ],
     flashSwapFee: 30,
   },
