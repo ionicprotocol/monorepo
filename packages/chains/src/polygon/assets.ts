@@ -688,6 +688,14 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.GelatoGUniPriceOracle,
     extraDocs: arrakisDocs("Polygon", 137, arrakis_WETH_DAI_03),
   },
+  {
+    symbol: assetSymbols.JRT,
+    underlying: JRT,
+    name: "Jarivs Reward Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://polygonscan.com", JRT),
+  },
 ];
 
 export default assets;
