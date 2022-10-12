@@ -136,13 +136,13 @@ const CustomTooltip = ({
         >{`${label}% Utilization`}</Text>
         {payload[0] && (
           <HStack color={payload[0].color} p={2} alignSelf="flex-start">
-            <Text>Supply Rate: </Text>
+            <Text>{payload[0].name}: </Text>
             <Text fontWeight="bold">{Number(payload[0].value).toFixed(2)}%</Text>
           </HStack>
         )}
         {payload[1] && (
           <HStack color={payload[1].color} px={2} pb={2} alignSelf="flex-start">
-            <Text>Borrow Rate: </Text>
+            <Text>{payload[1].name}: </Text>
             <Text fontWeight="bold">{Number(payload[1].value).toFixed(2)}%</Text>
           </HStack>
         )}
