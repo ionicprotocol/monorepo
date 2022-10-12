@@ -10,16 +10,20 @@ task("market:downgrade", "Downgrades a plugin market to a simple market")
   .setAction(async ({ market }, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
 
-    const cTokenInstance = (await ethers.getContractAt("CErc20PluginDelegate", market)) as CErc20PluginDelegate;
+    const cTokenInstance = (await ethers.getContractAt("CErc20PluginDelegate", market, signer)) as CErc20PluginDelegate;
     const pluginAddress = await cTokenInstance.callStatic.plugin();
     const erc20Delegate = await ethers.getContract("CErc20Delegate");
 
     if (market == "0x30b32BbfcA3A81922F88809F53E625b5EE5286f6") {
       // first upgrade the market to the latest delegate
       // then zero the plugin - it will transfer the tokens to the market
-      const tx = await cTokenInstance._updatePlugin(constants.AddressZero);
+      let tx = await cTokenInstance._updatePlugin(constants.AddressZero);
       await tx.wait();
       console.log(`zeroed plugin ${tx.hash}`);
+      // then downgrade to the simple market delegate
+      tx = await cTokenInstance._setImplementationSafe(erc20Delegate.address, false, constants.AddressZero);
+      await tx.wait();
+      console.log(`_setImplementationSafe ${tx.hash}`);
     } else if (market == "0x7AB807F3FBeca9eb22a1A7a490bdC353D85DED41") {
       // first downgrade the market
 
