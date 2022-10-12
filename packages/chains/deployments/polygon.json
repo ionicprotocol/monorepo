@@ -285,6 +285,40 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "jarvisPools",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "owner",
           "outputs": [
@@ -420,6 +454,34 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "setJarvisPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "asset",
               "type": "address"
             },
@@ -499,7 +561,7 @@
       ]
     },
     "AddressesProvider_Implementation": {
-      "address": "0x09bA6480e828E38703F43096585Ff45080a5Cdd6",
+      "address": "0xB3f531Cce086A097802027833437E8ebD3C8630f",
       "abi": [
         {
           "anonymous": false,
@@ -658,6 +720,40 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "jarvisPools",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "owner",
           "outputs": [
@@ -785,6 +881,34 @@
             }
           ],
           "name": "setFundingStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "setJarvisPool",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -2269,7 +2393,7 @@
       ]
     },
     "ArrakisERC4626_0xa5A14c3814d358230a56e8f011B8fc97A508E890_Implementation": {
-      "address": "0x37a342205d1a94e0C8DE2EF304892712Bc39a78E",
+      "address": "0xAd41f1f579F2AcB571cAE24f210C45B5DED58bEe",
       "abi": [
         {
           "anonymous": false,
@@ -3202,6 +3326,25 @@
           ],
           "name": "setRewardDestination",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -5634,6 +5777,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -5856,7 +6018,7 @@
       ]
     },
     "BeefyERC4626_0x1792046890b99ae36756Fd00f135dc5F80D41dfA_Implementation": {
-      "address": "0x06274F9FBc3652F68b7999cE6c7436F7610A01d6",
+      "address": "0x644D54eA14C8EBE68dAFC30EE0a2c0206d1A7901",
       "abi": [
         {
           "anonymous": false,
@@ -6701,6 +6863,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -8027,6 +8208,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -8249,7 +8449,7 @@
       ]
     },
     "BeefyERC4626_0x17A6922ADE40e8aE783b0f6b8931Faeca4a5A264_Implementation": {
-      "address": "0x10141c2E89E0295909f294c0912179214AD23091",
+      "address": "0xEc21a02eBad57aF878CbDcb00E8779A704F74Bd8",
       "abi": [
         {
           "anonymous": false,
@@ -9094,6 +9294,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -10420,6 +10639,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -10642,7 +10880,7 @@
       ]
     },
     "BeefyERC4626_0x41EDdba1e19fe301A067b2726DF5a3332DD02D6A_Implementation": {
-      "address": "0xA39d051496b78de6B266648Ca34202bC9b13b1c4",
+      "address": "0x9fe4e3B04dE14F8327Bb6264ff975fE967142098",
       "abi": [
         {
           "anonymous": false,
@@ -11487,6 +11725,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -12813,6 +13070,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -13035,7 +13311,7 @@
       ]
     },
     "BeefyERC4626_0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871_Implementation": {
-      "address": "0xCb292cf23a2b460B0a16b520a2FEFD5bb56064A6",
+      "address": "0x9d2Caa075f763153d37fdC4EA9e6d5B64AA4ad6B",
       "abi": [
         {
           "anonymous": false,
@@ -13880,6 +14156,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -15206,6 +15501,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -15428,7 +15742,7 @@
       ]
     },
     "BeefyERC4626_0x7AB807F3FBeca9eb22a1A7a490bdC353D85DED41_Implementation": {
-      "address": "0xcBC43EA3f7ef3fCC0f71AF85f0D21f26B094A674",
+      "address": "0xD43f2d66E0b6Ea7d9E136F765f97aB65DC9Ba8d7",
       "abi": [
         {
           "anonymous": false,
@@ -16273,6 +16587,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -17599,6 +17932,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -17821,7 +18173,7 @@
       ]
     },
     "BeefyERC4626_0x9b5D86F4e7A45f4b458A2B673B4A3b43D15428A7_Implementation": {
-      "address": "0x58e7801FD6a35E2D0AbD68635e4747d4D42FBD74",
+      "address": "0xfe6150DdB35ff4ab5E0cb8642a8cD95235528dD1",
       "abi": [
         {
           "anonymous": false,
@@ -18666,6 +19018,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -19992,6 +20363,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -20214,7 +20604,7 @@
       ]
     },
     "BeefyERC4626_0xB3eAb218a7e3A68Dc5020fC1c0F7f0e3214a8bAE_Implementation": {
-      "address": "0x6E7f06d4056d1e27ACb5Fc11fB97B12F7Acb5c68",
+      "address": "0xd22db3F4aD451E3c1C83fD0dC935dA7022001277",
       "abi": [
         {
           "anonymous": false,
@@ -21059,6 +21449,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -22385,6 +22794,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "symbol",
           "outputs": [
@@ -22607,7 +23035,7 @@
       ]
     },
     "BeefyERC4626_0xCC7eab2605972128752396241e46C281e0405a27_Implementation": {
-      "address": "0xB0ffCf0ba7e2F6fF303e3CC5100333a811A363C1",
+      "address": "0xf952C74D99A554226De2182370774423E6A35ad7",
       "abi": [
         {
           "anonymous": false,
@@ -23452,6 +23880,25 @@
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -26185,7 +26632,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xd9AC5ED25a92E473BBDB9D772f520c4e0ad1E22F",
+      "address": "0xee2326247b0EDA4E09C0DD64900aA88Bbf360ecF",
       "abi": [
         {
           "inputs": [],
@@ -26383,25 +26830,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -26992,6 +27420,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -27642,7 +28083,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x0f2e1779012936E5786578bC250Fe7335FB99E88",
+      "address": "0xeb006aD74B1d4220c379685E8689df0Db35b4Bdb",
       "abi": [
         {
           "anonymous": false,
@@ -27835,25 +28276,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -28489,6 +28911,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -29152,7 +29587,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x328E9Ad564D7b0E86D808a5fC3c885bAac7ce952",
+      "address": "0x59758a3B0CFF7356ee39671643e2E073C033b24F",
       "abi": [
         {
           "anonymous": false,
@@ -29345,25 +29780,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -30024,6 +30440,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -32311,7 +32740,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x9faE719fEA81938697984A7104aB6beaD9f76eec",
+      "address": "0x41557f6633d8fd643EdbB27A64E957120863ecaf",
       "abi": [
         {
           "inputs": [

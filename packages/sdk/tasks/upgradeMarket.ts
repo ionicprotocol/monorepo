@@ -51,21 +51,21 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
     if (oldErc20Delegate) {
       oldImplementations.push(oldErc20Delegate);
-      newImplementations.push(sdk.chainDeployment.CErc20Delegate.address);
+      newImplementations.push(erc20Delegate.address);
       arrayOfFalse.push(false);
       arrayOfTrue.push(true);
     }
 
     if (oldErc20PluginDelegate) {
       oldImplementations.push(oldErc20PluginDelegate);
-      newImplementations.push(sdk.chainDeployment.CErc20PluginDelegate.address);
+      newImplementations.push(erc20PluginDelegate.address);
       arrayOfFalse.push(false);
       arrayOfTrue.push(true);
     }
 
     if (oldErc20PluginRewardsDelegate) {
       oldImplementations.push(oldErc20PluginRewardsDelegate);
-      newImplementations.push(sdk.chainDeployment.CErc20PluginRewardsDelegate.address);
+      newImplementations.push(erc20PluginRewardsDelegate.address);
       arrayOfFalse.push(false);
       arrayOfTrue.push(true);
     }
