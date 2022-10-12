@@ -26632,7 +26632,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x0d1b9c6450b61193bf4B75Fad5d23d5F66F02198",
+      "address": "0xee2326247b0EDA4E09C0DD64900aA88Bbf360ecF",
       "abi": [
         {
           "inputs": [],
@@ -26830,25 +26830,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -27183,6 +27164,44 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "withdrawAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "_withdrawAdminFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "withdrawAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "_withdrawFuseFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "accrualBlockNumber",
           "outputs": [
@@ -27401,6 +27420,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -28051,7 +28083,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x5247330b9DA777d91e13901C416f6a7D2Fc4e703",
+      "address": "0xeb006aD74B1d4220c379685E8689df0Db35b4Bdb",
       "abi": [
         {
           "anonymous": false,
@@ -28244,25 +28276,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -28642,6 +28655,44 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "withdrawAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "_withdrawAdminFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "withdrawAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "_withdrawFuseFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "accrualBlockNumber",
           "outputs": [
@@ -28860,6 +28911,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -29523,7 +29587,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x2F17C1E0C6f611feD904047B773145df460f6eC8",
+      "address": "0x59758a3B0CFF7356ee39671643e2E073C033b24F",
       "abi": [
         {
           "anonymous": false,
@@ -29716,25 +29780,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -30114,6 +30159,44 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "withdrawAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "_withdrawAdminFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "withdrawAmount",
+              "type": "uint256"
+            }
+          ],
+          "name": "_withdrawFuseFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "accrualBlockNumber",
           "outputs": [
@@ -30357,6 +30440,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
