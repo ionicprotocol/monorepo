@@ -151,8 +151,11 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
             console.error(`failed to upgrade market ${market}`, e);
           }
         }
+      }
 
-        if (admin == signer.address) {
+      if (admin == signer.address) {
+        const autoImplOn = await comptroller.callStatic.autoImplementation();
+        if (autoImplOn) {
           const tx = await comptroller._toggleAutoImplementations(false);
           await tx.wait();
           console.log(`turned autoimpl off ${tx.hash}`);
