@@ -172,7 +172,10 @@ export const AdditionalInfo = ({
                 </Text>
               </Center>
             ) : (
-              <UtilizationChart irmToCurve={data} />
+              <UtilizationChart
+                irmToCurve={data}
+                currentUtilization={asset.utilization.toFixed(0)}
+              />
             )
           ) : (
             <Center height="100%" color="#FFFFFF">

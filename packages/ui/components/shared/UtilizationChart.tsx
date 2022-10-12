@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   Label,
   Legend,
+  ReferenceLine,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -21,7 +22,13 @@ type LineProps = {
   [key: string]: boolean | string | null;
 };
 
-const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
+const UtilizationChart = ({
+  irmToCurve,
+  currentUtilization,
+}: {
+  irmToCurve: IRMToCurveData;
+  currentUtilization?: string;
+}) => {
   const keys = irmToCurve.rates.length > 0 ? Object.keys(irmToCurve.rates[0]) : [];
   const supplyRateColor = useColorModeValue('#00B5D8', 'cyan'); // #00B5D8 = cyan.500
   const borrowRateColor = useColorModeValue('#DD6B20', 'orange'); // #DD6B20 = orange.500
@@ -56,10 +63,11 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={irmToCurve.rates} margin={{ top: 0, right: 0, left: 10, bottom: 10 }}>
+      <AreaChart data={irmToCurve.rates} margin={{ top: 10, right: 20, left: 20, bottom: 10 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis
           ticks={[0, 25, 50, 75, 100]}
+          minTickGap={10}
           padding={{ left: 0, right: 10 }}
           tickFormatter={(label) => `${label}%`}
           tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
@@ -73,7 +81,25 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
         >
           <Label angle={-90} value="Rate" offset={0} position="insideLeft" fill={cCard.txtColor} />
         </YAxis>
-        <Tooltip wrapperStyle={{ outline: 'none' }} content={<CustomTooltip />} />
+        <Tooltip
+          wrapperStyle={{ outline: 'none' }}
+          content={<CustomTooltip currentUtilization={currentUtilization} />}
+        />
+        {currentUtilization && (
+          <ReferenceLine
+            x={currentUtilization}
+            stroke={cCard.txtColor}
+            strokeOpacity={0.7}
+            fill={cCard.txtColor}
+            label={{
+              value: 'Current',
+              fill: cCard.txtColor,
+              position: 'top',
+              fillOpacity: 0.7,
+            }}
+          />
+        )}
+        {/* <ReferenceLine y={150} label="Max" stroke="red" strokeDasharray="3 3" /> */}
         <Legend
           verticalAlign="top"
           content={
@@ -120,16 +146,9 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
   );
 };
 
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: {
-  active?: boolean;
-  payload?: any;
-  label?: string;
-}) => {
+const CustomTooltip = (props: any) => {
   const { cCard } = useColors();
+  const { active, payload, label, currentUtilization } = props;
 
   if (active && payload && payload.length) {
     return (
@@ -148,7 +167,9 @@ const CustomTooltip = ({
           borderBottomColor={cCard.borderColor}
           textAlign="left"
           bgColor="ecru20alpha"
-        >{`${label}% Utilization`}</Text>
+        >{`${label}% Utilization${
+          label.toString() === currentUtilization ? ' (Current)' : ''
+        }`}</Text>
         {payload[0] && (
           <HStack color={payload[0].color} p={2} alignSelf="flex-start">
             <Text>{payload[0].name}: </Text>
@@ -190,6 +211,7 @@ const CustomLegend = (
               onClick={() => selectLine(item.dataKey)}
               onMouseEnter={() => handleLegendMouseEnter(item.dataKey)}
               onMouseLeave={() => handleLegendMouseLeave()}
+              pb={4}
             >
               <AiOutlineLineChart
                 fontSize={20}
