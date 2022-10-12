@@ -201,6 +201,7 @@ export enum assetSymbols {
 
   DDD = "DDD",
   EPX = "EPX",
+  pSTAKE = "pSTAKE",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
@@ -281,6 +282,7 @@ export enum assetSymbols {
   NZDS = "NZDS",
   XSGD = "XSGD",
   MIMO = "MIMO",
+  JRT = "JRT",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
