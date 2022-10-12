@@ -66,23 +66,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
         asset.isBorrowPaused = asset.borrowGuardianPaused;
         asset.isSupplyPaused = asset.mintGuardianPaused;
-
-        promises.push(
-          (async () => {
-            const ctoken = this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate");
-            const implementation = await ctoken.callStatic.implementation();
-            if (
-              [
-                this.chainDeployment["CErc20PluginRewardsDelegate"].address,
-                this.chainDeployment["CErc20PluginDelegate"].address,
-              ].includes(implementation)
-            ) {
-              const plugin = await ctoken.callStatic.plugin().catch(() => undefined);
-              if (!plugin) return;
-              asset.plugin = plugin;
-            }
-          })()
-        );
+        asset.plugin = this.marketToPlugin[asset.cToken];
 
         const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
           (ass) => ass.underlying === asset.underlyingToken

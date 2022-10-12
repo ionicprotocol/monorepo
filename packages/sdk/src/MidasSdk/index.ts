@@ -85,6 +85,7 @@ export class MidasBase {
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public deployedPlugins: DeployedPlugins;
+  public marketToPlugin: Record<string, string>;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
@@ -177,6 +178,9 @@ export class MidasBase {
     this.liquidationConfig = chainConfig.liquidationDefaults;
     this.supportedAssets = chainConfig.assets;
     this.deployedPlugins = chainConfig.deployedPlugins;
+    this.marketToPlugin = Object.entries(this.deployedPlugins).reduce((acc, [plugin, pluginData]) => {
+      return { ...acc, [pluginData.market]: plugin };
+    }, {});
     this.redemptionStrategies = chainConfig.redemptionStrategies;
     this.fundingStrategies = chainConfig.fundingStrategies;
     this.artifacts = ARTIFACTS;
