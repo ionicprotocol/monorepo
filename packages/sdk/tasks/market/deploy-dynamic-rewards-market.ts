@@ -1,4 +1,5 @@
 import { bsc, moonbeam, polygon } from "@midas-capital/chains";
+import { underlying } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 const underlyingsMapping = {
@@ -15,8 +16,8 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
   .addParam("pluginExtraParams", "Extra plugin parameters", undefined, types.string)
   .addParam("fwAddresses", "Flywheel address, one for each reward token", undefined, types.string)
   .addParam("rewardTokens", "Reward tokens", undefined, types.string)
-  .setAction(async (taskArgs, hre) => {
-    const signer = await hre.ethers.getNamedSigner(taskArgs.signer);
+  .setAction(async (taskArgs, { run, ethers, deployments }) => {
+    const signer = await ethers.getNamedSigner(taskArgs.signer);
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
@@ -30,38 +31,55 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     const fwAddresses = taskArgs.fwAddresses.split(",");
     const symbol = taskArgs.symbol;
 
-    const underlying = underlyings.find((a) => a.symbol === symbol)!.underlying;
-    const marketAddress = await sdk.createComptroller(comptroller, signer).callStatic.cTokensByUnderlying(underlying);
+    const underlyingAddress = underlying(underlyings, symbol);
+    const marketAddress = await sdk
+      .createComptroller(comptroller, signer)
+      .callStatic.cTokensByUnderlying(underlyingAddress);
     const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
 
     const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ marketAddress });
-    const deployArgs = [underlying, ...fwAddresses, ...pluginExtraParams, marketAddress, rewardTokens];
+    const deployArgs = [underlyingAddress, ...fwAddresses, ...pluginExtraParams, marketAddress, rewardTokens];
 
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
-    const pluginContract = await hre.ethers.getContractFactory(contractName, signer);
-    const pluginDeployment = await pluginContract.deploy();
-    console.log(pluginDeployment.deployTransaction.hash);
-    if (pluginDeployment.deployTransaction.hash)
-      await hre.ethers.provider.waitForTransaction(pluginDeployment.deployTransaction.hash);
+    const artifact = await deployments.getArtifact(contractName);
+    const deployment = await deployments.deploy(`${contractName}_${symbol}_${underlyingAddress}`, {
+      contract: artifact,
+      from: signer.address,
+      proxy: {
+        proxyContract: "OpenZeppelinTransparentProxy",
+        execute: {
+          init: {
+            methodName: "initialize",
+            args: deployArgs,
+          },
+        },
+        owner: signer.address,
+      },
+      log: true,
+    });
 
-    console.log(`Plugin deployed successfully: ${pluginDeployment.address}`);
-    const plugin = await hre.ethers.getContractAt(contractName, pluginDeployment.address, signer);
+    console.log(deployment.transactionHash);
+    if (deployment.transactionHash) await ethers.provider.waitForTransaction(deployment.transactionHash);
 
-    const _asset = await plugin.asset();
+    const pluginAddress = deployment.address;
+    console.log(`Plugin deployed successfully: ${pluginAddress}`);
 
-    if (_asset === hre.ethers.constants.AddressZero) {
-      const tx = await plugin.initialize(...deployArgs);
-      await tx.wait();
-      console.log(`Plugin initialised with status: ${tx.status} - ${tx.hash}`);
+    const plugin = await ethers.getContractAt(contractName, pluginAddress, signer);
+    const pluginAsset = await plugin.callStatic.asset();
+    console.log(`Plugin asset: ${pluginAsset}`);
+
+    if (pluginAsset !== underlyingAddress) {
+      throw new Error(`Plugin asset: ${pluginAsset} does not match underlying asset: ${underlyingAddress}`);
     }
+    console.log({ pluginAddress: plugin.address });
 
     // STEP 2: whitelist plugins
-    console.log(`Whitelisting plugin: ${pluginDeployment.address} ...`);
-    await hre.run("plugin:whitelist", {
-      oldImplementation: pluginDeployment.address,
-      newImplementation: pluginDeployment.address,
+    console.log(`Whitelisting plugin: ${pluginAddress} ...`);
+    await run("plugin:whitelist", {
+      oldImplementation: pluginAddress,
+      newImplementation: pluginAddress,
       admin: taskArgs.signer,
     });
 
@@ -69,21 +87,19 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     console.log(
       `Whitelisting upgrade path from CErc20Delegate: ${cTokenImplementation} -> CErc20PluginRewardsDelegate: ${sdk.chainDeployment.CErc20PluginRewardsDelegate.address}`
     );
-    await hre.run("market:updatewhitelist", {
+    await run("market:updatewhitelist", {
       oldPluginRewardsDelegate: cTokenImplementation,
       admin: taskArgs.signer,
     });
     console.log("Upgrade path whitelisted");
 
     // STEP 4: upgrade markets to the new implementation
-    console.log(
-      `Upgrading market: ${underlying} to CErc20PluginRewardsDelegate with plugin: ${pluginDeployment.address}`
-    );
-    await hre.run("market:upgrade", {
+    console.log(`Upgrading market: ${underlyingAddress} to CErc20PluginRewardsDelegate with plugin: ${pluginAddress}`);
+    await run("market:upgrade", {
       comptroller,
-      underlying,
+      underlying: underlyingAddress,
       implementationAddress: sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-      pluginAddress: pluginDeployment.address,
+      pluginAddress: pluginAddress,
       signer: taskArgs.signer,
     });
     console.log("Market upgraded");
