@@ -3,10 +3,10 @@ import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { useState } from 'react';
 import { AiOutlineLineChart } from 'react-icons/ai';
 import {
+  Area,
+  AreaChart,
   CartesianGrid,
   Legend,
-  Line,
-  LineChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -54,7 +54,7 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <LineChart data={irmToCurve.rates} margin={{ top: 5, right: 0, left: 0, bottom: 0 }}>
+      <AreaChart data={irmToCurve.rates} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
         <CartesianGrid strokeWidth={0} />
         <XAxis ticks={[0, 25, 50, 75, 100]} padding={{ left: 0, right: 10 }} />
         <YAxis ticks={[0, 50, 100, 150]} />
@@ -72,7 +72,7 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
         />
         {keys.length > 0 && (
           <>
-            <Line
+            <Area
               type="monotone"
               dataKey={keys[1]}
               stroke={supplyRateColor}
@@ -82,8 +82,10 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
               name="Supply Rate"
               hide={lineProps[keys[1]] === true}
               opacity={Number(lineProps.hover === keys[1] || !lineProps.hover ? 1 : 0.2)}
+              fillOpacity={0.2}
+              fill={supplyRateColor}
             />
-            <Line
+            <Area
               type="monotone"
               dataKey={keys[2]}
               stroke={borrowRateColor}
@@ -93,10 +95,12 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
               name="Borrow Rate"
               hide={lineProps[keys[2]] === true}
               opacity={Number(lineProps.hover === keys[2] || !lineProps.hover ? 1 : 0.2)}
+              fillOpacity={0.2}
+              fill={borrowRateColor}
             />
           </>
         )}
-      </LineChart>
+      </AreaChart>
     </ResponsiveContainer>
   );
 };
