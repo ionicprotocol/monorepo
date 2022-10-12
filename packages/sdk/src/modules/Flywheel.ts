@@ -221,16 +221,15 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         this.signer
       ) as MidasFlywheel__factory;
       const addressOfSigner = await this.signer.getAddress();
-      const mfw = await midasFlywheel.deploy();
-      const flywheelCoreInstance = this.createMidasFlywheel(mfw.address);
-      const flywheelCoreInstanceWithSigner = flywheelCoreInstance.connect(this.signer);
-      await flywheelCoreInstanceWithSigner.initialize(
+      const flywheelCore = await midasFlywheel.deploy();
+      const initializeTx = await flywheelCore.initialize(
         rewardTokenAddress,
         options?.rewardsAddress || constants.AddressZero,
         options?.boosterAddress || constants.AddressZero,
         options?.ownerAddress || addressOfSigner
       );
-      return flywheelCoreInstance;
+      await initializeTx.wait();
+      return flywheelCore;
     }
     async deployFlywheelStaticRewards(
       flywheelCoreAddress: string,
