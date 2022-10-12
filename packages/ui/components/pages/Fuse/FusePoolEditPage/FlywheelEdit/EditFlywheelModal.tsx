@@ -25,6 +25,7 @@ import {
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
@@ -43,7 +44,6 @@ import { getRewardTokenContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { shortAddress } from '@ui/utils/shortAddress';
-import { formatUnits } from 'ethers/lib/utils';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
@@ -217,7 +217,7 @@ const EditFlywheelModal = ({
         setTransactionPending(false);
       }
     },
-    [flywheel.address, currentSdk, errorToast, refetchRewardsInfo]
+    [flywheel.address, currentSdk, errorToast, refetchRewardsInfo, refetchEnabledMarkets]
   );
 
   return (
