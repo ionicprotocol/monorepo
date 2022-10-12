@@ -96,7 +96,7 @@ const deployedPlugins: DeployedPlugins = {
     name: "Beefy jEUR-PAR Vault",
     strategy: "BeefyERC4626",
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eurp",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/mimo-pool",
     underlying: underlying(assets, assetSymbols["JEUR-PAR"]),
     otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "0"],
   },
