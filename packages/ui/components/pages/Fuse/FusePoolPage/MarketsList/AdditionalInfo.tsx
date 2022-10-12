@@ -31,17 +31,13 @@ import {
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChartData } from '@ui/hooks/useChartData';
-import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
-import { FuseUtilizationChartOptions } from '@ui/utils/chartOptions';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
-const UtilizationChart = dynamic(
-  () => import('@ui/components/pages/Fuse/FusePoolPage/MarketsList/UtilizationChart'),
-  { ssr: false }
-);
+const UtilizationChart = dynamic(() => import('@ui/components/shared/UtilizationChart'), {
+  ssr: false,
+});
 
 export const AdditionalInfo = ({
   row,
@@ -61,11 +57,6 @@ export const AdditionalInfo = ({
   const assets: MarketData[] = rows.map((row) => row.original.market);
 
   const { data } = useChartData(asset.cToken, poolChainId);
-  const { cChart } = useColors();
-  const assetUtilization = useMemo(
-    () => parseFloat(asset.utilization.toFixed(0)),
-    [asset.utilization]
-  );
   const { currentChain } = useMultiMidas();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
@@ -168,14 +159,7 @@ export const AdditionalInfo = ({
         gap={4}
         alignItems="flex-end"
       >
-        <Box
-          height="250px"
-          width="100%"
-          color="#000000"
-          overflow="hidden"
-          className="hide-bottom-tooltip"
-          flexShrink={0}
-        >
+        <Box height="250px" width="100%">
           {data ? (
             asset.isBorrowPaused ? (
               <Center height="100%">
@@ -188,65 +172,7 @@ export const AdditionalInfo = ({
                 </Text>
               </Center>
             ) : (
-              <>
-                <UtilizationChart irmToCurve={data} />
-                {/* <Chart
-                  options={{
-                    ...FuseUtilizationChartOptions,
-                    annotations: {
-                      points: [
-                        {
-                          x: assetUtilization,
-                          y: data.borrowerRates[assetUtilization].y,
-                          marker: {
-                            size: 6,
-                            fillColor: '#FFF',
-                            strokeColor: '#DDDCDC',
-                          },
-                        },
-                        {
-                          x: assetUtilization,
-                          y: data.supplierRates[assetUtilization].y,
-                          marker: {
-                            size: 6,
-                            fillColor: cChart.tokenColor,
-                            strokeColor: '#FFF',
-                          },
-                        },
-                      ],
-                      xaxis: [
-                        {
-                          x: assetUtilization,
-                          label: {
-                            text: 'Current Utilization',
-                            orientation: 'horizontal',
-                            style: {
-                              background: cChart.labelBgColor,
-                              color: '#000',
-                            },
-                            // offsetX: 40,
-                          },
-                        },
-                      ],
-                    },
-
-                    colors: [cChart.borrowColor, cChart.tokenColor],
-                  }}
-                  type="line"
-                  width="100%"
-                  height="100%"
-                  series={[
-                    {
-                      name: 'Borrow Rate',
-                      data: data.borrowerRates,
-                    },
-                    {
-                      name: 'Deposit Rate',
-                      data: data.supplierRates,
-                    },
-                  ]}
-                /> */}
-              </>
+              <UtilizationChart irmToCurve={data} />
             )
           ) : (
             <Center height="100%" color="#FFFFFF">
