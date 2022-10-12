@@ -30,6 +30,7 @@ const SUSHI = "0x0b3F868E0BE5597D5DB7fEB59E1CADBb0fdDa50a";
 const YFI = "0xDA537104D6A5edd53c6fBba9A898708E465260b6";
 const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
+const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
 
 // Balancer
 const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
@@ -686,6 +687,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.GelatoGUniPriceOracle,
     extraDocs: arrakisDocs("Polygon", 137, arrakis_WETH_DAI_03),
+  },
+  {
+    symbol: assetSymbols.JRT,
+    underlying: JRT,
+    name: "Jarivs Reward Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://polygonscan.com", JRT),
   },
 ];
 

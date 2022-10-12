@@ -60,7 +60,15 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
     uniswapV2RouterAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
     uniswapV2FactoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
-    uniswapOracleInitialDeployTokens: [],
+    uniswapOracleInitialDeployTokens: [
+      {
+        token: underlying(assets, assetSymbols.JRT),
+        pair: "0x17F54d87B54B0F4BDc2Eb1E24C99f72a49c417CF", // USDC-JRT
+        baseToken: underlying(assets, assetSymbols.USDC),
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
+    ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WMATIC-USDC"]),
       underlying(assets, assetSymbols["WMATIC-ETH"]),
