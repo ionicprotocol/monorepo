@@ -67,7 +67,7 @@ export const AddAssetSettings = ({
   tokenData: TokenData;
   poolChainId: number;
 }) => {
-  const { currentSdk } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
@@ -213,9 +213,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
-                  poolChainId={poolChainId}
-                  isEditPool={true}
-                  isPowerfulAdmin={data?.isPowerfulAdmin}
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
                 />
               )}
             />
@@ -269,9 +269,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
-                  poolChainId={poolChainId}
-                  isEditPool={true}
-                  isPowerfulAdmin={data?.isPowerfulAdmin}
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
                 />
               )}
             />
@@ -321,9 +321,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
-                  poolChainId={poolChainId}
-                  isEditPool={true}
-                  isPowerfulAdmin={data?.isPowerfulAdmin}
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
                 />
               )}
             />

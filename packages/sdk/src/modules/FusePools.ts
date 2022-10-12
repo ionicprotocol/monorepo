@@ -1,4 +1,11 @@
-import { FusePoolData, NativePricedFuseAsset, SupportedAsset } from "@midas-capital/types";
+import { bsc, moonbeam, polygon } from "@midas-capital/chains";
+import {
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  FusePoolData,
+  NativePricedFuseAsset,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumberish, CallOverrides, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
@@ -14,6 +21,17 @@ export type LensPoolsWithData = [
   fusePoolsData: FusePoolLens.FusePoolDataStructOutput[],
   errors: boolean[]
 ];
+
+const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.bsc]: bsc.assets,
+  [SupportedChains.polygon]: polygon.assets,
+  [SupportedChains.ganache]: [],
+  [SupportedChains.evmos]: [],
+  [SupportedChains.chapel]: [],
+  [SupportedChains.moonbeam]: moonbeam.assets,
+  [SupportedChains.neon_devnet]: [],
+  [SupportedChains.arbitrum]: [],
+};
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
@@ -48,23 +66,15 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
         asset.isBorrowPaused = asset.borrowGuardianPaused;
         asset.isSupplyPaused = asset.mintGuardianPaused;
+        asset.plugin = this.marketToPlugin[asset.cToken];
 
-        promises.push(
-          (async () => {
-            const ctoken = this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate");
-            const implementation = await ctoken.callStatic.implementation();
-            if (
-              [
-                this.chainDeployment["CErc20PluginRewardsDelegate"].address,
-                this.chainDeployment["CErc20PluginDelegate"].address,
-              ].includes(implementation)
-            ) {
-              const plugin = await ctoken.callStatic.plugin().catch(() => undefined);
-              if (!plugin) return;
-              asset.plugin = plugin;
-            }
-          })()
+        const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+          (ass) => ass.underlying === asset.underlyingToken
         );
+
+        if (_asset) {
+          asset.underlyingSymbol = _asset.symbol;
+        }
 
         asset.supplyBalanceNative =
           Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *

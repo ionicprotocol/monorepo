@@ -34,6 +34,7 @@ import "./tasks/one-time/arrakis-polygon-plugins";
 import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/setNonAccruingFlywheels";
+import "./tasks/one-time/downgradeMarket";
 
 dotEnvConfig();
 

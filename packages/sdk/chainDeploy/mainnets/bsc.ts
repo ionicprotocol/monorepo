@@ -63,6 +63,13 @@ export const deployConfig: ChainDeployConfig = {
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
       },
+      {
+        token: underlying(assets, assetSymbols.pSTAKE),
+        pair: "0x2bF1c14b71C375B35B4C157790bC4D6e557714FE", // WBNB-pSTAKE
+        baseToken: wbnb,
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP

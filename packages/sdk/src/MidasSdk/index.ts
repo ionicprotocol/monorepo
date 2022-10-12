@@ -15,7 +15,7 @@ import {
   SupportedChains,
 } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber, constants, Contract, Signer, utils } from "ethers";
+import { BigNumber, Contract, Signer, utils } from "ethers";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
@@ -39,6 +39,7 @@ import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
 import { CTOKEN_ERROR_CODES } from "./config";
+import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
@@ -84,6 +85,7 @@ export class MidasBase {
   public artifacts: Artifacts;
   public irms: IrmConfig;
   public deployedPlugins: DeployedPlugins;
+  public marketToPlugin: Record<string, string>;
   public liquidationConfig: ChainLiquidationConfig;
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
@@ -176,6 +178,9 @@ export class MidasBase {
     this.liquidationConfig = chainConfig.liquidationDefaults;
     this.supportedAssets = chainConfig.assets;
     this.deployedPlugins = chainConfig.deployedPlugins;
+    this.marketToPlugin = Object.entries(this.deployedPlugins).reduce((acc, [plugin, pluginData]) => {
+      return { ...acc, [pluginData.market]: plugin };
+    }, {});
     this.redemptionStrategies = chainConfig.redemptionStrategies;
     this.fundingStrategies = chainConfig.fundingStrategies;
     this.artifacts = ARTIFACTS;
@@ -279,6 +284,8 @@ export class MidasBase {
       AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
       JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
       JumpRateModel_JARVIS_002_004_4_08: JumpRateModel,
+      AdjustableJumpRateModel_PSTAKE_WBNB: AdjustableJumpRateModel,
+      AdjustableJumpRateModel_MIXBYTES_XCDOT: AdjustableJumpRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 

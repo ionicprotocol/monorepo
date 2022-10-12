@@ -42,6 +42,9 @@ export const TextStyleConfig: ComponentStyleConfig = {
         md: 20,
         lg: 20,
       },
+      lineHeight: {
+        base: 6,
+      },
     }),
     mdText: (props) => ({
       color: mode('raisinBlack', 'whiteBg')(props),

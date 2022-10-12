@@ -94,10 +94,6 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
         throw 'Failed to deploy Flywheel Rewards';
       }
 
-      if (!fwStaticRewards) {
-        throw 'No Flywheel Rewards deployed';
-      }
-
       try {
         setActiveStep(3);
         const tx = await currentSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
