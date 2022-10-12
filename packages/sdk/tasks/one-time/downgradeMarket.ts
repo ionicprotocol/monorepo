@@ -2,8 +2,8 @@ import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
-import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
 
 task("market:downgrade", "Downgrades a plugin market to a simple market")
   .addParam("market", "The address of the market to downgrade", undefined, types.string)
@@ -31,7 +31,11 @@ task("market:downgrade", "Downgrades a plugin market to a simple market")
       console.log(`current market impl ${currentImpl}`);
       const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
 
-      const whitelisted = await fuseFeeDistributor.callStatic.cErc20DelegateWhitelist(currentImpl, erc20Delegate.address, false);
+      const whitelisted = await fuseFeeDistributor.callStatic.cErc20DelegateWhitelist(
+        currentImpl,
+        erc20Delegate.address,
+        false
+      );
       if (whitelisted) {
         console.log(`downgrade from ${currentImpl} to ${erc20Delegate.address} whitelisted`);
         let tx = await cTokenInstance._setImplementationSafe(erc20Delegate.address, false, constants.AddressZero);

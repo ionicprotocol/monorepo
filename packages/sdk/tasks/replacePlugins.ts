@@ -1,6 +1,5 @@
 import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
-import { ChainConfig } from "@midas-capital/types";
-import { DeployedPlugins } from "@midas-capital/types";
+import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
