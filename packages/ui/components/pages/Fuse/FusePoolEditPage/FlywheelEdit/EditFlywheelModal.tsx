@@ -13,8 +13,10 @@ import {
   NumberInput,
   NumberInputField,
   Select,
+  Skeleton,
   Spinner,
   Stat,
+  StatGroup,
   StatHelpText,
   StatLabel,
   StatNumber,
@@ -27,7 +29,7 @@ import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
-import { Center, Column, Row } from '@ui/components/shared/Flex';
+import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -41,6 +43,7 @@ import { getRewardTokenContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { shortAddress } from '@ui/utils/shortAddress';
+import { formatUnits } from 'ethers/lib/utils';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
@@ -221,91 +224,111 @@ const EditFlywheelModal = ({
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Edit Flywheel Rewards</ModalHeader>
+        <ModalHeader>Edit Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
+
         <VStack alignItems={'flex-start'} p={4}>
-          {tokenData?.logoURL && (
+          {tokenData?.logoURL ? (
             <Image
               mt={4}
               src={tokenData.logoURL}
               boxSize="50px"
+              alignSelf={'center'}
               borderRadius="50%"
               backgroundImage={`url(${SmallWhiteCircle})`}
               backgroundSize="100% auto"
-              alt=""
+              alt={tokenData.symbol}
             />
+          ) : (
+            <Skeleton alignSelf={'center'} height="50px" width="50px"></Skeleton>
           )}
-          <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-              <Stat>
-                <StatLabel>Reward Token</StatLabel>
-                <StatNumber>{tokenData ? tokenData.name : 'Loading...'}</StatNumber>
-                {tokenData && (
-                  <ClipboardValue
-                    value={tokenData.address}
-                    label={shortAddress(tokenData.address)}
-                    component={StatHelpText}
-                  />
-                )}
-              </Stat>
-            </Column>
-            <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-              <Stat>
-                <StatLabel>Flywheel Balance</StatLabel>
-                <StatNumber>
-                  {flywheelRewardsBalance
-                    ? ` ${(parseFloat(flywheelRewardsBalance.toString()) / 1e18).toFixed(4)}`
-                    : 'Loading...'}
+          <StatGroup width="100%">
+            <Stat>
+              <StatLabel>Reward Token</StatLabel>
+              {tokenData ? (
+                <StatNumber title={tokenData.name}>{tokenData.symbol}</StatNumber>
+              ) : (
+                <Skeleton>
+                  <StatNumber>Token Name</StatNumber>
+                </Skeleton>
+              )}
+
+              <ClipboardValue
+                value={flywheel.rewardToken}
+                label={shortAddress(flywheel.rewardToken)}
+                component={StatHelpText}
+              />
+            </Stat>
+
+            <Stat>
+              <StatLabel>Rewards Contract</StatLabel>
+              {flywheelRewardsBalance && tokenData ? (
+                <StatNumber title={formatUnits(flywheelRewardsBalance, tokenData.decimals)}>
+                  {formatUnits(flywheelRewardsBalance, tokenData.decimals)}
                 </StatNumber>
-                {tokenData && <StatHelpText>{tokenData.symbol}</StatHelpText>}
-              </Stat>
-            </Column>
-          </Row>
+              ) : (
+                <Skeleton>
+                  <StatNumber>0.0000</StatNumber>
+                </Skeleton>
+              )}
+              <ClipboardValue
+                value={flywheel.rewards}
+                label={shortAddress(flywheel.rewards)}
+                component={StatHelpText}
+              />
+            </Stat>
+          </StatGroup>
         </VStack>
+        <ModalDivider />
+
         {/* Funding */}
         <VStack alignItems="flex-start">
-          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%" p={4}>
+          <VStack alignItems={'flex-start'} width="100%" p={4}>
             <Heading fontSize={'xl'} mb={2}>
-              Fund Flywheel
+              Fund Flywheel Rewards Contract
             </Heading>
-            <HStack width={'100%'}>
-              <InputGroup flex={1} variant="outlineRightAddon">
-                <NumberInput
-                  min={0}
-                  onChange={(valueString: string) => {
-                    setTransactionPendingAmount(parseFloat(valueString));
-                  }}
-                  flex={1}
+            <VStack>
+              <HStack width={'100%'}>
+                <InputGroup flex={1} variant="outlineRightAddon">
+                  <NumberInput
+                    min={0}
+                    onChange={(valueString: string) => {
+                      setTransactionPendingAmount(parseFloat(valueString));
+                    }}
+                    flex={1}
+                  >
+                    <NumberInputField
+                      borderTopRightRadius={0}
+                      borderBottomRightRadius={0}
+                      placeholder={'0.00'}
+                    />
+                  </NumberInput>
+                  <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
+                </InputGroup>
+                <Button
+                  onClick={fund}
+                  disabled={
+                    isTransactionPending ||
+                    (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
+                    fundingAmount === 0 ||
+                    isNaN(fundingAmount) ||
+                    fundingAmount < 0
+                  }
+                  ml={4}
+                  width="15%"
                 >
-                  <NumberInputField
-                    borderTopRightRadius={0}
-                    borderBottomRightRadius={0}
-                    placeholder={'0.00'}
-                  />
-                </NumberInput>
-                <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
-              </InputGroup>
-              <Button
-                onClick={fund}
-                disabled={
-                  isTransactionPending ||
-                  (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
-                  fundingAmount === 0 ||
-                  isNaN(fundingAmount) ||
-                  fundingAmount < 0
-                }
-                ml={4}
-                width="15%"
-              >
-                {isTransactionPending ? <Spinner /> : 'Send'}
-              </Button>
-            </HStack>
-            <Text fontSize="lg" mt={2}>
+                  {isTransactionPending ? <Spinner /> : 'Send'}
+                </Button>
+              </HStack>
+            </VStack>
+            <Text fontSize="md" mt={2}>
               Your balance: {myBalance ? (parseFloat(myBalance?.toString()) / 1e18).toFixed(4) : 0}{' '}
               {tokenData?.symbol}
             </Text>
-          </Column>
+          </VStack>
+          <ModalDivider />
+
           {/* Rewards */}
           {pool.assets.length ? (
             <VStack alignItems="flex-start" p={4} width="100%">
