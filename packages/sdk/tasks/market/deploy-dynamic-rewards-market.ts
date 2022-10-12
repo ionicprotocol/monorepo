@@ -70,7 +70,7 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     const pluginAsset = await plugin.callStatic.asset();
     console.log(`Plugin asset: ${pluginAsset}`);
 
-    if (pluginAsset !== underlying) {
+    if (pluginAsset !== underlyingAddress) {
       throw new Error(`Plugin asset: ${pluginAsset} does not match underlying asset: ${underlyingAddress}`);
     }
     console.log({ pluginAddress: plugin.address });
@@ -94,10 +94,10 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
     console.log("Upgrade path whitelisted");
 
     // STEP 4: upgrade markets to the new implementation
-    console.log(`Upgrading market: ${underlying} to CErc20PluginRewardsDelegate with plugin: ${pluginAddress}`);
+    console.log(`Upgrading market: ${underlyingAddress} to CErc20PluginRewardsDelegate with plugin: ${pluginAddress}`);
     await run("market:upgrade", {
       comptroller,
-      underlying,
+      underlying: underlyingAddress,
       implementationAddress: sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
       pluginAddress: pluginAddress,
       signer: taskArgs.signer,

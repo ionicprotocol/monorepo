@@ -79,7 +79,7 @@ const deployedPlugins: DeployedPlugins = {
       ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"], // _rewardTokens
     ],
   },
-  "": {
+  "0xd682451F627d54cfdA74a80972aDaeF133cdc15e": {
     market: "0xcb67Bd2aE0597eDb2426802CdF34bb4085d9483A",
     name: "Balancer LP MIMO80-PAR20",
     strategy: "ArrakisERC4626",
