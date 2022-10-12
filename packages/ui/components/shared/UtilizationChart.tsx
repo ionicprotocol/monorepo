@@ -6,6 +6,7 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Label,
   Legend,
   ResponsiveContainer,
   Tooltip,
@@ -24,6 +25,7 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
   const keys = irmToCurve.rates.length > 0 ? Object.keys(irmToCurve.rates[0]) : [];
   const supplyRateColor = useColorModeValue('#00B5D8', 'cyan'); // #00B5D8 = cyan.500
   const borrowRateColor = useColorModeValue('#DD6B20', 'orange'); // #DD6B20 = orange.500
+  const { cCard } = useColors();
 
   const [lineProps, setLineProps] = useState<LineProps>(
     keys.reduce((a, key) => {
@@ -54,10 +56,23 @@ const UtilizationChart = ({ irmToCurve }: { irmToCurve: IRMToCurveData }) => {
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart data={irmToCurve.rates} margin={{ top: 0, right: 0, left: 0, bottom: 0 }}>
+      <AreaChart data={irmToCurve.rates} margin={{ top: 0, right: 0, left: 10, bottom: 10 }}>
         <CartesianGrid strokeWidth={0} />
-        <XAxis ticks={[0, 25, 50, 75, 100]} padding={{ left: 0, right: 10 }} />
-        <YAxis ticks={[0, 50, 100, 150]} />
+        <XAxis
+          ticks={[0, 25, 50, 75, 100]}
+          padding={{ left: 0, right: 10 }}
+          tickFormatter={(label) => `${label}%`}
+          tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
+        >
+          <Label value="Utilization" offset={-10} position="insideBottom" fill={cCard.txtColor} />
+        </XAxis>
+        <YAxis
+          ticks={[0, 50, 100, 150]}
+          tickFormatter={(label) => `${label}%`}
+          tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
+        >
+          <Label angle={-90} value="Rate" offset={0} position="insideLeft" fill={cCard.txtColor} />
+        </YAxis>
         <Tooltip wrapperStyle={{ outline: 'none' }} content={<CustomTooltip />} />
         <Legend
           verticalAlign="top"
@@ -119,10 +134,10 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     return (
       <VStack
-        borderWidth={3}
+        borderWidth={2}
         borderColor={cCard.borderColor}
         bgColor={cCard.bgColor}
-        borderRadius="md"
+        borderRadius={4}
         spacing={0}
       >
         <Text
