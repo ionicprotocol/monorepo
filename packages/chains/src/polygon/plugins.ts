@@ -67,15 +67,6 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["JEUR-EURT"]),
     otherParams: ["0x26B7d2fe697e932907175A3920B5dC2C2e2440A4", "0"],
   },
-  "0xE44986cf07E92D8135179Fb3bbc5ed9C17195f2F": {
-    market: "0x7AB807F3FBeca9eb22a1A7a490bdC353D85DED41",
-    name: "Beefy jNZD-NZDS Vault",
-    strategy: "BeefyERC4626",
-    apyDocsUrl: "https://app.beefy.com/vault/jarvis-2nzd",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
-    underlying: underlying(assets, assetSymbols["JNZD-NZDS"]),
-    otherParams: ["0x6720C2b7fd7dE1CAD3242dd3E8a86d033D4ed3f9", "0"],
-  },
   "0xdE58CF12595e92ebB07D664eE59A642e360bea58": {
     market: "0xa5A14c3814d358230a56e8f011B8fc97A508E890",
     name: "Arrakis PAR-USDC Vault",
