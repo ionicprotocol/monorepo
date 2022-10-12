@@ -160,12 +160,12 @@ export const AdditionalInfo = ({
         alignItems="flex-end"
       >
         <Box height="250px" width="100%">
-          {data ? (
-            asset.isBorrowPaused ? (
-              <Center height="100%">
-                <Text variant="smText">This asset is not borrowable.</Text>
-              </Center>
-            ) : data.rates === null ? (
+          {asset.isBorrowPaused ? (
+            <Center height="100%">
+              <Text variant="smText">This asset is not borrowable.</Text>
+            </Center>
+          ) : data ? (
+            data.rates === null ? (
               <Center height="100%">
                 <Text variant="smText">
                   No graph is available for this asset(&apos)s interest curves.

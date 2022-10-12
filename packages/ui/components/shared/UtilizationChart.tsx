@@ -75,7 +75,7 @@ const UtilizationChart = ({
           <Label value="Utilization" offset={-10} position="insideBottom" fill={cCard.txtColor} />
         </XAxis>
         <YAxis
-          ticks={[0, 50, 100, 150]}
+          ticks={[0, 50, 100]}
           tickFormatter={(label) => `${label}%`}
           tick={{ fill: cCard.txtColor, fillOpacity: 0.5 }}
         >
