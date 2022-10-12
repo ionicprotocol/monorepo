@@ -88,6 +88,18 @@ const deployedPlugins: DeployedPlugins = {
       ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"], // _rewardTokens
     ],
   },
+  "": {
+    market: "0xcb67Bd2aE0597eDb2426802CdF34bb4085d9483A",
+    name: "Balancer LP MIMO80-PAR20",
+    strategy: "ArrakisERC4626",
+    underlying: underlying(assets, assetSymbols.MIMO_PAR_80_20),
+    otherParams: [
+      "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
+      "0xBA2D426DCb186d670eD54a759098947fad395C95", // IGuniPool _pool
+      "0xcb67Bd2aE0597eDb2426802CdF34bb4085d9483A", // _rewardsDestination
+      ["0xADAC33f543267c4D59a8c299cF804c303BC3e4aC"], // _rewardTokens
+    ],
+  },
 };
 
 export default deployedPlugins;
