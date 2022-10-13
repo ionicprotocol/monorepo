@@ -241,3 +241,9 @@ export type PoolsPerChainStatus = {
 };
 
 export type Err = Error & { code?: string; reason?: string };
+
+export type IRMToCurveData = {
+  rates: UtilizationChartData[];
+};
+
+export type UtilizationChartData = { utilization: number; depositRate: number; borrowRate: number };

@@ -13,7 +13,7 @@ export function useChartData(market: string, poolChainId: number) {
         const interestRateModel = await sdk.getInterestRateModel(market);
 
         if (interestRateModel === null) {
-          return { borrowerRates: null, supplierRates: null };
+          return { rates: null };
         }
 
         return convertIRMtoCurve(sdk, interestRateModel, sdk.chainId);

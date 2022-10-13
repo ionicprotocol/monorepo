@@ -20,14 +20,6 @@ html {
   -ms-overflow-style: none;
 }
 
-.apexcharts-tooltip,
-.apexcharts-tooltip.active,
-.apexcharts-xaxistooltip,
-.apexcharts-xaxistooltip.active,
-.apexcharts-marker {
-  transition: none !important;
-}
-
 *::-webkit-scrollbar {
   display: none;
 }
@@ -119,10 +111,6 @@ img:not([src]) {
 .no-underline:link,
 .no-underline:active {
   text-decoration: none !important;
-}
-
-.hide-bottom-tooltip .apexcharts-xaxistooltip-bottom {
-  display: none !important;
 }
 
 .black-switch > .chakra-switch__track[data-checked] {
