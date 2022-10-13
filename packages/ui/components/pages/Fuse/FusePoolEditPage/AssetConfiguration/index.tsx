@@ -6,9 +6,9 @@ import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConf
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
 import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useTokenData } from '@ui/hooks/useTokenData';
 

@@ -16,8 +16,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { PoolRowData } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';

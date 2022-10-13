@@ -3,9 +3,9 @@ import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/module
 import React from 'react';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { Column } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';

@@ -1,9 +1,9 @@
 import { Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 
 export const RewardsBanner = ({
   tokens = [],

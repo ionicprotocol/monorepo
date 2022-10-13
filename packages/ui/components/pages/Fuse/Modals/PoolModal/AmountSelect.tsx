@@ -27,12 +27,12 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';

@@ -8,7 +8,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { ApyInformTooltip } from './ApyInformTooltip';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
-
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';

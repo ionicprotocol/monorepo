@@ -2,7 +2,7 @@ import { AvatarGroup, AvatarGroupProps } from '@chakra-ui/avatar';
 
 import { TokenIcon } from './TokenIcon';
 
-interface TokenIconGroup extends Partial<AvatarGroupProps> {
+interface TokenIconGroupProps extends Partial<AvatarGroupProps> {
   tokenAddresses: string[];
   popOnHover: boolean;
   chainId: number;
@@ -12,7 +12,7 @@ export const TokenIconGroup = ({
   popOnHover = false,
   chainId,
   ...avatarGroupProps
-}: TokenIconGroup) => {
+}: TokenIconGroupProps) => {
   return (
     <AvatarGroup size="xs" max={30} {...avatarGroupProps}>
       {tokenAddresses.map((tokenAddress, index) => {

@@ -24,8 +24,8 @@ import { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';

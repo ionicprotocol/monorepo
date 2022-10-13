@@ -21,9 +21,9 @@ import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/Flywhee
 import CreateFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/CreateFlywheelModal';
 import EditFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/EditFlywheelModal';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
-import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
+import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
