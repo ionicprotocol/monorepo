@@ -2,7 +2,6 @@ import { Avatar, AvatarProps } from '@chakra-ui/avatar';
 import { SpinnerIcon } from '@chakra-ui/icons';
 import { Icon, IconProps, useColorModeValue } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
-import { useCallback } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenData } from '@ui/hooks/useTokenData';
