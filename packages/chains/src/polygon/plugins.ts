@@ -93,7 +93,7 @@ const deployedPlugins: DeployedPlugins = {
   "0xc8E8B4A7E0F854Cf516A75fE742FC791dBec9F86": {
     market: "0x30b32BbfcA3A81922F88809F53E625b5EE5286f6",
     name: "Beefy jEUR-PAR Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eurp",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/mimo-pool",
     underlying: underlying(assets, assetSymbols["JEUR-PAR"]),
