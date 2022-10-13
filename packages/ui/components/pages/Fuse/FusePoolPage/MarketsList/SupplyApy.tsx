@@ -8,24 +8,21 @@ import { useEffect, useMemo, useState } from 'react';
 import { ApyInformTooltip } from './ApyInformTooltip';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
-import { TokenWithLabel } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { aprFormatter } from '@ui/utils/bigUtils';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const SupplyApy = ({
-  asset,
-  rewards,
-  poolChainId,
-}: {
+interface SupplyApyProps {
   asset: MarketData;
   rewards: FlywheelMarketRewardsInfo[];
   poolChainId: number;
-}) => {
+}
+
+export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
   const sdk = useSdk(poolChainId);
   const supplyAPY = useMemo(() => {
     if (sdk) {
@@ -77,21 +74,18 @@ export const SupplyApy = ({
         rewardsOfThisMarket?.rewardsInfo.map((info) => (
           <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
             <HStack mr={2}>
-              <Text variant="smText">+</Text>
-              <TokenWithLabel
-                address={info.rewardToken}
-                poolChainId={poolChainId}
-                size="2xs"
-                border="0"
-              />
+              <Text variant="smText" mr={-1}>
+                +
+              </Text>
+              <TokenIcon address={info.rewardToken} chainId={poolChainId} size="xs" />
             </HStack>
             {info.formattedAPR ? (
               <Text
                 variant="smText"
                 ml={1}
-                title={formatUnits(info.formattedAPR, 18).toString() + '%'}
+                title={formatUnits(info.formattedAPR, 16).toString() + '%'}
               >
-                {aprFormatter(info.formattedAPR)}%
+                {Number(formatUnits(info.formattedAPR, 16)).toFixed(2).toString() + '%'}
               </Text>
             ) : (
               <ApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />

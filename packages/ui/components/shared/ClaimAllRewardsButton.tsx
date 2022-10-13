@@ -3,9 +3,9 @@ import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/module
 import React from 'react';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
@@ -45,9 +45,7 @@ const ClaimAllRewardsButton: React.FC = () => {
           {currentChain && (
             <AvatarGroup size="xs" max={30}>
               {allClaimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
-                return (
-                  <CTokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />
-                );
+                return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
               })}
             </AvatarGroup>
           )}
