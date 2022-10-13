@@ -70,6 +70,7 @@ function getStrategyData(
   fundingToken: string
 ): string {
   switch (contract) {
+    // IFundsConversionStrategy should be also configured here
     case FundingStrategyContract.JarvisLiquidatorFunder:
       const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == inputToken && p.syntheticToken == fundingToken
