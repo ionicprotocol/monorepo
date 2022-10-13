@@ -1,6 +1,6 @@
 import { PluginData, Strategy } from '@midas-capital/types';
 import axios from 'axios';
-import { ExternalAPYProvider } from './AbstractAPYProvider';
+import { ExternalAPYProvider } from './ExternalAPYProvider';
 
 interface BeefyAPYResponse {
   [key: string]: number;
@@ -17,8 +17,11 @@ class BeefyAPYProvider extends ExternalAPYProvider {
   async getApy(pluginAddress: string, pluginData: PluginData): Promise<number> {
     if (pluginData.strategy != Strategy.Beefy)
       throw `BeefyAPYProvider: Not a Beefy Plugin ${pluginAddress}`;
+
     if (!pluginData.apyDocsUrl) throw 'BeefyAPYProvider: `apyDocsUrl` is required to map Beefy APY';
-    const beefyID = pluginData.apyDocsUrl.split('/')[-1];
+
+    const beefyID = pluginData.apyDocsUrl.split('/').pop();
+    if (!beefyID) throw 'BeefyAPYProvider: unable to extract `Beefy ID` from `apyDocsUrl`';
 
     if (!this.beefyAPYs) {
       await this._fetchBeefyAPYs();
@@ -31,7 +34,7 @@ class BeefyAPYProvider extends ExternalAPYProvider {
   }
 
   private async _fetchBeefyAPYs() {
-    this.beefyAPYs = await axios.get(BeefyAPYProvider.apyEndpoint);
+    this.beefyAPYs = await (await axios.get(BeefyAPYProvider.apyEndpoint)).data;
     if (!this.beefyAPYs) {
       throw `BeefyAPYProvider: unexpected Beefy APY response`;
     }
