@@ -13,14 +13,22 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
       try {
         const pluginContract = new ethers.Contract(pluginAddress, ERC4626_ABI, provider);
 
-        const [totalSupply, totalAssets, underlyingAsset] = await Promise.all([
+        const [totalSupply, totalAssets, underlyingAsset, externalAPY] = await Promise.all([
           pluginContract.callStatic.totalSupply(), // Total Amount of Vault Shares
           pluginContract.callStatic.totalAssets(), // Total Amount of Underlying Managed by the Vault
           pluginContract.callStatic.asset(), // Market Underlying
+          (async function fetchExternalAPY() {
+            let result: number | undefined = undefined;
+            if (APYProviders[pluginData.strategy]) {
+              try {
+                result = await APYProviders[pluginData.strategy]?.getApy(pluginAddress, pluginData);
+              } catch (exception) {
+                console.error(exception);
+              }
+            }
+            return result;
+          })(),
         ]);
-
-        if (pluginData.strategy && APYProviders[pluginData.strategy]) {
-        }
 
         // Don't save anything if the plugin is empty
         if (totalSupply.eq(0)) {
@@ -29,25 +37,26 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
 
         const { error } = await supabase.from(environment.supabasePluginTableName).insert([
           {
-            totalSupply: totalSupply.toString(),
-            totalAssets: totalAssets.toString(),
-            pluginAddress: pluginAddress.toLowerCase(),
-            underlyingAddress: underlyingAsset.toLowerCase(),
             chain: chainId,
+            externalAPY: externalAPY ? externalAPY.toString() : undefined,
+            pluginAddress: pluginAddress.toLowerCase(),
+            totalAssets: totalAssets.toString(),
+            totalSupply: totalSupply.toString(),
+            underlyingAddress: underlyingAsset.toLowerCase(),
           },
         ]);
 
         if (error) {
           throw new Error(JSON.stringify(error));
-        } else {
-          console.log(`Successfully saved data for plugin ${plugin}`);
         }
       } catch (exception) {
         console.error(
-          `Error occurred during saving data for plugin ${plugin}: ${JSON.stringify(exception)}`
+          `Error occurred during saving data for plugin ${pluginAddress}: ${JSON.stringify(
+            exception
+          )}`
         );
         functionsAlert(
-          `Error occurred during saving data for plugin ${plugin}`,
+          `Error occurred during saving data for plugin ${pluginAddress}`,
           JSON.stringify(exception)
         );
       }
