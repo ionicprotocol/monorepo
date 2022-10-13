@@ -1,7 +1,7 @@
 import { AvatarGroup, HStack, Text, VStack } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SHRINK_ASSETS } from '@ui/constants/index';
 import { PoolData } from '@ui/types/TokensDataMap';
 
@@ -19,7 +19,7 @@ export const Assets = ({ pool }: { pool: PoolData }) => {
         <HStack spacing={0}>
           <AvatarGroup size="sm" max={30}>
             {tokens.slice(0, SHRINK_ASSETS).map((token, i) => (
-              <CTokenIcon key={i} address={token.address} chainId={pool.chainId} />
+              <TokenIcon key={i} address={token.address} chainId={pool.chainId} />
             ))}
           </AvatarGroup>
           {tokens.length - SHRINK_ASSETS > 0 && (

@@ -13,10 +13,10 @@ import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/module
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -48,7 +48,7 @@ const ClaimableToken = ({
   return (
     <HStack width="80%" justify="space-evenly">
       {currentChain && (
-        <CTokenIcon
+        <TokenIcon
           address={rewardToken}
           chainId={currentChain.id}
           size="xs"
