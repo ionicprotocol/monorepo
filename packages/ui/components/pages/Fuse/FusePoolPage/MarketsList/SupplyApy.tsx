@@ -17,15 +17,13 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const SupplyApy = ({
-  asset,
-  rewards,
-  poolChainId,
-}: {
+interface SupplyApyProps {
   asset: MarketData;
   rewards: FlywheelMarketRewardsInfo[];
   poolChainId: number;
-}) => {
+}
+
+export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
   const sdk = useSdk(poolChainId);
   const supplyAPY = useMemo(() => {
     if (sdk) {
