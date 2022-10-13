@@ -11,9 +11,9 @@ import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MidasBox } from '@ui/components/shared/Box';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SHRINK_ASSETS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
@@ -70,15 +70,13 @@ const FusePoolPage = memo(() => {
                         }: {
                           underlyingToken: string;
                           cToken: string;
-                        }) => {
-                          return (
-                            <CTokenIcon
-                              key={cToken}
-                              address={underlyingToken}
-                              chainId={data.chainId}
-                            />
-                          );
-                        }
+                        }) => (
+                          <TokenIcon
+                            key={cToken}
+                            address={underlyingToken}
+                            chainId={data.chainId}
+                          />
+                        )
                       )
                     : data.assets
                         .slice(0, SHRINK_ASSETS)
@@ -91,7 +89,7 @@ const FusePoolPage = memo(() => {
                             cToken: string;
                           }) => {
                             return (
-                              <CTokenIcon
+                              <TokenIcon
                                 key={cToken}
                                 address={underlyingToken}
                                 chainId={data.chainId}
