@@ -24,7 +24,7 @@ import { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -88,7 +88,7 @@ const AddAsset = ({
       <VStack px={4} width="100%">
         <VStack>
           {tokenData && poolData && (
-            <CTokenIcon size="lg" address={tokenData.address} chainId={poolData.chainId} my={4} />
+            <TokenIcon size="lg" address={tokenData.address} chainId={poolData.chainId} my={4} />
           )}
           <Heading as="h1" size="lg">
             {error && 'Invalid Address!'}
@@ -150,7 +150,7 @@ const AddAsset = ({
                 return (
                   <WrapItem key={index}>
                     <Button variant="_solid" px={2}>
-                      <CTokenIcon
+                      <TokenIcon
                         size="sm"
                         address={asset.underlyingToken}
                         chainId={poolData.chainId}
@@ -208,7 +208,7 @@ const AddAsset = ({
                       height="max-content"
                     >
                       <Flex direction="row" alignContent="center" py={2}>
-                        <CTokenIcon address={asset.underlying} chainId={poolData.chainId} />
+                        <TokenIcon address={asset.underlying} chainId={poolData.chainId} />
                         <Flex ml={6} direction="column">
                           <Text variant="lgText" textAlign="left">
                             {asset.symbol}

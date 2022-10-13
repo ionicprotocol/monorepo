@@ -27,7 +27,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
@@ -332,7 +332,7 @@ const AmountSelect = ({
             flexShrink={0}
           >
             <Box height="36px" width="36px">
-              <CTokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
+              <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
             </Box>
             <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
               {tokenData?.symbol || asset.underlyingSymbol}
@@ -922,7 +922,7 @@ const TokenNameAndMaxButton = ({
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
         <Box height={8} width={8} mr={1}>
-          <CTokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
+          <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
         </Box>
         <Text variant="mdText" fontWeight="bold" mr={2} flexShrink={0}>
           {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}

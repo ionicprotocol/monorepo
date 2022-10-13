@@ -1,7 +1,7 @@
 import { AvatarGroup, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { SupportedChains } from '@midas-capital/types';
 
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { ALL } from '@ui/constants/index';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
@@ -45,7 +45,7 @@ export const PoolName = ({
           <Text>This pool is offering rewards</Text>
           <AvatarGroup size="xs" max={5}>
             {rewardTokens.map((token) => (
-              <CTokenIcon key={token} address={token} chainId={pool.chainId} />
+              <TokenIcon key={token} address={token} chainId={pool.chainId} />
             ))}
           </AvatarGroup>
         </HStack>

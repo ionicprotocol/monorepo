@@ -29,7 +29,7 @@ import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/Whit
 import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
@@ -426,7 +426,7 @@ const PoolConfiguration = ({
                 <AvatarGroup size="sm" max={30}>
                   {assets.map(({ underlyingToken, cToken }) => {
                     return (
-                      <CTokenIcon key={cToken} address={underlyingToken} chainId={poolChainId} />
+                      <TokenIcon key={cToken} address={underlyingToken} chainId={poolChainId} />
                     );
                   })}
                 </AvatarGroup>

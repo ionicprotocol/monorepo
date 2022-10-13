@@ -31,9 +31,11 @@ export const RewardsInfo = ({
   const { data: pluginInfo } = usePluginInfo(poolChainId, pluginAddress);
 
   return (
-    <HStack key={rewardAddress} justifyContent={'flex-end'} spacing={0}>
+    <HStack justifyContent={'flex-end'} spacing={0}>
       <HStack mr={2}>
-        <Text variant="smText">+</Text>
+        <Text variant="smText" mr={-1}>
+          +
+        </Text>
         <PopoverTooltip
           placement={'top-start'}
           body={
@@ -71,13 +73,9 @@ export const RewardsInfo = ({
           }
         >
           <HStack>
-            {rewardAddress ? (
-              <TokenWithLabel address={rewardAddress} poolChainId={poolChainId} size="2xs" />
-            ) : (
-              <span role="img" aria-label="plugin">
-                🔌
-              </span>
-            )}
+            <span role="img" aria-label="plugin">
+              🔌
+            </span>
             {!apyLoading && apyResponse && apyResponse.apy && (
               <Text
                 color={cCard.txtColor}

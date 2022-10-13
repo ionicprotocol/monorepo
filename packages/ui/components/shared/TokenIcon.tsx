@@ -7,6 +7,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
 type PlaceholderIconProps = IconProps;
+
 const PlaceholderIcon = ({ color, ...restOfProps }: PlaceholderIconProps) => {
   return (
     <Icon
@@ -27,19 +28,19 @@ const PlaceholderIcon = ({ color, ...restOfProps }: PlaceholderIconProps) => {
   );
 };
 
-interface CTokenIconProps extends AvatarProps {
+interface TokenIconProps extends AvatarProps {
   address: string;
   chainId: number;
   withTooltip?: boolean;
   withMotion?: boolean;
 }
-export const CTokenIcon = ({
+export const TokenIcon = ({
   address,
   chainId,
   withTooltip = true,
   withMotion = true,
   ...avatarProps
-}: CTokenIconProps) => {
+}: TokenIconProps) => {
   const iconColor = useColorModeValue('#333', '#ddd');
   const { data: tokenData, isLoading } = useTokenData(address, chainId);
 
@@ -60,61 +61,5 @@ export const CTokenIcon = ({
         />
       </SimpleTooltip>
     </motion.div>
-  );
-};
-
-export const TokenWithLabel = ({
-  address,
-  poolChainId,
-  ...avatarProps
-}: {
-  address: string;
-  poolChainId: number;
-} & Partial<AvatarProps>) => {
-  const { data: tokenData, isLoading } = useTokenData(address, poolChainId);
-  const fallbackImage = useColorModeValue(
-    '/images/help-circle-dark.svg',
-    '/images/help-circle-light.svg'
-  );
-
-  return (
-    <Skeleton isLoaded={!isLoading} m={0}>
-      <HStack width={'100%'} alignItems="center" justifyContent={'flex-start'}>
-        <Avatar
-          name={tokenData?.symbol ?? 'Loading...'}
-          src={tokenData?.logoURL || fallbackImage}
-          m={0}
-          {...avatarProps}
-        />
-        {!tokenData && <Text variant="smText">LOAD</Text>}
-        <Text variant="smText">{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
-      </HStack>
-    </Skeleton>
-  );
-};
-
-export const CTokenAvatarGroup = ({
-  tokenAddresses,
-  popOnHover = false,
-  chainId,
-  ...avatarGroupProps
-}: {
-  tokenAddresses: string[];
-  popOnHover: boolean;
-  chainId: number;
-} & Partial<AvatarGroupProps>) => {
-  return (
-    <AvatarGroup size="xs" max={30} {...avatarGroupProps}>
-      {tokenAddresses.map((tokenAddress, index) => {
-        return (
-          <CTokenIcon
-            key={index}
-            address={tokenAddress}
-            chainId={chainId}
-            _hover={popOnHover ? { transform: 'scale(1.2)', zIndex: 5 } : undefined}
-          />
-        );
-      })}
-    </AvatarGroup>
   );
 };

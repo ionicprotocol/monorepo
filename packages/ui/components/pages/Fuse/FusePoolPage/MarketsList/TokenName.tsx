@@ -1,7 +1,7 @@
 import { Badge, Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -43,7 +43,7 @@ export const TokenName = ({
         }
       >
         <Center>
-          <CTokenIcon
+          <TokenIcon
             size="md"
             address={asset.underlyingToken}
             chainId={poolChainId}
