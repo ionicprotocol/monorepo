@@ -14,7 +14,7 @@ import {
 import { useMemo } from 'react';
 
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats/PoolStat';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 import { sortTopBorrowedAssets, sortTopSuppliedAssets } from '@ui/utils/sorts';
@@ -55,7 +55,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                     {asset.totalSupplyFiat > 0 && (
                       <HStack mt={2}>
                         {poolData && (
-                          <CTokenIcon
+                          <TokenIcon
                             size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
@@ -94,7 +94,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                     {asset.totalBorrowFiat > 0 && (
                       <HStack mt={2}>
                         {poolData && (
-                          <CTokenIcon
+                          <TokenIcon
                             size="md"
                             address={asset.underlyingToken}
                             chainId={poolData.chainId}
