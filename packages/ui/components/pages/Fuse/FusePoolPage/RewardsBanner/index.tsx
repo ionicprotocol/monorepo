@@ -1,9 +1,9 @@
 import { Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 
 export const RewardsBanner = ({
   tokens = [],
@@ -24,7 +24,7 @@ export const RewardsBanner = ({
           <Text variant="smText" ml={2}>
             This pool is offering rewards
           </Text>
-          <CTokenAvatarGroup
+          <TokenIconGroup
             tokenAddresses={tokens}
             ml={2}
             mr={2}
