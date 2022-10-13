@@ -10,6 +10,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0xA4B1",
     name: "Arbitrum One",
     shortName: "Arbitrum",
+    uniswapV3Fee: 3000,
     img: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
     blockExplorerUrls: { default: { name: "arbiscan", url: "https://arbiscan.com" } },
     rpcUrls: { default: "https://rpc.ankr.com/arbitrum" },

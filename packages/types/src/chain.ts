@@ -24,6 +24,7 @@ export interface ChainMetadata {
   shortName: string;
   name: string;
   img: string;
+  uniswapV3Fee?: number;
   rpcUrls: { [key: string]: string; default: string };
   blockExplorerUrls: {
     [key: string]: BlockExplorer;
@@ -58,6 +59,7 @@ export type ChainAddresses = {
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
   UNISWAP_V2_ROUTER: string;
   UNISWAP_V2_FACTORY: string;
+  UNISWAP_V3_ROUTER?: string;
   PAIR_INIT_HASH: string;
 };
 
