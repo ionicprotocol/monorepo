@@ -2,15 +2,15 @@ import { ethers } from 'ethers';
 import CTOKEN_ABI from '../abi/CToken.json';
 import FLYWHEEL_ABI from '../abi/FlywheelCore.json';
 import { functionsAlert } from '../alert';
-import { flywheels } from '../assets';
-import { config, supabase, SupportedChains } from '../config';
+import { flywheelsOfChain } from '../assets';
+import { environment, supabase, SupportedChains } from '../config';
 
 const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-    const supportedFlywheels = flywheels[chainId];
+    const flywheels = flywheelsOfChain[chainId];
 
-    for (const flywheel of supportedFlywheels) {
+    for (const flywheel of flywheels) {
       const flywheelContract = new ethers.Contract(flywheel, FLYWHEEL_ABI, provider);
       // Naming is misleading, strategies => enabled markets
       const strategies = await flywheelContract.getAllStrategies();
@@ -33,7 +33,7 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
           }
 
           const index = state['index'];
-          const { error } = await supabase.from(config.supabaseFlywheelTableName).insert([
+          const { error } = await supabase.from(environment.supabaseFlywheelTableName).insert([
             {
               totalAssets: index.toString(),
               totalSupply: totalSupply.toString(),

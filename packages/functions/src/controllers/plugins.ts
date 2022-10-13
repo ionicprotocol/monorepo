@@ -1,16 +1,17 @@
 import { ethers } from 'ethers';
 import ERC4626_ABI from '../abi/ERC4626.json';
 import { functionsAlert } from '../alert';
-import { plugins } from '../assets';
-import { config, supabase, SupportedChains } from '../config';
+import { pluginsOfChain } from '../assets';
+import { environment, supabase, SupportedChains } from '../config';
+import APYProviders from '../providers/apy';
 
 const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
+  const plugins = pluginsOfChain[chainId];
   try {
     const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-    const deployedPlugins = plugins[chainId];
-    for (const plugin of deployedPlugins) {
+    for (const [pluginAddress, pluginData] of Object.entries(plugins)) {
       try {
-        const pluginContract = new ethers.Contract(plugin, ERC4626_ABI, provider);
+        const pluginContract = new ethers.Contract(pluginAddress, ERC4626_ABI, provider);
 
         const [totalSupply, totalAssets, underlyingAsset] = await Promise.all([
           pluginContract.callStatic.totalSupply(), // Total Amount of Vault Shares
@@ -18,16 +19,19 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           pluginContract.callStatic.asset(), // Market Underlying
         ]);
 
+        if (pluginData.strategy && APYProviders[pluginData.strategy]) {
+        }
+
         // Don't save anything if the plugin is empty
         if (totalSupply.eq(0)) {
           continue;
         }
 
-        const { error } = await supabase.from(config.supabasePluginTableName).insert([
+        const { error } = await supabase.from(environment.supabasePluginTableName).insert([
           {
             totalSupply: totalSupply.toString(),
             totalAssets: totalAssets.toString(),
-            pluginAddress: plugin.toLowerCase(),
+            pluginAddress: pluginAddress.toLowerCase(),
             underlyingAddress: underlyingAsset.toLowerCase(),
             chain: chainId,
           },

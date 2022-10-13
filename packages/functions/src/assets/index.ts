@@ -1,8 +1,16 @@
 import { SupportedChains } from '../config';
 import { bscFlywheels, moonbeamFlywheels, polygonFlywheels } from './flywheel';
-import { bscPlugins, moonbeamPlugins, polygonPlugins } from './plugins';
 
-type Assets = {
+import bscDeployedPlugins from '@chains/bsc/plugins';
+import moonbeamDeployedPlugins from '@chains/moonbeam/plugins';
+import polygonDeployedPlugins from '@chains/polygon/plugins';
+import { DeployedPlugins } from '@midas-capital/types';
+
+type ChainToPlugins = {
+  [chain in SupportedChains]: DeployedPlugins;
+};
+
+type ChainToFlywheels = {
   [chain in SupportedChains]: string[];
 };
 
@@ -10,13 +18,13 @@ type RpcUrls = {
   [chain in SupportedChains]: string;
 };
 
-export const plugins: Assets = {
-  [SupportedChains.bsc]: bscPlugins,
-  [SupportedChains.moonbeam]: moonbeamPlugins,
-  [SupportedChains.polygon]: polygonPlugins,
+export const pluginsOfChain: ChainToPlugins = {
+  [SupportedChains.bsc]: bscDeployedPlugins,
+  [SupportedChains.moonbeam]: moonbeamDeployedPlugins,
+  [SupportedChains.polygon]: polygonDeployedPlugins,
 };
 
-export const flywheels: Assets = {
+export const flywheelsOfChain: ChainToFlywheels = {
   [SupportedChains.bsc]: bscFlywheels,
   [SupportedChains.moonbeam]: moonbeamFlywheels,
   [SupportedChains.polygon]: polygonFlywheels,
