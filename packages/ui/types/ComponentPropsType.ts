@@ -230,11 +230,12 @@ export interface TokenDataResponse {
   symbol: string;
 }
 
-export type APYResult =
-  | { apy: number; externalAPY?: number; updatedAt: string }
-  | {
-      error: string;
-    };
+export type APYResult = {
+  apy?: number;
+  externalAPY?: number;
+  updatedAt?: string;
+  error?: string;
+};
 
 export type PoolsPerChainStatus = {
   [chainId: string]: {
