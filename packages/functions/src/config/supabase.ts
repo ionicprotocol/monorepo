@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import config from './variables';
+import environment from './environment';
 
-const supabase = createClient(config.supabaseUrl, config.supabasePublicKey);
+const supabase = createClient(environment.supabaseUrl, environment.supabasePublicKey);
 
 export default supabase;
