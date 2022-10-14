@@ -16,7 +16,6 @@ type CrossChainTVL = Map<
   string,
   {
     value: number;
-    symbol: string;
     name: string;
     logo: string;
   }
@@ -36,7 +35,6 @@ export const useTVL = () => {
           sdks.map(async (sdk) => {
             chainTVLs.set(sdk.chainId.toString(), {
               value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
-              symbol: prices[sdk.chainId.toString()].symbol,
               name: sdk.chainSpecificParams.metadata.name,
               logo: sdk.chainSpecificParams.metadata.img,
             });

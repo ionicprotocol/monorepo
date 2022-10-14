@@ -6,11 +6,13 @@ export const CButton = ({
   children,
   onClick,
   variant,
+  color,
   ...props
 }: {
   isSelected?: boolean;
+  color?: string;
 } & ButtonProps) => {
-  const styles = useStyleConfig('Button', { isSelected, variant });
+  const styles = useStyleConfig('Button', { isSelected, variant, color });
 
   return (
     <Button __css={styles} onClick={onClick} {...props}>
