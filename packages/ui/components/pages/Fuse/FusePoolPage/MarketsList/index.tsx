@@ -476,7 +476,6 @@ export const MarketsList = ({
               onClick={() => onFilter(ALL)}
               disabled={data.length === 0}
               variant="filter"
-              borderWidth="1px"
             >
               <PopoverTooltip
                 body={
@@ -503,6 +502,7 @@ export const MarketsList = ({
                 colorScheme="whatsapp"
                 onClick={() => onFilter(REWARDS)}
                 p={0}
+                borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
                 mr="-px"
                 width="115px"
               >
@@ -559,6 +559,7 @@ export const MarketsList = ({
                 onClick={() => onFilter(COLLATERAL)}
                 width="125px"
                 mr="-px"
+                borderWidth="2px"
               >
                 <PopoverTooltip
                   body={
@@ -590,6 +591,7 @@ export const MarketsList = ({
                 width="135px"
                 p={0}
                 mr="-px"
+                borderWidth="2px"
               >
                 <PopoverTooltip
                   body={
@@ -618,6 +620,7 @@ export const MarketsList = ({
                 onClick={() => onFilter(PROTECTED)}
                 width="125px"
                 mr="-px"
+                borderWidth="2px"
               >
                 <PopoverTooltip
                   body={
@@ -646,7 +649,7 @@ export const MarketsList = ({
                 color="gray"
                 onClick={() => onFilter(DEPRECATED)}
                 width="140px"
-                borderWidth="1px"
+                borderWidth="2px"
               >
                 <PopoverTooltip
                   body={
