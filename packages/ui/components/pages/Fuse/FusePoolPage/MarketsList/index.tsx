@@ -54,6 +54,7 @@ import {
   DEPRECATED,
   DOWN_LIMIT,
   MARKETS_COUNT_PER_PAGE,
+  MIDAS_LOCALSTORAGE_KEYS,
   PROTECTED,
   REWARDS,
   SEARCH,
@@ -88,6 +89,7 @@ export const MarketsList = ({
   supplyBalanceFiat,
   borrowBalanceFiat,
   poolChainId,
+  initSorting,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
@@ -95,6 +97,7 @@ export const MarketsList = ({
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
   poolChainId: number;
+  initSorting: SortingState;
 }) => {
   const sdk = useSdk(poolChainId);
   const { address } = useMultiMidas();
@@ -336,7 +339,7 @@ export const MarketsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewards, comptrollerAddress, totalApy]);
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'market', desc: true }]);
+  const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
@@ -412,6 +415,16 @@ export const MarketsList = ({
     onSearchFiltered();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
+
+  useEffect(() => {
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    let oldObj;
+    if (oldData) {
+      oldObj = JSON.parse(oldData);
+    }
+    const data = { ...oldObj, marketSorting: sorting };
+    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+  }, [sorting]);
 
   return (
     <Box>

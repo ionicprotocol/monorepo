@@ -366,7 +366,12 @@ const PoolsRowList = ({
 
   useEffect(() => {
     if (mounted.current) {
-      const data = { searchText, globalFilter, sorting };
+      const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+      let oldObj;
+      if (oldData) {
+        oldObj = JSON.parse(oldData);
+      }
+      const data = { ...oldObj, searchText, globalFilter, sorting };
       localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
   }, [searchText, globalFilter, sorting]);
