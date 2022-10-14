@@ -507,7 +507,7 @@ export const MarketsList = ({
         justifyContent="space-between"
         px="4"
         py="8"
-        flexDirection={{ base: 'column', sm: 'row' }}
+        flexDirection={{ base: 'column', md: 'row' }}
         gap={4}
       >
         <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
@@ -516,12 +516,13 @@ export const MarketsList = ({
           </Text>
           <Grid
             templateColumns={{
-              base: 'repeat(1, 1fr)',
+              base: 'repeat(2, 1fr)',
               sm: 'repeat(2, 1fr)',
               md: 'repeat(2, 1fr)',
               lg: 'repeat(5, 1fr)',
             }}
             gap={2}
+            width="max-content"
           >
             <PopoverTooltip
               body={
@@ -646,7 +647,7 @@ export const MarketsList = ({
             )}
           </Grid>
         </Flex>
-        <Flex className="searchAsset" justifyContent="flex-end" alignItems="flex-end">
+        <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end">
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
         </Flex>
       </Flex>
@@ -831,14 +832,14 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
   };
 
   return (
-    <HStack>
+    <HStack width="100%">
       {!isMobile && <Text>Search</Text>}
       <Input
         type="text"
         value={searchText}
         onChange={onSearch}
         placeholder="Symbol, Token Name"
-        maxWidth={60}
+        maxWidth={{ base: '100%', lg: 60, md: 60, sm: 290 }}
         _focusVisible={{}}
       />
     </HStack>
