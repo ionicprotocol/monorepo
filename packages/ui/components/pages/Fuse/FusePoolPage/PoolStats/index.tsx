@@ -64,7 +64,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                 {topSuppliedAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
                     {asset.totalSupplyFiat > 0 && (
-                      <HStack mt={2}>
+                      <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
                             size="md"
@@ -73,7 +73,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           />
                         )}
                         <Box ml="3">
-                          <Text fontWeight="bold">{smallUsdFormatter(asset.totalSupplyFiat)}</Text>
+                          <Text fontWeight="bold" mt={1}>
+                            {smallUsdFormatter(asset.totalSupplyFiat)}
+                          </Text>
                           <Text>{asset.underlyingSymbol}</Text>
                         </Box>
                       </HStack>
@@ -103,7 +105,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                 {topBorrowedAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
                     {asset.totalBorrowFiat > 0 && (
-                      <HStack mt={2}>
+                      <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
                             size="md"
@@ -112,7 +114,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           />
                         )}
                         <Box ml="3">
-                          <Text fontWeight="bold">{smallUsdFormatter(asset.totalBorrowFiat)}</Text>
+                          <Text fontWeight="bold" mt={1}>
+                            {smallUsdFormatter(asset.totalBorrowFiat)}
+                          </Text>
                           <Text>{asset.underlyingSymbol}</Text>
                         </Box>
                       </HStack>
@@ -143,7 +147,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                 {topLiquidityAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
                     {asset.liquidityFiat > 0 && (
-                      <HStack mt={2}>
+                      <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
                             size="md"
@@ -152,7 +156,9 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           />
                         )}
                         <Box ml="3">
-                          <Text fontWeight="bold">{smallUsdFormatter(asset.liquidityFiat)}</Text>
+                          <Text fontWeight="bold" mt={1}>
+                            {smallUsdFormatter(asset.liquidityFiat)}
+                          </Text>
                           <Text>{asset.underlyingSymbol}</Text>
                         </Box>
                       </HStack>
@@ -183,7 +189,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                 {topUtilizationAssets.slice(0, 3).map((asset, index) => (
                   <Flex key={index}>
                     {asset.utilization > 0 && (
-                      <HStack mt={2}>
+                      <HStack mt={1}>
                         {poolData && (
                           <TokenIcon
                             size="md"
@@ -195,6 +201,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           <Text fontWeight="bold" mt={1}>
                             {midFormat(asset.utilization)}%
                           </Text>
+                          <Text>{asset.underlyingSymbol}</Text>
                         </Box>
                       </HStack>
                     )}
