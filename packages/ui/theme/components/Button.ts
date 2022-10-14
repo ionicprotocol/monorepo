@@ -55,18 +55,45 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
     }),
     filter: (props) => ({
       ...theme.components.Button.variants?.solid,
-      bg: props.isSelected ? mode('ecru', 'ecru')(props) : mode('whiteBg', 'raisinBlack')(props),
+      bg: props.isSelected
+        ? mode(
+            props.color ? `${props.color}.500` : 'ecru',
+            props.color ? `${props.color}.200` : 'ecru'
+          )(props)
+        : mode('whiteBg', 'raisinBlack')(props),
       color: props.isSelected
-        ? mode('raisinBlack', 'raisinBlack')(props)
-        : mode('gunmetal', 'ecru')(props),
+        ? mode(props.color ? 'whiteBg' : 'raisinBlack', 'raisinBlack')(props)
+        : mode(
+            props.color ? `${props.color}.600` : 'gunmetal',
+            props.color ? `${props.color}.200` : 'ecru'
+          )(props),
       borderWidth: 2,
-      borderColor: mode('ecru', 'ecru')(props),
+      borderColor: mode(
+        props.color ? `${props.color}.600` : 'ecru',
+        props.color ? `${props.color}.200` : 'ecru'
+      )(props),
       mr: '-px',
       _active: { opacity: 0.8 },
       _hover: {
-        bg: props.isSelected ? mode('ecru', 'ecru')(props) : mode('ecru80', 'ecru80')(props),
-        color: mode('raisinBlack', 'raisinBlack')(props),
-        borderColor: mode('ecru', 'ecru')(props),
+        bg: props.isSelected
+          ? mode(
+              props.color ? `${props.color}.600` : 'ecru80alpha',
+              props.color ? `${props.color}.300` : 'ecru80alpha'
+            )(props)
+          : mode(
+              props.color ? `${props.color}.200` : 'ecru80alpha',
+              props.color ? `${props.color}.700` : 'ecru80alpha'
+            )(props),
+        color: props.isSelected
+          ? mode('whiteBg', 'raisinBlack')(props)
+          : mode(
+              props.color ? `${props.color}.600` : 'raisinBlack',
+              props.color ? `${props.color}.200` : 'raisinBlack'
+            )(props),
+        borderColor: mode(
+          props.color ? `${props.color}.500` : 'ecru',
+          props.color ? `${props.color}.200` : 'ecru'
+        )(props),
       },
     }),
     _link: (props) => ({
