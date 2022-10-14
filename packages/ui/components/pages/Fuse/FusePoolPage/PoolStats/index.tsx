@@ -16,17 +16,28 @@ import { useMemo } from 'react';
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats/PoolStat';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { PoolData } from '@ui/types/TokensDataMap';
-import { midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
-import { sortTopBorrowedAssets, sortTopSuppliedAssets } from '@ui/utils/sorts';
+import { midFormat, midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import {
+  sortTopBorrowedAssets,
+  sortTopLiquidityAssets,
+  sortTopSuppliedAssets,
+  sortTopUtilizationAssets,
+} from '@ui/utils/sorts';
 
 export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined }) => {
-  const [topBorrowedAssets, topSuppliedAssets] = useMemo(() => {
-    if (poolData && poolData.assets.length > 0) {
-      return [sortTopBorrowedAssets(poolData.assets), sortTopSuppliedAssets(poolData.assets)];
-    } else {
-      return [[], []];
-    }
-  }, [poolData]);
+  const [topBorrowedAssets, topSuppliedAssets, topLiquidityAssets, topUtilizationAssets] =
+    useMemo(() => {
+      if (poolData && poolData.assets.length > 0) {
+        return [
+          sortTopBorrowedAssets(poolData.assets),
+          sortTopSuppliedAssets(poolData.assets),
+          sortTopLiquidityAssets(poolData.assets),
+          sortTopUtilizationAssets(poolData.assets),
+        ];
+      } else {
+        return [[], [], [], []];
+      }
+    }, [poolData]);
 
   return (
     <Grid
@@ -45,7 +56,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
           </Flex>
         </PopoverTrigger>
         {topSuppliedAssets.length > 0 && topSuppliedAssets[0].totalSupplyFiat > 0 && (
-          <PopoverContent p={2}>
+          <PopoverContent p={2} width="fit-content">
             <PopoverArrow />
             <PopoverBody>
               <VStack width={'100%'} alignItems="flex-start" spacing={0}>
@@ -84,7 +95,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
           </Flex>
         </PopoverTrigger>
         {topBorrowedAssets.length > 0 && topBorrowedAssets[0].totalBorrowFiat > 0 && (
-          <PopoverContent p={2}>
+          <PopoverContent p={2} width="fit-content">
             <PopoverArrow />
             <PopoverBody>
               <VStack width={'100%'} alignItems="flex-start" spacing={0}>
@@ -114,14 +125,86 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         )}
       </Popover>
 
-      <PoolStat
-        label="Liquidity"
-        value={poolData ? midUsdFormatter(poolData?.totalAvailableLiquidityFiat) : undefined}
-      />
-      <PoolStat
-        label="Utilization"
-        value={poolData ? poolData.utilization.toFixed(2) + '%' : undefined}
-      />
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <Flex>
+            <PoolStat
+              label="Liquidity"
+              value={poolData ? midUsdFormatter(poolData?.totalAvailableLiquidityFiat) : undefined}
+            />
+          </Flex>
+        </PopoverTrigger>
+        {topLiquidityAssets.length > 0 && topLiquidityAssets[0].liquidityFiat > 0 && (
+          <PopoverContent p={2} width="fit-content">
+            <PopoverArrow />
+            <PopoverBody>
+              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+                <Text fontWeight="bold">Top liquidity assets</Text>
+                {topLiquidityAssets.slice(0, 3).map((asset, index) => (
+                  <Flex key={index}>
+                    {asset.liquidityFiat > 0 && (
+                      <HStack mt={2}>
+                        {poolData && (
+                          <TokenIcon
+                            size="md"
+                            address={asset.underlyingToken}
+                            chainId={poolData.chainId}
+                          />
+                        )}
+                        <Box ml="3">
+                          <Text fontWeight="bold">{smallUsdFormatter(asset.liquidityFiat)}</Text>
+                          <Text>{asset.underlyingSymbol}</Text>
+                        </Box>
+                      </HStack>
+                    )}
+                  </Flex>
+                ))}
+              </VStack>
+            </PopoverBody>
+          </PopoverContent>
+        )}
+      </Popover>
+
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <Flex>
+            <PoolStat
+              label="Utilization"
+              value={poolData ? poolData.utilization.toFixed(2) + '%' : undefined}
+            />
+          </Flex>
+        </PopoverTrigger>
+        {topUtilizationAssets.length > 0 && topUtilizationAssets[0].utilization > 0 && (
+          <PopoverContent p={2} width="fit-content">
+            <PopoverArrow />
+            <PopoverBody>
+              <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+                <Text fontWeight="bold">Top utilization assets</Text>
+                {topUtilizationAssets.slice(0, 3).map((asset, index) => (
+                  <Flex key={index}>
+                    {asset.utilization > 0 && (
+                      <HStack mt={2}>
+                        {poolData && (
+                          <TokenIcon
+                            size="md"
+                            address={asset.underlyingToken}
+                            chainId={poolData.chainId}
+                          />
+                        )}
+                        <Box ml="3">
+                          <Text fontWeight="bold" mt={1}>
+                            {midFormat(asset.utilization)}%
+                          </Text>
+                        </Box>
+                      </HStack>
+                    )}
+                  </Flex>
+                ))}
+              </VStack>
+            </PopoverBody>
+          </PopoverContent>
+        )}
+      </Popover>
     </Grid>
   );
 };
