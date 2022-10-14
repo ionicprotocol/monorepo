@@ -16,7 +16,7 @@ describe("Oracle", () => {
   });
 
   describe("getOracleRating", () => {
-    it.only("should fetch oracle rating for bsc", async () => {
+    it("should fetch oracle rating for bsc", async () => {
       const ratings = await oracleArbitrum.getUniswapV3OracleRating();
       console.log(ratings);
     });

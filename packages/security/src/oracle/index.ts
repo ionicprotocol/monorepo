@@ -1,2 +1,1 @@
-export { withChainLinkOracleScorer } from "./scorers";
-export { withUniswapV3OracleScorer } from "./scorers";
+export { withChainLinkOracleScorer, withUniswapV3OracleScorer } from "./scorers";
