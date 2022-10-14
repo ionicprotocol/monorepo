@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Flex,
   Link,
   Modal,
   ModalCloseButton,
@@ -11,17 +12,21 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { TransactionResponse } from '@ethersproject/providers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
-  const { pendingTxHashes, midasSdk, scanUrl, disconnect, address } = useMidas();
+  const { pendingTxHashes, currentSdk, currentChain, disconnect, address } = useMultiMidas();
+  const scanUrl = useMemo(() => {
+    if (currentChain) return getScanUrlByChainId(currentChain.id);
+  }, [currentChain]);
   const { cCard } = useColors();
   const {
     isOpen: isConnectWalletModalOpen,
@@ -43,18 +48,20 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 
   useEffect(() => {
     const func = async () => {
-      const info = await Promise.all(
-        pendingTxHashes.map(async (hash) => {
-          return await midasSdk.provider.getTransaction(hash);
-        })
-      );
-      setTxInfo(info);
+      if (currentSdk) {
+        const info = await Promise.all(
+          pendingTxHashes.map(async (hash) => {
+            return await currentSdk.provider.getTransaction(hash);
+          })
+        );
+        setTxInfo(info);
+      }
     };
 
-    if (pendingTxHashes.length) {
+    if (pendingTxHashes.length > 0 && currentSdk) {
       func();
     }
-  }, [pendingTxHashes, midasSdk]);
+  }, [pendingTxHashes, currentSdk]);
 
   return (
     <>
@@ -68,19 +75,21 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader display="flex" alignItems="baseline">
-            Account
-            <Text fontSize={20} fontWeight="light" ml={2}>
-              {`( ${shortAddress(address, 6, 4)} )`}
-            </Text>
+          <ModalHeader>
+            <Flex display="flex" alignItems="baseline">
+              <Text variant="title">Account</Text>
+              <Text variant="mdText" ml={2}>
+                {`( ${address && shortAddress(address, 6, 4)} )`}
+              </Text>
+            </Flex>
           </ModalHeader>
           <ModalCloseButton top={4} />
           <ModalDivider />
           <Column width="100%" mainAxisAlignment="flex-start" crossAxisAlignment="center" p={4}>
-            <Button width="100%" size="lg" onClick={onSwitchWallet} mb={4}>
+            <Button width="100%" onClick={onSwitchWallet} mb={4}>
               Switch Wallet
             </Button>
-            <Button width="100%" variant="silver" size="lg" onClick={handleDisconnectClick} mb={4}>
+            <Button width="100%" variant="silver" onClick={handleDisconnectClick} mb={4}>
               Disconnect
             </Button>
             <Column

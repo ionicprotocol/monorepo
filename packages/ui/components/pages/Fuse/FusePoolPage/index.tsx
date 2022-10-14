@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Heading, HStack, Skeleton } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Skeleton, Text } from '@chakra-ui/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
@@ -11,22 +11,26 @@ import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MidasBox } from '@ui/components/shared/Box';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
-import { useMidas } from '@ui/context/MidasContext';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { SHRINK_ASSETS } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const FusePoolPage = memo(() => {
-  const { setLoading } = useMidas();
+  const { setGlobalLoading } = useMultiMidas();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const { data } = useFusePoolData(poolId);
-  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller);
-  const rewardTokens = useRewardTokensOfPool(data?.comptroller);
+  const chainId = router.query.chainId as string;
+  const { data } = useFusePoolData(poolId, Number(chainId));
+  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller, data?.chainId);
+  const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
+  const isMobile = useIsMobile();
 
   return (
     <>
@@ -44,31 +48,68 @@ const FusePoolPage = memo(() => {
               fontWeight="extrabold"
               cursor="pointer"
               onClick={() => {
-                setLoading(true);
+                setGlobalLoading(true);
                 router.back();
               }}
             />
             {data ? (
-              <Heading textAlign="left" fontSize="xl" fontWeight="bold">
+              <Text textAlign="left" variant="title" fontWeight="bold">
                 {data.name}
-              </Heading>
+              </Text>
             ) : (
               <Skeleton>Pool Name</Skeleton>
             )}
-            {data?.assets && data?.assets?.length > 0 ? (
-              <>
+            {data?.assets && data.assets.length > 0 ? (
+              <HStack spacing={0}>
                 <AvatarGroup size="sm" max={30}>
-                  {data?.assets.map(
-                    ({ underlyingToken, cToken }: { underlyingToken: string; cToken: string }) => {
-                      return <CTokenIcon key={cToken} address={underlyingToken} />;
-                    }
-                  )}
+                  {!isMobile
+                    ? data.assets.map(
+                        ({
+                          underlyingToken,
+                          cToken,
+                        }: {
+                          underlyingToken: string;
+                          cToken: string;
+                        }) => (
+                          <TokenIcon
+                            key={cToken}
+                            address={underlyingToken}
+                            chainId={data.chainId}
+                          />
+                        )
+                      )
+                    : data.assets
+                        .slice(0, SHRINK_ASSETS)
+                        .map(
+                          ({
+                            underlyingToken,
+                            cToken,
+                          }: {
+                            underlyingToken: string;
+                            cToken: string;
+                          }) => {
+                            return (
+                              <TokenIcon
+                                key={cToken}
+                                address={underlyingToken}
+                                chainId={data.chainId}
+                              />
+                            );
+                          }
+                        )}
                 </AvatarGroup>
-              </>
+                {isMobile && data.assets.length > SHRINK_ASSETS && (
+                  <Text fontWeight="bold" pt={1}>
+                    +{data.assets.length - SHRINK_ASSETS}
+                  </Text>
+                )}
+              </HStack>
             ) : null}
           </HStack>
 
-          {rewardTokens.length > 0 && <RewardsBanner tokens={rewardTokens} />}
+          {rewardTokens.length > 0 && data && (
+            <RewardsBanner tokens={rewardTokens} poolChainId={data.chainId} />
+          )}
 
           <PoolStats poolData={data} />
 
@@ -76,6 +117,7 @@ const FusePoolPage = memo(() => {
             <CollateralRatioBar
               assets={data.assets}
               borrowFiat={data.totalBorrowBalanceFiat}
+              poolChainId={data.chainId}
               mb={4}
             />
           )}
@@ -88,6 +130,7 @@ const FusePoolPage = memo(() => {
                 comptrollerAddress={data.comptroller}
                 supplyBalanceFiat={data.totalSupplyBalanceFiat}
                 borrowBalanceFiat={data.totalBorrowBalanceFiat}
+                poolChainId={data.chainId}
               />
             ) : (
               <TableSkeleton tableHeading="Assets" />

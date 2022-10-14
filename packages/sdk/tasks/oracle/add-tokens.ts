@@ -11,27 +11,15 @@ task("oracle:add-tokens", "Initialize MasterPriceOracle with underlying oracle f
 
     const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, deployer);
     const underlyingTokens = _underlyings.split(",");
+    const underlyingOracleInput = _oracles.split(",");
 
     let underlyingOracles: Array<string>;
-
-    if (!_oracles) {
-      // by default, get uniswap's twap oracle address
-      const uniOracleFactory = await ethers.getContractAt(
-        "UniswapTwapPriceOracleV2Factory",
-        sdk.chainDeployment.UniswapTwapPriceOracleV2Factory.address,
-        deployer
-      );
-      const underlyingOracle = await uniOracleFactory.callStatic.oracles(
-        sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-        sdk.chainSpecificAddresses.W_TOKEN
-      );
-      underlyingOracles = Array(underlyingTokens.length).fill(underlyingOracle);
+    if (underlyingOracleInput.length === 1) {
+      underlyingOracles = Array(underlyingTokens.length).fill(underlyingOracleInput[0]);
     } else {
-      underlyingOracles = _oracles.split(",");
-      if (underlyingOracles.length === 1) {
-        underlyingOracles = Array(underlyingTokens.length).fill(underlyingOracles[0]);
-      }
+      underlyingOracles = underlyingOracleInput;
     }
+
     const tx = await mpo.add(underlyingTokens, underlyingOracles);
     await tx.wait();
     console.log(`Master Price Oracle updated for tokens ${underlyingTokens.join(", ")}`);

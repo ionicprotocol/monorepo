@@ -82,10 +82,19 @@ export type GelatoGUniAsset = {
   vaultAddress: string;
 };
 
+export type BalancerLpAsset = {
+  lpTokenAddress: string;
+};
+
 export type CurvePoolConfig = {
   lpToken: string;
   pool: string;
   underlyings: string[];
+};
+
+export type CurveV2PoolConfig = {
+  lpToken: string;
+  pool: string;
 };
 
 export type ChainDeployFnParams = {
@@ -134,11 +143,29 @@ export type CurveLpFnParams = ChainDeployFnParams & {
   curvePools: CurvePoolConfig[];
 };
 
+export type CurveV2LpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  curveV2Pools: CurveV2PoolConfig[];
+};
+
+export type DiaStDotFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+};
+
+export type BalancerLpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  balancerLpAssets: BalancerLpAsset[];
+};
+
 export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
 export type aBNBcDeployParams = ChainDeployFnParams & {
+  assets: SupportedAsset[];
+};
+
+export type stkBNBOracleDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
 };
 

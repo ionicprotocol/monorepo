@@ -34,7 +34,6 @@ import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
@@ -42,8 +41,11 @@ import {
   COLLATERAL_FACTOR_TOOLTIP,
   RESERVE_FACTOR,
 } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -93,17 +95,25 @@ interface AssetSettingsProps {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
   tokenData: TokenData;
+  poolChainId: number;
 }
 
-export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettingsProps) => {
+export const AssetSettings = ({
+  comptrollerAddress,
+  selectedAsset,
+  poolChainId,
+}: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { midasSdk, setPendingTxHash } = useMidas();
+  const { currentSdk, setPendingTxHash, currentChain } = useMultiMidas();
+  const sdk = useSdk(poolChainId);
+
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();
-  const { cCard, cSelect, cSwitch } = useColors();
+  const { cCard, cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-
+  const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const {
     control,
     handleSubmit,
@@ -116,7 +126,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
       collateralFactor: COLLATERAL_FACTOR.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
-      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
+      interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
     },
   });
 
@@ -125,12 +135,12 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
   const watchInterestRateModel = watch(
     'interestRateModel',
-    midasSdk.chainDeployment.JumpRateModel.address
+    sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
 
-  const { data: pluginInfo } = usePluginInfo(selectedAsset.plugin);
+  const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
-  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress);
+  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   useEffect(() => {
     if (cTokenData) {
       setValue(
@@ -144,9 +154,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   }, [cTokenData, setValue]);
 
   const updateCollateralFactor = async ({ collateralFactor }: { collateralFactor: number }) => {
-    if (!cTokenAddress) return;
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
@@ -179,8 +189,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = midasSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCToken(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -206,8 +217,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = midasSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCToken(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -233,8 +245,9 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = midasSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCToken(cTokenAddress || '');
 
     try {
       const tx: ContractTransaction = await testForCTokenErrorAndSend(
@@ -257,13 +270,10 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
   };
 
   const setBorrowingStatus = async () => {
-    if (!cTokenAddress) {
-      console.warn('No cTokenAddress');
-      return;
-    }
+    if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
@@ -322,8 +332,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             py={4}
             alignItems="center"
           >
-            <Text fontWeight="bold">
-              Borrowing Possibility{' '}
+            <HStack>
+              <Text variant="smText">Borrowing Possibility </Text>
               <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
                 <QuestionIcon
                   color={cCard.txtColor}
@@ -333,16 +343,16 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                   mb="4px"
                 />
               </SimpleTooltip>
-            </Text>
+            </HStack>
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
-              <SwitchCSS symbol="borrowing" color={cSwitch.bgColor} />
               <Switch
                 ml="auto"
                 h="20px"
                 isChecked={!isPaused}
                 onChange={setBorrowingStatus}
                 className="switch-borrowing"
+                isDisabled={!isEditableAdmin}
               />
             </Row>
           </Flex>
@@ -364,8 +374,10 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 alignItems="center"
               >
                 <FormLabel htmlFor="collateralFactor" margin={0}>
-                  <Text fontWeight="bold" width="max-content">
-                    Collateral Factor{' '}
+                  <HStack>
+                    <Text variant="smText" width="max-content">
+                      Collateral Factor{' '}
+                    </Text>
                     <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
@@ -375,7 +387,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         mb="4px"
                       />
                     </SimpleTooltip>
-                  </Text>
+                  </HStack>
                 </FormLabel>
                 <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -402,6 +414,11 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
                       />
                     )}
                   />
@@ -445,8 +462,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 alignItems="center"
               >
                 <FormLabel htmlFor="reserveFactor" margin={0}>
-                  <Text fontWeight="bold">
-                    Reserve Factor{' '}
+                  <HStack>
+                    <Text variant="smText">Reserve Factor </Text>
                     <SimpleTooltip
                       label={
                         "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
@@ -460,7 +477,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         mb="4px"
                       />
                     </SimpleTooltip>
-                  </Text>
+                  </HStack>
                 </FormLabel>
                 <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -487,6 +504,11 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
                       />
                     )}
                   />
@@ -526,8 +548,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                 alignItems="center"
               >
                 <FormLabel htmlFor="adminFee" margin={0}>
-                  <Text fontWeight="bold">
-                    Admin Fee{' '}
+                  <HStack>
+                    <Text variant="smText">Admin Fee </Text>{' '}
                     <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
@@ -537,7 +559,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         mb="4px"
                       />
                     </SimpleTooltip>
-                  </Text>
+                  </HStack>
                 </FormLabel>
                 <Spacer />
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -564,6 +586,11 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                         reff={ref}
                         onChange={onChange}
                         mt={{ base: 2, sm: 0 }}
+                        isDisabled={
+                          !poolInfo?.isPowerfulAdmin ||
+                          !currentChain ||
+                          currentChain.id !== poolChainId
+                        }
                       />
                     )}
                   />
@@ -592,7 +619,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
               <Box>
                 <HStack>
-                  <Text fontWeight="bold">Rewards Plugin </Text>
+                  <Text variant="smText">Rewards Plugin </Text>
                   <PopoverTooltip
                     body={
                       <>
@@ -645,8 +672,8 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                   alignItems="center"
                 >
                   <FormLabel htmlFor="interestRateModel" margin={0}>
-                    <Text fontWeight="bold">
-                      Interest Model{' '}
+                    <HStack>
+                      <Text variant="smText">Interest Model </Text>
                       <SimpleTooltip
                         label={
                           'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
@@ -660,7 +687,7 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                           mb="4px"
                         />
                       </SimpleTooltip>
-                    </Text>
+                    </HStack>
                   </FormLabel>
                   <Spacer />
                   <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="center">
@@ -672,15 +699,16 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
                       ml="auto"
                       cursor="pointer"
                       mt={{ base: 2, sm: 0 }}
+                      isDisabled={!isEditableAdmin}
                     >
                       <option
-                        value={midasSdk.chainDeployment.JumpRateModel.address}
+                        value={sdk ? sdk.chainDeployment.JumpRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
                       >
                         JumpRateModel
                       </option>
                       <option
-                        value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
+                        value={sdk ? sdk.chainDeployment.WhitePaperInterestRateModel.address : ''}
                         style={{ color: cSelect.txtColor }}
                       >
                         WhitePaperInterestRateModel
@@ -715,9 +743,14 @@ export const AssetSettings = ({ comptrollerAddress, selectedAsset }: AssetSettin
             adminFee={watchAdminFee}
             reserveFactor={watchReserveFactor}
             interestRateModelAddress={watchInterestRateModel}
+            poolChainId={poolChainId}
           />
           <ConfigRow>
-            <RemoveAssetButton comptrollerAddress={comptrollerAddress} asset={selectedAsset} />
+            <RemoveAssetButton
+              comptrollerAddress={comptrollerAddress}
+              asset={selectedAsset}
+              poolChainId={poolChainId}
+            />
           </ConfigRow>
         </>
       )}

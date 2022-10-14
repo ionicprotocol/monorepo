@@ -42,13 +42,13 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     const cToken = await sdk.createCErc20PluginRewardsDelegate(marketAddress);
 
     const cTokenImplementation = await cToken.callStatic.implementation();
-    console.log({ marketAddress, cTokenImplementation });
+    console.log({ underlyingAddress, marketAddress, cTokenImplementation });
     const deployArgs = [underlyingAddress, ...pluginExtraParams];
 
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
     const artifact = await deployments.getArtifact(contractName);
-    const deployment = await deployments.deploy(`${contractName}_${symbol}_${underlyingAddress}`, {
+    const deployment = await deployments.deploy(`${contractName}_${symbol}_${marketAddress}`, {
       contract: artifact,
       from: signer.address,
       proxy: {
@@ -70,11 +70,18 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     const pluginAddress = deployment.address;
 
     console.log(`Plugin deployed successfully: ${pluginAddress}`);
+
     const plugin = await ethers.getContractAt(contractName, pluginAddress, signer);
+    const pluginAsset = await plugin.callStatic.asset();
 
+    console.log(`Plugin asset: ${pluginAsset}`);
+
+    if (pluginAsset !== underlyingAddress) {
+      throw new Error(`Plugin asset: ${pluginAsset} does not match underlying asset: ${underlyingAddress}`);
+    }
     console.log({ pluginAddress: plugin.address });
-    // STEP 2: whitelist plugins
 
+    // STEP 2: whitelist plugins
     console.log(`Whitelisting plugin: ${pluginAddress} ...`);
     await run("plugin:whitelist", {
       oldImplementation: pluginAddress,

@@ -3,7 +3,6 @@ import {
   Box,
   Flex,
   FlexProps,
-  Heading,
   HStack,
   Link,
   Popover,
@@ -18,6 +17,7 @@ import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import FuseDashNav from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   MIDAS_DISCORD_URL,
@@ -36,7 +36,7 @@ const FuseStatsBar = () => {
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
-      return Object.values(tvlData).reduce((a, c) => a + c.value, 0);
+      return [...tvlData.values()].reduce((a, c) => a + c.value, 0);
     }
   }, [tvlData]);
   const { cPage } = useColors();
@@ -50,7 +50,7 @@ const FuseStatsBar = () => {
       alignItems="flex-end"
       justifyContent="center"
       pt={{ base: '72px', md: '0px' }}
-      pb={{ base: '72px', md: '72px' }}
+      pb={{ base: 6, md: 6 }}
       px={{ base: 0, lg: 0 }}
       w="100%"
       gridGap="1.5rem"
@@ -61,10 +61,10 @@ const FuseStatsBar = () => {
         fontSize="sm"
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
-        <Heading fontSize="37px" lineHeight="40px" fontWeight="bold">
+        <Text variant="heading" fontWeight="bold">
           Unleash the power of your assets
-        </Heading>
-        <Text fontSize="18px" lineHeight="31px" my="19px" fontWeight="medium" zIndex="100">
+        </Text>
+        <Text variant="mdText" my={4} zIndex="100" lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
@@ -98,6 +98,8 @@ const FuseStatsBar = () => {
               </motion.div>
             </Link>
           </SimpleTooltip>
+
+          <FuseDashNav />
         </HStack>
       </Flex>
 
@@ -122,23 +124,25 @@ const FuseStatsBar = () => {
               <Spinner />
             ) : (
               <>
-                <Heading fontWeight="extrabold" fontSize={['36px', '48px']} lineHeight={['60px']}>
+                <Text variant="panelHeading" fontWeight="bold" lineHeight={['60px']}>
                   {smallUsdFormatter(totalTVL)}
-                </Heading>
+                </Text>
               </>
             )}
-            <Text whiteSpace="nowrap">Total value supplied across Midas</Text>
+            <Text whiteSpace="nowrap" variant="panelMdText">
+              Total value supplied across Midas
+            </Text>
           </MotionFlex>
         </PopoverTrigger>
         {tvlData && (
           <PopoverContent p={2}>
             <VStack width={'100%'} alignItems="flex-start">
-              {Object.values(tvlData).map((chainTVL, index) => (
+              {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
                     <Text fontWeight="bold">{smallUsdFormatter(chainTVL.value)}</Text>
-                    <Text fontSize="sm">{chainTVL.name}</Text>
+                    <Text>{chainTVL.name}</Text>
                   </Box>
                 </Flex>
               ))}

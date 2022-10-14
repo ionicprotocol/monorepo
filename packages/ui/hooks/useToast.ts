@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 
 const useSuccessToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
-    options = options ? options : {};
+    const _options = options ? options : {};
     return {
       id: 'success',
       title: 'Success!',
@@ -11,7 +11,7 @@ const useSuccessToast = (options?: UseToastOptions) => {
       duration: 5000,
       isClosable: true,
       position: 'top-right',
-      ...options,
+      ..._options,
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);
@@ -19,7 +19,7 @@ const useSuccessToast = (options?: UseToastOptions) => {
 
 const useErrorToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
-    options = options ? options : {};
+    const _options = options ? options : {};
     return {
       id: 'error',
       title: 'Error!',
@@ -27,7 +27,7 @@ const useErrorToast = (options?: UseToastOptions) => {
       duration: 10000,
       isClosable: true,
       position: 'top-right',
-      ...options,
+      ..._options,
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);
@@ -35,7 +35,7 @@ const useErrorToast = (options?: UseToastOptions) => {
 
 const useWarningToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
-    options = options ? options : {};
+    const _options = options ? options : {};
     return {
       id: 'warning',
       title: 'Warning!',
@@ -43,7 +43,7 @@ const useWarningToast = (options?: UseToastOptions) => {
       duration: 10000,
       isClosable: true,
       position: 'top-right',
-      ...options,
+      ..._options,
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);
@@ -51,7 +51,7 @@ const useWarningToast = (options?: UseToastOptions) => {
 
 const useInfoToast = (options?: UseToastOptions) => {
   const allOptions = useMemo(() => {
-    options = options ? options : {};
+    const _options = options ? options : {};
     return {
       id: 'info',
       title: 'Info!',
@@ -59,7 +59,7 @@ const useInfoToast = (options?: UseToastOptions) => {
       duration: 5000,
       isClosable: true,
       position: 'top-right',
-      ...options,
+      ..._options,
     } as UseToastOptions;
   }, [options]);
   return useToast(allOptions);

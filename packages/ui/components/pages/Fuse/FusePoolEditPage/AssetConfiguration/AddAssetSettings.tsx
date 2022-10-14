@@ -30,7 +30,8 @@ import {
   COLLATERAL_FACTOR_TOOLTIP,
   RESERVE_FACTOR,
 } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TokenData } from '@ui/types/ComponentPropsType';
@@ -57,21 +58,26 @@ export const AddAssetSettings = ({
   poolID,
   poolName,
   tokenData,
+  poolChainId,
 }: {
   comptrollerAddress: string;
   onSuccess?: () => void;
   poolID: string;
   poolName: string;
   tokenData: TokenData;
+  poolChainId: number;
 }) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const queryClient = useQueryClient();
   const { cCard, cSelect } = useColors();
+  const { data } = useExtraPoolInfo(comptrollerAddress, poolChainId);
 
   const [isDeploying, setIsDeploying] = useState(false);
   const [isPossible, setIsPossible] = useState<boolean>(true);
+
+  if (!currentSdk) throw new Error("SDK doesn't exist!");
 
   const {
     control,
@@ -85,7 +91,7 @@ export const AddAssetSettings = ({
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
       pluginIndex: -1,
-      interestRateModel: midasSdk.chainDeployment.JumpRateModel.address,
+      interestRateModel: currentSdk.chainDeployment.JumpRateModel.address,
     },
   });
 
@@ -93,7 +99,7 @@ export const AddAssetSettings = ({
   const watchReserveFactor = watch('reserveFactor', RESERVE_FACTOR.DEFAULT);
   const watchInterestRateModel = watch(
     'interestRateModel',
-    midasSdk.chainDeployment.JumpRateModel.address
+    currentSdk.chainDeployment.JumpRateModel.address
   );
 
   const availablePlugins = useMemo(() => [], []);
@@ -102,7 +108,7 @@ export const AddAssetSettings = ({
     const func = async () => {
       setIsPossible(false);
       try {
-        const masterPriceOracle = midasSdk.createMasterPriceOracle();
+        const masterPriceOracle = currentSdk.createMasterPriceOracle();
         const res = await masterPriceOracle.callStatic.oracles(tokenData.address);
         if (res === constants.AddressZero) {
           errorToast({
@@ -120,7 +126,7 @@ export const AddAssetSettings = ({
     };
 
     func();
-  }, [tokenData.address, errorToast, midasSdk]);
+  }, [tokenData.address, errorToast, currentSdk]);
 
   const deploy = async (data: AddAssetFormData) => {
     const { collateralFactor, reserveFactor, adminFee, pluginIndex, interestRateModel } = data;
@@ -137,13 +143,13 @@ export const AddAssetSettings = ({
       reserveFactor: reserveFactor,
       plugin: plugin,
       bypassPriceFeedCheck: true,
-      fuseFeeDistributor: midasSdk.chainDeployment.FuseFeeDistributor.address,
+      fuseFeeDistributor: currentSdk.chainDeployment.FuseFeeDistributor.address,
       symbol: 'f' + tokenData.symbol + '-' + poolID,
       name: poolName + ' ' + tokenData.name,
     };
 
     try {
-      await midasSdk.deployAsset(marketConfig);
+      await currentSdk.deployAsset(marketConfig);
 
       LogRocket.track('Fuse-DeployAsset');
 
@@ -207,6 +213,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
                 />
               )}
             />
@@ -260,6 +269,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
                 />
               )}
             />
@@ -309,6 +321,9 @@ export const AddAssetSettings = ({
                   value={value}
                   reff={ref}
                   onChange={onChange}
+                  isDisabled={
+                    !data?.isPowerfulAdmin || !currentChain || currentChain.id !== poolChainId
+                  }
                 />
               )}
             />
@@ -404,13 +419,13 @@ export const AddAssetSettings = ({
               mt={{ base: 2, md: 0 }}
             >
               <option
-                value={midasSdk.chainDeployment.JumpRateModel.address}
+                value={currentSdk.chainDeployment.JumpRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
                 JumpRateModel
               </option>
               <option
-                value={midasSdk.chainDeployment.WhitePaperInterestRateModel.address}
+                value={currentSdk.chainDeployment.WhitePaperInterestRateModel.address}
                 style={{ color: cSelect.txtColor }}
               >
                 WhitePaperInterestRateModel
@@ -426,6 +441,7 @@ export const AddAssetSettings = ({
         adminFee={watchAdminFee}
         reserveFactor={watchReserveFactor}
         interestRateModelAddress={watchInterestRateModel}
+        poolChainId={poolChainId}
       />
       <Center px={4} mt={4} width="100%">
         <Button

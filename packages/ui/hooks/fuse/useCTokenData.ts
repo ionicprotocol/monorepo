@@ -1,17 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { getComptrollerContract, getCTokenContract } from '@ui/utils/contracts';
 
-export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: string) => {
-  const { midasSdk } = useMidas();
+export const useCTokenData = (
+  comptrollerAddress?: string,
+  cTokenAddress?: string,
+  poolChainId?: number
+) => {
+  const sdk = useSdk(poolChainId);
 
   const { data } = useQuery(
-    ['CTokenData', cTokenAddress, comptrollerAddress],
+    ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
     async () => {
-      if (comptrollerAddress && cTokenAddress) {
-        const comptroller = midasSdk.createComptroller(comptrollerAddress);
-        const cToken = midasSdk.createCToken(cTokenAddress);
-
+      if (comptrollerAddress && cTokenAddress && sdk) {
+        const comptroller = getComptrollerContract(comptrollerAddress, sdk);
+        const cToken = getCTokenContract(cTokenAddress, sdk);
         const [
           adminFeeMantissa,
           reserveFactorMantissa,
@@ -34,7 +38,11 @@ export const useCTokenData = (comptrollerAddress?: string, cTokenAddress?: strin
         return undefined;
       }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!cTokenAddress && !!comptrollerAddress }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
+    }
   );
 
   return data;

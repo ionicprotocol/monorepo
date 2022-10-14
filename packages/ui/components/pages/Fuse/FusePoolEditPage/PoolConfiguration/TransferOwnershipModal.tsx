@@ -13,7 +13,7 @@ import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
@@ -26,7 +26,7 @@ const TransferOwnershipModal = ({
   onClose: () => void;
   comptrollerAddress: string;
 }) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isTransferring, setIsTransferring] = useState<boolean>(false);
@@ -34,11 +34,13 @@ const TransferOwnershipModal = ({
   const [inputAddress, setInputAddress] = useState<string>('');
 
   const transferOwnership = async () => {
+    if (!currentSdk) return;
+
     try {
       setIsTransferring(true);
       const verifiedAddress = utils.getAddress(inputAddress);
 
-      const unitroller = midasSdk.createUnitroller(comptrollerAddress);
+      const unitroller = currentSdk.createUnitroller(comptrollerAddress);
 
       const tx = await unitroller._setPendingAdmin(verifiedAddress);
       await tx.wait();

@@ -10,6 +10,8 @@ import { ModalStyleConfig } from '@ui/theme/components/Modal';
 import { PopoverStyleConfig } from '@ui/theme/components/Popover';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
+import { SwitchConfigStyle } from '@ui/theme/components/Switch';
+import { TextStyleConfig } from '@ui/theme/components/Text';
 import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
 export const COLOR_PALETTE = {
@@ -20,9 +22,13 @@ export const COLOR_PALETTE = {
   grullo30: '#B29E844d',
   ecru: '#BCAC83',
   ecru10: '#373532',
+  ecru10alpha: '#bcac831a',
   ecru20: '#46423b',
+  ecru20alpha: '#bcac8333',
   ecru30: '#4E4A45',
-  ecru80: '#BCAC83cc', // alpha 0.8
+  ecru30alpha: '#bcac834d',
+  ecru80: '#9e9173',
+  ecru80alpha: '#bcac83cc',
   bone: '#EBE6E0',
   white: '#FFFFFF',
   white50: '#FFFFFF80',
@@ -84,6 +90,8 @@ export const theme = extendTheme({
     Stat: StatStyleConfig,
     Tooltip: TooltipStyleConfig,
     Badge: BadgeStyleConfig,
+    Text: TextStyleConfig,
+    Switch: SwitchConfigStyle,
   },
 });
 

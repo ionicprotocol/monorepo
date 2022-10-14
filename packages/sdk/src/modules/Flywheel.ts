@@ -73,10 +73,10 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelsByPool(poolAddress: string): Promise<MidasFlywheel[]> {
-      const comptrollerInstance = this.getComptrollerInstance(poolAddress);
+      const comptrollerInstance = new Contract(poolAddress, this.artifacts.Comptroller.abi, this.provider);
       const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
-        return new Contract(address, this.artifacts.MidasFlywheel.abi, this.signer) as MidasFlywheel;
+        return new Contract(address, this.artifacts.MidasFlywheel.abi, this.provider) as MidasFlywheel;
       });
 
       const filterList = await Promise.all(
@@ -93,12 +93,16 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelRewardsInfos(flywheelAddress: string) {
-      const flywheelCoreInstance = this.createMidasFlywheel(flywheelAddress);
+      const flywheelCoreInstance = new Contract(
+        flywheelAddress,
+        this.artifacts.MidasFlywheel.abi,
+        this.provider
+      ) as MidasFlywheel;
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(),
         flywheelCoreInstance.callStatic.getAllStrategies(),
       ]);
-      const fwStatic = this.createFlywheelStaticRewards(fwStaticAddress);
+      const fwStatic = new Contract(fwStaticAddress, this.artifacts.FlywheelStaticRewards.abi, this.provider);
       const rewardsInfos = {};
       await Promise.all(
         enabledMarkets.map(async (m) => {
@@ -173,27 +177,18 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         .filter((value, index, self) => self.indexOf(value) === index); // Unique Array;
     }
 
-    async getFlywheelMarketRewardsByPoolWithAPR(
-      pool: string,
-      overrides?: CallOverrides
-    ): Promise<FlywheelMarketRewardsInfo[]> {
+    async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
         this.contracts.FuseFlywheelLensRouter as FuseFlywheelLensRouter
-      ).callStatic.getMarketRewardsInfo(pool, overrides);
+      ).callStatic.getMarketRewardsInfo(pool);
 
-      const adaptedMarketRewards = marketRewards.map((marketReward) => ({
-        underlyingPrice: marketReward.underlyingPrice,
-        market: marketReward.market,
-        rewardsInfo: marketReward.rewardsInfo
-          .filter((info) => info.rewardSpeedPerSecondPerToken.gt(0))
-          .map((info) => ({
-            rewardToken: info.rewardToken,
-            flywheel: info.flywheel,
-            rewardSpeedPerSecondPerToken: info.rewardSpeedPerSecondPerToken,
-            rewardTokenPrice: info.rewardTokenPrice,
-            formattedAPR: info.formattedAPR,
-          })),
-      }));
+      const adaptedMarketRewards = marketRewards
+        .map((marketReward) => ({
+          underlyingPrice: marketReward.underlyingPrice,
+          market: marketReward.market,
+          rewardsInfo: marketReward.rewardsInfo.filter((info) => info.rewardSpeedPerSecondPerToken.gt(0)),
+        }))
+        .filter((marketReward) => marketReward.rewardsInfo.length > 0);
       return adaptedMarketRewards;
     }
 
@@ -206,7 +201,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         fwRewardsInstance.callStatic.rewardsInfo(marketAddress),
       ]);
       return {
-        enabled: marketState.lastUpdatedTimestamp > 0,
+        enabled: marketState[1] > 0,
         ...rewardsInfo,
       };
     }
@@ -226,16 +221,15 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         this.signer
       ) as MidasFlywheel__factory;
       const addressOfSigner = await this.signer.getAddress();
-      const mfw = await midasFlywheel.deploy();
-      const flywheelCoreInstance = this.createMidasFlywheel(mfw.address);
-      const flywheelCoreInstanceWithSigner = flywheelCoreInstance.connect(this.signer);
-      await flywheelCoreInstanceWithSigner.initialize(
+      const flywheelCore = await midasFlywheel.deploy();
+      const initializeTx = await flywheelCore.initialize(
         rewardTokenAddress,
         options?.rewardsAddress || constants.AddressZero,
         options?.boosterAddress || constants.AddressZero,
         options?.ownerAddress || addressOfSigner
       );
-      return flywheelCoreInstance;
+      await initializeTx.wait();
+      return flywheelCore;
     }
     async deployFlywheelStaticRewards(
       flywheelCoreAddress: string,
@@ -255,6 +249,10 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         options?.ownerAddress || addressOfSigner,
         options?.authorityAddress || constants.AddressZero
       )) as FlywheelStaticRewards;
+    }
+
+    getFlywheelEnabledMarkets(flywheelAddress: string) {
+      return this.createMidasFlywheel(flywheelAddress).callStatic.getAllStrategies();
     }
 
     setStaticRewardInfo(

@@ -8,7 +8,6 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
     const deployedPlugins = plugins[chainId];
-
     for (const plugin of deployedPlugins) {
       try {
         const pluginContract = new ethers.Contract(plugin, ERC4626_ABI, provider);
@@ -21,7 +20,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
 
         // Don't save anything if the plugin is empty
         if (totalSupply.eq(0)) {
-          return;
+          continue;
         }
 
         const { error } = await supabase.from(config.supabasePluginTableName).insert([
@@ -35,17 +34,23 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
         ]);
 
         if (error) {
-          throw `Error occurred during saving data for plugin ${plugin}:  ${error.message}`;
+          throw new Error(JSON.stringify(error));
         } else {
           console.log(`Successfully saved data for plugin ${plugin}`);
         }
-      } catch (err) {
-        throw err;
+      } catch (exception) {
+        console.error(
+          `Error occurred during saving data for plugin ${plugin}: ${JSON.stringify(exception)}`
+        );
+        functionsAlert(
+          `Error occurred during saving data for plugin ${plugin}`,
+          JSON.stringify(exception)
+        );
       }
     }
   } catch (err) {
-    await functionsAlert("Saving Flywheel's plugin", err as string);
     console.error(err);
+    functionsAlert('Generic Error', JSON.stringify(err));
   }
 };
 

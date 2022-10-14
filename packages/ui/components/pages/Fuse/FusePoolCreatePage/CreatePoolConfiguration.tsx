@@ -6,30 +6,32 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Heading,
+  HStack,
   Input,
   Select,
   Spinner,
   Switch,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
@@ -49,13 +51,17 @@ export const CreatePoolConfiguration = () => {
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
-  const { midasSdk, currentChain, address } = useMidas();
+  const { currentSdk, currentChain, address } = useMultiMidas();
   const router = useRouter();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isCreating, setIsCreating] = useState(false);
 
-  const { cCard, cSolidBtn, cSwitch } = useColors();
+  const { cCard, cSolidBtn } = useColors();
   const isMobile = useIsSmallScreen();
+  const sdk = useSdk(currentChain?.id);
+  const isAllowedAddress = useMemo(() => {
+    return address ? config.allowedAddresses.includes(address.toLowerCase()) : false;
+  }, [address]);
 
   const {
     control,
@@ -78,7 +84,12 @@ export const CreatePoolConfiguration = () => {
   const watchWhitelist = watch('whitelist', []);
 
   const onDeploy = async (data: FormData) => {
-    if (!config.allowedAddresses.includes(address.toLowerCase())) {
+    if (!currentSdk || !address || !currentChain) {
+      warningToast({ description: 'Connect your wallet!' });
+
+      return;
+    }
+    if (!isAllowedAddress) {
       warningToast({ description: 'Pool creation is limited!' });
 
       return;
@@ -94,7 +105,7 @@ export const CreatePoolConfiguration = () => {
     const bigLiquidationIncentive = utils.parseUnits((liquidationIncentive + 100).toString(), 16);
 
     try {
-      const deployResult = await midasSdk.deployPool(
+      const deployResult = await currentSdk.deployPool(
         name,
         isWhitelisted,
         bigCloseFactor,
@@ -111,11 +122,7 @@ export const CreatePoolConfiguration = () => {
 
       LogRocket.track('Fuse-CreatePool');
 
-      if (typeof poolId === 'number') {
-        await router.push(`/${currentChain.id}/pool/${poolId}`);
-      } else {
-        await router.push(`/${currentChain.id}?filter=created-pools`);
-      }
+      await router.push(`/${currentChain.id}/pool/${poolId}`);
     } catch (e) {
       handleGenericError(e, errorToast);
       setIsCreating(false);
@@ -133,10 +140,10 @@ export const CreatePoolConfiguration = () => {
   return (
     <Box as="form" alignSelf={'center'} mx="auto" onSubmit={handleSubmit(onDeploy)}>
       <DashboardBox maxWidth="550px" mx={'auto'}>
-        <Heading fontWeight="extrabold" size="md" px={4} py={4}>
+        <Text fontWeight="bold" variant="title" px={4} py={4}>
           Create Pool
-        </Heading>
-        {!config.allowedAddresses.includes(address.toLowerCase()) && (
+        </Text>
+        {address && !isAllowedAddress && (
           <Banner
             text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
             linkText="please contact us via Discord."
@@ -148,7 +155,9 @@ export const CreatePoolConfiguration = () => {
         <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
           <FormControl isInvalid={!!errors.name}>
             <OptionRow>
-              <FormLabel htmlFor="name">Name</FormLabel>
+              <FormLabel htmlFor="name">
+                <Text variant="smText">Name</Text>
+              </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                 <Input
                   id="name"
@@ -156,6 +165,7 @@ export const CreatePoolConfiguration = () => {
                   {...register('name', {
                     required: 'Pool name is required',
                   })}
+                  isDisabled={!address || !currentChain || !isAllowedAddress}
                 />
                 <FormErrorMessage marginBottom="-10px">
                   {errors.name && errors.name.message}
@@ -166,7 +176,9 @@ export const CreatePoolConfiguration = () => {
           <Divider bg={cCard.dividerColor} />
           <FormControl isInvalid={!!errors.oracle}>
             <OptionRow>
-              <FormLabel htmlFor="oracle">Oracle</FormLabel>
+              <FormLabel htmlFor="oracle">
+                <Text variant="smText">Oracle</Text>
+              </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                 <Select
                   id="oracle"
@@ -174,23 +186,15 @@ export const CreatePoolConfiguration = () => {
                   {...register('oracle', {
                     required: 'Oracle is required',
                   })}
+                  isDisabled={!address || !currentChain || !isAllowedAddress}
                 >
-                  {currentChain.id === 1337 ? (
+                  {sdk && (
                     <option
                       className="white-bg-option"
-                      value={midasSdk.chainDeployment.MasterPriceOracle.address}
+                      value={sdk.chainDeployment.MasterPriceOracle.address}
                     >
                       MasterPriceOracle
                     </option>
-                  ) : (
-                    <>
-                      <option
-                        className="white-bg-option"
-                        value={midasSdk.chainDeployment.MasterPriceOracle.address}
-                      >
-                        MasterPriceOracle
-                      </option>
-                    </>
                   )}
                 </Select>
                 <FormErrorMessage marginBottom="-10px">
@@ -203,36 +207,35 @@ export const CreatePoolConfiguration = () => {
           <FormControl>
             <OptionRow>
               <FormLabel htmlFor="isWhitelisted">
-                <SimpleTooltip
-                  label={
-                    "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
-                  }
-                >
-                  <Text fontWeight="normal">
-                    Whitelisted <QuestionIcon ml={1} mb="4px" />
-                  </Text>
-                </SimpleTooltip>
+                <HStack>
+                  <Text variant="smText">Whitelisted</Text>
+                  <SimpleTooltip
+                    label={
+                      "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
+                    }
+                  >
+                    <QuestionIcon ml={1} mb="4px" />
+                  </SimpleTooltip>
+                </HStack>
               </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-end">
                 <Controller
                   control={control}
                   name="isWhitelisted"
                   render={({ field: { ref, name, value, onChange } }) => (
-                    <>
-                      <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
-                      <Switch
-                        className="switch-whitelist"
-                        id="isWhitelisted"
-                        size={isMobile ? 'sm' : 'md'}
-                        cursor={'pointer'}
-                        _focus={{ boxShadow: 'none' }}
-                        _hover={{}}
-                        name={name}
-                        ref={ref}
-                        isChecked={value}
-                        onChange={onChange}
-                      />
-                    </>
+                    <Switch
+                      className="switch-whitelist"
+                      id="isWhitelisted"
+                      size={isMobile ? 'sm' : 'md'}
+                      cursor={'pointer'}
+                      _focus={{ boxShadow: 'none' }}
+                      _hover={{}}
+                      name={name}
+                      ref={ref}
+                      isChecked={value}
+                      onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
+                    />
                   )}
                 />
               </Column>
@@ -258,15 +261,16 @@ export const CreatePoolConfiguration = () => {
           <FormControl isInvalid={!!errors.closeFactor}>
             <OptionRow>
               <FormLabel htmlFor="closeFactor">
-                <SimpleTooltip
-                  label={
-                    "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
-                  }
-                >
-                  <Text fontWeight="normal">
-                    Close Factor <QuestionIcon ml={1} mb="4px" />
-                  </Text>
-                </SimpleTooltip>
+                <HStack>
+                  <Text variant="smText">Close Factor</Text>
+                  <SimpleTooltip
+                    label={
+                      "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
+                    }
+                  >
+                    <QuestionIcon ml={1} mb="4px" />
+                  </SimpleTooltip>
+                </HStack>
               </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-end" crossAxisAlignment="flex-end">
                 <Controller
@@ -292,6 +296,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -305,15 +310,16 @@ export const CreatePoolConfiguration = () => {
           <FormControl isInvalid={!!errors.liquidationIncentive}>
             <OptionRow>
               <FormLabel htmlFor="liquidationIncentive">
-                <SimpleTooltip
-                  label={
-                    "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
-                  }
-                >
-                  <Text fontWeight="normal">
-                    Liquidation Incentive <QuestionIcon ml={1} mb="4px" />
-                  </Text>
-                </SimpleTooltip>
+                <HStack>
+                  <Text variant="smText">Liquidation Incentive</Text>
+                  <SimpleTooltip
+                    label={
+                      "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."
+                    }
+                  >
+                    <QuestionIcon ml={1} mb="4px" />
+                  </SimpleTooltip>
+                </HStack>
               </FormLabel>
               <Column mainAxisAlignment="flex-end" crossAxisAlignment="flex-start">
                 <Controller
@@ -339,6 +345,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -351,34 +358,52 @@ export const CreatePoolConfiguration = () => {
         </Column>
       </DashboardBox>
       <Center>
-        <Button
-          id="createPool"
-          type="submit"
-          isLoading={isCreating}
-          width={'100%'}
-          height="60px"
-          mt={4}
-          fontSize="xl"
-          maxWidth={'550px'}
-          disabled={
-            isCreating ||
-            !!errors.name ||
-            !!errors.oracle ||
-            !!errors.closeFactor ||
-            !!errors.liquidationIncentive ||
-            !config.allowedAddresses.includes(address.toLowerCase())
-          }
-        >
-          <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-            {!config.allowedAddresses.includes(address.toLowerCase()) ? (
-              'Creation limited!'
-            ) : isCreating ? (
-              <Spinner />
-            ) : (
-              'Create'
-            )}
-          </Center>
-        </Button>
+        {currentChain?.id && address ? (
+          <Button
+            id="createPool"
+            type="submit"
+            isLoading={isCreating}
+            width="100%"
+            height={12}
+            mt={4}
+            fontSize="xl"
+            maxWidth={'550px'}
+            disabled={
+              !address ||
+              isCreating ||
+              !!errors.name ||
+              !!errors.oracle ||
+              !!errors.closeFactor ||
+              !!errors.liquidationIncentive ||
+              !isAllowedAddress
+            }
+          >
+            <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
+              {!address || !isAllowedAddress ? (
+                'Creation limited!'
+              ) : isCreating ? (
+                <Spinner />
+              ) : (
+                'Create'
+              )}
+            </Center>
+          </Button>
+        ) : (
+          <>
+            <Button
+              id="connectWalletToCreate"
+              width="100%"
+              height={12}
+              mt={4}
+              fontSize="xl"
+              maxWidth={'550px'}
+              onClick={onOpen}
+            >
+              Connect wallet
+            </Button>
+            <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+          </>
+        )}
       </Center>
     </Box>
   );

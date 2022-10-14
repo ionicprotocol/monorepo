@@ -4,7 +4,7 @@ import polygonDeployedPlugins from '@chains/polygon/plugins';
 import { DeployedPlugins } from '@midas-capital/types';
 
 function deployedPluginsToPluginArray(deployedPlugins: DeployedPlugins): string[] {
-  return Object.keys(deployedPlugins).map((address) => address.toLocaleLowerCase());
+  return Object.keys(deployedPlugins).map((address) => address.toLowerCase());
 }
 
 export const bscPlugins = deployedPluginsToPluginArray(bscDeployedPlugins);

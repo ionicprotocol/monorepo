@@ -103,6 +103,26 @@ const deployedPlugins: DeployedPlugins = {
       [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)],
     ],
   },
+  "0x29b2aB4102d7aF1CDCF9c84D29D18dC2cFf11f1A": {
+    market: "0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267",
+    name: "JCHF-BUSD",
+    strategy: "BeefyERC4626",
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-busd-jchf",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols["3EPS"]),
+    otherParams: ["0x80ACf5C89A284C4b6Fdbc851Ba9844D29d4c6BEd", "0"], // Beefy Vault, withdraw fee
+  },
+  "0xcfB267a90974a172c38Af238b1010672DE4479Ad": {
+    market: "0x906Ab4476221ADc91Dc112c25081A374E0bd29C0",
+    name: "Beefy stkBNB-WBNB Vault",
+    strategy: "BeefyERC4626",
+    apyDocsUrl: "https://app.beefy.com/vault/cakev2-wbnb-stkbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
+    underlying: underlying(assets, assetSymbols["stkBNB-WBNB"]),
+    otherParams: ["0xd23ef71883a98c55Eb7ED67ED61fABF554aDEd21", "0"],
+  },
 };
 
 export default deployedPlugins;

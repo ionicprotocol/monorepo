@@ -9,11 +9,13 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 const EditAssetSettings = ({
   comptrollerAddress,
   selectedAsset,
+  poolChainId,
 }: {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
+  poolChainId: number;
 }) => {
-  const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken);
+  const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken, poolChainId);
   if (isLoading) {
     return (
       <Center width="100%" height="100%">
@@ -28,12 +30,13 @@ const EditAssetSettings = ({
         comptrollerAddress={comptrollerAddress}
         selectedAsset={selectedAsset}
         tokenData={tokenData}
+        poolChainId={poolChainId}
       />
     );
   }
   return (
     <Center width="100%" height="100%">
-      <Text>Try again later</Text>
+      <Text variant="smText">Try again later</Text>
     </Center>
   );
 };

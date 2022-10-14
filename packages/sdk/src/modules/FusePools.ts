@@ -1,10 +1,16 @@
-import { FusePoolData, NativePricedFuseAsset, SupportedAsset } from "@midas-capital/types";
+import { arbitrum, bsc, chapel, evmos, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import {
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  FusePoolData,
+  NativePricedFuseAsset,
+  SupportedAsset,
+  SupportedChains,
+} from "@midas-capital/types";
 import { BigNumberish, CallOverrides, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { filterOnlyObjectProperties, filterPoolName, getContract } from "../MidasSdk/utils";
@@ -15,6 +21,17 @@ export type LensPoolsWithData = [
   fusePoolsData: FusePoolLens.FusePoolDataStructOutput[],
   errors: boolean[]
 ];
+
+const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.bsc]: bsc.assets,
+  [SupportedChains.polygon]: polygon.assets,
+  [SupportedChains.ganache]: ganache.assets,
+  [SupportedChains.evmos]: evmos.assets,
+  [SupportedChains.chapel]: chapel.assets,
+  [SupportedChains.moonbeam]: moonbeam.assets,
+  [SupportedChains.neon_devnet]: neondevnet.assets,
+  [SupportedChains.arbitrum]: arbitrum.assets,
+};
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
@@ -44,40 +61,20 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
       const promises: Promise<any>[] = [];
 
-      const comptrollerContract = getContract(comptroller, this.chainDeployment.Comptroller.abi, this.provider);
       for (let i = 0; i < assets.length; i++) {
         const asset = assets[i];
 
-        const isBorrowPaused: boolean = await comptrollerContract.callStatic.borrowGuardianPaused(asset.cToken);
-        asset.isBorrowPaused = isBorrowPaused;
-        // @todo aggregate the borrow/supply guardian paused into 1
-        promises.push(
-          comptrollerContract.callStatic
-            .mintGuardianPaused(asset.cToken)
-            .then((isPaused: boolean) => (asset.isSupplyPaused = isPaused))
+        asset.isBorrowPaused = asset.borrowGuardianPaused;
+        asset.isSupplyPaused = asset.mintGuardianPaused;
+        asset.plugin = this.marketToPlugin[asset.cToken];
+
+        const _asset = ChainSupportedAssets[this.chainId as SupportedChains].find(
+          (ass) => ass.underlying === asset.underlyingToken
         );
 
-        promises.push(
-          (async () => {
-            let plugin: string | undefined = undefined;
-
-            plugin = await this.getAssetInstance<CErc20PluginDelegate>(asset.cToken, "CErc20PluginDelegate")
-              .callStatic.plugin()
-              .catch(() => undefined);
-            if (!plugin) {
-              // @ts-ignore
-              plugin = await this.getAssetInstance<CErc20PluginRewardsDelegate>(
-                asset.cToken,
-                "CErc20PluginRewardsDelegate"
-              )
-                .callStatic.plugin()
-                .catch(() => undefined);
-            }
-            if (!plugin) return;
-
-            asset.plugin = plugin;
-          })()
-        );
+        if (_asset) {
+          asset.underlyingSymbol = _asset.symbol;
+        }
 
         asset.supplyBalanceNative =
           Number(utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)) *
@@ -136,6 +133,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       assets.sort((a, b) => b.liquidityNative - a.liquidityNative);
       return {
         id: Number(poolId),
+        chainId: this.chainId,
         assets,
         creator,
         comptroller,

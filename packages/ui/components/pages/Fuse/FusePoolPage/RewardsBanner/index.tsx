@@ -1,11 +1,17 @@
-import { Heading } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
-import { CTokenAvatarGroup } from '@ui/components/shared/CTokenIcon';
 import { Row } from '@ui/components/shared/Flex';
 import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 
-export const RewardsBanner = ({ tokens = [] }: { tokens: string[] }) => {
+export const RewardsBanner = ({
+  tokens = [],
+  poolChainId,
+}: {
+  tokens: string[];
+  poolChainId: number;
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 40 }}
@@ -15,10 +21,16 @@ export const RewardsBanner = ({ tokens = [] }: { tokens: string[] }) => {
     >
       <GlowingBox w="100%" h="50px" mt={4}>
         <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" h="100%" w="100" p={3}>
-          <Heading fontSize="md" ml={2}>
+          <Text variant="smText" ml={2}>
             This pool is offering rewards
-          </Heading>
-          <CTokenAvatarGroup tokenAddresses={tokens} ml={2} mr={2} popOnHover={true} />
+          </Text>
+          <TokenIconGroup
+            tokenAddresses={tokens}
+            ml={2}
+            mr={2}
+            popOnHover={true}
+            chainId={poolChainId}
+          />
         </Row>
       </GlowingBox>
     </motion.div>

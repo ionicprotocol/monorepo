@@ -151,6 +151,31 @@
           "anonymous": false,
           "inputs": [
             {
+              "indexed": true,
+              "internalType": "address",
+              "name": "key",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "contractType",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "contractAddress",
+              "type": "address"
+            }
+          ],
+          "name": "ContractSet",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
               "indexed": false,
               "internalType": "uint8",
               "name": "version",
@@ -206,6 +231,30 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "fundingStrategies",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "addr",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "string",
               "name": "id",
               "type": "string"
@@ -236,6 +285,40 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "jarvisPools",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "owner",
           "outputs": [
@@ -257,6 +340,30 @@
             }
           ],
           "name": "plugins",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "addr",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "redemptionStrategies",
           "outputs": [
             {
               "internalType": "address",
@@ -329,6 +436,57 @@
             },
             {
               "internalType": "address",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "name": "setFundingStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "setJarvisPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
               "name": "plugin",
               "type": "address"
             },
@@ -339,6 +497,29 @@
             }
           ],
           "name": "setPlugin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "name": "setRedemptionStrategy",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -380,7 +561,7 @@
       ]
     },
     "AddressesProvider_Implementation": {
-      "address": "0xA9c7610d450650F680E4ee849f1953710487BAA9",
+      "address": "0xbA2B35321f413d2ee73f6c15eBDb23dcf446C2ab",
       "abi": [
         {
           "anonymous": false,
@@ -399,6 +580,31 @@
             }
           ],
           "name": "AddressSet",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "key",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "contractType",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "contractAddress",
+              "type": "address"
+            }
+          ],
+          "name": "ContractSet",
           "type": "event"
         },
         {
@@ -460,6 +666,30 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "fundingStrategies",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "addr",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "string",
               "name": "id",
               "type": "string"
@@ -490,6 +720,40 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "jarvisPools",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "owner",
           "outputs": [
@@ -511,6 +775,30 @@
             }
           ],
           "name": "plugins",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "addr",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "redemptionStrategies",
           "outputs": [
             {
               "internalType": "address",
@@ -583,6 +871,57 @@
             },
             {
               "internalType": "address",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "name": "setFundingStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "syntheticToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "collateralToken",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "liquidityPool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "expirationTime",
+              "type": "uint256"
+            }
+          ],
+          "name": "setJarvisPool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
               "name": "plugin",
               "type": "address"
             },
@@ -593,6 +932,29 @@
             }
           ],
           "name": "setPlugin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "string",
+              "name": "contractInterface",
+              "type": "string"
+            }
+          ],
+          "name": "setRedemptionStrategy",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -762,7 +1124,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x983e0d0E02CF14C086E1cbde89F7d79D4A4deefb",
+      "address": "0x9e2c57aBEC61ba4DFCd84fc847B118355714FbB4",
       "abi": [
         {
           "inputs": [],
@@ -960,25 +1322,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -1569,6 +1912,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -2219,7 +2575,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xEEC413fB57830c62c3D909b2Dc185dA22f56fe3C",
+      "address": "0xc3b333e1D3135B092856E773Fd609e9387B068b1",
       "abi": [
         {
           "anonymous": false,
@@ -2412,25 +2768,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -3066,6 +3403,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -3729,7 +4079,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x473cDB1038d17FB7388ce832971330032C48C6cE",
+      "address": "0x8b047966B5cDFf492159eaA53218DdFD4413254F",
       "abi": [
         {
           "anonymous": false,
@@ -3922,25 +4272,6 @@
             }
           ],
           "name": "NewAdminFee",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "oldComptroller",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "contract ComptrollerInterface",
-              "name": "newComptroller",
-              "type": "address"
-            }
-          ],
-          "name": "NewComptroller",
           "type": "event"
         },
         {
@@ -4601,6 +4932,19 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "contractType",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -6674,7 +7018,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x66ceEB3AA6fC5d67f478b56B475fF930bacf7E03",
+      "address": "0xB05ca0202710825323402421455CaFc941e17AE2",
       "abi": [
         {
           "inputs": [
@@ -6857,7 +7201,7 @@
               "type": "address[]"
             },
             {
-              "internalType": "contract AggregatorV3Interface[]",
+              "internalType": "address[]",
               "name": "feeds",
               "type": "address[]"
             },
@@ -6888,7 +7232,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x0fF21c5Ec8999805F1e62E9df8190C33076AEC4B",
+      "address": "0xe1b488B01cA2143A08A800a92FEA38d661fC31D4",
       "abi": [
         {
           "inputs": [
@@ -6925,7 +7269,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7001,7 +7345,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7020,7 +7364,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7039,7 +7383,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -7052,7 +7396,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -7065,7 +7409,7 @@
           "inputs": [
             {
               "indexed": true,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7122,7 +7466,7 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7204,7 +7548,7 @@
           "inputs": [
             {
               "indexed": true,
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7355,7 +7699,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7398,7 +7742,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7441,7 +7785,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "cTokens",
               "type": "address[]"
             },
@@ -7459,7 +7803,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "cTokens",
               "type": "address[]"
             },
@@ -7477,7 +7821,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             },
@@ -7639,7 +7983,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -7671,7 +8015,7 @@
           "name": "accountAssets",
           "outputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "",
               "type": "address"
             }
@@ -7754,7 +8098,7 @@
           "name": "allMarkets",
           "outputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "",
               "type": "address"
             }
@@ -7890,7 +8234,7 @@
           "name": "cTokensByUnderlying",
           "outputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "",
               "type": "address"
             }
@@ -7906,7 +8250,7 @@
               "type": "address"
             },
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -8043,7 +8387,7 @@
           "name": "getAllMarkets",
           "outputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "",
               "type": "address[]"
             }
@@ -8062,7 +8406,7 @@
           "name": "getAssetsIn",
           "outputs": [
             {
-              "internalType": "contract CToken[]",
+              "internalType": "contract CTokenInterface[]",
               "name": "",
               "type": "address[]"
             }
@@ -8185,7 +8529,7 @@
         {
           "inputs": [
             {
-              "internalType": "contract CToken",
+              "internalType": "contract CTokenInterface",
               "name": "cToken",
               "type": "address"
             }
@@ -13226,7 +13570,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x84a49D5B6a94A6011AFF01FaB96AA56257c033E2",
+      "address": "0x29a33bdC951F3e9C27Fa18ED8f96aCB58605346f",
       "abi": [
         {
           "anonymous": false,
@@ -13380,6 +13724,11 @@
                   "internalType": "bool",
                   "name": "borrowGuardianPaused",
                   "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "mintGuardianPaused",
+                  "type": "bool"
                 }
               ],
               "internalType": "struct FusePoolLens.FusePoolAsset[]",
@@ -13510,6 +13859,11 @@
                 {
                   "internalType": "bool",
                   "name": "borrowGuardianPaused",
+                  "type": "bool"
+                },
+                {
+                  "internalType": "bool",
+                  "name": "mintGuardianPaused",
                   "type": "bool"
                 }
               ],

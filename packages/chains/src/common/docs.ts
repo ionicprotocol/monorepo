@@ -17,6 +17,11 @@ export const ankrBNBDocs = (variant: string) => {
   <p>Head over to <a href="https://www.ankr.com/staking/stake/bnb/?token=${variant}" target="_blank">Ankr BNB Staking</a>, where you can acquire ${variant} by depositing BNB</p>`;
 };
 
+export const stkBNBDocs = () => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p>Head over to <a href="https://bnb.pstake.finance/" target="_blank">pStake's BNB Staking</a>, where you can acquire stkBNB by depositing BNB</p>`;
+};
+
 export const pancakeSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
   return `<p><b>How to acquire this token</b><p/><br />
   <p> 1. Head to <a href="https://pancakeswap.finance/add/${token0}/${token1}" target="_blank">Pancakeswap</a>.</p><br />
@@ -77,6 +82,15 @@ export const curveFinancePolygonDocs = (
   }${poolNumber}/deposit" target="_blank"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p> 
   <p>You will get back the <a href="https://polygonscan.com/address/${tokenAddress}" target="_blank"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
+export const balacerDocs = (chain: string, poolAddress: string, poolName: string, tokenAddress: string) => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://${chain}.balancer.fi/#/pool/${poolAddress}" target="_blank"> Balancer ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p> 
+  <p>You will get back the <a href="https://polygonscan.com/address/${tokenAddress}" target="_blank"> Balancer ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };

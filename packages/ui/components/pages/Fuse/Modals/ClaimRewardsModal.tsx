@@ -12,13 +12,12 @@ import {
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
-import { useSigner } from 'wagmi';
 
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMidas } from '@ui/context/MidasContext';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
@@ -33,8 +32,9 @@ const ClaimableToken = ({
   onClaim: () => void;
   isClaiming: boolean;
 }) => {
+  const { currentChain } = useMultiMidas();
   const { rewards, rewardToken } = useMemo(() => data, [data]);
-  const { data: tokenData } = useTokenData(rewardToken);
+  const { data: tokenData } = useTokenData(rewardToken, currentChain?.id);
 
   const totalRewardsString = useMemo(
     () =>
@@ -47,7 +47,15 @@ const ClaimableToken = ({
 
   return (
     <HStack width="80%" justify="space-evenly">
-      <CTokenIcon address={rewardToken} size="xs" withMotion={false} withTooltip={false} />
+      {currentChain && (
+        <TokenIcon
+          address={rewardToken}
+          chainId={currentChain.id}
+          size="xs"
+          withMotion={false}
+          withTooltip={false}
+        />
+      )}
       <SimpleTooltip label={totalRewardsString}>
         <Text minWidth="100px" textAlign="end" fontWeight="bold" fontSize={'16'}>
           {dynamicFormatter(Number(totalRewardsString), {
@@ -76,26 +84,24 @@ const ClaimRewardsModal = ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetchRewards: any;
 }) => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address, signer } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
-  const { data: signer } = useSigner();
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[]) => async () => {
+      if (!currentSdk || !address || !signer) return;
+
       try {
         setIsClaiming(true);
-        if (!signer) return;
-        const fwLensRouter = midasSdk.contracts['FuseFlywheelLensRouter'];
+        const fwLensRouter = currentSdk.contracts.FuseFlywheelLensRouter;
 
         for (const reward of rewards) {
           const markets = reward.rewards.map((reward) => reward.market);
           const tx = await fwLensRouter
             .connect(signer)
-            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true], {
-              from: address,
-            });
+            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
 
           await tx.wait();
           successToast({
@@ -109,14 +115,16 @@ const ClaimRewardsModal = ({
         setIsClaiming(false);
       }
     },
-    [address, midasSdk.contracts, refetchRewards, signer, errorToast, successToast]
+    [address, currentSdk, refetchRewards, signer, errorToast, successToast]
   );
 
   return (
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Claim Rewards</ModalHeader>
+        <ModalHeader>
+          <Text variant="title">Claim Rewards</Text>
+        </ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
         <VStack m={4}>

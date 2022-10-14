@@ -16,7 +16,6 @@ import {
 } from 'react';
 import { Chain } from 'wagmi';
 
-import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
@@ -85,8 +84,6 @@ export const MidasProvider = ({
 
   const queryClient = useQueryClient();
 
-  const { cPage } = useColors();
-
   const mounted = useRef(false);
 
   const coingeckoId = midasSdk.chainSpecificParams.cgId;
@@ -117,40 +114,54 @@ export const MidasProvider = ({
         const tx = await midasSdk.provider.getTransaction(hash);
         if (tx.from === address) {
           infoToast({
-            title: <>Pending!</>,
-            description: <>Transaction is pending now.</>,
+            title: (
+              <Text variant="toastLgText" fontWeight="bold">
+                Complete!
+              </Text>
+            ),
+            description: <Text variant="toastSmText">Transaction is pending now.</Text>,
           });
           const res = await tx.wait();
 
           if (res.blockNumber) {
             mounted.current && setFinishedTxHash(hash);
             successToast({
-              title: <>Complete!</>,
+              title: (
+                <Text variant="toastLgText" fontWeight="bold">
+                  Complete!
+                </Text>
+              ),
               description: (
-                <VStack alignItems="flex-start" mt={1}>
+                <VStack alignItems="flex-start" mt={1} spacing={0}>
                   <HStack>
-                    <Text>Your can check transaction </Text>
+                    <Text variant="toastSmText">Your can check transaction </Text>
                     <Button
                       href={`${scanUrl}/tx/${tx.hash}`}
                       rightIcon={<ExternalLinkIcon />}
-                      color={cPage.primary.bgColor}
-                      variant={'link'}
+                      variant="panelLink"
                       as={ChakraLink}
+                      p={0}
+                      height={3}
                       isExternal
                     >
                       here
                     </Button>
                   </HStack>
                   <HStack>
-                    <Text>Your data is being updated! Please wait...</Text>
+                    <Text variant="toastSmText">Your data is being updated! Please wait...</Text>
                   </HStack>
                 </VStack>
               ),
             });
             await queryClient.refetchQueries();
             successToast({
-              title: <>Complete!</>,
-              description: <Text>Data is fully updated!</Text>,
+              id: 'toast-success',
+              title: (
+                <Text variant="toastLgText" fontWeight="bold">
+                  Complete!
+                </Text>
+              ),
+              description: <Text variant="toastSmText">Data is fully updated!</Text>,
             });
           }
         }

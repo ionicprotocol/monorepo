@@ -1,10 +1,20 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { DeployedPlugins } from "@midas-capital/types";
+import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
+
+const chainIdToConfig: { [chainId: number]: ChainConfig } = {
+  [bsc.chainId]: bsc,
+  [polygon.chainId]: polygon,
+  [moonbeam.chainId]: moonbeam,
+  [arbitrum.chainId]: arbitrum,
+  [neondevnet.chainId]: neondevnet,
+  [chapel.chainId]: chapel,
+  [ganache.chainId]: ganache,
+};
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
   async ({}, { ethers, getChainId, deployments }) => {
@@ -116,9 +126,6 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
   }
 );
 
-// npx hardhat plugins:change --market 0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871 --new-plugin 0x43fa05d9D56c44d7a697Ac458CC16707A545183B --network polygon
-// npx hardhat plugins:change --market 0xCC7eab2605972128752396241e46C281e0405a27 --new-plugin 0x9F82D802FB4940743C543041b86220A9096A7522 --network polygon
-
 task("plugins:change", "Replaces an old plugin contract with a new one")
   .addParam("market", "The address of the market", undefined, types.string)
   .addParam("newPlugin", "The address of the new plugin", undefined, types.string)
@@ -134,7 +141,9 @@ task("plugins:change", "Replaces an old plugin contract with a new one")
       const currentPluginAddress = await market.callStatic.plugin();
       if (currentPluginAddress != newPluginAddress) {
         console.log(`changing ${currentPluginAddress} with ${newPluginAddress}`);
-        await market._updatePlugin(newPluginAddress);
+        const tx = await market._updatePlugin(newPluginAddress);
+        await tx.wait();
+        console.log(`plugin changed with ${tx.hash}`);
       }
     } catch (e) {
       console.log(`market ${marketAddress} is probably not a plugin market`, e);

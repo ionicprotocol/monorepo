@@ -2,6 +2,7 @@ import { Dappeteer } from '@chainsafe/dappeteer';
 import { Browser, Page } from 'puppeteer';
 
 import { Config } from '@ui/test//helpers/Config';
+import { JEST_EXE_TIME } from '@ui/test/constants';
 import { TestHelper } from '@ui/test/helpers/TestHelper';
 import { PoolDetailPage } from '@ui/test/pages/pools/PoolDetailPage';
 
@@ -10,10 +11,10 @@ let page: Page;
 let metamask: Dappeteer;
 let poolDetailPage: PoolDetailPage;
 
-const { chainId, networkName, symbol, rpc, testUrl, supplyAmount, assetSymbol } =
-  Config.fundOperation();
+const { chainId, networkName, symbol, rpc, testUrl } = Config.init();
+const { supplyAmount, assetSymbol } = Config.fundOperation();
 
-jest.setTimeout(600000);
+jest.setTimeout(JEST_EXE_TIME);
 
 describe('Fund Operation:', () => {
   beforeAll(async () => {

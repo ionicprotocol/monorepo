@@ -12,25 +12,27 @@ import {
   ModalOverlay,
   NumberInput,
   NumberInputField,
+  Select,
+  Skeleton,
   Spinner,
   Stat,
+  StatGroup,
   StatHelpText,
   StatLabel,
   StatNumber,
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { Web3Provider } from '@ethersproject/providers';
 import { useQuery } from '@tanstack/react-query';
-import { Contract, utils } from 'ethers';
+import { utils } from 'ethers';
+import { formatUnits } from 'ethers/lib/utils';
 import { useCallback, useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
-import { FilterButton } from '@ui/components/shared/Button';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
-import { Center, Column, Row } from '@ui/components/shared/Flex';
+import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -38,24 +40,47 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
+import { getRewardTokenContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { shortAddress } from '@ui/utils/shortAddress';
-
 import 'react-datepicker/dist/react-datepicker.css';
 
 const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   return useQuery(
-    ['useRewardsInfo', flywheelAddress, marketAddress],
+    ['useRewardsInfo', flywheelAddress, marketAddress, currentSdk?.chainId],
     async () => {
-      if (flywheelAddress && marketAddress) {
-        return midasSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
+      if (flywheelAddress && marketAddress && currentSdk) {
+        return currentSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
+      } else {
+        return null;
       }
-      return undefined;
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!flywheelAddress && !!marketAddress }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!flywheelAddress && !!marketAddress && !!currentSdk,
+    }
+  );
+};
+
+const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
+  const { currentSdk } = useMultiMidas();
+
+  return useQuery(
+    ['useFlywheelEnabledMarkets', flywheelAddress, currentSdk?.chainId],
+    async () => {
+      if (flywheelAddress && currentSdk) {
+        return currentSdk.getFlywheelEnabledMarkets(flywheelAddress);
+      }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!flywheelAddress && !!currentSdk,
+    }
   );
 };
 
@@ -70,9 +95,9 @@ const EditFlywheelModal = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
-  const { data: tokenData } = useTokenData(flywheel.rewardToken);
+  const { data: tokenData } = useTokenData(flywheel.rewardToken, currentSdk?.chainId);
   const isAdmin = address === flywheel.owner;
 
   const { data: flywheelRewardsBalance, refetch: refetchRewardsBalance } = useTokenBalance(
@@ -95,6 +120,9 @@ const EditFlywheelModal = ({
     flywheel.address,
     selectedMarket?.cToken
   );
+  const { data: enabledMarkets, refetch: refetchEnabledMarkets } = useFlywheelEnabledMarkets(
+    flywheel.address
+  );
 
   const { cPage } = useColors();
 
@@ -102,17 +130,19 @@ const EditFlywheelModal = ({
     if (rewardsInfo?.rewardsPerSecond) {
       setSupplySpeed(toFixedNoRound(utils.formatEther(rewardsInfo.rewardsPerSecond), 8));
     }
-    if (rewardsInfo?.rewardsEndTimestamp && rewardsInfo.rewardsEndTimestamp > 0) {
-      setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+    if (rewardsInfo?.rewardsEndTimestamp !== undefined && rewardsInfo?.rewardsEndTimestamp >= 0) {
+      if (rewardsInfo?.rewardsEndTimestamp === 0) {
+        setEndDate(null);
+      } else {
+        setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+      }
     }
   }, [rewardsInfo]);
 
   const fund = useCallback(async () => {
-    const token = new Contract(
-      flywheel.rewardToken,
-      midasSdk.artifacts.EIP20Interface.abi,
-      midasSdk.provider as Web3Provider
-    );
+    if (!currentSdk) return;
+
+    const token = getRewardTokenContract(flywheel.rewardToken, currentSdk);
 
     setTransactionPending(true);
     try {
@@ -128,21 +158,22 @@ const EditFlywheelModal = ({
   }, [
     flywheel.rewardToken,
     flywheel.rewards,
-    midasSdk.artifacts.EIP20Interface.abi,
-    midasSdk.provider,
+    currentSdk,
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
   ]);
 
   const updateRewardInfo = useCallback(async () => {
+    if (!currentSdk) return;
+
     try {
       if (!isAdmin) throw new Error('User is not admin of this Flywheel!');
       if (!selectedMarket) throw new Error('No asset selected!');
 
       setTransactionPending(true);
 
-      const tx = await midasSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
+      const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
         // TODO use rewardsTokens decimals here
         rewardsPerSecond: utils.parseUnits(supplySpeed),
         // TODO enable in UI
@@ -162,7 +193,7 @@ const EditFlywheelModal = ({
     supplySpeed,
     endDate,
     flywheel.rewards,
-    midasSdk,
+    currentSdk,
     isAdmin,
     selectedMarket,
     refetchRewardsInfo,
@@ -171,10 +202,14 @@ const EditFlywheelModal = ({
 
   const enableForRewards = useCallback(
     (market: string) => async () => {
+      if (!currentSdk) return;
+
       try {
         setTransactionPending(true);
-        const tx = await midasSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
+        const tx = await currentSdk.addMarketForRewardsToFlywheelCore(flywheel.address, market);
         await tx.wait();
+        refetchRewardsInfo();
+        refetchEnabledMarkets();
         setTransactionPending(false);
       } catch (err) {
         handleGenericError(err, errorToast);
@@ -182,109 +217,142 @@ const EditFlywheelModal = ({
         setTransactionPending(false);
       }
     },
-    [flywheel.address, midasSdk, errorToast]
+    [flywheel.address, currentSdk, errorToast, refetchRewardsInfo, refetchEnabledMarkets]
   );
 
   return (
     <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Edit Flywheel Rewards</ModalHeader>
+        <ModalHeader>Edit Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
         <ModalDivider />
+
         <VStack alignItems={'flex-start'} p={4}>
-          {tokenData?.logoURL && (
+          {tokenData?.logoURL ? (
             <Image
               mt={4}
               src={tokenData.logoURL}
               boxSize="50px"
+              alignSelf={'center'}
               borderRadius="50%"
               backgroundImage={`url(${SmallWhiteCircle})`}
               backgroundSize="100% auto"
-              alt=""
+              alt={tokenData.symbol}
             />
+          ) : (
+            <Skeleton alignSelf={'center'} height="50px" width="50px"></Skeleton>
           )}
-          <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-              <Stat>
-                <StatLabel>Reward Token</StatLabel>
-                <StatNumber>{tokenData ? tokenData.name : 'Loading...'}</StatNumber>
-                {tokenData && (
-                  <ClipboardValue
-                    value={flywheel.address}
-                    label={shortAddress(flywheel.address)}
-                    component={StatHelpText}
-                  />
-                )}
-              </Stat>
-            </Column>
-            <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
-              <Stat>
-                <StatLabel>Flywheel Balance</StatLabel>
-                <StatNumber>
-                  {flywheelRewardsBalance
-                    ? ` ${(parseFloat(flywheelRewardsBalance.toString()) / 1e18).toFixed(4)}`
-                    : 'Loading...'}
+          <StatGroup width="100%">
+            <Stat>
+              <StatLabel>Reward Token</StatLabel>
+              {tokenData ? (
+                <StatNumber title={tokenData.name}>{tokenData.symbol}</StatNumber>
+              ) : (
+                <Skeleton>
+                  <StatNumber>Token Name</StatNumber>
+                </Skeleton>
+              )}
+
+              <ClipboardValue
+                value={flywheel.rewardToken}
+                label={shortAddress(flywheel.rewardToken)}
+                component={StatHelpText}
+              />
+            </Stat>
+
+            <Stat>
+              <StatLabel>Rewards Contract</StatLabel>
+              {flywheelRewardsBalance && tokenData ? (
+                <StatNumber title={formatUnits(flywheelRewardsBalance, tokenData.decimals)}>
+                  {formatUnits(flywheelRewardsBalance, tokenData.decimals)}
                 </StatNumber>
-                {tokenData && <StatHelpText>{tokenData.symbol}</StatHelpText>}
-              </Stat>
-            </Column>
-          </Row>
+              ) : (
+                <Skeleton>
+                  <StatNumber>0.0000</StatNumber>
+                </Skeleton>
+              )}
+              <ClipboardValue
+                value={flywheel.rewards}
+                label={shortAddress(flywheel.rewards)}
+                component={StatHelpText}
+              />
+            </Stat>
+          </StatGroup>
         </VStack>
+        <ModalDivider />
+
         {/* Funding */}
         <VStack alignItems="flex-start">
-          <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%" p={4}>
+          <VStack alignItems={'flex-start'} width="100%" p={4}>
             <Heading fontSize={'xl'} mb={2}>
-              Fund Flywheel
+              Fund Flywheel Rewards Contract
             </Heading>
-            <HStack width={'100%'}>
-              <InputGroup flex={1} variant="outlineRightAddon">
-                <NumberInput
-                  min={0}
-                  onChange={(valueString: string) => {
-                    setTransactionPendingAmount(parseFloat(valueString));
-                  }}
-                  flex={1}
+            <VStack>
+              <HStack width={'100%'}>
+                <InputGroup flex={1} variant="outlineRightAddon">
+                  <NumberInput
+                    min={0}
+                    onChange={(valueString: string) => {
+                      setTransactionPendingAmount(parseFloat(valueString));
+                    }}
+                    flex={1}
+                  >
+                    <NumberInputField
+                      borderTopRightRadius={0}
+                      borderBottomRightRadius={0}
+                      placeholder={'0.00'}
+                    />
+                  </NumberInput>
+                  <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
+                </InputGroup>
+                <Button
+                  onClick={fund}
+                  disabled={
+                    isTransactionPending ||
+                    (myBalance && fundingAmount > parseInt(myBalance?.toString())) ||
+                    fundingAmount === 0 ||
+                    isNaN(fundingAmount) ||
+                    fundingAmount < 0
+                  }
+                  ml={4}
+                  width="15%"
                 >
-                  <NumberInputField
-                    borderTopRightRadius={0}
-                    borderBottomRightRadius={0}
-                    placeholder={'0.00'}
-                  />
-                </NumberInput>
-                <InputRightAddon>{tokenData?.symbol}</InputRightAddon>
-              </InputGroup>
-              <Button onClick={fund} disabled={isTransactionPending} ml={4} width="15%">
-                {isTransactionPending ? <Spinner /> : 'Send'}
-              </Button>
-            </HStack>
-            <Text fontSize="lg" mt={2}>
+                  {isTransactionPending ? <Spinner /> : 'Send'}
+                </Button>
+              </HStack>
+            </VStack>
+            <Text fontSize="md" mt={2}>
               Your balance: {myBalance ? (parseFloat(myBalance?.toString()) / 1e18).toFixed(4) : 0}{' '}
               {tokenData?.symbol}
             </Text>
-          </Column>
+          </VStack>
+          <ModalDivider />
+
           {/* Rewards */}
           {pool.assets.length ? (
             <VStack alignItems="flex-start" p={4} width="100%">
               <Heading fontSize={'xl'} mb={2}>
                 Set Speed and End Time for Market Suppliers
               </Heading>
-
-              <HStack alignItems={'center'} justifyContent="center" width={'100%'}>
+              <Select
+                onChange={(e) => {
+                  const assetIndex = parseInt(e.target.value);
+                  selectMarket(pool.assets[assetIndex]);
+                  setDateEditable(false);
+                  setSpeedEditable(false);
+                }}
+              >
                 {pool.assets.map((asset, index) => (
-                  <FilterButton
-                    key={index}
-                    isSelected={asset.cToken === selectedMarket?.cToken}
-                    variant="filter"
-                    onClick={() => selectMarket(asset)}
-                    flex={1}
-                  >
-                    {asset.underlyingSymbol}
-                  </FilterButton>
+                  <option key={index} value={index}>
+                    {`${asset.underlyingSymbol} ${
+                      enabledMarkets?.includes(asset.cToken) ? '(enabled)' : ''
+                    }`}
+                  </option>
                 ))}
-              </HStack>
+              </Select>
 
-              {rewardsInfo && !rewardsInfo.enabled && selectedMarket && (
+              {selectedMarket && enabledMarkets && !enabledMarkets.includes(selectedMarket.cToken) && (
                 <Center width={'100%'} p={4}>
                   <Button
                     onClick={enableForRewards(selectedMarket.cToken)}
@@ -370,15 +438,18 @@ const EditFlywheelModal = ({
                         cursor: auto;
                     }`}
                       </style>
-
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        timeInputLabel="Time:"
-                        dateFormat="MM/dd/yyyy h:mm aa"
-                        showTimeInput
-                        readOnly={!isDateEditable}
-                      />
+                      {rewardsInfo?.rewardsEndTimestamp === 0 && !isDateEditable ? (
+                        <Text width={'100%'}>End Time/Date Has Not Yet Been Set</Text>
+                      ) : (
+                        <DatePicker
+                          selected={endDate}
+                          onChange={(date) => setEndDate(date)}
+                          timeInputLabel="Time:"
+                          dateFormat="MM/dd/yyyy h:mm aa"
+                          showTimeInput
+                          readOnly={!isDateEditable}
+                        />
+                      )}
                       <Button
                         onClick={() => setDateEditable(true)}
                         disabled={isTransactionPending}

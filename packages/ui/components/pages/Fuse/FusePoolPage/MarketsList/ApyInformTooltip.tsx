@@ -4,8 +4,14 @@ import { Box, Link as ChakraLink } from '@chakra-ui/react';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 
-export const ApyInformTooltip = ({ pluginAddress }: { pluginAddress: string }) => {
-  const { data: pluginInfo } = usePluginInfo(pluginAddress);
+export const ApyInformTooltip = ({
+  pluginAddress,
+  poolChainId,
+}: {
+  pluginAddress?: string;
+  poolChainId: number;
+}) => {
+  const { data: pluginInfo } = usePluginInfo(poolChainId, pluginAddress);
 
   return (
     <PopoverTooltip

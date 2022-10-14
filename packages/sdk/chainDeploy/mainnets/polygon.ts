@@ -8,13 +8,22 @@ import {
   ChainlinkFeedBaseCurrency,
   deployChainlinkOracle,
   deployCurveLpOracle,
+  deployDiaOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployMIMOIrm } from "../helpers/irms";
+import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, GelatoGUniAsset } from "../helpers/types";
+import {
+  BalancerLpAsset,
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  CurvePoolConfig,
+  DiaAsset,
+  GelatoGUniAsset,
+} from "../helpers/types";
 
 const assets = polygon.assets;
 const wmatic = underlying(assets, assetSymbols.WMATIC);
@@ -51,7 +60,15 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
     uniswapV2RouterAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
     uniswapV2FactoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
-    uniswapOracleInitialDeployTokens: [],
+    uniswapOracleInitialDeployTokens: [
+      {
+        token: underlying(assets, assetSymbols.JRT),
+        pair: "0x17F54d87B54B0F4BDc2Eb1E24C99f72a49c417CF", // USDC-JRT
+        baseToken: underlying(assets, assetSymbols.USDC),
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
+    ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WMATIC-USDC"]),
       underlying(assets, assetSymbols["WMATIC-ETH"]),
@@ -409,6 +426,21 @@ const gelatoAssets: GelatoGUniAsset[] = [
   },
 ];
 
+const diaAssets: DiaAsset[] = [
+  {
+    symbol: assetSymbols.MIMO,
+    underlying: underlying(assets, assetSymbols.MIMO),
+    feed: "0xd3709072C338689F94a4072a26Bb993559D9a026",
+    key: "MIMO/USD",
+  },
+];
+
+const balancerLpAssets: BalancerLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.MIMO_PAR_80_20),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -462,6 +494,26 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     gelatoAssets,
+  });
+
+  /// Dia Price Oracle
+  await deployDiaOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    diaAssets,
+    deployConfig,
+    diaNativeFeed: { feed: ethers.constants.AddressZero, key: "" },
+  });
+  /// Dia Price Oracle
+  await deployBalancerLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLpAssets,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {

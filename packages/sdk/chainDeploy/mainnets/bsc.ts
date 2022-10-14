@@ -1,5 +1,5 @@
 import { bsc } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset, underlying } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
@@ -14,7 +14,9 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, DiaAsset } from "../helpers/types";
+import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
+import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
+import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
 
 const assets = bsc.assets;
 const wbnb = underlying(assets, assetSymbols.WBNB);
@@ -61,6 +63,13 @@ export const deployConfig: ChainDeployConfig = {
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
       },
+      {
+        token: underlying(assets, assetSymbols.pSTAKE),
+        pair: "0x2bF1c14b71C375B35B4C157790bC4D6e557714FE", // WBNB-pSTAKE
+        baseToken: wbnb,
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP
@@ -76,6 +85,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["BUSD-USDT"]), // BUSD-USDT PCS LP
       underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB-BTC PCS LP
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
+      underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
     ],
     flashSwapFee: 25,
   },
@@ -233,6 +243,14 @@ const curvePools: CurvePoolConfig[] = [
   },
 ];
 
+const curveV2Pools: CurveV2PoolConfig[] = [
+  {
+    // eps BUSD jCHF
+    lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
+    pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
+  },
+];
+
 const diaAssets: DiaAsset[] = [
   {
     symbol: assetSymbols.MAI,
@@ -296,6 +314,25 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     curvePools,
+  });
+
+  //// Curve V2 LP Oracle
+  await deployCurveV2LpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curveV2Pools,
+  });
+
+  //// stk BNB  oracle
+  await deployStkBNBOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
   });
 
   //// Ankr BNB Certificate oracle

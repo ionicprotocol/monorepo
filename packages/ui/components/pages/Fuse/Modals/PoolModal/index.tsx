@@ -12,6 +12,8 @@ interface PoolModalProps {
   asset: MarketData;
   assets: MarketData[];
   comptrollerAddress: string;
+  supplyBalanceFiat?: number;
+  poolChainId: number;
 }
 
 const PoolModal = (props: PoolModalProps) => {
@@ -32,6 +34,8 @@ const PoolModal = (props: PoolModalProps) => {
             asset={props.asset}
             mode={mode}
             setMode={setMode}
+            supplyBalanceFiat={props?.supplyBalanceFiat}
+            poolChainId={props.poolChainId}
           />
         </ModalBody>
       </ModalContent>

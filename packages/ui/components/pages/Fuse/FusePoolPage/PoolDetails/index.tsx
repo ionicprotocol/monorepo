@@ -1,12 +1,12 @@
+import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import {
   Button,
-  Heading,
+  Grid,
+  GridItem,
+  HStack,
   Link,
   Skeleton,
-  Table,
-  Tbody,
-  Td,
-  Tr,
+  Text,
   useClipboard,
 } from '@chakra-ui/react';
 import { useQueryClient } from '@tanstack/react-query';
@@ -14,21 +14,20 @@ import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { StatRow } from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails/StatRow';
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
-import { useMidas } from '@ui/context/MidasContext';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
-import { useIsMobile } from '@ui/hooks/useScreenSize';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { shortUsdFormatter } from '@ui/utils/bigUtils';
+import { midUsdFormatter } from '@ui/utils/bigUtils';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
-  const isMobile = useIsMobile();
+const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   const { assets, totalSuppliedFiat, totalBorrowedFiat, totalAvailableLiquidityFiat, comptroller } =
     poolData || {
       assets: [] as Array<MarketData>,
@@ -41,34 +40,50 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
   const { cCard } = useColors();
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const { data } = useExtraPoolInfo(poolData?.comptroller);
+  const { data } = useExtraPoolInfo(poolData?.comptroller, poolData?.chainId);
 
-  const { hasCopied, onCopy } = useClipboard(data?.admin ?? '');
-  const { setLoading, currentChain, setPendingTxHash } = useMidas();
-  const { midasSdk } = useMidas();
+  const [copiedText, setCopiedText] = useState<string>('');
+  const { hasCopied, onCopy } = useClipboard(copiedText);
+  const { setGlobalLoading, setPendingTxHash, currentSdk } = useMultiMidas();
+  const scanUrl = useMemo(
+    () => poolData?.chainId && getScanUrlByChainId(poolData.chainId),
+    [poolData?.chainId]
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const acceptOwnership = useCallback(async () => {
-    if (!comptroller) return;
+    if (!comptroller || !currentSdk) return;
     setIsLoading(true);
-    const unitroller = midasSdk.createUnitroller(comptroller);
+    const unitroller = currentSdk.createUnitroller(comptroller);
     const tx = await unitroller._acceptAdmin();
     setPendingTxHash(tx.hash);
     await tx.wait();
     setIsLoading(false);
 
     await queryClient.refetchQueries();
-  }, [comptroller, midasSdk, queryClient, setPendingTxHash]);
+  }, [comptroller, currentSdk, queryClient, setPendingTxHash]);
+
+  useEffect(() => {
+    if (copiedText) {
+      onCopy();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [copiedText]);
+
+  useEffect(() => {
+    if (!hasCopied) {
+      setCopiedText('');
+    }
+  }, [hasCopied]);
 
   return (
-    <MidasBox height={isMobile ? 'auto' : '450px'} width="100%">
+    <MidasBox height="auto" width="100%">
       <Column
         mainAxisAlignment="flex-start"
         crossAxisAlignment="flex-start"
         height="100%"
         width="100%"
-        pb={2}
       >
         <Row
           mainAxisAlignment="space-between"
@@ -78,12 +93,17 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
           height="60px"
           flexShrink={0}
         >
-          <Heading size="sm">{`Pool Details`}</Heading>
+          <Text variant="mdText" fontWeight="bold">{`Pool Details`}</Text>
 
           {data?.isPowerfulAdmin ? (
-            <RouterLink href={`/${currentChain.id}/pool/${poolId}/edit`} passHref>
+            <RouterLink href={`/${poolData?.chainId}/pool/${poolId}/edit`} passHref>
               <Link className="no-underline" ml={4}>
-                <Center px={2} fontWeight="bold" cursor="pointer" onClick={() => setLoading(true)}>
+                <Center
+                  px={2}
+                  fontWeight="bold"
+                  cursor="pointer"
+                  onClick={() => setGlobalLoading(true)}
+                >
                   Edit
                 </Center>
               </Link>
@@ -96,85 +116,195 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
         </Row>
 
         {poolData ? (
-          <Table variant={'simple'} size={'sm'} width="100%" height={'100%'} colorScheme="teal">
-            <Tbody>
-              <StatRow
-                statATitle={'Total Supplied'}
-                statA={shortUsdFormatter(totalSuppliedFiat)}
-                statBTitle={'Total Borrowed'}
-                statB={shortUsdFormatter(totalBorrowedFiat)}
-              />
-              <StatRow
-                statATitle={'Available Liquidity'}
-                statA={shortUsdFormatter(totalAvailableLiquidityFiat)}
-                statBTitle={'Pool Utilization'}
-                statB={
-                  totalSuppliedFiat.toString() === '0'
-                    ? '0%'
-                    : poolData.utilization.toFixed(2) + '%'
-                }
-              />
-              <StatRow
-                statATitle={'Upgradeable'}
-                statA={data ? (data.upgradeable ? 'Yes' : 'No') : '?'}
-                statBTitle={hasCopied ? 'Admin (copied!)' : 'Admin (click to copy)'}
-                statB={data?.admin ? shortAddress(data.admin, 4, 2) : '?'}
-                onClick={onCopy}
-              />
-              <StatRow
-                statATitle={'Platform Fee'}
-                statA={
-                  assets.length > 0
-                    ? Number(utils.formatUnits(assets[0].fuseFee, 16)).toPrecision(2) + '%'
-                    : '10%'
-                }
-                statBTitle={'Average Admin Fee'}
-                statB={
-                  assets
-                    .reduce(
-                      (a, b, _, { length }) =>
-                        a + Number(utils.formatUnits(b.adminFee, 16)) / length,
-                      0
-                    )
-                    .toFixed(1) + '%'
-                }
-              />
-              <StatRow
-                statATitle={'Close Factor'}
-                statA={
-                  data?.closeFactor
-                    ? data.closeFactor.div(parseUnits('1', 16)).toNumber() + '%'
-                    : '?%'
-                }
-                statBTitle={'Liquidation Incentive'}
-                statB={
-                  data?.liquidationIncentive
-                    ? data.liquidationIncentive.div(parseUnits('1', 16)).toNumber() - 100 + '%'
-                    : '?%'
-                }
-              />
-              <StatRow
-                statATitle={'Oracle'}
-                statA={data ? data.oracle : '?'}
-                statBTitle={'Whitelist'}
-                statB={data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
-              />
-              {comptroller && (
-                <Tr borderTopWidth={'1px'} borderColor={cCard.dividerColor}>
-                  <Td
-                    fontSize={{ base: '3vw', sm: '0.9rem' }}
-                    wordBreak={'break-all'}
-                    lineHeight={1.5}
-                    colSpan={2}
-                    textAlign="left"
-                    border="none"
+          <Grid
+            templateColumns={{
+              base: 'repeat(1, 1fr)',
+              sm: 'repeat(2, 1fr)',
+              md: 'repeat(2, 1fr)',
+              lg: 'repeat(4, 1fr)',
+            }}
+            width="100%"
+            gridArea={{ borderTopWidth: 1, borderColor: 'red' }}
+          >
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Total Supplied</Text>
+              <Text variant="smText" fontWeight="bold">
+                {midUsdFormatter(totalSuppliedFiat)}
+              </Text>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Total Borrowed</Text>
+              <Text variant="smText" fontWeight="bold">
+                {midUsdFormatter(totalBorrowedFiat)}
+              </Text>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Available Liquidity</Text>
+              <Text variant="smText" fontWeight="bold">
+                {midUsdFormatter(totalAvailableLiquidityFiat)}
+              </Text>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Pool Utilization</Text>
+              <Text variant="smText" fontWeight="bold">
+                {totalSuppliedFiat.toString() === '0'
+                  ? '0%'
+                  : poolData.utilization.toFixed(2) + '%'}
+              </Text>
+            </HStack>
+
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Upgradeable</Text>
+              <Text variant="smText" fontWeight="bold">
+                {data ? (data.upgradeable ? 'Yes' : 'No') : '?'}
+              </Text>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Admin</Text>
+              {data?.admin ? (
+                <HStack>
+                  <SimpleTooltip label={`${scanUrl}/address/${data.admin}`}>
+                    <Button
+                      minWidth={6}
+                      m={0}
+                      p={0}
+                      variant="_link"
+                      as={Link}
+                      href={`${scanUrl}/address/${data.admin}`}
+                      isExternal
+                      fontSize={{ base: 14, md: 16 }}
+                      height="auto"
+                    >
+                      {shortAddress(data.admin, 6, 4)}
+                    </Button>
+                  </SimpleTooltip>
+
+                  <Button
+                    variant="_link"
+                    minW={0}
+                    mt="-8px !important"
+                    p={0}
+                    onClick={() => setCopiedText(data.admin)}
+                    fontSize={18}
+                    height="auto"
                   >
-                    Pool Address: <b>{comptroller}</b>
-                  </Td>
-                </Tr>
+                    {copiedText === data.admin ? (
+                      <SimpleTooltip label="Copied">
+                        <CheckIcon />
+                      </SimpleTooltip>
+                    ) : (
+                      <SimpleTooltip label="Click to copy">
+                        <CopyIcon />
+                      </SimpleTooltip>
+                    )}
+                  </Button>
+                </HStack>
+              ) : (
+                <Text variant="smText" fontWeight="bold">
+                  ?
+                </Text>
               )}
-            </Tbody>
-          </Table>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Platform Fee</Text>
+              <Text variant="smText" fontWeight="bold">
+                {assets.length > 0
+                  ? Number(utils.formatUnits(assets[0].fuseFee, 16)).toPrecision(2) + '%'
+                  : '10%'}
+              </Text>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Average Admin Fee</Text>
+              <Text variant="smText" fontWeight="bold">
+                {assets
+                  .reduce(
+                    (a, b, _, { length }) => a + Number(utils.formatUnits(b.adminFee, 16)) / length,
+                    0
+                  )
+                  .toFixed(1) + '%'}
+              </Text>
+            </HStack>
+
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Close Factor</Text>
+              <Text variant="smText" fontWeight="bold">
+                {data?.closeFactor
+                  ? data.closeFactor.div(parseUnits('1', 16)).toNumber() + '%'
+                  : '?%'}
+              </Text>
+            </HStack>
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Liquidation Incentive</Text>
+              <Text variant="smText" fontWeight="bold">
+                {data?.liquidationIncentive
+                  ? data.liquidationIncentive.div(parseUnits('1', 16)).toNumber() - 100 + '%'
+                  : '?%'}
+              </Text>
+            </HStack>
+
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Oracle</Text>
+              <Text variant="smText" fontWeight="bold">
+                {data ? data.oracle : '?'}
+              </Text>
+            </HStack>
+
+            <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
+              <Text variant="smText">Whitelist</Text>
+              <Text variant="smText" fontWeight="bold">
+                {data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
+              </Text>
+            </HStack>
+            <GridItem colSpan={{ base: 1, sm: 2, md: 2, lg: 4 }}>
+              <HStack
+                aria-colspan={4}
+                px={4}
+                pt={4}
+                pb={3}
+                wrap="wrap"
+                borderTopWidth={1}
+                borderColor={cCard.dividerColor}
+              >
+                <Text variant="smText">Pool Address:</Text>
+                <HStack>
+                  <SimpleTooltip label={`${scanUrl}/address/${comptroller}`}>
+                    <Button
+                      minWidth={6}
+                      m={0}
+                      p={0}
+                      variant="_link"
+                      as={Link}
+                      href={`${scanUrl}/address/${comptroller}`}
+                      isExternal
+                      fontSize={{ base: 14, md: 16 }}
+                      height="auto"
+                    >
+                      {shortAddress(comptroller, 6, 4)}
+                    </Button>
+                  </SimpleTooltip>
+                  <Button
+                    variant="_link"
+                    minW={0}
+                    mt="-8px !important"
+                    p={0}
+                    onClick={() => setCopiedText(comptroller)}
+                    fontSize={18}
+                    height="auto"
+                  >
+                    {copiedText === comptroller ? (
+                      <SimpleTooltip label="Copied">
+                        <CheckIcon />
+                      </SimpleTooltip>
+                    ) : (
+                      <SimpleTooltip label="Click to copy">
+                        <CopyIcon />
+                      </SimpleTooltip>
+                    )}
+                  </Button>
+                </HStack>
+              </HStack>
+            </GridItem>
+          </Grid>
         ) : (
           <Column
             mainAxisAlignment="flex-start"
@@ -183,7 +313,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
             width="100%"
             pb={1}
           >
-            <Skeleton width="100%" height="100%"></Skeleton>
+            <Skeleton width="100%" height={200}></Skeleton>
           </Column>
         )}
       </Column>

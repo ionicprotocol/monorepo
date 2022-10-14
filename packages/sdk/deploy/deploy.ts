@@ -5,6 +5,7 @@ import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
 import { deployIRMs } from "../chainDeploy/helpers";
 import { getCgPrice } from "../chainDeploy/helpers/getCgPrice";
 import {
+  configureAddressesProviderStrategies,
   configureFuseSafeLiquidator,
   deployFuseSafeLiquidator,
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
@@ -52,14 +53,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("FuseFeeDistributor: ", ffd.address);
   const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
-  const ffdFee = await fuseFeeDistributor.defaultInterestFeeRate();
+  const ffdFee = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
   console.log(`ffd fee ${ffdFee}`);
   if (ffdFee.isZero()) {
     tx = await fuseFeeDistributor._setDefaultInterestFeeRate(ethers.utils.parseEther("0.1"));
     await tx.wait();
     console.log(`updated the FFD fee with tx ${tx.hash}`);
 
-    const feeAfter = await fuseFeeDistributor.defaultInterestFeeRate();
+    const feeAfter = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
     console.log(`ffd fee updated to ${feeAfter}`);
   }
 
@@ -110,15 +111,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
 
-  const ethDel = await deployments.deploy("CEtherDelegate", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (ethDel.transactionHash) await ethers.provider.waitForTransaction(ethDel.transactionHash);
-  console.log("CEtherDelegate: ", ethDel.address);
-
   const rewards = await deployments.deploy("RewardsDistributorDelegate", {
     from: deployer,
     args: [],
@@ -126,8 +118,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     waitConfirmations: 1,
   });
   if (rewards.transactionHash) await ethers.provider.waitForTransaction(rewards.transactionHash);
-  // const rewardsDistributorDelegate = await ethers.getContract("RewardsDistributorDelegate", deployer);
-  // await rewardsDistributorDelegate.initialize(constants.AddressZero);
   console.log("RewardsDistributorDelegate: ", rewards.address);
   ////
 
@@ -510,6 +500,12 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
   }
+
+  await configureAddressesProviderStrategies({
+    ethers,
+    getNamedAccounts,
+    chainId,
+  });
 
   // upgrade any of the pools if necessary
   await run("pools:all:upgrade");

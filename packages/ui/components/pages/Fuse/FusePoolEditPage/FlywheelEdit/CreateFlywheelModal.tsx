@@ -22,7 +22,7 @@ import React, { useMemo, useState } from 'react';
 import { Center } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
@@ -36,7 +36,7 @@ const steps = [
 ];
 
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
-  const { midasSdk } = useMidas();
+  const { currentSdk } = useMultiMidas();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -46,14 +46,20 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
   const [isDeploying, setIsDeploying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
-  const { data: rewardTokenData, error, isLoading } = useTokenData(rewardToken);
+  const {
+    data: rewardTokenData,
+    error,
+    isLoading,
+  } = useTokenData(rewardToken, currentSdk?.chainId);
 
-  const readyToDeploy = useMemo(
-    () => rewardTokenData?.address === rewardToken,
-    [rewardToken, rewardTokenData?.address]
-  );
+  const readyToDeploy = useMemo(() => {
+    if (!rewardTokenData) return false;
+    return rewardTokenData.address.toLowerCase() === rewardToken.toLowerCase();
+  }, [rewardToken, rewardTokenData]);
 
   const handleDeploy = async () => {
+    if (!currentSdk) return;
+
     try {
       setActiveStep(0);
       setFailedStep(0);
@@ -64,54 +70,56 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       try {
         setActiveStep(1);
 
-        fwCore = await midasSdk.deployFlywheelCore(rewardTokenData.address);
-        await fwCore.deployTransaction.wait();
+        fwCore = await currentSdk.deployFlywheelCore(rewardTokenData.address);
         successToast({
           description: 'Flywheel Core Deployed',
         });
-      } catch (err) {
+      } catch (error) {
         setFailedStep(1);
+        console.error(error);
         throw 'Failed to deploy Flywheel Core';
       }
 
       let fwStaticRewards: FlywheelStaticRewards;
       try {
         setActiveStep(2);
-        fwStaticRewards = await midasSdk.deployFlywheelStaticRewards(fwCore.address);
+        fwStaticRewards = await currentSdk.deployFlywheelStaticRewards(fwCore.address);
         await fwStaticRewards.deployTransaction.wait();
         successToast({
           description: 'Flywheel Rewards Deployed',
         });
-      } catch (err) {
+      } catch (error) {
         setFailedStep(2);
+        console.error(error);
         throw 'Failed to deploy Flywheel Rewards';
-      }
-
-      if (!fwStaticRewards) {
-        throw 'No Flywheel Rewards deployed';
       }
 
       try {
         setActiveStep(3);
-        const tx = await midasSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
+        const tx = await currentSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
         await tx.wait();
         successToast({
           description: 'Rewards Added to Flywheel',
         });
-      } catch (e) {
+      } catch (error) {
         setFailedStep(3);
+        console.error(error);
         throw 'Failed to add Rewards to Flywheel';
       }
 
       try {
         setActiveStep(4);
-        const tx = await midasSdk.addFlywheelCoreToComptroller(fwCore.address, comptrollerAddress);
+        const tx = await currentSdk.addFlywheelCoreToComptroller(
+          fwCore.address,
+          comptrollerAddress
+        );
         await tx.wait();
         successToast({
           description: 'Flywheel added to Pool',
         });
-      } catch (e) {
+      } catch (error) {
         setFailedStep(4);
+        console.error(error);
         throw 'Failed to add Flywheel to Pool';
       }
 
@@ -119,11 +127,11 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       setActiveStep(0);
       setFailedStep(0);
       if (onSuccess) onSuccess();
-    } catch (e) {
-      console.error(e);
+    } catch (error) {
+      console.error(error);
       setIsDeploying(false);
       errorToast({
-        description: e as string,
+        description: JSON.stringify(error),
       });
       return;
     }

@@ -9,10 +9,10 @@ import { DOWN_LIMIT, UP_LIMIT } from '@ui/constants/index';
 import { useColors } from '@ui/hooks/useColors';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { longFormat, shortUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { longFormat, midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
 
-export const Liquidity = ({ asset }: { asset: MarketData }) => {
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
   const liquidity = useMemo(() => {
     return Number(utils.formatUnits(asset.liquidity, asset.underlyingDecimals));
   }, [asset.liquidity, asset.underlyingDecimals]);
@@ -33,7 +33,7 @@ export const Liquidity = ({ asset }: { asset: MarketData }) => {
             </>
           }
         >
-          <Text color={cCard.txtColor} fontWeight="bold" fontSize={{ base: '2.8vw', sm: 'md' }}>
+          <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
             {smallUsdFormatter(asset.liquidityFiat)}
             {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && '+'}
           </Text>
@@ -41,8 +41,17 @@ export const Liquidity = ({ asset }: { asset: MarketData }) => {
         <SimpleTooltip
           label={`${longFormat(liquidity)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
         >
-          <Text color={cCard.txtColor} mt={1} fontSize={{ base: '2.8vw', sm: '0.8rem' }}>
-            {shortUsdFormatter(liquidity).replace('$', '')}
+          <Text
+            id="liquidity"
+            mt={1}
+            variant="smText"
+            maxWidth={'90px'}
+            textOverflow={'ellipsis'}
+            align={'right'}
+            whiteSpace="nowrap"
+            overflow="hidden"
+          >
+            {midUsdFormatter(liquidity).replace('$', '')}
             {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
             {tokenData?.symbol ?? asset.underlyingSymbol}
           </Text>

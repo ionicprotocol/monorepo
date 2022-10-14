@@ -24,6 +24,7 @@ export const SliderWithLabel = ({
   value,
   reff,
   onChange,
+  isDisabled,
   ...others
 }: {
   min: number;
@@ -32,6 +33,7 @@ export const SliderWithLabel = ({
   value: number;
   reff: any;
   onChange: (...event: any[]) => void;
+  isDisabled?: boolean;
   [key: string]: ReactNode;
 }) => {
   const { cSlider } = useColors();
@@ -47,6 +49,7 @@ export const SliderWithLabel = ({
           min={min}
           max={max}
           allowMouseWheel
+          isDisabled={isDisabled}
         >
           <NumberInputField
             paddingLeft={2}
@@ -72,6 +75,7 @@ export const SliderWithLabel = ({
         min={min}
         max={max}
         step={1}
+        isDisabled={isDisabled}
       >
         <SliderTrack backgroundColor={cSlider.trackBgColor}>
           <SliderFilledTrack backgroundColor={cSlider.filledTrackBgColor} />
