@@ -497,7 +497,7 @@ export const MarketsList = ({
                 >{`${data.length} All`}</Center>
               </PopoverTooltip>
             </CButton>
-            {(!allClaimableRewards || Object.keys(allClaimableRewards).length === 0) && (
+            {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
               <Button
                 variant={globalFilter.includes(REWARDS) ? 'ghost' : 'outline'}
                 colorScheme="whatsapp"
@@ -552,7 +552,7 @@ export const MarketsList = ({
                 </PopoverTooltip>
               </Button>
             )}
-            {collateralCounts === 0 && (
+            {collateralCounts !== 0 && (
               <Button
                 variant={globalFilter.includes(COLLATERAL) ? 'solid' : 'outline'}
                 colorScheme="cyan"
@@ -639,7 +639,7 @@ export const MarketsList = ({
                 </PopoverTooltip>
               </Button>
             )}
-            {deprecatedCounts === 0 && (
+            {deprecatedCounts !== 0 && (
               <CButton
                 isSelected={globalFilter.includes(DEPRECATED)}
                 variant="filter"
