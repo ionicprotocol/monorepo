@@ -11,6 +11,13 @@ import {
   StrategyTimeInMarket,
 } from "../enums";
 
+export const SCORING_WEIGHTS = {
+  COMPLEXITY: 0.3,
+  TIME_IN_MARKET: 0.1,
+  ASSET_RISK: 0.2,
+  PLATFORM_RISK: 0.2,
+};
+
 export const complexityScore = (complexity: StrategyComplexity) => {
   switch (complexity) {
     case StrategyComplexity.LOW:

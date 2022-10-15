@@ -3,13 +3,6 @@ import { SecurityBaseConstructor } from "../";
 import * as scoring from "./scoring";
 import { strategies } from "./strategies";
 
-const WEIGHTS = {
-  COMPLEXITY: 0.3,
-  TIME_IN_MARKET: 0.1,
-  ASSET_RISK: 0.2,
-  PLATFORM_RISK: 0.2,
-};
-
 export function withErc4626StrategyScorer<TBase extends SecurityBaseConstructor>(Base: TBase) {
   return class Erc4626StrategyScorer extends Base {
     getStrategyRating(strategyAddress: string): number {
@@ -30,16 +23,23 @@ export function withErc4626StrategyScorer<TBase extends SecurityBaseConstructor>
       const platformRiskContractsVerifiedScore = scoring.platformRiskContractsVerifiedScore(strategy.contractsVerified);
       const platformRiskAdminWithTimelockScore = scoring.platformRiskAdminWithTimelockScore(strategy.adminWithTimelock);
 
-      const complexity = complexityScore * WEIGHTS.COMPLEXITY;
-      const timeInMarket = timeInMarketScore * WEIGHTS.TIME_IN_MARKET;
+      const complexity = complexityScore * scoring.SCORING_WEIGHTS.COMPLEXITY;
+
+      const timeInMarket = timeInMarketScore * scoring.SCORING_WEIGHTS.TIME_IN_MARKET;
+
       const assetRisk =
-        assetRiskILScore * assetRiskLiquidityScore * assetRiskMktCapScore * assetRiskSupplyScore * WEIGHTS.ASSET_RISK;
+        assetRiskILScore *
+        assetRiskLiquidityScore *
+        assetRiskMktCapScore *
+        assetRiskSupplyScore *
+        scoring.SCORING_WEIGHTS.ASSET_RISK;
+
       const platformRisk =
         platformRiskReputationScore *
         platformRiskAuditScore *
         platformRiskContractsVerifiedScore *
         platformRiskAdminWithTimelockScore *
-        WEIGHTS.PLATFORM_RISK;
+        scoring.SCORING_WEIGHTS.PLATFORM_RISK;
       return complexity + timeInMarket + assetRisk + platformRisk;
     }
   };
