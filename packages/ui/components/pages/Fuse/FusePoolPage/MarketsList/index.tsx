@@ -489,6 +489,8 @@ export const MarketsList = ({
               onClick={() => onFilter(ALL)}
               disabled={data.length === 0}
               variant="filter"
+              width="80px"
+              p={0}
             >
               <PopoverTooltip
                 body={
@@ -566,13 +568,13 @@ export const MarketsList = ({
               </Button>
             )}
             {collateralCounts !== 0 && (
-              <Button
-                variant={globalFilter.includes(COLLATERAL) ? 'solid' : 'outline'}
-                colorScheme="cyan"
+              <CButton
+                isSelected={globalFilter.includes(COLLATERAL)}
+                variant="filter"
+                color="cyan"
                 onClick={() => onFilter(COLLATERAL)}
                 width="125px"
-                mr="-px"
-                borderWidth="2px"
+                p={0}
               >
                 <PopoverTooltip
                   body={
@@ -594,17 +596,16 @@ export const MarketsList = ({
                     pt="2px"
                   >{`${collateralCounts} Collateral`}</Center>
                 </PopoverTooltip>
-              </Button>
+              </CButton>
             )}
             {borrowableCounts !== 0 && (
-              <Button
-                variant={globalFilter.includes(BORROWABLE) ? 'solid' : 'outline'}
-                colorScheme="orange"
+              <CButton
+                isSelected={globalFilter.includes(BORROWABLE)}
+                variant="filter"
+                color="orange"
                 onClick={() => onFilter(BORROWABLE)}
                 width="135px"
                 p={0}
-                mr="-px"
-                borderWidth="2px"
               >
                 <PopoverTooltip
                   body={
@@ -624,16 +625,16 @@ export const MarketsList = ({
                     fontWeight="bold"
                   >{`${borrowableCounts} Borrowable`}</Center>
                 </PopoverTooltip>
-              </Button>
+              </CButton>
             )}
             {protectedCounts !== 0 && (
-              <Button
-                variant={globalFilter.includes(PROTECTED) ? 'solid' : 'outline'}
-                colorScheme="purple"
+              <CButton
+                isSelected={globalFilter.includes(PROTECTED)}
+                variant="filter"
+                color="purple"
                 onClick={() => onFilter(PROTECTED)}
                 width="125px"
-                mr="-px"
-                borderWidth="2px"
+                p={0}
               >
                 <PopoverTooltip
                   body={
@@ -653,7 +654,7 @@ export const MarketsList = ({
                     pt="2px"
                   >{`${protectedCounts} Protected`}</Center>
                 </PopoverTooltip>
-              </Button>
+              </CButton>
             )}
             {deprecatedCounts !== 0 && (
               <CButton
@@ -662,7 +663,7 @@ export const MarketsList = ({
                 color="gray"
                 onClick={() => onFilter(DEPRECATED)}
                 width="140px"
-                borderWidth="2px"
+                p={0}
               >
                 <PopoverTooltip
                   body={

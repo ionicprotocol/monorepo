@@ -57,7 +57,7 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       ...theme.components.Button.variants?.solid,
       bg: props.isSelected
         ? mode(
-            props.color ? `${props.color}.500` : 'ecru',
+            props.color ? `${props.color}.600` : 'ecru',
             props.color ? `${props.color}.200` : 'ecru'
           )(props)
         : mode('whiteBg', 'raisinBlack')(props),
@@ -81,8 +81,8 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
               props.color ? `${props.color}.300` : 'ecru80alpha'
             )(props)
           : mode(
-              props.color ? `${props.color}.200` : 'ecru80alpha',
-              props.color ? `${props.color}.700` : 'ecru80alpha'
+              props.color ? `${props.color}.600Alpha200` : 'ecru80alpha',
+              props.color ? `${props.color}.200Alpha200` : 'ecru80alpha'
             )(props),
         color: props.isSelected
           ? mode('whiteBg', 'raisinBlack')(props)
