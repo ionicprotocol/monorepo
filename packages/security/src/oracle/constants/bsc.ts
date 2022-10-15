@@ -5,7 +5,7 @@ import { ChainLinkAssetConfig } from "../scorers/chainlink/types";
 export const chainLinkOracleAssetMappings: ChainLinkAssetConfig = {
   defaultValidatorNumber: 16,
   chainLinkApiResponseKey: {
-    networkName: "bnb-chain-addresses-price",
+    networkName: "bnb-chain",
     networkIndex: 0,
   },
   symbolMappings: {

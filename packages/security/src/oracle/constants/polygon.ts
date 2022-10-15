@@ -5,7 +5,7 @@ import { ChainLinkAssetConfig } from "../scorers/chainlink/types";
 export const chainLinkOracleAssetMappings: ChainLinkAssetConfig = {
   defaultValidatorNumber: 16,
   chainLinkApiResponseKey: {
-    networkName: "matic-addresses",
+    networkName: "polygon",
     networkIndex: 0,
   },
   symbolMappings: {
