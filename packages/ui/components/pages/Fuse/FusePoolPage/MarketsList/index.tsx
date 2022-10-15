@@ -54,6 +54,7 @@ import {
   DEPRECATED,
   DOWN_LIMIT,
   MARKETS_COUNT_PER_PAGE,
+  MIDAS_LOCALSTORAGE_KEYS,
   PROTECTED,
   REWARDS,
   SEARCH,
@@ -88,6 +89,7 @@ export const MarketsList = ({
   supplyBalanceFiat,
   borrowBalanceFiat,
   poolChainId,
+  initSorting,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
@@ -95,6 +97,7 @@ export const MarketsList = ({
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
   poolChainId: number;
+  initSorting: SortingState;
 }) => {
   const sdk = useSdk(poolChainId);
   const { address } = useMultiMidas();
@@ -336,7 +339,7 @@ export const MarketsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rewards, comptrollerAddress, totalApy]);
 
-  const [sorting, setSorting] = useState<SortingState>([{ id: 'market', desc: true }]);
+  const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
@@ -413,6 +416,16 @@ export const MarketsList = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
 
+  useEffect(() => {
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    let oldObj;
+    if (oldData) {
+      oldObj = JSON.parse(oldData);
+    }
+    const data = { ...oldObj, marketSorting: sorting };
+    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+  }, [sorting]);
+
   return (
     <Box>
       <Flex
@@ -476,7 +489,8 @@ export const MarketsList = ({
               onClick={() => onFilter(ALL)}
               disabled={data.length === 0}
               variant="filter"
-              borderWidth="1px"
+              width="80px"
+              p={0}
             >
               <PopoverTooltip
                 body={
@@ -503,6 +517,7 @@ export const MarketsList = ({
                 colorScheme="whatsapp"
                 onClick={() => onFilter(REWARDS)}
                 p={0}
+                borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
                 mr="-px"
                 width="115px"
               >
@@ -553,12 +568,13 @@ export const MarketsList = ({
               </Button>
             )}
             {collateralCounts !== 0 && (
-              <Button
-                variant={globalFilter.includes(COLLATERAL) ? 'solid' : 'outline'}
-                colorScheme="cyan"
+              <CButton
+                isSelected={globalFilter.includes(COLLATERAL)}
+                variant="filter"
+                color="cyan"
                 onClick={() => onFilter(COLLATERAL)}
                 width="125px"
-                mr="-px"
+                p={0}
               >
                 <PopoverTooltip
                   body={
@@ -580,16 +596,16 @@ export const MarketsList = ({
                     pt="2px"
                   >{`${collateralCounts} Collateral`}</Center>
                 </PopoverTooltip>
-              </Button>
+              </CButton>
             )}
             {borrowableCounts !== 0 && (
-              <Button
-                variant={globalFilter.includes(BORROWABLE) ? 'solid' : 'outline'}
-                colorScheme="orange"
+              <CButton
+                isSelected={globalFilter.includes(BORROWABLE)}
+                variant="filter"
+                color="orange"
                 onClick={() => onFilter(BORROWABLE)}
                 width="135px"
                 p={0}
-                mr="-px"
               >
                 <PopoverTooltip
                   body={
@@ -609,15 +625,16 @@ export const MarketsList = ({
                     fontWeight="bold"
                   >{`${borrowableCounts} Borrowable`}</Center>
                 </PopoverTooltip>
-              </Button>
+              </CButton>
             )}
             {protectedCounts !== 0 && (
-              <Button
-                variant={globalFilter.includes(PROTECTED) ? 'solid' : 'outline'}
-                colorScheme="purple"
+              <CButton
+                isSelected={globalFilter.includes(PROTECTED)}
+                variant="filter"
+                color="purple"
                 onClick={() => onFilter(PROTECTED)}
                 width="125px"
-                mr="-px"
+                p={0}
               >
                 <PopoverTooltip
                   body={
@@ -637,7 +654,7 @@ export const MarketsList = ({
                     pt="2px"
                   >{`${protectedCounts} Protected`}</Center>
                 </PopoverTooltip>
-              </Button>
+              </CButton>
             )}
             {deprecatedCounts !== 0 && (
               <CButton
@@ -646,7 +663,7 @@ export const MarketsList = ({
                 color="gray"
                 onClick={() => onFilter(DEPRECATED)}
                 width="140px"
-                borderWidth="1px"
+                p={0}
               >
                 <PopoverTooltip
                   body={

@@ -1,8 +1,9 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { AvatarGroup, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { SortingState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
 import { MarketsList } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
@@ -14,7 +15,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { SHRINK_ASSETS } from '@ui/constants/index';
+import { MIDAS_LOCALSTORAGE_KEYS, SHRINK_ASSETS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
@@ -31,6 +32,17 @@ const FusePoolPage = memo(() => {
   const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller, data?.chainId);
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
   const isMobile = useIsMobile();
+  const [initSorting, setInitSorting] = useState<SortingState | undefined>();
+
+  useEffect(() => {
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+
+    if (oldData && JSON.parse(oldData).marketSorting) {
+      setInitSorting(JSON.parse(oldData).marketSorting);
+    } else {
+      setInitSorting([{ id: 'market', desc: true }]);
+    }
+  }, []);
 
   return (
     <>
@@ -123,7 +135,7 @@ const FusePoolPage = memo(() => {
           )}
 
           <MidasBox overflowX="auto" width="100%" mb="4">
-            {data ? (
+            {data && initSorting ? (
               <MarketsList
                 assets={data.assets}
                 rewards={marketRewards}
@@ -131,6 +143,7 @@ const FusePoolPage = memo(() => {
                 supplyBalanceFiat={data.totalSupplyBalanceFiat}
                 borrowBalanceFiat={data.totalBorrowBalanceFiat}
                 poolChainId={data.chainId}
+                initSorting={initSorting}
               />
             ) : (
               <TableSkeleton tableHeading="Assets" />
