@@ -18,7 +18,7 @@ on:
       - 'yarn.lock'
 
 jobs:
-  release:
+  test-and-publish:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -41,6 +41,9 @@ jobs:
 
       - name: Lint `security`
         run: yarn workspace @midas-capital/security lint
+
+      - name: Test `security`
+        run: yarn workspace @midas-capital/security test
 
       - uses: JS-DevTools/npm-publish@v1
         if: github.ref == 'refs/heads/main'

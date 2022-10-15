@@ -11,16 +11,28 @@ export class UniswapV3Fetcher {
   public quoter: Contract;
   public chainConfig: ChainConfig;
   public W_TOKEN: string;
+  public quoterContract: string;
+  public uniV3Factory: string;
+  public uniV3PairInitHash: string;
 
   public constructor(chainConfig: ChainConfig, provider: SignerOrProvider) {
     this.chainConfig = chainConfig;
     this.W_TOKEN = chainConfig.chainAddresses.W_TOKEN;
-    this.quoter = new Contract(chainConfig.chainAddresses.UNISWAP_V3.QUOTER_V2, QUOTER_ABI, provider);
+    if (chainConfig.chainAddresses && chainConfig.chainAddresses.UNISWAP_V3) {
+      this.quoterContract = chainConfig.chainAddresses.UNISWAP_V3.QUOTER_V2;
+      this.uniV3Factory = chainConfig.chainAddresses.UNISWAP_V3.FACTORY;
+      this.uniV3PairInitHash = chainConfig.chainAddresses.UNISWAP_V3.PAIR_INIT_HASH;
+    } else {
+      throw new Error("UniswapV3 Config not found");
+    }
+    this.quoter = new Contract(this.quoterContract, QUOTER_ABI, provider);
   }
 
-  getSlot0 = async (tokenConfig: UniswapV3AssetConfig, provider: SignerOrProvider): Promise<Slot0 | null> => {
+  getSlot0 = async (tokenConfig: UniswapV3AssetConfig, provider: SignerOrProvider): Promise<Slot0> => {
     const { token, fee, inverted } = tokenConfig;
-    if (token.address === this.W_TOKEN) return null;
+    if (token.address === this.W_TOKEN) {
+      throw Error("Token is WNATIVE");
+    }
     const poolAddress = this.#computeUniV3PoolAddress(token.address, this.W_TOKEN, fee);
     try {
       const pool = new Contract(poolAddress, UNISWAP_V3_POOL_ABI, provider);
@@ -30,19 +42,19 @@ export class UniswapV3Fetcher {
         price: sqrtPriceX96ToPrice(res.sqrtPriceX96, inverted),
       };
     } catch (e) {
-      console.log("current price Error: ", token.symbol, e);
+      throw Error(`current price Error for ${token.symbol}: ${e}`);
     }
   };
   #computeUniV3PoolAddress = (tokenA: string, tokenB: string, fee: number) => {
     const [token0, token1] = BigNumber.from(tokenA).lt(tokenB) ? [tokenA, tokenB] : [tokenB, tokenA];
 
     return utils.getCreate2Address(
-      this.chainConfig.chainAddresses.UNISWAP_V3.FACTORY,
+      this.uniV3Factory,
       utils.solidityKeccak256(
         ["bytes"],
         [utils.defaultAbiCoder.encode(["address", "address", "uint24"], [token0, token1, fee])]
       ),
-      this.chainConfig.chainAddresses.UNISWAP_V3.PAIR_INIT_HASH
+      this.uniV3PairInitHash
     );
   };
   getPumpAndDump = async (
@@ -66,7 +78,17 @@ export class UniswapV3Fetcher {
     direction: Direction
   ): Promise<Trade> => {
     const { token, fee, inverted } = tokenConfig;
-    if (token.address === this.W_TOKEN) return { value: tradeValueInUSD, price: BigNumber.from(0), priceImpact: "0" };
+    if (token.address === this.W_TOKEN)
+      return {
+        value: tradeValueInUSD,
+        price: BigNumber.from(0),
+        priceImpact: "0",
+        amountIn: BigNumber.from(0),
+        amountOut: BigNumber.from(0),
+        after: BigNumber.from(0),
+        tokenOut: token.address,
+        index: 0,
+      };
 
     try {
       const amountIn =
@@ -104,6 +126,7 @@ export class UniswapV3Fetcher {
         amountOut: quote.amountOut,
         tokenOut: direction === "pump" ? token.address : this.W_TOKEN,
         gasEstimate: quote.gasEstimate,
+        index: 0,
       };
     } catch (e) {
       console.log("e dump: ", token.symbol, e);

@@ -4,7 +4,7 @@ import { SecurityBase } from "../../../src/index";
 import * as StrategyModule from "../../../src/strategy";
 import { expect } from "../../globalTestHook";
 
-describe("Oracle", () => {
+describe("Strategy", () => {
   const Strategy = StrategyModule.withErc4626StrategyScorer(SecurityBase);
   let strategyBsc: InstanceType<typeof Strategy>;
   let strategyPolygon: InstanceType<typeof Strategy>;
@@ -17,21 +17,21 @@ describe("Oracle", () => {
   });
 
   describe("getStrategyRating", () => {
-    it.only("should fetch strat rating for bsc", async () => {
+    it("should fetch strat rating for bsc", async () => {
       for (const [address, strat] of Object.entries(strategyBsc.chainConfig.deployedPlugins)) {
         const rating = await strategyBsc.getStrategyRating(address);
         console.log(`Rating for strategy: ${strat.name} is ${rating}`);
         expect(rating).to.be.greaterThan(0);
       }
     });
-    it.only("should fetch strat rating for polygon", async () => {
+    it("should fetch strat rating for polygon", async () => {
       for (const [address, strat] of Object.entries(strategyPolygon.chainConfig.deployedPlugins)) {
         const rating = await strategyPolygon.getStrategyRating(address);
         console.log(`Rating for strategy: ${strat.name} is ${rating}`);
         expect(rating).to.be.greaterThan(0);
       }
     });
-    it.only("should fetch strat rating for moonbeam", async () => {
+    it("should fetch strat rating for moonbeam", async () => {
       for (const [address, strat] of Object.entries(strategyMoonbeam.chainConfig.deployedPlugins)) {
         const rating = await strategyMoonbeam.getStrategyRating(address);
         console.log(`Rating for strategy:  ${strat.name} is ${rating}`);

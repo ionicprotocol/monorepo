@@ -17,16 +17,16 @@ export type Quote = {
 };
 
 export type Trade = {
-  amountIn?: BigNumber;
+  amountIn: BigNumber;
   value: number;
   priceImpact: string;
   sqrtPriceX96After?: string;
   price: BigNumber;
-  after?: BigNumber;
-  amountOut?: BigNumber;
-  tokenOut?: string;
+  after: BigNumber;
+  amountOut: BigNumber;
+  tokenOut: string;
   gasEstimate?: BigNumber;
-  index?: number;
+  index: number;
 };
 
 export type PumpAndDump = {
@@ -41,14 +41,14 @@ export type UniswapV3AssetConfig = {
   baseToken: string;
   cardinality: number;
   attackBlocks: number;
-  inverted?: boolean;
+  inverted: boolean;
 };
 
 export type Slot0 = {
   sqrtPriceX96: BigNumber;
   tick: BigNumber;
   observationIndex: BigNumber;
-  price?: BigNumber;
+  price: BigNumber;
 };
 
 export type Attack = {

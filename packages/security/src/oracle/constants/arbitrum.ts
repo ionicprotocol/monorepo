@@ -43,6 +43,7 @@ export const uniswapV3OracleAssetMappings: UniswapV3AssetConfig[] = [
     fee: 10000,
     cardinality: 10,
     attackBlocks: 2,
+    inverted: false,
   },
 ];
 

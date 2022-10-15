@@ -93,7 +93,11 @@ export const searchTrade = async (
     i++;
   }
   allTrades = allTrades.sort((a, b) => b.value - a.value);
-  return allTrades.find((t) => target.gt(Decimal.abs(t.priceImpact)));
+  const trade = allTrades.find((t) => target.gt(Decimal.abs(t.priceImpact)));
+  if (!trade) {
+    throw new Error("No trade found");
+  }
+  return trade;
 };
 
 export const binarySearchTradeValues = async (

@@ -14,9 +14,9 @@ export type SignerOrProvider = SupportedSigners | SupportedProvider;
 
 export class SecurityBase {
   chainConfig: ChainConfig;
-  provider: SignerOrProvider | null;
+  provider: SignerOrProvider;
 
-  constructor(chainId: number, provider: SignerOrProvider | null) {
+  constructor(chainId: number, provider: SignerOrProvider) {
     this.chainConfig = chainIdToConfig[chainId];
     this.provider = provider;
   }

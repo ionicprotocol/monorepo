@@ -1,11 +1,10 @@
 import Decimal from "decimal.js";
-import { Contract, utils } from "ethers";
+import { utils } from "ethers";
 
 import { SecurityBaseConstructor } from "../../..";
 import { uniswapV3OracleAssetMappings } from "../../constants";
 import { UniswapV3Fetcher } from "../../fetchers";
 
-import { QUOTER_ABI } from "./constants";
 import { binarySearchTradeValues, getCostOfAttack } from "./trades";
 import { getTwapRatio } from "./twap";
 import { Attack } from "./types";
@@ -14,7 +13,6 @@ import { isInverted } from "./utils";
 export function withUniswapV3OracleScorer<TBase extends SecurityBaseConstructor>(Base: TBase) {
   return class UniswapV3OracleScorer extends Base {
     fetcher: UniswapV3Fetcher = new UniswapV3Fetcher(this.chainConfig, this.provider);
-    quoter: Contract = new Contract(this.chainConfig.chainAddresses.UNISWAP_V3.QUOTER_V2, QUOTER_ABI, this.provider);
 
     async #getPotentialAttack(): Promise<{ pump: Attack; dump: Attack }> {
       const { chainId } = this.chainConfig;
