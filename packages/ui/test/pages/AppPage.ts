@@ -9,6 +9,7 @@ export abstract class AppPage {
   protected Route = '';
 
   protected WalletConnectSelector = '#MetaMask';
+  protected ConnectWalletBtn = '#connectWalletBtn';
   protected WalletOptionMetamaskSelector = '#wallet-option-MetaMask';
 
   private ci: string = process.env.CI || 'false';
@@ -48,12 +49,15 @@ export abstract class AppPage {
     const web3Connected = await this.Page.$('#walletBtn');
 
     if (web3Connected) return;
-
-    const btnConnectWallet = await this.Page.waitForSelector(this.WalletConnectSelector);
-
+    const btnConnectWallet = await this.Page.waitForSelector(this.ConnectWalletBtn);
     if (btnConnectWallet) {
       await btnConnectWallet.click();
-      await this.Metamask.approve();
+      const metamaskBtn = await this.Page.waitForSelector(this.WalletConnectSelector);
+
+      if (metamaskBtn) {
+        await metamaskBtn.click();
+        await this.Metamask.approve();
+      }
     }
   }
 
