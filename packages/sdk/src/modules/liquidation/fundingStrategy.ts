@@ -79,7 +79,7 @@ function getStrategyData(
         [
           inputToken,
           fundingToken,
-          midasSdk.chainConfig.specificParams.metadata.uniswapV3Fee,
+          midasSdk.chainConfig.specificParams.metadata.uniswapV3Fees?.[inputToken][fundingToken] || 1000,
           midasSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER,
           quoter,
         ]

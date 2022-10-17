@@ -24,7 +24,11 @@ export interface ChainMetadata {
   shortName: string;
   name: string;
   img: string;
-  uniswapV3Fee?: number;
+  uniswapV3Fees?: {
+    [key: string]: {
+      [key: string]: number;
+    };
+  };
   rpcUrls: { [key: string]: string; default: string };
   blockExplorerUrls: {
     [key: string]: BlockExplorer;
