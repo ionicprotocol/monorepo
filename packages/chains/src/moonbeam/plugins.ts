@@ -33,6 +33,7 @@ const deployedPlugins: DeployedPlugins = {
       [underlying(assets, assetSymbols.STELLA), underlying(assets, assetSymbols.WGLMR)],
     ],
   },
+  // CurveGaugeERC4626_xcDOT-stDOT_0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98.json
   "0xE9c4274341ab4Be0857476e84963b3c36787568D": {
     market: "0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98",
     name: "xcDOT-stDOT",
