@@ -95,6 +95,11 @@ export const deployConfig: ChainDeployConfig = {
       cycleLength: 1,
       name: assetSymbols.CELR,
     },
+    {
+      rewardToken: underlying(assets, assetSymbols.LDO),
+      cycleLength: 1,
+      name: assetSymbols.LDO,
+    },
   ],
   cgId: moonbeam.specificParams.cgId,
 };
