@@ -167,8 +167,8 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       const j = curvePool.coins.indexOf(outputToken);
 
       const strategyData = new ethers.utils.AbiCoder().encode(
-        ["address", "int128", "int128", "address"],
-        [curvePool.poolAddress, i, j, outputToken]
+        ["address", "int128", "int128", "address", "address"],
+        [curvePool.poolAddress, i, j, outputToken, fuse.chainSpecificAddresses.W_TOKEN]
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };

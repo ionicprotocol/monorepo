@@ -47,7 +47,7 @@ const liquidationDefaults: LiquidationDefaults = {
     {
       expirationTime: 40 * 60,
       liquidityPoolAddress: "0x8734CF40A402D4191BD4D7a64bEeF12E4c452DeF",
-      syntheticToken: underlying(assets, assetSymbols.JCHF),
+      syntheticToken: underlying(assets, assetSymbols.JCHF), // 0xbD1463F02f61676d53fd183C2B19282BFF93D099 polygon
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
     //  jCNY <-> USDC
@@ -135,7 +135,64 @@ const liquidationDefaults: LiquidationDefaults = {
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
   ],
-  curveSwapPools: [],
+  curveSwapPools: [
+    {
+      poolAddress: underlying(assets, assetSymbols["AGEUR_JEUR"]),
+      coins: [
+        underlying(assets, assetSymbols.AGEUR), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JEUR_PAR"]),
+      coins: [
+        underlying(assets, assetSymbols.PAR), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JJPY_JPYC"]),
+      coins: [
+        underlying(assets, assetSymbols.JJPY), // coin 0
+        underlying(assets, assetSymbols.JPYC), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JCAD_CADC"]),
+      coins: [
+        underlying(assets, assetSymbols.JCAD), // coin 0
+        underlying(assets, assetSymbols.CADC), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JSGD_XSGD"]),
+      coins: [
+        underlying(assets, assetSymbols.JSGD), // coin 0
+        underlying(assets, assetSymbols.XSGD), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JNZD_NZDS"]),
+      coins: [
+        underlying(assets, assetSymbols.JNZD), // coin 0
+        underlying(assets, assetSymbols.NZDS), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JEUR_EURT"]),
+      coins: [
+        underlying(assets, assetSymbols.EURT), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["EURE_JEUR"]),
+      coins: [
+        underlying(assets, assetSymbols.EURE), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+  ],
 };
 
 export default liquidationDefaults;
