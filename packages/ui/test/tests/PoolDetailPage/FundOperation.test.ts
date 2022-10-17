@@ -12,7 +12,7 @@ let metamask: Dappeteer;
 let poolDetailPage: PoolDetailPage;
 
 const { chainId, networkName, symbol, rpc, testUrl } = Config.init();
-const { supplyAmount, assetSymbol } = Config.fundOperation();
+const { supplyAmount, withdrawAmount, assetSymbol } = Config.fundOperation();
 
 jest.setTimeout(JEST_EXE_TIME);
 
@@ -29,10 +29,8 @@ describe('Fund Operation:', () => {
 
     await page.goto(testUrl);
     await page.bringToFront();
-    // connect MM to website
-    await poolDetailPage.connectMetamaskWallet();
-    // pass terms modal
     await poolDetailPage.acceptTerms();
+    await poolDetailPage.connectMetamaskWallet();
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -43,22 +41,16 @@ describe('Fund Operation:', () => {
   });
 
   test(`User can supply on pool`, async () => {
-    await page.bringToFront();
-    await page.goto(testUrl);
-
-    const balanceBefore = await poolDetailPage.supplyBalance();
+    const balanceBefore = await poolDetailPage.supplyBalance(assetSymbol);
     await poolDetailPage.supply(assetSymbol, supplyAmount);
-    const balanceAfter = await poolDetailPage.supplyBalance();
+    const balanceAfter = await poolDetailPage.supplyBalance(assetSymbol);
     expect(balanceBefore).not.toEqual(balanceAfter);
   });
 
   test(`User can withdraw on pool`, async () => {
-    await page.bringToFront();
-    await page.goto(testUrl);
-
-    const balanceBefore = await poolDetailPage.supplyBalance();
-    await poolDetailPage.withdraw(assetSymbol, supplyAmount);
-    const balanceAfter = await poolDetailPage.supplyBalance();
+    const balanceBefore = await poolDetailPage.supplyBalance(assetSymbol);
+    await poolDetailPage.withdraw(assetSymbol, withdrawAmount);
+    const balanceAfter = await poolDetailPage.supplyBalance(assetSymbol);
     expect(balanceBefore).not.toEqual(balanceAfter);
   });
 });

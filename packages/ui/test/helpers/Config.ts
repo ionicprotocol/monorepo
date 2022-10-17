@@ -10,6 +10,7 @@ const testChainId = process.env.TEST_CHAIN_ID;
 
 export type FundOperationConfig = {
   supplyAmount: string;
+  withdrawAmount: string;
   assetSymbol: string;
   asset: SupportedAsset | undefined;
 };
@@ -63,26 +64,30 @@ export class Config {
     switch (Number(testChainId)) {
       case SupportedChains.chapel:
         return {
-          supplyAmount: DEFAULT_AMOUNT,
+          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
+          withdrawAmount: DEFAULT_AMOUNT.toString(),
           assetSymbol: assetSymbols.WBNB,
           asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
         };
       case SupportedChains.bsc:
         return {
-          supplyAmount: DEFAULT_AMOUNT,
+          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
+          withdrawAmount: DEFAULT_AMOUNT.toString(),
           assetSymbol: assetSymbols.WBNB,
           asset: bsc.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
         };
       case SupportedChains.polygon:
         return {
-          supplyAmount: DEFAULT_AMOUNT,
+          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
+          withdrawAmount: DEFAULT_AMOUNT.toString(),
           assetSymbol: assetSymbols.WMATIC,
           asset: polygon.assets.find((asset) => asset.symbol === assetSymbols.WMATIC),
         };
       // use chapel as default
       default:
         return {
-          supplyAmount: DEFAULT_AMOUNT,
+          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
+          withdrawAmount: DEFAULT_AMOUNT.toString(),
           assetSymbol: assetSymbols.WBNB,
           asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
         };
