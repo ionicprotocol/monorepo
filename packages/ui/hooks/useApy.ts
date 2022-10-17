@@ -100,7 +100,7 @@ export const useTotalApy = (
               );
               if (!res.error && res.apy) totalApy += Number(res.apy) * 100;
             } else if (reward.formattedAPR) {
-              totalApy += Number(utils.formatUnits(reward.formattedAPR));
+              totalApy += Number(utils.formatUnits(reward.formattedAPR, 16));
             }
           });
         } else if (asset.plugin) {

@@ -16,8 +16,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { PoolRowData } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolDetails } from '@ui/hooks/fuse/usePoolDetails';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
@@ -151,7 +151,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 </Text>
                 <AvatarGroup size="sm" max={30}>
                   {rewardTokens.map((token, i) => (
-                    <CTokenIcon key={i} address={token} chainId={pool.chainId} />
+                    <TokenIcon key={i} address={token} chainId={pool.chainId} />
                   ))}
                 </AvatarGroup>
               </VStack>
@@ -175,7 +175,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             </GridItem>
             <GridItem colSpan={1} textAlign="center">
               {poolDetails?.mostSuppliedAsset && (
-                <CTokenIcon
+                <TokenIcon
                   address={poolDetails.mostSuppliedAsset.underlyingToken}
                   chainId={pool.chainId}
                   width={35}
@@ -206,7 +206,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             </GridItem>
             <GridItem colSpan={1} textAlign="center">
               {poolDetails?.topLendingAPYAsset && (
-                <CTokenIcon
+                <TokenIcon
                   address={poolDetails.topLendingAPYAsset.underlyingToken}
                   chainId={pool.chainId}
                   width={35}
@@ -235,7 +235,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             </GridItem>
             <GridItem colSpan={1} textAlign="center">
               {poolDetails?.topBorrowAPRAsset && (
-                <CTokenIcon
+                <TokenIcon
                   address={poolDetails.topBorrowAPRAsset.underlyingToken}
                   chainId={pool.chainId}
                   width={35}
