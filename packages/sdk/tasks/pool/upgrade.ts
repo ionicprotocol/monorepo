@@ -1,9 +1,9 @@
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 
 export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)
@@ -13,7 +13,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     const deployer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const fuseFeeDistributor = new ethers.Contract(
@@ -56,7 +56,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
     const deployer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;

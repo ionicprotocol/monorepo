@@ -20,17 +20,21 @@ export const PopoverTooltip = ({
   header,
   body,
   footer,
+  width,
+  height,
   ...popoverProps
 }: {
   header?: PopoverHeaderProps['children'];
   body?: PopoverBodyProps['children'];
   footer?: PopoverFooterProps['children'];
   placement?: string;
+  width?: string;
+  height?: string;
 } & PopoverProps) => {
   const { cPage } = useColors();
 
   return (
-    <Box>
+    <Box width={width} height={height}>
       <style>
         {`
         .chakra-popover__arrow {
