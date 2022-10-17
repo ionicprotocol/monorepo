@@ -49,14 +49,19 @@ export abstract class AppPage {
     const web3Connected = await this.Page.$('#walletBtn');
 
     if (web3Connected) return;
-    const btnConnectWallet = await this.Page.waitForSelector(this.ConnectWalletBtn);
+
+    const btnConnectWallet = await this.Page.$(this.ConnectWalletBtn);
+
     if (btnConnectWallet) {
+      await this.blockingWait(1);
       await btnConnectWallet.click();
+
       const metamaskBtn = await this.Page.waitForSelector(this.WalletConnectSelector);
 
       if (metamaskBtn) {
         await metamaskBtn.click();
         await this.Metamask.approve();
+        await this.bringToFront();
       }
     }
   }
@@ -159,10 +164,6 @@ export abstract class AppPage {
 
     try {
       await this.Metamask.confirmTransaction();
-
-      // Try to confirm transaction again
-      await this.Metamask.confirmTransaction();
-      await this.blockingWait(3);
 
       const mmFooterButtons = await this.Metamask.page.$$('footer > button');
       if (mmFooterButtons && mmFooterButtons[1]) {

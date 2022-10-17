@@ -43,6 +43,7 @@ export const SupplyBalance = ({
           >
             <Text
               id="supplyBalance"
+              className={asset.underlyingSymbol}
               mt={1}
               variant="smText"
               maxWidth="90px"

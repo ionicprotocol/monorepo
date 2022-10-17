@@ -57,7 +57,11 @@ export const TokenName = ({
             placement="top-start"
             body={
               <VStack>
-                <Text alignSelf="flex-start" variant="mdText">
+                <Text
+                  alignSelf="flex-start"
+                  variant="mdText"
+                  className={tokenData?.symbol ?? asset.underlyingSymbol}
+                >
                   {tokenData?.symbol ?? asset.underlyingSymbol}
                 </Text>
                 <div
