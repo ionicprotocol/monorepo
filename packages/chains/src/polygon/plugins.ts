@@ -1,5 +1,4 @@
-import { assetSymbols, DeployedPlugins, underlying } from "@midas-capital/types";
-
+import { assetSymbols, Strategy, DeployedPlugins, underlying } from "@midas-capital/types";
 import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
@@ -7,7 +6,7 @@ const deployedPlugins: DeployedPlugins = {
     // still the same, failing to change to new 0x43fa05d9D56c44d7a697Ac458CC16707A545183B
     market: "0x6dDF9A3b2DE1300bB2B99277716e4E574DB3a871",
     name: "Beefy EURE-jEUR Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eure",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["EURE-JEUR"]),
@@ -16,7 +15,7 @@ const deployedPlugins: DeployedPlugins = {
   "0x509d5070088d1F789cD6BeAA88055ac93fF9bCeB": {
     market: "0x9b5D86F4e7A45f4b458A2B673B4A3b43D15428A7",
     name: "Beefy agEUR-jEUR Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eur",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["AGEUR-JEUR"]),
@@ -25,7 +24,7 @@ const deployedPlugins: DeployedPlugins = {
   "0x9F82D802FB4940743C543041b86220A9096A7522": {
     market: "0xCC7eab2605972128752396241e46C281e0405a27",
     name: "Beefy jEUR-PAR Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eurp",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["JEUR-PAR"]),
@@ -34,7 +33,7 @@ const deployedPlugins: DeployedPlugins = {
   "0xcDb7D4f4Dbe0DDd09F1De16aaA2eEcA6a590F725": {
     market: "0x1792046890b99ae36756Fd00f135dc5F80D41dfA",
     name: "Beefy jJPY-JPYC Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2jpy2",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["JJPY-JPYC"]),
@@ -43,7 +42,7 @@ const deployedPlugins: DeployedPlugins = {
   "0x0FbFc75E7FAcEb8453f8F0F6938c4898C9Fcdcbd": {
     market: "0x17A6922ADE40e8aE783b0f6b8931Faeca4a5A264",
     name: "Beefy jCAD-CADC Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2cad",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["JCAD-CADC"]),
@@ -52,7 +51,7 @@ const deployedPlugins: DeployedPlugins = {
   "0x8cA5151058aD6F5684287ca523194Faa79827B99": {
     market: "0x41EDdba1e19fe301A067b2726DF5a3332DD02D6A",
     name: "Beefy jSGD-XSGD Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2sgd",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["JSGD-XSGD"]),
@@ -61,7 +60,7 @@ const deployedPlugins: DeployedPlugins = {
   "0x90721EfE6b155052b9f9E99043A43fDAB521aeC1": {
     market: "0xB3eAb218a7e3A68Dc5020fC1c0F7f0e3214a8bAE",
     name: "Beefy jEUR-EURt Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eurt",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["JEUR-EURT"]),
@@ -70,7 +69,7 @@ const deployedPlugins: DeployedPlugins = {
   "0xdE58CF12595e92ebB07D664eE59A642e360bea58": {
     market: "0xa5A14c3814d358230a56e8f011B8fc97A508E890",
     name: "Arrakis PAR-USDC Vault",
-    strategy: "ArrakisERC4626",
+    strategy: Strategy.Arrakis,
     underlying: underlying(assets, assetSymbols["arrakis_USDC_PAR_005"]),
     otherParams: [
       "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
@@ -82,7 +81,7 @@ const deployedPlugins: DeployedPlugins = {
   "0xd682451F627d54cfdA74a80972aDaeF133cdc15e": {
     market: "0xcb67Bd2aE0597eDb2426802CdF34bb4085d9483A",
     name: "Balancer LP MIMO80-PAR20",
-    strategy: "ArrakisERC4626",
+    strategy: Strategy.Arrakis,
     underlying: underlying(assets, assetSymbols.MIMO_PAR_80_20),
     otherParams: [
       "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
@@ -94,7 +93,7 @@ const deployedPlugins: DeployedPlugins = {
   "0xc8E8B4A7E0F854Cf516A75fE742FC791dBec9F86": {
     market: "0x30b32BbfcA3A81922F88809F53E625b5EE5286f6",
     name: "Beefy jEUR-PAR Vault",
-    strategy: "BeefyERC4626",
+    strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/jarvis-2eurp",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/mimo-pool",
     underlying: underlying(assets, assetSymbols["JEUR-PAR"]),
