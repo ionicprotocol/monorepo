@@ -25,7 +25,7 @@ interface SupabaseRow {
 interface MarketState extends SupabaseRow {
   totalAssets: string;
   totalSupply: string;
-  chain: number;
+  chain?: number;
 }
 
 interface PluginState extends MarketState {
@@ -39,6 +39,10 @@ interface FlywheelState extends MarketState {
   underlyingAddress: string;
   rewardAddress: string;
   pluginAddress: string;
+}
+
+interface Database {
+  'apy-plugin': PluginState;
 }
 
 const handler = async (req: NextApiRequest, res: NextApiResponse<APYResult>) => {
@@ -123,14 +127,14 @@ async function rewardTokenAPY(query: Query): Promise<APYResult> {
 }
 
 async function underlyingTokenAPY(query: Query): Promise<APYResult> {
-  const client = createClient(config.supabaseUrl, config.supabasePublicKey);
+  const client = createClient<Database>(config.supabaseUrl, config.supabasePublicKey);
   const dateLimit = new Date();
   dateLimit.setDate(dateLimit.getDate() - parseInt('7', 10));
   const { chain, pluginAddress, underlyingAddress } = query;
 
   const [start, end] = await Promise.all([
     client
-      .from<PluginState>(config.supabasePluginTableName)
+      .from(config.supabasePluginTableName)
       .select('totalAssets,totalSupply,created_at')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
@@ -139,7 +143,7 @@ async function underlyingTokenAPY(query: Query): Promise<APYResult> {
       .order('created_at', { ascending: true })
       .limit(1),
     client
-      .from<PluginState>(config.supabasePluginTableName)
+      .from(config.supabasePluginTableName)
       .select('totalAssets,totalSupply,created_at,externalAPY')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
