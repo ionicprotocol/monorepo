@@ -33,6 +33,15 @@ const deployedPlugins: DeployedPlugins = {
       [underlying(assets, assetSymbols.STELLA), underlying(assets, assetSymbols.WGLMR)],
     ],
   },
+  "0xE9c4274341ab4Be0857476e84963b3c36787568D": {
+    market: "0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98",
+    name: "xcDOT-stDOT",
+    strategy: Strategy.CurveGauge,
+    apyDocsUrl: "https://moonbeam.curve.fi/",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam-coming-soon",
+    underlying: underlying(assets, assetSymbols.LDO),
+    otherParams: ["0xC106C836771B0B4f4a0612Bd68163Ca93be1D340", [underlying(assets, assetSymbols.LDO)]],
+  },
 };
 
 export default deployedPlugins;
