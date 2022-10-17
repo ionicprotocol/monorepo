@@ -24,7 +24,7 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["AGEUR-JEUR"]),
     otherParams: ["0x5F1b5714f30bAaC4Cb1ee95E1d0cF6d5694c2204", "0"],
   },
-  // BeefyERC4626_jEUR-PAR_0x9b5D86F4e7A45f4b458A2B673B4A3b43D15428A7.json
+  // BeefyERC4626_jEUR-PAR_0xCC7eab2605972128752396241e46C281e0405a27.json
   "0x9F82D802FB4940743C543041b86220A9096A7522": {
     market: "0xCC7eab2605972128752396241e46C281e0405a27",
     name: "Beefy jEUR-PAR Vault",

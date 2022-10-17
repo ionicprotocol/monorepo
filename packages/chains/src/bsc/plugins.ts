@@ -110,7 +110,7 @@ const deployedPlugins: DeployedPlugins = {
       [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)],
     ],
   },
-  // BeefyERC4626_JCHF-BUSD_0x5887cEa5e2bb7dD36F0C06Da47A8Df918c289A29.json
+  // BeefyERC4626_jCHF-BUSD_0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267.json
   "0x29b2aB4102d7aF1CDCF9c84D29D18dC2cFf11f1A": {
     market: "0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267",
     name: "JCHF-BUSD",
@@ -121,7 +121,7 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["3EPS"]),
     otherParams: ["0x80ACf5C89A284C4b6Fdbc851Ba9844D29d4c6BEd", "0"], // Beefy Vault, withdraw fee
   },
-  // BeefyERC4626_stkBNB-WBNB_0xaA2527ff1893e0D40d4a454623d362B79E8bb7F1.json
+  // BeefyERC4626_stkBNB-WBNB_0x906Ab4476221ADc91Dc112c25081A374E0bd29C0.json
   "0xcfB267a90974a172c38Af238b1010672DE4479Ad": {
     market: "0x906Ab4476221ADc91Dc112c25081A374E0bd29C0",
     name: "Beefy stkBNB-WBNB Vault",
