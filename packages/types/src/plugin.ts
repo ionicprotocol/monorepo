@@ -4,6 +4,7 @@ export enum Strategy {
   DotDot = "DotDotLpERC4626",
   Stella = "StellaLpERC4626",
   Bomb = "BombERC4626",
+  CurveGauge = "CurveGaugeERC4626",
 }
 
 export interface PluginData {
