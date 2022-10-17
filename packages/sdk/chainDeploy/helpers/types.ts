@@ -30,6 +30,7 @@ export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;
     uniswapV2FactoryAddress: string;
+    uniswapV3FactoryAddress?: string;
     uniswapOracleInitialDeployTokens: Array<UniswapOracleDeployConfig>;
     pairInitHashCode?: string;
     hardcoded: { name: string; symbol: string; address: string }[];

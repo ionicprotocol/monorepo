@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { config } from '../config';
+import { environment } from '../config';
 
 function hexToDecimal(hex: string) {
   return parseInt(hex.replace('#', ''), 16);
@@ -7,7 +7,7 @@ function hexToDecimal(hex: string) {
 
 export const functionsAlert = async (title: string, description: string) => {
   try {
-    await axios.post(config.functionsAlertWebHookUrl, {
+    await axios.post(environment.functionsAlertWebHookUrl, {
       username: 'Functions Notifier',
       embeds: [
         {

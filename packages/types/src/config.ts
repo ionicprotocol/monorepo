@@ -41,17 +41,3 @@ export type InterestRateModelConf = {
   interestRateModel?: string;
   interestRateModelParams?: InterestRateModelParams;
 };
-
-export interface PluginData {
-  market: string;
-  name: string;
-  strategy?: string;
-  apyDocsUrl?: string;
-  strategyDocsUrl?: string;
-  underlying: string;
-  otherParams?: any[];
-}
-
-export type DeployedPlugins = {
-  [pluginAddress: string]: PluginData;
-};
