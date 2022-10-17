@@ -19,7 +19,7 @@ const querySchema = yup.object().shape({
 type Query = yup.InferType<typeof querySchema>;
 
 interface SupabaseRow {
-  created_at: Date;
+  created_at: string;
 }
 
 interface MarketState extends SupabaseRow {
@@ -31,6 +31,7 @@ interface MarketState extends SupabaseRow {
 interface PluginState extends MarketState {
   underlyingAddress: string;
   pluginAddress: string;
+  externalAPY?: string;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -139,7 +140,7 @@ async function underlyingTokenAPY(query: Query): Promise<APYResult> {
       .limit(1),
     client
       .from<PluginState>(config.supabasePluginTableName)
-      .select('totalAssets,totalSupply,created_at')
+      .select('totalAssets,totalSupply,created_at,externalAPY')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
       .eq('underlyingAddress', (underlyingAddress as string).toLowerCase())
@@ -168,6 +169,8 @@ async function underlyingTokenAPY(query: Query): Promise<APYResult> {
   // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
   const millisecondsInADay = 86_400_000;
   return {
+    updatedAt: end.data[0].created_at,
+    externalAPY: end.data[0].externalAPY ? Number(end.data[0].externalAPY) : undefined,
     apy: (Math.log(pricePerShare2 / pricePerShare1) / dateDelta) * millisecondsInADay * 365,
   };
 }

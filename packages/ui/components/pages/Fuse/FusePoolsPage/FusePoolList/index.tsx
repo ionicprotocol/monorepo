@@ -1,6 +1,6 @@
 import PoolsRowList from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import { AlertHero } from '@ui/components/shared/Alert';
-import { useCrossFusePools } from '@ui/hooks/fuse/useFusePools';
+import { useCrossFusePools } from '@ui/hooks/fuse/useCrossFusePools';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 
 const FusePoolList = () => {

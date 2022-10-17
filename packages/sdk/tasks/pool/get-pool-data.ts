@@ -8,9 +8,9 @@ export default task("get-pool-data", "Get pools data")
   .addOptionalParam("address", "Address of the pool", undefined, types.string)
   .setAction(async (taskArgs, hre) => {
     // @ts-ignore
-    const poolModule = await import("../tests/utils/pool");
+    const poolModule = await import("../../tests/utils/pool");
     // @ts-ignore
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
 
     const chainId = parseInt(await hre.getChainId());
     if (!(chainId in SupportedChains)) {
@@ -61,9 +61,9 @@ task("get-position-ratio", "Get unhealthy po data")
   .addOptionalParam("logData", "Verbose logging", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
     // @ts-ignore
-    const poolModule = await import("../tests/utils/pool");
+    const poolModule = await import("../../tests/utils/pool");
     // @ts-ignore
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
 
     const chainId = parseInt(await hre.getChainId());
     if (!(chainId in SupportedChains)) {

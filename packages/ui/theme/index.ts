@@ -1,4 +1,4 @@
-import { extendTheme } from '@chakra-ui/react';
+import { theme as DefaultTheme, extendTheme } from '@chakra-ui/react';
 
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
 import { BadgeStyleConfig } from '@ui/theme/components/Badge';
@@ -22,12 +22,13 @@ export const COLOR_PALETTE = {
   grullo30: '#B29E844d',
   ecru: '#BCAC83',
   ecru10: '#373532',
-  ecru20: '#46423b',
-  ecru30: '#4E4A45',
   ecru10alpha: '#bcac831a',
+  ecru20: '#46423b',
   ecru20alpha: '#bcac8333',
+  ecru30: '#4E4A45',
   ecru30alpha: '#bcac834d',
-  ecru80: '#9e9173', // alpha 0.8
+  ecru80: '#9e9173',
+  ecru80alpha: '#bcac83cc',
   bone: '#EBE6E0',
   white: '#FFFFFF',
   white50: '#FFFFFF80',
@@ -73,6 +74,34 @@ export const theme = extendTheme({
       700: '#276749',
       800: '#22543D',
       900: '#1C4532',
+    },
+    cyan: {
+      ...DefaultTheme.colors.cyan,
+      '200Alpha100': '#9decf91a',
+      '200Alpha200': '#9decf933',
+      '600Alpha100': '#00a3c41a',
+      '600Alpha200': '#00a3c433',
+    },
+    gray: {
+      ...DefaultTheme.colors.gray,
+      '200Alpha100': '#e2e8f01a',
+      '200Alpha200': '#e2e8f033',
+      '600Alpha100': '#4a55681a',
+      '600Alpha200': '#4a556833',
+    },
+    orange: {
+      ...DefaultTheme.colors.orange,
+      '200Alpha100': '#fbd38d1a',
+      '200Alpha200': '#fbd38d33',
+      '600Alpha100': '#c056211a',
+      '600Alpha200': '#c0562133',
+    },
+    purple: {
+      ...DefaultTheme.colors.purple,
+      '200Alpha100': '#d6bcfa1a',
+      '200Alpha200': '#d6bcfa33',
+      '600Alpha100': '#6b46c11a',
+      '600Alpha200': '#6b46c133',
     },
     ...COLOR_PALETTE,
   },

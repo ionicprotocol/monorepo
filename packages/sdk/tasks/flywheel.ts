@@ -1,5 +1,7 @@
 import { task, types } from "hardhat/config";
 
+import { Comptroller } from "../lib/contracts/typechain/Comptroller";
+
 task("flywheel:addStrategyForRewards", "Create pool if does not exist")
   .addParam("signer", "Named account to use fo tx", "deployer", types.string)
   .addParam("flywheel", "address of flywheel", undefined, types.string)
@@ -71,4 +73,22 @@ task("flywheel:addToPool", "Create pool if does not exist")
 
     const receipt = await addTx.wait();
     console.log(receipt);
+  });
+
+export default task("flyhwheel:nonaccruing", "Sets a flywheel as non-accruing in the comptroller")
+  .addParam("signer", "Named account to use fo tx", "deployer", types.string)
+  .addParam("flywheel", "address of flywheel", undefined, types.string)
+  .addParam("pool", "address of comptroller", undefined, types.string)
+  .setAction(async (taskArgs, hre) => {
+    const deployer = await hre.ethers.getNamedSigner(taskArgs.signer);
+
+    const comptroller = (await hre.ethers.getContractAt(
+      "Comptroller.sol:Comptroller",
+      taskArgs.pool,
+      deployer
+    )) as Comptroller;
+
+    const tx = await comptroller.addNonAccruingFlywheel(taskArgs.flywheel);
+    await tx.wait();
+    console.log(`added the flywheel to the non-accruing with tx ${tx.hash}`);
   });
