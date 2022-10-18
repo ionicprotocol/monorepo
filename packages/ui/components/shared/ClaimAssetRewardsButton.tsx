@@ -22,7 +22,7 @@ const ClaimAssetRewardsButton = ({
     onOpen: openClaimModal,
     onClose: closeClaimModal,
   } = useDisclosure();
-  const { cCard } = useColors();
+  const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
   const isMobile = useIsSemiSmallScreen();
 
@@ -48,7 +48,13 @@ const ClaimAssetRewardsButton = ({
       >
         <HStack>
           {!isMobile && (
-            <Text ml={1} fontWeight="semibold" color={cCard.txtColor} width="max-content">
+            <Text
+              ml={1}
+              mt={1}
+              fontWeight="semibold"
+              color={cPage.secondary.txtColor}
+              width="max-content"
+            >
               Claim Rewards
             </Text>
           )}
