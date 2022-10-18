@@ -27,19 +27,6 @@ interface MarketState extends SupabaseRow {
   totalSupply: string;
 }
 
-interface PluginState extends MarketState {
-  underlyingAddress: string;
-  pluginAddress: string;
-  externalAPY?: string;
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface FlywheelState extends MarketState {
-  underlyingAddress: string;
-  rewardAddress: string;
-  pluginAddress: string;
-}
-
 const handler = async (req: NextApiRequest, res: NextApiResponse<APYResponse>) => {
   let validatedQuery: Query | null = null;
   try {
