@@ -8,7 +8,6 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
-import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
 const ClaimAssetRewardsButton = ({
   poolAddress,
@@ -22,9 +21,8 @@ const ClaimAssetRewardsButton = ({
     onOpen: openClaimModal,
     onClose: closeClaimModal,
   } = useDisclosure();
-  const { cCard } = useColors();
+  const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
-  const isMobile = useIsSemiSmallScreen();
 
   const { data: claimableRewards, refetch: refetchRewards } = useAssetClaimableRewards({
     poolAddress,
@@ -37,24 +35,20 @@ const ClaimAssetRewardsButton = ({
     <>
       <GlowingBox
         as="button"
-        minW="50px"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onClick={(e: any) => {
-          e.stopPropagation();
+        onClick={() => {
           openClaimModal();
         }}
         borderRadius={'xl'}
         p={2}
+        width="fit-content"
       >
-        <HStack>
-          {!isMobile && (
-            <Text ml={1} fontWeight="semibold" color={cCard.txtColor} width="max-content">
-              Claim Rewards
-            </Text>
-          )}
+        <HStack spacing={1}>
+          <Text fontWeight="bold" ml={1} color={cPage.secondary.txtColor} width="max-content">
+            Claim Rewards
+          </Text>
           {currentChain && (
-            <AvatarGroup size="xs" max={30} my={2}>
-              {claimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
+            <AvatarGroup size="xs" max={30}>
+              {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
                 return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
               })}
             </AvatarGroup>

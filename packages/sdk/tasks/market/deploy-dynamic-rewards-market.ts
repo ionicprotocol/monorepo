@@ -39,12 +39,12 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
     const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ marketAddress });
-    const deployArgs = [underlyingAddress, ...fwAddresses, ...pluginExtraParams, marketAddress, rewardTokens];
+    const deployArgs = [underlyingAddress, ...pluginExtraParams, marketAddress, rewardTokens];
 
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
     const artifact = await deployments.getArtifact(contractName);
-    const deployment = await deployments.deploy(`${contractName}_${symbol}_${underlyingAddress}`, {
+    const deployment = await deployments.deploy(`${contractName}_${symbol}_${marketAddress}`, {
       contract: artifact,
       from: signer.address,
       proxy: {

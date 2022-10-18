@@ -7,6 +7,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useColors } from '@ui/hooks/useColors';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -24,9 +25,10 @@ export const TokenName = ({
     poolAddress,
     assetAddress: asset.cToken,
   });
+  const { cPage } = useColors();
 
   return (
-    <Row id="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
+    <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <PopoverTooltip
         placement="top-start"
         body={
@@ -69,7 +71,6 @@ export const TokenName = ({
             }
           >
             <Text
-              className={tokenData?.symbol ?? asset.underlyingSymbol}
               fontWeight="bold"
               variant="mdText"
               whiteSpace="nowrap"
@@ -94,7 +95,7 @@ export const TokenName = ({
             <SimpleTooltip label="This asset has rewards!">
               <Box>
                 <GlowingBox px={2} fontSize={12} height={5} borderRadius={8} py={0}>
-                  Rewards
+                  <Center color={cPage.secondary.txtColor}>Rewards</Center>
                 </GlowingBox>
               </Box>
             </SimpleTooltip>
