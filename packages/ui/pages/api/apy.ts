@@ -25,7 +25,6 @@ interface SupabaseRow {
 interface MarketState extends SupabaseRow {
   totalAssets: string;
   totalSupply: string;
-  chain: number;
 }
 
 interface PluginState extends MarketState {
@@ -130,7 +129,7 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
 
   const [start, end] = await Promise.all([
     client
-      .from<PluginState>(config.supabasePluginTableName)
+      .from(config.supabasePluginTableName)
       .select('totalAssets,totalSupply,created_at')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
@@ -139,7 +138,7 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
       .order('created_at', { ascending: true })
       .limit(1),
     client
-      .from<PluginState>(config.supabasePluginTableName)
+      .from(config.supabasePluginTableName)
       .select('totalAssets,totalSupply,created_at,externalAPY')
       .eq('chain', parseInt(chain as string, 10))
       .eq('pluginAddress', (pluginAddress as string).toLowerCase())
@@ -163,9 +162,9 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
   const pricePerShare2 = pricePerShare(end);
   const pricePerShare1 = pricePerShare(start);
 
-  const date1 = end.data[0].created_at;
-  const date2 = start.data[0].created_at;
-  const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
+  const dateEnd = end.data[0].created_at;
+  const dateStart = start.data[0].created_at;
+  const dateDelta = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
   // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
   const millisecondsInADay = 86_400_000;
 
