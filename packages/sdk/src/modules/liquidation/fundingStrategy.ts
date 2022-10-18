@@ -70,6 +70,20 @@ function getStrategyData(
   fundingToken: string
 ): string {
   switch (contract) {
+    // IFundsConversionStrategy should be also configured here
+    case FundingStrategyContract.UniswapV3LiquidatorFunder:
+      const quoter = midasSdk.chainDeployment["Quoter"].address;
+
+      return new ethers.utils.AbiCoder().encode(
+        ["address", "address", "uint24", "address", "address"],
+        [
+          inputToken,
+          fundingToken,
+          midasSdk.chainConfig.specificParams.metadata.uniswapV3Fees?.[inputToken][fundingToken] || 1000,
+          midasSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER,
+          quoter,
+        ]
+      );
     case FundingStrategyContract.JarvisLiquidatorFunder:
       const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == inputToken && p.syntheticToken == fundingToken

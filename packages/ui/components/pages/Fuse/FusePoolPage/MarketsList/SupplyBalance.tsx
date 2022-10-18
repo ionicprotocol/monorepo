@@ -42,7 +42,7 @@ export const SupplyBalance = ({
             }`}
           >
             <Text
-              id="supplyBalance"
+              className="supplyBalance"
               mt={1}
               variant="smText"
               maxWidth="90px"

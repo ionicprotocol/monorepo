@@ -1,7 +1,8 @@
-import { assetSymbols, ChainParams } from "@midas-capital/types";
+import { assetSymbols, ChainParams, underlying } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
 import chainAddresses from "./addresses";
+import assets from "./assets";
 
 const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((4 * 24 * 365 * 60).toString()),
@@ -10,6 +11,11 @@ const specificParams: ChainParams = {
     chainIdHex: "0xA4B1",
     name: "Arbitrum One",
     shortName: "Arbitrum",
+    uniswapV3Fees: {
+      [underlying(assets, assetSymbols.USDC)]: {
+        [underlying(assets, assetSymbols.GMX)]: 3000,
+      },
+    },
     img: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
     blockExplorerUrls: { default: { name: "arbiscan", url: "https://arbiscan.com" } },
     rpcUrls: { default: "https://rpc.ankr.com/arbitrum" },

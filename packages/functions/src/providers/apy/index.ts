@@ -2,10 +2,21 @@ import { Strategy } from '@midas-capital/types';
 import BeefyAPYProvider from './BeefyAPYProvider';
 import { ExternalAPYProvider } from './ExternalAPYProvider';
 
-const providerMap: {
+type ProviderMap = {
   [key in Strategy]?: ExternalAPYProvider;
-} = {
+};
+
+const providerMap: ProviderMap = {
   [Strategy.Beefy]: BeefyAPYProvider,
 };
 
-export default providerMap;
+export async function getAPYProviders(): Promise<ProviderMap> {
+  await Promise.all(
+    Object.values(providerMap).map((provider) =>
+      provider.init().catch((error) => `Failed to init() provider: ${error}`)
+    )
+  );
+  return providerMap;
+}
+
+export default getAPYProviders;
