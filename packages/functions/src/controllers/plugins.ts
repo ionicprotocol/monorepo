@@ -40,7 +40,6 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           if (totalSupply.eq(0)) {
             return;
           }
-
           const { error } = await supabase.from(environment.supabasePluginTableName).insert([
             {
               chain: chainId,
@@ -57,14 +56,14 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           }
         } catch (exception) {
           await functionsAlert(
-            `Error occurred during saving data for plugin ${pluginAddress}`,
+            `Functions.plugins: Error occurred during saving data for plugin ${pluginAddress}`,
             JSON.stringify(exception)
           );
         }
       })
     );
   } catch (err) {
-    await functionsAlert('Generic Error', JSON.stringify(err));
+    await functionsAlert('Functions.plugins: Generic Error', JSON.stringify(err));
   }
 };
 
