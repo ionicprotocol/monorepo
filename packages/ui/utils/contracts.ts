@@ -2,13 +2,14 @@ import { MidasSdk } from '@midas-capital/sdk';
 import { Contract } from 'ethers';
 
 import { aBNBcContractABI, aBNBcContractAddress } from '@ui/constants/index';
+import { CErc20Delegate } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/CErc20Delegate';
 
 export const getComptrollerContract = (address: string, sdk: MidasSdk) => {
   return new Contract(address, sdk.artifacts.Comptroller.abi, sdk.provider);
 };
 
 export const getCTokenContract = (address: string, sdk: MidasSdk) => {
-  return new Contract(address, sdk.artifacts.CErc20Delegate.abi, sdk.provider);
+  return new Contract(address, sdk.artifacts.CErc20Delegate.abi, sdk.provider) as CErc20Delegate;
 };
 
 export const getRewardTokenContract = (address: string, sdkWithSigner: MidasSdk) => {
