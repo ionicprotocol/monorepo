@@ -108,8 +108,18 @@ export const RewardsInfo = ({
             </>
           }
         >
-          <Text color={cCard.txtColor} title={apyResponse.apy * 100 + '%'} variant="smText">
-            {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
+          <Text
+            color={cCard.txtColor}
+            title={
+              apyResponse.externalAPY !== undefined
+                ? apyResponse.externalAPY * 100 + '%'
+                : apyResponse.apy * 100 + '%'
+            }
+            variant="smText"
+          >
+            {apyResponse.externalAPY !== undefined
+              ? (apyResponse.externalAPY * 100).toFixed(2) + '%'
+              : (apyResponse.apy * 100).toFixed(2) + '%'}
           </Text>
         </PopoverTooltip>
       )}
