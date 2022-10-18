@@ -230,7 +230,7 @@ export interface TokenDataResponse {
   symbol: string;
 }
 
-export type APYResult = {
+export type APYResponse = {
   apy?: number;
   externalAPY?: number;
   updatedAt?: string;

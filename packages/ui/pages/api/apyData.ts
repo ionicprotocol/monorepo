@@ -4,7 +4,7 @@ import * as yup from 'yup';
 
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
-import { APYResult } from '@ui/types/ComponentPropsType';
+import { APYResponse } from '@ui/types/ComponentPropsType';
 
 const querySchema = yup.object().shape({
   chain: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
@@ -41,7 +41,7 @@ interface FlywheelState extends MarketState {
   pluginAddress: string;
 }
 
-const handler = async (req: NextApiRequest, res: NextApiResponse<APYResult>) => {
+const handler = async (req: NextApiRequest, res: NextApiResponse<APYResponse>) => {
   let validatedQuery: Query | null = null;
   try {
     querySchema.validateSync(req.query);
@@ -68,7 +68,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<APYResult>) => 
  * @returns
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function rewardTokenAPY(query: Query): Promise<APYResult> {
+async function rewardTokenAPY(query: Query): Promise<APYResponse> {
   // TODO https://github.com/Midas-Protocol/monorepo/issues/543
   return { error: 'Not yet supported.' };
   // const client = createClient(config.supabaseUrl, config.supabasePublicKey);
@@ -122,7 +122,7 @@ async function rewardTokenAPY(query: Query): Promise<APYResult> {
   // return { apy: (Math.log(endAssets / startAssets) / dateDelta) * millisecondsInADay * 365 };
 }
 
-async function underlyingTokenAPY(query: Query): Promise<APYResult> {
+async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
   const dateLimit = new Date();
   dateLimit.setDate(dateLimit.getDate() - parseInt('7', 10));

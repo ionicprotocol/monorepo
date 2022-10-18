@@ -5,7 +5,7 @@ import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { APYResult } from '@ui/types/ComponentPropsType';
+import { APYResponse } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
@@ -32,7 +32,7 @@ export function useApy(
   rewardAddress?: string,
   poolChainId?: number
 ) {
-  return useQuery<APYResult>(
+  return useQuery<APYResponse>(
     ['useApy', poolChainId, underlyingAddress, pluginAddress, rewardAddress],
     async () => {
       if (poolChainId) {
