@@ -47,7 +47,7 @@ const liquidationDefaults: LiquidationDefaults = {
     {
       expirationTime: 40 * 60,
       liquidityPoolAddress: "0x8734CF40A402D4191BD4D7a64bEeF12E4c452DeF",
-      syntheticToken: underlying(assets, assetSymbols.JCHF), // 0xbD1463F02f61676d53fd183C2B19282BFF93D099 polygon
+      syntheticToken: underlying(assets, assetSymbols.JCHF),
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
     //  jCNY <-> USDC
