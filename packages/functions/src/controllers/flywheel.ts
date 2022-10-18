@@ -47,13 +47,12 @@ const updateFlywheelData = async (chainId: SupportedChains, rpcUrl: string) => {
             throw `Error occurred during saving data for flywheel's plugin ${pluginAddress}: ${error.message}`;
           }
         } catch (err) {
-          console.error(err);
+          await functionsAlert("Saving Flywheel's plugin", JSON.stringify(err));
         }
       }
     }
   } catch (err) {
-    await functionsAlert("Saving Flywheel's plugin", err as string);
-    console.error(err);
+    await functionsAlert("Saving Flywheel's plugin", JSON.stringify(err));
   }
 };
 
