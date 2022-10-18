@@ -393,7 +393,7 @@ export const MarketsList = ({
     }
   }, [address, table]);
 
-  const { cCard } = useColors();
+  const { cCard, cPage } = useColors();
 
   const onFilter = (filter: string) => {
     if (globalFilter.includes(SEARCH)) {
@@ -543,7 +543,7 @@ export const MarketsList = ({
                         pt="11px"
                         px={4}
                       >
-                        <Text fontSize="md" color={cCard.txtColor}>
+                        <Text fontSize="md" color={cPage.secondary.txtColor}>
                           {`${
                             (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                           } Rewards`}
@@ -746,6 +746,7 @@ export const MarketsList = ({
               <Fragment key={row.id}>
                 <Tr
                   key={row.id}
+                  className={row.original.market.underlyingSymbol}
                   borderColor={cCard.dividerColor}
                   borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}

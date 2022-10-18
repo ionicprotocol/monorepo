@@ -39,7 +39,7 @@ export const BorrowBalance = ({
             label={`${longFormat(borrowBalance)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
           >
             <Text
-              id="borrowBalance"
+              className="borrowBalance"
               mt={1}
               variant="smText"
               maxWidth={'90px'}

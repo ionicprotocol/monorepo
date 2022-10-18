@@ -3,7 +3,6 @@ import Head from 'next/head';
 import { useEffect } from 'react';
 
 import FusePoolsPage from '@ui/components/pages/Fuse/FusePoolsPage';
-import Terms from '@ui/components/pages/Fuse/Modals/Terms';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export async function getInitialProps() {
@@ -23,7 +22,6 @@ const FusePage: NextPage = () => {
         <title>Midas Capital</title>
       </Head>
       <FusePoolsPage />
-      <Terms />
     </>
   );
 };

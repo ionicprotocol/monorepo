@@ -178,7 +178,7 @@ export const AdditionalInfo = ({
               />
             )
           ) : (
-            <Center height="100%" color="#FFFFFF">
+            <Center height="100%">
               <Spinner />
             </Center>
           )}
