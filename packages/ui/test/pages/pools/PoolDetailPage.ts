@@ -5,8 +5,9 @@ import { Page } from 'puppeteer';
 import { AppPage } from '@ui/test/pages/AppPage';
 
 export class PoolDetailPage extends AppPage {
-  private marketColumn = '#marketName';
-  private SupplyAssetBalance = '#supplyBalance';
+  private marketColumn = ' .marketName';
+  private SupplyAssetBalance = ' .supplyBalance';
+  private BorrowAssetBalance = ' .borrowBalance';
   private ModalTokenSymbol = '#fundOperationModal #symbol';
   private FundInput = '#fundInput';
   private ConfirmFundButton = '#confirmFund:not([disabled])';
@@ -16,52 +17,101 @@ export class PoolDetailPage extends AppPage {
     super(page, metamask, baseUrl);
   }
 
-  public async supply(symbol: string, amount: string): Promise<void> {
-    await this.Page.waitForSelector(this.SupplyAssetBalance + '.' + symbol);
-    const supplyBalance = await this.Page.$eval(
-      this.SupplyAssetBalance + '.' + symbol,
-      (el) => el.textContent
-    );
-    const marketName = await this.Page.waitForSelector(this.marketColumn + ' .' + symbol);
+  public async openPanel(symbol: string): Promise<void> {
+    await this.blockingWait(3);
+    await this.Page.waitForSelector('.' + symbol + this.marketColumn);
+    const marketName = await this.Page.$('.' + symbol + this.marketColumn);
     if (marketName) {
-      await marketName.click();
+      marketName.click();
     }
-    await this._openModal(FundOperationMode[FundOperationMode.SUPPLY].toLowerCase(), symbol);
-    await this._setAmount(amount);
-    await this._confirm(parseFloat(supplyBalance || ''), amount, FundOperationMode.SUPPLY, symbol);
   }
 
   public async supplyBalance(symbol: string): Promise<string | undefined> {
-    await this.Page.waitForSelector(this.SupplyAssetBalance + '.' + symbol);
+    await this.Page.waitForSelector('.' + symbol + this.SupplyAssetBalance);
     return (
-      (await this.Page.$eval(this.SupplyAssetBalance + '.' + symbol, (el) => el.textContent)) ||
+      (await this.Page.$eval('.' + symbol + this.SupplyAssetBalance, (el) => el.textContent)) ||
       undefined
     );
   }
 
-  public async withdraw(symbol: string, amount: string): Promise<void> {
-    await this.Page.waitForSelector(this.SupplyAssetBalance + '.' + symbol);
-    const supplyBalance = await this.Page.$eval(
-      this.SupplyAssetBalance + '.' + symbol,
-      (el) => el.textContent
-    );
-    await this._openModal(FundOperationMode[FundOperationMode.WITHDRAW].toLowerCase(), symbol);
-    await this._setAmount(amount);
-    await this._confirm(
-      parseFloat(supplyBalance || ''),
-      amount,
-      FundOperationMode.WITHDRAW,
-      symbol
+  public async borrowBalance(symbol: string): Promise<string | undefined> {
+    await this.Page.waitForSelector('.' + symbol + this.BorrowAssetBalance);
+    return (
+      (await this.Page.$eval('.' + symbol + this.BorrowAssetBalance, (el) => el.textContent)) ||
+      undefined
     );
   }
 
-  private async _openModal(mode: string, symbol: string): Promise<void> {
-    const fundOperationBtn = await this.Page.waitForSelector('.' + symbol + '.' + mode);
-    if (fundOperationBtn) {
-      await fundOperationBtn.click();
-      await this.Page.waitForSelector(this.ModalTokenSymbol);
-      const _symbol = await this.Page.$eval(this.ModalTokenSymbol, (el) => el.textContent);
-      expect(_symbol).toEqual(symbol);
+  public async supply(symbol: string, amount: string): Promise<void> {
+    const supplyBalanceBefore = await this.supplyBalance(symbol);
+
+    await this._openModal(FundOperationMode.SUPPLY, symbol);
+    await this._setAmount(amount);
+    await this._confirm();
+    await this._expected(
+      FundOperationMode.SUPPLY,
+      symbol,
+      amount,
+      parseFloat(supplyBalanceBefore || '')
+    );
+  }
+
+  public async borrow(symbol: string, amount: string): Promise<void> {
+    const borrowBalanceBefore = await this.borrowBalance(symbol);
+
+    await this._openModal(FundOperationMode.BORROW, symbol);
+    await this._setAmount(amount);
+    await this._confirm();
+    await this._expected(
+      FundOperationMode.BORROW,
+      symbol,
+      amount,
+      parseFloat(borrowBalanceBefore || '')
+    );
+  }
+
+  public async repay(symbol: string, amount: string): Promise<void> {
+    const borrowBalanceBefore = await this.borrowBalance(symbol);
+
+    await this._openModal(FundOperationMode.REPAY, symbol);
+    await this._setAmount(amount);
+    await this._confirm();
+    await this._expected(
+      FundOperationMode.REPAY,
+      symbol,
+      amount,
+      parseFloat(borrowBalanceBefore || '')
+    );
+  }
+
+  public async withdraw(symbol: string, amount: string): Promise<void> {
+    const supplyBalanceBefore = await this.supplyBalance(symbol);
+
+    await this._openModal(FundOperationMode.WITHDRAW, symbol);
+    await this._setAmount(amount);
+    await this._confirm();
+    await this._expected(
+      FundOperationMode.WITHDRAW,
+      symbol,
+      amount,
+      parseFloat(supplyBalanceBefore || '')
+    );
+  }
+
+  private async _openModal(mode: FundOperationMode, symbol: string): Promise<void> {
+    try {
+      const fundOperationBtn = await this.Page.waitForSelector(
+        '.' + symbol + '.' + FundOperationMode[mode].toLowerCase() + ':not([disabled])'
+      );
+
+      if (fundOperationBtn) {
+        await fundOperationBtn.click();
+        await this.Page.waitForSelector(this.ModalTokenSymbol);
+        const _symbol = await this.Page.$eval(this.ModalTokenSymbol, (el) => el.textContent);
+        expect(_symbol).toEqual(symbol);
+      }
+    } catch {
+      throw new Error(`${FundOperationMode[mode]} Button disabled!`);
     }
   }
 
@@ -72,19 +122,16 @@ export class PoolDetailPage extends AppPage {
     }
   }
 
-  private async _confirm(
-    balance: number,
-    amount: string,
-    mode: FundOperationMode,
-    symbol: string
-  ): Promise<void> {
+  private async _confirm(): Promise<void> {
     const confirmFundButton = await this.Page.waitForSelector(this.ConfirmFundButton);
+
     if (confirmFundButton) {
       await confirmFundButton.click();
+
       let finished = false;
       while (!finished) {
         try {
-          await this.blockingWait(3);
+          await this.blockingWait(5);
           await Promise.race([
             this.Metamask.confirmTransaction(),
             new Promise((resolve) => setTimeout(resolve, 5000)),
@@ -97,34 +144,50 @@ export class PoolDetailPage extends AppPage {
           }
         } catch {}
       }
+    }
+  }
 
-      if (mode === FundOperationMode.SUPPLY) {
-        await this.Page.waitForSelector(this.SupplyAssetBalance + '.' + symbol);
-        const updatedBalance = await this.Page.$eval(
-          this.SupplyAssetBalance + '.' + symbol,
-          (el) => el.textContent
+  private async _expected(
+    mode: FundOperationMode,
+    symbol: string,
+    amount: string,
+    balanceBefore: number
+  ): Promise<void> {
+    if (mode === FundOperationMode.SUPPLY) {
+      const supplyBalanceAfter = await this.supplyBalance(symbol);
+      if (supplyBalanceAfter) {
+        expect(parseFloat(supplyBalanceAfter).toFixed(2)).toEqual(
+          (balanceBefore + Number(amount)).toFixed(2)
         );
-        if (updatedBalance) {
-          expect(parseFloat(updatedBalance).toFixed(2)).toEqual(
-            (balance + Number(amount)).toFixed(2)
-          );
-        } else {
-          throw new Error('Supply Error!');
-        }
-      } else if (mode === FundOperationMode.WITHDRAW) {
-        await this.Page.waitForSelector(this.SupplyAssetBalance + '.' + symbol);
-        const updatedBalance = await this.Page.$eval(
-          this.SupplyAssetBalance + '.' + symbol,
-          (el) => el.textContent
+      } else {
+        throw new Error(`Supply Error!`);
+      }
+    } else if (mode === FundOperationMode.BORROW) {
+      const borrowBalanceAfter = await this.borrowBalance(symbol);
+      if (borrowBalanceAfter) {
+        expect(parseFloat(borrowBalanceAfter).toFixed(2)).toEqual(
+          (balanceBefore + Number(amount)).toFixed(2)
         );
-
-        if (updatedBalance) {
-          expect(parseFloat(updatedBalance).toFixed(2)).toEqual(
-            (balance - Number(amount)).toFixed(2)
-          );
-        } else {
-          throw new Error('Withdraw Error!');
-        }
+      } else {
+        throw new Error(`Borrow Error!`);
+      }
+    } else if (mode === FundOperationMode.REPAY) {
+      const borrowBalanceAfter = await this.borrowBalance(symbol);
+      if (borrowBalanceAfter) {
+        expect(parseFloat(borrowBalanceAfter).toFixed(2)).toEqual(
+          (balanceBefore - Number(amount)).toFixed(2)
+        );
+      } else {
+        throw new Error(`Repay Error!`);
+      }
+    } else if (mode === FundOperationMode.WITHDRAW) {
+      const supplyBalanceAfter = await this.supplyBalance(symbol);
+      if (supplyBalanceAfter) {
+        expect(parseFloat(supplyBalanceAfter).toFixed(2)).toEqual(
+          (balanceBefore - Number(amount)).toFixed(2)
+        );
+      } else {
+        throw new Error(`Withdraw Error!`);
       }
     }
   }

@@ -2,7 +2,7 @@ import { bsc, chapel, polygon } from '@midas-capital/chains';
 import { assetSymbols, SupportedAsset, SupportedChains } from '@midas-capital/types';
 import dotenv from 'dotenv';
 
-import { BASE_URL, DEFAULT_AMOUNT, FORKED_RPC } from '@ui/test/constants/index';
+import { BASE_URL, FORKED_RPC } from '@ui/test/constants/index';
 
 dotenv.config();
 
@@ -10,9 +10,12 @@ const testChainId = process.env.TEST_CHAIN_ID;
 
 export type FundOperationConfig = {
   supplyAmount: string;
+  borrowAmount: string;
+  repayAmount: string;
   withdrawAmount: string;
   assetSymbol: string;
   asset: SupportedAsset | undefined;
+  testUrl: string;
 };
 
 export type InitConfig = {
@@ -20,7 +23,6 @@ export type InitConfig = {
   networkName: string;
   symbol: string;
   rpc: string;
-  testUrl: string;
 };
 
 export class Config {
@@ -32,7 +34,6 @@ export class Config {
           networkName: 'chapel',
           symbol: 'BNB',
           rpc: chapel.specificParams.metadata.rpcUrls.default,
-          testUrl: `${BASE_URL}/97/pool/25`,
         };
       case SupportedChains.bsc:
         return {
@@ -40,7 +41,6 @@ export class Config {
           networkName: 'ForkedBSC',
           symbol: 'FORK',
           rpc: FORKED_RPC,
-          testUrl: `${BASE_URL}/56/pool/1`, // Jarvis pool
         };
       case SupportedChains.polygon:
         return {
@@ -48,7 +48,6 @@ export class Config {
           networkName: 'ForkedPolygon',
           symbol: 'MATIC',
           rpc: FORKED_RPC,
-          testUrl: `${BASE_URL}/137/pool/1`,
         };
       default:
         return {
@@ -56,7 +55,6 @@ export class Config {
           networkName: 'chapel',
           symbol: 'BNB',
           rpc: chapel.specificParams.metadata.rpcUrls.default,
-          testUrl: `${BASE_URL}/97/pool/25`,
         };
     }
   }
@@ -64,32 +62,44 @@ export class Config {
     switch (Number(testChainId)) {
       case SupportedChains.chapel:
         return {
-          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
-          withdrawAmount: DEFAULT_AMOUNT.toString(),
+          supplyAmount: '5',
+          borrowAmount: '2',
+          repayAmount: '1',
+          withdrawAmount: '3',
           assetSymbol: assetSymbols.WBNB,
           asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
+          testUrl: `${BASE_URL}/97/pool/25`,
         };
       case SupportedChains.bsc:
         return {
-          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
-          withdrawAmount: DEFAULT_AMOUNT.toString(),
+          supplyAmount: '5',
+          borrowAmount: '2',
+          repayAmount: '1',
+          withdrawAmount: '3',
           assetSymbol: assetSymbols.WBNB,
           asset: bsc.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
+          testUrl: `${BASE_URL}/56/pool/1`, // Jarvis pool
         };
       case SupportedChains.polygon:
         return {
-          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
-          withdrawAmount: DEFAULT_AMOUNT.toString(),
+          supplyAmount: '5',
+          borrowAmount: '2',
+          repayAmount: '1',
+          withdrawAmount: '3',
           assetSymbol: assetSymbols.WMATIC,
           asset: polygon.assets.find((asset) => asset.symbol === assetSymbols.WMATIC),
+          testUrl: `${BASE_URL}/137/pool/1`,
         };
       // use chapel as default
       default:
         return {
-          supplyAmount: (DEFAULT_AMOUNT * 2).toString(),
-          withdrawAmount: DEFAULT_AMOUNT.toString(),
+          supplyAmount: '5',
+          borrowAmount: '2',
+          repayAmount: '1',
+          withdrawAmount: '3',
           assetSymbol: assetSymbols.WBNB,
           asset: chapel.assets.find((asset) => asset.symbol === assetSymbols.WBNB),
+          testUrl: `${BASE_URL}/97/pool/25`,
         };
     }
   }

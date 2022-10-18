@@ -746,6 +746,7 @@ export const MarketsList = ({
               <Fragment key={row.id}>
                 <Tr
                   key={row.id}
+                  className={row.original.market.underlyingSymbol}
                   borderColor={cCard.dividerColor}
                   borderBottomWidth={row.getIsExpanded() ? 0 : 1}
                   background={row.getIsExpanded() ? cCard.hoverBgColor : cCard.bgColor}

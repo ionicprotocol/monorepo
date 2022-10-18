@@ -26,7 +26,7 @@ export const TokenName = ({
   });
 
   return (
-    <Row id="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
+    <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <PopoverTooltip
         placement="top-start"
         body={
@@ -57,11 +57,7 @@ export const TokenName = ({
             placement="top-start"
             body={
               <VStack>
-                <Text
-                  alignSelf="flex-start"
-                  variant="mdText"
-                  className={tokenData?.symbol ?? asset.underlyingSymbol}
-                >
+                <Text alignSelf="flex-start" variant="mdText">
                   {tokenData?.symbol ?? asset.underlyingSymbol}
                 </Text>
                 <div
@@ -73,7 +69,6 @@ export const TokenName = ({
             }
           >
             <Text
-              className={tokenData?.symbol ?? asset.underlyingSymbol}
               fontWeight="bold"
               variant="mdText"
               whiteSpace="nowrap"
