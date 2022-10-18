@@ -33,11 +33,15 @@ class BeefyAPYProvider extends ExternalAPYProvider {
 
     const apy = this.beefyAPYs![beefyID];
     if (apy === undefined) {
-      throw `BeefyAPYProvider: Beefy ID: "${beefyID}" not included in Beefy APY data`;
+      await functionsAlert(
+        `BeefyAPYProvider: ${beefyID}`,
+        `Beefy ID: "${beefyID}" not included in Beefy APY data`
+      );
+      throw `Beefy ID: "${beefyID}" not included in Beefy APY data`;
     }
 
     if (apy === 0) {
-      functionsAlert(`External APY of Plugin is 0`, pluginAddress);
+      await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
     return apy;
