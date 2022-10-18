@@ -42,66 +42,23 @@ export class PoolDetailPage extends AppPage {
     );
   }
 
-  public async supply(symbol: string, amount: string): Promise<void> {
-    const supplyBalanceBefore = await this.supplyBalance(symbol);
-
-    await this._openModal(FundOperationMode.SUPPLY, symbol);
+  public async fundOperation(
+    mode: FundOperationMode,
+    symbol: string,
+    amount: string,
+    balanceBefore?: string
+  ): Promise<void> {
+    await this._openModal(mode, symbol);
     await this._setAmount(amount);
     await this._confirm();
-    await this._expected(
-      FundOperationMode.SUPPLY,
-      symbol,
-      amount,
-      parseFloat(supplyBalanceBefore || '')
-    );
-  }
-
-  public async borrow(symbol: string, amount: string): Promise<void> {
-    const borrowBalanceBefore = await this.borrowBalance(symbol);
-
-    await this._openModal(FundOperationMode.BORROW, symbol);
-    await this._setAmount(amount);
-    await this._confirm();
-    await this._expected(
-      FundOperationMode.BORROW,
-      symbol,
-      amount,
-      parseFloat(borrowBalanceBefore || '')
-    );
-  }
-
-  public async repay(symbol: string, amount: string): Promise<void> {
-    const borrowBalanceBefore = await this.borrowBalance(symbol);
-
-    await this._openModal(FundOperationMode.REPAY, symbol);
-    await this._setAmount(amount);
-    await this._confirm();
-    await this._expected(
-      FundOperationMode.REPAY,
-      symbol,
-      amount,
-      parseFloat(borrowBalanceBefore || '')
-    );
-  }
-
-  public async withdraw(symbol: string, amount: string): Promise<void> {
-    const supplyBalanceBefore = await this.supplyBalance(symbol);
-
-    await this._openModal(FundOperationMode.WITHDRAW, symbol);
-    await this._setAmount(amount);
-    await this._confirm();
-    await this._expected(
-      FundOperationMode.WITHDRAW,
-      symbol,
-      amount,
-      parseFloat(supplyBalanceBefore || '')
-    );
+    await this._expected(mode, symbol, amount, parseFloat(balanceBefore || ''));
   }
 
   private async _openModal(mode: FundOperationMode, symbol: string): Promise<void> {
     try {
       const fundOperationBtn = await this.Page.waitForSelector(
-        '.' + symbol + '.' + FundOperationMode[mode].toLowerCase() + ':not([disabled])'
+        '.' + symbol + '.' + FundOperationMode[mode].toLowerCase() + ':not([disabled])',
+        { timeout: 10000 }
       );
 
       if (fundOperationBtn) {

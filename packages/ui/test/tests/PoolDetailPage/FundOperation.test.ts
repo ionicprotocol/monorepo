@@ -1,4 +1,5 @@
 import { Dappeteer } from '@chainsafe/dappeteer';
+import { FundOperationMode } from '@midas-capital/types';
 import { Browser, Page } from 'puppeteer';
 
 import { Config } from '@ui/test//helpers/Config';
@@ -44,28 +45,48 @@ describe('Fund Operation:', () => {
 
   test(`User can supply on pool`, async () => {
     const balanceBefore = await poolDetailPage.supplyBalance(assetSymbol);
-    await poolDetailPage.supply(assetSymbol, supplyAmount);
+    await poolDetailPage.fundOperation(
+      FundOperationMode.SUPPLY,
+      assetSymbol,
+      supplyAmount,
+      balanceBefore
+    );
     const balanceAfter = await poolDetailPage.supplyBalance(assetSymbol);
     expect(balanceBefore).not.toEqual(balanceAfter);
   });
 
   test(`User can borrow on pool`, async () => {
     const balanceBefore = await poolDetailPage.borrowBalance(assetSymbol);
-    await poolDetailPage.borrow(assetSymbol, borrowAmount);
+    await poolDetailPage.fundOperation(
+      FundOperationMode.BORROW,
+      assetSymbol,
+      borrowAmount,
+      balanceBefore
+    );
     const balanceAfter = await poolDetailPage.borrowBalance(assetSymbol);
     expect(balanceBefore).not.toEqual(balanceAfter);
   });
 
   test(`User can repay on pool`, async () => {
     const balanceBefore = await poolDetailPage.borrowBalance(assetSymbol);
-    await poolDetailPage.repay(assetSymbol, repayAmount);
+    await poolDetailPage.fundOperation(
+      FundOperationMode.REPAY,
+      assetSymbol,
+      repayAmount,
+      balanceBefore
+    );
     const balanceAfter = await poolDetailPage.borrowBalance(assetSymbol);
     expect(balanceBefore).not.toEqual(balanceAfter);
   });
 
   test(`User can withdraw on pool`, async () => {
     const balanceBefore = await poolDetailPage.supplyBalance(assetSymbol);
-    await poolDetailPage.withdraw(assetSymbol, withdrawAmount);
+    await poolDetailPage.fundOperation(
+      FundOperationMode.WITHDRAW,
+      assetSymbol,
+      withdrawAmount,
+      balanceBefore
+    );
     const balanceAfter = await poolDetailPage.supplyBalance(assetSymbol);
     expect(balanceBefore).not.toEqual(balanceAfter);
   });
