@@ -136,12 +136,14 @@ const FuseStatsBar = () => {
         </PopoverTrigger>
         {tvlData && (
           <PopoverContent p={2}>
-            <VStack width={'100%'} alignItems="flex-start">
+            <VStack width={'100%'} alignItems="flex-start" spacing={0}>
               {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
-                    <Text fontWeight="bold">{smallUsdFormatter(chainTVL.value)}</Text>
+                    <Text fontWeight="bold" mt={1}>
+                      {smallUsdFormatter(chainTVL.value)}
+                    </Text>
                     <Text>{chainTVL.name}</Text>
                   </Box>
                 </Flex>
