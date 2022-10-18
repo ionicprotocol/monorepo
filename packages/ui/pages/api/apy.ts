@@ -52,7 +52,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<APYResponse>) =
         error: error.message,
       });
     } else {
-      throw 'Unknown Error';
+      throw error;
     }
   }
 
@@ -70,7 +70,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<APYResponse>) =
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function rewardTokenAPY(query: Query): Promise<APYResponse> {
   // TODO https://github.com/Midas-Protocol/monorepo/issues/543
-  return { error: 'Not yet supported.' };
+  throw 'Not yet supported.';
   // const client = createClient(config.supabaseUrl, config.supabasePublicKey);
   // const dateLimit = new Date();
   // dateLimit.setDate(dateLimit.getDate() - parseInt('7', 10));
@@ -168,6 +168,7 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
   const dateDelta = new Date(date1).getTime() - new Date(date2).getTime();
   // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
   const millisecondsInADay = 86_400_000;
+
   return {
     updatedAt: end.data[0].created_at,
     externalAPY: end.data[0].externalAPY ? Number(end.data[0].externalAPY) : undefined,

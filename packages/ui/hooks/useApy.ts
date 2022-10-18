@@ -16,7 +16,7 @@ export const fetchApy = async (
   rewardAddress?: string
 ) => {
   const response = await axios.get(
-    `/api/apyData?chain=${chainId}&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
+    `/api/apy?chain=${chainId}&underlyingAddress=${underlyingAddress}&pluginAddress=${pluginAddress}${
       rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
     }`
   );
