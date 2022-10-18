@@ -1,5 +1,6 @@
 import { PluginData, Strategy } from '@midas-capital/types';
 import axios from 'axios';
+import { functionsAlert } from '../../alert';
 import { ExternalAPYProvider } from './ExternalAPYProvider';
 
 interface BeefyAPYResponse {
@@ -10,8 +11,11 @@ class BeefyAPYProvider extends ExternalAPYProvider {
   static apyEndpoint = 'https://api.beefy.finance/apy';
   private beefyAPYs: BeefyAPYResponse | undefined;
 
-  constructor() {
-    super();
+  async init() {
+    this.beefyAPYs = await (await axios.get(BeefyAPYProvider.apyEndpoint)).data;
+    if (!this.beefyAPYs) {
+      throw `BeefyAPYProvider: unexpected Beefy APY response`;
+    }
   }
 
   async getApy(pluginAddress: string, pluginData: PluginData): Promise<number> {
@@ -24,20 +28,19 @@ class BeefyAPYProvider extends ExternalAPYProvider {
     if (!beefyID) throw 'BeefyAPYProvider: unable to extract `Beefy ID` from `apyDocsUrl`';
 
     if (!this.beefyAPYs) {
-      await this._fetchBeefyAPYs();
+      throw 'BeefyAPYProvider: Not initialized';
     }
 
     const apy = this.beefyAPYs![beefyID];
-    if (!apy) throw `BeefyAPYProvider: Beefy ID: "${beefyID}" not included in Beefy APY data`;
+    if (apy === undefined) {
+      throw `BeefyAPYProvider: Beefy ID: "${beefyID}" not included in Beefy APY data`;
+    }
+
+    if (apy === 0) {
+      functionsAlert(`External APY of Plugin is 0`, pluginAddress);
+    }
 
     return apy;
-  }
-
-  private async _fetchBeefyAPYs() {
-    this.beefyAPYs = await (await axios.get(BeefyAPYProvider.apyEndpoint)).data;
-    if (!this.beefyAPYs) {
-      throw `BeefyAPYProvider: unexpected Beefy APY response`;
-    }
   }
 }
 
