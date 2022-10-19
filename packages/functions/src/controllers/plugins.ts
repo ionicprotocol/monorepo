@@ -21,18 +21,13 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
             pluginContract.callStatic.totalAssets(), // Total Amount of Underlying Managed by the Vault
             pluginContract.callStatic.asset(), // Market Underlying
             (async function fetchExternalAPY() {
-              let result: number | undefined = undefined;
               if (apyProviders[pluginData.strategy]) {
                 try {
-                  result = await apyProviders[pluginData.strategy]?.getApy(
-                    pluginAddress,
-                    pluginData
-                  );
+                  return await apyProviders[pluginData.strategy]?.getApy(pluginAddress, pluginData);
                 } catch (exception) {
                   console.error(exception);
                 }
               }
-              return result;
             })(),
           ]);
 
