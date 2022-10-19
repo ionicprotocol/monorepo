@@ -21,18 +21,13 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
             pluginContract.callStatic.totalAssets(), // Total Amount of Underlying Managed by the Vault
             pluginContract.callStatic.asset(), // Market Underlying
             (async function fetchExternalAPY() {
-              let result: number | undefined = undefined;
               if (apyProviders[pluginData.strategy]) {
                 try {
-                  result = await apyProviders[pluginData.strategy]?.getApy(
-                    pluginAddress,
-                    pluginData
-                  );
+                  return await apyProviders[pluginData.strategy]?.getApy(pluginAddress, pluginData);
                 } catch (exception) {
                   console.error(exception);
                 }
               }
-              return result;
             })(),
           ]);
 
@@ -40,17 +35,20 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           if (totalSupply.eq(0)) {
             return;
           }
-          const { error } = await supabase.from(environment.supabasePluginTableName).insert([
-            {
-              chain: chainId,
-              externalAPY: externalAPY ? externalAPY.toString() : undefined,
-              pluginAddress: pluginAddress.toLowerCase(),
-              totalAssets: totalAssets.toString(),
-              totalSupply: totalSupply.toString(),
-              underlyingAddress: underlyingAsset.toLowerCase(),
-            },
-          ]);
+          const { error, status, statusText, count, data, body } = await supabase
+            .from(environment.supabasePluginTableName)
+            .insert([
+              {
+                chain: chainId,
+                externalAPY: externalAPY ? externalAPY.toString() : undefined,
+                pluginAddress: pluginAddress.toLowerCase(),
+                totalAssets: totalAssets.toString(),
+                totalSupply: totalSupply.toString(),
+                underlyingAddress: underlyingAsset.toLowerCase(),
+              },
+            ]);
 
+          console.log({ pluginAddress, status, statusText, count, data, body });
           if (error) {
             throw new Error(JSON.stringify(error));
           }
