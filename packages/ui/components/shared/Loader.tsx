@@ -12,12 +12,11 @@ function Loader({ width }: { width?: string }) {
       fillOpacity: [0, 0, 1, 1, 0, 0],
       transition: {
         delay: i * 0.2,
-        loop: Infinity,
         repeatDelay: 0.5,
         repeatType: 'reverse',
         ease: 'easeIn',
         repeat: Infinity,
-        duration: 3,
+        duration: 2,
       },
     }));
   }, [controls]);
