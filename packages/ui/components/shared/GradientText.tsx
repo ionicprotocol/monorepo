@@ -21,6 +21,8 @@ export const GradientText = ({
         isEnabled
           ? {
               background: gradientBackground[0],
+              WebkitTextFillColor: 'transparent',
+              WebkitBackgroundClip: 'text',
             }
           : {}
       }

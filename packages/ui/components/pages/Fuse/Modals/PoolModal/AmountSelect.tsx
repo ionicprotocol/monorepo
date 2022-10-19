@@ -312,7 +312,7 @@ const AmountSelect = ({
       borderRadius={16}
     >
       {userAction === UserAction.WAITING_FOR_TRANSACTIONS ? (
-        <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
+        <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
           <Loader />
           <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions
