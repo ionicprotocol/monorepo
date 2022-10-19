@@ -29,6 +29,7 @@ const stkBNB_WBNB = "0xaA2527ff1893e0D40d4a454623d362B79E8bb7F1";
 const stkBNB = "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
 const jCHF = "0x7c869b5A294b1314E985283d01C702B62224a05f";
+const jEUR = "0x23b8683Ff98F9E4781552DFE6f12Aa32814924e8";
 const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
 const BRZw = "0x5b1a9850f55d9282a7C4Bf23A2a21B050e3Beb2f";
 const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
@@ -273,6 +274,14 @@ const assets: SupportedAsset[] = [
     symbol: assetSymbols.JCHF,
     underlying: jCHF,
     name: "Jarvis Synthetic Swiss Franc",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
+    symbol: assetSymbols.JEUR,
+    underlying: jEUR,
+    name: "Jarvis Synthetic Euro",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v1"),
