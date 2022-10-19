@@ -23,9 +23,6 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
-SUPABASE_PLUGIN_TABLE_NAME="apy-plugin-preview"
-SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel-preview"
-SUPABASE_NATIVE_PRICES_TABLE_NAME="native-prices-preview"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -34,8 +31,6 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
-SUPABASE_PLUGIN_TABLE_NAME="apy-plugin-development"
-SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel-development"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -44,8 +39,6 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
-SUPABASE_PLUGIN_TABLE_NAME="apy-plugin"
-SUPABASE_FLYWHEEL_TABLE_NAME="apy-flywheel"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"
