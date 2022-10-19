@@ -109,9 +109,9 @@ async function rewardTokenAPY(query: Query): Promise<APYResponse> {
 }
 
 async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
+  const millisecondsInADay = 86_400_000;
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
-  const dateLimit = new Date();
-  dateLimit.setDate(dateLimit.getDate() - parseInt('7', 10));
+  const dateLimit: Date = new Date(Date.now() - 7 * millisecondsInADay);
   const { chain, pluginAddress, underlyingAddress } = query;
 
   const [start, end] = await Promise.all([
@@ -151,9 +151,9 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
 
   const dateEnd = end.data[0].created_at;
   const dateStart = start.data[0].created_at;
+
   const dateDelta = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
   // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
-  const millisecondsInADay = 86_400_000;
 
   return {
     updatedAt: end.data[0].created_at,
