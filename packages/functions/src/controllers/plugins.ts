@@ -35,20 +35,17 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           if (totalSupply.eq(0)) {
             return;
           }
-          const { error, status, statusText, count, data, body } = await supabase
-            .from(environment.supabasePluginTableName)
-            .insert([
-              {
-                chain: chainId,
-                externalAPY: externalAPY ? externalAPY.toString() : undefined,
-                pluginAddress: pluginAddress.toLowerCase(),
-                totalAssets: totalAssets.toString(),
-                totalSupply: totalSupply.toString(),
-                underlyingAddress: underlyingAsset.toLowerCase(),
-              },
-            ]);
+          const { error } = await supabase.from(environment.supabasePluginTableName).insert([
+            {
+              chain: chainId,
+              externalAPY: externalAPY ? externalAPY.toString() : undefined,
+              pluginAddress: pluginAddress.toLowerCase(),
+              totalAssets: totalAssets.toString(),
+              totalSupply: totalSupply.toString(),
+              underlyingAddress: underlyingAsset.toLowerCase(),
+            },
+          ]);
 
-          console.log({ pluginAddress, status, statusText, count, data, body });
           if (error) {
             throw new Error(JSON.stringify(error));
           }
