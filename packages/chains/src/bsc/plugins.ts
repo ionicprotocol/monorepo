@@ -132,6 +132,17 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["stkBNB-WBNB"]),
     otherParams: ["0xd23ef71883a98c55Eb7ED67ED61fABF554aDEd21", "0"],
   },
+  // BeefyERC4626_3brl_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
+  "0xCeB429c710D523d8243833018852Bbad2CEA9Bb4": {
+    market: "0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a",
+    name: "Beefy 3brl Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-3brl",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
+    underlying: underlying(assets, assetSymbols["3brl"]),
+    otherParams: ["0xF46E3e2eb855baE2A32eD941f0c03b1D9b7b96a0", "0"],
+  },
 };
 
 export default deployedPlugins;

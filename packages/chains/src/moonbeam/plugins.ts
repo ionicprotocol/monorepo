@@ -9,7 +9,7 @@ const deployedPlugins: DeployedPlugins = {
     name: "GLMR-ATOM",
     strategy: Strategy.Stella,
     apyDocsUrl: "https://app.stellaswap.com/farm",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam-coming-soon",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/stellaswap",
     underlying: underlying(assets, assetSymbols["ATOM-GLMR"]),
     otherParams: [
       "0xF3a5454496E26ac57da879bf3285Fa85DEBF0388",
@@ -24,7 +24,7 @@ const deployedPlugins: DeployedPlugins = {
     name: "GLMR-xc.DOT",
     strategy: Strategy.Stella,
     apyDocsUrl: "https://app.stellaswap.com/farm",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam-coming-soon",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/stellaswap",
     underlying: underlying(assets, assetSymbols["WGLMR-xcDOT"]),
     otherParams: [
       "0xF3a5454496E26ac57da879bf3285Fa85DEBF0388",
@@ -39,7 +39,7 @@ const deployedPlugins: DeployedPlugins = {
     name: "xcDOT-stDOT",
     strategy: Strategy.CurveGauge,
     apyDocsUrl: "https://moonbeam.curve.fi/",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam-coming-soon",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/xcdot",
     underlying: underlying(assets, assetSymbols.LDO),
     otherParams: ["0xC106C836771B0B4f4a0612Bd68163Ca93be1D340", [underlying(assets, assetSymbols.LDO)]],
   },
