@@ -389,7 +389,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// EPS
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
     args: [],
@@ -402,7 +401,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });

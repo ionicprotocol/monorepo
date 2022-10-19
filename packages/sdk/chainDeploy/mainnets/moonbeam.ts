@@ -240,7 +240,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // CurveSwapLiquidator
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
