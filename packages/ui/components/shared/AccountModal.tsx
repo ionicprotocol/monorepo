@@ -10,12 +10,13 @@ import {
   ModalOverlay,
   Text,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
 import { TransactionResponse } from '@ethersproject/providers';
 import { useEffect, useMemo, useState } from 'react';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
-import { Column, Row } from '@ui/components/shared/Flex';
+import { Column } from '@ui/components/shared/Flex';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -108,49 +109,24 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                   <Text fontSize={20} mb={4}>
                     Pending transactions
                   </Text>
-                  {pendingTxHashes.map((hash, index) => (
-                    <Button
-                      key={index}
-                      href={`${scanUrl}/tx/${hash}`}
-                      rightIcon={<ExternalLinkIcon />}
-                      variant={'link'}
-                      as={Link}
-                      isExternal
-                      width="100%"
-                    >
-                      {shortAddress(hash, 12, 10)}
-                    </Button>
-                  ))}
+                  <VStack alignContent={'flex-start'}>
+                    {pendingTxHashes.map((hash, index) => (
+                      <Button
+                        key={index}
+                        href={`${scanUrl}/tx/${hash}`}
+                        rightIcon={<ExternalLinkIcon />}
+                        variant={'link'}
+                        as={Link}
+                        isExternal
+                        width="100%"
+                      >
+                        {shortAddress(hash, 6, 4)}
+                      </Button>
+                    ))}
+                  </VStack>
                 </>
               )}
             </Column>
-            <Row
-              mainAxisAlignment="center"
-              crossAxisAlignment="center"
-              mt={4}
-              width="100%"
-              color={cCard.txtColor}
-            >
-              <Link target="_blank" href="https://docs.midas.capital/">
-                <Text mx={2} size="sm" textDecoration="underline">
-                  Docs
-                </Text>
-              </Link>
-              <Link target="_blank" href="https://www.notion.so/Midas-Capital">
-                <Text mx={2} size="sm" textDecoration="underline">
-                  Notion
-                </Text>
-              </Link>
-              <Link target="_blank" href="https://www.notion.so/Midas-Capital-Audit">
-                <Text mx={2} size="sm" textDecoration="underline">
-                  Audit
-                </Text>
-              </Link>
-            </Row>
-
-            <Text mt={4} fontSize="10px" color={cCard.txtColor}>
-              Version
-            </Text>
           </Column>
         </ModalContent>
       </Modal>
