@@ -5,7 +5,7 @@ import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ApyInformTooltip } from './ApyInformTooltip';
+import { NoApyInformTooltip } from './NoApyInformTooltip';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -88,7 +88,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
                 {Number(formatUnits(info.formattedAPR, 16)).toFixed(2).toString() + '%'}
               </Text>
             ) : (
-              <ApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
+              <NoApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
             )}
           </HStack>
         ))

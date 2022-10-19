@@ -10,7 +10,6 @@ import { BigNumberish, CallOverrides, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { filterOnlyObjectProperties, filterPoolName, getContract } from "../MidasSdk/utils";

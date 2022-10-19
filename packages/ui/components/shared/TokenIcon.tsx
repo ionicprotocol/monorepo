@@ -56,6 +56,7 @@ export const TokenIcon = ({
               <PlaceholderIcon boxSize={'100%'} color={iconColor} />
             )
           }
+          borderRadius={0}
           src={tokenData?.logoURL}
           {...avatarProps}
         />
