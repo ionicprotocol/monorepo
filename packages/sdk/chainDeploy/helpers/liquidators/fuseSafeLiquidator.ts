@@ -113,7 +113,7 @@ export const configureAddressesProviderStrategies = async ({
     const [redemptionStrategyType] = chainConfig.redemptionStrategies[assetAddress];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
 
-    const [onChainStrategyAddress, onChainContractType] = await ap.redemptionStrategies(assetAddress);
+    const [onChainStrategyAddress, onChainContractType] = await ap.callStatic.redemptionStrategies(assetAddress);
     if (onChainStrategyAddress != redemptionStrategy.address) {
       redemptionStrategiesToUpdate.push([assetAddress, redemptionStrategyType, redemptionStrategy.address]);
     }
@@ -136,17 +136,19 @@ export const configureAddressesProviderStrategies = async ({
     const [fundingStrategyType] = chainConfig.fundingStrategies[assetAddress];
     const fundingStrategy = await ethers.getContract(fundingStrategyType);
 
-    const [onChainStrategyAddress, onChainContractType] = await ap.fundingStrategies(assetAddress);
+    const [onChainStrategyAddress, onChainContractType] = await ap.callStatic.fundingStrategies(assetAddress);
     if (onChainStrategyAddress != fundingStrategy.address) {
       fundingStrategiesToUpdate.push([assetAddress, fundingStrategyType, fundingStrategy.address]);
     }
   }
 
   if (fundingStrategiesToUpdate.length > 0) {
+    const gasPrice = (await ethers.provider.getGasPrice()).mul(250).div(100);
     for (const key in fundingStrategiesToUpdate) {
       const [asset, type, strategy] = fundingStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
-      const tx = await ap.setFundingStrategy(asset, strategy, type);
+      const tx = await ap.setFundingStrategy(asset, strategy, type, {gasPrice});
+      console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setFundingStrategy: ", tx.hash);
     }
@@ -157,7 +159,7 @@ export const configureAddressesProviderStrategies = async ({
   for (const key in chainConfig.liquidationDefaults.jarvisPools) {
     const jarvisPool = chainConfig.liquidationDefaults.jarvisPools[key];
 
-    const currenConfig = await ap.jarvisPools(jarvisPool.syntheticToken);
+    const currenConfig = await ap.callStatic.jarvisPools(jarvisPool.syntheticToken);
 
     if (
       currenConfig.collateralToken != jarvisPool.collateralToken ||
@@ -171,6 +173,7 @@ export const configureAddressesProviderStrategies = async ({
         jarvisPool.expirationTime
       );
 
+      console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("jarvis pool configured: ", tx.hash);
     } else {
