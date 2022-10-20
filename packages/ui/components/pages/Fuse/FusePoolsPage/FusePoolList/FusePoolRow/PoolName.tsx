@@ -1,9 +1,11 @@
-import { AvatarGroup, HStack, Stack, Text, VStack } from '@chakra-ui/react';
+import { AvatarGroup, Box, HStack, Stack, Text, VStack } from '@chakra-ui/react';
 import { SupportedChains } from '@midas-capital/types';
 
+import { GradientText } from '@ui/components/shared/GradientText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { ALL } from '@ui/constants/index';
+import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { PoolData } from '@ui/types/TokensDataMap';
 
@@ -15,6 +17,9 @@ export const PoolName = ({
   globalFilter: (string | SupportedChains)[];
 }) => {
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
+  const { data: claimableRewards } = usePoolClaimableRewards({
+    poolAddress: pool.comptroller,
+  });
 
   return (
     <VStack
@@ -27,17 +32,20 @@ export const PoolName = ({
     >
       <Stack width="350px" mt={rewardTokens.length ? 2 : 0}>
         <SimpleTooltip label={pool.name}>
-          <Text
-            variant="lgText"
-            fontWeight="bold"
-            whiteSpace="nowrap"
-            overflow="hidden"
-            textOverflow="ellipsis"
-            maxWidth="100%"
-            width="fit-content"
-          >
-            {pool.name}
-          </Text>
+          <Box width="fit-content" maxWidth="100%">
+            <GradientText
+              variant="lgText"
+              fontWeight="bold"
+              whiteSpace="nowrap"
+              overflow="hidden"
+              textOverflow="ellipsis"
+              maxWidth="100%"
+              width="fit-content"
+              isEnabled={claimableRewards && claimableRewards.length > 0 ? true : false}
+            >
+              {pool.name}
+            </GradientText>
+          </Box>
         </SimpleTooltip>
       </Stack>
       {rewardTokens.length && (

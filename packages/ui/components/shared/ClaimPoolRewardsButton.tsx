@@ -3,7 +3,7 @@ import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/module
 import React from 'react';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
-import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { GradientButton } from '@ui/components/shared//GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
@@ -26,18 +26,16 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <>
-      <GlowingBox
-        as="button"
+      <GradientButton
+        isSelected
         onClick={() => {
           openClaimModal();
         }}
-        borderRadius={'xl'}
-        p={2}
         width="fit-content"
         justifySelf="center"
       >
         <HStack spacing={1}>
-          <Text fontWeight="semibold" color={cPage.secondary.txtColor} width="max-content">
+          <Text fontWeight="semibold" color={cPage.secondary.txtColor} width="max-content" mt="2px">
             Claim Rewards
           </Text>
           {currentChain && (
@@ -48,7 +46,8 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
             </AvatarGroup>
           )}
         </HStack>
-      </GlowingBox>
+      </GradientButton>
+
       <Box position="absolute">
         <ClaimRewardsModal
           isOpen={isClaimModalOpen}
