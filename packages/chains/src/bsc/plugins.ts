@@ -162,7 +162,7 @@ const deployedPlugins: DeployedPlugins = {
     apyDocsUrl: "https://app.beefy.com/vault/banana-bnbx-wbnb",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
-    underlying: underlying(assets, assetSymbols["ApeSwap BNBx-WBNB LP"]),
+    underlying: underlying(assets, assetSymbols["asBNBx-WBNB"]),
     otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
   },
 };

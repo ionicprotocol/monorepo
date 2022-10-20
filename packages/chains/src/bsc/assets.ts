@@ -12,7 +12,6 @@ import {
 } from "../common";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
-export const BNB = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
 export const BTCB = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
 const DAI = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
@@ -62,14 +61,6 @@ const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
 
 const assets: SupportedAsset[] = [
-  {
-    symbol: assetSymbols.BNB,
-    underlying: BNB,
-    name: "Binance Network Token",
-    decimals: 18,
-    oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", WBNB),
-  },
   {
     symbol: assetSymbols.WBNB,
     underlying: WBNB,
