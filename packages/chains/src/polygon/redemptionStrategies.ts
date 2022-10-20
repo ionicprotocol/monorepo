@@ -115,6 +115,38 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.GelatoGUniLiquidator,
     underlying(assets, assetSymbols.WMATIC),
   ],
+  [underlying(assets, assetSymbols["AGEUR-JEUR"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JEUR),
+  ],
+  [underlying(assets, assetSymbols["JEUR-PAR"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JEUR),
+  ],
+  [underlying(assets, assetSymbols["JJPY-JPYC"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JJPY),
+  ],
+  [underlying(assets, assetSymbols["JCAD-CADC"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JCAD),
+  ],
+  [underlying(assets, assetSymbols["JSGD-XSGD"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JSGD),
+  ],
+  [underlying(assets, assetSymbols["JNZD-NZDS"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JNZD),
+  ],
+  [underlying(assets, assetSymbols["JEUR-EURT"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JEUR),
+  ],
+  [underlying(assets, assetSymbols["EURE-JEUR"])]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.JEUR),
+  ],
 };
 
 export default redemptionStrategies;
