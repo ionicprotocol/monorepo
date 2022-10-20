@@ -11948,50 +11948,8 @@
       ]
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x4ebDb054B77e69de61fd4Ded3C1419d203134EaD",
+      "address": "0x86b9521A1FB513d859AafA676df2F81Aafee139E",
       "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract WETH",
-              "name": "wnative",
-              "type": "address"
-            },
-            {
-              "internalType": "contract CurveLpTokenPriceOracleNoRegistry",
-              "name": "_oracle",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "W_NATIVE",
-          "outputs": [
-            {
-              "internalType": "contract WETH",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "oracle",
-          "outputs": [
-            {
-              "internalType": "contract CurveLpTokenPriceOracleNoRegistry",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
         {
           "inputs": [
             {
@@ -12273,6 +12231,25 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "lpToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingTokens",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address[]",
               "name": "_lpTokens",
               "type": "address[]"
@@ -12448,7 +12425,7 @@
       ]
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0xFC43A2A797f731dad53D6BC4Fe9300d68F480203",
+      "address": "0xd7166f16780F2C2cf7767c0ACbA54F026f36df55",
       "abi": [
         {
           "anonymous": false,
@@ -12561,6 +12538,25 @@
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "lpToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingTokens",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
             }
           ],
           "stateMutability": "view",
@@ -12872,32 +12868,8 @@
       ]
     },
     "CurveSwapLiquidator": {
-      "address": "0x36198d73091Da38DFB066422895027544Be7D1a5",
+      "address": "0x95649Ad481DE33402fE1597D04ACA144538E3596",
       "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "wnative",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "W_NATIVE",
-          "outputs": [
-            {
-              "internalType": "contract WETH",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
         {
           "inputs": [
             {
