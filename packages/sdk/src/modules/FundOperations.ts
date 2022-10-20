@@ -68,6 +68,18 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { tx, errorCode: null };
     }
 
+    async supply(
+      cTokenAddress: string,
+      underlyingTokenAddress: string,
+      comptrollerAddress: string,
+      enableAsCollateral: boolean,
+      amount: BigNumber
+    ) {
+      await this.approve(cTokenAddress, underlyingTokenAddress, amount);
+      await this.enterMarkets(cTokenAddress, comptrollerAddress, enableAsCollateral);
+      return await this.mint(cTokenAddress, amount);
+    }
+
     async repay(cTokenAddress: string, underlyingTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
 
