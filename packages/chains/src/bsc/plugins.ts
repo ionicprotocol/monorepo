@@ -143,9 +143,9 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["3brl"]),
     otherParams: ["0xF46E3e2eb855baE2A32eD941f0c03b1D9b7b96a0", "0"],
   },
-  // BeefyERC4626_epsBNBx-BNB_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
+  // BeefyERC4626_epsBNBx-BNB_0x373E0F759828c891EF837b6457a0E7584107dbAb.json
   "0x643fd5AB2485dF7D9Ad43C4c210AbEc8Ae7e44D8": {
-    market: "0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a",
+    market: "0x373E0F759828c891EF837b6457a0E7584107dbAb",
     name: "Beefy EPS BNBx/BNB  Vault",
     strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/ellipsis-bnb-bnbx-crypto",
@@ -154,9 +154,9 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
     otherParams: ["0x56ec6031dC969CfA035F6D65e65D8595d5660fB4", "0"],
   },
-  // BeefyERC4626_ApeSwap BNBx-WBNB LP_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
+  // BeefyERC4626_ApeSwap BNBx-WBNB LP_0xF0baaE2dc101e6Ff1439Ed3C9f27b30715d1E6AA.json
   "0x0b4444F3FB85264427397Fede0f94704aa3828b9": {
-    market: "0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a",
+    market: "0xF0baaE2dc101e6Ff1439Ed3C9f27b30715d1E6AA",
     name: "Beefy ApeSwap BNBx/BNB  Vault",
     strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.com/vault/banana-bnbx-wbnb",
