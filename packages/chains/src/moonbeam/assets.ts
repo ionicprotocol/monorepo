@@ -13,6 +13,7 @@ const BNB = "0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055";
 const multiDAI = "0x765277EebeCA2e31912C9946eAe1021199B39C61";
 const multiUSDC = "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b";
 const multiUSDT = "0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73";
+const whUSDC = "0x931715FEE2d06333043d11F658C8CE934aC61D0c";
 const FRAX = "0x322E86852e492a7Ee17f28a78c663da38FB33bfb";
 const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
 const GLINT = "0xcd3B51D98478D53F4515A306bE565c6EebeF1D58";
@@ -107,6 +108,14 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiUSDC),
+  },
+  {
+    symbol: assetSymbols.USDC_wh,
+    underlying: whUSDC,
+    name: "USD Coin",
+    decimals: 6,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", whUSDC),
   },
   {
     symbol: assetSymbols.multiUSDT,

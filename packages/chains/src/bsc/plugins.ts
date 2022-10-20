@@ -143,6 +143,28 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["3brl"]),
     otherParams: ["0xF46E3e2eb855baE2A32eD941f0c03b1D9b7b96a0", "0"],
   },
+  // BeefyERC4626_epsBNBx-BNB_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
+  "0x643fd5AB2485dF7D9Ad43C4c210AbEc8Ae7e44D8": {
+    market: "0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a",
+    name: "Beefy EPS BNBx/BNB  Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.com/vault/ellipsis-bnb-bnbx-crypto",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
+    underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    otherParams: ["0x56ec6031dC969CfA035F6D65e65D8595d5660fB4", "0"],
+  },
+  // BeefyERC4626_ApeSwap BNBx-WBNB LP_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
+  "0x0b4444F3FB85264427397Fede0f94704aa3828b9": {
+    market: "0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a",
+    name: "Beefy ApeSwap BNBx/BNB  Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.com/vault/banana-bnbx-wbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
+    underlying: underlying(assets, assetSymbols["ApeSwap BNBx-WBNB LP"]),
+    otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
+  },
 };
 
 export default deployedPlugins;

@@ -232,6 +232,7 @@ export enum assetSymbols {
   stKSM = "stKSM",
   multiWBTC = "multiWBTC",
   multiUSDC = "multiUSDC",
+  USDC_wh = "USDC.wh",
   multiUSDT = "multiUSDT",
   multiDAI = "multiDAI",
   "3pool" = "3pool",
