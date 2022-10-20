@@ -184,4 +184,36 @@ export const configureAddressesProviderStrategies = async ({
       console.log(`no need to update jarvis pool config for ${jarvisPool.syntheticToken}`);
     }
   }
+
+  const csl = await ethers.getContract("CurveSwapLiquidator");
+  const cslAddress = await ap.callStatic.getAddress("CurveSwapLiquidator");
+  if (cslAddress !== csl.address) {
+    const tx = await ap.setAddress("CurveSwapLiquidator", csl.address);
+    await tx.wait();
+    console.log("setAddress CurveSwapLiquidator: ", tx.hash);
+  }
+
+  const jlf = await ethers.getContract("JarvisLiquidatorFunder");
+  const jlfAddress = await ap.callStatic.getAddress("JarvisLiquidatorFunder");
+  if (jlfAddress !== jlf.address) {
+    const tx = await ap.setAddress("JarvisLiquidatorFunder", jlf.address);
+    await tx.wait();
+    console.log("setAddress JarvisLiquidatorFunder: ", tx.hash);
+  }
+
+  const uv2l = await ethers.getContract("UniswapV2Liquidator");
+  const uv2lAddress = await ap.callStatic.getAddress("UniswapV2Liquidator");
+  if (uv2lAddress !== uv2l.address) {
+    const tx = await ap.setAddress("UniswapV2Liquidator", uv2l.address);
+    await tx.wait();
+    console.log("setAddress UniswapV2Liquidator: ", tx.hash);
+  }
+
+  const clptlnr = await ethers.getContract("CurveLpTokenLiquidatorNoRegistry");
+  const clptlnrAddress = await ap.callStatic.getAddress("CurveLpTokenLiquidatorNoRegistry");
+  if (clptlnrAddress !== clptlnr.address) {
+    const tx = await ap.setAddress("CurveLpTokenLiquidatorNoRegistry", clptlnr.address);
+    await tx.wait();
+    console.log("setAddress CurveLpTokenLiquidatorNoRegistry: ", tx.hash);
+  }
 };
