@@ -65,6 +65,7 @@ export enum IrmTypes {
   AdjustableJumpRateModel_TRANSFERO_BRZ = "AdjustableJumpRateModel_TRANSFERO_BRZ",
   AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB = "AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB",
   AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
+  AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
 }
 
 export enum LiquidationStrategy {
