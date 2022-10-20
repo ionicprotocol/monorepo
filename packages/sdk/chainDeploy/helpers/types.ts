@@ -170,6 +170,8 @@ export type stkBNBOracleDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
 };
 
+export type BNBxOracleDeployParams = stkBNBOracleDeployParams;
+
 export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   gelatoAssets: GelatoGUniAsset[];

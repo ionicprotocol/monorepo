@@ -22,12 +22,27 @@ export const stkBNBDocs = () => {
   <p>Head over to <a href="https://bnb.pstake.finance/" target="_blank">pStake's BNB Staking</a>, where you can acquire stkBNB by depositing BNB</p>`;
 };
 
+export const BNBxDocs = () => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p>Head over to <a href="https://bnbchain.staderlabs.com/liquid-staking/bnbx/" target="_blank">Stader Lab's BNB Staking</a>, where you can acquire BNBx by depositing BNB</p>`;
+};
+
 export const pancakeSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
   return `<p><b>How to acquire this token</b><p/><br />
   <p> 1. Head to <a href="https://pancakeswap.finance/add/${token0}/${token1}" target="_blank">Pancakeswap</a>.</p><br />
   <p> 2. Ensure that the tokens are correct, and tap "Add Liquidity".</p>
   <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Pancakeswap to spend them. Finally, click on supply.</p>
   <p>You will get back <a href="https://bscscan.com/address/${tokenAddress}" target="_blank">Pancakeswap ${poolName} LP tokens</a> in your wallet.</p><br />
+  <p> 3. Come back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
+export const apeSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head to <a href="https://apeswap.finance/add-liquidity/${token0}/${token1}" target="_blank">Apeswap</a>.</p><br />
+  <p> 2. Ensure that the tokens are correct, and tap "Add Liquidity".</p>
+  <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Pancakeswap to spend them. Finally, click on supply.</p>
+  <p>You will get back <a href="https://bscscan.com/address/${tokenAddress}" target="_blank">Apeswap ${poolName} LP tokens</a> in your wallet.</p><br />
   <p> 3. Come back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };
