@@ -53,6 +53,9 @@ const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModelArtifact;
 const AdjustableJumpRateModel_PSTAKE_WBNB: Artifact = AdjustableJumpRateModelArtifact;
 const AdjustableJumpRateModel_MIXBYTES_XCDOT: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_TRANSFERO_BRZ: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_STADER_WBNB: Artifact = AdjustableJumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -88,6 +91,9 @@ const ARTIFACTS = {
   AdjustableJumpRateModel,
   AdjustableJumpRateModel_PSTAKE_WBNB,
   AdjustableJumpRateModel_MIXBYTES_XCDOT,
+  AdjustableJumpRateModel_TRANSFERO_BRZ,
+  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
+  AdjustableJumpRateModel_STADER_WBNB,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -129,6 +135,9 @@ export {
   AdjustableJumpRateModel,
   AdjustableJumpRateModel_PSTAKE_WBNB,
   AdjustableJumpRateModel_MIXBYTES_XCDOT,
+  AdjustableJumpRateModel_TRANSFERO_BRZ,
+  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
+  AdjustableJumpRateModel_STADER_WBNB,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
