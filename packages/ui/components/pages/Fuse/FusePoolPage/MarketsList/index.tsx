@@ -1,7 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import {
   Box,
-  Button,
   ButtonGroup,
   Center,
   Flex,
@@ -44,7 +43,8 @@ import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Su
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
-import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { GradientButton } from '@ui/components/shared/GradientButton';
+import { GradientText } from '@ui/components/shared/GradientText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
@@ -393,7 +393,7 @@ export const MarketsList = ({
     }
   }, [address, table]);
 
-  const { cCard, cPage } = useColors();
+  const { cCard } = useColors();
 
   const onFilter = (filter: string) => {
     if (globalFilter.includes(SEARCH)) {
@@ -512,11 +512,9 @@ export const MarketsList = ({
               </PopoverTooltip>
             </CButton>
             {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
-              <Button
-                variant={globalFilter.includes(REWARDS) ? 'ghost' : 'outline'}
-                colorScheme="whatsapp"
+              <GradientButton
+                isSelected={globalFilter.includes(REWARDS)}
                 onClick={() => onFilter(REWARDS)}
-                p={0}
                 borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
                 mr="-px"
                 width="115px"
@@ -534,38 +532,15 @@ export const MarketsList = ({
                   width="100%"
                   height="100%"
                 >
-                  {globalFilter.includes(REWARDS) ? (
-                    <Center width="100%" height="100%">
-                      <GlowingBox
-                        height="100%"
-                        width="100%"
-                        borderRadius={isSemiSmallScreen ? 'xl' : 0}
-                        pt="11px"
-                        px={4}
-                      >
-                        <Text fontSize="md" color={cPage.secondary.txtColor}>
-                          {`${
-                            (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                          } Rewards`}
-                        </Text>
-                      </GlowingBox>
-                    </Center>
-                  ) : (
-                    <Center
-                      width="100%"
-                      height="100%"
-                      fontWeight="bold"
-                      borderRadius="xl"
-                      pt="2px"
-                      px={4}
-                    >
+                  <Center width="100%" height="100%" fontWeight="bold" pt="2px">
+                    <GradientText isEnabled={!globalFilter.includes(REWARDS)} color={cCard.bgColor}>
                       {`${
                         (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
                       } Rewards`}
-                    </Center>
-                  )}
+                    </GradientText>
+                  </Center>
                 </PopoverTooltip>
-              </Button>
+              </GradientButton>
             )}
             {collateralCounts !== 0 && (
               <CButton
