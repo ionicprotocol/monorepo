@@ -20,43 +20,50 @@ export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChain
 
   return (
     <Box textAlign="end">
-      <VStack alignItems={'flex-end'}>
-        <PopoverTooltip
-          body={
-            <>
-              <div>${longFormat(asset.liquidityFiat)}</div>
-              <br />
-              <div>
-                Liquidity is the amount of this asset that is available to borrow (unborrowed). To
-                see how much has been supplied and borrowed in total, navigate to the Pool Info tab.
-              </div>
-            </>
-          }
-        >
-          <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
-            {smallUsdFormatter(asset.liquidityFiat)}
-            {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && '+'}
-          </Text>
-        </PopoverTooltip>
-        <SimpleTooltip
-          label={`${longFormat(liquidity)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
-        >
-          <Text
-            id="liquidity"
-            mt={1}
-            variant="smText"
-            maxWidth={'90px'}
-            textOverflow={'ellipsis'}
-            align={'right'}
-            whiteSpace="nowrap"
-            overflow="hidden"
+      {asset.isBorrowPaused ? (
+        <Text fontWeight="bold" variant="smText">
+          -
+        </Text>
+      ) : (
+        <VStack alignItems={'flex-end'}>
+          <PopoverTooltip
+            body={
+              <>
+                <div>${longFormat(asset.liquidityFiat)}</div>
+                <br />
+                <div>
+                  Liquidity is the amount of this asset that is available to borrow (unborrowed). To
+                  see how much has been supplied and borrowed in total, navigate to the Pool Info
+                  tab.
+                </div>
+              </>
+            }
           >
-            {midUsdFormatter(liquidity).replace('$', '')}
-            {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
-            {tokenData?.symbol ?? asset.underlyingSymbol}
-          </Text>
-        </SimpleTooltip>
-      </VStack>
+            <Text color={cCard.txtColor} fontWeight="bold" variant="smText">
+              {smallUsdFormatter(asset.liquidityFiat)}
+              {asset.liquidityFiat > DOWN_LIMIT && asset.liquidityFiat < UP_LIMIT && '+'}
+            </Text>
+          </PopoverTooltip>
+          <SimpleTooltip
+            label={`${longFormat(liquidity)} ${tokenData?.symbol ?? asset.underlyingSymbol}`}
+          >
+            <Text
+              id="liquidity"
+              mt={1}
+              variant="smText"
+              maxWidth={'90px'}
+              textOverflow={'ellipsis'}
+              align={'right'}
+              whiteSpace="nowrap"
+              overflow="hidden"
+            >
+              {midUsdFormatter(liquidity).replace('$', '')}
+              {liquidity > DOWN_LIMIT && liquidity < UP_LIMIT && '+'}{' '}
+              {tokenData?.symbol ?? asset.underlyingSymbol}
+            </Text>
+          </SimpleTooltip>
+        </VStack>
+      )}
     </Box>
   );
 };
