@@ -186,7 +186,13 @@ export const MarketsList = ({
         ? 1
         : -1;
     } else if (columnId === 'liquidity') {
-      return rowA.original.market.liquidityFiat > rowB.original.market.liquidityFiat ? 1 : -1;
+      const liquidityA = !rowA.original.market.isBorrowPaused
+        ? rowA.original.market.liquidityFiat
+        : -1;
+      const liquidityB = !rowB.original.market.isBorrowPaused
+        ? rowB.original.market.liquidityFiat
+        : -1;
+      return liquidityA > liquidityB ? 1 : -1;
     } else if (columnId === 'collateral') {
       return rowA.original.market.membership ? 1 : -1;
     } else {
