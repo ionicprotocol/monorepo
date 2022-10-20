@@ -95,6 +95,11 @@ export const deployConfig: ChainDeployConfig = {
       cycleLength: 1,
       name: assetSymbols.CELR,
     },
+    {
+      rewardToken: underlying(assets, assetSymbols.LDO),
+      cycleLength: 1,
+      name: assetSymbols.LDO,
+    },
   ],
   cgId: moonbeam.specificParams.cgId,
 };
@@ -224,7 +229,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
-    args: [deployConfig.wtoken, curveOracle.address],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
@@ -235,7 +240,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // CurveSwapLiquidator
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });

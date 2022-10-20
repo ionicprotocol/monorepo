@@ -1,15 +1,13 @@
-import { AvatarGroup, Box, Text, useDisclosure } from '@chakra-ui/react';
+import { AvatarGroup, Box, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import React from 'react';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
-import { Column } from '@ui/components/shared/Flex';
-import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { GradientButton } from '@ui/components/shared//GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
-import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 
 const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
   const {
@@ -17,9 +15,8 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
     onOpen: openClaimModal,
     onClose: closeClaimModal,
   } = useDisclosure();
-  const { cCard } = useColors();
+  const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
-  const isMobile = useIsSemiSmallScreen();
 
   const { data: claimableRewards, refetch: refetchRewards } = usePoolClaimableRewards({
     poolAddress,
@@ -29,32 +26,28 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
 
   return (
     <>
-      <GlowingBox
-        as="button"
-        minW="50px"
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onClick={(e: any) => {
-          e.stopPropagation();
+      <GradientButton
+        isSelected
+        onClick={() => {
           openClaimModal();
         }}
-        borderRadius={'xl'}
-        px={2}
+        width="fit-content"
+        justifySelf="center"
       >
-        <Column>
+        <HStack spacing={1}>
+          <Text fontWeight="semibold" color={cPage.secondary.txtColor} width="max-content" mt="2px">
+            Claim Rewards
+          </Text>
           {currentChain && (
             <AvatarGroup size="xs" max={30} my={2}>
-              {claimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
+              {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
                 return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
               })}
             </AvatarGroup>
           )}
-          {!isMobile && (
-            <Text ml={1} mr={1} fontWeight="semibold" color={cCard.txtColor} width="max-content">
-              Claim Rewards
-            </Text>
-          )}
-        </Column>
-      </GlowingBox>
+        </HStack>
+      </GradientButton>
+
       <Box position="absolute">
         <ClaimRewardsModal
           isOpen={isClaimModalOpen}

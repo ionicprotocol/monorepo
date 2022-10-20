@@ -2,7 +2,8 @@ import { Badge, Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { Row } from '@ui/components/shared/Flex';
-import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { GradientButton } from '@ui/components/shared/GradientButton';
+import { GradientText } from '@ui/components/shared/GradientText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -26,7 +27,7 @@ export const TokenName = ({
   });
 
   return (
-    <Row id="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
+    <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
       <PopoverTooltip
         placement="top-start"
         body={
@@ -69,7 +70,6 @@ export const TokenName = ({
             }
           >
             <Text
-              className={tokenData?.symbol ?? asset.underlyingSymbol}
               fontWeight="bold"
               variant="mdText"
               whiteSpace="nowrap"
@@ -93,9 +93,17 @@ export const TokenName = ({
           {claimableRewards && claimableRewards.length > 0 && (
             <SimpleTooltip label="This asset has rewards!">
               <Box>
-                <GlowingBox px={2} fontSize={12} height={5} borderRadius={8} py={0}>
-                  Rewards
-                </GlowingBox>
+                <GradientButton
+                  isSelected={false}
+                  px={2}
+                  height="20px"
+                  borderRadius={8}
+                  borderWidth="1px"
+                >
+                  <GradientText isEnabled fontSize={12}>
+                    Rewards
+                  </GradientText>
+                </GradientButton>
               </Box>
             </SimpleTooltip>
           )}

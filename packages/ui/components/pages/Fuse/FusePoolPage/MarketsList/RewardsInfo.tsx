@@ -1,7 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { HStack, Link, Skeleton, Text } from '@chakra-ui/react';
+import { Divider, HStack, Link, Skeleton, Text, VStack } from '@chakra-ui/react';
 
-import { ApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/ApyInformTooltip';
+import { NoApyInformTooltip } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/NoApyInformTooltip';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useApy } from '@ui/hooks/useApy';
@@ -39,11 +39,11 @@ export const RewardsInfo = ({
         </Skeleton>
       )}
 
-      {!apyLoading && apyResponse && apyResponse.apy === undefined && (
-        <ApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
+      {!apyLoading && apyResponse?.apy === undefined && (
+        <NoApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
       )}
 
-      {!apyLoading && apyResponse && apyResponse.apy && (
+      {!apyLoading && apyResponse?.apy && (
         <PopoverTooltip
           placement={'top-start'}
           body={
@@ -77,11 +77,49 @@ export const RewardsInfo = ({
                   </Link>
                 </>
               )}
+
+              <Divider my={2} />
+              <VStack width={'100%'} alignItems={'flex-start'}>
+                {apyResponse.externalAPY && (
+                  <HStack justifyContent={'space-between'} width={'100%'}>
+                    <div>Current APY:</div>
+                    <div>{`${(apyResponse.externalAPY * 100).toFixed(2) + '%'}`}</div>
+                  </HStack>
+                )}
+                {apyResponse.apy && (
+                  <HStack justifyContent={'space-between'} width={'100%'}>
+                    <div>APY/7 days:</div>
+                    <div>{`${(apyResponse.apy * 100).toFixed(2) + '%'}`}</div>
+                  </HStack>
+                )}
+                {apyResponse.updatedAt && (
+                  <HStack justifyContent={'space-between'} width={'100%'}>
+                    <Text>Updated:</Text>
+                    <Text>{`${new Date(apyResponse.updatedAt).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'numeric',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}`}</Text>
+                  </HStack>
+                )}
+              </VStack>
             </>
           }
         >
-          <Text color={cCard.txtColor} title={apyResponse.apy * 100 + '%'} variant="smText">
-            {apyResponse.apy > 0 && (apyResponse.apy * 100).toFixed(2) + '%'}
+          <Text
+            color={cCard.txtColor}
+            title={
+              apyResponse.externalAPY !== undefined
+                ? apyResponse.externalAPY * 100 + '%'
+                : apyResponse.apy * 100 + '%'
+            }
+            variant="smText"
+          >
+            {apyResponse.externalAPY !== undefined
+              ? (apyResponse.externalAPY * 100).toFixed(2) + '%'
+              : (apyResponse.apy * 100).toFixed(2) + '%'}
           </Text>
         </PopoverTooltip>
       )}

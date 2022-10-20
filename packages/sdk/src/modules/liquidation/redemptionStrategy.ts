@@ -88,6 +88,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         fuse.provider
       );
 
+      // TODO replace with curveLpOracle.callStatic.getUnderlyingTokens()
       const tokens: string[] = [];
       while (true) {
         try {
@@ -99,9 +100,13 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       }
 
       const preferredOutputToken = pickPreferredToken(fuse, tokens);
+      const outputTokenIndex = tokens.indexOf(preferredOutputToken);
       return {
         strategyAddress: redemptionStrategyContract.address,
-        strategyData: new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, preferredOutputToken]),
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["uint256", "address", "address", "address"],
+          [outputTokenIndex, preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
+        ),
         outputToken: preferredOutputToken,
       };
 
@@ -167,8 +172,8 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       const j = curvePool.coins.indexOf(outputToken);
 
       const strategyData = new ethers.utils.AbiCoder().encode(
-        ["address", "int128", "int128", "address"],
-        [curvePool.poolAddress, i, j, outputToken]
+        ["address", "int128", "int128", "address", "address"],
+        [curvePool.poolAddress, i, j, outputToken, fuse.chainSpecificAddresses.W_TOKEN]
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };

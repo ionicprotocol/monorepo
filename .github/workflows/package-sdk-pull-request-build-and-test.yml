@@ -64,9 +64,9 @@ jobs:
   build-and-test-bsc:
     env:
       MNEMONIC: '${{ secrets.MNEMONIC }}'
-      FORK_RPC_URL: '${{ secrets.FORK_URL_BSC }}'
+      FORK_RPC_URL: https://rpc.ankr.com/bsc
       SIMULATION: true
-      FORK_BLOCK_NUMBER: 21528676
+      FORK_BLOCK_NUMBER: 22342014
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

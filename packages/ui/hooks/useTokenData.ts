@@ -19,7 +19,6 @@ import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { chainIdToConfig } from '@ui/types/ChainMetaData';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
 
@@ -44,27 +43,20 @@ export const fetchTokenData = async (
 
   if (addresses.length !== 0) {
     addresses.map(async (address) => {
-      const wrappedNativeCurrencyConfig =
-        chainIdToConfig[chainId].specificParams.metadata.wrappedNativeCurrency;
+      const asset = ChainSupportedAssets[chainId as SupportedChains].find(
+        (asset) => address === asset.underlying
+      );
 
-      if (address !== wrappedNativeCurrencyConfig.address) {
-        const asset = ChainSupportedAssets[chainId as SupportedChains].find(
-          (asset) => address === asset.underlying
-        );
-
-        if (asset) {
-          data.push({
-            address: asset.underlying,
-            symbol: asset.symbol,
-            decimals: asset.decimals,
-            name: asset.name,
-            logoURL: config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png',
-          });
-        } else {
-          apiAddresses.push(address);
-        }
+      if (asset) {
+        data.push({
+          address: asset.underlying,
+          symbol: asset.symbol,
+          decimals: asset.decimals,
+          name: asset.name,
+          logoURL: config.iconServerURL + '/token/96x96/' + asset.symbol.toLowerCase() + '.png',
+        });
       } else {
-        data.push(wrappedNativeCurrencyConfig);
+        apiAddresses.push(address);
       }
     });
 

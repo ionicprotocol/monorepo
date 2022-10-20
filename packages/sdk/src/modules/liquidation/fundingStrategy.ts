@@ -25,25 +25,25 @@ export const getFundingStrategiesAndDatas = async (
 
   let fundingToken = debtToken;
   while (fundingToken in midasSdk.fundingStrategies) {
-    // if we can supply the funding token with flash loan on uniswap, that's enough
-    const pair = await uniswapV2Factory.callStatic.getPair(midasSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
-    if (pair !== constants.AddressZero) {
-      // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
-      break;
-    }
-
     // chain the funding strategy that can give us the needed funding token
     const [fundingStrategyContract, inputToken] = midasSdk.fundingStrategies[fundingToken];
     // console.log(`got funding str ${fundingStrategyContract} and output ${inputToken} for ${fundingToken}`);
 
     // avoid going in an endless loop
     if (tokenPath.find((p) => p == inputToken)) {
-      throw new Error(
-        `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
-          tokenPath
-        )} already includes ${inputToken}`
-      );
+      // if we can supply the funding token with flash loan on uniswap, that's enough
+      const pair = await uniswapV2Factory.callStatic.getPair(midasSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
+      if (pair !== constants.AddressZero) {
+        break;
+      } else {
+        throw new Error(
+          `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
+            tokenPath
+          )} already includes ${inputToken}`
+        );
+      }
     }
+
     tokenPath.push(inputToken);
 
     const strategyAddress = midasSdk.chainDeployment[fundingStrategyContract].address;
@@ -70,6 +70,20 @@ function getStrategyData(
   fundingToken: string
 ): string {
   switch (contract) {
+    // IFundsConversionStrategy should be also configured here
+    case FundingStrategyContract.UniswapV3LiquidatorFunder:
+      const quoter = midasSdk.chainDeployment["Quoter"].address;
+
+      return new ethers.utils.AbiCoder().encode(
+        ["address", "address", "uint24", "address", "address"],
+        [
+          inputToken,
+          fundingToken,
+          midasSdk.chainConfig.specificParams.metadata.uniswapV3Fees?.[inputToken][fundingToken] || 1000,
+          midasSdk.chainConfig.chainAddresses.UNISWAP_V3_ROUTER,
+          quoter,
+        ]
+      );
     case FundingStrategyContract.JarvisLiquidatorFunder:
       const jarvisPool = midasSdk.chainConfig.liquidationDefaults.jarvisPools.find(
         (p) => p.collateralToken == inputToken && p.syntheticToken == fundingToken

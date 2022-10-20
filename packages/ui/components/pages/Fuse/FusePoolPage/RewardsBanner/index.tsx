@@ -2,7 +2,7 @@ import { Text } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 
 import { Row } from '@ui/components/shared/Flex';
-import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 
 export const RewardsBanner = ({
@@ -19,9 +19,9 @@ export const RewardsBanner = ({
       exit={{ opacity: 0 }}
       style={{ width: '100%' }}
     >
-      <GlowingBox w="100%" h="50px" mt={4}>
+      <GradientButton isSelected width="100%" height="50px" justifyContent="flex-start" mt={2}>
         <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" h="100%" w="100" p={3}>
-          <Text variant="smText" ml={2}>
+          <Text variant="smText" ml={2} mt="2px">
             This pool is offering rewards
           </Text>
           <TokenIconGroup
@@ -32,7 +32,7 @@ export const RewardsBanner = ({
             chainId={poolChainId}
           />
         </Row>
-      </GlowingBox>
+      </GradientButton>
     </motion.div>
   );
 };

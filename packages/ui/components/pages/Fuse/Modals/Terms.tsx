@@ -15,19 +15,17 @@ import {
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
-const Terms = () => {
-  const [hasAcceptedTerms, setHasAcceptedTerms] = useState<boolean>(true);
+import { MIDAS_T_AND_C_ACCEPTED } from '@ui/constants/index';
+
+const Terms = ({ isAcceptedTerms }: { isAcceptedTerms: boolean }) => {
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState<boolean>(isAcceptedTerms);
 
   const accept = () => {
     setHasAcceptedTerms(true);
   };
 
   useEffect(() => {
-    setHasAcceptedTerms(localStorage.getItem('MidasTandCAccepted') === 'true');
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem('MidasTandCAccepted', 'true');
+    localStorage.setItem(MIDAS_T_AND_C_ACCEPTED, 'true');
   }, [hasAcceptedTerms]);
 
   return (

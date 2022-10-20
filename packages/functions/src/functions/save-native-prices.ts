@@ -1,7 +1,7 @@
 import { bsc, moonbeam, polygon } from '@midas-capital/chains';
 import { Handler } from '@netlify/functions';
 import axios from 'axios';
-import { config, supabase } from '../config';
+import { environment, supabase } from '../config';
 
 const NATIVE_ASSETS = {
   [bsc.chainId]: bsc.specificParams.cgId,
@@ -33,7 +33,7 @@ const handler: Handler = async () => {
     }));
 
     const wholeResult = await supabase
-      .from<PriceTable>(config.supabaseNativePricesTableName)
+      .from<PriceTable>(environment.supabaseNativePricesTableName)
       .upsert(upserts);
     console.log(wholeResult);
     if (wholeResult.error) {

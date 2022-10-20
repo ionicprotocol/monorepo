@@ -11,6 +11,7 @@ export type Artifact = {
     sourceMap: string;
   };
 };
+
 export type TxOptions = Overrides & { from?: string | Promise<string> };
 
 export type MinifiedContracts = {

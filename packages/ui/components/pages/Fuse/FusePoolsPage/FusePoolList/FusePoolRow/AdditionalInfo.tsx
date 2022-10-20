@@ -174,13 +174,15 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               </Text>
             </GridItem>
             <GridItem colSpan={1} textAlign="center">
-              {poolDetails?.mostSuppliedAsset && (
+              {poolDetails?.mostSuppliedAsset ? (
                 <TokenIcon
                   address={poolDetails.mostSuppliedAsset.underlyingToken}
                   chainId={pool.chainId}
                   width={35}
                   height={35}
                 />
+              ) : (
+                <Text>-</Text>
               )}
             </GridItem>
             <GridItem colSpan={6} alignSelf="center">
@@ -205,18 +207,20 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               </Text>
             </GridItem>
             <GridItem colSpan={1} textAlign="center">
-              {poolDetails?.topLendingAPYAsset && (
+              {poolDetails?.topLendingAPYAsset ? (
                 <TokenIcon
                   address={poolDetails.topLendingAPYAsset.underlyingToken}
                   chainId={pool.chainId}
                   width={35}
                   height={35}
                 />
+              ) : (
+                <Text>-</Text>
               )}
             </GridItem>
             <GridItem colSpan={6} alignSelf="center">
               <Text variant="smText" textAlign="left">
-                {topLendingApy}% APY
+                {topLendingApy && `${topLendingApy}% APY`}
               </Text>
             </GridItem>
           </Grid>
@@ -234,18 +238,20 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               </Text>
             </GridItem>
             <GridItem colSpan={1} textAlign="center">
-              {poolDetails?.topBorrowAPRAsset && (
+              {poolDetails?.topBorrowAPRAsset ? (
                 <TokenIcon
                   address={poolDetails.topBorrowAPRAsset.underlyingToken}
                   chainId={pool.chainId}
                   width={35}
                   height={35}
                 />
+              ) : (
+                <Text>-</Text>
               )}
             </GridItem>
             <GridItem colSpan={6} alignSelf="center">
               <Text variant="smText" textAlign="left">
-                {topBorrowApr}% APR
+                {topBorrowApr && `${topBorrowApr}% APR`}
               </Text>
             </GridItem>
           </Grid>
