@@ -25,25 +25,25 @@ export const getFundingStrategiesAndDatas = async (
 
   let fundingToken = debtToken;
   while (fundingToken in midasSdk.fundingStrategies) {
-    // if we can supply the funding token with flash loan on uniswap, that's enough
-    const pair = await uniswapV2Factory.callStatic.getPair(midasSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
-    if (pair !== constants.AddressZero) {
-      // TODO: should check if the liquidity is enough or a funding strategy is preferred in the opposite case
-      break;
-    }
-
     // chain the funding strategy that can give us the needed funding token
     const [fundingStrategyContract, inputToken] = midasSdk.fundingStrategies[fundingToken];
     // console.log(`got funding str ${fundingStrategyContract} and output ${inputToken} for ${fundingToken}`);
 
     // avoid going in an endless loop
     if (tokenPath.find((p) => p == inputToken)) {
-      throw new Error(
-        `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
-          tokenPath
-        )} already includes ${inputToken}`
-      );
+      // if we can supply the funding token with flash loan on uniswap, that's enough
+      const pair = await uniswapV2Factory.callStatic.getPair(midasSdk.chainSpecificAddresses.W_TOKEN, fundingToken);
+      if (pair !== constants.AddressZero) {
+        break;
+      } else {
+        throw new Error(
+          `circular path in the chain of funding for ${debtToken}: ${JSON.stringify(
+            tokenPath
+          )} already includes ${inputToken}`
+        );
+      }
     }
+
     tokenPath.push(inputToken);
 
     const strategyAddress = midasSdk.chainDeployment[fundingStrategyContract].address;

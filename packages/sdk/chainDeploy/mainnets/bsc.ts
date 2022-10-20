@@ -181,6 +181,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.JEUR,
+    aggregator: "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.BRZ,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -389,10 +394,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// EPS
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
-    args: [deployConfig.wtoken, curveOracle.address],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
@@ -402,7 +406,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });

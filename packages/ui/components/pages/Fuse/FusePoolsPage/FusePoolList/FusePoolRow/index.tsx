@@ -123,13 +123,22 @@ const PoolsRowList = ({
   }, [globalFilter, poolsPerChain, allPools]);
 
   const poolFilter: FilterFn<PoolRowData> = (row, columnId, value) => {
+    const pool = row.original.poolName;
+    const namesAndSymbols: string[] = [];
+    pool.assets.map((asset) => {
+      namesAndSymbols.push(
+        asset.underlyingName.toLowerCase(),
+        asset.underlyingSymbol.toLowerCase()
+      );
+    });
     if (
       !searchText ||
       (value.includes(SEARCH) &&
-        (row.original.poolName.comptroller.toLowerCase().includes(searchText.toLowerCase()) ||
-          row.original.poolName.name.toLowerCase().includes(searchText.toLowerCase())))
+        (pool.comptroller.toLowerCase().includes(searchText.toLowerCase()) ||
+          pool.name.toLowerCase().includes(searchText.toLowerCase()) ||
+          namesAndSymbols.some((ns) => ns.includes(searchText.toLowerCase()))))
     ) {
-      if (value.includes(ALL) || value.includes(row.original.chain.chainId)) {
+      if (value.includes(ALL) || value.includes(pool.chainId)) {
         return true;
       } else {
         return false;
