@@ -6,6 +6,7 @@ import AdjustableJumpRateModelArtifact from "../lib/contracts/out/AdjustableJump
 import AnkrBNBcPriceOracleArtifact from "../lib/contracts/out/AnkrBNBcPriceOracle.sol/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import BalancerLpTokenPriceOracleArtifact from "../lib/contracts/out/BalancerLpTokenPriceOracle.sol/BalancerLpTokenPriceOracle.json";
+import BNBxPriceOracleArtifact from "../lib/contracts/out/BNBxPriceOracle.sol/BNBxPriceOracle.json";
 import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "../lib/contracts/out/CErc20PluginDelegate.sol/CErc20PluginDelegate.json";
@@ -53,6 +54,10 @@ const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModelArtifact;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModelArtifact;
 const AdjustableJumpRateModel_PSTAKE_WBNB: Artifact = AdjustableJumpRateModelArtifact;
 const AdjustableJumpRateModel_MIXBYTES_XCDOT: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_TRANSFERO_BRZ: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_STADER_WBNB: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_MIXBYTES_USDC: Artifact = AdjustableJumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -65,6 +70,7 @@ const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
 const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
 const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
+const BNBxPriceOracle: Artifact = BNBxPriceOracleArtifact;
 const GelatoGUniPriceOracle: Artifact = GelatoGUniPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
@@ -88,6 +94,10 @@ const ARTIFACTS = {
   AdjustableJumpRateModel,
   AdjustableJumpRateModel_PSTAKE_WBNB,
   AdjustableJumpRateModel_MIXBYTES_XCDOT,
+  AdjustableJumpRateModel_TRANSFERO_BRZ,
+  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
+  AdjustableJumpRateModel_STADER_WBNB,
+  AdjustableJumpRateModel_MIXBYTES_USDC,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -102,6 +112,7 @@ const ARTIFACTS = {
   BalancerLpTokenPriceOracle,
   AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
+  BNBxPriceOracle,
   GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   Unitroller,
@@ -129,6 +140,10 @@ export {
   AdjustableJumpRateModel,
   AdjustableJumpRateModel_PSTAKE_WBNB,
   AdjustableJumpRateModel_MIXBYTES_XCDOT,
+  AdjustableJumpRateModel_TRANSFERO_BRZ,
+  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
+  AdjustableJumpRateModel_STADER_WBNB,
+  AdjustableJumpRateModel_MIXBYTES_USDC,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -139,6 +154,7 @@ export {
   BalancerLpTokenPriceOracle,
   AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
+  BNBxPriceOracle,
   GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,

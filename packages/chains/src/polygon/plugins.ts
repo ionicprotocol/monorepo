@@ -1,4 +1,5 @@
-import { assetSymbols, Strategy, DeployedPlugins, underlying } from "@midas-capital/types";
+import { assetSymbols, DeployedPlugins, Strategy, underlying } from "@midas-capital/types";
+
 import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
