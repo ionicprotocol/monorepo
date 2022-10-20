@@ -128,6 +128,7 @@ export const configureAddressesProviderStrategies = async ({
       const [asset, type, strategy] = redemptionStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
       const tx = await ap.setRedemptionStrategy(asset, strategy, type);
+      console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setRedemptionStrategy: ", tx.hash);
     }
