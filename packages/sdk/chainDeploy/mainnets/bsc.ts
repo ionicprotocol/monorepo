@@ -14,6 +14,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
 import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
@@ -86,6 +87,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB-BTC PCS LP
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
       underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
+      underlying(assets, assetSymbols["asBNBx-WBNB"]), // BNBx-WBNB ApeSwap LP
     ],
     flashSwapFee: 25,
   },
@@ -246,6 +248,12 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.BRZw),
     ],
   },
+  {
+    // BNBx-BNB pool
+    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
+    underlyings: [underlying(assets, assetSymbols.BNBx), underlying(assets, assetSymbols.BNB)],
+  },
 ];
 
 const curveV2Pools: CurveV2PoolConfig[] = [
@@ -269,6 +277,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  // set Native BNB price
+  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+  const nativeBnb = underlying(assets, assetSymbols.BNB);
+
+  const existingOracle = await mpo.callStatic.oracles(nativeBnb);
+  if (existingOracle === ethers.constants.AddressZero) {
+    const fpo = await ethers.getContract("FixedNativePriceOracle", deployer);
+    const tx = await mpo.add([nativeBnb], [fpo.address]);
+    await tx.wait();
+  }
 
   //// Dia Price Oracle
   await deployDiaOracle({
@@ -333,6 +352,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// stk BNB  oracle
   await deployStkBNBOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+  });
+
+  //// BNBx  oracle
+  await deployBNBxPriceOracle({
     run,
     ethers,
     getNamedAccounts,
