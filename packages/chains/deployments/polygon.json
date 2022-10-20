@@ -37094,50 +37094,8 @@
       ]
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x2789FE49265f414b98B995192C87D76224e313c3",
+      "address": "0x728bA61465BA5d90DC5E51dFdA522AC912868306",
       "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract WETH",
-              "name": "wnative",
-              "type": "address"
-            },
-            {
-              "internalType": "contract CurveLpTokenPriceOracleNoRegistry",
-              "name": "_oracle",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "W_NATIVE",
-          "outputs": [
-            {
-              "internalType": "contract WETH",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "oracle",
-          "outputs": [
-            {
-              "internalType": "contract CurveLpTokenPriceOracleNoRegistry",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
         {
           "inputs": [
             {
@@ -37419,6 +37377,25 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "lpToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingTokens",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address[]",
               "name": "_lpTokens",
               "type": "address[]"
@@ -37594,7 +37571,7 @@
       ]
     },
     "CurveLpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0xFC43A2A797f731dad53D6BC4Fe9300d68F480203",
+      "address": "0x08cF0A74107a67BC70897a57CAdF5447b4547065",
       "abi": [
         {
           "anonymous": false,
@@ -37707,6 +37684,25 @@
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "lpToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingTokens",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
             }
           ],
           "stateMutability": "view",
@@ -38018,32 +38014,8 @@
       ]
     },
     "CurveSwapLiquidator": {
-      "address": "0x273ccEF2f2015142784410EBb07BD9dD8eCb619d",
+      "address": "0xfFb6aB7931ACa7927D1459a1De1E0Ba2905CC69E",
       "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "wnative",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "W_NATIVE",
-          "outputs": [
-            {
-              "internalType": "contract WETH",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
         {
           "inputs": [
             {
@@ -45737,6 +45709,34 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "moraswapCall",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "owner",
           "outputs": [
@@ -46175,7 +46175,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x14b506508F4D5f6263034Ed57484b4B07c1efDFC",
+      "address": "0xEdfe7dC401Fb49F0D87CB5F1B8c3CaFb128cD991",
       "abi": [
         {
           "anonymous": false,
@@ -46450,6 +46450,34 @@
             }
           ],
           "name": "initialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "moraswapCall",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -47131,7 +47159,7 @@
       ]
     },
     "JarvisLiquidatorFunder": {
-      "address": "0x347A6E89f3B894e0c8996eD7CA7aFE8de520cEEF",
+      "address": "0x98110E8482E4e286716AC0671438BDd84C4D838c",
       "abi": [
         {
           "inputs": [

@@ -21,9 +21,11 @@ export const sortTopSuppliedAssets = (assets: MarketData[]) => {
 };
 
 export const sortTopLiquidityAssets = (assets: MarketData[]) => {
-  return [...assets].sort((a, b) => {
-    return b.liquidityFiat - a.liquidityFiat;
-  });
+  return [...assets]
+    .filter((asset) => !asset.isBorrowPaused)
+    .sort((a, b) => {
+      return b.liquidityFiat - a.liquidityFiat;
+    });
 };
 
 export const sortTopUtilizationAssets = (assets: MarketData[]) => {

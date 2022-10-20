@@ -33,14 +33,15 @@ import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
+import TransactionStepper from '@ui/components/shared/TransactionStepper';
+import { DEFAULT_DECIMALS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -95,6 +96,11 @@ const AmountSelect = ({
   const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [failedStep, setFailedStep] = useState<number>(0);
+  const successToast = useSuccessToast();
 
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
@@ -205,19 +211,60 @@ const AmountSelect = ({
       let tx: ContractTransaction;
 
       if (mode === FundOperationMode.SUPPLY) {
-        const resp = await currentSdk.supply(
-          asset.cToken,
-          asset.underlyingToken,
-          comptrollerAddress,
-          enableAsCollateral,
-          amount
-        );
+        try {
+          setActiveStep(0);
+          setFailedStep(0);
+          setIsDeploying(true);
 
-        if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode, minBorrowUSD);
-        } else {
-          tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          try {
+            setActiveStep(1);
+
+            await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+
+            successToast({
+              description: 'Successfully Approved!',
+            });
+          } catch (error) {
+            setFailedStep(1);
+            console.error(error);
+            throw 'Failed to approve!';
+          }
+
+          try {
+            setActiveStep(2);
+
+            await currentSdk.enterMarkets(asset.cToken, comptrollerAddress, enableAsCollateral);
+
+            successToast({
+              description: 'Collateral enabled!',
+            });
+          } catch (error) {
+            setFailedStep(2);
+            console.error(error);
+            throw 'Failed to enable collateral!';
+          }
+
+          try {
+            setActiveStep(3);
+            const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+            if (errorCode !== null) {
+              fundOperationError(errorCode, minBorrowUSD);
+            } else {
+              setPendingTxHash(tx.hash);
+            }
+          } catch (error) {
+            setFailedStep(3);
+            console.error(error);
+            throw 'Failed to mint!';
+          }
+        } catch (error) {
+          console.error(error);
+          setIsDeploying(false);
+          errorToast({
+            description: JSON.stringify(error),
+          });
+
+          return;
         }
       } else if (mode === FundOperationMode.REPAY) {
         const resp = await currentSdk.repay(
@@ -314,6 +361,13 @@ const AmountSelect = ({
       {userAction === UserAction.WAITING_FOR_TRANSACTIONS ? (
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
           <Loader />
+          <Box py={4} w="100%" h="100%">
+            <TransactionStepper
+              activeStep={activeStep}
+              steps={SUPPLY_STEPS}
+              failedStep={failedStep}
+            />
+          </Box>
           <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions
           </Text>
@@ -536,7 +590,7 @@ const AmountSelect = ({
                 isDisabled={!amountIsValid}
                 height={16}
               >
-                {depositOrWithdrawAlert ?? 'Confirm'}
+                {isDeploying ? SUPPLY_STEPS[activeStep] : depositOrWithdrawAlert ?? 'Confirm'}
               </Button>
             )}
           </Column>
