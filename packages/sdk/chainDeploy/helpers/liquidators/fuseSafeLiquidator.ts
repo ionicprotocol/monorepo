@@ -71,7 +71,9 @@ export const configureFuseSafeLiquidator = async ({
     const [redemptionStrategyType] = chainIdToConfig[chainId].redemptionStrategies[address];
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType, deployer);
 
-    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(redemptionStrategy.address);
+    const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
+      redemptionStrategy.address
+    );
     if (!whitelistedAlready) {
       strategies.push(redemptionStrategy.address);
       arrayOfTrue.push(true);
@@ -82,7 +84,9 @@ export const configureFuseSafeLiquidator = async ({
     const [fundingStrategyType] = chainIdToConfig[chainId].fundingStrategies[address];
     const fundingStrategy = await ethers.getContract(fundingStrategyType, deployer);
 
-    const whitelistedAlready = await fuseSafeLiquidator.redemptionStrategiesWhitelist(fundingStrategy.address);
+    const whitelistedAlready = await fuseSafeLiquidator.callStatic.redemptionStrategiesWhitelist(
+      fundingStrategy.address
+    );
     if (!whitelistedAlready) {
       strategies.push(fundingStrategy.address);
       arrayOfTrue.push(true);
@@ -143,11 +147,10 @@ export const configureAddressesProviderStrategies = async ({
   }
 
   if (fundingStrategiesToUpdate.length > 0) {
-    const gasPrice = (await ethers.provider.getGasPrice()).mul(250).div(100);
     for (const key in fundingStrategiesToUpdate) {
       const [asset, type, strategy] = fundingStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
-      const tx = await ap.setFundingStrategy(asset, strategy, type, {gasPrice});
+      const tx = await ap.setFundingStrategy(asset, strategy, type);
       console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setFundingStrategy: ", tx.hash);
