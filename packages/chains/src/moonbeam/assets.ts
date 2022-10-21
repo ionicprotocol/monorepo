@@ -1,6 +1,6 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { beamSwapDocs, beamSwapStableDocs, defaultDocs } from "../common";
+import { beamSwapDocs, beamSwapStableDocs, defaultDocs, wrappedAssetDocs } from "../common";
 import { stellaSwapDocs } from "../common/docs";
 
 const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
@@ -139,7 +139,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped GLMR",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://moonbeam.moonscan.io", WGLMR),
+    extraDocs: wrappedAssetDocs(SupportedChains.moonbeam),
   },
   {
     symbol: assetSymbols.GLINT,

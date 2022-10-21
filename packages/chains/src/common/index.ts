@@ -14,4 +14,5 @@ export {
   balacerDocs,
   curveFinanceArbitrumDocs,
   jarvisDocs,
+  wrappedAssetDocs,
 } from "./docs";

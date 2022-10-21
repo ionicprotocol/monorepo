@@ -1,4 +1,4 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import {
   ankrBNBDocs,
@@ -10,6 +10,7 @@ import {
   pancakeSwapDocs,
   stkBNBDocs,
 } from "../common";
+import { wrappedAssetDocs } from "../common/docs";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 export const BNB = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
@@ -76,7 +77,7 @@ const assets: SupportedAsset[] = [
     name: "Wrapped Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", WBNB),
+    extraDocs: wrappedAssetDocs(SupportedChains.bsc),
   },
   {
     symbol: assetSymbols.BUSD,
