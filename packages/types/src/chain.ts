@@ -65,6 +65,11 @@ export type ChainAddresses = {
   UNISWAP_V2_FACTORY: string;
   UNISWAP_V3_ROUTER?: string;
   PAIR_INIT_HASH: string;
+  UNISWAP_V3?: {
+    FACTORY: string;
+    PAIR_INIT_HASH: string;
+    QUOTER_V2: string;
+  };
 };
 
 export type ChainSupportedAssets = {

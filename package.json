@@ -10,6 +10,7 @@
     "packages/monitors/oracle",
     "packages/chains",
     "packages/sdk",
+    "packages/security",
     "packages/types",
     "packages/ui"
   ],
@@ -32,6 +33,7 @@
     "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @midas-capital/sdk build",
     "build:types": "yarn workspace @midas-capital/types build",
     "build:chains": "yarn build:types && yarn workspace @midas-capital/chains build",
+    "build:security": "yarn build:types && yarn build:chains && yarn workspace @midas-capital/security build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:functions": "yarn workspace @midas-capital/functions build",

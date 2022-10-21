@@ -17,7 +17,7 @@ const deployedPlugins: DeployedPlugins = {
   // No plugin deployment file stored
   "0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854": {
     market: "0x4cF3D3ca995beEeEd83f67A5C0456A13e038f7b8",
-    name: "BTCB-BOMB",
+    name: "Beefy BTCB-BOMB Vault",
     strategy: Strategy.Beefy,
     apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb-btcb",
     strategyDocsUrl:
@@ -113,7 +113,7 @@ const deployedPlugins: DeployedPlugins = {
   // BeefyERC4626_jCHF-BUSD_0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267.json
   "0x29b2aB4102d7aF1CDCF9c84D29D18dC2cFf11f1A": {
     market: "0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267",
-    name: "JCHF-BUSD",
+    name: "Beefy JCHF-BUSD Vault",
     strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-busd-jchf",
     strategyDocsUrl:
