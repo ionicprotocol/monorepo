@@ -356,11 +356,13 @@ const AmountSelect = ({
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
           <Loader />
           <Box py={4} w="100%" h="100%">
-            <TransactionStepper
-              activeStep={activeStep}
-              steps={SUPPLY_STEPS}
-              failedStep={failedStep}
-            />
+            {mode === FundOperationMode.SUPPLY && (
+              <TransactionStepper
+                activeStep={activeStep}
+                steps={SUPPLY_STEPS}
+                failedStep={failedStep}
+              />
+            )}
           </Box>
           <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions
