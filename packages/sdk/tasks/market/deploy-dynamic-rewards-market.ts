@@ -39,12 +39,12 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
     const cTokenImplementation = await cToken.callStatic.implementation();
     console.log({ marketAddress });
-    const deployArgs = [underlyingAddress, ...fwAddresses, ...pluginExtraParams, marketAddress, rewardTokens];
+    const deployArgs = [underlyingAddress, ...pluginExtraParams, marketAddress, rewardTokens];
 
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
     const artifact = await deployments.getArtifact(contractName);
-    const deployment = await deployments.deploy(`${contractName}_${symbol}_${underlyingAddress}`, {
+    const deployment = await deployments.deploy(`${contractName}_${symbol}_${marketAddress}`, {
       contract: artifact,
       from: signer.address,
       proxy: {
@@ -106,8 +106,10 @@ task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywhe
 
     // for each token and its flywheel, set up the market and its rewards
     for (const [idx, rewardToken] of rewardTokens.entries()) {
+      console.log(`Setting up market for reward token: ${rewardToken}, fwAddress: ${fwAddresses[idx]}`);
       const flywheel = sdk.createMidasFlywheel(fwAddresses[idx]);
       const tokenRewards = await flywheel.callStatic.flywheelRewards();
+      console.log(`token rewards ${tokenRewards}`);
 
       // Step 1: Approve fwc Rewards to get rewardTokens from it (!IMPORTANT to use "approve(address,address)", it has two approve functions)
       const approveRewardTx = await cToken["approve(address,address)"](rewardToken, tokenRewards);

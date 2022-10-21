@@ -20,6 +20,20 @@ export const sortTopSuppliedAssets = (assets: MarketData[]) => {
   });
 };
 
+export const sortTopLiquidityAssets = (assets: MarketData[]) => {
+  return [...assets]
+    .filter((asset) => !asset.isBorrowPaused)
+    .sort((a, b) => {
+      return b.liquidityFiat - a.liquidityFiat;
+    });
+};
+
+export const sortTopUtilizationAssets = (assets: MarketData[]) => {
+  return [...assets].sort((a, b) => {
+    return b.utilization - a.utilization;
+  });
+};
+
 export const sortSupportedAssets = (assets: SupportedAsset[]) => {
   return assets.sort((a, b) => {
     return a.symbol.localeCompare(b.symbol);

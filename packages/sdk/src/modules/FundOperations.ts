@@ -28,13 +28,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { gasWEI, gasPrice, estimatedGas };
     }
 
-    async supply(
-      cTokenAddress: string,
-      underlyingTokenAddress: string,
-      comptrollerAddress: string,
-      enableAsCollateral: boolean,
-      amount: BigNumber
-    ) {
+    async approve(cTokenAddress: string, underlyingTokenAddress: string, amount: BigNumber) {
       const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
       const currentSignerAddress = await this.signer.getAddress();
 
@@ -44,6 +38,9 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
         const approveTx = await token.approve(cTokenAddress, max);
         await approveTx.wait();
       }
+    }
+
+    async enterMarkets(cTokenAddress: string, comptrollerAddress: string, enableAsCollateral: boolean) {
       if (enableAsCollateral) {
         const comptrollerInstance = getContract(
           comptrollerAddress,
@@ -53,6 +50,9 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
 
         await comptrollerInstance.enterMarkets([cTokenAddress]);
       }
+    }
+
+    async mint(cTokenAddress: string, amount: BigNumber) {
       const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
       const address = this.signer.getAddress();
       // add 10% to default estimated gas
@@ -66,6 +66,18 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
 
       const tx: ContractTransaction = await cToken.mint(amount, { gasLimit, from: address });
       return { tx, errorCode: null };
+    }
+
+    async supply(
+      cTokenAddress: string,
+      underlyingTokenAddress: string,
+      comptrollerAddress: string,
+      enableAsCollateral: boolean,
+      amount: BigNumber
+    ) {
+      await this.approve(cTokenAddress, underlyingTokenAddress, amount);
+      await this.enterMarkets(cTokenAddress, comptrollerAddress, enableAsCollateral);
+      return await this.mint(cTokenAddress, amount);
     }
 
     async repay(cTokenAddress: string, underlyingTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {

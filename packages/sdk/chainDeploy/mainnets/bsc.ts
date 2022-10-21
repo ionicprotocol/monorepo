@@ -14,6 +14,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
 import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
@@ -86,6 +87,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB-BTC PCS LP
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
       underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
+      underlying(assets, assetSymbols["asBNBx-WBNB"]), // BNBx-WBNB ApeSwap LP
     ],
     flashSwapFee: 25,
   },
@@ -181,6 +183,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.JEUR,
+    aggregator: "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.BRZ,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -241,6 +248,12 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.BRZw),
     ],
   },
+  {
+    // BNBx-BNB pool
+    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
+    underlyings: [underlying(assets, assetSymbols.BNBx), underlying(assets, assetSymbols.BNB)],
+  },
 ];
 
 const curveV2Pools: CurveV2PoolConfig[] = [
@@ -264,6 +277,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  // set Native BNB price
+  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+  const nativeBnb = underlying(assets, assetSymbols.BNB);
+
+  const existingOracle = await mpo.callStatic.oracles(nativeBnb);
+  if (existingOracle === ethers.constants.AddressZero) {
+    const fpo = await ethers.getContract("FixedNativePriceOracle", deployer);
+    const tx = await mpo.add([nativeBnb], [fpo.address]);
+    await tx.wait();
+  }
 
   //// Dia Price Oracle
   await deployDiaOracle({
@@ -335,6 +359,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     assets,
   });
 
+  //// BNBx  oracle
+  await deployBNBxPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+  });
+
   //// Ankr BNB Certificate oracle
   await deployABNBcOracle({
     run,
@@ -389,10 +422,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
   /// EPS
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
-    args: [deployConfig.wtoken, curveOracle.address],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
@@ -402,7 +434,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });

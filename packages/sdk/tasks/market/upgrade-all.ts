@@ -2,10 +2,10 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegate } from "../lib/contracts/typechain/CErc20Delegate";
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../lib/contracts/typechain/FusePoolDirectory";
+import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
+import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   .addOptionalParam(
@@ -33,7 +33,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
 
     // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const fuseFeeDistributor = new ethers.Contract(
       sdk.chainDeployment.FuseFeeDistributor.address,
@@ -169,7 +169,7 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
     // @ts-ignore
-    const midasSdkModule = await import("../tests/utils/midasSdk");
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
     const signer = await ethers.getNamedSigner(taskArgs.admin);
     const enabled = taskArgs.enabled;
