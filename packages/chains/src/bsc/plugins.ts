@@ -17,7 +17,7 @@ const deployedPlugins: DeployedPlugins = {
   // No plugin deployment file stored
   "0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854": {
     market: "0x4cF3D3ca995beEeEd83f67A5C0456A13e038f7b8",
-    name: "BTCB-BOMB",
+    name: "Beefy BTCB-BOMB Vault",
     strategy: Strategy.Beefy,
     apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb-btcb",
     strategyDocsUrl:
@@ -50,7 +50,7 @@ const deployedPlugins: DeployedPlugins = {
     apyDocsUrl: "https://dotdot.finance/#/stake",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
-    underlying: underlying(assets, assetSymbols["2brl"]), // 2BRL
+    underlying: underlying(assets, assetSymbols["3brl"]), // 2BRL
     otherParams: [
       "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
       "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
@@ -113,7 +113,7 @@ const deployedPlugins: DeployedPlugins = {
   // BeefyERC4626_jCHF-BUSD_0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267.json
   "0x29b2aB4102d7aF1CDCF9c84D29D18dC2cFf11f1A": {
     market: "0x1F0452D6a8bb9EAbC53Fa6809Fa0a060Dd531267",
-    name: "JCHF-BUSD",
+    name: "Beefy JCHF-BUSD Vault",
     strategy: Strategy.Beefy,
     apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-busd-jchf",
     strategyDocsUrl:

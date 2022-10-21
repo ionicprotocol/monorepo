@@ -36,7 +36,7 @@ const deployedPlugins: DeployedPlugins = {
   // CurveGaugeERC4626_xcDOT-stDOT_0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98.json
   "0xE9c4274341ab4Be0857476e84963b3c36787568D": {
     market: "0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98",
-    name: "xcDOT-stDOT",
+    name: "Curve xcDOT-stDOT Gauge",
     strategy: Strategy.CurveGauge,
     apyDocsUrl: "https://moonbeam.curve.fi/",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/xcdot",

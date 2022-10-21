@@ -226,8 +226,7 @@ const AmountSelect = ({
             });
           } catch (error) {
             setFailedStep(1);
-            console.error(error);
-            throw 'Failed to approve!';
+            throw error;
           }
 
           try {
@@ -240,8 +239,7 @@ const AmountSelect = ({
             });
           } catch (error) {
             setFailedStep(2);
-            console.error(error);
-            throw 'Failed to enable collateral!';
+            throw error;
           }
 
           try {
@@ -254,15 +252,11 @@ const AmountSelect = ({
             }
           } catch (error) {
             setFailedStep(3);
-            console.error(error);
-            throw 'Failed to mint!';
+            throw error;
           }
         } catch (error) {
-          console.error(error);
           setIsDeploying(false);
-          errorToast({
-            description: JSON.stringify(error),
-          });
+          handleGenericError(error, errorToast);
 
           return;
         }
@@ -362,11 +356,13 @@ const AmountSelect = ({
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
           <Loader />
           <Box py={4} w="100%" h="100%">
-            <TransactionStepper
-              activeStep={activeStep}
-              steps={SUPPLY_STEPS}
-              failedStep={failedStep}
-            />
+            {mode === FundOperationMode.SUPPLY && (
+              <TransactionStepper
+                activeStep={activeStep}
+                steps={SUPPLY_STEPS}
+                failedStep={failedStep}
+              />
+            )}
           </Box>
           <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions

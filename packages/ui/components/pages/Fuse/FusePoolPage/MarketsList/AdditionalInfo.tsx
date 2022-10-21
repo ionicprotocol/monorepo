@@ -26,7 +26,7 @@ import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import {
   ADMIN_FEE_TOOLTIP,
-  COLLATERAL_FACTOR_TOOLTIP,
+  LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR_TOOLTIP,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -213,9 +213,9 @@ export const AdditionalInfo = ({
           >
             <CaptionedStat
               stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
-              caption={'Collateral Factor'}
+              caption={'Loan-to-Value'}
               crossAxisAlignment="center"
-              tooltip={COLLATERAL_FACTOR_TOOLTIP}
+              tooltip={LOAN_TO_VALUE_TOOLTIP}
             />
 
             <CaptionedStat
