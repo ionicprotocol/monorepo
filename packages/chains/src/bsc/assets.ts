@@ -68,7 +68,7 @@ const assets: SupportedAsset[] = [
     name: "Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", WBNB),
+    extraDocs: defaultDocs("https://bscscan.com", BNB),
   },
   {
     symbol: assetSymbols.WBNB,

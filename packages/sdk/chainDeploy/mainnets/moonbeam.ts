@@ -138,6 +138,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.USDC_wh,
+    aggregator: "0xA122591F60115D63421f66F752EF9f6e0bc73abC",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.FRAX,
     aggregator: "0x05Ec3Fb5B7CB3bE9D7150FBA1Fb0749407e5Aa8a",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
