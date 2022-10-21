@@ -144,7 +144,7 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
     return { apy: undefined, error: 'Not enough data yet to calculate APY' };
   }
 
-  let averageAPY = 0;
+  let averageAPY = undefined;
 
   const dateEnd = end.data[0].created_at;
   const dateStart = start.data[0].created_at;
@@ -161,8 +161,8 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
     updatedAt: end.data[0].created_at,
     externalAPY: end.data[0].externalAPY ? Number(end.data[0].externalAPY) : undefined,
     apy: averageAPY,
-    averageAPY,
-    timeDelta,
+    averageAPY: averageAPY,
+    timeDelta: averageAPY ? timeDelta : undefined,
   };
 }
 
