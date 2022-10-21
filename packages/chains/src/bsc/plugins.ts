@@ -50,7 +50,7 @@ const deployedPlugins: DeployedPlugins = {
     apyDocsUrl: "https://dotdot.finance/#/stake",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
-    underlying: underlying(assets, assetSymbols["2brl"]), // 2BRL
+    underlying: underlying(assets, assetSymbols["3brl"]), // 2BRL
     otherParams: [
       "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
       "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
