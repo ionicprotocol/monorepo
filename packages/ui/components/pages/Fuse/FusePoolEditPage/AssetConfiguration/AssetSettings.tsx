@@ -180,7 +180,7 @@ export const AssetSettings = ({
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated collateral factor!' });
+      successToast({ description: 'Successfully updated loan-to-Value!' });
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
@@ -376,7 +376,7 @@ export const AssetSettings = ({
                 <FormLabel htmlFor="collateralFactor" margin={0}>
                   <HStack>
                     <Text variant="smText" width="max-content">
-                      Collateral Factor{' '}
+                      Loan-to-Value{' '}
                     </Text>
                     <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
                       <QuestionIcon
@@ -395,14 +395,14 @@ export const AssetSettings = ({
                     control={control}
                     name="collateralFactor"
                     rules={{
-                      required: 'Collateral factor is required',
+                      required: 'Loan-to-Value is required',
                       min: {
                         value: COLLATERAL_FACTOR.MIN,
-                        message: `Collateral factor must be at least ${COLLATERAL_FACTOR.MIN}%`,
+                        message: `Loan-to-Value must be at least ${COLLATERAL_FACTOR.MIN}%`,
                       },
                       max: {
                         value: COLLATERAL_FACTOR.MAX,
-                        message: `Collateral factor must be no more than ${COLLATERAL_FACTOR.MAX}%`,
+                        message: `Loan-to-Value must be no more than ${COLLATERAL_FACTOR.MAX}%`,
                       },
                     }}
                     render={({ field: { name, value, ref, onChange } }) => (

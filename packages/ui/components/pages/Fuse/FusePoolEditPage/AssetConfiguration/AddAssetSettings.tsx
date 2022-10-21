@@ -179,7 +179,7 @@ export const AddAssetSettings = ({
           <FormLabel htmlFor="collateralFactor">
             <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
               <Text fontWeight="bold">
-                Collateral Factor{' '}
+                Loan-to-Value{' '}
                 <QuestionIcon
                   color={cCard.txtColor}
                   bg={cCard.bgColor}
@@ -195,14 +195,14 @@ export const AddAssetSettings = ({
               control={control}
               name="collateralFactor"
               rules={{
-                required: 'Collateral factor is required',
+                required: 'Loan-to-Value is required',
                 min: {
                   value: COLLATERAL_FACTOR.MIN,
-                  message: `Collateral Factor must be at least ${COLLATERAL_FACTOR.MIN}%`,
+                  message: `Loan-to-Value must be at least ${COLLATERAL_FACTOR.MIN}%`,
                 },
                 max: {
                   value: COLLATERAL_FACTOR.MAX,
-                  message: `Collateral Factor must be no more than ${COLLATERAL_FACTOR.MAX}%`,
+                  message: `Loan-to-Value must be no more than ${COLLATERAL_FACTOR.MAX}%`,
                 },
               }}
               render={({ field: { name, value, ref, onChange } }) => (
