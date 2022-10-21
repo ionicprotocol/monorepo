@@ -97,4 +97,4 @@ export const ADMIN_FEE_TOOLTIP =
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
-export const SUPPLY_STEPS = ['Approve', 'Set Collateral', 'Mint'];
+export const SUPPLY_STEPS = ['Approve', 'Enter Market', 'Mint Market Share'];
