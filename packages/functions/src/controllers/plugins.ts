@@ -31,17 +31,13 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
             })(),
           ]);
 
-          // Don't save anything if the plugin is empty
-          if (totalSupply.eq(0)) {
-            return;
-          }
           const { error } = await supabase.from(environment.supabasePluginTableName).insert([
             {
               chain: chainId,
               externalAPY: externalAPY ? externalAPY.toString() : undefined,
               pluginAddress: pluginAddress.toLowerCase(),
-              totalAssets: totalAssets.toString(),
-              totalSupply: totalSupply.toString(),
+              totalAssets: totalAssets.eq(0) ? '1' : totalAssets.toString(),
+              totalSupply: totalSupply.eq(0) ? '1' : totalSupply.toString(),
               underlyingAddress: underlyingAsset.toLowerCase(),
             },
           ]);

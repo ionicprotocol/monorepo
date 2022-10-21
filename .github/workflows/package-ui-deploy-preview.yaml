@@ -45,5 +45,5 @@ jobs:
       - name: Deploy `Preview`
         run: |
           netlify link --id ${{ secrets.NETLIFY_SITE_ID_PREVIEW }}
-          netlify deploy --prod --build --context preview --skip-functions-cache
+          netlify deploy --prod --build --context preview
 

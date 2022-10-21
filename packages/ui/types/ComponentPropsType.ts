@@ -232,6 +232,8 @@ export interface TokenDataResponse {
 
 export type APYResponse = {
   apy?: number;
+  averageAPY?: number;
+  timeDelta?: number;
   externalAPY?: number;
   updatedAt?: string;
   error?: string;

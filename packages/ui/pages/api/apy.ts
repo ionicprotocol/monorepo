@@ -139,26 +139,30 @@ async function underlyingTokenAPY(query: Query): Promise<APYResponse> {
     end.error ||
     start.data.length === 0 ||
     end.data.length === 0 ||
-    start.data[0].created_at === end.data[0].created_at ||
-    parseFloat(start.data[0].totalAssets) === 0 ||
-    parseFloat(end.data[0].totalAssets) === 0
+    start.data[0].created_at === end.data[0].created_at
   ) {
     return { apy: undefined, error: 'Not enough data yet to calculate APY' };
   }
 
-  const pricePerShare2 = pricePerShare(end);
-  const pricePerShare1 = pricePerShare(start);
+  let averageAPY = undefined;
 
   const dateEnd = end.data[0].created_at;
   const dateStart = start.data[0].created_at;
 
-  const dateDelta = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
-  // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
+  const timeDelta = new Date(dateEnd).getTime() - new Date(dateStart).getTime();
+  const pricePerShare2 = pricePerShare(end);
+  const pricePerShare1 = pricePerShare(start);
+  if (pricePerShare1 !== pricePerShare2) {
+    // Formula origin: https://www.cuemath.com/continuous-compounding-formula/
+    averageAPY = (Math.log(pricePerShare2 / pricePerShare1) / timeDelta) * millisecondsInADay * 365;
+  }
 
   return {
     updatedAt: end.data[0].created_at,
     externalAPY: end.data[0].externalAPY ? Number(end.data[0].externalAPY) : undefined,
-    apy: (Math.log(pricePerShare2 / pricePerShare1) / dateDelta) * millisecondsInADay * 365,
+    apy: averageAPY,
+    averageAPY: averageAPY,
+    timeDelta: averageAPY ? timeDelta : undefined,
   };
 }
 
@@ -166,6 +170,13 @@ function pricePerShare(response: PostgrestResponse<MarketState>) {
   if (!response.data || response.data.length === 0) {
     return 0;
   }
+  if (
+    parseFloat(response.data[0].totalAssets) === 0 ||
+    parseFloat(response.data[0].totalSupply) === 0
+  ) {
+    return 1;
+  }
+
   return parseFloat(response.data[0].totalAssets) / parseFloat(response.data[0].totalSupply);
 }
 
