@@ -10,6 +10,7 @@ import {
   Spinner,
   Text,
   useDisclosure,
+  VStack,
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
@@ -30,7 +31,9 @@ import {
   RESERVE_FACTOR_TOOLTIP,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
 import { useChartData } from '@ui/hooks/useChartData';
+import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
@@ -58,10 +61,11 @@ export const AdditionalInfo = ({
 
   const { data } = useChartData(asset.cToken, poolChainId);
   const { currentChain } = useMultiMidas();
+  const { cCard } = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { switchNetworkAsync } = useSwitchNetwork();
-
+  const strategyRating = useStrategyRating(poolChainId, asset.plugin);
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
       await switchNetworkAsync(chainConfig.chainId);
@@ -158,80 +162,122 @@ export const AdditionalInfo = ({
         w="100%"
         gap={4}
         alignItems="flex-end"
+        mt={4}
       >
-        <Box height="250px" width="100%">
-          {asset.isBorrowPaused ? (
-            <Center height="100%">
-              <Text variant="smText">This asset is not borrowable.</Text>
-            </Center>
-          ) : data ? (
-            data.rates === null ? (
+        <VStack width="100%" spacing={0} borderRadius="20">
+          <Box
+            width="100%"
+            p={4}
+            background={cCard.headingBgColor}
+            borderWidth={2}
+            borderColor={cCard.headingBgColor}
+          >
+            <Text>Utilization Rate</Text>
+          </Box>
+          <Box
+            width="100%"
+            height="250px"
+            borderWidth={2}
+            borderColor={cCard.headingBgColor}
+            pb={4}
+          >
+            {asset.isBorrowPaused ? (
               <Center height="100%">
-                <Text variant="smText">
-                  No graph is available for this asset(&apos)s interest curves.
-                </Text>
+                <Text variant="smText">This asset is not borrowable.</Text>
               </Center>
+            ) : data ? (
+              data.rates === null ? (
+                <Center height="100%">
+                  <Text variant="smText">
+                    No graph is available for this asset(&apos)s interest curves.
+                  </Text>
+                </Center>
+              ) : (
+                <UtilizationChart
+                  irmToCurve={data}
+                  currentUtilization={asset.utilization.toFixed(0)}
+                />
+              )
             ) : (
-              <UtilizationChart
-                irmToCurve={data}
-                currentUtilization={asset.utilization.toFixed(0)}
+              <Center height="100%">
+                <Spinner />
+              </Center>
+            )}
+          </Box>
+        </VStack>
+        <VStack width="100%" spacing={0} borderRadius="20">
+          <Box
+            width="100%"
+            p={4}
+            background={cCard.headingBgColor}
+            borderWidth={2}
+            borderColor={cCard.headingBgColor}
+          >
+            <Text>Asset Info</Text>
+          </Box>
+          <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
+            <Grid
+              templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
+              gap={2}
+              width="100%"
+              height="100%"
+            >
+              <CaptionedStat
+                stat={midUsdFormatter(asset.totalSupplyFiat)}
+                caption={'Asset Supplied'}
+                crossAxisAlignment="center"
               />
-            )
-          ) : (
-            <Center height="100%">
-              <Spinner />
-            </Center>
-          )}
-        </Box>
-        <Box height="fit-content">
-          <Grid
-            templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
-            gap={2}
-            width="100%"
-            mb={8}
-          >
-            <CaptionedStat
-              stat={midUsdFormatter(asset.totalSupplyFiat)}
-              caption={'Asset Supplied'}
-              crossAxisAlignment="center"
-            />
-            <CaptionedStat
-              stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
-              caption={'Asset Borrowed'}
-              crossAxisAlignment="center"
-            />
-            <CaptionedStat
-              stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
-              caption={'Asset Utilization'}
-              crossAxisAlignment="center"
-            />
-          </Grid>
-          <Grid
-            templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
-            gap={2}
-            width="100%"
-          >
-            <CaptionedStat
-              stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
-              caption={'Loan-to-Value'}
-              crossAxisAlignment="center"
-              tooltip={LOAN_TO_VALUE_TOOLTIP}
-            />
+              <CaptionedStat
+                stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
+                caption={'Asset Borrowed'}
+                crossAxisAlignment="center"
+              />
+              <CaptionedStat
+                stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
+                caption={'Asset Utilization'}
+                crossAxisAlignment="center"
+              />
+              <CaptionedStat
+                stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
+                caption={'Loan-to-Value'}
+                crossAxisAlignment="center"
+                tooltip={LOAN_TO_VALUE_TOOLTIP}
+              />
 
-            <CaptionedStat
-              stat={Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0) + '%'}
-              caption={'Reserve Factor'}
-              crossAxisAlignment="center"
-              tooltip={RESERVE_FACTOR_TOOLTIP}
-            />
-            <CaptionedStat
-              stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
-              caption={'Admin Fee'}
-              crossAxisAlignment="center"
-              tooltip={ADMIN_FEE_TOOLTIP}
-            />
-          </Grid>
-        </Box>
+              <CaptionedStat
+                stat={Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0) + '%'}
+                caption={'Reserve Factor'}
+                crossAxisAlignment="center"
+                tooltip={RESERVE_FACTOR_TOOLTIP}
+              />
+              <CaptionedStat
+                stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
+                caption={'Admin Fee'}
+                crossAxisAlignment="center"
+                tooltip={ADMIN_FEE_TOOLTIP}
+              />
+            </Grid>
+          </Box>
+        </VStack>
+        {strategyRating !== undefined && (
+          <VStack width="100%" spacing={0} borderRadius="20">
+            <Box
+              width="100%"
+              p={4}
+              background={cCard.headingBgColor}
+              borderWidth={2}
+              borderColor={cCard.headingBgColor}
+            >
+              <Text>Safety Score</Text>
+            </Box>
+            <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
+              <Flex p={4} gap={4}>
+                <Text>Strategy Score</Text>
+                <Text>{strategyRating}</Text>
+              </Flex>
+            </Box>
+          </VStack>
+        )}
       </Grid>
     </Box>
   );

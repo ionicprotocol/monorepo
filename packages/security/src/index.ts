@@ -4,6 +4,7 @@ import { Signer } from "ethers";
 
 import { chainIdToConfig } from "./enums";
 import { withChainLinkOracleScorer, withUniswapV3OracleScorer } from "./oracle";
+import { withErc4626StrategyScorer } from "./strategy";
 
 export type GConstructor<T> = new (...args: any[]) => T;
 export type SecurityBaseConstructor = GConstructor<SecurityBase>;
@@ -22,5 +23,5 @@ export class SecurityBase {
   }
 }
 
-const SecurityBaseWithModules = withChainLinkOracleScorer(withUniswapV3OracleScorer(SecurityBase));
+const SecurityBaseWithModules = withErc4626StrategyScorer(SecurityBase);
 export default class Security extends SecurityBaseWithModules {}
