@@ -1,6 +1,7 @@
 export enum Strategy {
   Beefy = "BeefyERC4626",
   Arrakis = "ArrakisERC4626",
+  Mimo = "MimoERC4626",
   DotDot = "DotDotLpERC4626",
   Stella = "StellaLpERC4626",
   Bomb = "BombERC4626",

@@ -78,7 +78,8 @@ const deployedPlugins: DeployedPlugins = {
   "0xdE58CF12595e92ebB07D664eE59A642e360bea58": {
     market: "0xa5A14c3814d358230a56e8f011B8fc97A508E890",
     name: "Arrakis PAR-USDC Vault",
-    strategy: Strategy.Arrakis,
+    strategy: Strategy.Mimo,
+    apyDocsUrl: "https://app.mimo.capital/mining",
     underlying: underlying(assets, assetSymbols["arrakis_USDC_PAR_005"]),
     otherParams: [
       "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
@@ -91,7 +92,8 @@ const deployedPlugins: DeployedPlugins = {
   "0xd682451F627d54cfdA74a80972aDaeF133cdc15e": {
     market: "0xcb67Bd2aE0597eDb2426802CdF34bb4085d9483A",
     name: "Balancer LP MIMO80-PAR20",
-    strategy: Strategy.Arrakis,
+    strategy: Strategy.Mimo,
+    apyDocsUrl: "https://app.mimo.capital/mining",
     underlying: underlying(assets, assetSymbols.MIMO_PAR_80_20),
     otherParams: [
       "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
