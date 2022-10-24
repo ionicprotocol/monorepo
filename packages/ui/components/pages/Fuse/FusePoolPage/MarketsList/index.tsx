@@ -42,6 +42,7 @@ import { Liquidity } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Li
 import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
+import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TotalSupplied';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
@@ -79,6 +80,7 @@ export type Market = {
   collateral: MarketData;
   borrowApy: MarketData;
   borrowBalance: MarketData;
+  totalSupplied: MarketData;
   liquidity: MarketData;
 };
 
@@ -185,6 +187,8 @@ export const MarketsList = ({
       return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
         ? 1
         : -1;
+    } else if (columnId === 'totalSupplied') {
+      return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
     } else if (columnId === 'liquidity') {
       const liquidityA = !rowA.original.market.isBorrowPaused
         ? rowA.original.market.liquidityFiat
@@ -212,6 +216,7 @@ export const MarketsList = ({
         collateral: asset,
         borrowApy: asset,
         borrowBalance: asset,
+        totalSupplied: asset,
         liquidity: asset,
       };
     });
@@ -302,6 +307,25 @@ export const MarketsList = ({
             </Text>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
               Balance
+            </Text>
+          </VStack>
+        ),
+        footer: (props) => props.column.id,
+        sortingFn: assetSort,
+      },
+      {
+        accessorFn: (row) => row.totalSupplied,
+        id: 'totalSupplied',
+        cell: ({ getValue }) => (
+          <TotalSupplied asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
+        header: () => (
+          <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
+              Total
+            </Text>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
+              Supply
             </Text>
           </VStack>
         ),
