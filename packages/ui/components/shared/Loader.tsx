@@ -22,8 +22,8 @@ function Loader({ width }: { width?: string }) {
   }, [controls]);
 
   return (
-    <Box width={width ? width : '140px'}>
-      <motion.svg fill="#BCAC83" width="140px" height="125px">
+    <Box width={width ? width : '142px'}>
+      <motion.svg fill="#BCAC83" width="142px" height="125px">
         <motion.path
           initial={{
             opacity: 0,
