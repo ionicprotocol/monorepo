@@ -28,101 +28,108 @@ export const RewardsInfo = ({
 
   const { cCard } = useColors();
   const { data: pluginInfo } = usePluginInfo(poolChainId, pluginAddress);
+  if (apyLoading) {
+    return (
+      <HStack justifyContent={'flex-end'}>
+        <Text>+ 🔌</Text>
+
+        {apyLoading && (
+          <Skeleton height={'1em'} ml={2}>
+            0.00%
+          </Skeleton>
+        )}
+      </HStack>
+    );
+  }
+
+  if (apyResponse?.averageAPY === undefined && apyResponse?.externalAPY === undefined) {
+    return (
+      <HStack justifyContent={'flex-end'}>
+        <Text>+ 🔌</Text>
+
+        <NoApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
+      </HStack>
+    );
+  }
 
   return (
-    <HStack justifyContent={'flex-end'}>
-      <Text>+ 🔌</Text>
-
-      {apyLoading && (
-        <Skeleton height={'1em'} ml={2}>
-          0.00%
-        </Skeleton>
-      )}
-
-      {!apyLoading && apyResponse?.apy === undefined && (
-        <NoApyInformTooltip pluginAddress={pluginAddress} poolChainId={poolChainId} />
-      )}
-
-      {!apyLoading && apyResponse?.apy && (
-        <PopoverTooltip
-          placement={'top-start'}
-          body={
-            <>
-              <Text>
-                This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
-              </Text>
-              {pluginInfo?.apyDocsUrl ? (
-                <Link
-                  href={pluginInfo?.apyDocsUrl}
-                  isExternal
-                  variant={'color'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                >
-                  Vault Details
-                </Link>
-              ) : (
-                <>
-                  Read more about it{' '}
-                  <Link
-                    href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
-                    isExternal
-                    variant={'color'}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                  >
-                    in our Docs <ExternalLinkIcon mx="2px" />
-                  </Link>
-                </>
-              )}
-
-              <Divider my={2} />
-              <VStack width={'100%'} alignItems={'flex-start'}>
-                {apyResponse.externalAPY && (
-                  <HStack justifyContent={'space-between'} width={'100%'}>
-                    <div>Current APY:</div>
-                    <div>{`${(apyResponse.externalAPY * 100).toFixed(2) + '%'}`}</div>
-                  </HStack>
-                )}
-                {apyResponse.apy && (
-                  <HStack justifyContent={'space-between'} width={'100%'}>
-                    <div>APY/7 days:</div>
-                    <div>{`${(apyResponse.apy * 100).toFixed(2) + '%'}`}</div>
-                  </HStack>
-                )}
-                {apyResponse.updatedAt && (
-                  <HStack justifyContent={'space-between'} width={'100%'}>
-                    <Text>Updated:</Text>
-                    <Text>{`${new Date(apyResponse.updatedAt).toLocaleDateString(undefined, {
-                      year: 'numeric',
-                      month: 'numeric',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}`}</Text>
-                  </HStack>
-                )}
-              </VStack>
-            </>
-          }
-        >
-          <Text
-            color={cCard.txtColor}
-            title={
-              apyResponse.externalAPY !== undefined
-                ? apyResponse.externalAPY * 100 + '%'
-                : apyResponse.apy * 100 + '%'
-            }
-            variant="smText"
-          >
-            {apyResponse.externalAPY !== undefined
-              ? (apyResponse.externalAPY * 100).toFixed(2) + '%'
-              : (apyResponse.apy * 100).toFixed(2) + '%'}
+    <PopoverTooltip
+      placement={'top-start'}
+      body={
+        <>
+          <Text>
+            This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
           </Text>
-        </PopoverTooltip>
-      )}
-    </HStack>
+          {pluginInfo?.apyDocsUrl ? (
+            <Link
+              href={pluginInfo?.apyDocsUrl}
+              isExternal
+              variant={'color'}
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              Vault Details
+            </Link>
+          ) : (
+            <>
+              Read more about it{' '}
+              <Link
+                href={pluginInfo?.strategyDocsUrl || MIDAS_DOCS_URL}
+                isExternal
+                variant={'color'}
+                onClick={(e) => {
+                  e.stopPropagation();
+                }}
+              >
+                in our Docs <ExternalLinkIcon mx="2px" />
+              </Link>
+            </>
+          )}
+
+          <Divider my={2} />
+          <VStack width={'100%'} alignItems={'flex-start'}>
+            {apyResponse.externalAPY && (
+              <HStack justifyContent={'space-between'} width={'100%'}>
+                <div>Current APY:</div>
+                <div>{`${(apyResponse.externalAPY * 100).toFixed(2) + '%'}`}</div>
+              </HStack>
+            )}
+            {apyResponse.apy && (
+              <HStack justifyContent={'space-between'} width={'100%'}>
+                <div>APY/7 days:</div>
+                <div>{`${(apyResponse.apy * 100).toFixed(2) + '%'}`}</div>
+              </HStack>
+            )}
+            {apyResponse.updatedAt && (
+              <HStack justifyContent={'space-between'} width={'100%'}>
+                <Text>Updated:</Text>
+                <Text>{`${new Date(apyResponse.updatedAt).toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}`}</Text>
+              </HStack>
+            )}
+          </VStack>
+        </>
+      }
+    >
+      <HStack justifyContent={'flex-end'}>
+        <Text>+ 🔌</Text>
+
+        {apyResponse.externalAPY ? (
+          <Text color={cCard.txtColor} title={apyResponse.externalAPY * 100 + '%'} variant="smText">
+            {(apyResponse.externalAPY * 100).toFixed(2) + '%'}
+          </Text>
+        ) : apyResponse.averageAPY ? (
+          <Text color={cCard.txtColor} title={apyResponse.averageAPY * 100 + '%'} variant="smText">
+            {(apyResponse.averageAPY * 100).toFixed(2) + '%'}
+          </Text>
+        ) : null}
+      </HStack>
+    </PopoverTooltip>
   );
 };

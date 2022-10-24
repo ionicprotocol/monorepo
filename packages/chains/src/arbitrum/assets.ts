@@ -1,6 +1,6 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { curveFinanceArbitrumDocs, defaultDocs } from "../common";
+import { curveFinanceArbitrumDocs, defaultDocs, wrappedAssetDocs } from "../common";
 
 export const WBTC = "0x2f2a2543B76A4166549F7aaB2e75Bef0aefC5B0f";
 export const USDC = "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8";
@@ -66,7 +66,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Ether",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", WETH),
+    extraDocs: wrappedAssetDocs(SupportedChains.arbitrum),
   },
   {
     symbol: assetSymbols.FRAX,
