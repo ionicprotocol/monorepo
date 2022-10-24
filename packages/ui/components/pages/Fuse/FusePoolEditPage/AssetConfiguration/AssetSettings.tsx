@@ -37,8 +37,8 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
-  COLLATERAL_FACTOR,
-  COLLATERAL_FACTOR_TOOLTIP,
+  LOAN_TO_VALUE,
+  LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -123,14 +123,14 @@ export const AssetSettings = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      collateralFactor: COLLATERAL_FACTOR.DEFAULT,
+      collateralFactor: LOAN_TO_VALUE.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
       interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
     },
   });
 
-  const watchCollateralFactor = Number(watch('collateralFactor', COLLATERAL_FACTOR.DEFAULT));
+  const watchCollateralFactor = Number(watch('collateralFactor', LOAN_TO_VALUE.DEFAULT));
   const watchAdminFee = Number(watch('adminFee', ADMIN_FEE.DEFAULT));
   const watchReserveFactor = Number(watch('reserveFactor', RESERVE_FACTOR.DEFAULT));
   const watchInterestRateModel = watch(
@@ -378,7 +378,7 @@ export const AssetSettings = ({
                     <Text variant="smText" width="max-content">
                       Loan-to-Value{' '}
                     </Text>
-                    <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
+                    <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
                       <QuestionIcon
                         color={cCard.txtColor}
                         bg={cCard.bgColor}
@@ -397,18 +397,18 @@ export const AssetSettings = ({
                     rules={{
                       required: 'Loan-to-Value is required',
                       min: {
-                        value: COLLATERAL_FACTOR.MIN,
-                        message: `Loan-to-Value must be at least ${COLLATERAL_FACTOR.MIN}%`,
+                        value: LOAN_TO_VALUE.MIN,
+                        message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
                       },
                       max: {
-                        value: COLLATERAL_FACTOR.MAX,
-                        message: `Loan-to-Value must be no more than ${COLLATERAL_FACTOR.MAX}%`,
+                        value: LOAN_TO_VALUE.MAX,
+                        message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
                       },
                     }}
                     render={({ field: { name, value, ref, onChange } }) => (
                       <SliderWithLabel
-                        min={COLLATERAL_FACTOR.MIN}
-                        max={COLLATERAL_FACTOR.MAX}
+                        min={LOAN_TO_VALUE.MIN}
+                        max={LOAN_TO_VALUE.MAX}
                         name={name}
                         value={value}
                         reff={ref}
