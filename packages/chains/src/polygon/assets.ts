@@ -1,6 +1,14 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { arrakisDocs, balacerDocs, curveFinancePolygonDocs, defaultDocs, jarvisDocs, quickSwapDocs } from "../common";
+import {
+  arrakisDocs,
+  balacerDocs,
+  curveFinancePolygonDocs,
+  defaultDocs,
+  jarvisDocs,
+  quickSwapDocs,
+  wrappedAssetDocs,
+} from "../common";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -295,7 +303,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped Matic",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://polygonscan.com", WMATIC),
+    extraDocs: wrappedAssetDocs(SupportedChains.polygon),
   },
   {
     symbol: assetSymbols.MIMO,
