@@ -28,6 +28,7 @@ import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import {
   ADMIN_FEE_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
+  MIDAS_SECURITY_DOCS_URL,
   RESERVE_FACTOR_TOOLTIP,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -268,7 +269,12 @@ export const AdditionalInfo = ({
               borderWidth={2}
               borderColor={cCard.headingBgColor}
             >
-              <Text>Safety Score</Text>
+              <Flex justifyContent="space-between">
+                <Text>Safety Score</Text>
+                <Link href={MIDAS_SECURITY_DOCS_URL} isExternal>
+                  How it works
+                </Link>
+              </Flex>
             </Box>
             <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
               <Flex p={4} gap={4}>

@@ -6,6 +6,8 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 export const ABILLY = 1e9;
 
 export const MIDAS_DOCS_URL = 'https://docs.midascapital.xyz/';
+export const MIDAS_SECURITY_DOCS_URL =
+  'https://docs.midascapital.xyz/security/security-outline/4626-strategy-risk-scoring';
 export const MIDAS_DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
 export const MIDAS_TELEGRAM_URL = 'https://t.me/midascapitaltg';
 export const MIDAS_TWITTER_URL = 'https://twitter.com/MidasCapitalxyz';
