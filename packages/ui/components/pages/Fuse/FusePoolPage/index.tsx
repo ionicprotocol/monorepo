@@ -15,7 +15,19 @@ import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { MIDAS_LOCALSTORAGE_KEYS, SHRINK_ASSETS } from '@ui/constants/index';
+import {
+  BORROW_APY,
+  BORROW_BALANCE,
+  COLLATERAL,
+  LIQUIDITY,
+  MARKET_LTV,
+  MIDAS_LOCALSTORAGE_KEYS,
+  SHRINK_ASSETS,
+  SUPPLY_APY,
+  SUPPLY_BALANCE,
+  TOTAL_BORROW,
+  TOTAL_SUPPLY,
+} from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
@@ -37,10 +49,24 @@ const FusePoolPage = memo(() => {
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
 
-    if (oldData && JSON.parse(oldData).marketSorting) {
+    if (
+      oldData &&
+      JSON.parse(oldData).marketSorting &&
+      [
+        MARKET_LTV,
+        SUPPLY_APY,
+        BORROW_APY,
+        SUPPLY_BALANCE,
+        BORROW_BALANCE,
+        TOTAL_SUPPLY,
+        TOTAL_BORROW,
+        LIQUIDITY,
+        COLLATERAL,
+      ].includes(JSON.parse(oldData).marketSorting[0].id)
+    ) {
       setInitSorting(JSON.parse(oldData).marketSorting);
     } else {
-      setInitSorting([{ id: 'market', desc: true }]);
+      setInitSorting([{ id: MARKET_LTV, desc: true }]);
     }
   }, []);
 
