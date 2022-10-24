@@ -71,6 +71,13 @@ export const deployConfig: ChainDeployConfig = {
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
       },
+      {
+        token: underlying(assets, assetSymbols.SD),
+        pair: "0x867EB519b05d9C4798B2EdE0B11197274dfDFcC0", // ApeSwap BUSD-SD
+        baseToken: underlying(assets, assetSymbols.BUSD),
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP
