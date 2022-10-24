@@ -81,7 +81,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
-      const curveLpOracleAddress = await redemptionStrategyContract.callStatic.oracle();
+      const curveLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
       const curveLpOracle = new Contract(
         curveLpOracleAddress,
         fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.abi,
