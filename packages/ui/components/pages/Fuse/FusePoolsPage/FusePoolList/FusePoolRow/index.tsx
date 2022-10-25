@@ -47,6 +47,7 @@ import {
   SortingFn,
   SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -366,13 +367,6 @@ const PoolsRowList = ({
     },
   });
 
-  useEffect(() => {
-    if (!address) {
-      table.getColumn(SUPPLY_BALANCE).toggleVisibility(false);
-      table.getColumn(BORROW_BALANCE).toggleVisibility(false);
-    }
-  }, [address, table]);
-
   const { cCard } = useColors();
 
   const onFilter = (filter: SupportedChains | string) => {
@@ -399,10 +393,16 @@ const PoolsRowList = ({
       if (oldData) {
         oldObj = JSON.parse(oldData);
       }
-      const data = { ...oldObj, searchText, globalFilter, sorting };
+      const arr: string[] = [];
+      Object.entries(columnVisibility).map(([key, value]) => {
+        if (value) {
+          arr.push(key);
+        }
+      });
+      const data = { ...oldObj, searchText, globalFilter, sorting, poolsListColumnVisibility: arr };
       localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
-  }, [searchText, globalFilter, sorting]);
+  }, [searchText, globalFilter, sorting, columnVisibility]);
 
   useEffect(() => {
     const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
@@ -431,6 +431,24 @@ const PoolsRowList = ({
       } else {
         setSorting([{ id: TOTAL_SUPPLY, desc: true }]);
       }
+
+      const columnVisibility: VisibilityState = {};
+
+      if (obj.poolsListColumnVisibility && obj.poolsListColumnVisibility.length > 0) {
+        POOLS_COLUMNS.map((columnId) => {
+          if (obj.poolsListColumnVisibility.includes(columnId)) {
+            columnVisibility[columnId] = true;
+          } else {
+            columnVisibility[columnId] = false;
+          }
+        });
+      } else {
+        POOLS_COLUMNS.map((columnId) => {
+          columnVisibility[columnId] = true;
+        });
+      }
+
+      setColumnVisibility(columnVisibility);
     }
 
     return () => {
@@ -508,10 +526,6 @@ const PoolsRowList = ({
                           key={column.id}
                           isChecked={column.getIsVisible()}
                           onChange={column.getToggleVisibilityHandler()}
-                          isDisabled={
-                            !address &&
-                            (column.id === SUPPLY_BALANCE || column.id === BORROW_BALANCE)
-                          }
                         >
                           {column.id}
                         </Checkbox>

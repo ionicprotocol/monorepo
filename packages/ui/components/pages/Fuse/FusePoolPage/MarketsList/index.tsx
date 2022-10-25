@@ -84,7 +84,6 @@ import {
   TOTAL_SUPPLY,
   UP_LIMIT,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useTotalApy } from '@ui/hooks/useApy';
@@ -128,7 +127,6 @@ export const MarketsList = ({
   initColumnVisibility: VisibilityState;
 }) => {
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -455,13 +453,6 @@ export const MarketsList = ({
     },
   });
 
-  useEffect(() => {
-    if (!address) {
-      table.getColumn(SUPPLY_BALANCE).toggleVisibility(false);
-      table.getColumn(BORROW_BALANCE).toggleVisibility(false);
-    }
-  }, [address, table]);
-
   const { cCard } = useColors();
 
   const onFilter = (filter: string) => {
@@ -491,25 +482,15 @@ export const MarketsList = ({
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
-    const data = { ...oldObj, marketSorting: sorting };
-    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-  }, [sorting]);
-
-  useEffect(() => {
-    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
-    let oldObj;
-    if (oldData) {
-      oldObj = JSON.parse(oldData);
-    }
     const arr: string[] = [];
     Object.entries(columnVisibility).map(([key, value]) => {
       if (value) {
         arr.push(key);
       }
     });
-    const data = { ...oldObj, marketColumnVisibility: arr };
+    const data = { ...oldObj, marketSorting: sorting, marketColumnVisibility: arr };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-  }, [columnVisibility]);
+  }, [sorting, columnVisibility]);
 
   return (
     <Box>
@@ -577,9 +558,6 @@ export const MarketsList = ({
                         key={column.id}
                         isChecked={column.getIsVisible()}
                         onChange={column.getToggleVisibilityHandler()}
-                        isDisabled={
-                          !address && (column.id === SUPPLY_BALANCE || column.id === BORROW_BALANCE)
-                        }
                       >
                         {column.id}
                       </Checkbox>
