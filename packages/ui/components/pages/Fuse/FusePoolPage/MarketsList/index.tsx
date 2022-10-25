@@ -43,6 +43,7 @@ import {
   SortingFn,
   SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
@@ -115,6 +116,7 @@ export const MarketsList = ({
   borrowBalanceFiat,
   poolChainId,
   initSorting,
+  initColumnVisibility,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
@@ -123,6 +125,7 @@ export const MarketsList = ({
   borrowBalanceFiat: number;
   poolChainId: number;
   initSorting: SortingState;
+  initColumnVisibility: VisibilityState;
 }) => {
   const sdk = useSdk(poolChainId);
   const { address } = useMultiMidas();
@@ -425,7 +428,7 @@ export const MarketsList = ({
   const isSemiSmallScreen = useIsSemiSmallScreen();
 
   const [globalFilter, setGlobalFilter] = useState<string[]>([ALL]);
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
   const [searchText, setSearchText] = useState('');
 
   const table = useReactTable({
@@ -453,22 +456,26 @@ export const MarketsList = ({
   });
 
   useEffect(() => {
-    if (isMobile) {
-      table.getColumn(COLLATERAL).toggleVisibility(false);
-    } else {
+    if (!isMobile && columnVisibility[COLLATERAL]) {
       table.getColumn(COLLATERAL).toggleVisibility(true);
+    } else {
+      table.getColumn(COLLATERAL).toggleVisibility(false);
     }
-  }, [isMobile, table]);
+  }, [isMobile, table, columnVisibility]);
 
   useEffect(() => {
-    if (address) {
+    if (address && columnVisibility[SUPPLY_BALANCE]) {
       table.getColumn(SUPPLY_BALANCE).toggleVisibility(true);
-      table.getColumn(BORROW_BALANCE).toggleVisibility(true);
     } else {
       table.getColumn(SUPPLY_BALANCE).toggleVisibility(false);
+    }
+
+    if (address && columnVisibility[BORROW_BALANCE]) {
+      table.getColumn(BORROW_BALANCE).toggleVisibility(true);
+    } else {
       table.getColumn(BORROW_BALANCE).toggleVisibility(false);
     }
-  }, [address, table]);
+  }, [address, table, columnVisibility]);
 
   const { cCard } = useColors();
 
@@ -502,6 +509,22 @@ export const MarketsList = ({
     const data = { ...oldObj, marketSorting: sorting };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting]);
+
+  useEffect(() => {
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    let oldObj;
+    if (oldData) {
+      oldObj = JSON.parse(oldData);
+    }
+    const arr: string[] = [];
+    Object.entries(columnVisibility).map(([key, value]) => {
+      if (value) {
+        arr.push(key);
+      }
+    });
+    const data = { ...oldObj, marketColumnVisibility: arr };
+    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+  }, [columnVisibility]);
 
   return (
     <Box>
@@ -569,6 +592,9 @@ export const MarketsList = ({
                         key={column.id}
                         isChecked={column.getIsVisible()}
                         onChange={column.getToggleVisibilityHandler()}
+                        isDisabled={
+                          !address && (column.id === SUPPLY_BALANCE || column.id === BORROW_BALANCE)
+                        }
                       >
                         {column.id}
                       </Checkbox>

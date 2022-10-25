@@ -105,3 +105,14 @@ export const BORROW_BALANCE = 'Borrow Balance';
 export const TOTAL_SUPPLY = 'Total Supply';
 export const TOTAL_BORROW = 'Total Borrow';
 export const LIQUIDITY = 'Liquidity';
+export const MARKET_COLUMNS = [
+  MARKET_LTV,
+  SUPPLY_APY,
+  BORROW_APY,
+  SUPPLY_BALANCE,
+  BORROW_BALANCE,
+  TOTAL_SUPPLY,
+  TOTAL_BORROW,
+  LIQUIDITY,
+  COLLATERAL,
+];
