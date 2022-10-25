@@ -114,20 +114,18 @@ export const configureAddressesProviderStrategies = async ({
   const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
   for (const assetAddress in chainConfig.redemptionStrategies) {
-    let [redemptionStrategyType, outputToken]: string[] = chainConfig.redemptionStrategies[assetAddress];
+    const [redemptionStrategyType, outputToken]: string[] = chainConfig.redemptionStrategies[assetAddress];
     const [onChainStrategyAddress, onChainContractType, onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(
       assetAddress
     );
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
-    if (!ethers.utils.isAddress(outputToken)) {
-      outputToken = constants.AddressZero;
-    }
-    if (onChainStrategyAddress != redemptionStrategy.address || onChainOutputToken != outputToken) {
+    const outputTokenParam = ethers.utils.isAddress(outputToken) ? outputToken : constants.AddressZero;
+    if (onChainStrategyAddress != redemptionStrategy.address || onChainOutputToken != outputTokenParam) {
       redemptionStrategiesToUpdate.push([
         assetAddress,
         redemptionStrategyType,
         redemptionStrategy.address,
-        outputToken,
+        outputTokenParam,
       ]);
     }
   }
