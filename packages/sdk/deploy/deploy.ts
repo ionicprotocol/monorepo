@@ -471,6 +471,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("setAddress wBTCToken: ", tx.hash);
   }
 
+  const stableTokenAddress = await addressesProvider.callStatic.getAddress("stableToken");
+  if (stableTokenAddress !== chainDeployParams.stableToken && chainDeployParams.stableToken) {
+    tx = await addressesProvider.setAddress("stableToken", chainDeployParams.stableToken);
+    await tx.wait();
+    console.log("setAddress stableToken: ", tx.hash);
+  }
+
   /// SYSTEM ADDRESSES
   const masterPOAddress = await addressesProvider.callStatic.getAddress("MasterPriceOracle");
   if (masterPOAddress !== masterPO.address) {
