@@ -21,7 +21,7 @@ export const CheckboxStyleConfig: ComponentStyleConfig = {
         },
       },
       _hover: {
-        bg: 'ecru30',
+        bg: mode('silverMetallic30', 'ecru30')(props),
         color: mode('whiteBg', 'raisinBlack')(props),
       },
       _indeterminate: {
