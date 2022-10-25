@@ -116,3 +116,19 @@ export const MARKET_COLUMNS = [
   LIQUIDITY,
   COLLATERAL,
 ];
+
+export const POOL_NAME = 'Pool Name';
+export const ASSETS = 'Assets';
+export const CHAIN = 'Chain';
+export const EXPANDER = 'Expander';
+
+export const POOLS_COLUMNS = [
+  CHAIN,
+  POOL_NAME,
+  ASSETS,
+  SUPPLY_BALANCE,
+  BORROW_BALANCE,
+  TOTAL_SUPPLY,
+  TOTAL_BORROW,
+  EXPANDER,
+];

@@ -4,7 +4,7 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { longFormat, smallUsdFormatter } from '@ui/utils/bigUtils';
 
-export const TotalSupplied = ({ pool }: { pool: PoolData }) => {
+export const TotalSupply = ({ pool }: { pool: PoolData }) => {
   return (
     <VStack alignItems={'flex-end'} px={{ base: 2, lg: 4 }} justifyContent="center" height="100%">
       <SimpleTooltip label={`$${longFormat(pool.totalSuppliedFiat)}`}>
