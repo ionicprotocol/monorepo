@@ -359,7 +359,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     assets,
   });
 
-  console.log(`before bnbx oracle`);
   //// BNBx  oracle
   await deployBNBxPriceOracle({
     run,
