@@ -537,6 +537,7 @@ export const MarketsList = ({
               variant="_outline"
               icon={<SettingsIcon fontSize={20} />}
               aria-label="Column Settings"
+              maxWidth={10}
             />
           </PopoverTrigger>
           <PopoverContent width="200px">
