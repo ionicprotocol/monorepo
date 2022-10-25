@@ -15,7 +15,6 @@ import {
   IconButton,
   Input,
   Popover,
-  PopoverArrow,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
@@ -541,7 +540,6 @@ export const MarketsList = ({
             />
           </PopoverTrigger>
           <PopoverContent width="200px">
-            <PopoverArrow />
             <PopoverBody>
               <VStack alignItems="flex-start">
                 <Text>Show/Hide Columns</Text>

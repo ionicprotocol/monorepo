@@ -16,7 +16,6 @@ import {
   Img,
   Input,
   Popover,
-  PopoverArrow,
   PopoverBody,
   PopoverContent,
   PopoverTrigger,
@@ -509,7 +508,6 @@ const PoolsRowList = ({
               />
             </PopoverTrigger>
             <PopoverContent width="200px">
-              <PopoverArrow />
               <PopoverBody>
                 <VStack alignItems="flex-start">
                   <Text>Show/Hide Columns</Text>
