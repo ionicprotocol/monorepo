@@ -502,7 +502,7 @@ const PoolsRowList = ({
           <Popover placement="bottom-end">
             <PopoverTrigger>
               <IconButton
-                variant="outline"
+                variant="_outline"
                 icon={<SettingsIcon fontSize={20} />}
                 aria-label="Column Settings"
               />
