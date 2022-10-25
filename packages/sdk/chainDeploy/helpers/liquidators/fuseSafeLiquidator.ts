@@ -130,6 +130,8 @@ export const configureAddressesProviderStrategies = async ({
     }
   }
 
+  console.log(JSON.stringify(redemptionStrategiesToUpdate));
+
   if (redemptionStrategiesToUpdate.length > 0) {
     for (const key in redemptionStrategiesToUpdate) {
       const [asset, type, strategy, outputToken] = redemptionStrategiesToUpdate[key];

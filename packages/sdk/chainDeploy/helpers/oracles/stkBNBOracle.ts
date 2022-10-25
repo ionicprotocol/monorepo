@@ -33,7 +33,9 @@ export const deployStkBNBOracle = async ({
   if (stkBNBOracle.transactionHash) await ethers.provider.waitForTransaction(stkBNBOracle.transactionHash);
   console.log("stkBNBOracle: ", stkBNBOracle.address);
 
+  console.log(`adding to the mpo`);
   const tx: providers.TransactionResponse = await mpo.add([stkBNB], [stkBNBOracle.address]);
+  console.log(`waiting to add to the mpo`);
   await tx.wait();
   return { stkBNBOracle };
 };
