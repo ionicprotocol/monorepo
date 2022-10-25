@@ -456,26 +456,11 @@ export const MarketsList = ({
   });
 
   useEffect(() => {
-    if (!isMobile && columnVisibility[COLLATERAL]) {
-      table.getColumn(COLLATERAL).toggleVisibility(true);
-    } else {
-      table.getColumn(COLLATERAL).toggleVisibility(false);
-    }
-  }, [isMobile, table, columnVisibility]);
-
-  useEffect(() => {
-    if (address && columnVisibility[SUPPLY_BALANCE]) {
-      table.getColumn(SUPPLY_BALANCE).toggleVisibility(true);
-    } else {
+    if (!address) {
       table.getColumn(SUPPLY_BALANCE).toggleVisibility(false);
-    }
-
-    if (address && columnVisibility[BORROW_BALANCE]) {
-      table.getColumn(BORROW_BALANCE).toggleVisibility(true);
-    } else {
       table.getColumn(BORROW_BALANCE).toggleVisibility(false);
     }
-  }, [address, table, columnVisibility]);
+  }, [address, table]);
 
   const { cCard } = useColors();
 
