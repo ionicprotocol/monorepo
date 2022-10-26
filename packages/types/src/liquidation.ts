@@ -3,6 +3,10 @@ import { BigNumber } from "ethers";
 import { FundingStrategyContract, LiquidationStrategy, RedemptionStrategyContract } from "./enums";
 
 export type LiquidationDefaults = {
+  DEFAULT_ROUTER: string;
+  ASSET_SPECIFIC_ROUTER: {
+    [token: string]: string;
+  };
   SUPPORTED_OUTPUT_CURRENCIES: Array<string>;
   SUPPORTED_INPUT_CURRENCIES: Array<string>;
   LIQUIDATION_STRATEGY: LiquidationStrategy;
