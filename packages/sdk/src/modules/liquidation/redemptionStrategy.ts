@@ -55,6 +55,12 @@ export const getRedemptionStrategiesAndDatas = async (
   ];
 };
 
+const getUniswapV2Router = (fuse: MidasBase, asset: string): string => {
+  return Object.values(fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER).includes(asset)
+    ? fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER[asset]
+    : fuse.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
+};
+
 const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
   const wtoken = fuse.chainSpecificAddresses.W_TOKEN;
   const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
@@ -135,7 +141,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, swapToken0Path, swapToken1Path]
+          [getUniswapV2Router(fuse, inputToken), swapToken0Path, swapToken1Path]
         ),
         outputToken,
       };
