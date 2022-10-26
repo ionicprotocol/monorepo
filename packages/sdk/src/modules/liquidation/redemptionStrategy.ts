@@ -165,12 +165,14 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
-        (p) => p.coins.find((c) => c == inputToken) && p.coins.find((c) => c == outputToken)
+      // look up a pool for which the output token is an underlying
+      // and the input token is either the LP token or an underlying
+      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find((p) =>
+        p.coins.find((c) => c == outputToken && (p.poolAddress == inputToken || p.coins.find((c) => c == inputToken)))
       );
       if (curvePool == null) {
         throw new Error(
-          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with ${outputToken}`
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with output token ${outputToken}`
         );
       }
 
