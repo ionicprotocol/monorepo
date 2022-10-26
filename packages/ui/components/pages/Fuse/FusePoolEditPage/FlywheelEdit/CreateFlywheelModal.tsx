@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   Image,
   Input,
   InputGroup,
@@ -20,7 +21,6 @@ import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/lib/contracts/typecha
 import React, { useMemo, useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -204,7 +204,7 @@ const CreateFlywheelModal = ({
       <ModalContent>
         <ModalHeader>Create New Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <Center p={4}>
           <CreateFlywheel {...createFlywheelProps} onSuccess={onClose} />
         </Center>

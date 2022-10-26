@@ -3,6 +3,7 @@ import { theme as DefaultTheme, extendTheme } from '@chakra-ui/react';
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
 import { BadgeStyleConfig } from '@ui/theme/components/Badge';
 import { ButtonStyleConfig } from '@ui/theme/components/Button';
+import { DividierStyleConfig } from '@ui/theme/components/Divider';
 import { IconButtonStyleConfig } from '@ui/theme/components/IconButton';
 import { InputConfigStyle } from '@ui/theme/components/Input';
 import { LinkStyleConfig } from '@ui/theme/components/Link';
@@ -11,6 +12,7 @@ import { PopoverStyleConfig } from '@ui/theme/components/Popover';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
 import { SwitchConfigStyle } from '@ui/theme/components/Switch';
+import { TabsStyleConfig } from '@ui/theme/components/Tabs';
 import { TextStyleConfig } from '@ui/theme/components/Text';
 import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
@@ -37,6 +39,7 @@ export const COLOR_PALETTE = {
   silverMetallic10: '#353636',
   silverMetallic20: '#414344',
   silverMetallic30: '#DEDEDE',
+  silverMetallic50: '#ced1d2',
   silverMetallic80: '#8c9298',
   gunmetal: '#253439',
   gunmetal80: '#253439CC',
@@ -120,6 +123,8 @@ export const theme = extendTheme({
     Badge: BadgeStyleConfig,
     Text: TextStyleConfig,
     Switch: SwitchConfigStyle,
+    Divider: DividierStyleConfig,
+    Tabs: TabsStyleConfig,
   },
 });
 

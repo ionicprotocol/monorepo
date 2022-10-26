@@ -3,6 +3,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  Divider,
   Input,
   InputProps,
   Spinner,
@@ -27,10 +28,9 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
-import DashboardBox from '@ui/components/shared/DashboardBox';
+import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
@@ -389,7 +389,7 @@ const AmountSelect = ({
             </Text>
           </Row>
 
-          <ModalDivider />
+          <Divider />
           <Column
             mainAxisAlignment="flex-start"
             crossAxisAlignment="center"
@@ -481,7 +481,7 @@ const AmountSelect = ({
                       </Alert>
                     </Row>
                   )}
-                  <DashboardBox width="100%" height="70px" mt={3}>
+                  <MidasBox width="100%" height="70px" mt={3}>
                     <Row
                       width="100%"
                       p={4}
@@ -503,7 +503,7 @@ const AmountSelect = ({
                         poolChainId={poolChainId}
                       />
                     </Row>
-                  </DashboardBox>
+                  </MidasBox>
                   {mode === FundOperationMode.BORROW &&
                     maxBorrowInAsset &&
                     maxBorrowInAsset.number !== 0 && (
@@ -536,7 +536,7 @@ const AmountSelect = ({
                 />
 
                 {showEnableAsCollateral ? (
-                  <DashboardBox p={4} width="100%" mt={4}>
+                  <MidasBox p={4} width="100%" mt={4}>
                     <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                       <Text variant="smText" fontWeight="bold">
                         Enable As Collateral:
@@ -549,7 +549,7 @@ const AmountSelect = ({
                         }}
                       />
                     </Row>
-                  </DashboardBox>
+                  </MidasBox>
                 ) : null}
               </>
             )}
@@ -642,94 +642,52 @@ const TabBar = ({
 }) => {
   const isSupplySide = mode < 2;
 
-  const { cOutlineBtn } = useColors();
-
-  // Woohoo okay so there's some pretty weird shit going on in this component.
-  // yep. :upsidedownsmilieface:
-
-  // The AmountSelect component gets passed a `mode` param which is a `Mode` enum. The `Mode` enum has 4 values (SUPPLY, WITHDRAW, BORROW, REPAY).
-  // The `mode` param is used to determine what text gets rendered and what action to take on clicking the confirm button.
-
-  // As part of our simple design for the modal, we only show 2 mode options in the tab bar at a time.
-
-  // When the modal is triggered it is given a `defaultMode` (starting mode). This is passed in by the component which renders the modal.
-  // - If the user starts off in SUPPLY or WITHDRAW, we only want show them the option to switch between SUPPLY and WITHDRAW.
-  // - If the user starts off in BORROW or REPAY, we want to only show them the option to switch between BORROW and REPAY.
-
-  // However since the tab list has only has 2 tabs under it. It accepts an `index` parameter which determines which tab to show as "selected". Since we only show 2 tabs, it can either be 0 or 1.
-  // This means we can't just pass `mode` to `index` because `mode` could be 2 or 3 (for BORROW or REPAY respectively) which would be invalid.
-
-  // To solve this, if the mode is BORROW or REPAY we pass the index as `mode - 2` which transforms the BORROW mode to 0 and the REPAY mode to 1.
-
-  // However, we also need to do the opposite of that logic in `onChange`:
-  // - If a user clicks a tab and the current mode is SUPPLY or WITHDRAW we just pass that index (0 or 1 respectively) to setFundOperationMode.
-  // - But if a user clicks on a tab and the current mode is BORROW or REPAY, we need to add 2 to the index of the tab so it's the right index in the `Mode` enum.
-  //   - Otherwise whenever you clicked on a tab it would always set the mode to SUPPLY or BORROW when clicking the left or right button respectively.
-
-  // Does that make sense? Everything I described above is basically a way to get around the tab component's understanding that it only has 2 tabs under it to make it fit into our 4 value enum setup.
-  // Still confused? DM me on Twitter (@transmissions11) for help.
-
   return (
-    <>
-      <style>
-        {`
-            .chakra-tabs__tab {
-              color: ${cOutlineBtn.primary.txtColor};
-              border-bottom-width: 2px;
-            }
-            .chakra-tabs__tablist {
-              border: none;
-            }
-        `}
-      </style>
-      <Box width="100%" mt={1} mb="-1px" zIndex={99999}>
-        <Tabs
-          isFitted
-          width="100%"
-          align="center"
-          index={isSupplySide ? mode : mode - 2}
-          onChange={(index: number) => {
-            if (isSupplySide) {
-              setUserEnteredAmount('');
-              setAmount(constants.Zero);
-              return setMode(index);
-            } else {
-              setUserEnteredAmount('');
-              setAmount(constants.Zero);
-              return setMode(index + 2);
-            }
-          }}
-        >
-          <TabList height={10}>
-            {isSupplySide ? (
-              <>
-                <AmountTab className="supplyTab" mr={2} isDisabled={asset.isSupplyPaused}>
-                  Supply
-                </AmountTab>
-                <AmountTab className="withdrawTab" isDisabled={asset.supplyBalanceFiat === 0}>
-                  Withdraw
-                </AmountTab>
-              </>
-            ) : (
-              <>
-                <AmountTab
-                  className="borrowTab"
-                  mr={2}
-                  isDisabled={
-                    asset.isBorrowPaused || (supplyBalanceFiat && supplyBalanceFiat === 0)
-                  }
-                >
-                  Borrow
-                </AmountTab>
-                <AmountTab className="repayTab" isDisabled={asset.borrowBalanceFiat === 0}>
-                  Repay
-                </AmountTab>
-              </>
-            )}
-          </TabList>
-        </Tabs>
-      </Box>
-    </>
+    <Box width="100%" mt={1} mb="-1px" zIndex={99999}>
+      <Tabs
+        isFitted
+        width="100%"
+        align="center"
+        index={isSupplySide ? mode : mode - 2}
+        onChange={(index: number) => {
+          if (isSupplySide) {
+            setUserEnteredAmount('');
+            setAmount(constants.Zero);
+            return setMode(index);
+          } else {
+            setUserEnteredAmount('');
+            setAmount(constants.Zero);
+            return setMode(index + 2);
+          }
+        }}
+      >
+        <TabList height={10}>
+          {isSupplySide ? (
+            <>
+              <AmountTab className="supplyTab" mr={2} isDisabled={asset.isSupplyPaused}>
+                Supply
+              </AmountTab>
+              <AmountTab className="withdrawTab" isDisabled={asset.supplyBalanceFiat === 0}>
+                Withdraw
+              </AmountTab>
+            </>
+          ) : (
+            <>
+              <AmountTab
+                className="borrowTab"
+                mr={2}
+                isDisabled={asset.isBorrowPaused || (supplyBalanceFiat && supplyBalanceFiat === 0)}
+              >
+                Borrow
+              </AmountTab>
+              <AmountTab className="repayTab" isDisabled={asset.borrowBalanceFiat === 0}>
+                Repay
+              </AmountTab>
+            </>
+          )}
+        </TabList>
+      </Tabs>
+    </Box>
   );
 };
 
@@ -806,7 +764,7 @@ const StatsColumn = ({
     : '';
 
   return (
-    <DashboardBox width="100%" height="190px" mt={4}>
+    <MidasBox width="100%" height="190px" mt={4}>
       {updatedAsset ? (
         <Column
           mainAxisAlignment="space-between"
@@ -900,7 +858,7 @@ const StatsColumn = ({
           <Spinner />
         </Center>
       )}
-    </DashboardBox>
+    </MidasBox>
   );
 };
 

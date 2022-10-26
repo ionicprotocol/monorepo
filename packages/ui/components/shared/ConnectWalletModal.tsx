@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   Grid,
   Image,
   Modal,
@@ -14,7 +15,6 @@ import React, { useEffect } from 'react';
 import { useConnect } from 'wagmi';
 
 import { Column, Row } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { useErrorToast, useWarningToast } from '@ui/hooks/useToast';
 
 const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
@@ -44,7 +44,7 @@ const ConnectWalletModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           <Text variant="title">Select a Wallet</Text>
         </ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <ModalBody py={12}>
           <Grid
             templateColumns={{ base: 'repeat(1, 1fr)', sm: 'repeat(2, 1fr)' }}
