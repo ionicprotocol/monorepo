@@ -1,6 +1,7 @@
 import { QuestionIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -19,15 +20,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Center, Column } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
-  COLLATERAL_FACTOR,
-  COLLATERAL_FACTOR_TOOLTIP,
+  LOAN_TO_VALUE,
+  LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -87,7 +87,7 @@ export const AddAssetSettings = ({
     formState: { errors },
   } = useForm({
     defaultValues: {
-      collateralFactor: COLLATERAL_FACTOR.DEFAULT,
+      collateralFactor: LOAN_TO_VALUE.DEFAULT,
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
       pluginIndex: -1,
@@ -173,13 +173,13 @@ export const AddAssetSettings = ({
 
   return (
     <VStack as="form" width="100%" height="100%" onSubmit={handleSubmit(deploy)}>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.collateralFactor}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="collateralFactor">
-            <SimpleTooltip label={COLLATERAL_FACTOR_TOOLTIP}>
+            <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
               <Text fontWeight="bold">
-                Collateral Factor{' '}
+                Loan-to-Value{' '}
                 <QuestionIcon
                   color={cCard.txtColor}
                   bg={cCard.bgColor}
@@ -195,20 +195,20 @@ export const AddAssetSettings = ({
               control={control}
               name="collateralFactor"
               rules={{
-                required: 'Collateral factor is required',
+                required: 'Loan-to-Value is required',
                 min: {
-                  value: COLLATERAL_FACTOR.MIN,
-                  message: `Collateral Factor must be at least ${COLLATERAL_FACTOR.MIN}%`,
+                  value: LOAN_TO_VALUE.MIN,
+                  message: `Loan-to-Value must be at least ${LOAN_TO_VALUE.MIN}%`,
                 },
                 max: {
-                  value: COLLATERAL_FACTOR.MAX,
-                  message: `Collateral Factor must be no more than ${COLLATERAL_FACTOR.MAX}%`,
+                  value: LOAN_TO_VALUE.MAX,
+                  message: `Loan-to-Value must be no more than ${LOAN_TO_VALUE.MAX}%`,
                 },
               }}
               render={({ field: { name, value, ref, onChange } }) => (
                 <SliderWithLabel
-                  min={COLLATERAL_FACTOR.MIN}
-                  max={COLLATERAL_FACTOR.MAX}
+                  min={LOAN_TO_VALUE.MIN}
+                  max={LOAN_TO_VALUE.MAX}
                   name={name}
                   value={value}
                   reff={ref}
@@ -225,7 +225,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.reserveFactor}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="reserveFactor">
@@ -281,7 +281,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.adminFee}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="adminFee">
@@ -333,7 +333,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.pluginIndex}>
         <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="oracle">
@@ -387,7 +387,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.interestRateModel}>
         <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="interestRateModel">

@@ -13,8 +13,6 @@ import {
   PopoverTrigger,
 } from '@chakra-ui/react';
 
-import { useColors } from '@ui/hooks/useColors';
-
 export const PopoverTooltip = ({
   children,
   header,
@@ -31,24 +29,8 @@ export const PopoverTooltip = ({
   width?: string;
   height?: string;
 } & PopoverProps) => {
-  const { cPage } = useColors();
-
   return (
     <Box width={width} height={height}>
-      <style>
-        {`
-        .chakra-popover__arrow {
-          border-top: none;
-          border-left: none;
-          border-right: 1px solid ${cPage.primary.borderColor};
-          border-bottom: 1px solid ${cPage.primary.borderColor};
-        }
-        .chakra-popover__popper a {
-          font-weight: bold;
-          color: ${cPage.primary.borderColor}
-        }
-    `}
-      </style>
       <Popover placement="top" trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         <PopoverContent

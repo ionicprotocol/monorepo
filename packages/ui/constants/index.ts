@@ -24,7 +24,7 @@ export const LIQUIDATION_INCENTIVE = {
   MAX: 50,
 };
 
-export const COLLATERAL_FACTOR = {
+export const LOAN_TO_VALUE = {
   DEFAULT: 50,
   MIN: 5,
   MAX: 90,
@@ -91,8 +91,6 @@ export const ALL = 'All';
 
 export const RESERVE_FACTOR_TOOLTIP =
   'The reserve factor defines the portion of borrower interest that is converted into reserves.';
-export const COLLATERAL_FACTOR_TOOLTIP =
-  'Collateral factor can range from 0-90%, and represents the proportionate increase in liquidity (borrow limit) that an account receives by depositing the asset.';
 export const ADMIN_FEE_TOOLTIP =
   "The fraction of interest generated on a given asset that is routed to the asset's admin address as a fee.";
 export const LOAN_TO_VALUE_TOOLTIP =

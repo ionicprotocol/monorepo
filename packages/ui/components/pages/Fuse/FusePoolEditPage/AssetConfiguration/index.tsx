@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useEffect, useState } from 'react';
 
@@ -7,7 +7,6 @@ import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetC
 import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Center, Column } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useTokenData } from '@ui/hooks/useTokenData';
@@ -93,7 +92,7 @@ const AssetConfiguration = ({
         </Box>
       </ConfigRow>
 
-      <ModalDivider />
+      <Divider />
 
       <ConfigRow>
         <Text variant="smText" mr={4}>
@@ -117,7 +116,7 @@ const AssetConfiguration = ({
         </Flex>
       </ConfigRow>
 
-      <ModalDivider />
+      <Divider />
 
       <EditAssetSettings
         comptrollerAddress={comptrollerAddress}

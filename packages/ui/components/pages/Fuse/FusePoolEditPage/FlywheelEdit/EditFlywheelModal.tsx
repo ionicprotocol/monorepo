@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   Heading,
   HStack,
   Image,
@@ -31,7 +32,6 @@ import DatePicker from 'react-datepicker';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -226,7 +226,7 @@ const EditFlywheelModal = ({
       <ModalContent>
         <ModalHeader>Edit Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
 
         <VStack alignItems={'flex-start'} p={4}>
           {tokenData?.logoURL ? (
@@ -280,7 +280,7 @@ const EditFlywheelModal = ({
             </Stat>
           </StatGroup>
         </VStack>
-        <ModalDivider />
+        <Divider />
 
         {/* Funding */}
         <VStack alignItems="flex-start">
@@ -327,7 +327,7 @@ const EditFlywheelModal = ({
               {tokenData?.symbol}
             </Text>
           </VStack>
-          <ModalDivider />
+          <Divider />
 
           {/* Rewards */}
           {pool.assets.length ? (

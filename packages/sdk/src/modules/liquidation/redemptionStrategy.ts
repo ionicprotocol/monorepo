@@ -55,6 +55,12 @@ export const getRedemptionStrategiesAndDatas = async (
   ];
 };
 
+const getUniswapV2Router = (fuse: MidasBase, asset: string): string => {
+  return Object.values(fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER).includes(asset)
+    ? fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER[asset]
+    : fuse.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
+};
+
 const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
   const wtoken = fuse.chainSpecificAddresses.W_TOKEN;
   const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
@@ -81,7 +87,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
-      const curveLpOracleAddress = await redemptionStrategyContract.callStatic.oracle();
+      const curveLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
       const curveLpOracle = new Contract(
         curveLpOracleAddress,
         fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.abi,
@@ -135,7 +141,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, swapToken0Path, swapToken1Path]
+          [getUniswapV2Router(fuse, inputToken), swapToken0Path, swapToken1Path]
         ),
         outputToken,
       };
@@ -159,12 +165,14 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
-        (p) => p.coins.find((c) => c == inputToken) && p.coins.find((c) => c == outputToken)
+      // look up a pool for which the output token is an underlying
+      // and the input token is either the LP token or an underlying
+      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find((p) =>
+        p.coins.find((c) => c == outputToken && (p.poolAddress == inputToken || p.coins.find((c) => c == inputToken)))
       );
       if (curvePool == null) {
         throw new Error(
-          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with ${outputToken}`
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with output token ${outputToken}`
         );
       }
 
