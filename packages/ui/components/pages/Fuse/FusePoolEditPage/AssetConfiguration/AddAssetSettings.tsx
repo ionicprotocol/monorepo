@@ -1,6 +1,7 @@
 import { QuestionIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Divider,
   FormControl,
   FormErrorMessage,
   FormLabel,
@@ -19,7 +20,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Center, Column } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
@@ -173,7 +173,7 @@ export const AddAssetSettings = ({
 
   return (
     <VStack as="form" width="100%" height="100%" onSubmit={handleSubmit(deploy)}>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.collateralFactor}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="collateralFactor">
@@ -225,7 +225,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.reserveFactor}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="reserveFactor">
@@ -281,7 +281,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.adminFee}>
         <HStack px={4} py={2} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="adminFee">
@@ -333,7 +333,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.pluginIndex}>
         <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="oracle">
@@ -387,7 +387,7 @@ export const AddAssetSettings = ({
           </Column>
         </HStack>
       </FormControl>
-      <ModalDivider />
+      <Divider />
       <FormControl isInvalid={!!errors.interestRateModel}>
         <HStack py={2} px={4} w="100%" justifyContent={'space-between'}>
           <FormLabel htmlFor="interestRateModel">

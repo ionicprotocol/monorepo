@@ -3,6 +3,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  Divider,
   Input,
   InputProps,
   Spinner,
@@ -30,7 +31,6 @@ import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorro
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
@@ -389,7 +389,7 @@ const AmountSelect = ({
             </Text>
           </Row>
 
-          <ModalDivider />
+          <Divider />
           <Column
             mainAxisAlignment="flex-start"
             crossAxisAlignment="center"
