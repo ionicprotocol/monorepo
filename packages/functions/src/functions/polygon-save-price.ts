@@ -5,7 +5,7 @@ import { updateFlywheelData, updatePluginsData } from '../controllers';
 
 const handler: Handler = async (event, context) => {
   await updatePluginsData(SupportedChains.polygon, rpcUrls[SupportedChains.polygon]);
-  await updateFlywheelData(SupportedChains.polygon, rpcUrls[SupportedChains.polygon]);
+  // await updateFlywheelData(SupportedChains.polygon, rpcUrls[SupportedChains.polygon]);
 
   return {
     statusCode: 200,
