@@ -109,7 +109,10 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       const outputTokenIndex = tokens.indexOf(preferredOutputToken);
 
       let actualOutputToken = preferredOutputToken;
-      if (preferredOutputToken == ethers.constants.AddressZero || preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE") {
+      if (
+        preferredOutputToken == ethers.constants.AddressZero ||
+        preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      ) {
         actualOutputToken = fuse.chainSpecificAddresses.W_TOKEN;
       }
 
