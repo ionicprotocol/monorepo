@@ -59,7 +59,7 @@ export const deployConfig: ChainDeployConfig = {
       },
       {
         token: underlying(assets, assetSymbols.EPX),
-        pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EXP
+        pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EPX
         baseToken: wbnb,
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
