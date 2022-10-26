@@ -27,7 +27,7 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
-import DashboardBox from '@ui/components/shared/DashboardBox';
+import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import { ModalDivider } from '@ui/components/shared/Modal';
@@ -481,7 +481,7 @@ const AmountSelect = ({
                       </Alert>
                     </Row>
                   )}
-                  <DashboardBox width="100%" height="70px" mt={3}>
+                  <MidasBox width="100%" height="70px" mt={3}>
                     <Row
                       width="100%"
                       p={4}
@@ -503,7 +503,7 @@ const AmountSelect = ({
                         poolChainId={poolChainId}
                       />
                     </Row>
-                  </DashboardBox>
+                  </MidasBox>
                   {mode === FundOperationMode.BORROW &&
                     maxBorrowInAsset &&
                     maxBorrowInAsset.number !== 0 && (
@@ -536,7 +536,7 @@ const AmountSelect = ({
                 />
 
                 {showEnableAsCollateral ? (
-                  <DashboardBox p={4} width="100%" mt={4}>
+                  <MidasBox p={4} width="100%" mt={4}>
                     <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                       <Text variant="smText" fontWeight="bold">
                         Enable As Collateral:
@@ -549,7 +549,7 @@ const AmountSelect = ({
                         }}
                       />
                     </Row>
-                  </DashboardBox>
+                  </MidasBox>
                 ) : null}
               </>
             )}
@@ -806,7 +806,7 @@ const StatsColumn = ({
     : '';
 
   return (
-    <DashboardBox width="100%" height="190px" mt={4}>
+    <MidasBox width="100%" height="190px" mt={4}>
       {updatedAsset ? (
         <Column
           mainAxisAlignment="space-between"
@@ -900,7 +900,7 @@ const StatsColumn = ({
           <Spinner />
         </Center>
       )}
-    </DashboardBox>
+    </MidasBox>
   );
 };
 

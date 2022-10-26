@@ -11,7 +11,7 @@ import FlywheelEdit from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdi
 import PoolConfiguration from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { AdminAlert } from '@ui/components/shared/Alert';
-import DashboardBox from '@ui/components/shared/DashboardBox';
+import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, RowOrColumn } from '@ui/components/shared/Flex';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -112,7 +112,7 @@ const FusePoolEditPage = memo(() => {
               isRow={!isMobile}
               alignItems="stretch"
             >
-              <DashboardBox width={isMobile ? '100%' : '50%'} mt={4}>
+              <MidasBox width={isMobile ? '100%' : '50%'} mt={4}>
                 {data ? (
                   <PoolConfiguration
                     assets={data.assets}
@@ -125,9 +125,9 @@ const FusePoolEditPage = memo(() => {
                     <Spinner my={8} />
                   </Center>
                 )}
-              </DashboardBox>
+              </MidasBox>
 
-              <DashboardBox width={isMobile ? '100%' : '50%'} mt={4} ml={isMobile ? 0 : 4}>
+              <MidasBox width={isMobile ? '100%' : '50%'} mt={4} ml={isMobile ? 0 : 4}>
                 {data.assets.length > 0 ? (
                   <AssetConfiguration
                     openAddAssetModal={openAddAssetModal}
@@ -146,7 +146,7 @@ const FusePoolEditPage = memo(() => {
                     />
                   </Column>
                 )}
-              </DashboardBox>
+              </MidasBox>
             </RowOrColumn>
             <FlywheelEdit pool={data} />
           </Flex>
