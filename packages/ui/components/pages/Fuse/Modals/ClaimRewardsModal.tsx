@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   HStack,
   Modal,
   ModalCloseButton,
@@ -14,7 +15,6 @@ import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -126,7 +126,7 @@ const ClaimRewardsModal = ({
           <Text variant="title">Claim Rewards</Text>
         </ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <VStack m={4}>
           {!claimableRewards ? (
             <Center>

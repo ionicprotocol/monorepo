@@ -67,10 +67,6 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
               methodName: "initialize",
               args: deployArgs,
             },
-            onUpgrade: {
-              methodName: "reinitialize",
-              args: [],
-            },
           },
           owner: deployer.address,
         },

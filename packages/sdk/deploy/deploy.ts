@@ -471,6 +471,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("setAddress wBTCToken: ", tx.hash);
   }
 
+  const stableTokenAddress = await addressesProvider.callStatic.getAddress("stableToken");
+  if (stableTokenAddress !== chainDeployParams.stableToken && chainDeployParams.stableToken) {
+    tx = await addressesProvider.setAddress("stableToken", chainDeployParams.stableToken);
+    await tx.wait();
+    console.log("setAddress stableToken: ", tx.hash);
+  }
+
   /// SYSTEM ADDRESSES
   const masterPOAddress = await addressesProvider.callStatic.getAddress("MasterPriceOracle");
   if (masterPOAddress !== masterPO.address) {
@@ -493,12 +500,20 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("setAddress FuseFeeDistributor: ", tx.hash);
   }
 
-  const fsl = await ethers.getContract("FuseSafeLiquidator", deployer);
+  const fsl = await ethers.getContract("FuseSafeLiquidator");
   const fslAddress = await addressesProvider.callStatic.getAddress("FuseSafeLiquidator");
   if (fslAddress !== fsl.address) {
     tx = await addressesProvider.setAddress("FuseSafeLiquidator", fsl.address);
     await tx.wait();
     console.log("setAddress FuseSafeLiquidator: ", tx.hash);
+  }
+
+  const dpa = await ethers.getContract("DefaultProxyAdmin");
+  const dpaAddress = await addressesProvider.callStatic.getAddress("DefaultProxyAdmin");
+  if (dpaAddress !== dpa.address) {
+    tx = await addressesProvider.setAddress("DefaultProxyAdmin", dpa.address);
+    await tx.wait();
+    console.log("setAddress DefaultProxyAdmin: ", tx.hash);
   }
 
   await configureAddressesProviderStrategies({

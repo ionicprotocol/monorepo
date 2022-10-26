@@ -20,8 +20,8 @@ import React, { useCallback, useMemo, useState } from 'react';
 import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';
 import CreateFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/CreateFlywheelModal';
 import EditFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/EditFlywheelModal';
+import { MidasBox } from '@ui/components/shared/Box';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
-import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -91,7 +91,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
         />
       )}
 
-      <DashboardBox w="100%" h="100%" my={4}>
+      <MidasBox w="100%" h="100%" my={4}>
         {isLoading && (
           <Column w="100%" h="100%" mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
             <Spinner />
@@ -138,7 +138,7 @@ const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
             </Tbody>
           </Table>
         )}
-      </DashboardBox>
+      </MidasBox>
     </>
   );
 };

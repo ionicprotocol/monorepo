@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   HStack,
   Input,
   InputGroup,
@@ -19,7 +20,6 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -127,7 +127,7 @@ const AddFlywheelModal = ({ isOpen, onClose, ...rest }: AddFlywheelModalProps) =
       <ModalContent>
         <ModalHeader>Add Existing Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <Center p={4}>
           <AddFlywheel {...rest} onSuccess={onClose} />
         </Center>

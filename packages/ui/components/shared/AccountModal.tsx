@@ -1,6 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Button,
+  Divider,
   Flex,
   Link,
   Modal,
@@ -17,7 +18,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Column } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { getScanUrlByChainId } from '@ui/utils/networkData';
@@ -85,7 +85,7 @@ const AccountModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
             </Flex>
           </ModalHeader>
           <ModalCloseButton top={4} />
-          <ModalDivider />
+          <Divider />
           <Column width="100%" mainAxisAlignment="flex-start" crossAxisAlignment="center" p={4}>
             <Button width="100%" onClick={onSwitchWallet} mb={4}>
               Switch Wallet

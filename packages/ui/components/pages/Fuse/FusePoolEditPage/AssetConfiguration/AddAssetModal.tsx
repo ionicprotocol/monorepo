@@ -4,6 +4,7 @@ import {
   Button,
   Center,
   CircularProgress,
+  Divider,
   Flex,
   Heading,
   Input,
@@ -24,7 +25,6 @@ import { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -259,7 +259,7 @@ const AddAssetModal = ({
           </Text>
         </ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <AddAsset onSuccess={onClose} poolChainId={poolChainId} {...addAssetProps} />
       </ModalContent>
     </Modal>
