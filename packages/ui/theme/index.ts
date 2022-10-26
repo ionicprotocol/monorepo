@@ -38,6 +38,7 @@ export const COLOR_PALETTE = {
   silverMetallic10: '#353636',
   silverMetallic20: '#414344',
   silverMetallic30: '#DEDEDE',
+  silverMetallic50: '#ced1d2',
   silverMetallic80: '#8c9298',
   gunmetal: '#253439',
   gunmetal80: '#253439CC',

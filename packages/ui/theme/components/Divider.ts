@@ -7,7 +7,7 @@ export const DividierStyleConfig: ComponentStyleConfig = {
       borderWidth: 0,
       height: '1px',
       width: '100%',
-      bgColor: mode('silverMetallic80', 'ecru80')(props),
+      bgColor: mode('silverMetallic50', 'ecru20')(props),
     }),
   },
   defaultProps: {
