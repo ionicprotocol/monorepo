@@ -417,19 +417,37 @@ const AmountSelect = ({
                     <Text variant="smText" mr={2}>
                       Available To Withdraw:
                     </Text>
-                    <Text>
-                      {availableToWithdraw} {asset.underlyingSymbol}
-                    </Text>
+                    <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
+                      <Text
+                        maxWidth="250px"
+                        textOverflow={'ellipsis'}
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                      >
+                        {availableToWithdraw} {asset.underlyingSymbol}
+                      </Text>
+                    </SimpleTooltip>
                   </>
                 ) : (
                   <>
                     <Text variant="smText" mr={2}>
                       Wallet Balance:
                     </Text>
-                    <Text variant="smText">
-                      {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
-                      {asset.underlyingSymbol}
-                    </Text>
+                    <SimpleTooltip
+                      label={`${
+                        myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0
+                      } ${asset.underlyingSymbol}`}
+                    >
+                      <Text
+                        maxWidth="300px"
+                        textOverflow={'ellipsis'}
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                      >
+                        {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                        {asset.underlyingSymbol}
+                      </Text>
+                    </SimpleTooltip>
                   </>
                 )}
               </Row>
@@ -792,6 +810,10 @@ const StatsColumn = ({
                 fontWeight="bold"
                 flexShrink={0}
                 variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}
+                maxWidth="250px"
+                textOverflow={'ellipsis'}
+                whiteSpace="nowrap"
+                overflow="hidden"
               >
                 {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
                 {isSupplyingOrWithdrawing ? (
@@ -932,9 +954,22 @@ const TokenNameAndMaxButton = ({
         <Box height={8} width={8} mr={1}>
           <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
         </Box>
-        <Text variant="mdText" fontWeight="bold" mr={2} flexShrink={0}>
-          {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
-        </Text>
+        <SimpleTooltip
+          label={optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+        >
+          <Text
+            variant="mdText"
+            fontWeight="bold"
+            mr={2}
+            flexShrink={0}
+            maxWidth="100px"
+            textOverflow={'ellipsis'}
+            whiteSpace="nowrap"
+            overflow="hidden"
+          >
+            {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+          </Text>
+        </SimpleTooltip>
       </Row>
 
       {mode !== FundOperationMode.BORROW ? (
