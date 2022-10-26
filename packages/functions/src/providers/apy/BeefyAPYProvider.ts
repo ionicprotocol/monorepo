@@ -1,13 +1,13 @@
-import { PluginData, Strategy } from '@midas-capital/types';
+import { BeefyPlugin, PluginData, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { functionsAlert } from '../../alert';
-import { ExternalAPYProvider } from './ExternalAPYProvider';
+import { AbstractAPYProvider, Rewards } from './AbstractAPYProvider';
 
 interface BeefyAPYResponse {
   [key: string]: number;
 }
 
-class BeefyAPYProvider extends ExternalAPYProvider {
+class BeefyAPYProvider extends AbstractAPYProvider {
   static apyEndpoint = 'https://api.beefy.finance/apy';
   private beefyAPYs: BeefyAPYResponse | undefined;
 
@@ -18,7 +18,7 @@ class BeefyAPYProvider extends ExternalAPYProvider {
     }
   }
 
-  async getApy(pluginAddress: string, pluginData: PluginData): Promise<number> {
+  async getApy(pluginAddress: string, pluginData: BeefyPlugin): Promise<Rewards> {
     if (pluginData.strategy != Strategy.Beefy)
       throw `BeefyAPYProvider: Not a Beefy Plugin ${pluginAddress}`;
 
@@ -44,7 +44,7 @@ class BeefyAPYProvider extends ExternalAPYProvider {
       await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
-    return apy;
+    return [{ apy }];
   }
 }
 

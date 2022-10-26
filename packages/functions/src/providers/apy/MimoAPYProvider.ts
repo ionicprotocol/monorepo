@@ -1,8 +1,8 @@
-import { PluginData, Strategy } from '@midas-capital/types';
+import { MimoPlugin, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { BigNumber, utils } from 'ethers';
 import { functionsAlert } from '../../alert';
-import { ExternalAPYProvider } from './ExternalAPYProvider';
+import { AbstractAPYProvider, Rewards } from './AbstractAPYProvider';
 
 interface MimoAPYResponse
   extends Array<{
@@ -17,7 +17,7 @@ interface MimoAPYs {
   [key: string]: number;
 }
 
-class MimoAPYProvider extends ExternalAPYProvider {
+class MimoAPYProvider extends AbstractAPYProvider {
   static apyEndpoint = 'https://app.mimo.capital/.netlify/functions/demand-miner-payees';
   private mimoAPYs: MimoAPYs | undefined;
 
@@ -35,17 +35,17 @@ class MimoAPYProvider extends ExternalAPYProvider {
           ),
         };
       }, {});
-    console.log({ mimo: this.mimoAPYs });
     if (!this.mimoAPYs) {
       throw `MimoAPYProvider: unexpected Mimo APY response`;
     }
   }
 
-  async getApy(pluginAddress: string, pluginData: PluginData): Promise<number> {
+  async getApy(pluginAddress: string, pluginData: MimoPlugin): Promise<Rewards> {
     if (pluginData.strategy != Strategy.Mimo)
       throw `MimoAPYProvider: Not a Mimo Plugin ${pluginAddress}`;
 
-    const vaultAddress = pluginData.otherParams![1];
+    const [flywheel, vaultAddress, _, rewardTokens] = pluginData.otherParams;
+
     if (!vaultAddress)
       throw 'MimoAPYProvider: expects second `otherParams[1]` to be Mimo Vault Address';
 
@@ -69,7 +69,7 @@ class MimoAPYProvider extends ExternalAPYProvider {
       await functionsAlert(`MimoAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
-    return apy;
+    return [{ apy, flywheel, token: rewardTokens[0] }];
   }
 }
 

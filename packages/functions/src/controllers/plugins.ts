@@ -1,61 +1,35 @@
-import { ethers } from 'ethers';
-import ERC4626_ABI from '../abi/ERC4626.json';
 import { functionsAlert } from '../alert';
 import { pluginsOfChain } from '../assets';
-import { environment, supabase, SupportedChains } from '../config';
+import { SupportedChains } from '../config';
 import { getAPYProviders } from '../providers/apy';
 
 const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
   const plugins = pluginsOfChain[chainId];
   const apyProviders = await getAPYProviders();
+  const results = await Promise.all(
+    Object.entries(plugins).map(async ([pluginAddress, pluginData]) => {
+      try {
+        const apyProvider = apyProviders[pluginData.strategy];
+        if (!apyProvider)
+          throw `No APYProvider available for: '${pluginData.strategy}' of ${pluginAddress}`;
 
-  try {
-    const provider = new ethers.providers.StaticJsonRpcProvider(rpcUrl);
-    await Promise.all(
-      Object.entries(plugins).map(async ([pluginAddress, pluginData]) => {
-        try {
-          const pluginContract = new ethers.Contract(pluginAddress, ERC4626_ABI, provider);
+        return {
+          pluginAddress,
+          strategy: pluginData.strategy,
+          rewards: await apyProvider.getApy(pluginAddress, pluginData),
+        };
+      } catch (exception) {
+        await functionsAlert(
+          `Functions.plugins: Fetching APY for '${pluginAddress}' (${pluginData.strategy})`,
+          JSON.stringify(exception)
+        );
+      }
+    })
+  );
 
-          const [totalSupply, totalAssets, underlyingAsset, externalAPY] = await Promise.all([
-            pluginContract.callStatic.totalSupply(), // Total Amount of Vault Shares
-            pluginContract.callStatic.totalAssets(), // Total Amount of Underlying Managed by the Vault
-            pluginContract.callStatic.asset(), // Market Underlying
-            (async function fetchExternalAPY() {
-              if (apyProviders[pluginData.strategy]) {
-                try {
-                  return await apyProviders[pluginData.strategy]?.getApy(pluginAddress, pluginData);
-                } catch (exception) {
-                  console.error(exception);
-                }
-              }
-            })(),
-          ]);
-
-          const { error } = await supabase.from(environment.supabasePluginTableName).insert([
-            {
-              chain: chainId,
-              externalAPY: externalAPY ? externalAPY.toString() : undefined,
-              pluginAddress: pluginAddress.toLowerCase(),
-              totalAssets: totalAssets.eq(0) ? '1' : totalAssets.toString(),
-              totalSupply: totalSupply.eq(0) ? '1' : totalSupply.toString(),
-              underlyingAddress: underlyingAsset.toLowerCase(),
-            },
-          ]);
-
-          if (error) {
-            throw new Error(JSON.stringify(error));
-          }
-        } catch (exception) {
-          await functionsAlert(
-            `Functions.plugins: Error occurred during saving data for plugin ${pluginAddress}`,
-            JSON.stringify(exception)
-          );
-        }
-      })
-    );
-  } catch (err) {
-    await functionsAlert('Functions.plugins: Generic Error', JSON.stringify(err));
-  }
+  results.forEach((r) => {
+    console.log({ rewards: r?.rewards, p: r?.pluginAddress, s: r?.strategy });
+  });
 };
 
 export default updatePluginsData;
