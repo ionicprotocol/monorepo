@@ -211,6 +211,7 @@ export enum assetSymbols {
   DDD = "DDD",
   EPX = "EPX",
   pSTAKE = "pSTAKE",
+  SD = "SD", // stader labs
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",

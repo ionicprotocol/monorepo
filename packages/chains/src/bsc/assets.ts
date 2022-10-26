@@ -61,6 +61,7 @@ const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
 const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
 const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
+const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
 
 const assets: SupportedAsset[] = [
   {
@@ -461,6 +462,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", pSTAKE),
+  },
+  {
+    symbol: assetSymbols.SD,
+    underlying: SD,
+    name: "SD",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", SD),
   },
 ];
 
