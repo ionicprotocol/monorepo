@@ -4,7 +4,7 @@ import { functionsAlert } from '../alert';
 import { pluginsOfChain } from '../assets';
 import { environment, supabase, SupportedChains } from '../config';
 
-const updatePluginSharePrice = async (chainId: SupportedChains, rpcUrl: string) => {
+const updatePluginData = async (chainId: SupportedChains, rpcUrl: string) => {
   const plugins = pluginsOfChain[chainId];
 
   try {
@@ -48,4 +48,4 @@ const updatePluginSharePrice = async (chainId: SupportedChains, rpcUrl: string) 
   }
 };
 
-export default updatePluginSharePrice;
+export default updatePluginData;

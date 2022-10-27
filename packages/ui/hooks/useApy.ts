@@ -20,7 +20,8 @@ export const fetchApy = async (
       rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
     }`
   );
-
+  const rewards = await axios.get(`/api/rewards?chainId=${chainId}&pluginAddress=${pluginAddress}`);
+  console.log({ rewards });
   if (response.status === 200) return response.data;
 
   throw 'APY Response was not ok';

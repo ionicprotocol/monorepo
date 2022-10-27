@@ -20,24 +20,26 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Reward
     querySchema.validateSync(request.query);
     validatedQuery = request.query as Query;
   } catch (error) {
-    if (error instanceof yup.ValidationError) {
-      return response.status(400);
-    } else {
-      throw error;
-    }
+    return response.status(400);
   }
   const { pluginAddress, chainId } = validatedQuery;
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
+
   const databaseResponse = await client
     .from(config.supabasePluginRewardsTableName)
     .select<'rewards', Rewards>('rewards')
-    .eq('chain', parseInt(chainId as string, 10))
-    .eq('pluginAddress', (pluginAddress as string).toLowerCase())
+    .eq('chain_id', parseInt(chainId as string, 10))
+    .eq('plugin_address', (pluginAddress as string).toLowerCase())
     .order('created_at', { ascending: false })
     .limit(1);
 
+  if (databaseResponse.error) {
+    return response.status(500);
+  }
   if (databaseResponse.data && databaseResponse.data.length > 0) {
-    return databaseResponse.data[0];
+    return response.json(databaseResponse.data[0]);
+  } else {
+    return response.json([]);
   }
 };
 

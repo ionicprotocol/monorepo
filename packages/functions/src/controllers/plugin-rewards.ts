@@ -3,7 +3,7 @@ import { pluginsOfChain } from '../assets';
 import { environment, supabase, SupportedChains } from '../config';
 import { getAPYProviders } from '../providers/apy';
 
-const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
+const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const plugins = pluginsOfChain[chainId];
     const apyProviders = await getAPYProviders();
@@ -45,4 +45,4 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
   }
 };
 
-export default updatePluginsData;
+export default updatePluginRewards;
