@@ -29,20 +29,22 @@ const updatePluginSharePrice = async (chainId: SupportedChains, rpcUrl: string) 
           };
         } catch (exception) {
           await functionsAlert(
-            `Functions.plugins: Error occurred during saving data for plugin ${pluginAddress}`,
+            `Functions.plugin-data: Error occurred fetching data for plugin ${pluginAddress}`,
             JSON.stringify(exception)
           );
         }
       })
     );
 
-    const { error } = await supabase.from(environment.supabasePluginTableName).insert(rows);
+    const { error } = await supabase
+      .from(environment.supabasePluginTableName)
+      .insert(rows.filter((r) => !!r));
 
     if (error) {
       throw new Error(JSON.stringify(error));
     }
   } catch (err) {
-    await functionsAlert('Functions.plugins: Generic Error', JSON.stringify(err));
+    await functionsAlert('Functions.plugin-data: Generic Error', JSON.stringify(err));
   }
 };
 

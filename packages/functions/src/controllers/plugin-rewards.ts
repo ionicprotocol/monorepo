@@ -21,7 +21,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
           };
         } catch (exception) {
           await functionsAlert(
-            `Functions.plugins: Fetching APY for '${pluginAddress}' (${pluginData.strategy})`,
+            `Functions.plugin-rewards: Fetching APY for '${pluginAddress}' (${pluginData.strategy})`,
             JSON.stringify(exception)
           );
         }
@@ -41,7 +41,7 @@ const updatePluginsData = async (chainId: SupportedChains, rpcUrl: string) => {
       throw `Error occurred during saving plugin reward results to database: ${error.message}`;
     }
   } catch (exception) {
-    await functionsAlert('Functions.plugins: Generic Error', JSON.stringify(exception));
+    await functionsAlert('Functions.plugin-rewards: Generic Error', JSON.stringify(exception));
   }
 };
 
