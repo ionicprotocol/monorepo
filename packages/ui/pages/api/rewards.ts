@@ -1,12 +1,12 @@
+import type { Rewards } from '@midas-capital/types';
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
 
-import type { Rewards } from '@midas-capital/types';
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 
-interface RewardsResponse extends Rewards {}
+type RewardsResponse = Rewards;
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
