@@ -1,8 +1,7 @@
-import { DotDotPlugin, Strategy } from '@midas-capital/types';
+import { DotDotPlugin, Rewards, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider, Rewards } from './AbstractAPYProvider';
-
+import { AbstractAPYProvider } from './AbstractAPYProvider';
 interface DotDotAPYResponse {
   success: boolean;
   data: {
@@ -57,19 +56,19 @@ class DotDotAPYProvider extends AbstractAPYProvider {
     const [dddFlywheel, epxFlywheel] = pluginData.otherParams;
     const { dddAPR, epxAPR } = apyData;
 
-    if (dddAPR === 0 || dddAPR === undefined) {
+    if (dddAPR === undefined) {
       await functionsAlert(
         'DotDotAPYProvider: Missing APY',
-        `DDD APY is zero or missing for ${pluginAddress}, retire plugin?`
+        `DDD APY is missing for \`${pluginAddress}\`, retire plugin?`
       );
     } else {
       rewards.push({ apy: dddAPR, token: dddAddress, flywheel: dddFlywheel });
     }
 
-    if (epxAPR === 0 || epxAPR === undefined) {
+    if (epxAPR === undefined) {
       await functionsAlert(
         'DotDotAPYProvider: Missing APY',
-        `EPX APY is zero or missing for ${pluginAddress}, retire plugin?`
+        `EPX APY is missing for \`${pluginAddress}\`, retire plugin?`
       );
     } else {
       rewards.push({ apy: epxAPR, token: epxAddress, flywheel: epxFlywheel });

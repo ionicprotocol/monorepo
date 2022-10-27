@@ -1,8 +1,7 @@
-import { BeefyPlugin, PluginData, Strategy } from '@midas-capital/types';
+import { BeefyPlugin, Rewards, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider, Rewards } from './AbstractAPYProvider';
-
+import { AbstractAPYProvider } from './AbstractAPYProvider';
 interface BeefyAPYResponse {
   [key: string]: number;
 }

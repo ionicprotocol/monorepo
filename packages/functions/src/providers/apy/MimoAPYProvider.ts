@@ -1,9 +1,8 @@
-import { MimoPlugin, Strategy } from '@midas-capital/types';
+import { MimoPlugin, Rewards, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { BigNumber, utils } from 'ethers';
 import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider, Rewards } from './AbstractAPYProvider';
-
+import { AbstractAPYProvider } from './AbstractAPYProvider';
 interface MimoAPYResponse
   extends Array<{
     network: number;
