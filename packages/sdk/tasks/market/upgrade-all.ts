@@ -100,6 +100,12 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
+      const autoImplOn = await comptroller.callStatic.autoImplementation();
+      if (admin != signer.address && !autoImplOn) {
+        console.log(`signer is not the admin ${admin} and cannot turn the autoimpl on`);
+        continue;
+      }
+
       const markets = await comptroller.callStatic.getAllMarkets();
       const marketsToUpgrade = [];
       for (let j = 0; j < markets.length; j++) {
@@ -124,15 +130,10 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       }
 
       if (marketsToUpgrade.length > 0) {
-        if (admin == signer.address) {
-          const autoImplOn = await comptroller.callStatic.autoImplementation();
-          if (!autoImplOn) {
-            const tx = await comptroller._toggleAutoImplementations(true);
-            await tx.wait();
-            console.log(`turned autoimpl on ${tx.hash}`);
-          }
-        } else {
-          console.log(`signer is not the admin of this pool ${admin}`);
+        if (admin == signer.address && !autoImplOn) {
+          const tx = await comptroller._toggleAutoImplementations(true);
+          await tx.wait();
+          console.log(`turned autoimpl on ${tx.hash}`);
         }
 
         for (let k = 0; k < marketsToUpgrade.length; k++) {

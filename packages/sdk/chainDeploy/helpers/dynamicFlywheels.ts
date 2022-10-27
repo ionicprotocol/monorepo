@@ -58,7 +58,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
       const flywheelCore = (await ethers.getContract(`MidasFlywheel_${config.name}`, deployer)) as MidasFlywheel;
-      const tx = await flywheelCore.setFlywheelRewards(fdr.address, { from: deployer });
+      const tx = await flywheelCore.setFlywheelRewards(fdr.address);
       await tx.wait();
       console.log("setFlywheelRewards: ", tx.hash);
       dynamicFlywheels.push(fwc.address);

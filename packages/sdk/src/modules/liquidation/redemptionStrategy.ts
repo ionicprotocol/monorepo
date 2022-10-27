@@ -107,13 +107,22 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
       const preferredOutputToken = pickPreferredToken(fuse, tokens);
       const outputTokenIndex = tokens.indexOf(preferredOutputToken);
+
+      let actualOutputToken = preferredOutputToken;
+      if (
+        preferredOutputToken == ethers.constants.AddressZero ||
+        preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      ) {
+        actualOutputToken = fuse.chainSpecificAddresses.W_TOKEN;
+      }
+
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["uint256", "address", "address", "address"],
           [outputTokenIndex, preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
         ),
-        outputToken: preferredOutputToken,
+        outputToken: actualOutputToken,
       };
 
     case RedemptionStrategyContract.XBombLiquidatorFunder: {
@@ -165,12 +174,14 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
-        (p) => p.coins.find((c) => c == inputToken) && p.coins.find((c) => c == outputToken)
+      // look up a pool for which the output token is an underlying
+      // and the input token is either the LP token or an underlying
+      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find((p) =>
+        p.coins.find((c) => c == outputToken && (p.poolAddress == inputToken || p.coins.find((c) => c == inputToken)))
       );
       if (curvePool == null) {
         throw new Error(
-          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with ${outputToken}`
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with output token ${outputToken}`
         );
       }
 

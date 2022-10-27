@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -30,7 +31,6 @@ import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/P
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Center, Column } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -373,7 +373,7 @@ const PoolConfiguration = ({
           ) : null}
         </Flex>
       </ConfigRow>
-      <ModalDivider />
+      <Divider />
       {data ? (
         <Column expand overflowY="auto">
           <Flex px={{ base: 4, md: 8 }} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
@@ -416,7 +416,7 @@ const PoolConfiguration = ({
               </Button>
             )}
           </Flex>
-          <ModalDivider />
+          <Divider />
           <ConfigRow>
             <Text variant="smText" mr={2}>
               Assets:
@@ -440,7 +440,7 @@ const PoolConfiguration = ({
               <Text variant="smText">None</Text>
             )}
           </ConfigRow>
-          <ModalDivider />
+          <Divider />
           <ConfigRow>
             <Text variant="smText">Whitelist:</Text>
             <Switch
@@ -485,7 +485,7 @@ const PoolConfiguration = ({
             />
           ) : null} */}
 
-          <ModalDivider />
+          <Divider />
 
           <ConfigRow>
             <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
@@ -521,7 +521,7 @@ const PoolConfiguration = ({
               )}
             </Flex>
           </ConfigRow>
-          <ModalDivider />
+          <Divider />
           <ConfigRow>
             <Flex
               as="form"
@@ -590,7 +590,7 @@ const PoolConfiguration = ({
               )}
             </Flex>
           </ConfigRow>
-          <ModalDivider />
+          <Divider />
           <ConfigRow>
             <Flex
               as="form"

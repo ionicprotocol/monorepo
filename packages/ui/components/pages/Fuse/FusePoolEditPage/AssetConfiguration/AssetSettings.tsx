@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -30,7 +31,6 @@ import { Controller, useForm } from 'react-hook-form';
 import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column, Row } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
@@ -357,7 +357,7 @@ export const AssetSettings = ({
             </Row>
           </Flex>
 
-          <ModalDivider />
+          <Divider />
           <Flex
             as="form"
             w="100%"
@@ -445,7 +445,7 @@ export const AssetSettings = ({
                 </ButtonGroup>
               )}
           </Flex>
-          <ModalDivider />
+          <Divider />
           <Flex
             as="form"
             w="100%"
@@ -531,7 +531,7 @@ export const AssetSettings = ({
                 </ButtonGroup>
               )}
           </Flex>
-          <ModalDivider />
+          <Divider />
           <Flex
             as="form"
             w="100%"
@@ -614,7 +614,7 @@ export const AssetSettings = ({
           </Flex>
 
           {/* Plugin */}
-          <ModalDivider />
+          <Divider />
           <ConfigRow>
             <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
               <Box>
@@ -656,7 +656,7 @@ export const AssetSettings = ({
           </ConfigRow>
 
           {/* Interest Model */}
-          <ModalDivider />
+          <Divider />
           <ConfigRow>
             <Flex
               as="form"
