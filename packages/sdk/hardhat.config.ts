@@ -127,7 +127,6 @@ const config: HardhatUserConfig = {
       chainId: 56,
       url: OVERRIDE_RPC_URL || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
     },
-
     chapel: {
       accounts: { mnemonic },
       chainId: 97,
