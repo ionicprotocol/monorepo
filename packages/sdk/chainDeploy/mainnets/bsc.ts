@@ -59,7 +59,7 @@ export const deployConfig: ChainDeployConfig = {
       },
       {
         token: underlying(assets, assetSymbols.EPX),
-        pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EXP
+        pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EPX
         baseToken: wbnb,
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
@@ -68,6 +68,13 @@ export const deployConfig: ChainDeployConfig = {
         token: underlying(assets, assetSymbols.pSTAKE),
         pair: "0x2bF1c14b71C375B35B4C157790bC4D6e557714FE", // WBNB-pSTAKE
         baseToken: wbnb,
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
+      {
+        token: underlying(assets, assetSymbols.SD),
+        pair: "0x867EB519b05d9C4798B2EdE0B11197274dfDFcC0", // ApeSwap BUSD-SD
+        baseToken: underlying(assets, assetSymbols.BUSD),
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
       },
