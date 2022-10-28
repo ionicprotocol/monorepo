@@ -530,43 +530,6 @@ export const MarketsList = ({
             </SimpleTooltip>
           </HStack>
         </Flex>
-
-        <Popover placement="bottom-end">
-          <PopoverTrigger>
-            <IconButton
-              variant="_outline"
-              icon={<SettingsIcon fontSize={20} />}
-              aria-label="Column Settings"
-              maxWidth={10}
-            />
-          </PopoverTrigger>
-          <PopoverContent width="200px">
-            <PopoverBody>
-              <VStack alignItems="flex-start">
-                <Text>Show/Hide Columns</Text>
-                <Checkbox
-                  isChecked={table.getIsAllColumnsVisible()}
-                  onChange={table.getToggleAllColumnsVisibilityHandler()}
-                >
-                  All
-                </Checkbox>
-                {table.getAllColumns().map((column) => {
-                  if (column.getCanHide()) {
-                    return (
-                      <Checkbox
-                        key={column.id}
-                        isChecked={column.getIsVisible()}
-                        onChange={column.getToggleVisibilityHandler()}
-                      >
-                        {column.id}
-                      </Checkbox>
-                    );
-                  }
-                })}
-              </VStack>
-            </PopoverBody>
-          </PopoverContent>
-        </Popover>
       </Flex>
       <Flex
         justifyContent="space-between"
@@ -765,8 +728,44 @@ export const MarketsList = ({
             )}
           </ButtonGroup>
         </Flex>
-        <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end">
+        <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end" gap={2}>
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
+          <Popover placement="bottom-end">
+            <PopoverTrigger>
+              <IconButton
+                variant="_outline"
+                icon={<SettingsIcon fontSize={20} />}
+                aria-label="Column Settings"
+                maxWidth={10}
+              />
+            </PopoverTrigger>
+            <PopoverContent width="200px">
+              <PopoverBody>
+                <VStack alignItems="flex-start">
+                  <Text>Show/Hide Columns</Text>
+                  <Checkbox
+                    isChecked={table.getIsAllColumnsVisible()}
+                    onChange={table.getToggleAllColumnsVisibilityHandler()}
+                  >
+                    All
+                  </Checkbox>
+                  {table.getAllColumns().map((column) => {
+                    if (column.getCanHide()) {
+                      return (
+                        <Checkbox
+                          key={column.id}
+                          isChecked={column.getIsVisible()}
+                          onChange={column.getToggleVisibilityHandler()}
+                        >
+                          {column.id}
+                        </Checkbox>
+                      );
+                    }
+                  })}
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Flex>
       </Flex>
       <Table>
