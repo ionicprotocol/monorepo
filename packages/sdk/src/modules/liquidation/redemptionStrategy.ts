@@ -2,6 +2,7 @@ import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
 import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
+import { ICurvePool__factory } from "../../../lib/contracts/typechain/factories/ICurvePool__factory";
 import { MidasBase } from "../../MidasSdk";
 
 export type StrategiesAndDatas = {
@@ -61,12 +62,14 @@ const getUniswapV2Router = (fuse: MidasBase, asset: string): string => {
     : fuse.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
 };
 
-const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
+const pickPreferredToken = (fuse: MidasBase, tokens: string[], strategyOutputToken: string): string => {
   const wtoken = fuse.chainSpecificAddresses.W_TOKEN;
   const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
   const wBTCToken = fuse.chainSpecificAddresses.W_BTC_TOKEN;
 
-  if (tokens.find((t) => t == wtoken)) {
+  if (tokens.find((t) => t == strategyOutputToken)) {
+    return strategyOutputToken;
+  } else if (tokens.find((t) => t == wtoken)) {
     return wtoken;
   } else if (tokens.find((t) => t == stableToken)) {
     return stableToken;
@@ -94,20 +97,12 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         fuse.provider
       );
 
-      // TODO replace with curveLpOracle.callStatic.getUnderlyingTokens()
-      const tokens: string[] = [];
-      while (true) {
-        try {
-          const underlying = await curveLpOracle.callStatic.underlyingTokens(inputToken, tokens.length);
-          tokens.push(underlying);
-        } catch (e) {
-          break;
-        }
-      }
+      const tokens = await getCurvePoolUnderlyingTokens(fuse, await curveLpOracle.callStatic.poolOf(inputToken));
 
-      const preferredOutputToken = pickPreferredToken(fuse, tokens);
+      const preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
       const outputTokenIndex = tokens.indexOf(preferredOutputToken);
 
+      // the native asset is not a real erc20 token contract, converting to wrapped
       let actualOutputToken = preferredOutputToken;
       if (
         preferredOutputToken == ethers.constants.AddressZero ||
@@ -200,3 +195,23 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
     }
   }
 };
+
+const getCurvePoolUnderlyingTokens = async (fuse: MidasBase, poolAddress: string): Promise<string[]> => {
+  const tokens: string[] = [];
+
+  while (true) {
+    try {
+      const curvePool = new Contract(
+        poolAddress,
+        ICurvePool__factory.abi,
+        fuse.provider
+      );
+      const underlying = await curvePool.callStatic.coins(tokens.length);
+      tokens.push(underlying);
+    } catch (ignored) {
+      break;
+    }
+  }
+
+  return tokens;
+}

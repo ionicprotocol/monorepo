@@ -211,6 +211,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
 ];
 
+// TODO use these as funding and redemption strategies
 // https://docs.ellipsis.finance/deployment-links
 const curvePools: CurvePoolConfig[] = [
   {
@@ -428,7 +429,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
-  /// EPS
+  /// curve LP tokens
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
     args: [],
@@ -439,6 +440,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
+  // curve swap underlying tokens
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
     args: [],
@@ -448,6 +450,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (curveSwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
+  // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
+  const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1
+  });
+  if (curveSwapLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
+  console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
 
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
