@@ -40,7 +40,8 @@ class MimoAPYProvider extends AbstractAPYProvider {
   }
 
   async getApy(pluginAddress: string, pluginData: MimoPlugin): Promise<Rewards> {
-    if (pluginData.strategy != Strategy.Mimo)
+    if (pluginData.strategy != Strategy.Mimo && pluginData.strategy != Strategy.Arrakis)
+      // TODO should only be using Mimo
       throw `MimoAPYProvider: Not a Mimo Plugin ${pluginAddress}`;
 
     const [flywheel, vaultAddress, _, rewardTokens] = pluginData.otherParams;

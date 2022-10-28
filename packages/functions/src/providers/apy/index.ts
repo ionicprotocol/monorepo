@@ -10,7 +10,7 @@ type ProviderMap = {
 
 const providerMap: ProviderMap = {
   [Strategy.Beefy]: BeefyAPYProvider,
-  [Strategy.Mimo]: MimoAPYProvider,
+  [Strategy.Arrakis]: MimoAPYProvider,
   [Strategy.DotDot]: DotDotAPYProvider,
 };
 

@@ -38,7 +38,7 @@ export interface DotDotPlugin extends AbstractPlugin {
 }
 
 export interface MimoPlugin extends AbstractPlugin {
-  strategy: Strategy.Mimo;
+  strategy: Strategy.Mimo | Strategy.Arrakis;
   otherParams: [
     string, // Mimo Flywheel
     string, // Pool
@@ -46,6 +46,8 @@ export interface MimoPlugin extends AbstractPlugin {
     [string] // Reward Tokens [Mimo]
   ];
 }
+
+export type ArrakisPlugin = MimoPlugin;
 
 export interface BombPlugin extends AbstractPlugin {
   strategy: Strategy.Bomb;
@@ -59,7 +61,14 @@ export interface CurveGaugePlugin extends AbstractPlugin {
   strategy: Strategy.CurveGauge;
 }
 
-export type SupportedPlugin = BeefyPlugin | DotDotPlugin | MimoPlugin | BombPlugin | StellaPlugin | CurveGaugePlugin;
+export type SupportedPlugin =
+  | BeefyPlugin
+  | DotDotPlugin
+  | MimoPlugin
+  | BombPlugin
+  | StellaPlugin
+  | CurveGaugePlugin
+  | ArrakisPlugin;
 
 export declare type DeployedPlugins = {
   [pluginAddress: string]: SupportedPlugin;
