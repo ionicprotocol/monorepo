@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Flex,
   FlexProps,
   HStack,
@@ -20,6 +21,7 @@ import { SiGitbook } from 'react-icons/si';
 import FuseDashNav from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
+  FEATURE_REQUESTS_URL,
   MIDAS_DISCORD_URL,
   MIDAS_DOCS_URL,
   MIDAS_TELEGRAM_URL,
@@ -98,7 +100,17 @@ const FuseStatsBar = () => {
               </motion.div>
             </Link>
           </SimpleTooltip>
-
+          <Button
+            pt={1}
+            variant="_link"
+            as={Link}
+            href={FEATURE_REQUESTS_URL}
+            isExternal
+            fontSize={{ base: 14, md: 16 }}
+            height="auto"
+          >
+            Request a new feature
+          </Button>
           <FuseDashNav />
         </HStack>
       </Flex>
