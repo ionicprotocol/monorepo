@@ -364,6 +364,21 @@ export const strategies: ERC4626Strategy[] = [
     contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
+  {
+    address: "0xdF23f2E94a322685DD4E967dE6165242cf00B85B",
+    strategy: Strategy.Arrakis,
+    name: "Arrakis PAR-USDC Vault",
+    complexity: StrategyComplexity.MEDIUM,
+    timeInMarket: StrategyTimeInMarket.EXPERIMENTAL,
+    riskIL: AssetRiskIL.LOW,
+    liquidity: AssetRiskLiquidity.LOW,
+    mktCap: AssetRiskMktCap.MEDIUM,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.ESTABLISHED,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
   // MOONBEAM
   {
     address: "0x0DaFF7aaaE63F1Fc30c1C40816257513D052b649",

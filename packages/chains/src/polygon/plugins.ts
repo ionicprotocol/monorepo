@@ -112,6 +112,19 @@ const deployedPlugins: DeployedPlugins = {
     underlying: underlying(assets, assetSymbols["JEUR-PAR"]),
     otherParams: ["0xfE1779834EaDD60660a7F3f576448D6010f5e3Fc", "0"],
   },
+  // ArrakisERC4626_G-UNI USDC-PAR Vault (0.05)_0x4DED2939A2A8912E9Cc9eaEFAbECC43CC9864723.json
+  "0xdF23f2E94a322685DD4E967dE6165242cf00B85B": {
+    market: "0x4DED2939A2A8912E9Cc9eaEFAbECC43CC9864723",
+    name: "Arrakis PAR-USDC Vault",
+    strategy: Strategy.Arrakis,
+    underlying: underlying(assets, assetSymbols["arrakis_USDC_PAR_005"]),
+    otherParams: [
+      "0x5fF63E442AC4724EC342f4a3d26924233832EcBB", // _flywheel
+      "0x528330fF7c358FE1bAe348D23849CCed8edA5917", // IGuniPool _pool
+      "0x4DED2939A2A8912E9Cc9eaEFAbECC43CC9864723", // _rewardsDestination
+      [underlying(assets, assetSymbols.MIMO)], // _rewardTokens
+    ],
+  },
 };
 
 export default deployedPlugins;

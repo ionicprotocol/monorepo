@@ -23,8 +23,8 @@ import { Controller, useForm } from 'react-hook-form';
 import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
+import { MidasBox } from '@ui/components/shared/Box';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
-import DashboardBox from '@ui/components/shared/DashboardBox';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
@@ -139,7 +139,7 @@ export const CreatePoolConfiguration = () => {
 
   return (
     <Box as="form" alignSelf={'center'} mx="auto" onSubmit={handleSubmit(onDeploy)}>
-      <DashboardBox maxWidth="550px" mx={'auto'}>
+      <MidasBox maxWidth="550px" mx={'auto'}>
         <Text fontWeight="bold" variant="title" px={4} py={4}>
           Create Pool
         </Text>
@@ -356,7 +356,7 @@ export const CreatePoolConfiguration = () => {
             </OptionRow>
           </FormControl>
         </Column>
-      </DashboardBox>
+      </MidasBox>
       <Center>
         {currentChain?.id && address ? (
           <Button

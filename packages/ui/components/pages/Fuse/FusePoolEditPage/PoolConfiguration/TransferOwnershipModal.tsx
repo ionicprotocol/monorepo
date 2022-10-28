@@ -1,5 +1,6 @@
 import {
   Button,
+  Divider,
   Input,
   Modal,
   ModalCloseButton,
@@ -12,7 +13,6 @@ import { utils } from 'ethers';
 import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -63,7 +63,7 @@ const TransferOwnershipModal = ({
       <ModalContent>
         <ModalHeader>Transfer Ownership</ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <VStack m={4}>
           <Center px={4} width="100%">
             <Input

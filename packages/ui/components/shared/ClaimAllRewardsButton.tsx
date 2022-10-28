@@ -1,10 +1,9 @@
-import { AvatarGroup, Text, useDisclosure } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import React from 'react';
 
 import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
-import { Center } from '@ui/components/shared/Flex';
-import { GlowingBox } from '@ui/components/shared/GlowingBox';
+import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAllClaimableRewards } from '@ui/hooks/rewards/useAllClaimableRewards';
@@ -17,7 +16,7 @@ const ClaimAllRewardsButton: React.FC = () => {
     onOpen: openClaimModal,
     onClose: closeClaimModal,
   } = useDisclosure();
-  const { cCard } = useColors();
+  const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
   const isMobile = useIsSmallScreen();
 
@@ -33,29 +32,35 @@ const ClaimAllRewardsButton: React.FC = () => {
         claimableRewards={allClaimableRewards}
         refetchRewards={refetchRewards}
       />
-      <GlowingBox
-        as="button"
-        height={10}
-        minW="50px"
-        onClick={openClaimModal}
-        borderRadius={'xl'}
-        px={2}
+      <GradientButton
+        isSelected
+        onClick={() => {
+          openClaimModal();
+        }}
+        width="fit-content"
+        justifySelf="center"
       >
-        <Center>
+        <HStack spacing={1}>
+          {!isMobile && (
+            <Text
+              ml={1}
+              mr={1}
+              fontWeight="semibold"
+              color={cPage.secondary.txtColor}
+              width="max-content"
+            >
+              Claim All Rewards
+            </Text>
+          )}
           {currentChain && (
             <AvatarGroup size="xs" max={30}>
-              {allClaimableRewards?.map((rD: FlywheelClaimableRewards, index: number) => {
+              {allClaimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
                 return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
               })}
             </AvatarGroup>
           )}
-          {!isMobile && (
-            <Text ml={1} mr={1} fontWeight="semibold" color={cCard.txtColor}>
-              Claim All Rewards
-            </Text>
-          )}
-        </Center>
-      </GlowingBox>
+        </HStack>
+      </GradientButton>
     </>
   );
 };

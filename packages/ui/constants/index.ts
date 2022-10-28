@@ -97,3 +97,39 @@ export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
 export const SUPPLY_STEPS = ['Approve', 'Enter Market', 'Mint Market Share'];
+export const MARKET_LTV = 'Market / LTV';
+export const SUPPLY_APY = 'Supply APY';
+export const BORROW_APY = 'Borrow APY';
+export const SUPPLY_BALANCE = 'Supply Balance';
+export const BORROW_BALANCE = 'Borrow Balance';
+export const TOTAL_SUPPLY = 'Total Supply';
+export const TOTAL_BORROW = 'Total Borrow';
+export const LIQUIDITY = 'Liquidity';
+export const MARKET_COLUMNS = [
+  MARKET_LTV,
+  SUPPLY_APY,
+  BORROW_APY,
+  SUPPLY_BALANCE,
+  BORROW_BALANCE,
+  TOTAL_SUPPLY,
+  TOTAL_BORROW,
+  LIQUIDITY,
+  COLLATERAL,
+];
+
+export const POOL_NAME = 'Pool Name';
+export const ASSETS = 'Assets';
+export const CHAIN = 'Chain';
+export const EXPANDER = 'Expander';
+
+export const POOLS_COLUMNS = [
+  CHAIN,
+  POOL_NAME,
+  ASSETS,
+  SUPPLY_BALANCE,
+  BORROW_BALANCE,
+  TOTAL_SUPPLY,
+  TOTAL_BORROW,
+  EXPANDER,
+];
+export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';

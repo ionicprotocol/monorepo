@@ -1,6 +1,6 @@
 import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
-import { ChainConfig } from "@midas-capital/types";
-import { constants } from "ethers";
+import { ChainConfig, CurveSwapPool, JarvisLiquidityPool } from "@midas-capital/types";
+import { BigNumber, constants } from "ethers";
 
 import { AddressesProvider } from "../../../lib/contracts/typechain/AddressesProvider";
 import { FuseSafeLiquidator } from "../../../lib/contracts/typechain/FuseSafeLiquidator";
@@ -110,24 +110,31 @@ export const configureAddressesProviderStrategies = async ({
   const { deployer } = await getNamedAccounts();
   const chainConfig = chainIdToConfig[chainId];
 
-  const redemptionStrategiesToUpdate: [string, string, string][] = [];
+  const redemptionStrategiesToUpdate: [string, string, string, string][] = [];
   const ap = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
 
   for (const assetAddress in chainConfig.redemptionStrategies) {
-    const [redemptionStrategyType] = chainConfig.redemptionStrategies[assetAddress];
+    const [redemptionStrategyType, outputToken]: string[] = chainConfig.redemptionStrategies[assetAddress];
+    const [onChainStrategyAddress, onChainContractType, onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(
+      assetAddress
+    );
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
-
-    const [onChainStrategyAddress, onChainContractType] = await ap.callStatic.redemptionStrategies(assetAddress);
-    if (onChainStrategyAddress != redemptionStrategy.address) {
-      redemptionStrategiesToUpdate.push([assetAddress, redemptionStrategyType, redemptionStrategy.address]);
+    const outputTokenParam = ethers.utils.isAddress(outputToken) ? outputToken : constants.AddressZero;
+    if (onChainStrategyAddress != redemptionStrategy.address || onChainOutputToken != outputTokenParam) {
+      redemptionStrategiesToUpdate.push([
+        assetAddress,
+        redemptionStrategyType,
+        redemptionStrategy.address,
+        outputTokenParam,
+      ]);
     }
   }
 
   if (redemptionStrategiesToUpdate.length > 0) {
     for (const key in redemptionStrategiesToUpdate) {
-      const [asset, type, strategy] = redemptionStrategiesToUpdate[key];
+      const [asset, type, strategy, outputToken] = redemptionStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
-      const tx = await ap.setRedemptionStrategy(asset, strategy, type);
+      const tx = await ap.setRedemptionStrategy(asset, strategy, type, outputToken);
       console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setRedemptionStrategy: ", tx.hash);
@@ -136,22 +143,24 @@ export const configureAddressesProviderStrategies = async ({
     console.log("no redemption strategies to configure");
   }
 
-  const fundingStrategiesToUpdate: [string, string, string][] = [];
+  const fundingStrategiesToUpdate: [string, string, string, string][] = [];
   for (const assetAddress in chainConfig.fundingStrategies) {
-    const [fundingStrategyType] = chainConfig.fundingStrategies[assetAddress];
+    const [fundingStrategyType, inputToken] = chainConfig.fundingStrategies[assetAddress];
     const fundingStrategy = await ethers.getContract(fundingStrategyType);
 
-    const [onChainStrategyAddress, onChainContractType] = await ap.callStatic.fundingStrategies(assetAddress);
-    if (onChainStrategyAddress != fundingStrategy.address) {
-      fundingStrategiesToUpdate.push([assetAddress, fundingStrategyType, fundingStrategy.address]);
+    const [onChainStrategyAddress, onChainContractType, onChainInputToken] = await ap.callStatic.getFundingStrategy(
+      assetAddress
+    );
+    if (onChainStrategyAddress != fundingStrategy.address || onChainInputToken != inputToken) {
+      fundingStrategiesToUpdate.push([assetAddress, fundingStrategyType, fundingStrategy.address, inputToken]);
     }
   }
 
   if (fundingStrategiesToUpdate.length > 0) {
     for (const key in fundingStrategiesToUpdate) {
-      const [asset, type, strategy] = fundingStrategiesToUpdate[key];
+      const [asset, type, strategy, inputToken] = fundingStrategiesToUpdate[key];
       console.log(`configuring strategy ${strategy} of type ${type} for asset ${asset}`);
-      const tx = await ap.setFundingStrategy(asset, strategy, type);
+      const tx = await ap.setFundingStrategy(asset, strategy, type, inputToken);
       console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("setFundingStrategy: ", tx.hash);
@@ -160,28 +169,50 @@ export const configureAddressesProviderStrategies = async ({
     console.log("no funding strategies to configure");
   }
 
-  for (const key in chainConfig.liquidationDefaults.jarvisPools) {
-    const jarvisPool = chainConfig.liquidationDefaults.jarvisPools[key];
-
-    const currenConfig = await ap.callStatic.jarvisPools(jarvisPool.syntheticToken);
-
+  const jarvisPools = await ap.callStatic.getJarvisPools();
+  for (const key in jarvisPools) {
+    const onChainPool = jarvisPools[key];
+    const configPools: JarvisLiquidityPool[] = chainConfig.liquidationDefaults.jarvisPools;
+    let configPool = configPools.find((jp) => jp.syntheticToken == onChainPool.syntheticToken);
+    if (!configPool)
+      configPool = {
+        liquidityPoolAddress: constants.AddressZero,
+        expirationTime: 0,
+        collateralToken: constants.AddressZero,
+        syntheticToken: constants.AddressZero,
+      };
     if (
-      currenConfig.collateralToken != jarvisPool.collateralToken ||
-      currenConfig.liquidityPool != jarvisPool.liquidityPoolAddress ||
-      currenConfig.expirationTime != jarvisPool.expirationTime
+      configPool.liquidityPoolAddress != onChainPool.liquidityPool ||
+      configPool.collateralToken != onChainPool.collateralToken ||
+      BigNumber.from(configPool.expirationTime) != onChainPool.expirationTime
     ) {
       const tx = await ap.setJarvisPool(
-        jarvisPool.syntheticToken,
-        jarvisPool.collateralToken,
-        jarvisPool.liquidityPoolAddress,
-        jarvisPool.expirationTime
+        configPool.syntheticToken,
+        configPool.collateralToken,
+        configPool.liquidityPoolAddress,
+        configPool.expirationTime
       );
 
       console.log("waiting for ", tx.hash);
       await tx.wait();
       console.log("jarvis pool configured: ", tx.hash);
     } else {
-      console.log(`no need to update jarvis pool config for ${jarvisPool.syntheticToken}`);
+      console.log(`no need to update jarvis pool config for ${configPool.syntheticToken}`);
+    }
+  }
+
+  const curveSwapPools = await ap.callStatic.getCurveSwapPools();
+  for (const key in curveSwapPools) {
+    const onChainPool = curveSwapPools[key];
+    const configPools: CurveSwapPool[] = chainConfig.liquidationDefaults.curveSwapPools;
+    let configPool = configPools.find((csp) => csp.poolAddress == onChainPool.poolAddress);
+    if (!configPool) configPool = { poolAddress: constants.AddressZero, coins: [] };
+    if (configPool.coins.find((c) => onChainPool.coins.indexOf(c) < 0)) {
+      const tx = await ap.setCurveSwapPool(configPool.poolAddress, configPool.coins);
+      await tx.wait();
+      console.log(`curve swap pool configured ${tx.hash}`);
+    } else {
+      console.log(`no need to update curve swap pool config for ${configPool.poolAddress}`);
     }
   }
 

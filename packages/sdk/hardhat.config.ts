@@ -27,6 +27,7 @@ import "./tasks/one-time/arrakis-polygon-plugins";
 import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/downgradeMarket";
+import "./tasks/oracle/add-apeswap-oracle";
 
 dotEnvConfig();
 
@@ -126,7 +127,6 @@ const config: HardhatUserConfig = {
       chainId: 56,
       url: OVERRIDE_RPC_URL || process.env.BSC_PROVIDER_URL || "https://bsc-dataseed.binance.org/",
     },
-
     chapel: {
       accounts: { mnemonic },
       chainId: 97,

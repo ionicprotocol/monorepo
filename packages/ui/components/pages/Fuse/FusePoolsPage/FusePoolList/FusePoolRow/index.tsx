@@ -1,12 +1,24 @@
-import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SettingsIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   ButtonGroup,
   Center,
+  Checkbox,
   Flex,
   HStack,
+  IconButton,
   Img,
   Input,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   Skeleton,
   Spinner,
@@ -34,6 +46,7 @@ import {
   SortingFn,
   SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import { useRouter } from 'next/router';
 import * as React from 'react';
@@ -46,12 +59,26 @@ import { Chain } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/Fuse
 import { ExpanderArrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/ExpanderArrow';
 import { PoolName } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/PoolName';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/SupplyBalance';
-import { TotalBorrowed } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalBorrowed';
-import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupplied';
+import { TotalBorrow } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalBorrow';
+import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/TotalSupply';
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
-import { ALL, MIDAS_LOCALSTORAGE_KEYS, POOLS_COUNT_PER_PAGE, SEARCH } from '@ui/constants/index';
+import {
+  ALL,
+  ASSETS,
+  BORROW_BALANCE,
+  CHAIN,
+  EXPANDER,
+  MIDAS_LOCALSTORAGE_KEYS,
+  POOL_NAME,
+  POOLS_COLUMNS,
+  POOLS_COUNT_PER_PAGE,
+  SEARCH,
+  SUPPLY_BALANCE,
+  TOTAL_BORROW,
+  TOTAL_SUPPLY,
+} from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig, useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
@@ -67,8 +94,8 @@ export type PoolRowData = {
   assets: PoolData;
   supplyBalance: PoolData;
   borrowBalance: PoolData;
-  totalSupplied: PoolData;
-  totalBorrowed: PoolData;
+  totalSupply: PoolData;
+  totalBorrow: PoolData;
 };
 
 const PoolsRowList = ({
@@ -84,7 +111,7 @@ const PoolsRowList = ({
   const [isLoadingPerChain, setIsLoadingPerChain] = useState(false);
   const [selectedFilteredPools, setSelectedFilteredPools] = useState<PoolData[]>([]);
   const [sorting, setSorting] = useState<SortingState>([
-    { id: address ? 'supplyBalance' : 'totalSupplied', desc: true },
+    { id: address ? SUPPLY_BALANCE : TOTAL_SUPPLY, desc: true },
   ]);
   const [pagination, onPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -149,25 +176,25 @@ const PoolsRowList = ({
   };
 
   const poolSort: SortingFn<PoolRowData> = (rowA, rowB, columnId) => {
-    if (columnId === 'chain') {
+    if (columnId === CHAIN) {
       return rowB.original.poolName.chainId > rowA.original.poolName.chainId ? 1 : -1;
-    } else if (columnId === 'poolName') {
+    } else if (columnId === POOL_NAME) {
       return rowB.original.poolName.name.localeCompare(rowA.original.poolName.name);
-    } else if (columnId === 'supplyBalance') {
+    } else if (columnId === SUPPLY_BALANCE) {
       return rowA.original.poolName.totalSupplyBalanceFiat >
         rowB.original.poolName.totalSupplyBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === 'borrowBalance') {
+    } else if (columnId === BORROW_BALANCE) {
       return rowA.original.poolName.totalBorrowBalanceFiat >
         rowB.original.poolName.totalBorrowBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === 'totalSupplied') {
+    } else if (columnId === TOTAL_SUPPLY) {
       return rowA.original.poolName.totalSuppliedFiat > rowB.original.poolName.totalSuppliedFiat
         ? 1
         : -1;
-    } else if (columnId === 'totalBorrowed') {
+    } else if (columnId === TOTAL_BORROW) {
       return rowA.original.poolName.totalBorrowedFiat > rowB.original.poolName.totalBorrowedFiat
         ? 1
         : -1;
@@ -184,8 +211,8 @@ const PoolsRowList = ({
         assets: pool,
         supplyBalance: pool,
         borrowBalance: pool,
-        totalSupplied: pool,
-        totalBorrowed: pool,
+        totalSupply: pool,
+        totalBorrow: pool,
       };
     });
   }, [allPools]);
@@ -193,29 +220,31 @@ const PoolsRowList = ({
   const columns: ColumnDef<PoolRowData>[] = useMemo(() => {
     return [
       {
-        accessorKey: 'chain',
+        accessorFn: (row) => row.chain,
+        id: CHAIN,
         header: () => null,
         cell: ({ getValue }) => <Chain pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         enableSorting: false,
+        enableHiding: false,
       },
       {
-        accessorKey: 'poolName',
+        accessorFn: (row) => row.poolName,
+        id: POOL_NAME,
         header: () => (
           <Text variant="smText" fontWeight="bold" py={2}>
             Pool Name
           </Text>
         ),
-        cell: ({ getValue }) => (
-          <PoolName pool={getValue<PoolData>()} globalFilter={globalFilter} />
-        ),
+        cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         filterFn: poolFilter,
         sortingFn: poolSort,
+        enableHiding: false,
       },
       {
         accessorFn: (row) => row.assets,
-        id: 'assets',
+        id: ASSETS,
         cell: ({ getValue }) => <Assets pool={getValue<PoolData>()} />,
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
@@ -229,7 +258,7 @@ const PoolsRowList = ({
       },
       {
         accessorFn: (row) => row.supplyBalance,
-        id: 'supplyBalance',
+        id: SUPPLY_BALANCE,
         cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
         header: () => (
           <Box py={2} textAlign="end" alignItems="end">
@@ -246,7 +275,7 @@ const PoolsRowList = ({
       },
       {
         accessorFn: (row) => row.borrowBalance,
-        id: 'borrowBalance',
+        id: BORROW_BALANCE,
         cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
@@ -262,9 +291,9 @@ const PoolsRowList = ({
         sortingFn: poolSort,
       },
       {
-        accessorFn: (row) => row.totalSupplied,
-        id: 'totalSupplied',
-        cell: ({ getValue }) => <TotalSupplied pool={getValue<PoolData>()} />,
+        accessorFn: (row) => row.totalSupply,
+        id: TOTAL_SUPPLY,
+        cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -279,9 +308,9 @@ const PoolsRowList = ({
         sortingFn: poolSort,
       },
       {
-        accessorFn: (row) => row.totalBorrowed,
-        id: 'totalBorrowed',
-        cell: ({ getValue }) => <TotalBorrowed pool={getValue<PoolData>()} />,
+        accessorFn: (row) => row.totalBorrow,
+        id: TOTAL_BORROW,
+        cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
             <Text variant="smText" fontWeight="bold" lineHeight={5}>
@@ -296,7 +325,7 @@ const PoolsRowList = ({
         sortingFn: poolSort,
       },
       {
-        id: 'expander',
+        id: EXPANDER,
         header: () => null,
         cell: ({ row }) => {
           return (
@@ -307,10 +336,11 @@ const PoolsRowList = ({
             />
           );
         },
+        enableHiding: false,
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [globalFilter]);
+  }, []);
 
   const table = useReactTable({
     columns,
@@ -335,24 +365,6 @@ const PoolsRowList = ({
       columnVisibility,
     },
   });
-
-  useEffect(() => {
-    if (globalFilter.includes(ALL)) {
-      table.getColumn('chain').toggleVisibility(true);
-    } else {
-      table.getColumn('chain').toggleVisibility(false);
-    }
-  }, [globalFilter, table]);
-
-  useEffect(() => {
-    if (address) {
-      table.getColumn('supplyBalance').toggleVisibility(true);
-      table.getColumn('borrowBalance').toggleVisibility(true);
-    } else {
-      table.getColumn('supplyBalance').toggleVisibility(false);
-      table.getColumn('borrowBalance').toggleVisibility(false);
-    }
-  }, [address, table]);
 
   const { cCard } = useColors();
 
@@ -380,10 +392,16 @@ const PoolsRowList = ({
       if (oldData) {
         oldObj = JSON.parse(oldData);
       }
-      const data = { ...oldObj, searchText, globalFilter, sorting };
+      const arr: string[] = [];
+      Object.entries(columnVisibility).map(([key, value]) => {
+        if (value) {
+          arr.push(key);
+        }
+      });
+      const data = { ...oldObj, searchText, globalFilter, sorting, poolsListColumnVisibility: arr };
       localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     }
-  }, [searchText, globalFilter, sorting]);
+  }, [searchText, globalFilter, sorting, columnVisibility]);
 
   useEffect(() => {
     const selectedChainId = Object.keys(poolsPerChain).find((chainId) =>
@@ -405,10 +423,31 @@ const PoolsRowList = ({
     if (data && mounted.current) {
       const obj = JSON.parse(data);
       const _globalFilter = (obj.globalFilter as (string | SupportedChains)[]) || [ALL];
-      const _sorting = (obj.sorting as SortingState) || [{ id: 'totalSupplied', desc: true }];
-
       setGlobalFilter(_globalFilter);
-      setSorting(_sorting);
+
+      if (obj && obj.sorting && POOLS_COLUMNS.includes(obj.sorting[0].id)) {
+        setSorting(obj.sorting);
+      } else {
+        setSorting([{ id: TOTAL_SUPPLY, desc: true }]);
+      }
+
+      const columnVisibility: VisibilityState = {};
+
+      if (obj.poolsListColumnVisibility && obj.poolsListColumnVisibility.length > 0) {
+        POOLS_COLUMNS.map((columnId) => {
+          if (obj.poolsListColumnVisibility.includes(columnId)) {
+            columnVisibility[columnId] = true;
+          } else {
+            columnVisibility[columnId] = false;
+          }
+        });
+      } else {
+        POOLS_COLUMNS.map((columnId) => {
+          columnVisibility[columnId] = true;
+        });
+      }
+
+      setColumnVisibility(columnVisibility);
     }
 
     return () => {
@@ -458,8 +497,44 @@ const PoolsRowList = ({
             })}
           </ButtonGroup>
         </Flex>
-        <Flex className="searchAsset" justifyContent="center" alignItems="flex-end">
+        <Flex className="searchAsset" justifyContent="center" alignItems="flex-end" gap={2}>
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
+          <Popover placement="bottom-end">
+            <PopoverTrigger>
+              <IconButton
+                variant="_outline"
+                icon={<SettingsIcon fontSize={20} />}
+                aria-label="Column Settings"
+                maxWidth={10}
+              />
+            </PopoverTrigger>
+            <PopoverContent width="200px">
+              <PopoverBody>
+                <VStack alignItems="flex-start">
+                  <Text>Show/Hide Columns</Text>
+                  <Checkbox
+                    isChecked={table.getIsAllColumnsVisible()}
+                    onChange={table.getToggleAllColumnsVisibilityHandler()}
+                  >
+                    All
+                  </Checkbox>
+                  {table.getAllColumns().map((column) => {
+                    if (column.getCanHide()) {
+                      return (
+                        <Checkbox
+                          key={column.id}
+                          isChecked={column.getIsVisible()}
+                          onChange={column.getToggleVisibilityHandler()}
+                        >
+                          {column.id}
+                        </Checkbox>
+                      );
+                    }
+                  })}
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Flex>
       </Flex>
       {!isLoading && !isLoadingPerChain ? (
@@ -483,23 +558,22 @@ const PoolsRowList = ({
                       py={2}
                       cursor="pointer"
                       px={
-                        (globalFilter.includes(ALL) && header.column.id === 'poolName') ||
-                        header.column.id === 'chain'
+                        header.column.id === POOL_NAME || header.column.id === CHAIN
                           ? 0
                           : { base: 2, lg: 4 }
                       }
                     >
                       <HStack
-                        spacing={header.column.id === 'assets' ? 0 : 2}
+                        spacing={header.column.id === ASSETS ? 0 : 2}
                         justifyContent={
-                          header.column.id === 'chain' ||
-                          header.column.id === 'poolName' ||
-                          header.column.id === 'assets'
+                          header.column.id === CHAIN ||
+                          header.column.id === POOL_NAME ||
+                          header.column.id === ASSETS
                             ? 'flex-start'
                             : 'flex-end'
                         }
                       >
-                        <Box width={header.column.id === 'assets' ? 0 : 4} mb={1}>
+                        <Box width={header.column.id === ASSETS ? 0 : 4} mb={1}>
                           <Box hidden={header.column.getIsSorted() ? false : true}>
                             {header.column.getIsSorted() === 'desc' ? (
                               <ArrowDownIcon fontSize={16} aria-label="sorted descending" />
