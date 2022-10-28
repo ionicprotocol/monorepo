@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -30,6 +30,7 @@ import {
   LOAN_TO_VALUE_TOOLTIP,
   MIDAS_SECURITY_DOCS_URL,
   RESERVE_FACTOR_TOOLTIP,
+  SCORE_LIMIT,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
@@ -66,7 +67,7 @@ export const AdditionalInfo = ({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { switchNetworkAsync } = useSwitchNetwork();
-  const strategyRating = useStrategyRating(poolChainId, asset.plugin);
+  const strategyScore = useStrategyRating(poolChainId, asset.plugin);
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
       await switchNetworkAsync(chainConfig.chainId);
@@ -260,7 +261,7 @@ export const AdditionalInfo = ({
             </Grid>
           </Box>
         </VStack>
-        {strategyRating !== undefined && (
+        {strategyScore !== undefined && (
           <VStack width="100%" spacing={0} borderRadius="20">
             <Box
               width="100%"
@@ -277,10 +278,48 @@ export const AdditionalInfo = ({
               </Flex>
             </Box>
             <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
-              <Flex p={4} gap={4}>
-                <Text>Strategy Score</Text>
-                <Text>{strategyRating}</Text>
-              </Flex>
+              <VStack alignItems="flex-start" p={4}>
+                <Flex gap={4} mb={2}>
+                  <Text>Strategy Total Score</Text>
+                  <Text>{strategyScore.totalScore}</Text>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.complexityScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>Complexity Score</Text>
+                  <Text>{strategyScore.complexityScore}</Text>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.timeInMarketScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>Time In Market Score</Text>
+                  <Text>{strategyScore.timeInMarketScore}</Text>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.assetRiskScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>Asset Risk Score</Text>
+                  <Text>{strategyScore.assetRiskScore}</Text>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.platformRiskScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>Platform Risk Score</Text>
+                  <Text>{strategyScore.platformRiskScore}</Text>
+                </Flex>
+              </VStack>
             </Box>
           </VStack>
         )}

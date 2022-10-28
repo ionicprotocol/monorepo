@@ -1,8 +1,8 @@
 import { BigNumber } from "ethers";
 
-import { DeployedPlugins } from "./plugin";
 import { IrmTypes, OracleTypes, SupportedChains } from "./enums";
 import { FundingStrategy, LiquidationDefaults, RedemptionStrategy } from "./liquidation";
+import { DeployedPlugins } from "./plugin";
 
 export type SupportedAsset = {
   symbol: string;

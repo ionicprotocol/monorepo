@@ -20,3 +20,11 @@ export interface PluginData {
 export type DeployedPlugins = {
   [pluginAddress: string]: PluginData;
 };
+
+export type StrategyScore = {
+  complexityScore: number;
+  timeInMarketScore: number;
+  assetRiskScore: number;
+  platformRiskScore: number;
+  totalScore: number;
+};
