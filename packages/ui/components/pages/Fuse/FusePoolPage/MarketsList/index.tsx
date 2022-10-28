@@ -1,11 +1,23 @@
-import { ArrowDownIcon, ArrowUpIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  SettingsIcon,
+} from '@chakra-ui/icons';
 import {
   Box,
   ButtonGroup,
   Center,
+  Checkbox,
   Flex,
   HStack,
+  IconButton,
   Input,
+  Popover,
+  PopoverBody,
+  PopoverContent,
+  PopoverTrigger,
   Select,
   Table,
   Tbody,
@@ -30,6 +42,7 @@ import {
   SortingFn,
   SortingState,
   useReactTable,
+  VisibilityState,
 } from '@tanstack/react-table';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
@@ -42,7 +55,8 @@ import { Liquidity } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Li
 import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
 import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
-import { TotalSupplied } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TotalSupplied';
+import { TotalBorrow } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TotalBorrow';
+import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TotalSupply';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
@@ -50,18 +64,25 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ALL,
+  BORROW_APY,
+  BORROW_BALANCE,
   BORROWABLE,
   COLLATERAL,
   DEPRECATED,
   DOWN_LIMIT,
+  LIQUIDITY,
+  MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   PROTECTED,
   REWARDS,
   SEARCH,
+  SUPPLY_APY,
+  SUPPLY_BALANCE,
+  TOTAL_BORROW,
+  TOTAL_SUPPLY,
   UP_LIMIT,
 } from '@ui/constants/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useTotalApy } from '@ui/hooks/useApy';
@@ -80,7 +101,8 @@ export type Market = {
   collateral: MarketData;
   borrowApy: MarketData;
   borrowBalance: MarketData;
-  totalSupplied: MarketData;
+  totalSupply: MarketData;
+  totalBorrow: MarketData;
   liquidity: MarketData;
 };
 
@@ -92,6 +114,7 @@ export const MarketsList = ({
   borrowBalanceFiat,
   poolChainId,
   initSorting,
+  initColumnVisibility,
 }: {
   assets: MarketData[];
   rewards?: FlywheelMarketRewardsInfo[];
@@ -100,9 +123,9 @@ export const MarketsList = ({
   borrowBalanceFiat: number;
   poolChainId: number;
   initSorting: SortingState;
+  initColumnVisibility: VisibilityState;
 }) => {
   const sdk = useSdk(poolChainId);
-  const { address } = useMultiMidas();
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -157,15 +180,15 @@ export const MarketsList = ({
   const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
     if (!sdk) return 0;
 
-    if (columnId === 'market') {
+    if (columnId === MARKET_LTV) {
       return rowB.original.market.underlyingSymbol.localeCompare(
         rowA.original.market.underlyingSymbol
       );
-    } else if (columnId === 'supplyApy') {
+    } else if (columnId === SUPPLY_APY) {
       const rowASupplyAPY = totalApy ? totalApy[rowA.original.market.cToken] : 0;
       const rowBSupplyAPY = totalApy ? totalApy[rowB.original.market.cToken] : 0;
       return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
-    } else if (columnId === 'borrowApy') {
+    } else if (columnId === BORROW_APY) {
       const rowABorrowAPY = !rowA.original.market.isBorrowPaused
         ? sdk.ratePerBlockToAPY(
             rowA.original.market.borrowRatePerBlock,
@@ -179,17 +202,19 @@ export const MarketsList = ({
           )
         : -1;
       return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
-    } else if (columnId === 'supplyBalance') {
+    } else if (columnId === SUPPLY_BALANCE) {
       return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === 'borrowBalance') {
+    } else if (columnId === BORROW_BALANCE) {
       return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
         ? 1
         : -1;
-    } else if (columnId === 'totalSupplied') {
+    } else if (columnId === TOTAL_SUPPLY) {
       return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
-    } else if (columnId === 'liquidity') {
+    } else if (columnId === TOTAL_BORROW) {
+      return rowA.original.market.totalBorrowFiat > rowB.original.market.totalBorrowFiat ? 1 : -1;
+    } else if (columnId === LIQUIDITY) {
       const liquidityA = !rowA.original.market.isBorrowPaused
         ? rowA.original.market.liquidityFiat
         : -1;
@@ -197,7 +222,7 @@ export const MarketsList = ({
         ? rowB.original.market.liquidityFiat
         : -1;
       return liquidityA > liquidityB ? 1 : -1;
-    } else if (columnId === 'collateral') {
+    } else if (columnId === COLLATERAL) {
       return rowA.original.market.membership ? 1 : -1;
     } else {
       return 0;
@@ -216,7 +241,8 @@ export const MarketsList = ({
         collateral: asset,
         borrowApy: asset,
         borrowBalance: asset,
-        totalSupplied: asset,
+        totalSupply: asset,
+        totalBorrow: asset,
         liquidity: asset,
       };
     });
@@ -225,7 +251,8 @@ export const MarketsList = ({
   const columns: ColumnDef<Market>[] = useMemo(() => {
     return [
       {
-        accessorKey: 'market',
+        accessorFn: (row) => row.market,
+        id: MARKET_LTV,
         header: () => (
           <Text variant="smText" fontWeight="bold" py={2}>
             Market / LTV
@@ -241,10 +268,11 @@ export const MarketsList = ({
         footer: (props) => props.column.id,
         filterFn: assetFilter,
         sortingFn: assetSort,
+        enableHiding: false,
       },
       {
         accessorFn: (row) => row.supplyApy,
-        id: 'supplyApy',
+        id: SUPPLY_APY,
         cell: ({ getValue }) => (
           <SupplyApy asset={getValue<MarketData>()} rewards={rewards} poolChainId={poolChainId} />
         ),
@@ -261,7 +289,7 @@ export const MarketsList = ({
       },
       {
         accessorFn: (row) => row.borrowApy,
-        id: 'borrowApy',
+        id: BORROW_APY,
         cell: ({ getValue }) => (
           <BorrowApy asset={getValue<MarketData>()} poolChainId={poolChainId} />
         ),
@@ -277,7 +305,7 @@ export const MarketsList = ({
       },
       {
         accessorFn: (row) => row.supplyBalance,
-        id: 'supplyBalance',
+        id: SUPPLY_BALANCE,
         cell: ({ getValue }) => (
           <SupplyBalance asset={getValue<MarketData>()} poolChainId={poolChainId} />
         ),
@@ -296,7 +324,7 @@ export const MarketsList = ({
       },
       {
         accessorFn: (row) => row.borrowBalance,
-        id: 'borrowBalance',
+        id: BORROW_BALANCE,
         cell: ({ getValue }) => (
           <BorrowBalance asset={getValue<MarketData>()} poolChainId={poolChainId} />
         ),
@@ -314,10 +342,10 @@ export const MarketsList = ({
         sortingFn: assetSort,
       },
       {
-        accessorFn: (row) => row.totalSupplied,
-        id: 'totalSupplied',
+        accessorFn: (row) => row.totalSupply,
+        id: TOTAL_SUPPLY,
         cell: ({ getValue }) => (
-          <TotalSupplied asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <TotalSupply asset={getValue<MarketData>()} poolChainId={poolChainId} />
         ),
         header: () => (
           <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
@@ -333,8 +361,27 @@ export const MarketsList = ({
         sortingFn: assetSort,
       },
       {
+        accessorFn: (row) => row.totalBorrow,
+        id: TOTAL_BORROW,
+        cell: ({ getValue }) => (
+          <TotalBorrow asset={getValue<MarketData>()} poolChainId={poolChainId} />
+        ),
+        header: () => (
+          <VStack py={2} textAlign="end" alignItems="end" spacing={0}>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
+              Total
+            </Text>
+            <Text variant="smText" fontWeight="bold" lineHeight={5}>
+              Borrow
+            </Text>
+          </VStack>
+        ),
+        footer: (props) => props.column.id,
+        sortingFn: assetSort,
+      },
+      {
         accessorFn: (row) => row.liquidity,
-        id: 'liquidity',
+        id: LIQUIDITY,
         cell: ({ getValue }) => (
           <Liquidity asset={getValue<MarketData>()} poolChainId={poolChainId} />
         ),
@@ -348,7 +395,7 @@ export const MarketsList = ({
       },
       {
         accessorFn: (row) => row.collateral,
-        id: 'collateral',
+        id: COLLATERAL,
         cell: ({ getValue }) => (
           <Collateral
             asset={getValue<MarketData>()}
@@ -378,7 +425,7 @@ export const MarketsList = ({
   const isSemiSmallScreen = useIsSemiSmallScreen();
 
   const [globalFilter, setGlobalFilter] = useState<string[]>([ALL]);
-  const [columnVisibility, setColumnVisibility] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState(initColumnVisibility);
   const [searchText, setSearchText] = useState('');
 
   const table = useReactTable({
@@ -404,24 +451,6 @@ export const MarketsList = ({
       columnVisibility,
     },
   });
-
-  useEffect(() => {
-    if (isMobile) {
-      table.getColumn('collateral').toggleVisibility(false);
-    } else {
-      table.getColumn('collateral').toggleVisibility(true);
-    }
-  }, [isMobile, table]);
-
-  useEffect(() => {
-    if (address) {
-      table.getColumn('supplyBalance').toggleVisibility(true);
-      table.getColumn('borrowBalance').toggleVisibility(true);
-    } else {
-      table.getColumn('supplyBalance').toggleVisibility(false);
-      table.getColumn('borrowBalance').toggleVisibility(false);
-    }
-  }, [address, table]);
 
   const { cCard } = useColors();
 
@@ -452,9 +481,15 @@ export const MarketsList = ({
     if (oldData) {
       oldObj = JSON.parse(oldData);
     }
-    const data = { ...oldObj, marketSorting: sorting };
+    const arr: string[] = [];
+    Object.entries(columnVisibility).map(([key, value]) => {
+      if (value) {
+        arr.push(key);
+      }
+    });
+    const data = { ...oldObj, marketSorting: sorting, marketColumnVisibility: arr };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
-  }, [sorting]);
+  }, [sorting, columnVisibility]);
 
   return (
     <Box>
@@ -693,8 +728,44 @@ export const MarketsList = ({
             )}
           </ButtonGroup>
         </Flex>
-        <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end">
+        <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end" gap={2}>
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
+          <Popover placement="bottom-end">
+            <PopoverTrigger>
+              <IconButton
+                variant="_outline"
+                icon={<SettingsIcon fontSize={20} />}
+                aria-label="Column Settings"
+                maxWidth={10}
+              />
+            </PopoverTrigger>
+            <PopoverContent width="200px">
+              <PopoverBody>
+                <VStack alignItems="flex-start">
+                  <Text>Show/Hide Columns</Text>
+                  <Checkbox
+                    isChecked={table.getIsAllColumnsVisible()}
+                    onChange={table.getToggleAllColumnsVisibilityHandler()}
+                  >
+                    All
+                  </Checkbox>
+                  {table.getAllColumns().map((column) => {
+                    if (column.getCanHide()) {
+                      return (
+                        <Checkbox
+                          key={column.id}
+                          isChecked={column.getIsVisible()}
+                          onChange={column.getToggleVisibilityHandler()}
+                        >
+                          {column.id}
+                        </Checkbox>
+                      );
+                    }
+                  })}
+                </VStack>
+              </PopoverBody>
+            </PopoverContent>
+          </Popover>
         </Flex>
       </Flex>
       <Table>
@@ -723,7 +794,7 @@ export const MarketsList = ({
                       justifyContent={
                         header.index === 0
                           ? 'flex-start'
-                          : header.column.id === 'collateral'
+                          : header.column.id === COLLATERAL
                           ? 'center'
                           : 'flex-end'
                       }
