@@ -14,6 +14,7 @@ import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributo
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   const MIN_BORROW_USD = 100;
+  console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = await getChainId();
   console.log("chainId: ", chainId);
   const { deployer } = await getNamedAccounts();

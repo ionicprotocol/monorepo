@@ -107,13 +107,22 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
       const preferredOutputToken = pickPreferredToken(fuse, tokens);
       const outputTokenIndex = tokens.indexOf(preferredOutputToken);
+
+      let actualOutputToken = preferredOutputToken;
+      if (
+        preferredOutputToken == ethers.constants.AddressZero ||
+        preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      ) {
+        actualOutputToken = fuse.chainSpecificAddresses.W_TOKEN;
+      }
+
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["uint256", "address", "address", "address"],
           [outputTokenIndex, preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
         ),
-        outputToken: preferredOutputToken,
+        outputToken: actualOutputToken,
       };
 
     case RedemptionStrategyContract.XBombLiquidatorFunder: {

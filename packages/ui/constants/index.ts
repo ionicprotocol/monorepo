@@ -132,3 +132,4 @@ export const POOLS_COLUMNS = [
   TOTAL_BORROW,
   EXPANDER,
 ];
+export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';
