@@ -1,4 +1,4 @@
-import { BeefyPlugin, Rewards, Strategy } from '@midas-capital/types';
+import { BeefyPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { functionsAlert } from '../../alert';
 import { AbstractAPYProvider } from './AbstractAPYProvider';
@@ -17,7 +17,7 @@ class BeefyAPYProvider extends AbstractAPYProvider {
     }
   }
 
-  async getApy(pluginAddress: string, pluginData: BeefyPlugin): Promise<Rewards> {
+  async getApy(pluginAddress: string, pluginData: BeefyPlugin): Promise<Reward[]> {
     if (pluginData.strategy != Strategy.Beefy)
       throw `BeefyAPYProvider: Not a Beefy Plugin ${pluginAddress}`;
 

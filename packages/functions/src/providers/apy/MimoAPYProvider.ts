@@ -1,4 +1,4 @@
-import { MimoPlugin, Rewards, Strategy } from '@midas-capital/types';
+import { MimoPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { BigNumber, utils } from 'ethers';
 import { functionsAlert } from '../../alert';
@@ -39,7 +39,7 @@ class MimoAPYProvider extends AbstractAPYProvider {
     }
   }
 
-  async getApy(pluginAddress: string, pluginData: MimoPlugin): Promise<Rewards> {
+  async getApy(pluginAddress: string, pluginData: MimoPlugin): Promise<Reward[]> {
     if (pluginData.strategy != Strategy.Mimo && pluginData.strategy != Strategy.Arrakis)
       // TODO should only be using Mimo
       throw `MimoAPYProvider: Not a Mimo Plugin ${pluginAddress}`;
@@ -67,7 +67,9 @@ class MimoAPYProvider extends AbstractAPYProvider {
       await functionsAlert(`MimoAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
-    return [{ apy, flywheel, token: rewardTokens[0], updated_at: new Date().toISOString() }];
+    return [
+      { apy: apy / 100, flywheel, token: rewardTokens[0], updated_at: new Date().toISOString() },
+    ];
   }
 }
 

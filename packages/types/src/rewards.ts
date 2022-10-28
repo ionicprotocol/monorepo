@@ -8,7 +8,6 @@ export interface FlywheelReward extends AbstractReward {
   flywheel: string;
 }
 
-export interface ShareReward extends AbstractReward {}
+export type ShareReward = AbstractReward;
 
-export type Reward = FlywheelReward | ShareReward;
-export type Rewards = Array<Reward>;
+export type Reward = ShareReward | FlywheelReward;

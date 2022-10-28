@@ -1,4 +1,4 @@
-import { DotDotPlugin, Rewards, Strategy } from '@midas-capital/types';
+import { DotDotPlugin, Reward, Rewards, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { functionsAlert } from '../../alert';
 import { AbstractAPYProvider } from './AbstractAPYProvider';
@@ -31,7 +31,7 @@ class DotDotAPYProvider extends AbstractAPYProvider {
     }
   }
 
-  async getApy(pluginAddress: string, pluginData: DotDotPlugin): Promise<Rewards> {
+  async getApy(pluginAddress: string, pluginData: DotDotPlugin): Promise<Reward[]> {
     if (pluginData.strategy != Strategy.DotDot)
       throw `DotDotAPYProvider: Not a DotDot Plugin ${pluginAddress}`;
 
@@ -51,7 +51,7 @@ class DotDotAPYProvider extends AbstractAPYProvider {
       throw `DotDotAPYProvider: unable to find APY Data for Plugin  "${pluginAddress}", retire plugin?`;
     }
 
-    const rewards = [];
+    const rewards: Reward[] = [];
     const [dddAddress, epxAddress] = pluginData.otherParams[4];
     const [dddFlywheel, epxFlywheel] = pluginData.otherParams;
     const { dddAPR, epxAPR } = apyData;
@@ -63,7 +63,7 @@ class DotDotAPYProvider extends AbstractAPYProvider {
       );
     } else {
       rewards.push({
-        apy: dddAPR,
+        apy: dddAPR / 100,
         token: dddAddress,
         flywheel: dddFlywheel,
         updated_at: new Date().toISOString(),
@@ -77,7 +77,7 @@ class DotDotAPYProvider extends AbstractAPYProvider {
       );
     } else {
       rewards.push({
-        apy: epxAPR,
+        apy: epxAPR / 100,
         token: epxAddress,
         flywheel: epxFlywheel,
         updated_at: new Date().toISOString(),
