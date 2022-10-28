@@ -8,6 +8,7 @@ import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { APYResponse } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { RewardsResponse } from '../pages/api/rewards';
 
 export const fetchApy = async (
   chainId: number,
@@ -20,8 +21,6 @@ export const fetchApy = async (
       rewardAddress ? `&rewardAddress=${rewardAddress}` : ''
     }`
   );
-  const rewards = await axios.get(`/api/rewards?chainId=${chainId}&pluginAddress=${pluginAddress}`);
-  console.log({ rewards });
   if (response.status === 200) return response.data;
 
   throw 'APY Response was not ok';
@@ -44,6 +43,28 @@ export function useApy(
       cacheTime: Infinity,
       staleTime: Infinity,
       enabled: !!underlyingAddress && !!pluginAddress && !!poolChainId,
+    }
+  );
+}
+
+interface UseRewardsProps {
+  chainId: number;
+  pluginAddress: string;
+}
+export function useRewards({ chainId, pluginAddress }: UseRewardsProps) {
+  return useQuery<RewardsResponse>(
+    ['useRewards', chainId, pluginAddress.toLowerCase()],
+    async () => {
+      if (chainId) {
+        return (await axios.get(`/api/rewards?chainId=${chainId}&pluginAddress=${pluginAddress}`))
+          .data as RewardsResponse;
+      }
+      return [];
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!pluginAddress && !!chainId,
     }
   );
 }

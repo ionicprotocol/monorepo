@@ -70,35 +70,37 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         </Text>
       )}
 
-      {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
-        rewardsOfThisMarket?.rewardsInfo.map((info) => (
-          <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-            <HStack mr={2}>
-              <Text variant="smText" mr={-1}>
-                +
-              </Text>
-              <TokenIcon address={info.rewardToken} chainId={poolChainId} size="xs" />
-            </HStack>
-            {info.formattedAPR ? (
-              <Text
-                variant="smText"
-                ml={1}
-                title={formatUnits(info.formattedAPR, 16).toString() + '%'}
-              >
-                {Number(formatUnits(info.formattedAPR, 16)).toFixed(2).toString() + '%'}
-              </Text>
-            ) : (
-              <NoApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
-            )}
-          </HStack>
-        ))
-      ) : asset.plugin ? (
+      {asset.plugin && (
         <RewardsInfo
           pluginAddress={asset.plugin}
           poolChainId={poolChainId}
           underlyingAddress={asset.underlyingToken}
         />
-      ) : null}
+      )}
+
+      {/* {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0
+        ? rewardsOfThisMarket?.rewardsInfo.map((info) => (
+            <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
+              <HStack mr={2}>
+                <Text variant="smText" mr={-1}>
+                  +
+                </Text>
+                <TokenIcon address={info.rewardToken} chainId={poolChainId} size="xs" />
+              </HStack>
+              {info.formattedAPR ? (
+                <Text
+                  variant="smText"
+                  ml={1}
+                  title={formatUnits(info.formattedAPR, 16).toString() + '%'}
+                >
+                  {Number(formatUnits(info.formattedAPR, 16)).toFixed(2).toString() + '%'}
+                </Text>
+              ) : (
+                <NoApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
+              )}
+            </HStack>
+          ))
+        : null} */}
     </VStack>
   );
 };

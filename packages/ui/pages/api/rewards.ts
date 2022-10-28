@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 
-type RewardsResponse = Rewards;
+export type RewardsResponse = Rewards;
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
