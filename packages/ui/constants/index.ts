@@ -97,3 +97,4 @@ export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
 export const SUPPLY_STEPS = ['Approve', 'Enter Market', 'Mint Market Share'];
+export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';
