@@ -1,5 +1,6 @@
 export interface AbstractReward {
   apy: number;
+  updated_at: string;
 }
 
 export interface FlywheelReward extends AbstractReward {

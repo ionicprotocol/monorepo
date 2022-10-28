@@ -27,7 +27,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Reward
 
   const databaseResponse = await client
     .from(config.supabasePluginRewardsTableName)
-    .select<'rewards', Rewards>('rewards')
+    .select<'rewards', { rewards: Rewards }>('rewards')
     .eq('chain_id', parseInt(chainId as string, 10))
     .eq('plugin_address', (pluginAddress as string).toLowerCase())
     .order('created_at', { ascending: false })
@@ -37,7 +37,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Reward
     return response.status(500);
   }
   if (databaseResponse.data && databaseResponse.data.length > 0) {
-    return response.json(databaseResponse.data[0]);
+    return response.json(databaseResponse.data[0]['rewards']);
   } else {
     return response.json([]);
   }

@@ -53,8 +53,6 @@ class MimoAPYProvider extends AbstractAPYProvider {
       throw 'MimoAPYProvider: Not initialized';
     }
 
-    console.log({ apy: this.mimoAPYs });
-
     const apy = this.mimoAPYs[vaultAddress.toLowerCase()];
     // const apy = this.mimoAPYs![beefyID];
     if (apy === undefined) {
@@ -69,7 +67,7 @@ class MimoAPYProvider extends AbstractAPYProvider {
       await functionsAlert(`MimoAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
-    return [{ apy, flywheel, token: rewardTokens[0] }];
+    return [{ apy, flywheel, token: rewardTokens[0], updated_at: new Date().toISOString() }];
   }
 }
 

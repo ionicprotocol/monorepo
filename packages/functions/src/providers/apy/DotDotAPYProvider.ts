@@ -62,7 +62,12 @@ class DotDotAPYProvider extends AbstractAPYProvider {
         `DDD APY is missing for \`${pluginAddress}\`, retire plugin?`
       );
     } else {
-      rewards.push({ apy: dddAPR, token: dddAddress, flywheel: dddFlywheel });
+      rewards.push({
+        apy: dddAPR,
+        token: dddAddress,
+        flywheel: dddFlywheel,
+        updated_at: new Date().toISOString(),
+      });
     }
 
     if (epxAPR === undefined) {
@@ -71,7 +76,12 @@ class DotDotAPYProvider extends AbstractAPYProvider {
         `EPX APY is missing for \`${pluginAddress}\`, retire plugin?`
       );
     } else {
-      rewards.push({ apy: epxAPR, token: epxAddress, flywheel: epxFlywheel });
+      rewards.push({
+        apy: epxAPR,
+        token: epxAddress,
+        flywheel: epxFlywheel,
+        updated_at: new Date().toISOString(),
+      });
     }
 
     return rewards;

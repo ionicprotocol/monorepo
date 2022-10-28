@@ -43,7 +43,7 @@ class BeefyAPYProvider extends AbstractAPYProvider {
       await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
-    return [{ apy }];
+    return [{ apy, updated_at: new Date().toISOString() }];
   }
 }
 
