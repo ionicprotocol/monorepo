@@ -1,21 +1,13 @@
 import { AvatarGroup, Box, HStack, Stack, Text, VStack } from '@chakra-ui/react';
-import { SupportedChains } from '@midas-capital/types';
 
 import { GradientText } from '@ui/components/shared/GradientText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { ALL } from '@ui/constants/index';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { PoolData } from '@ui/types/TokensDataMap';
 
-export const PoolName = ({
-  pool,
-  globalFilter,
-}: {
-  pool: PoolData;
-  globalFilter: (string | SupportedChains)[];
-}) => {
+export const PoolName = ({ pool }: { pool: PoolData }) => {
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
   const { data: claimableRewards } = usePoolClaimableRewards({
     poolAddress: pool.comptroller,
@@ -25,7 +17,7 @@ export const PoolName = ({
     <VStack
       alignItems={'flex-start'}
       spacing={1}
-      ml={globalFilter.includes(ALL) ? 2 : 6}
+      ml={2}
       justifyContent="center"
       height="100%"
       px={{ base: 2, lg: 4 }}

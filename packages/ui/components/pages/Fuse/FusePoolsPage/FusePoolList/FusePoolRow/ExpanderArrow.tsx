@@ -1,4 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
+import { Box } from '@chakra-ui/react';
 
 import { CIconButton } from '@ui/components/shared/Button';
 
@@ -12,17 +13,19 @@ export const ExpanderArrow = ({
   canExpand: boolean;
 }) => {
   return (
-    <CIconButton
-      aria-label="detail View"
-      alignSelf="flex-end"
-      variant="_outline"
-      onClick={(e) => {
-        e.stopPropagation();
-        getToggleExpandedHandler();
-      }}
-      icon={!isExpanded ? <ChevronDownIcon fontSize={30} /> : <ChevronUpIcon fontSize={30} />}
-      borderRadius="50%"
-      disabled={!canExpand ? true : false}
-    />
+    <Box textAlign="center">
+      <CIconButton
+        aria-label="detail View"
+        alignSelf="flex-end"
+        variant="_outline"
+        onClick={(e) => {
+          e.stopPropagation();
+          getToggleExpandedHandler();
+        }}
+        icon={!isExpanded ? <ChevronDownIcon fontSize={30} /> : <ChevronUpIcon fontSize={30} />}
+        borderRadius="50%"
+        disabled={!canExpand ? true : false}
+      />
+    </Box>
   );
 };
