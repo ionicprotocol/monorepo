@@ -156,8 +156,10 @@ const EditFlywheelModal = ({
 
     setTransactionPending(true);
     try {
-      // TODO use rewardsTokens decimals here
-      const tx = await token.transfer(flywheel.rewards, utils.parseUnits(fundingAmount.toString()));
+      const tx = await token.transfer(
+        flywheel.rewards,
+        utils.parseUnits(fundingAmount.toString(), rewardTokenDecimal)
+      );
       await tx.wait();
       refetchRewardsBalance();
     } catch (err) {
@@ -172,6 +174,7 @@ const EditFlywheelModal = ({
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
+    rewardTokenDecimal,
   ]);
 
   const updateRewardInfo = useCallback(async () => {
@@ -184,8 +187,7 @@ const EditFlywheelModal = ({
       setTransactionPending(true);
 
       const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
-        // TODO use rewardsTokens decimals here
-        rewardsPerSecond: utils.parseUnits(supplySpeed),
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
         // TODO enable in UI
         rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
       });
@@ -208,6 +210,7 @@ const EditFlywheelModal = ({
     selectedMarket,
     refetchRewardsInfo,
     errorToast,
+    rewardTokenDecimal,
   ]);
 
   const enableForRewards = useCallback(
