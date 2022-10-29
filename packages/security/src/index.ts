@@ -6,6 +6,7 @@ import { chainIdToConfig } from "./enums";
 import { withChainLinkOracleScorer, withUniswapV3OracleScorer } from "./oracle";
 import { withErc4626StrategyScorer } from "./strategy";
 
+export { STRATEGY_HELP } from "./enums";
 export type GConstructor<T> = new (...args: any[]) => T;
 export type SecurityBaseConstructor = GConstructor<SecurityBase>;
 

@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, QuestionIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -12,6 +12,7 @@ import {
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
+import { STRATEGY_HELP } from '@midas-capital/security';
 import { FundOperationMode } from '@midas-capital/types';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
@@ -24,6 +25,7 @@ import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/F
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import {
   ADMIN_FEE_TOOLTIP,
@@ -277,11 +279,17 @@ export const AdditionalInfo = ({
                 </Link>
               </Flex>
             </Box>
-            <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
-              <VStack alignItems="flex-start" p={4}>
-                <Flex gap={4} mb={2}>
+            <Box width="100%" borderWidth={2} borderColor={cCard.headingBgColor}>
+              <VStack alignItems="flex-start" p={4} gap={2}>
+                <Flex gap={4}>
                   <Text>Strategy Total Score</Text>
-                  <Text>{strategyScore.totalScore}</Text>
+                  <Text
+                    fontWeight="bold"
+                    variant="mdText"
+                    color={strategyScore.totalScore > SCORE_LIMIT ? 'green' : 'red'}
+                  >
+                    {strategyScore.totalScore}
+                  </Text>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.complexityScore > SCORE_LIMIT ? (
@@ -289,8 +297,18 @@ export const AdditionalInfo = ({
                   ) : (
                     <TriangleDownIcon color="red" />
                   )}
-                  <Text>Complexity Score</Text>
-                  <Text>{strategyScore.complexityScore}</Text>
+                  <Text>{STRATEGY_HELP.complexity[strategyScore.strategy.complexity].title}</Text>
+                  <SimpleTooltip
+                    label={STRATEGY_HELP.complexity[strategyScore.strategy.complexity].explanation}
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.timeInMarketScore > SCORE_LIMIT ? (
@@ -298,26 +316,198 @@ export const AdditionalInfo = ({
                   ) : (
                     <TriangleDownIcon color="red" />
                   )}
-                  <Text>Time In Market Score</Text>
-                  <Text>{strategyScore.timeInMarketScore}</Text>
+                  <Text>
+                    {STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].title}
+                  </Text>
+                  <SimpleTooltip
+                    label={
+                      STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].explanation
+                    }
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.assetRiskScore > SCORE_LIMIT ? (
+                  {strategyScore.assetRiskILScore > SCORE_LIMIT ? (
                     <TriangleUpIcon color="green" />
                   ) : (
                     <TriangleDownIcon color="red" />
                   )}
-                  <Text>Asset Risk Score</Text>
-                  <Text>{strategyScore.assetRiskScore}</Text>
+                  <Text>{STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].title}</Text>
+                  <SimpleTooltip
+                    label={STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].explanation}
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.platformRiskScore > SCORE_LIMIT ? (
+                  {strategyScore.assetRiskLiquidityScore > SCORE_LIMIT ? (
                     <TriangleUpIcon color="green" />
                   ) : (
                     <TriangleDownIcon color="red" />
                   )}
-                  <Text>Platform Risk Score</Text>
-                  <Text>{strategyScore.platformRiskScore}</Text>
+                  <Text>{STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].title}</Text>
+                  <SimpleTooltip
+                    label={STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].explanation}
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.assetRiskMktCapScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>{STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].title}</Text>
+                  <SimpleTooltip
+                    label={STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].explanation}
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.assetRiskSupplyScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>
+                    {
+                      STRATEGY_HELP.supplyCentralised[strategyScore.strategy.supplyCentralised]
+                        .title
+                    }
+                  </Text>
+                  <SimpleTooltip
+                    label={
+                      STRATEGY_HELP.supplyCentralised[strategyScore.strategy.supplyCentralised]
+                        .explanation
+                    }
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.platformRiskReputationScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>{STRATEGY_HELP.reputation[strategyScore.strategy.reputation].title}</Text>
+                  <SimpleTooltip
+                    label={STRATEGY_HELP.reputation[strategyScore.strategy.reputation].explanation}
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.platformRiskAuditScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].title}</Text>
+                  <SimpleTooltip
+                    label={STRATEGY_HELP.audit[strategyScore.strategy.audit].explanation}
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.platformRiskContractsVerifiedScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>
+                    {
+                      STRATEGY_HELP.contractsVerified[strategyScore.strategy.contractsVerified]
+                        .title
+                    }
+                  </Text>
+                  <SimpleTooltip
+                    label={
+                      STRATEGY_HELP.contractsVerified[strategyScore.strategy.contractsVerified]
+                        .explanation
+                    }
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
+                </Flex>
+                <Flex gap={4}>
+                  {strategyScore.platformRiskAdminWithTimelockScore > SCORE_LIMIT ? (
+                    <TriangleUpIcon color="green" />
+                  ) : (
+                    <TriangleDownIcon color="red" />
+                  )}
+                  <Text>
+                    {
+                      STRATEGY_HELP.adminWithTimelock[strategyScore.strategy.adminWithTimelock]
+                        .title
+                    }
+                  </Text>
+                  <SimpleTooltip
+                    label={
+                      STRATEGY_HELP.adminWithTimelock[strategyScore.strategy.adminWithTimelock]
+                        .explanation
+                    }
+                  >
+                    <Text fontWeight="bold">
+                      <QuestionIcon
+                        color={cCard.txtColor}
+                        bg={cCard.bgColor}
+                        borderRadius={'50%'}
+                      />
+                    </Text>
+                  </SimpleTooltip>
                 </Flex>
               </VStack>
             </Box>

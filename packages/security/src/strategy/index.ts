@@ -43,7 +43,20 @@ export function withErc4626StrategyScorer<TBase extends SecurityBaseConstructor>
 
       const totalScore = complexity + timeInMarket + assetRisk + platformRisk;
 
-      return { complexityScore, timeInMarketScore, assetRiskScore, platformRiskScore, totalScore };
+      return {
+        strategy,
+        complexityScore,
+        timeInMarketScore,
+        assetRiskILScore,
+        assetRiskLiquidityScore,
+        assetRiskMktCapScore,
+        assetRiskSupplyScore,
+        platformRiskReputationScore,
+        platformRiskAuditScore,
+        platformRiskContractsVerifiedScore,
+        platformRiskAdminWithTimelockScore,
+        totalScore,
+      };
     }
   };
 }
