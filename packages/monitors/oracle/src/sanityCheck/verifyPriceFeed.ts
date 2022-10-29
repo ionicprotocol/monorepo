@@ -1,17 +1,16 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { OracleTypes, SupportedAsset } from "@midas-capital/types";
-import { BigNumber, ethers, utils, Wallet } from "ethers";
+import { BigNumber, ethers, utils } from "ethers";
 
-import { config } from "./config";
+import { InvalidFeedExtraData, InvalidReason, logger, SupportedAssetPriceFeed } from "../index";
 
 import {
-  InvalidFeedExtraData,
-  InvalidReason,
-  logger,
-  SupportedAssetPriceFeed,
-  verifyOracleProviderPriceFeed,
-  verifyTwapPriceFeed,
-} from "./index";
+  getMpoPrice,
+  verifyChainLinkOraclePriceFeed,
+  verifyDiaOraclePriceFeed,
+  verifyFluxOraclePriceFeed,
+  verifyUniswapV2PriceFeed,
+} from ".";
 
 export default async function verifyPriceFeed(
   midasSdk: MidasSdk,
@@ -19,6 +18,7 @@ export default async function verifyPriceFeed(
 ): Promise<SupportedAssetPriceFeed> {
   const oracle = asset.oracle;
   if (!oracle) {
+    logger.warn(`No oracle for asset ${asset.symbol}`);
     return {
       asset,
       valid: true,
@@ -28,12 +28,20 @@ export default async function verifyPriceFeed(
       priceEther: 1,
     };
   }
-  const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
-
-  logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
-  const mpo = midasSdk.createMasterPriceOracle(signer);
-  const mpoPrice = await mpo.callStatic.price(asset.underlying);
-  const underlyingOracleAddress = await mpo.callStatic.oracles(asset.underlying);
+  const { mpoPrice, underlyingOracleAddress } = await getMpoPrice(midasSdk, asset);
+  if (mpoPrice.isZero()) {
+    return {
+      asset,
+      valid: false,
+      invalidReason: InvalidReason.MPO_FAILURE,
+      extraInfo: {
+        message: "Failed to fetch price from Master Price Oracle",
+        extraData: {},
+      },
+      priceBN: BigNumber.from(0),
+      priceEther: 0,
+    };
+  }
 
   let valid: boolean;
   let invalidReason: InvalidReason | null;
@@ -41,16 +49,24 @@ export default async function verifyPriceFeed(
 
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
-      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(midasSdk, oracle, asset.underlying));
+      ({ valid, invalidReason, extraInfo } = await verifyChainLinkOraclePriceFeed(
+        midasSdk.provider,
+        midasSdk.oracles,
+        asset.underlying
+      ));
       break;
     case OracleTypes.DiaPriceOracle:
-      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(midasSdk, oracle, asset.underlying));
+      ({ valid, invalidReason, extraInfo } = await verifyDiaOraclePriceFeed(
+        midasSdk.provider,
+        midasSdk.oracles,
+        asset.underlying
+      ));
       break;
     case OracleTypes.FluxPriceOracle:
-      ({ valid, invalidReason, extraInfo } = await verifyOracleProviderPriceFeed(midasSdk, oracle, asset.underlying));
+      ({ valid, invalidReason, extraInfo } = await verifyFluxOraclePriceFeed(midasSdk.oracles, asset.underlying));
       break;
     case OracleTypes.UniswapTwapPriceOracleV2:
-      ({ valid, invalidReason, extraInfo } = await verifyTwapPriceFeed(
+      ({ valid, invalidReason, extraInfo } = await verifyUniswapV2PriceFeed(
         midasSdk,
         underlyingOracleAddress,
         asset.underlying

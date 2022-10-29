@@ -13,7 +13,9 @@ const config = {
   checkPriceInterval: parseInt(process.env.CHECK_PRICE_INTERVAL ?? "21600") * 1000, // 6 hours
   defaultMinPeriod: BigNumber.from(process.env.DEFAULT_MIN_PERIOD ?? "1800"),
   defaultDeviationThreshold: utils.parseEther(process.env.DEFAULT_DEVIATION_THRESHOLD ?? "0.05"),
+  maxPriceDeviation: parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
   minTwapDepth: parseFloat(process.env.MINIMAL_TWAP_DEPTH ?? "1000000"),
+  discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
 };
 
 export default config;

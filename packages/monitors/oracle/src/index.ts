@@ -1,12 +1,9 @@
-export { default as verifyPriceFeed } from "./verifyPriceFeed";
-export { default as verify } from "./verify";
+export { default as verifyPriceFeed } from "./sanityCheck/verifyPriceFeed";
+export { default as verify } from "./sanityCheck/verify";
 export { default as setUpSdk } from "./setUpSdk";
 export { default as verifyAndRepeat } from "./verifyAndRepeat";
-export { default as verifyOracleProviderPriceFeed } from "./verifyOracleProviderPriceFeed";
-export { default as verifyTwapPriceFeed } from "./verifyTwapPriceFeed";
 export { updateOracleMonitorData } from "./controllers/index";
 
-export { getCgPrice } from "./utils";
 import { SupportedAsset } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import pino from "pino";
@@ -16,6 +13,10 @@ export enum InvalidReason {
   TWAP_LIQUIDITY_LOW = "TWAP_LIQUIDITY_LOW",
   LAST_OBSERVATION_TOO_OLD = "LAST_OBSERVATION_TOO_OLD",
   UNKNOWN = "UNKNOWN",
+}
+
+export enum OracleFailure {
+  MPO_FAILURE = "MPO_FAILURE",
 }
 
 export type InvalidFeedExtraData = {
