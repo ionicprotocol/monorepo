@@ -1,7 +1,8 @@
 import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
+import { logger } from "ethers";
 
-import { InvalidReason, OracleFailure } from "..";
+import { OracleFailure, PriceFeedInvalidity, PriceValueInvalidity } from "..";
 import { config } from "../config";
 
 export class DiscordAlert {
@@ -9,7 +10,9 @@ export class DiscordAlert {
   chainId: SupportedChains;
 
   private errorColor = 0xa83232;
+  // @ts-ignore
   private warningColor = 0xfcdb03;
+  // @ts-ignore
   private infoColor = 0x32a832;
 
   private hook = new Webhook(config.discordWebhookUrl);
@@ -26,13 +29,17 @@ export class DiscordAlert {
   }
 
   private async send(embed: MessageBuilder) {
-    return this.hook.send(embed);
+    if (config.environment === "production") {
+      this.hook.send(embed);
+    } else {
+      logger.debug(`Would have sent alert to discord: ${JSON.stringify(embed)}`);
+    }
   }
 
-  public async sendInvalidPriceAlert(description: string) {
+  public async sendInvalidFeedAlert(feedValidity: PriceFeedInvalidity | PriceValueInvalidity) {
     const embed = this.create()
-      .setTitle(InvalidReason.DEVIATION_ABOVE_THRESHOLD)
-      .setDescription(description)
+      .setTitle(feedValidity.invalidReason)
+      .setDescription(feedValidity.message)
       .setTimestamp()
       .setColor(this.errorColor);
     await this.send(embed);

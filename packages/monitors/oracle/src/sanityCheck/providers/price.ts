@@ -2,13 +2,21 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { BigNumber, utils } from "ethers";
 
-import { config } from "../config";
-import { DiscordAlert } from "../controllers";
-import { logger } from "../index";
+import { InvalidReason, logger, PriceValueInvalidity } from "../../";
+import { config } from "../../config";
+import { getDefiLlamaPrice } from "../utils";
 
-import { getDefiLlamaPrice } from "./utils";
+export interface VerifyPriceParams {
+  midasSdk: MidasSdk;
+  asset: SupportedAsset;
+  mpoPrice: BigNumber;
+}
 
-export async function verifyPriceValue(midasSdk: MidasSdk, asset: SupportedAsset, price: BigNumber) {
+export async function verifyPriceValue({
+  midasSdk,
+  asset,
+  mpoPrice,
+}: VerifyPriceParams): Promise<PriceValueInvalidity | null> {
   const chainName = SupportedChains[midasSdk.chainId];
 
   const wrappedNativeId = `${chainName}:${midasSdk.chainSpecificAddresses.W_TOKEN}`;
@@ -16,18 +24,16 @@ export async function verifyPriceValue(midasSdk: MidasSdk, asset: SupportedAsset
   const wrappedNativeTokenPriceUSD = await getDefiLlamaPrice(wrappedNativeId);
   const tokenPriceUSD = await getDefiLlamaPrice(assetId);
 
-  const assetPriceUSD = parseFloat(utils.formatEther(price)) * wrappedNativeTokenPriceUSD;
+  const assetPriceUSD = parseFloat(utils.formatEther(mpoPrice)) * wrappedNativeTokenPriceUSD;
   const priceDiff = Math.abs(assetPriceUSD - tokenPriceUSD);
   const priceDiffPercent = (priceDiff / assetPriceUSD) * 100;
   logger.info(`Price difference for asset is ${priceDiffPercent}%`);
 
   if (priceDiffPercent > config.maxPriceDeviation) {
-    const msg = `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.maxPriceDeviation}%`;
-
-    const alert = new DiscordAlert(asset, midasSdk.chainId);
-    await alert.sendInvalidPriceAlert(msg);
-
-    logger.error(msg);
-    return { mpoPrice: BigNumber.from(0), underlyingOracleAddress: "" };
+    return {
+      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.maxPriceDeviation}%`,
+      invalidReason: InvalidReason.DEVIATION_ABOVE_THRESHOLD,
+    };
   }
+  return null;
 }

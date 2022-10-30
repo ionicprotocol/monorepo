@@ -1,40 +1,31 @@
-import { Provider } from "@ethersproject/providers";
-import { OracleConfig, OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
-import { InvalidReason, SupportedAssetPriceValidity } from "../../";
 import { config } from "../../config";
+import { InvalidReason, logger, PriceFeedInvalidity } from "../../index";
 
-export async function verifyDiaOraclePriceFeed(
-  provider: Provider,
-  oracleConfig: OracleConfig,
-  underlying: string
-): Promise<SupportedAssetPriceValidity> {
-  const diaPriceOracle = new Contract(
-    oracleConfig[OracleTypes.DiaPriceOracle].address,
-    oracleConfig[OracleTypes.DiaPriceOracle].abi,
-    provider
-  );
-  const feedAddress = await diaPriceOracle.callStatic.priceFeeds(underlying);
+import { VerifyFeedParams } from ".";
+
+export async function verifyDiaOraclePriceFeed({
+  midasSdk,
+  underlyingOracle,
+  underlying,
+}: VerifyFeedParams): Promise<PriceFeedInvalidity | null> {
+  logger.debug(`Verifying Dia oracle for ${underlying}`);
+  const feedAddress = await underlyingOracle.callStatic.priceFeeds(underlying);
   const diaFeed = new Contract(
     feedAddress,
     ["function getValue(string memory key) external view returns (uint128, uint128)"],
-    provider
+    midasSdk.provider
   );
   const [, timestamp] = await diaFeed.callStatic.latestRoundData();
   const updatedAtts = timestamp.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
   const isValid = timeSinceLastUpdate < config.maxObservationDelay;
-  return {
-    valid: isValid,
-    invalidReason: isValid ? null : InvalidReason.LAST_OBSERVATION_TOO_OLD,
-    extraInfo: isValid
-      ? null
-      : {
-          message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay}`,
-          extraData: {
-            timeSinceLastUpdate,
-          },
-        },
-  };
+  if (!isValid) {
+    return {
+      invalidReason: InvalidReason.LAST_OBSERVATION_TOO_OLD,
+      message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay}`,
+    };
+  }
+  return null;
 }

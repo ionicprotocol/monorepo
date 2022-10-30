@@ -8,12 +8,13 @@ const updateOracleMonitorData = async (assets: SupportedAssetPriceFeed[]) => {
         {
           underlyingAddress: asset.asset.underlying.toLowerCase(),
           oracle: asset.asset.oracle,
-          valid: asset.valid,
-          invalidReason: asset.invalidReason ? asset.invalidReason : null,
-          extraInfo: asset.extraInfo ? asset.extraInfo : null,
+          priceValid: asset.priceValidity == null ? true : false,
+          feedValid: asset.feedValidity == null ? true : false,
+          priceInvalidReason: asset.priceValidity ? asset.priceValidity.invalidReason : null,
+          priceInvalidMsg: asset.priceValidity ? asset.priceValidity.invalidReason : null,
+          feedInvalidReason: asset.feedValidity ? asset.feedValidity.invalidReason : null,
           chain: config.chainId,
-          priceBN: asset.priceBN.toString(),
-          priceEther: asset.priceEther,
+          priceBN: asset.mpoPrice,
         },
       ]);
       if (error) {

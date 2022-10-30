@@ -1,1 +1,1 @@
-export * from "./providers";
+export { OracleVerifier } from "./verifier";

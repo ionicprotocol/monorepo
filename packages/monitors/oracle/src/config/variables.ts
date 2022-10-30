@@ -4,6 +4,8 @@ doetenv.config();
 
 const config = {
   chainId: parseInt(process.env.TARGET_CHAIN_ID ?? "56", 10),
+  environment: process.env.NODE_ENV ?? "development",
+  logLevel: process.env.NODE_ENV === "production" ? "info" : "debug",
   rpcUrl: process.env.WEB3_HTTP_PROVIDER_URL ?? "https://bsc-dataseed1.binance.org/",
   supabaseUrl: process.env.SUPABASE_URL ?? "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
   supabasePublicKey: process.env.SUPABASE_KEY ?? "",
