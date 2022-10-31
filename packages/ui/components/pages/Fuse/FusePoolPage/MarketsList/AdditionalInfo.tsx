@@ -25,7 +25,7 @@ import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/F
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import {
   ADMIN_FEE_TOOLTIP,
@@ -76,6 +76,9 @@ export const AdditionalInfo = ({
     } else {
       onOpen();
     }
+  };
+  const setColorByScore = (score: number) => {
+    return score > 0.8 ? 'green' : score > 0.6 ? 'yellow' : 'red';
   };
 
   return (
@@ -286,20 +289,27 @@ export const AdditionalInfo = ({
                   <Text
                     fontWeight="bold"
                     variant="mdText"
-                    color={strategyScore.totalScore > SCORE_LIMIT ? 'green' : 'red'}
+                    color={setColorByScore(strategyScore.totalScore)}
                   >
                     {strategyScore.totalScore}
                   </Text>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.complexityScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon color={setColorByScore(strategyScore.complexityScore)} />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon color={setColorByScore(strategyScore.complexityScore)} />
                   )}
                   <Text>{STRATEGY_HELP.complexity[strategyScore.strategy.complexity].title}</Text>
-                  <SimpleTooltip
-                    label={STRATEGY_HELP.complexity[strategyScore.strategy.complexity].explanation}
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">Score: {strategyScore.complexityScore}</Text>
+                        <Text>
+                          {STRATEGY_HELP.complexity[strategyScore.strategy.complexity].explanation}
+                        </Text>
+                      </VStack>
+                    }
                   >
                     <Text fontWeight="bold">
                       <QuestionIcon
@@ -308,20 +318,28 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.timeInMarketScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon color={setColorByScore(strategyScore.timeInMarketScore)} />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon color={setColorByScore(strategyScore.timeInMarketScore)} />
                   )}
                   <Text>
                     {STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].title}
                   </Text>
-                  <SimpleTooltip
-                    label={
-                      STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].explanation
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">Score: {strategyScore.timeInMarketScore}</Text>
+                        <Text>
+                          {
+                            STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket]
+                              .explanation
+                          }
+                        </Text>
+                      </VStack>
                     }
                   >
                     <Text fontWeight="bold">
@@ -331,17 +349,25 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskILScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskILScore)} />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskILScore)} />
                   )}
                   <Text>{STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].title}</Text>
-                  <SimpleTooltip
-                    label={STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].explanation}
+
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">Score: {strategyScore.assetRiskILScore}</Text>
+                        <Text>
+                          {STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].explanation}
+                        </Text>
+                      </VStack>
+                    }
                   >
                     <Text fontWeight="bold">
                       <QuestionIcon
@@ -350,17 +376,30 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskLiquidityScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon
+                      color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
+                    />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon
+                      color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
+                    />
                   )}
                   <Text>{STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].title}</Text>
-                  <SimpleTooltip
-                    label={STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].explanation}
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.assetRiskLiquidityScore}
+                        </Text>
+                        <Text>
+                          {STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].explanation}
+                        </Text>
+                      </VStack>
+                    }
                   >
                     <Text fontWeight="bold">
                       <QuestionIcon
@@ -369,17 +408,24 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskMktCapScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskMktCapScore)} />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskMktCapScore)} />
                   )}
                   <Text>{STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].title}</Text>
-                  <SimpleTooltip
-                    label={STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].explanation}
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">Score: {strategyScore.assetRiskMktCapScore}</Text>
+                        <Text>
+                          {STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].explanation}
+                        </Text>
+                      </VStack>
+                    }
                   >
                     <Text fontWeight="bold">
                       <QuestionIcon
@@ -388,13 +434,13 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskSupplyScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskSupplyScore)} />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskSupplyScore)} />
                   )}
                   <Text>
                     {
@@ -402,10 +448,18 @@ export const AdditionalInfo = ({
                         .title
                     }
                   </Text>
-                  <SimpleTooltip
-                    label={
-                      STRATEGY_HELP.supplyCentralised[strategyScore.strategy.supplyCentralised]
-                        .explanation
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">Score: {strategyScore.assetRiskSupplyScore}</Text>
+                        <Text>
+                          {
+                            STRATEGY_HELP.supplyCentralised[
+                              strategyScore.strategy.supplyCentralised
+                            ].explanation
+                          }
+                        </Text>
+                      </VStack>
                     }
                   >
                     <Text fontWeight="bold">
@@ -415,17 +469,30 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskReputationScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon
+                      color={setColorByScore(strategyScore.platformRiskReputationScore)}
+                    />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon
+                      color={setColorByScore(strategyScore.platformRiskReputationScore)}
+                    />
                   )}
                   <Text>{STRATEGY_HELP.reputation[strategyScore.strategy.reputation].title}</Text>
-                  <SimpleTooltip
-                    label={STRATEGY_HELP.reputation[strategyScore.strategy.reputation].explanation}
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.platformRiskReputationScore}
+                        </Text>
+                        <Text>
+                          {STRATEGY_HELP.reputation[strategyScore.strategy.reputation].explanation}
+                        </Text>
+                      </VStack>
+                    }
                   >
                     <Text fontWeight="bold">
                       <QuestionIcon
@@ -434,17 +501,24 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskAuditScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon color={setColorByScore(strategyScore.platformRiskAuditScore)} />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon
+                      color={setColorByScore(strategyScore.platformRiskAuditScore)}
+                    />
                   )}
                   <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].title}</Text>
-                  <SimpleTooltip
-                    label={STRATEGY_HELP.audit[strategyScore.strategy.audit].explanation}
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">Score: {strategyScore.platformRiskAuditScore}</Text>
+                        <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].explanation}</Text>
+                      </VStack>
+                    }
                   >
                     <Text fontWeight="bold">
                       <QuestionIcon
@@ -453,13 +527,17 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskContractsVerifiedScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon
+                      color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
+                    />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon
+                      color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
+                    />
                   )}
                   <Text>
                     {
@@ -467,10 +545,20 @@ export const AdditionalInfo = ({
                         .title
                     }
                   </Text>
-                  <SimpleTooltip
-                    label={
-                      STRATEGY_HELP.contractsVerified[strategyScore.strategy.contractsVerified]
-                        .explanation
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.platformRiskContractsVerifiedScore}
+                        </Text>
+                        <Text>
+                          {
+                            STRATEGY_HELP.contractsVerified[
+                              strategyScore.strategy.contractsVerified
+                            ].explanation
+                          }
+                        </Text>
+                      </VStack>
                     }
                   >
                     <Text fontWeight="bold">
@@ -480,13 +568,17 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskAdminWithTimelockScore > SCORE_LIMIT ? (
-                    <TriangleUpIcon color="green" />
+                    <TriangleUpIcon
+                      color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
+                    />
                   ) : (
-                    <TriangleDownIcon color="red" />
+                    <TriangleDownIcon
+                      color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
+                    />
                   )}
                   <Text>
                     {
@@ -494,10 +586,20 @@ export const AdditionalInfo = ({
                         .title
                     }
                   </Text>
-                  <SimpleTooltip
-                    label={
-                      STRATEGY_HELP.adminWithTimelock[strategyScore.strategy.adminWithTimelock]
-                        .explanation
+                  <PopoverTooltip
+                    body={
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.platformRiskAdminWithTimelockScore}
+                        </Text>
+                        <Text>
+                          {
+                            STRATEGY_HELP.adminWithTimelock[
+                              strategyScore.strategy.adminWithTimelock
+                            ].explanation
+                          }
+                        </Text>
+                      </VStack>
                     }
                   >
                     <Text fontWeight="bold">
@@ -507,7 +609,7 @@ export const AdditionalInfo = ({
                         borderRadius={'50%'}
                       />
                     </Text>
-                  </SimpleTooltip>
+                  </PopoverTooltip>
                 </Flex>
               </VStack>
             </Box>
