@@ -24,14 +24,16 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import DatePicker from 'react-datepicker';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -43,6 +45,7 @@ import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getRewardTokenContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
+import { ChainSupportedAssets } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -105,6 +108,13 @@ const EditFlywheelModal = ({
     flywheel.rewards
   );
   const { data: myBalance } = useTokenBalance(flywheel.rewardToken);
+  const rewardTokenDecimal = useMemo(() => {
+    const asset = ChainSupportedAssets[pool.chainId as SupportedChains].find((asset) => {
+      return asset.underlying === flywheel.rewardToken;
+    });
+
+    return asset ? asset.decimals : DEFAULT_DECIMALS;
+  }, [flywheel.rewardToken, pool.chainId]);
 
   const errorToast = useErrorToast();
 
@@ -146,8 +156,10 @@ const EditFlywheelModal = ({
 
     setTransactionPending(true);
     try {
-      // TODO use rewardsTokens decimals here
-      const tx = await token.transfer(flywheel.rewards, utils.parseUnits(fundingAmount.toString()));
+      const tx = await token.transfer(
+        flywheel.rewards,
+        utils.parseUnits(fundingAmount.toString(), rewardTokenDecimal)
+      );
       await tx.wait();
       refetchRewardsBalance();
     } catch (err) {
@@ -162,6 +174,7 @@ const EditFlywheelModal = ({
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
+    rewardTokenDecimal,
   ]);
 
   const updateRewardInfo = useCallback(async () => {
@@ -174,8 +187,7 @@ const EditFlywheelModal = ({
       setTransactionPending(true);
 
       const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
-        // TODO use rewardsTokens decimals here
-        rewardsPerSecond: utils.parseUnits(supplySpeed),
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
         // TODO enable in UI
         rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
       });
@@ -198,6 +210,7 @@ const EditFlywheelModal = ({
     selectedMarket,
     refetchRewardsInfo,
     errorToast,
+    rewardTokenDecimal,
   ]);
 
   const enableForRewards = useCallback(
@@ -323,7 +336,8 @@ const EditFlywheelModal = ({
               </HStack>
             </VStack>
             <Text fontSize="md" mt={2}>
-              Your balance: {myBalance ? (parseFloat(myBalance?.toString()) / 1e18).toFixed(4) : 0}{' '}
+              Your balance:{' '}
+              {myBalance ? Number(utils.formatUnits(myBalance, rewardTokenDecimal)).toFixed(4) : 0}{' '}
               {tokenData?.symbol}
             </Text>
           </VStack>

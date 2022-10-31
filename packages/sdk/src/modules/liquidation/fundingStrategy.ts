@@ -101,5 +101,7 @@ function getStrategyData(
       );
     case FundingStrategyContract.XBombLiquidatorFunder:
       return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
+    default:
+      return "";
   }
 }

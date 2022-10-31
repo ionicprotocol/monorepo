@@ -101,7 +101,6 @@ const FuseStatsBar = () => {
             </Link>
           </SimpleTooltip>
           <Button
-            pt={1}
             variant="_link"
             as={Link}
             href={FEATURE_REQUESTS_URL}

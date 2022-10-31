@@ -335,7 +335,7 @@ export const strategies: ERC4626Strategy[] = [
   },
   {
     address: "0xdE58CF12595e92ebB07D664eE59A642e360bea58",
-    strategy: Strategy.Arrakis,
+    strategy: Strategy.Arrakis, // TODO should be called Mimo
     name: "Arrakis PAR-USDC Vault",
     complexity: StrategyComplexity.MEDIUM,
     timeInMarket: StrategyTimeInMarket.EXPERIMENTAL,
@@ -350,7 +350,7 @@ export const strategies: ERC4626Strategy[] = [
   },
   {
     address: "0xd682451F627d54cfdA74a80972aDaeF133cdc15e",
-    strategy: Strategy.Arrakis,
+    strategy: Strategy.Arrakis, // TODO should be called Mimo
     name: "Balancer LP MIMO80-PAR20",
     complexity: StrategyComplexity.MEDIUM,
     timeInMarket: StrategyTimeInMarket.EXPERIMENTAL,
