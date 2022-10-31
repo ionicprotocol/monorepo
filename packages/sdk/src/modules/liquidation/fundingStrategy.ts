@@ -97,9 +97,11 @@ function getStrategyData(
       const expirationTime = jarvisPool.expirationTime;
       return new ethers.utils.AbiCoder().encode(
         ["address", "address", "uint256"],
-        [fundingToken, poolAddress, expirationTime]
+        [inputToken, poolAddress, expirationTime]
       );
     case FundingStrategyContract.XBombLiquidatorFunder:
       return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
+    default:
+      return "";
   }
 }

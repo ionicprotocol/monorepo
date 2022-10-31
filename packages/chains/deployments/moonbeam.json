@@ -12670,7 +12670,7 @@
       ]
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x86b9521A1FB513d859AafA676df2F81Aafee139E",
+      "address": "0xAFE9E590a8D72CfdCf12d215B091c2338A7d0071",
       "abi": [
         {
           "inputs": [
@@ -13590,7 +13590,7 @@
       ]
     },
     "CurveSwapLiquidator": {
-      "address": "0x6aA15083E1fDA0614B0E7177417040f1D609F875",
+      "address": "0xE2935208329F39B5548b17F2bC1d6Ba3cb5eB66B",
       "abi": [
         {
           "inputs": [
@@ -13614,12 +13614,12 @@
           "outputs": [
             {
               "internalType": "contract IERC20Upgradeable",
-              "name": "outputToken",
+              "name": "",
               "type": "address"
             },
             {
               "internalType": "uint256",
-              "name": "outputAmount",
+              "name": "",
               "type": "uint256"
             }
           ],
@@ -15683,6 +15683,25 @@
         {
           "inputs": [
             {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -15948,7 +15967,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x23bBcF59BF843cD55c4DA9bDB81429695C87f847",
+      "address": "0x7D4007D5f1fA11be71625736CeeB5ebed11dA70e",
       "abi": [
         {
           "anonymous": false,
@@ -16571,6 +16590,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -19017,7 +19055,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xb0543004b96e30d2089D455ff88e6b14cE468Aa1",
+      "address": "0xDF3318bEd93412F3b681b82874AF7bA90577B7fa",
       "abi": [
         {
           "anonymous": false,
@@ -35559,7 +35597,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0xAB70a11D0D4522D2CBEE5099D3fB09FbA9914D4a",
+      "address": "0x376bF93039664590Ee2E4A30794D15969d5eDC8C",
       "abi": [
         {
           "inputs": [
