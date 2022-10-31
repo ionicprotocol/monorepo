@@ -1,4 +1,4 @@
-import type { Rewards } from '@midas-capital/types';
+import type { Reward } from '@midas-capital/types';
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
@@ -6,7 +6,7 @@ import * as yup from 'yup';
 import { config } from '@ui/config/index';
 import { SUPPORTED_NETWORKS_REGEX, VALID_ADDRESS_REGEX } from '@ui/constants/index';
 
-export type RewardsResponse = Rewards;
+export type RewardsResponse = Reward[];
 
 const querySchema = yup.object().shape({
   chainId: yup.string().matches(SUPPORTED_NETWORKS_REGEX, 'Not a supported Network').required(),
@@ -27,7 +27,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Reward
 
   const databaseResponse = await client
     .from(config.supabasePluginRewardsTableName)
-    .select<'rewards', { rewards: Rewards }>('rewards')
+    .select<'rewards', { rewards: Reward[] }>('rewards')
     .eq('chain_id', parseInt(chainId as string, 10))
     .eq('plugin_address', (pluginAddress as string).toLowerCase())
     .order('created_at', { ascending: false })

@@ -54,7 +54,7 @@ class MimoAPYProvider extends AbstractAPYProvider {
     }
 
     const apy = this.mimoAPYs[vaultAddress.toLowerCase()];
-    // const apy = this.mimoAPYs![beefyID];
+
     if (apy === undefined) {
       await functionsAlert(
         `MimoAPYProvider: ${vaultAddress}`,
@@ -68,7 +68,13 @@ class MimoAPYProvider extends AbstractAPYProvider {
     }
 
     return [
-      { apy: apy / 100, flywheel, token: rewardTokens[0], updated_at: new Date().toISOString() },
+      {
+        apy: apy / 100,
+        flywheel,
+        token: rewardTokens[0],
+        plugin: pluginAddress,
+        updated_at: new Date().toISOString(),
+      },
     ];
   }
 }

@@ -1,4 +1,4 @@
-import { DotDotPlugin, Reward, Rewards, Strategy } from '@midas-capital/types';
+import { DotDotPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { functionsAlert } from '../../alert';
 import { AbstractAPYProvider } from './AbstractAPYProvider';
@@ -66,6 +66,7 @@ class DotDotAPYProvider extends AbstractAPYProvider {
         apy: dddAPR / 100,
         token: dddAddress,
         flywheel: dddFlywheel,
+        plugin: pluginAddress,
         updated_at: new Date().toISOString(),
       });
     }
@@ -80,6 +81,7 @@ class DotDotAPYProvider extends AbstractAPYProvider {
         apy: epxAPR / 100,
         token: epxAddress,
         flywheel: epxFlywheel,
+        plugin: pluginAddress,
         updated_at: new Date().toISOString(),
       });
     }

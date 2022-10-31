@@ -28,7 +28,6 @@ import {
   Tr,
   VStack,
 } from '@chakra-ui/react';
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import {
   ColumnDef,
   FilterFn,
@@ -44,6 +43,7 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
+import { utils } from 'ethers';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
@@ -85,9 +85,9 @@ import {
 } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import { useTotalApy } from '@ui/hooks/useApy';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
+import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -108,7 +108,7 @@ export type Market = {
 
 export const MarketsList = ({
   assets,
-  rewards = [],
+  rewards = {},
   comptrollerAddress,
   supplyBalanceFiat,
   borrowBalanceFiat,
@@ -117,7 +117,7 @@ export const MarketsList = ({
   initColumnVisibility,
 }: {
   assets: MarketData[];
-  rewards?: FlywheelMarketRewardsInfo[];
+  rewards?: UseRewardsData;
   comptrollerAddress: string;
   supplyBalanceFiat: number;
   borrowBalanceFiat: number;
@@ -144,8 +144,24 @@ export const MarketsList = ({
     ];
   }, [assets]);
 
-  const { data: totalApy } = useTotalApy(rewards, assets, poolChainId);
+  const totalApy = useMemo(() => {
+    if (!sdk) return {};
+    const result: { [market: string]: number } = {};
+    for (const asset of assets) {
+      let marketTotalAPY =
+        sdk.ratePerBlockToAPY(
+          asset.supplyRatePerBlock,
+          getBlockTimePerMinuteByChainId(poolChainId)
+        ) / 100;
 
+      if (rewards[asset.cToken]) {
+        marketTotalAPY += rewards[asset.cToken].reduce((acc, cur) => acc + cur.apy, 0);
+      }
+      result[asset.cToken] = marketTotalAPY;
+    }
+    return result;
+  }, [rewards, assets]);
+  console.log({ totalApy });
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
       !searchText ||
