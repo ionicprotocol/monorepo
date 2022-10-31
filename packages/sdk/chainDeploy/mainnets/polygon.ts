@@ -562,6 +562,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
+  // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
+  const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
+  console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
+
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
     ethers,
@@ -597,6 +608,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (jarvisLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
+
+  //// Uniswap V3 Liquidator Funder
+  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;

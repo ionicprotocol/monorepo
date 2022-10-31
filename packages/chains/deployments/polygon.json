@@ -40047,7 +40047,7 @@
       ]
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x728bA61465BA5d90DC5E51dFdA522AC912868306",
+      "address": "0xc60FCB562f66Ec5614FFF540B1cdacf5a0F161D0",
       "abi": [
         {
           "inputs": [
@@ -40967,7 +40967,7 @@
       ]
     },
     "CurveSwapLiquidator": {
-      "address": "0xa9f36146f261b5a02e5A2bD438CCf331bDef8b84",
+      "address": "0x021534B0a9d6ddaf2966712CD7C449507952D8bb",
       "abi": [
         {
           "inputs": [
@@ -40991,12 +40991,114 @@
           "outputs": [
             {
               "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
+    "CurveSwapLiquidatorFunder": {
+      "address": "0xCAA7462B4c3E0fa71F1fbD8e902dac70cA096357",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convert",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
               "name": "outputToken",
               "type": "address"
             },
             {
               "internalType": "uint256",
               "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "estimateInputAmount",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
               "type": "uint256"
             }
           ],
@@ -42219,6 +42321,25 @@
         {
           "inputs": [
             {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -42484,7 +42605,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x7A0836241Ee13189704036B4Cd6cB17b852acc6c",
+      "address": "0x8135bE365Ec863b0DFE6De74EDe4E4C22d839816",
       "abi": [
         {
           "anonymous": false,
@@ -43107,6 +43228,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -46086,7 +46226,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xb8098e2f0F30216fD3c2DD07d0f1919ce1cc46C7",
+      "address": "0x1b4035D5B97Cf3a985375B8aE0d7dFD29aD274a3",
       "abi": [
         {
           "anonymous": false,
@@ -59362,7 +59502,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0x64f11C365B68Dd689a54997360B0a580ECdaB0F2",
+      "address": "0x483E57C8B0EB35dA662105bD55588f66F4C6c755",
       "abi": [
         {
           "inputs": [
@@ -59957,6 +60097,108 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "UniswapV3LiquidatorFunder": {
+      "address": "0x2F436d94E3479E78b00fE88c5ac05d2a9c57C3af",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convert",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "estimateInputAmount",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
