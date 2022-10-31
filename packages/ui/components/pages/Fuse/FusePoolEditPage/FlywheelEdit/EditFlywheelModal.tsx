@@ -136,9 +136,19 @@ const EditFlywheelModal = ({
 
   const { cPage } = useColors();
 
+  const rewardsSpeed = useMemo(() => {
+    return rewardsInfo?.rewardsPerSecond
+      ? Number(
+          toFixedNoRound(utils.formatUnits(rewardsInfo.rewardsPerSecond, rewardTokenDecimal), 8)
+        )
+      : 0;
+  }, [rewardsInfo, rewardTokenDecimal]);
+
   useEffect(() => {
     if (rewardsInfo?.rewardsPerSecond) {
-      setSupplySpeed(toFixedNoRound(utils.formatEther(rewardsInfo.rewardsPerSecond), 8));
+      setSupplySpeed(
+        toFixedNoRound(utils.formatUnits(rewardsInfo.rewardsPerSecond, rewardTokenDecimal), 8)
+      );
     }
     if (rewardsInfo?.rewardsEndTimestamp !== undefined && rewardsInfo?.rewardsEndTimestamp >= 0) {
       if (rewardsInfo?.rewardsEndTimestamp === 0) {
@@ -147,7 +157,7 @@ const EditFlywheelModal = ({
         setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
       }
     }
-  }, [rewardsInfo]);
+  }, [rewardsInfo, rewardTokenDecimal]);
 
   const fund = useCallback(async () => {
     if (!currentSdk) return;
@@ -156,8 +166,10 @@ const EditFlywheelModal = ({
 
     setTransactionPending(true);
     try {
-      // TODO use rewardsTokens decimals here
-      const tx = await token.transfer(flywheel.rewards, utils.parseUnits(fundingAmount.toString()));
+      const tx = await token.transfer(
+        flywheel.rewards,
+        utils.parseUnits(fundingAmount.toString(), rewardTokenDecimal)
+      );
       await tx.wait();
       refetchRewardsBalance();
     } catch (err) {
@@ -172,6 +184,7 @@ const EditFlywheelModal = ({
     fundingAmount,
     refetchRewardsBalance,
     errorToast,
+    rewardTokenDecimal,
   ]);
 
   const updateRewardInfo = useCallback(async () => {
@@ -184,8 +197,7 @@ const EditFlywheelModal = ({
       setTransactionPending(true);
 
       const tx = await currentSdk.setStaticRewardInfo(flywheel.rewards, selectedMarket.cToken, {
-        // TODO use rewardsTokens decimals here
-        rewardsPerSecond: utils.parseUnits(supplySpeed),
+        rewardsPerSecond: utils.parseUnits(supplySpeed, rewardTokenDecimal),
         // TODO enable in UI
         rewardsEndTimestamp: endDate ? endDate.getTime() / 1000 : 0,
       });
@@ -208,6 +220,7 @@ const EditFlywheelModal = ({
     selectedMarket,
     refetchRewardsInfo,
     errorToast,
+    rewardTokenDecimal,
   ]);
 
   const enableForRewards = useCallback(
@@ -416,12 +429,20 @@ const EditFlywheelModal = ({
                       </Button>
                       <Button
                         onClick={updateRewardInfo}
+                        disabled={isTransactionPending || rewardsSpeed === Number(supplySpeed)}
+                        ml={2}
+                        hidden={!isSpeedEditable}
+                      >
+                        {isTransactionPending ? <Spinner /> : 'Save'}
+                      </Button>
+                      <Button
+                        variant="silver"
+                        onClick={() => setSpeedEditable(false)}
                         disabled={isTransactionPending}
                         ml={2}
                         hidden={!isSpeedEditable}
-                        width="15%"
                       >
-                        {isTransactionPending ? <Spinner /> : 'Save'}
+                        Cancel
                       </Button>
                     </HStack>
                   </VStack>

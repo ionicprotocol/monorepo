@@ -22,9 +22,9 @@ import {
   SHRINK_ASSETS,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useRewards } from '@ui/hooks/useRewards';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const FusePoolPage = memo(() => {
@@ -34,7 +34,7 @@ const FusePoolPage = memo(() => {
   const poolId = router.query.poolId as string;
   const chainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(chainId));
-  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller, data?.chainId);
+  const { data: allRewards } = useRewards({ poolId: poolId, chainId: Number(chainId) });
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
   const isMobile = useIsMobile();
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
@@ -170,7 +170,7 @@ const FusePoolPage = memo(() => {
             {data && initSorting && initColumnVisibility ? (
               <MarketsList
                 assets={data.assets}
-                rewards={marketRewards}
+                rewards={allRewards}
                 comptrollerAddress={data.comptroller}
                 supplyBalanceFiat={data.totalSupplyBalanceFiat}
                 borrowBalanceFiat={data.totalBorrowBalanceFiat}
