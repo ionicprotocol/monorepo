@@ -43,7 +43,6 @@ import {
   useReactTable,
   VisibilityState,
 } from '@tanstack/react-table';
-import { utils } from 'ethers';
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
@@ -64,15 +63,15 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ALL,
+  BORROWABLE,
   BORROW_APY,
   BORROW_BALANCE,
-  BORROWABLE,
   COLLATERAL,
   DEPRECATED,
   DOWN_LIMIT,
   LIQUIDITY,
-  MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
+  MARKET_LTV,
   MIDAS_LOCALSTORAGE_KEYS,
   PROTECTED,
   REWARDS,
@@ -161,7 +160,7 @@ export const MarketsList = ({
     }
     return result;
   }, [rewards, assets]);
-  console.log({ totalApy });
+
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
       !searchText ||
