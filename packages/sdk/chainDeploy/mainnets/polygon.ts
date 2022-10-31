@@ -609,6 +609,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
+  //// Uniswap V3 Liquidator Funder
+  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
+
   /// Addresses Provider - set bUSD
   const addressesProvider = (await ethers.getContract("AddressesProvider", deployer)) as AddressesProvider;
   const busdAddress = underlying(assets, assetSymbols.BUSD);
