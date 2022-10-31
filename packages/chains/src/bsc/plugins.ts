@@ -4,6 +4,7 @@ import assets from "./assets";
 
 const deployedPlugins: DeployedPlugins = {
   // No plugin deployment file stored
+  // Can we delete this?
   "0x10C90bfCFb3D2A7ae814dA1548ae3a7fC31C35A0": {
     market: "0x34ea4cbb464E6D120B081661464d4635Ca237FA7",
     name: "Bomb",
@@ -11,14 +12,15 @@ const deployedPlugins: DeployedPlugins = {
     apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
-    underlying: underlying(assets, assetSymbols.BOMB), // BOMB
+    underlying: underlying(assets, assetSymbols.BOMB),
     otherParams: ["0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b"], // xBOMB
   },
   // No plugin deployment file stored
+  // Can we delete this?
   "0x6B8B935dfC9Dcd0754eced708b1b633BF73FE854": {
     market: "0x4cF3D3ca995beEeEd83f67A5C0456A13e038f7b8",
     name: "Beefy BTCB-BOMB Vault",
-    strategy: Strategy.Beefy,
+    strategy: Strategy.Bomb,
     apyDocsUrl: "https://www.bomb.farm/#/bsc/vault/bomb-bomb-btcb",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
@@ -126,7 +128,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0x906Ab4476221ADc91Dc112c25081A374E0bd29C0",
     name: "Beefy stkBNB-WBNB Vault",
     strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.com/vault/cakev2-wbnb-stkbnb",
+    apyDocsUrl: "https://app.beefy.finance/vault/cakev2-wbnb-stkbnb",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["stkBNB-WBNB"]),
@@ -148,7 +150,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0x373E0F759828c891EF837b6457a0E7584107dbAb",
     name: "Beefy EPS BNBx/BNB  Vault",
     strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.com/vault/ellipsis-bnb-bnbx-crypto",
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-bnb-bnbx-crypto",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
     underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
@@ -159,7 +161,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0xF0baaE2dc101e6Ff1439Ed3C9f27b30715d1E6AA",
     name: "Beefy ApeSwap BNBx/BNB  Vault",
     strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.com/vault/banana-bnbx-wbnb",
+    apyDocsUrl: "https://app.beefy.finance/vault/banana-bnbx-wbnb",
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
     underlying: underlying(assets, assetSymbols["asBNBx-WBNB"]),

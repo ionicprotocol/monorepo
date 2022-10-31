@@ -5,4 +5,5 @@ export * from "./enums";
 export * from "./fuse";
 export * from "./liquidation";
 export * from "./plugin";
+export * from "./rewards";
 export * from "./utils";
