@@ -63,15 +63,15 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ALL,
-  BORROWABLE,
   BORROW_APY,
   BORROW_BALANCE,
+  BORROWABLE,
   COLLATERAL,
   DEPRECATED,
   DOWN_LIMIT,
   LIQUIDITY,
-  MARKETS_COUNT_PER_PAGE,
   MARKET_LTV,
+  MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   PROTECTED,
   REWARDS,
