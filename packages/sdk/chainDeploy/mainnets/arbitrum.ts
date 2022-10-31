@@ -26,6 +26,7 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0xe18a34eb0e04b04f7a0ac29a6e80748dca96319b42c54d679cb821dca90c6303"),
     uniswapV2RouterAddress: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
     uniswapV2FactoryAddress: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
+    uniswapV3FactoryAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
     uniswapOracleInitialDeployTokens: [
       {
         token: underlying(assets, assetSymbols.GOHM),
@@ -166,13 +167,22 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     curvePools,
   });
 
+  // Quoter
+  const quoter = await deployments.deploy("Quoter", {
+    from: deployer,
+    args: [deployConfig.uniswap.uniswapV3FactoryAddress],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("Quoter: ", quoter.address);
+
   // Liquidators
 
   //// CurveLPLiquidator
   const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
-    args: [deployConfig.wtoken, curveOracle.address],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
@@ -183,7 +193,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // CurveSwapLiquidator
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
@@ -199,6 +209,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     waitConfirmations: 1,
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
+
+  //// Uniswap V3 Liquidator Funder
+  const uniswapV3LiquidatorFunder = await deployments.deploy("UniswapV3LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("UniswapV3LiquidatorFunder: ", uniswapV3LiquidatorFunder.address);
 
   ////
 

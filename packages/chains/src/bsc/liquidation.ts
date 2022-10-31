@@ -1,9 +1,14 @@
 import { assetSymbols, LiquidationDefaults, LiquidationStrategy, underlying } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
+import chainAddresses from "./addresses";
 import assets, { WBNB } from "./assets";
 
 const liquidationDefaults: LiquidationDefaults = {
+  DEFAULT_ROUTER: chainAddresses.UNISWAP_V2_ROUTER,
+  ASSET_SPECIFIC_ROUTER: {
+    [underlying(assets, assetSymbols["asBNBx-WBNB"])]: "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7",
+  },
   SUPPORTED_OUTPUT_CURRENCIES: [constants.AddressZero, WBNB],
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, WBNB],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
@@ -22,8 +27,16 @@ const liquidationDefaults: LiquidationDefaults = {
     {
       poolAddress: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
       coins: [
-        "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d", // MAI
-        "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5", // val3EPS
+        underlying(assets, assetSymbols.MAI),
+        underlying(assets, assetSymbols.val3EPS),
+      ],
+    },
+    {
+      poolAddress: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d", // val3EPS LP token
+      coins: [
+        underlying(assets, assetSymbols.BUSD),
+        underlying(assets, assetSymbols.USDC),
+        underlying(assets, assetSymbols.USDT),
       ],
     },
   ],

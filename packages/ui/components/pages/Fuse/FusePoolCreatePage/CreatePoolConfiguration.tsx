@@ -12,24 +12,26 @@ import {
   Spinner,
   Switch,
   Text,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRow';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
-import DashboardBox from '@ui/components/shared/DashboardBox';
+import { MidasBox } from '@ui/components/shared/Box';
+import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
 import { config } from '@ui/config/index';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { useErrorToast, useSuccessToast, useWarningToast } from '@ui/hooks/useToast';
@@ -49,13 +51,17 @@ export const CreatePoolConfiguration = () => {
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
-  const { midasSdk, currentChain, address } = useMidas();
+  const { currentSdk, currentChain, address } = useMultiMidas();
   const router = useRouter();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isCreating, setIsCreating] = useState(false);
 
-  const { cCard, cSolidBtn, cSwitch } = useColors();
+  const { cCard, cSolidBtn } = useColors();
   const isMobile = useIsSmallScreen();
+  const sdk = useSdk(currentChain?.id);
+  const isAllowedAddress = useMemo(() => {
+    return address ? config.allowedAddresses.includes(address.toLowerCase()) : false;
+  }, [address]);
 
   const {
     control,
@@ -78,7 +84,12 @@ export const CreatePoolConfiguration = () => {
   const watchWhitelist = watch('whitelist', []);
 
   const onDeploy = async (data: FormData) => {
-    if (!config.allowedAddresses.includes(address.toLowerCase())) {
+    if (!currentSdk || !address || !currentChain) {
+      warningToast({ description: 'Connect your wallet!' });
+
+      return;
+    }
+    if (!isAllowedAddress) {
       warningToast({ description: 'Pool creation is limited!' });
 
       return;
@@ -94,7 +105,7 @@ export const CreatePoolConfiguration = () => {
     const bigLiquidationIncentive = utils.parseUnits((liquidationIncentive + 100).toString(), 16);
 
     try {
-      const deployResult = await midasSdk.deployPool(
+      const deployResult = await currentSdk.deployPool(
         name,
         isWhitelisted,
         bigCloseFactor,
@@ -111,11 +122,7 @@ export const CreatePoolConfiguration = () => {
 
       LogRocket.track('Fuse-CreatePool');
 
-      if (typeof poolId === 'number') {
-        await router.push(`/${currentChain.id}/pool/${poolId}`);
-      } else {
-        await router.push(`/${currentChain.id}?filter=created-pools`);
-      }
+      await router.push(`/${currentChain.id}/pool/${poolId}`);
     } catch (e) {
       handleGenericError(e, errorToast);
       setIsCreating(false);
@@ -132,11 +139,11 @@ export const CreatePoolConfiguration = () => {
 
   return (
     <Box as="form" alignSelf={'center'} mx="auto" onSubmit={handleSubmit(onDeploy)}>
-      <DashboardBox maxWidth="550px" mx={'auto'}>
+      <MidasBox maxWidth="550px" mx={'auto'}>
         <Text fontWeight="bold" variant="title" px={4} py={4}>
           Create Pool
         </Text>
-        {!config.allowedAddresses.includes(address.toLowerCase()) && (
+        {address && !isAllowedAddress && (
           <Banner
             text="We are limiting pool creation to a whitelist while still in Beta. If you want to launch a pool, "
             linkText="please contact us via Discord."
@@ -158,6 +165,7 @@ export const CreatePoolConfiguration = () => {
                   {...register('name', {
                     required: 'Pool name is required',
                   })}
+                  isDisabled={!address || !currentChain || !isAllowedAddress}
                 />
                 <FormErrorMessage marginBottom="-10px">
                   {errors.name && errors.name.message}
@@ -178,23 +186,15 @@ export const CreatePoolConfiguration = () => {
                   {...register('oracle', {
                     required: 'Oracle is required',
                   })}
+                  isDisabled={!address || !currentChain || !isAllowedAddress}
                 >
-                  {currentChain.id === 1337 ? (
+                  {sdk && (
                     <option
                       className="white-bg-option"
-                      value={midasSdk.chainDeployment.MasterPriceOracle.address}
+                      value={sdk.chainDeployment.MasterPriceOracle.address}
                     >
                       MasterPriceOracle
                     </option>
-                  ) : (
-                    <>
-                      <option
-                        className="white-bg-option"
-                        value={midasSdk.chainDeployment.MasterPriceOracle.address}
-                      >
-                        MasterPriceOracle
-                      </option>
-                    </>
                   )}
                 </Select>
                 <FormErrorMessage marginBottom="-10px">
@@ -223,21 +223,19 @@ export const CreatePoolConfiguration = () => {
                   control={control}
                   name="isWhitelisted"
                   render={({ field: { ref, name, value, onChange } }) => (
-                    <>
-                      <SwitchCSS symbol="whitelist" color={cSwitch.bgColor} />
-                      <Switch
-                        className="switch-whitelist"
-                        id="isWhitelisted"
-                        size={isMobile ? 'sm' : 'md'}
-                        cursor={'pointer'}
-                        _focus={{ boxShadow: 'none' }}
-                        _hover={{}}
-                        name={name}
-                        ref={ref}
-                        isChecked={value}
-                        onChange={onChange}
-                      />
-                    </>
+                    <Switch
+                      className="switch-whitelist"
+                      id="isWhitelisted"
+                      size={isMobile ? 'sm' : 'md'}
+                      cursor={'pointer'}
+                      _focus={{ boxShadow: 'none' }}
+                      _hover={{}}
+                      name={name}
+                      ref={ref}
+                      isChecked={value}
+                      onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
+                    />
                   )}
                 />
               </Column>
@@ -298,6 +296,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -346,6 +345,7 @@ export const CreatePoolConfiguration = () => {
                       value={value}
                       reff={ref}
                       onChange={onChange}
+                      isDisabled={!address || !currentChain || !isAllowedAddress}
                     />
                   )}
                 />
@@ -356,36 +356,54 @@ export const CreatePoolConfiguration = () => {
             </OptionRow>
           </FormControl>
         </Column>
-      </DashboardBox>
+      </MidasBox>
       <Center>
-        <Button
-          id="createPool"
-          type="submit"
-          isLoading={isCreating}
-          width="100%"
-          height={12}
-          mt={4}
-          fontSize="xl"
-          maxWidth={'550px'}
-          disabled={
-            isCreating ||
-            !!errors.name ||
-            !!errors.oracle ||
-            !!errors.closeFactor ||
-            !!errors.liquidationIncentive ||
-            !config.allowedAddresses.includes(address.toLowerCase())
-          }
-        >
-          <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
-            {!config.allowedAddresses.includes(address.toLowerCase()) ? (
-              'Creation limited!'
-            ) : isCreating ? (
-              <Spinner />
-            ) : (
-              'Create'
-            )}
-          </Center>
-        </Button>
+        {currentChain?.id && address ? (
+          <Button
+            id="createPool"
+            type="submit"
+            isLoading={isCreating}
+            width="100%"
+            height={12}
+            mt={4}
+            fontSize="xl"
+            maxWidth={'550px'}
+            disabled={
+              !address ||
+              isCreating ||
+              !!errors.name ||
+              !!errors.oracle ||
+              !!errors.closeFactor ||
+              !!errors.liquidationIncentive ||
+              !isAllowedAddress
+            }
+          >
+            <Center color={cSolidBtn.primary.txtColor} fontWeight="bold">
+              {!address || !isAllowedAddress ? (
+                'Creation limited!'
+              ) : isCreating ? (
+                <Spinner />
+              ) : (
+                'Create'
+              )}
+            </Center>
+          </Button>
+        ) : (
+          <>
+            <Button
+              id="connectWalletToCreate"
+              width="100%"
+              height={12}
+              mt={4}
+              fontSize="xl"
+              maxWidth={'550px'}
+              onClick={onOpen}
+            >
+              Connect wallet
+            </Button>
+            <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
+          </>
+        )}
       </Center>
     </Box>
   );

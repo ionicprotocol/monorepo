@@ -1,15 +1,20 @@
-import { extendTheme } from '@chakra-ui/react';
+import { theme as DefaultTheme, extendTheme } from '@chakra-ui/react';
 
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
 import { BadgeStyleConfig } from '@ui/theme/components/Badge';
 import { ButtonStyleConfig } from '@ui/theme/components/Button';
+import { CheckboxStyleConfig } from '@ui/theme/components/Checkbox';
+import { DividierStyleConfig } from '@ui/theme/components/Divider';
 import { IconButtonStyleConfig } from '@ui/theme/components/IconButton';
 import { InputConfigStyle } from '@ui/theme/components/Input';
 import { LinkStyleConfig } from '@ui/theme/components/Link';
+import { MenuStyleConfig } from '@ui/theme/components/Menu';
 import { ModalStyleConfig } from '@ui/theme/components/Modal';
 import { PopoverStyleConfig } from '@ui/theme/components/Popover';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
 import { StatStyleConfig } from '@ui/theme/components/Stat';
+import { SwitchConfigStyle } from '@ui/theme/components/Switch';
+import { TabsStyleConfig } from '@ui/theme/components/Tabs';
 import { TextStyleConfig } from '@ui/theme/components/Text';
 import { TooltipStyleConfig } from '@ui/theme/components/Tooltip';
 
@@ -21,17 +26,24 @@ export const COLOR_PALETTE = {
   grullo30: '#B29E844d',
   ecru: '#BCAC83',
   ecru10: '#373532',
+  ecru10alpha: '#bcac831a',
   ecru20: '#46423b',
+  ecru20alpha: '#bcac8333',
   ecru30: '#4E4A45',
-  ecru80: '#BCAC83cc', // alpha 0.8
+  ecru30alpha: '#bcac834d',
+  ecru80: '#9e9173',
+  ecru80alpha: '#bcac83cc',
   bone: '#EBE6E0',
   white: '#FFFFFF',
   white50: '#FFFFFF80',
   whiteBg: '#F6F4F1',
   silverMetallic: '#A5ADB4',
-  silverMetallic10: '#353636',
-  silverMetallic20: '#414344',
+  silverMetallic10: '#eeedea',
+  silverMetallic10Alpha: '#a5adb41a',
+  silverMetallic20: '#e6e6e5',
   silverMetallic30: '#DEDEDE',
+  silverMetallic40: '#d6d7d9',
+  silverMetallic50: '#ced1d2',
   silverMetallic80: '#8c9298',
   gunmetal: '#253439',
   gunmetal80: '#253439CC',
@@ -70,6 +82,34 @@ export const theme = extendTheme({
       800: '#22543D',
       900: '#1C4532',
     },
+    cyan: {
+      ...DefaultTheme.colors.cyan,
+      '200Alpha100': '#9decf91a',
+      '200Alpha200': '#9decf933',
+      '600Alpha100': '#00a3c41a',
+      '600Alpha200': '#00a3c433',
+    },
+    gray: {
+      ...DefaultTheme.colors.gray,
+      '200Alpha100': '#e2e8f01a',
+      '200Alpha200': '#e2e8f033',
+      '600Alpha100': '#4a55681a',
+      '600Alpha200': '#4a556833',
+    },
+    orange: {
+      ...DefaultTheme.colors.orange,
+      '200Alpha100': '#fbd38d1a',
+      '200Alpha200': '#fbd38d33',
+      '600Alpha100': '#c056211a',
+      '600Alpha200': '#c0562133',
+    },
+    purple: {
+      ...DefaultTheme.colors.purple,
+      '200Alpha100': '#d6bcfa1a',
+      '200Alpha200': '#d6bcfa33',
+      '600Alpha100': '#6b46c11a',
+      '600Alpha200': '#6b46c133',
+    },
     ...COLOR_PALETTE,
   },
   components: {
@@ -86,6 +126,11 @@ export const theme = extendTheme({
     Tooltip: TooltipStyleConfig,
     Badge: BadgeStyleConfig,
     Text: TextStyleConfig,
+    Switch: SwitchConfigStyle,
+    Menu: MenuStyleConfig,
+    Checkbox: CheckboxStyleConfig,
+    Divider: DividierStyleConfig,
+    Tabs: TabsStyleConfig,
   },
 });
 

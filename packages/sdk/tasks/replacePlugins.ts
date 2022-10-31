@@ -1,10 +1,20 @@
-import { chainIdToConfig } from "@midas-capital/chains";
-import { DeployedPlugins } from "@midas-capital/types";
+import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
+
+const chainIdToConfig: { [chainId: number]: ChainConfig } = {
+  [bsc.chainId]: bsc,
+  [polygon.chainId]: polygon,
+  [moonbeam.chainId]: moonbeam,
+  [arbitrum.chainId]: arbitrum,
+  [neondevnet.chainId]: neondevnet,
+  [chapel.chainId]: chapel,
+  [ganache.chainId]: ganache,
+};
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
   async ({}, { ethers, getChainId, deployments }) => {
@@ -56,10 +66,6 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
             init: {
               methodName: "initialize",
               args: deployArgs,
-            },
-            onUpgrade: {
-              methodName: "reinitialize",
-              args: [],
             },
           },
           owner: deployer.address,

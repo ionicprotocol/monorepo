@@ -25,6 +25,8 @@ export enum RedemptionStrategyContract {
 export enum FundingStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   XBombLiquidatorFunder = "XBombLiquidatorFunder",
+  UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
+  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
 }
 
 export enum DelegateContractName {
@@ -36,6 +38,7 @@ export enum DelegateContractName {
 export enum OracleTypes {
   ChainlinkPriceOracleV2 = "ChainlinkPriceOracleV2",
   CurveLpTokenPriceOracleNoRegistry = "CurveLpTokenPriceOracleNoRegistry",
+  CurveV2LpTokenPriceOracleNoRegistry = "CurveV2LpTokenPriceOracleNoRegistry",
   DiaPriceOracle = "DiaPriceOracle",
   FixedNativePriceOracle = "FixedNativePriceOracle",
   FluxPriceOracle = "FluxPriceOracle",
@@ -47,6 +50,9 @@ export enum OracleTypes {
   AnkrBNBcPriceOracle = "AnkrBNBcPriceOracle",
   GelatoGUniPriceOracle = "GelatoGUniPriceOracle",
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
+  BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
+  StkBNBPriceOracle = "StkBNBPriceOracle",
+  BNBxPriceOracle = "BNBxPriceOracle",
 }
 
 export enum IrmTypes {
@@ -55,6 +61,12 @@ export enum IrmTypes {
   AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
   JumpRateModel_MIMO_2_004_4_08 = "JumpRateModel_MIMO_2_004_4_08",
   JumpRateModel_JARVIS_2_004_4_08 = "JumpRateModel_JARVIS_2_004_4_08",
+  AdjustableJumpRateModel_PSTAKE_WBNB = "AdjustableJumpRateModel_PSTAKE_WBNB",
+  AdjustableJumpRateModel_MIXBYTES_XCDOT = "AdjustableJumpRateModel_MIXBYTES_XCDOT",
+  AdjustableJumpRateModel_TRANSFERO_BRZ = "AdjustableJumpRateModel_TRANSFERO_BRZ",
+  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB = "AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB",
+  AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
+  AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
 }
 
 export enum LiquidationStrategy {
@@ -175,6 +187,7 @@ export enum assetSymbols {
   BOMB = "BOMB",
   xBOMB = "xBOMB",
   aBNBc = "aBNBc",
+  stkBNB = "stkBNB",
   SAFEMOON = "SAFEMOON",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
@@ -191,9 +204,15 @@ export enum assetSymbols {
   "BTCB-ETH" = "BTCB-ETH",
 
   "CAKE-WBNB" = "CAKE-WBNB",
+  "stkBNB-WBNB" = "stkBNB-WBNB",
+  BNBx = "BNBx",
+  "epsBNBx-BNB" = "epsBNBx-BNB",
+  "asBNBx-WBNB" = "ApeSwap BNBx-WBNB LP",
 
   DDD = "DDD",
   EPX = "EPX",
+  pSTAKE = "pSTAKE",
+  SD = "SD", // stader labs
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
@@ -216,6 +235,7 @@ export enum assetSymbols {
   stKSM = "stKSM",
   multiWBTC = "multiWBTC",
   multiUSDC = "multiUSDC",
+  USDC_wh = "USDC.wh",
   multiUSDT = "multiUSDT",
   multiDAI = "multiDAI",
   "3pool" = "3pool",
@@ -233,6 +253,7 @@ export enum assetSymbols {
 
   // neon
   WNEON = "WNEON",
+  MORA = "MORA",
 
   // polygon
   WMATIC = "WMATIC",
@@ -241,51 +262,56 @@ export enum assetSymbols {
   "WMATIC-ETH" = "WMATIC-ETH",
   "WMATIC-USDT" = "WMATIC-USDT",
   "WETH-WBTC" = "WETH-WBTC",
-  "AGEUR-JEUR" = "AGEUR-JEUR",
-  "JEUR-PAR" = "JEUR-PAR",
-  "JEUR-EURT" = "JEUR-EURT",
-  "JJPY-JPYC" = "JJPY-JPYC",
-  "JCAD-CADC" = "JCAD-CADC",
-  "JSGD-XSGD" = "JSGD-XSGD",
-  "JNZD-NZDS" = "JNZD-NZDS",
-  "EURE-JEUR" = "EURE-JEUR",
-  "JCHF-BUSD" = "JCHF-BUSD",
-  AGEUR = "AGEUR",
+  "AGEUR-JEUR" = "agEUR-jEUR",
+  "JEUR-PAR" = "jEUR-PAR",
+  "JEUR-EURT" = "jEUR-EURT",
+  "JJPY-JPYC" = "jJPY-JPYC",
+  "JCAD-CADC" = "jCAD-CADC",
+  "JSGD-XSGD" = "jSGD-XSGD",
+  "JNZD-NZDS" = "jNZD-NZDS",
+  "EURE-JEUR" = "EURE-jEUR",
+  "JCHF-BUSD" = "jCHF-BUSD",
+  AGEUR = "agEUR",
   EURT = "EURT",
   EURE = "EURE",
   CADC = "CADC",
-  JSGD = "JSGD",
-  JJPY = "JJPY",
-  JAUD = "JAUD",
-  JCAD = "JCAD",
-  JNZD = "JNZD",
-  JCHF = "JCHF",
-  JCNY = "JCNY",
-  JEUR = "JEUR",
-  JKRW = "JKRW",
-  JMXN = "JMXN",
-  JGBP = "JGBP",
-  JPLN = "JPLN",
-  JPHP = "JPHP",
+  JSGD = "jSGD",
+  JJPY = "jJPY",
+  JAUD = "jAUD",
+  JCAD = "jCAD",
+  JNZD = "jNZD",
+  JCHF = "jCHF",
+  JCNY = "jCNY",
+  JEUR = "jEUR",
+  JKRW = "jKRW",
+  JMXN = "jMXN",
+  JGBP = "jGBP",
+  JPLN = "jPLN",
+  JPHP = "jPHP",
   JPYC = "JPYC",
-  JSEK = "JSEK",
+  JSEK = "jSEK",
   PAR = "PAR",
   NZDS = "NZDS",
   XSGD = "XSGD",
+  MIMO = "MIMO",
+  JRT = "JRT",
+
+  // Balancer
+  MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
-  arrakis_USDC_WETH_005 = "arrakis_USDC_WETH_005",
-  arrakis_WBTC_WETH_005 = "arrakis_WBTC_WETH_005",
-  arrakis_USDC_PAR_005 = "arrakis_USDC_PAR_005",
-  arrakis_WMATIC_USDC_005 = "arrakis_WMATIC_USDC_005",
-  arrakis_USDC_agEUR_001 = "arrakis_USDC_agEUR_001",
-  arrakis_WMATIC_WETH_005 = "arrakis_WMATIC_WETH_005",
-  arrakis_WMATIC_AAVE_03 = "arrakis_WMATIC_AAVE_03",
-  arrakis_USDC_MAI_005 = "arrakis_USDC_MAI_005",
-  arrakis_USDC_USDT_001 = "arrakis_USDC_USDT_001",
-  arrakis_USDC_USDT_005 = "arrakis_USDC_USDT_005",
-  arrakis_USDC_DAI_005 = "arrakis_USDC_DAI_005",
-  arrakis_WETH_DAI_03 = "arrakis_WETH_DAI_03",
+  arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
+  arrakis_WBTC_WETH_005 = "Arrakis Vault V1 WBTC-WETH (0.05)",
+  arrakis_USDC_PAR_005 = "G-UNI USDC-PAR Vault (0.05)",
+  arrakis_WMATIC_USDC_005 = "Arrakis Vault V1 WMATIC-USDC (0.05)",
+  arrakis_USDC_agEUR_001 = "Arrakis Vault V1 USDC-agEUR (0.01)",
+  arrakis_WMATIC_WETH_005 = "Arrakis Vault V1 WMATIC-WETH (0.05)",
+  arrakis_WMATIC_AAVE_03 = "Arrakis Vault V1 WMATIC-AAVE (0.3)",
+  arrakis_USDC_MAI_005 = "Arrakis Vault V1 USDC-miMATIC (0.05)",
+  arrakis_USDC_USDT_001 = "Arrakis Vault V1 USDC-USDT (0.01)",
+  arrakis_USDC_USDT_005 = "Arrakis Vault V1 USDC-USDT (0.05)",
+  arrakis_USDC_DAI_005 = "G-UNI USDC-DAI Vault (0.05)",
+  arrakis_WETH_DAI_03 = "G-UNI WETH-DAI Vault (0.3)",
 
   // Stella
   "STELLA-GLMR" = "STELLA-GLMR",
@@ -293,6 +319,8 @@ export enum assetSymbols {
   "ATOM-GLMR" = "ATOM-GLMR",
   STELLA = "STELLA",
   CELR = "CELR",
+  LDO = "LDO",
+  "LDO-GLMR" = "LDO-GLMR",
 
   // Arbitrum
   "2pool" = "2pool",

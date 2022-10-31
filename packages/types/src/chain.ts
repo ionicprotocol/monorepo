@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { DeployedPlugins } from "./config";
+import { DeployedPlugins } from "./plugin";
 import { IrmTypes, OracleTypes, SupportedChains } from "./enums";
 import { FundingStrategy, LiquidationDefaults, RedemptionStrategy } from "./liquidation";
 
@@ -24,6 +24,11 @@ export interface ChainMetadata {
   shortName: string;
   name: string;
   img: string;
+  uniswapV3Fees?: {
+    [key: string]: {
+      [key: string]: number;
+    };
+  };
   rpcUrls: { [key: string]: string; default: string };
   blockExplorerUrls: {
     [key: string]: BlockExplorer;
@@ -58,7 +63,13 @@ export type ChainAddresses = {
   W_TOKEN_USD_CHAINLINK_PRICE_FEED: string;
   UNISWAP_V2_ROUTER: string;
   UNISWAP_V2_FACTORY: string;
+  UNISWAP_V3_ROUTER?: string;
   PAIR_INIT_HASH: string;
+  UNISWAP_V3?: {
+    FACTORY: string;
+    PAIR_INIT_HASH: string;
+    QUOTER_V2: string;
+  };
 };
 
 export type ChainSupportedAssets = {

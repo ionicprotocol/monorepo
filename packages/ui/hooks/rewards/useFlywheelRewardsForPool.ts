@@ -1,27 +1,29 @@
 import { useQuery } from '@tanstack/react-query';
 import LogRocket from 'logrocket';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useFlywheelRewardsForPool = (poolAddress?: string) => {
-  const {
-    midasSdk,
-    currentChain: { id: chainId },
-  } = useMidas();
+export const useFlywheelRewardsForPool = (poolAddress?: string, chainId?: number) => {
+  const sdk = useSdk(chainId);
 
   return useQuery(
-    ['useFlywheelRewardsForPool', chainId, poolAddress],
+    ['useFlywheelRewardsForPool', sdk?.chainId, poolAddress],
     async () => {
-      if (!poolAddress) return undefined;
-      try {
-        // Try with APRs first
-        return await midasSdk.getFlywheelMarketRewardsByPoolWithAPR(poolAddress);
-      } catch (error) {
-        LogRocket.captureException(new Error(`Unable to get Rewards with APRs for ${poolAddress}`));
-        // Fallback to rewards without APRs
-        return midasSdk.getFlywheelMarketRewardsByPool(poolAddress);
+      if (poolAddress && sdk) {
+        try {
+          // Try with APRs first
+          return await sdk.getFlywheelMarketRewardsByPoolWithAPR(poolAddress);
+        } catch (error) {
+          LogRocket.captureException(
+            new Error(`Unable to get Rewards with APRs for ${poolAddress}`)
+          );
+          // Fallback to rewards without APRs
+          return sdk.getFlywheelMarketRewardsByPool(poolAddress);
+        }
+      } else {
+        return [];
       }
     },
-    { enabled: !!poolAddress, initialData: [] }
+    { enabled: !!poolAddress && !!sdk, initialData: [] }
   );
 };

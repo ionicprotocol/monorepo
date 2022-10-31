@@ -30,6 +30,7 @@ export type ChainDeployConfig = {
   uniswap: {
     uniswapV2RouterAddress: string;
     uniswapV2FactoryAddress: string;
+    uniswapV3FactoryAddress?: string;
     uniswapOracleInitialDeployTokens: Array<UniswapOracleDeployConfig>;
     pairInitHashCode?: string;
     hardcoded: { name: string; symbol: string; address: string }[];
@@ -80,6 +81,10 @@ export type DiaAsset = {
 
 export type GelatoGUniAsset = {
   vaultAddress: string;
+};
+
+export type BalancerLpAsset = {
+  lpTokenAddress: string;
 };
 
 export type CurvePoolConfig = {
@@ -148,6 +153,11 @@ export type DiaStDotFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
+export type BalancerLpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  balancerLpAssets: BalancerLpAsset[];
+};
+
 export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
@@ -155,6 +165,12 @@ export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
 export type aBNBcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
 };
+
+export type stkBNBOracleDeployParams = ChainDeployFnParams & {
+  assets: SupportedAsset[];
+};
+
+export type BNBxOracleDeployParams = stkBNBOracleDeployParams;
 
 export type gelatoGUniPriceOracleDeployParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;

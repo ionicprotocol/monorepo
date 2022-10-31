@@ -1,14 +1,16 @@
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const useAllClaimableRewards = () => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
   return useQuery<FlywheelClaimableRewards[] | undefined>(
-    ['useAllClaimableRewards', midasSdk.chainId, address],
-    () => midasSdk.getFlywheelClaimableRewards(address),
-    { enabled: !!address }
+    ['useAllClaimableRewards', currentSdk?.chainId, address],
+    () => {
+      if (currentSdk && address) return currentSdk.getFlywheelClaimableRewards(address);
+    },
+    { enabled: !!address && !!currentSdk }
   );
 };

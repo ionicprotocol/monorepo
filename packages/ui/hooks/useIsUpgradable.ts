@@ -1,20 +1,26 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 export const useIsUpgradeable = (comptrollerAddress: string) => {
-  const { midasSdk, currentChain } = useMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
 
   const { data } = useQuery(
-    ['useIsUpgradeable', currentChain.id, comptrollerAddress],
+    ['useIsUpgradeable', currentChain?.id, comptrollerAddress, currentSdk?.chainId],
     async () => {
-      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      if (currentSdk) {
+        const comptroller = currentSdk.createComptroller(comptrollerAddress);
 
-      const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
+        const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 
-      return isUpgradeable;
+        return isUpgradeable;
+      }
     },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress && !!currentChain.id }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!comptrollerAddress && !!currentChain && !!currentSdk,
+    }
   );
 
   return data;

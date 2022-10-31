@@ -3,6 +3,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  Divider,
   Input,
   InputProps,
   Spinner,
@@ -27,21 +28,20 @@ import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
-import DashboardBox from '@ui/components/shared/DashboardBox';
+import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { SwitchCSS } from '@ui/components/shared/SwitchCSS';
-import { DEFAULT_DECIMALS, UserAction } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import TransactionStepper from '@ui/components/shared/TransactionStepper';
+import { DEFAULT_DECIMALS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -60,6 +60,7 @@ interface AmountSelectProps {
   onClose: () => void;
   setMode: (mode: FundOperationMode) => void;
   supplyBalanceFiat?: number;
+  poolChainId: number;
 }
 const AmountSelect = ({
   assets,
@@ -70,12 +71,15 @@ const AmountSelect = ({
   onClose,
   setMode,
   supplyBalanceFiat,
+  poolChainId,
 }: AmountSelectProps) => {
-  const { midasSdk, setPendingTxHash, address, currentChain } = useMidas();
+  const { currentSdk, setPendingTxHash, address, currentChain } = useMultiMidas();
+
+  if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
 
-  const { data: tokenData } = useTokenData(asset.underlyingToken);
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
   const [userAction, setUserAction] = useState(UserAction.NO_ACTION);
 
@@ -87,15 +91,20 @@ const AmountSelect = ({
 
   const showEnableAsCollateral = !asset.membership && mode === FundOperationMode.SUPPLY;
   const [enableAsCollateral, setEnableAsCollateral] = useState(showEnableAsCollateral);
-  const { cCard, cSwitch } = useColors();
+  const { cCard } = useColors();
 
   const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
 
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [failedStep, setFailedStep] = useState<number>(0);
+  const successToast = useSuccessToast();
+
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
-    asset.underlyingToken === midasSdk.chainSpecificAddresses.W_TOKEN &&
+    asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
     mode === FundOperationMode.SUPPLY &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
@@ -125,11 +134,13 @@ const AmountSelect = ({
 
   const {
     data: { minBorrowAsset, minBorrowUSD },
-  } = useBorrowMinimum(asset);
+  } = useBorrowMinimum(asset, poolChainId);
 
   const { data: amountIsValid } = useQuery(
-    ['ValidAmount', mode, amount, minBorrowAsset],
+    ['ValidAmount', mode, amount, minBorrowAsset, currentSdk.chainId, address],
     async () => {
+      if (!currentSdk || !address) return null;
+
       if (amount === null || amount.isZero() || !minBorrowAsset) {
         return false;
       }
@@ -137,7 +148,7 @@ const AmountSelect = ({
       try {
         const max = optionToWrap
           ? (myNativeBalance as BigNumber)
-          : ((await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber);
+          : ((await fetchMaxAmount(mode, currentSdk, address, asset)) as BigNumber);
         if (mode === FundOperationMode.BORROW && optionToWrap === false) {
           return amount.lte(max) && amount.gte(minBorrowAsset);
         } else {
@@ -192,28 +203,65 @@ const AmountSelect = ({
   }
 
   const onConfirm = async () => {
+    if (!currentSdk || !address) return;
+
     try {
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
       const isRepayingMax = amount.eq(asset.borrowBalance) && mode === FundOperationMode.REPAY;
       let tx: ContractTransaction;
 
       if (mode === FundOperationMode.SUPPLY) {
-        const resp = await midasSdk.supply(
-          asset.cToken,
-          asset.underlyingToken,
-          comptrollerAddress,
-          enableAsCollateral,
-          amount
-        );
+        try {
+          setActiveStep(0);
+          setFailedStep(0);
+          setIsDeploying(true);
 
-        if (resp.errorCode !== null) {
-          fundOperationError(resp.errorCode, minBorrowUSD);
-        } else {
-          tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          try {
+            setActiveStep(1);
+
+            await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+
+            successToast({
+              description: 'Successfully Approved!',
+            });
+          } catch (error) {
+            setFailedStep(1);
+            throw error;
+          }
+
+          try {
+            setActiveStep(2);
+
+            await currentSdk.enterMarkets(asset.cToken, comptrollerAddress, enableAsCollateral);
+
+            successToast({
+              description: 'Collateral enabled!',
+            });
+          } catch (error) {
+            setFailedStep(2);
+            throw error;
+          }
+
+          try {
+            setActiveStep(3);
+            const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+            if (errorCode !== null) {
+              fundOperationError(errorCode, minBorrowUSD);
+            } else {
+              setPendingTxHash(tx.hash);
+            }
+          } catch (error) {
+            setFailedStep(3);
+            throw error;
+          }
+        } catch (error) {
+          setIsDeploying(false);
+          handleGenericError(error, errorToast);
+
+          return;
         }
       } else if (mode === FundOperationMode.REPAY) {
-        const resp = await midasSdk.repay(
+        const resp = await currentSdk.repay(
           asset.cToken,
           asset.underlyingToken,
           isRepayingMax,
@@ -227,7 +275,7 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.BORROW) {
-        const resp = await midasSdk.borrow(asset.cToken, amount);
+        const resp = await currentSdk.borrow(asset.cToken, amount);
 
         if (resp.errorCode !== null) {
           fundOperationError(resp.errorCode, minBorrowUSD);
@@ -236,12 +284,12 @@ const AmountSelect = ({
           setPendingTxHash(tx.hash);
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
-        const maxAmount = await fetchMaxAmount(mode, midasSdk, address, asset);
+        const maxAmount = await fetchMaxAmount(mode, currentSdk, address, asset);
         let resp;
         if (maxAmount.eq(amount)) {
-          resp = await midasSdk.withdraw(asset.cToken, constants.MaxUint256);
+          resp = await currentSdk.withdraw(asset.cToken, constants.MaxUint256);
         } else {
-          resp = await midasSdk.withdraw(asset.cToken, amount);
+          resp = await currentSdk.withdraw(asset.cToken, amount);
         }
 
         if (resp.errorCode !== null) {
@@ -261,8 +309,14 @@ const AmountSelect = ({
   };
 
   const onWrap = async () => {
+    if (!currentSdk) return;
+
     try {
-      const WToken = getContract(midasSdk.chainSpecificAddresses.W_TOKEN, WETHAbi, midasSdk.signer);
+      const WToken = getContract(
+        currentSdk.chainSpecificAddresses.W_TOKEN,
+        WETHAbi,
+        currentSdk.signer
+      );
 
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
 
@@ -277,9 +331,11 @@ const AmountSelect = ({
   };
 
   const updateAvailableToWithdraw = useCallback(async () => {
-    const max = await fetchMaxAmount(mode, midasSdk, address, asset);
+    if (!currentSdk || !address) return;
+
+    const max = await fetchMaxAmount(mode, currentSdk, address, asset);
     setAvailableToWithdraw(utils.formatUnits(max, asset.underlyingDecimals));
-  }, [address, asset, midasSdk, mode]);
+  }, [address, asset, currentSdk, mode]);
 
   useEffect(() => {
     if (mode === FundOperationMode.WITHDRAW) {
@@ -297,8 +353,17 @@ const AmountSelect = ({
       borderRadius={16}
     >
       {userAction === UserAction.WAITING_FOR_TRANSACTIONS ? (
-        <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4}>
+        <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
           <Loader />
+          <Box py={4} w="100%" h="100%">
+            {mode === FundOperationMode.SUPPLY && (
+              <TransactionStepper
+                activeStep={activeStep}
+                steps={SUPPLY_STEPS}
+                failedStep={failedStep}
+              />
+            )}
+          </Box>
           <Text mt="30px" textAlign="center" variant="smText">
             Check your wallet to submit the transactions
           </Text>
@@ -317,14 +382,14 @@ const AmountSelect = ({
             flexShrink={0}
           >
             <Box height="36px" width="36px">
-              <CTokenIcon size="36" address={asset.underlyingToken}></CTokenIcon>
+              <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
             </Box>
             <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
               {tokenData?.symbol || asset.underlyingSymbol}
             </Text>
           </Row>
 
-          <ModalDivider />
+          <Divider />
           <Column
             mainAxisAlignment="flex-start"
             crossAxisAlignment="center"
@@ -352,19 +417,37 @@ const AmountSelect = ({
                     <Text variant="smText" mr={2}>
                       Available To Withdraw:
                     </Text>
-                    <Text>
-                      {availableToWithdraw} {asset.underlyingSymbol}
-                    </Text>
+                    <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
+                      <Text
+                        maxWidth="250px"
+                        textOverflow={'ellipsis'}
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                      >
+                        {availableToWithdraw} {asset.underlyingSymbol}
+                      </Text>
+                    </SimpleTooltip>
                   </>
                 ) : (
                   <>
                     <Text variant="smText" mr={2}>
                       Wallet Balance:
                     </Text>
-                    <Text variant="smText">
-                      {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
-                      {asset.underlyingSymbol}
-                    </Text>
+                    <SimpleTooltip
+                      label={`${
+                        myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0
+                      } ${asset.underlyingSymbol}`}
+                    >
+                      <Text
+                        maxWidth="300px"
+                        textOverflow={'ellipsis'}
+                        whiteSpace="nowrap"
+                        overflow="hidden"
+                      >
+                        {myBalance ? utils.formatUnits(myBalance, asset.underlyingDecimals) : 0}{' '}
+                        {asset.underlyingSymbol}
+                      </Text>
+                    </SimpleTooltip>
                   </>
                 )}
               </Row>
@@ -416,7 +499,7 @@ const AmountSelect = ({
                       </Alert>
                     </Row>
                   )}
-                  <DashboardBox width="100%" height="70px" mt={3}>
+                  <MidasBox width="100%" height="70px" mt={3}>
                     <Row
                       width="100%"
                       p={4}
@@ -435,9 +518,10 @@ const AmountSelect = ({
                         asset={asset}
                         updateAmount={updateAmount}
                         optionToWrap={optionToWrap}
+                        poolChainId={poolChainId}
                       />
                     </Row>
-                  </DashboardBox>
+                  </MidasBox>
                   {mode === FundOperationMode.BORROW &&
                     maxBorrowInAsset &&
                     maxBorrowInAsset.number !== 0 && (
@@ -446,6 +530,7 @@ const AmountSelect = ({
                         updateAmount={updateAmount}
                         borrowableAmount={maxBorrowInAsset.number}
                         asset={asset}
+                        poolChainId={poolChainId}
                       />
                     )}
                 </>
@@ -465,28 +550,24 @@ const AmountSelect = ({
                   asset={asset}
                   mode={mode}
                   enableAsCollateral={enableAsCollateral}
+                  poolChainId={poolChainId}
                 />
 
                 {showEnableAsCollateral ? (
-                  <DashboardBox p={4} width="100%" mt={4}>
+                  <MidasBox p={4} width="100%" mt={4}>
                     <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
                       <Text variant="smText" fontWeight="bold">
                         Enable As Collateral:
                       </Text>
-                      <SwitchCSS
-                        symbol={asset.underlyingSymbol.replace(/[\s+()]/g, '')}
-                        color={cSwitch.bgColor}
-                      />
                       <Switch
                         h="20px"
-                        className={'switch-' + asset.underlyingSymbol.replace(/[\s+()]/g, '')}
                         isChecked={enableAsCollateral}
                         onChange={() => {
                           setEnableAsCollateral((past) => !past);
                         }}
                       />
                     </Row>
-                  </DashboardBox>
+                  </MidasBox>
                 ) : null}
               </>
             )}
@@ -523,7 +604,7 @@ const AmountSelect = ({
                 isDisabled={!amountIsValid}
                 height={16}
               >
-                {depositOrWithdrawAlert ?? 'Confirm'}
+                {isDeploying ? SUPPLY_STEPS[activeStep] : depositOrWithdrawAlert ?? 'Confirm'}
               </Button>
             )}
           </Column>
@@ -579,94 +660,52 @@ const TabBar = ({
 }) => {
   const isSupplySide = mode < 2;
 
-  const { cOutlineBtn } = useColors();
-
-  // Woohoo okay so there's some pretty weird shit going on in this component.
-  // yep. :upsidedownsmilieface:
-
-  // The AmountSelect component gets passed a `mode` param which is a `Mode` enum. The `Mode` enum has 4 values (SUPPLY, WITHDRAW, BORROW, REPAY).
-  // The `mode` param is used to determine what text gets rendered and what action to take on clicking the confirm button.
-
-  // As part of our simple design for the modal, we only show 2 mode options in the tab bar at a time.
-
-  // When the modal is triggered it is given a `defaultMode` (starting mode). This is passed in by the component which renders the modal.
-  // - If the user starts off in SUPPLY or WITHDRAW, we only want show them the option to switch between SUPPLY and WITHDRAW.
-  // - If the user starts off in BORROW or REPAY, we want to only show them the option to switch between BORROW and REPAY.
-
-  // However since the tab list has only has 2 tabs under it. It accepts an `index` parameter which determines which tab to show as "selected". Since we only show 2 tabs, it can either be 0 or 1.
-  // This means we can't just pass `mode` to `index` because `mode` could be 2 or 3 (for BORROW or REPAY respectively) which would be invalid.
-
-  // To solve this, if the mode is BORROW or REPAY we pass the index as `mode - 2` which transforms the BORROW mode to 0 and the REPAY mode to 1.
-
-  // However, we also need to do the opposite of that logic in `onChange`:
-  // - If a user clicks a tab and the current mode is SUPPLY or WITHDRAW we just pass that index (0 or 1 respectively) to setFundOperationMode.
-  // - But if a user clicks on a tab and the current mode is BORROW or REPAY, we need to add 2 to the index of the tab so it's the right index in the `Mode` enum.
-  //   - Otherwise whenever you clicked on a tab it would always set the mode to SUPPLY or BORROW when clicking the left or right button respectively.
-
-  // Does that make sense? Everything I described above is basically a way to get around the tab component's understanding that it only has 2 tabs under it to make it fit into our 4 value enum setup.
-  // Still confused? DM me on Twitter (@transmissions11) for help.
-
   return (
-    <>
-      <style>
-        {`
-            .chakra-tabs__tab {
-              color: ${cOutlineBtn.primary.txtColor};
-              border-bottom-width: 2px;
-            }
-            .chakra-tabs__tablist {
-              border: none;
-            }
-        `}
-      </style>
-      <Box width="100%" mt={1} mb="-1px" zIndex={99999}>
-        <Tabs
-          isFitted
-          width="100%"
-          align="center"
-          index={isSupplySide ? mode : mode - 2}
-          onChange={(index: number) => {
-            if (isSupplySide) {
-              setUserEnteredAmount('');
-              setAmount(constants.Zero);
-              return setMode(index);
-            } else {
-              setUserEnteredAmount('');
-              setAmount(constants.Zero);
-              return setMode(index + 2);
-            }
-          }}
-        >
-          <TabList height={10}>
-            {isSupplySide ? (
-              <>
-                <AmountTab className="supplyTab" mr={2} isDisabled={asset.isSupplyPaused}>
-                  Supply
-                </AmountTab>
-                <AmountTab className="withdrawTab" isDisabled={asset.supplyBalanceFiat === 0}>
-                  Withdraw
-                </AmountTab>
-              </>
-            ) : (
-              <>
-                <AmountTab
-                  className="borrowTab"
-                  mr={2}
-                  isDisabled={
-                    asset.isBorrowPaused || (supplyBalanceFiat && supplyBalanceFiat === 0)
-                  }
-                >
-                  Borrow
-                </AmountTab>
-                <AmountTab className="repayTab" isDisabled={asset.borrowBalanceFiat === 0}>
-                  Repay
-                </AmountTab>
-              </>
-            )}
-          </TabList>
-        </Tabs>
-      </Box>
-    </>
+    <Box width="100%" mt={1} mb="-1px" zIndex={99999}>
+      <Tabs
+        isFitted
+        width="100%"
+        align="center"
+        index={isSupplySide ? mode : mode - 2}
+        onChange={(index: number) => {
+          if (isSupplySide) {
+            setUserEnteredAmount('');
+            setAmount(constants.Zero);
+            return setMode(index);
+          } else {
+            setUserEnteredAmount('');
+            setAmount(constants.Zero);
+            return setMode(index + 2);
+          }
+        }}
+      >
+        <TabList height={10}>
+          {isSupplySide ? (
+            <>
+              <AmountTab className="supplyTab" mr={2} isDisabled={asset.isSupplyPaused}>
+                Supply
+              </AmountTab>
+              <AmountTab className="withdrawTab" isDisabled={asset.supplyBalanceFiat === 0}>
+                Withdraw
+              </AmountTab>
+            </>
+          ) : (
+            <>
+              <AmountTab
+                className="borrowTab"
+                mr={2}
+                isDisabled={asset.isBorrowPaused || (supplyBalanceFiat && supplyBalanceFiat === 0)}
+              >
+                Borrow
+              </AmountTab>
+              <AmountTab className="repayTab" isDisabled={asset.borrowBalanceFiat === 0}>
+                Repay
+              </AmountTab>
+            </>
+          )}
+        </TabList>
+      </Tabs>
+    </Box>
   );
 };
 
@@ -676,8 +715,16 @@ interface StatsColumnProps {
   asset: MarketData;
   amount: BigNumber;
   enableAsCollateral: boolean;
+  poolChainId: number;
 }
-const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsColumnProps) => {
+const StatsColumn = ({
+  mode,
+  assets,
+  asset,
+  amount,
+  enableAsCollateral,
+  poolChainId,
+}: StatsColumnProps) => {
   const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
   const updatedAssets: MarketData[] | undefined = useUpdatedUserAssets({
@@ -685,35 +732,39 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
     assets,
     index,
     amount,
+    poolChainId,
   });
 
-  const {
-    midasSdk,
-    currentChain: { id: chainId },
-  } = useMidas();
-  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
+  const { currentSdk, currentChain } = useMultiMidas();
+
+  if (!currentSdk || !currentChain) throw new Error("SDK doesn't exist!");
+
+  const blocksPerMinute = useMemo(
+    () => getBlockTimePerMinuteByChainId(currentChain.id),
+    [currentChain]
+  );
 
   // Define the old and new asset (same asset different numerical values)
   const updatedAsset = updatedAssets ? updatedAssets[index] : null;
 
   // Calculate Old and new Borrow Limits
-  const borrowLimit = useBorrowLimit(assets);
-  const updatedBorrowLimit = useBorrowLimit(updatedAssets ?? [], {
+  const borrowLimit = useBorrowLimit(assets, poolChainId);
+  const updatedBorrowLimit = useBorrowLimit(updatedAssets ?? [], poolChainId, {
     ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
   });
 
   const isSupplyingOrWithdrawing =
     mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
 
-  const supplyAPY = midasSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
-  const borrowAPR = midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
+  const supplyAPY = currentSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
+  const borrowAPR = currentSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
 
-  const updatedSupplyAPY = midasSdk.ratePerBlockToAPY(
+  const updatedSupplyAPY = currentSdk.ratePerBlockToAPY(
     updatedAsset?.supplyRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
 
-  const updatedBorrowAPR = midasSdk.ratePerBlockToAPY(
+  const updatedBorrowAPR = currentSdk.ratePerBlockToAPY(
     updatedAsset?.borrowRatePerBlock ?? constants.Zero,
     blocksPerMinute
   );
@@ -731,7 +782,7 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
     : '';
 
   return (
-    <DashboardBox width="100%" height="190px" mt={4}>
+    <MidasBox width="100%" height="190px" mt={4}>
       {updatedAsset ? (
         <Column
           mainAxisAlignment="space-between"
@@ -759,6 +810,10 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
                 fontWeight="bold"
                 flexShrink={0}
                 variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}
+                maxWidth="250px"
+                textOverflow={'ellipsis'}
+                whiteSpace="nowrap"
+                overflow="hidden"
               >
                 {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
                 {isSupplyingOrWithdrawing ? (
@@ -825,7 +880,7 @@ const StatsColumn = ({ mode, assets, asset, amount, enableAsCollateral }: StatsC
           <Spinner />
         </Center>
       )}
-    </DashboardBox>
+    </MidasBox>
   );
 };
 
@@ -834,30 +889,34 @@ const TokenNameAndMaxButton = ({
   asset,
   mode,
   optionToWrap,
+  poolChainId,
 }: {
   asset: NativePricedFuseAsset;
   mode: FundOperationMode;
   updateAmount: (newAmount: string) => void;
   optionToWrap: boolean | undefined;
+  poolChainId: number;
 }) => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
   const errorToast = useErrorToast();
 
   const [isLoading, setIsLoading] = useState(false);
   const {
     data: { minBorrowAsset },
-  } = useBorrowMinimum(asset);
+  } = useBorrowMinimum(asset, poolChainId);
 
   const setToMax = async () => {
+    if (!currentSdk || !address) return;
+
     setIsLoading(true);
 
     try {
       let maxBN;
       if (optionToWrap) {
-        maxBN = await midasSdk.signer.getBalance();
+        maxBN = await currentSdk.signer.getBalance();
       } else {
-        maxBN = (await fetchMaxAmount(mode, midasSdk, address, asset)) as BigNumber;
+        maxBN = (await fetchMaxAmount(mode, currentSdk, address, asset)) as BigNumber;
       }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
@@ -893,11 +952,24 @@ const TokenNameAndMaxButton = ({
     <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" flexShrink={0}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center">
         <Box height={8} width={8} mr={1}>
-          <CTokenIcon size="sm" address={asset.underlyingToken}></CTokenIcon>
+          <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
         </Box>
-        <Text variant="mdText" fontWeight="bold" mr={2} flexShrink={0}>
-          {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
-        </Text>
+        <SimpleTooltip
+          label={optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+        >
+          <Text
+            variant="mdText"
+            fontWeight="bold"
+            mr={2}
+            flexShrink={0}
+            maxWidth="100px"
+            textOverflow={'ellipsis'}
+            whiteSpace="nowrap"
+            overflow="hidden"
+          >
+            {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+          </Text>
+        </SimpleTooltip>
       </Row>
 
       {mode !== FundOperationMode.BORROW ? (
@@ -975,11 +1047,15 @@ export function fundOperationError(errorCode: number, minBorrowUSD?: number) {
   throw err;
 }
 
-export const fetchGasForCall = async (amountBN: BigNumber, midasSdk: MidasSdk, address: string) => {
+export const fetchGasForCall = async (
+  amountBN: BigNumber,
+  currentSdk: MidasSdk,
+  address: string
+) => {
   const estimatedGas = BigNumber.from(
     (
       (
-        await midasSdk.provider.estimateGas({
+        await currentSdk.provider.estimateGas({
           from: address,
           // Cut amountBN in half in case it screws up the gas estimation by causing a fail in the event that it accounts for gasPrice > 0 which means there will not be enough ETH (after paying gas)
           value: amountBN.div(BigNumber.from(2)),

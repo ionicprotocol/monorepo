@@ -72,12 +72,13 @@ To run `forge` commands inside the `sdk` package, run:
 - `yarn` from top-level to update dependencies/symlinks.
 ```
 
+## Working with Forks
 
-## Working with Mainnet Fork
+Forking requires access to a archive RPC node. For BSC we had a great experience using an RPC Node from NodeReals MegaNode service - https://nodereal.io/meganode .
 
-Make sure to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
+For forking Polygon we haven't found a free service to use an archive node yet.
 
-We had a great experience using an RPC Node from NodeReals MegaNode service - https://nodereal.io/meganode .
+You general purpose forking you have to set `FORK_RPC_URL` and `FORK_CHAIN_ID` in your `packages/sdk/.env` file.
 
 And than start a forked local node by running.
 
@@ -85,12 +86,38 @@ And than start a forked local node by running.
 > yarn dev:node:fork
 ```
 
+In order to start multiple forks at once we streamlined the process a bit. In your executing shell make sure to set `BSC_RPC_URL` and or `POLYGON_RPC_URL`.
+
+```
+> yarn dev:node:bsc
+// Will start a CHAIN_ID=56 fork using $BSC_RPC_URL at https://localhost:8545
+```
+
+```
+> yarn dev:node:polygon
+// Will start a CHAIN_ID=137 fork using $POLYGON_RPC_URL at https://localhost:8546
+```
+
+The idea is to increase the port number with each fork we want to support.
+
+```
+8545: BSC
+8546: Polygon
+8547: Moonbeam?
+```
+
 For convenience we have a Hardhat task to make some token swaps to on the forked node for you.
 
 ```
 > yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
-```
+// Works with https://localhost:8545
 
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network localbsc
+// Works with https://localhost:8545
+
+> yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network localpolygon
+// Works with https://localhost:8546
+```
 
 ## Running UI Tests
 
@@ -98,22 +125,61 @@ We are using [ChainSafe/dappeteer](https://github.com/ChainSafe/dappeteer) to te
 
 Follow this step to run the UI test locally
 
-1) Start local forked BSC node
+1. Start local forked BSC node
+
 ```
 > yarn dev:node:fork
 ```
 
-2) Start local UI dev server
+2. Start local UI dev server
+
 ```
 > yarn dev:ui
 ```
 
-3) Fund test accounts
+3. Fund test accounts
+
 ```
 > yarn workspace @midas-capital/sdk hardhat fork:fund-accounts --network fork
 ```
 
-4) Run dAppateer
+4. Run dAppateer
+
 ```
 > yarn test:ui
+```
+
+### UI Test With WSL2
+
+If you are on windows you need an X-server to run dappeteer.
+These instructions were taken from here: https://www.rickmakes.com/windows-subsystem-for-linux-2-installing-vcxrv-x-server/
+
+Follow these steps before running `yarn test:ui`
+
+1. Download VcXsrv, this is your X-server that will display the GUI
+   https://sourceforge.net/projects/vcxsrv/
+2. Run VcXsrv. Use these settings
+
+```
+Multiple Windows -> Start No Client -> Check All Boxes in Extra Settings -> Finish
+```
+
+If Windows Defender Firewall prompts you, check both Private & Public Networks and Allow Access
+
+3. Find your Windows IP Address by running the following command
+
+```
+cat /etc/resolv.conf
+```
+
+4. Set DISPLAY Variable (replace ip_address with your IP Address found above)
+
+```
+export DISPLAY=ip_address:0.0
+```
+
+5. export opengl Variable
+
+```
+export LIBGL_ALWAYS_INDIRECT=1
 ```

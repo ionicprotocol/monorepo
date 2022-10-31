@@ -1,6 +1,42 @@
+import { SupportedChains } from "@midas-capital/types";
+
 export const defaultDocs = (blockExplorerUrl: string, tokenAddress: string): string => {
   return `<p><b>How to acquire this token</b><p/><br />
   <p>Check out the token tracker for this asset in the <a href="${blockExplorerUrl}/token/${tokenAddress}" target="_blank">Official Block Explorer</a>, where you can access the token's site as well as market information</p>`;
+};
+
+export const wrappedAssetDocs = (chainId: SupportedChains) => {
+  const wrapAddress = {
+    [SupportedChains.bsc]: {
+      swapName: "PancakeSwap",
+      swapAddress: "https://pancakeswap.finance/swap?outputCurrency=0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c",
+    },
+    [SupportedChains.polygon]: {
+      swapName: "SushiSwap",
+      swapAddress:
+        "https://app.sushi.com/swap?tokens=MATIC&tokens=0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270&chainId=137",
+    },
+    [SupportedChains.moonbeam]: {
+      swapName: "StellaSwap",
+      swapAddress: "https://app.stellaswap.com/exchange/swap",
+    },
+    [SupportedChains.arbitrum]: {
+      swapName: "SushiSwap",
+      swapAddress:
+        "https://app.sushi.com/swap?inputCurrency=ETH&outputCurrency=0x82aF49447D8a07e3bd95BD0d56f35241523fBab1&chainId=42161",
+    },
+    [SupportedChains.ganache]: {},
+    [SupportedChains.evmos]: {},
+    [SupportedChains.neon_devnet]: {
+      swapName: "MoraSwap",
+      swapAddress: "https://moraswap.com/exchange/swap",
+    },
+    [SupportedChains.chapel]: {},
+  }[chainId];
+
+  return `<p><b>How to acquire the wrapped token: </b><p/><br />
+  Head over to the <a href="${wrapAddress.swapAddress}" target="_blank">${wrapAddress.swapName} Exchange and swap your native token for the wrapped token</a></p>
+  `;
 };
 
 export const ellipsisDocs = (poolAddress: string, poolName: string, tokenAddress: string) => {
@@ -17,12 +53,32 @@ export const ankrBNBDocs = (variant: string) => {
   <p>Head over to <a href="https://www.ankr.com/staking/stake/bnb/?token=${variant}" target="_blank">Ankr BNB Staking</a>, where you can acquire ${variant} by depositing BNB</p>`;
 };
 
+export const stkBNBDocs = () => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p>Head over to <a href="https://bnb.pstake.finance/" target="_blank">pStake's BNB Staking</a>, where you can acquire stkBNB by depositing BNB</p>`;
+};
+
+export const BNBxDocs = () => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p>Head over to <a href="https://bnbchain.staderlabs.com/liquid-staking/bnbx/" target="_blank">Stader Lab's BNB Staking</a>, where you can acquire BNBx by depositing BNB</p>`;
+};
+
 export const pancakeSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
   return `<p><b>How to acquire this token</b><p/><br />
   <p> 1. Head to <a href="https://pancakeswap.finance/add/${token0}/${token1}" target="_blank">Pancakeswap</a>.</p><br />
   <p> 2. Ensure that the tokens are correct, and tap "Add Liquidity".</p>
   <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Pancakeswap to spend them. Finally, click on supply.</p>
   <p>You will get back <a href="https://bscscan.com/address/${tokenAddress}" target="_blank">Pancakeswap ${poolName} LP tokens</a> in your wallet.</p><br />
+  <p> 3. Come back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
+export const apeSwapDocs = (token0: string, token1: string, poolName: string, tokenAddress: string) => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head to <a href="https://apeswap.finance/add-liquidity/${token0}/${token1}" target="_blank">Apeswap</a>.</p><br />
+  <p> 2. Ensure that the tokens are correct, and tap "Add Liquidity".</p>
+  <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve Pancakeswap to spend them. Finally, click on supply.</p>
+  <p>You will get back <a href="https://bscscan.com/address/${tokenAddress}" target="_blank">Apeswap ${poolName} LP tokens</a> in your wallet.</p><br />
   <p> 3. Come back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };
@@ -77,6 +133,15 @@ export const curveFinancePolygonDocs = (
   }${poolNumber}/deposit" target="_blank"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p> 
   <p>You will get back the <a href="https://polygonscan.com/address/${tokenAddress}" target="_blank"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
+export const balacerDocs = (chain: string, poolAddress: string, poolName: string, tokenAddress: string) => {
+  return `<p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://${chain}.balancer.fi/#/pool/${poolAddress}" target="_blank"> Balancer ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p> 
+  <p>You will get back the <a href="https://polygonscan.com/address/${tokenAddress}" target="_blank"> Balancer ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };

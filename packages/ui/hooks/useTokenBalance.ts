@@ -1,14 +1,13 @@
-import { Web3Provider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber, Contract } from 'ethers';
-import { erc20ABI } from 'wagmi';
+import { BigNumber } from 'ethers';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { getCTokenContract } from '@ui/utils/contracts';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
-  midasSdk: MidasSdk,
+  currentSdk: MidasSdk,
   address?: string
 ): Promise<BigNumber> => {
   let balance: BigNumber;
@@ -16,9 +15,9 @@ export const fetchTokenBalance = async (
   if (!address) {
     balance = BigNumber.from(0);
   } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
-    balance = await midasSdk.provider.getBalance(address);
+    balance = await currentSdk.provider.getBalance(address);
   } else {
-    const contract = new Contract(tokenAddress, erc20ABI, midasSdk.provider as Web3Provider);
+    const contract = getCTokenContract(tokenAddress, currentSdk);
     balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
   }
 
@@ -26,17 +25,17 @@ export const fetchTokenBalance = async (
 };
 
 export function useTokenBalance(tokenAddress: string, customAddress?: string) {
-  const { midasSdk, currentChain, address } = useMidas();
+  const { currentSdk, currentChain, address } = useMultiMidas();
 
   const addressToCheck = customAddress ?? address;
 
   return useQuery(
-    ['TokenBalance', currentChain.id, tokenAddress, addressToCheck],
-    () => fetchTokenBalance(tokenAddress, midasSdk, addressToCheck),
+    ['TokenBalance', currentChain?.id, tokenAddress, addressToCheck, currentSdk?.chainId],
+    () => currentSdk && fetchTokenBalance(tokenAddress, currentSdk, addressToCheck),
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!currentChain.id && !!tokenAddress && !!addressToCheck,
+      enabled: !!currentChain && !!tokenAddress && !!addressToCheck && !!currentSdk,
     }
   );
 }

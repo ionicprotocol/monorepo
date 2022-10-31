@@ -2,27 +2,33 @@ import { Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import * as React from 'react';
 import { useMemo } from 'react';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const BorrowApy = ({ asset }: { asset: MarketData }) => {
-  const { currentChain, midasSdk } = useMidas();
+export const BorrowApy = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
+  const sdk = useSdk(poolChainId);
   const borrowApyColor = useColorModeValue('orange.500', 'orange');
-  const blocksPerMin = useMemo(
-    () => getBlockTimePerMinuteByChainId(currentChain.id),
-    [currentChain.id]
-  );
-  const borrowAPR = useMemo(
-    () => midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin),
-    [blocksPerMin, asset.borrowRatePerBlock, midasSdk]
-  );
+
+  const borrowAPR = useMemo(() => {
+    if (sdk) {
+      const blocksPerMin = getBlockTimePerMinuteByChainId(sdk.chainId);
+
+      return sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMin);
+    }
+  }, [asset.borrowRatePerBlock, sdk]);
 
   return (
     <VStack alignItems={'flex-end'}>
-      <Text color={borrowApyColor} fontWeight="bold" variant="smText">
-        {borrowAPR.toFixed(3)}%
-      </Text>
+      {asset.isBorrowPaused || borrowAPR === undefined ? (
+        <Text color={borrowApyColor} fontWeight="bold" variant="smText">
+          -
+        </Text>
+      ) : (
+        <Text color={borrowApyColor} fontWeight="bold" variant="smText">
+          {borrowAPR.toFixed(3)}%
+        </Text>
+      )}
     </VStack>
   );
 };

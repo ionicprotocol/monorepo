@@ -1,4 +1,5 @@
 import {
+  Divider,
   Grid,
   Image,
   Modal,
@@ -9,19 +10,16 @@ import {
   ModalOverlay,
   Text,
 } from '@chakra-ui/react';
-import { useRouter } from 'next/router';
 import React, { useMemo } from 'react';
 import { useNetwork, useSwitchNetwork } from 'wagmi';
 
 import { CButton } from '@ui/components/shared/Button';
-import { ModalDivider } from '@ui/components/shared/Modal';
 import { supportedChainIdToConfig } from '@ui/types/ChainMetaData';
 import { getChainConfig } from '@ui/utils/networkData';
 
 const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
   const { chain, chains } = useNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
-  const router = useRouter();
 
   const supportedChains = useMemo(() => chains?.map((chain) => getChainConfig(chain.id)), [chains]);
 
@@ -33,7 +31,7 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
           <Text variant="title">Select a Network</Text>
         </ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <ModalBody mt={4} mb={6}>
           {chain ? (
             <Text variant="mdText">
@@ -67,14 +65,6 @@ const SwitchNetworkModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                       disabled={!supportedChainIdToConfig[chainMetadata.chainId].enabled}
                       onClick={() => {
                         switchNetworkAsync(chainMetadata.chainId).then(() => {
-                          router.push(
-                            {
-                              pathname: `/[chainId]`,
-                              query: { chainId: chainMetadata.chainId, sortBy: 'supply' },
-                            },
-                            undefined,
-                            { shallow: true }
-                          );
                           onClose();
                         });
                       }}

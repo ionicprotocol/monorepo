@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   Flex,
   FlexProps,
   HStack,
@@ -17,8 +18,10 @@ import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
+import FuseDashNav from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
+  FEATURE_REQUESTS_URL,
   MIDAS_DISCORD_URL,
   MIDAS_DOCS_URL,
   MIDAS_TELEGRAM_URL,
@@ -35,7 +38,7 @@ const FuseStatsBar = () => {
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
-      return Object.values(tvlData).reduce((a, c) => a + c.value, 0);
+      return [...tvlData.values()].reduce((a, c) => a + c.value, 0);
     }
   }, [tvlData]);
   const { cPage } = useColors();
@@ -49,7 +52,7 @@ const FuseStatsBar = () => {
       alignItems="flex-end"
       justifyContent="center"
       pt={{ base: '72px', md: '0px' }}
-      pb={{ base: '72px', md: '72px' }}
+      pb={{ base: 6, md: 6 }}
       px={{ base: 0, lg: 0 }}
       w="100%"
       gridGap="1.5rem"
@@ -97,6 +100,17 @@ const FuseStatsBar = () => {
               </motion.div>
             </Link>
           </SimpleTooltip>
+          <Button
+            variant="_link"
+            as={Link}
+            href={FEATURE_REQUESTS_URL}
+            isExternal
+            fontSize={{ base: 14, md: 16 }}
+            height="auto"
+          >
+            Request a new feature
+          </Button>
+          <FuseDashNav />
         </HStack>
       </Flex>
 
@@ -133,13 +147,15 @@ const FuseStatsBar = () => {
         </PopoverTrigger>
         {tvlData && (
           <PopoverContent p={2}>
-            <VStack width={'100%'} alignItems="flex-start">
-              {Object.values(tvlData).map((chainTVL, index) => (
+            <VStack width={'100%'} alignItems="flex-start" spacing={0}>
+              {[...tvlData.values()].map((chainTVL, index) => (
                 <Flex key={'tvl_' + index}>
                   <Avatar src={chainTVL.logo} />
                   <Box ml="3">
-                    <Text fontWeight="bold">{smallUsdFormatter(chainTVL.value)}</Text>
-                    <Text fontSize="sm">{chainTVL.name}</Text>
+                    <Text fontWeight="bold" mt={1}>
+                      {smallUsdFormatter(chainTVL.value)}
+                    </Text>
+                    <Text>{chainTVL.name}</Text>
                   </Box>
                 </Flex>
               ))}

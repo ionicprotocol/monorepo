@@ -1,6 +1,7 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
+import { ICurvePool__factory } from "../../../lib/contracts/typechain/factories/ICurvePool__factory";
 import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
 
@@ -55,12 +56,20 @@ export const getRedemptionStrategiesAndDatas = async (
   ];
 };
 
-const pickPreferredToken = (fuse: MidasBase, tokens: string[]): string => {
+const getUniswapV2Router = (fuse: MidasBase, asset: string): string => {
+  return Object.values(fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER).includes(asset)
+    ? fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER[asset]
+    : fuse.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
+};
+
+const pickPreferredToken = (fuse: MidasBase, tokens: string[], strategyOutputToken: string): string => {
   const wtoken = fuse.chainSpecificAddresses.W_TOKEN;
   const stableToken = fuse.chainSpecificAddresses.STABLE_TOKEN;
   const wBTCToken = fuse.chainSpecificAddresses.W_BTC_TOKEN;
 
-  if (tokens.find((t) => t == wtoken)) {
+  if (tokens.find((t) => t == strategyOutputToken)) {
+    return strategyOutputToken;
+  } else if (tokens.find((t) => t == wtoken)) {
     return wtoken;
   } else if (tokens.find((t) => t == stableToken)) {
     return stableToken;
@@ -81,28 +90,34 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
-      const curveLpOracleAddress = await redemptionStrategyContract.callStatic.oracle();
+      const curveLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
       const curveLpOracle = new Contract(
         curveLpOracleAddress,
         fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.abi,
         fuse.provider
       );
 
-      const tokens: string[] = [];
-      while (true) {
-        try {
-          const underlying = await curveLpOracle.callStatic.underlyingTokens(inputToken, tokens.length);
-          tokens.push(underlying);
-        } catch (e) {
-          break;
-        }
+      const tokens = await getCurvePoolUnderlyingTokens(fuse, await curveLpOracle.callStatic.poolOf(inputToken));
+
+      const preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
+      const outputTokenIndex = tokens.indexOf(preferredOutputToken);
+
+      // the native asset is not a real erc20 token contract, converting to wrapped
+      let actualOutputToken = preferredOutputToken;
+      if (
+        preferredOutputToken == ethers.constants.AddressZero ||
+        preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      ) {
+        actualOutputToken = fuse.chainSpecificAddresses.W_TOKEN;
       }
 
-      const preferredOutputToken = pickPreferredToken(fuse, tokens);
       return {
         strategyAddress: redemptionStrategyContract.address,
-        strategyData: new ethers.utils.AbiCoder().encode(["uint256", "address"], [0, preferredOutputToken]),
-        outputToken: preferredOutputToken,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["uint256", "address", "address", "address"],
+          [outputTokenIndex, preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
+        ),
+        outputToken: actualOutputToken,
       };
 
     case RedemptionStrategyContract.XBombLiquidatorFunder: {
@@ -130,7 +145,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
-          [fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, swapToken0Path, swapToken1Path]
+          [getUniswapV2Router(fuse, inputToken), swapToken0Path, swapToken1Path]
         ),
         outputToken,
       };
@@ -154,12 +169,14 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
     case RedemptionStrategyContract.CurveSwapLiquidator: {
-      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find(
-        (p) => p.coins.find((c) => c == inputToken) && p.coins.find((c) => c == outputToken)
+      // look up a pool for which the output token is an underlying
+      // and the input token is either the LP token or an underlying
+      const curvePool = fuse.chainConfig.liquidationDefaults.curveSwapPools.find((p) =>
+        p.coins.find((c) => c == outputToken && (p.poolAddress == inputToken || p.coins.find((c) => c == inputToken)))
       );
       if (curvePool == null) {
         throw new Error(
-          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with ${outputToken}`
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with output token ${outputToken}`
         );
       }
 
@@ -167,8 +184,8 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       const j = curvePool.coins.indexOf(outputToken);
 
       const strategyData = new ethers.utils.AbiCoder().encode(
-        ["address", "int128", "int128", "address"],
-        [curvePool.poolAddress, i, j, outputToken]
+        ["address", "int128", "int128", "address", "address"],
+        [curvePool.poolAddress, i, j, outputToken, fuse.chainSpecificAddresses.W_TOKEN]
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
@@ -177,4 +194,20 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
   }
+};
+
+const getCurvePoolUnderlyingTokens = async (fuse: MidasBase, poolAddress: string): Promise<string[]> => {
+  const tokens: string[] = [];
+
+  while (true) {
+    try {
+      const curvePool = new Contract(poolAddress, ICurvePool__factory.abi, fuse.provider);
+      const underlying = await curvePool.callStatic.coins(tokens.length);
+      tokens.push(underlying);
+    } catch (ignored) {
+      break;
+    }
+  }
+
+  return tokens;
 };

@@ -1,18 +1,20 @@
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useMemo } from 'react';
 
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
-  const {
-    midasSdk,
-    currentChain: { id: chainId },
-  } = useMidas();
-  const blocksPerMinute = useMemo(() => getBlockTimePerMinuteByChainId(chainId), [chainId]);
+export const usePoolDetails = (assets?: NativePricedFuseAsset[], poolChainId?: number) => {
+  const { getSdk } = useMultiMidas();
+  const sdk = useMemo(() => {
+    if (poolChainId) return getSdk(poolChainId);
+  }, [poolChainId, getSdk]);
+  const blocksPerMinute = useMemo(() => {
+    if (sdk) return getBlockTimePerMinuteByChainId(sdk.chainId);
+  }, [sdk]);
 
   return useMemo(() => {
-    if (assets && assets.length) {
+    if (assets && assets.length && sdk && blocksPerMinute) {
       let mostSuppliedAsset = assets[0];
       let topLendingAPYAsset = assets[0];
       let topBorrowAPRAsset = assets[0];
@@ -21,14 +23,14 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
           mostSuppliedAsset = asset;
         }
         if (
-          midasSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
-          midasSdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
+          sdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute) >
+          sdk.ratePerBlockToAPY(topLendingAPYAsset.supplyRatePerBlock, blocksPerMinute)
         ) {
           topLendingAPYAsset = asset;
         }
         if (
-          midasSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
-          midasSdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
+          sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute) >
+          sdk.ratePerBlockToAPY(topBorrowAPRAsset.borrowRatePerBlock, blocksPerMinute)
         ) {
           topBorrowAPRAsset = asset;
         }
@@ -42,5 +44,5 @@ export const usePoolDetails = (assets: NativePricedFuseAsset[] | undefined) => {
     } else {
       return null;
     }
-  }, [assets, midasSdk, blocksPerMinute]);
+  }, [assets, sdk, blocksPerMinute]);
 };

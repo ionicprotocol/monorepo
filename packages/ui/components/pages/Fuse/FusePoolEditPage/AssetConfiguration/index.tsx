@@ -1,4 +1,4 @@
-import { Box, Flex, Text } from '@chakra-ui/react';
+import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
 import React, { useEffect, useState } from 'react';
 
@@ -6,21 +6,65 @@ import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConf
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
 import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
-import { CTokenIcon } from '@ui/components/shared/CTokenIcon';
 import { Center, Column } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
+import { useTokenData } from '@ui/hooks/useTokenData';
+
+const AssetButton = ({
+  asset,
+  selectedAsset,
+  setSelectedAsset,
+  setSelectedIndex,
+  index,
+  isEditableAdmin,
+  poolChainId,
+}: {
+  asset: NativePricedFuseAsset;
+  selectedAsset: NativePricedFuseAsset;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  setSelectedIndex: (value: number) => void;
+  index: number;
+  isEditableAdmin?: boolean;
+  poolChainId: number;
+}) => {
+  const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
+
+  return (
+    <Box mr={2} key={asset.cToken} mb={2}>
+      <CButton
+        variant="filter"
+        isSelected={asset.cToken === selectedAsset.cToken}
+        onClick={() => {
+          setSelectedAsset(asset);
+          setSelectedIndex(index);
+        }}
+        px={2}
+        isDisabled={!isEditableAdmin}
+      >
+        <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
+        <Center px={1} fontWeight="bold">
+          {tokenData?.symbol ?? asset.underlyingSymbol}
+        </Center>
+      </CButton>
+    </Box>
+  );
+};
 
 const AssetConfiguration = ({
   openAddAssetModal,
   assets,
   comptrollerAddress,
+  poolChainId,
 }: {
   openAddAssetModal: () => void;
   assets: NativePricedFuseAsset[];
   comptrollerAddress: string;
+  poolChainId: number;
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   useEffect(() => {
     setSelectedAsset(assets[selectedIndex]);
@@ -43,11 +87,12 @@ const AssetConfiguration = ({
           <AddAssetButton
             comptrollerAddress={comptrollerAddress}
             openAddAssetModal={openAddAssetModal}
+            poolChainId={poolChainId}
           />
         </Box>
       </ConfigRow>
 
-      <ModalDivider />
+      <Divider />
 
       <ConfigRow>
         <Text variant="smText" mr={4}>
@@ -56,30 +101,28 @@ const AssetConfiguration = ({
         <Flex wrap="wrap">
           {assets.map((asset, index) => {
             return (
-              <Box mr={2} key={asset.cToken} mb={2}>
-                <CButton
-                  variant="filter"
-                  isSelected={asset.cToken === selectedAsset.cToken}
-                  onClick={() => {
-                    setSelectedAsset(asset);
-                    setSelectedIndex(index);
-                  }}
-                  px={2}
-                >
-                  <CTokenIcon size="sm" address={asset.underlyingToken} />
-                  <Center px={1} fontWeight="bold">
-                    {asset.underlyingSymbol}
-                  </Center>
-                </CButton>
-              </Box>
+              <AssetButton
+                key={index}
+                asset={asset}
+                selectedAsset={selectedAsset}
+                setSelectedAsset={setSelectedAsset}
+                setSelectedIndex={setSelectedIndex}
+                index={index}
+                isEditableAdmin={isEditableAdmin}
+                poolChainId={poolChainId}
+              />
             );
           })}
         </Flex>
       </ConfigRow>
 
-      <ModalDivider />
+      <Divider />
 
-      <EditAssetSettings comptrollerAddress={comptrollerAddress} selectedAsset={selectedAsset} />
+      <EditAssetSettings
+        comptrollerAddress={comptrollerAddress}
+        selectedAsset={selectedAsset}
+        poolChainId={poolChainId}
+      />
     </Column>
   );
 };

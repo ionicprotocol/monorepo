@@ -1,5 +1,5 @@
 import { bsc } from "@midas-capital/chains";
-import { assetSymbols, SupportedAsset, underlying } from "@midas-capital/types";
+import { assetSymbols, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
@@ -14,7 +14,9 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
+import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
 import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
 
 const assets = bsc.assets;
@@ -57,10 +59,24 @@ export const deployConfig: ChainDeployConfig = {
       },
       {
         token: underlying(assets, assetSymbols.EPX),
-        pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EXP
+        pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EPX
         baseToken: wbnb,
         minPeriod: 1800,
         deviationThreshold: "10000000000000000", // 1%
+      },
+      {
+        token: underlying(assets, assetSymbols.pSTAKE),
+        pair: "0x2bF1c14b71C375B35B4C157790bC4D6e557714FE", // WBNB-pSTAKE
+        baseToken: wbnb,
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
+      {
+        token: underlying(assets, assetSymbols.SD),
+        pair: "0x867EB519b05d9C4798B2EdE0B11197274dfDFcC0", // ApeSwap BUSD-SD
+        baseToken: underlying(assets, assetSymbols.BUSD),
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
       },
     ],
     uniswapOracleLpTokens: [
@@ -77,6 +93,8 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["BUSD-USDT"]), // BUSD-USDT PCS LP
       underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB-BTC PCS LP
       underlying(assets, assetSymbols["BTCB-ETH"]), // BTCB-ETH PCS LP
+      underlying(assets, assetSymbols["stkBNB-WBNB"]), // stkBNB-WBNB PCS LP
+      underlying(assets, assetSymbols["asBNBx-WBNB"]), // BNBx-WBNB ApeSwap LP
     ],
     flashSwapFee: 25,
   },
@@ -172,6 +190,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.JEUR,
+    aggregator: "0x0bf79F617988C472DcA68ff41eFe1338955b9A80",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.BRZ,
     aggregator: "0x5cb1Cb3eA5FB46de1CE1D0F3BaDB3212e8d8eF48",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -188,6 +211,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
 ];
 
+// TODO use these as funding and redemption strategies
 // https://docs.ellipsis.finance/deployment-links
 const curvePools: CurvePoolConfig[] = [
   {
@@ -232,6 +256,12 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.BRZw),
     ],
   },
+  {
+    // BNBx-BNB pool
+    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
+    underlyings: [underlying(assets, assetSymbols.BNBx), underlying(assets, assetSymbols.BNB)],
+  },
 ];
 
 const curveV2Pools: CurveV2PoolConfig[] = [
@@ -255,6 +285,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const { deployer } = await getNamedAccounts();
   ////
   //// ORACLES
+
+  // set Native BNB price
+  const mpo = await ethers.getContract("MasterPriceOracle", deployer);
+  const nativeBnb = underlying(assets, assetSymbols.BNB);
+
+  const existingOracle = await mpo.callStatic.oracles(nativeBnb);
+  if (existingOracle === ethers.constants.AddressZero) {
+    const fpo = await ethers.getContract("FixedNativePriceOracle", deployer);
+    const tx = await mpo.add([nativeBnb], [fpo.address]);
+    await tx.wait();
+  }
 
   //// Dia Price Oracle
   await deployDiaOracle({
@@ -317,6 +358,24 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     curveV2Pools,
   });
 
+  //// stk BNB  oracle
+  await deployStkBNBOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+  });
+
+  //// BNBx  oracle
+  await deployBNBxPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+  });
+
   //// Ankr BNB Certificate oracle
   await deployABNBcOracle({
     run,
@@ -370,11 +429,10 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(jarvisLiquidatorFunder.transactionHash);
   console.log("JarvisLiquidatorFunder: ", jarvisLiquidatorFunder.address);
 
-  /// EPS
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
+  /// curve LP tokens
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
-    args: [deployConfig.wtoken, curveOracle.address],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
@@ -382,15 +440,27 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
+  // curve swap underlying tokens
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
-    args: [deployConfig.wtoken],
+    args: [],
     log: true,
     waitConfirmations: 1,
   });
   if (curveSwapLiquidator.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
   console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
+  // curve swap liquidator funder - TODO replace the CurveSwapLiquidator above
+  const curveSwapLiquidatorFunder = await deployments.deploy("CurveSwapLiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidatorFunder.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
+  console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
 
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {

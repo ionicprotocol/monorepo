@@ -1,8 +1,19 @@
-import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { ankrBNBDocs, defaultDocs, ellipsisDocs, jarvisDocs, pancakeSwapDocs } from "../common";
+import {
+  ankrBNBDocs,
+  apeSwapDocs,
+  BNBxDocs,
+  defaultDocs,
+  ellipsisDocs,
+  jarvisDocs,
+  pancakeSwapDocs,
+  stkBNBDocs,
+} from "../common";
+import { wrappedAssetDocs } from "../common/docs";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
+export const BNB = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 export const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
 export const BTCB = "0x7130d2A12B9BCbFAe4f2634d864A1Ee1Ce3Ead9c";
 const DAI = "0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3";
@@ -25,8 +36,14 @@ const epsBUSD_jCHF = "0x5887cEa5e2bb7dD36F0C06Da47A8Df918c289A29";
 const BOMB = "0x522348779DCb2911539e76A1042aA922F9C47Ee3";
 const xBOMB = "0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b";
 const aBNBc = "0xE85aFCcDaFBE7F2B096f268e31ccE3da8dA2990A";
+const stkBNB_WBNB = "0xaA2527ff1893e0D40d4a454623d362B79E8bb7F1";
+const stkBNB = "0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16";
+const asBNBx_WBNB = "0xB88F211EC9ecfc2931Ae1DE53ea28Da76B9Ed37A";
+const epsBNBx_BNB = "0x5c73804FeDd39f3388E03F4aa1fE06a1C0e60c8e";
+const BNBx = "0x1bdd3Cf7F79cfB8EdbB955f20ad99211551BA275";
 const jBRL = "0x316622977073BBC3dF32E7d2A9B3c77596a0a603";
 const jCHF = "0x7c869b5A294b1314E985283d01C702B62224a05f";
+const jEUR = "0x23b8683Ff98F9E4781552DFE6f12Aa32814924e8";
 const BRZ = "0x71be881e9C5d4465B3FfF61e89c6f3651E69B5bb";
 const BRZw = "0x5b1a9850f55d9282a7C4Bf23A2a21B050e3Beb2f";
 const BTCB_BOMB = "0x84392649eb0bC1c1532F2180E58Bae4E1dAbd8D6";
@@ -43,15 +60,26 @@ const CAKE_WBNB = "0x0eD7e52944161450477ee417DE9Cd3a859b14fD0";
 const BTCB_ETH = "0xD171B26E4484402de70e3Ea256bE5A2630d7e88D";
 const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
 const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
+const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
+const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
 
 const assets: SupportedAsset[] = [
+  {
+    symbol: assetSymbols.BNB,
+    underlying: BNB,
+    name: "Binance Network Token",
+    decimals: 18,
+    oracle: OracleTypes.FixedNativePriceOracle,
+    extraDocs: defaultDocs("https://bscscan.com", BNB),
+    disabled: true,
+  },
   {
     symbol: assetSymbols.WBNB,
     underlying: WBNB,
     name: "Wrapped Binance Network Token",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", WBNB),
+    extraDocs: wrappedAssetDocs(SupportedChains.bsc),
   },
   {
     symbol: assetSymbols.BUSD,
@@ -206,7 +234,7 @@ const assets: SupportedAsset[] = [
     underlying: epsBUSD_jCHF,
     name: "Ellipsis.finance JCHF-BUSD",
     decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    oracle: OracleTypes.CurveV2LpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", "eps BUSD jCHF", epsBUSD_jCHF),
   },
   // Bomb
@@ -234,12 +262,52 @@ const assets: SupportedAsset[] = [
     extraDocs: ankrBNBDocs("aBNBc"),
   },
   {
+    symbol: assetSymbols.stkBNB,
+    underlying: stkBNB,
+    name: "Staked BNB (Persistance)",
+    decimals: 18,
+    oracle: OracleTypes.StkBNBPriceOracle,
+    extraDocs: stkBNBDocs(),
+  },
+  {
+    symbol: assetSymbols.BNBx,
+    underlying: BNBx,
+    name: "Liquid Staked BNB (Stader)",
+    decimals: 18,
+    oracle: OracleTypes.BNBxPriceOracle,
+    extraDocs: BNBxDocs(),
+  },
+  {
+    symbol: assetSymbols["epsBNBx-BNB"],
+    underlying: epsBNBx_BNB,
+    name: "Ellipsis.finance epsBNBx (BNBx/BNB)",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA", "BNBx/BNB", epsBNBx_BNB),
+  },
+  {
+    symbol: assetSymbols["asBNBx-WBNB"],
+    underlying: asBNBx_WBNB,
+    name: "BNBx-BNB ApeSwap LP",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: apeSwapDocs(WBNB, BNBx, "BNBx-WBNB", asBNBx_WBNB),
+  },
+  {
     symbol: assetSymbols["BTCB-BOMB"],
     underlying: BTCB_BOMB,
     name: "BOMB-BTC PCS LP",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: pancakeSwapDocs(BTCB, BOMB, "BOMB-BTC", BTCB_BOMB),
+  },
+  {
+    symbol: assetSymbols["stkBNB-WBNB"],
+    underlying: stkBNB_WBNB,
+    name: "stkBNB-WBNB PCS LP",
+    decimals: 18,
+    oracle: OracleTypes.StkBNBPriceOracle,
+    extraDocs: pancakeSwapDocs(WBNB, stkBNB, "stkBNB-WBNB", stkBNB_WBNB),
   },
   // Jarvis
   {
@@ -254,6 +322,14 @@ const assets: SupportedAsset[] = [
     symbol: assetSymbols.JCHF,
     underlying: jCHF,
     name: "Jarvis Synthetic Swiss Franc",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v1"),
+  },
+  {
+    symbol: assetSymbols.JEUR,
+    underlying: jEUR,
+    name: "Jarvis Synthetic Euro",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v1"),
@@ -371,6 +447,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", EPX),
+    disabled: true,
   },
   {
     symbol: assetSymbols.DDD,
@@ -379,6 +456,24 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", DDD),
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.pSTAKE,
+    underlying: pSTAKE,
+    name: "pSTAKE",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", pSTAKE),
+  },
+  {
+    symbol: assetSymbols.SD,
+    underlying: SD,
+    name: "SD",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", SD),
+    disabled: true,
   },
 ];
 

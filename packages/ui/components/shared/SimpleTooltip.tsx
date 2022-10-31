@@ -12,20 +12,15 @@ export const SimpleTooltip = ({
   const { cPage } = useColors();
   return (
     <Box>
-      <style>
-        {`
-            .chakra-tooltip__arrow {
-              border-right: 1px solid ${cPage.primary.borderColor};
-              border-bottom: 1px solid ${cPage.primary.borderColor};
-            }
-        `}
-      </style>
       <Tooltip
         hasArrow
         bg={cPage.primary.bgColor}
         placement={'top'}
         aria-label={label}
         label={label}
+        sx={{
+          '--popper-arrow-shadow-color': `${cPage.primary.borderColor}`,
+        }}
         {...tooltipProps}
       >
         {children}

@@ -3,13 +3,29 @@ import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-cap
 import assets, { WBNB } from "./assets";
 
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
-  [underlying(assets, assetSymbols["3EPS"])]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-  [underlying(assets, assetSymbols["2brl"])]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-  [underlying(assets, assetSymbols["3brl"])]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
-  [underlying(assets, assetSymbols.val3EPS)]: [RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry, "ignored"],
+  [underlying(assets, assetSymbols["3EPS"])]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.BUSD),
+  ],
+  [underlying(assets, assetSymbols["2brl"])]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.jBRL),
+  ],
+  [underlying(assets, assetSymbols["3brl"])]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.jBRL),
+  ],
+  [underlying(assets, assetSymbols.val3EPS)]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.BUSD),
+  ],
   [underlying(assets, assetSymbols.valdai3EPS)]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
-    "ignored",
+    underlying(assets, assetSymbols.val3EPS),
+  ],
+  [underlying(assets, assetSymbols["JCHF-BUSD"])]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.BUSD),
   ],
   [underlying(assets, assetSymbols.MAI)]: [
     RedemptionStrategyContract.CurveSwapLiquidator,
@@ -57,6 +73,8 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.BTCB),
   ],
   [underlying(assets, assetSymbols["CAKE-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
+  [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
+  [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
 };
 
 export default redemptionStrategies;

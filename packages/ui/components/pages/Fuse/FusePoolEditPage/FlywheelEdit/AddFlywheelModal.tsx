@@ -3,6 +3,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   HStack,
   Input,
   InputGroup,
@@ -19,15 +20,14 @@ import React, { useCallback, useMemo, useState } from 'react';
 
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
-import { ModalDivider } from '@ui/components/shared/Modal';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useFlywheel } from '@ui/hooks/rewards/useFlywheel';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { AddFlywheelModalProps, AddFlywheelProps } from '@ui/types/ComponentPropsType';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
-  const { midasSdk, address } = useMidas();
+  const { currentSdk, address } = useMultiMidas();
 
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
@@ -42,10 +42,11 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
   );
 
   const addFlywheel = useCallback(async () => {
-    if (!flywheel) return;
+    if (!flywheel || !currentSdk) return;
+
     try {
       setIsAdding(true);
-      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      const comptroller = currentSdk.createComptroller(comptrollerAddress);
       const tx = await comptroller.functions._addRewardsDistributor(flywheel?.address, {
         from: address,
       });
@@ -60,7 +61,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
     } finally {
       setIsAdding(false);
     }
-  }, [address, comptrollerAddress, errorToast, flywheel, midasSdk, onSuccess, successToast]);
+  }, [address, comptrollerAddress, errorToast, flywheel, currentSdk, onSuccess, successToast]);
 
   return (
     <VStack width="100%">
@@ -126,7 +127,7 @@ const AddFlywheelModal = ({ isOpen, onClose, ...rest }: AddFlywheelModalProps) =
       <ModalContent>
         <ModalHeader>Add Existing Flywheel</ModalHeader>
         <ModalCloseButton top={4} />
-        <ModalDivider />
+        <Divider />
         <Center p={4}>
           <AddFlywheel {...rest} onSuccess={onClose} />
         </Center>

@@ -7,17 +7,14 @@ import {
 } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
+import chainAddresses from "./addresses";
 import { assets } from "./assets";
 
 const liquidationDefaults: LiquidationDefaults = {
-  SUPPORTED_OUTPUT_CURRENCIES: [
-    constants.AddressZero,
-    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
-  ],
-  SUPPORTED_INPUT_CURRENCIES: [
-    constants.AddressZero,
-    assets.find((a: SupportedAsset) => a.symbol === assetSymbols.WMATIC)!.underlying,
-  ],
+  DEFAULT_ROUTER: chainAddresses.UNISWAP_V2_ROUTER,
+  ASSET_SPECIFIC_ROUTER: {},
+  SUPPORTED_OUTPUT_CURRENCIES: [constants.AddressZero, underlying(assets, assetSymbols.WMATIC)],
+  SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, underlying(assets, assetSymbols.WMATIC)],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 20,
@@ -135,7 +132,64 @@ const liquidationDefaults: LiquidationDefaults = {
       collateralToken: underlying(assets, assetSymbols.USDC),
     },
   ],
-  curveSwapPools: [],
+  curveSwapPools: [
+    {
+      poolAddress: underlying(assets, assetSymbols["AGEUR-JEUR"]),
+      coins: [
+        underlying(assets, assetSymbols.AGEUR), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JEUR-PAR"]),
+      coins: [
+        underlying(assets, assetSymbols.PAR), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JJPY-JPYC"]),
+      coins: [
+        underlying(assets, assetSymbols.JJPY), // coin 0
+        underlying(assets, assetSymbols.JPYC), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JCAD-CADC"]),
+      coins: [
+        underlying(assets, assetSymbols.JCAD), // coin 0
+        underlying(assets, assetSymbols.CADC), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JSGD-XSGD"]),
+      coins: [
+        underlying(assets, assetSymbols.JSGD), // coin 0
+        underlying(assets, assetSymbols.XSGD), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JNZD-NZDS"]),
+      coins: [
+        underlying(assets, assetSymbols.JNZD), // coin 0
+        underlying(assets, assetSymbols.NZDS), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["JEUR-EURT"]),
+      coins: [
+        underlying(assets, assetSymbols.EURT), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+    {
+      poolAddress: underlying(assets, assetSymbols["EURE-JEUR"]),
+      coins: [
+        underlying(assets, assetSymbols.EURE), // coin 0
+        underlying(assets, assetSymbols.JEUR), // coin 1
+      ],
+    },
+  ],
 };
 
 export default liquidationDefaults;

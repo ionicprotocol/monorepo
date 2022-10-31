@@ -14,19 +14,20 @@ import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useMidas } from '@ui/context/MidasContext';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { shortUsdFormatter } from '@ui/utils/bigUtils';
+import { midUsdFormatter } from '@ui/utils/bigUtils';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
+const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   const { assets, totalSuppliedFiat, totalBorrowedFiat, totalAvailableLiquidityFiat, comptroller } =
     poolData || {
       assets: [] as Array<MarketData>,
@@ -39,26 +40,29 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
   const { cCard } = useColors();
   const router = useRouter();
   const poolId = router.query.poolId as string;
-  const { data } = useExtraPoolInfo(poolData?.comptroller);
+  const { data } = useExtraPoolInfo(poolData?.comptroller, poolData?.chainId);
 
   const [copiedText, setCopiedText] = useState<string>('');
   const { hasCopied, onCopy } = useClipboard(copiedText);
-  const { setLoading, currentChain, setPendingTxHash, midasSdk, scanUrl } = useMidas();
-
+  const { setGlobalLoading, setPendingTxHash, currentSdk } = useMultiMidas();
+  const scanUrl = useMemo(
+    () => poolData?.chainId && getScanUrlByChainId(poolData.chainId),
+    [poolData?.chainId]
+  );
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const queryClient = useQueryClient();
 
   const acceptOwnership = useCallback(async () => {
-    if (!comptroller) return;
+    if (!comptroller || !currentSdk) return;
     setIsLoading(true);
-    const unitroller = midasSdk.createUnitroller(comptroller);
+    const unitroller = currentSdk.createUnitroller(comptroller);
     const tx = await unitroller._acceptAdmin();
     setPendingTxHash(tx.hash);
     await tx.wait();
     setIsLoading(false);
 
     await queryClient.refetchQueries();
-  }, [comptroller, midasSdk, queryClient, setPendingTxHash]);
+  }, [comptroller, currentSdk, queryClient, setPendingTxHash]);
 
   useEffect(() => {
     if (copiedText) {
@@ -92,9 +96,14 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
           <Text variant="mdText" fontWeight="bold">{`Pool Details`}</Text>
 
           {data?.isPowerfulAdmin ? (
-            <RouterLink href={`/${currentChain.id}/pool/${poolId}/edit`} passHref>
+            <RouterLink href={`/${poolData?.chainId}/pool/${poolId}/edit`} passHref>
               <Link className="no-underline" ml={4}>
-                <Center px={2} fontWeight="bold" cursor="pointer" onClick={() => setLoading(true)}>
+                <Center
+                  px={2}
+                  fontWeight="bold"
+                  cursor="pointer"
+                  onClick={() => setGlobalLoading(true)}
+                >
                   Edit
                 </Center>
               </Link>
@@ -120,19 +129,19 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData }) => {
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Total Supplied</Text>
               <Text variant="smText" fontWeight="bold">
-                {shortUsdFormatter(totalSuppliedFiat)}
+                {midUsdFormatter(totalSuppliedFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Total Borrowed</Text>
               <Text variant="smText" fontWeight="bold">
-                {shortUsdFormatter(totalBorrowedFiat)}
+                {midUsdFormatter(totalBorrowedFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
               <Text variant="smText">Available Liquidity</Text>
               <Text variant="smText" fontWeight="bold">
-                {shortUsdFormatter(totalAvailableLiquidityFiat)}
+                {midUsdFormatter(totalAvailableLiquidityFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>

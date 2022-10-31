@@ -10,16 +10,17 @@
     "packages/monitors/oracle",
     "packages/chains",
     "packages/sdk",
+    "packages/security",
     "packages/types",
     "packages/ui"
   ],
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.38.0",
-    "@typescript-eslint/parser": "^5.38.0",
-    "netlify-cli": "^11.8.3",
-    "typescript": "^4.8.3"
+    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/parser": "^5.40.1",
+    "netlify-cli": "^12.0.9",
+    "typescript": "^4.8.4"
   },
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
@@ -32,6 +33,7 @@
     "build:sdk": "yarn build:types && yarn build:chains && yarn workspace @midas-capital/sdk build",
     "build:types": "yarn workspace @midas-capital/types build",
     "build:chains": "yarn build:types && yarn workspace @midas-capital/chains build",
+    "build:security": "yarn build:types && yarn build:chains && yarn workspace @midas-capital/security build",
     "build:twap": "yarn workspace @midas-capital/fuse-twap-bot build",
     "build:ui": "yarn workspace @midas-capital/ui build",
     "build:functions": "yarn workspace @midas-capital/functions build",
@@ -45,7 +47,9 @@
     "dev:functions": "yarn build:sdk && yarn build:ui && netlify dev",
     "dev:node": "yarn workspace @midas-capital/sdk hardhat node --no-deploy",
     "dev:node:deploy": "yarn workspace @midas-capital/sdk deploy:localhost",
-    "dev:node:fork": "yarn workspace @midas-capital/sdk hardhat node --no-deploy",
+    "dev:node:fork": "yarn workspace @midas-capital/sdk hardhat node --port 8545 --no-deploy",
+    "dev:node:bsc": "FORK_CHAIN_ID=56 FORK_RPC_URL=$BSC_RPC_URL yarn workspace @midas-capital/sdk hardhat node --port 8545 --no-deploy",
+    "dev:node:polygon": "FORK_CHAIN_ID=137 FORK_RPC_URL=$POLYGON_RPC_URL yarn workspace @midas-capital/sdk hardhat node --port 8546 --no-deploy",
     "dev:simulate:deploy:bsc": "FORK_RPC_URL=${FORK_RPC_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=56 yarn workspace @midas-capital/sdk hardhat node --tags prod",
     "test:ui": "yarn workspace @midas-capital/ui test"
   }

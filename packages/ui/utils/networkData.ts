@@ -1,6 +1,21 @@
-import { ChainConfig, SupportedChains } from '@midas-capital/types';
+import {
+  arbitrum,
+  bsc,
+  chapel,
+  evmos,
+  ganache,
+  moonbeam,
+  neondevnet,
+  polygon,
+} from '@midas-capital/chains';
+import {
+  ChainConfig,
+  ChainSupportedAssets as ChainSupportedAssetsType,
+  SupportedChains,
+} from '@midas-capital/types';
 import { BigNumber } from 'ethers';
 
+import { config } from '@ui/config/index';
 import { MINUTES_PER_YEAR } from '@ui/constants/index';
 import { chainIdToConfig, supportedChainIdToConfig } from '@ui/types/ChainMetaData';
 
@@ -39,3 +54,38 @@ export function getBlockTimePerMinuteByChainId(chainId: number): number {
     ? chain.specificParams.blocksPerYear.div(BigNumber.from(MINUTES_PER_YEAR)).toNumber()
     : 0;
 }
+
+export function getEnabledChains() {
+  const enabledChains: SupportedChains[] = [];
+
+  if (config.isBscEnabled) {
+    enabledChains.push(SupportedChains.bsc);
+  }
+  if (config.isPolygonEnabled) {
+    enabledChains.push(SupportedChains.polygon);
+  }
+  if (config.isMoonbeamEnabled) {
+    enabledChains.push(SupportedChains.moonbeam);
+  }
+
+  if (config.isArbitrumEnabled) {
+    enabledChains.push(SupportedChains.arbitrum);
+  }
+
+  if (config.isTestnetEnabled) {
+    enabledChains.push(SupportedChains.neon_devnet);
+  }
+
+  return enabledChains;
+}
+
+export const ChainSupportedAssets: ChainSupportedAssetsType = {
+  [SupportedChains.bsc]: bsc.assets,
+  [SupportedChains.polygon]: polygon.assets,
+  [SupportedChains.ganache]: ganache.assets,
+  [SupportedChains.evmos]: evmos.assets,
+  [SupportedChains.chapel]: chapel.assets,
+  [SupportedChains.moonbeam]: moonbeam.assets,
+  [SupportedChains.neon_devnet]: neondevnet.assets,
+  [SupportedChains.arbitrum]: arbitrum.assets,
+};

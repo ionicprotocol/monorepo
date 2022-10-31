@@ -9,6 +9,7 @@ export abstract class AppPage {
   protected Route = '';
 
   protected WalletConnectSelector = '#MetaMask';
+  protected ConnectWalletBtn = '#connectWalletBtn';
   protected WalletOptionMetamaskSelector = '#wallet-option-MetaMask';
 
   private ci: string = process.env.CI || 'false';
@@ -49,11 +50,19 @@ export abstract class AppPage {
 
     if (web3Connected) return;
 
-    const btnConnectWallet = await this.Page.waitForSelector(this.WalletConnectSelector);
+    const btnConnectWallet = await this.Page.$(this.ConnectWalletBtn);
 
     if (btnConnectWallet) {
+      await this.blockingWait(1);
       await btnConnectWallet.click();
-      await this.Metamask.approve();
+
+      const metamaskBtn = await this.Page.waitForSelector(this.WalletConnectSelector);
+
+      if (metamaskBtn) {
+        await metamaskBtn.click();
+        await this.Metamask.approve();
+        await this.bringToFront();
+      }
     }
   }
 
@@ -155,10 +164,6 @@ export abstract class AppPage {
 
     try {
       await this.Metamask.confirmTransaction();
-
-      // Try to confirm transaction again
-      await this.Metamask.confirmTransaction();
-      await this.blockingWait(3);
 
       const mmFooterButtons = await this.Metamask.page.$$('footer > button');
       if (mmFooterButtons && mmFooterButtons[1]) {

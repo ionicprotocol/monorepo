@@ -14,7 +14,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useMidas } from '@ui/context/MidasContext';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -25,6 +25,7 @@ interface MaxBorrowSliderProps {
   updateAmount: (amount: string) => void;
   borrowableAmount: number;
   asset: FuseAsset;
+  poolChainId: number;
 }
 
 function MaxBorrowSlider({
@@ -32,6 +33,7 @@ function MaxBorrowSlider({
   updateAmount,
   borrowableAmount,
   asset,
+  poolChainId,
 }: MaxBorrowSliderProps) {
   const { borrowedAmount, borrowedPercent, borrowLimit, borrowablePercent } = useMemo(() => {
     const borrowBalanceNumber = Number(
@@ -48,8 +50,8 @@ function MaxBorrowSlider({
   }, [asset, borrowableAmount]);
 
   const [sliderValue, setSliderValue] = useState(borrowedPercent);
-  const { coingeckoId } = useMidas();
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const cgId = useCgId(poolChainId);
+  const { data: usdPrice } = useUSDPrice(cgId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
   const { cPage } = useColors();

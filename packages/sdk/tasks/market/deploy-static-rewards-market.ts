@@ -48,7 +48,7 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
     // STEP 1: deploy plugins
     console.log(`Deploying plugin with arguments: ${JSON.stringify({ deployArgs })}`);
     const artifact = await deployments.getArtifact(contractName);
-    const deployment = await deployments.deploy(`${contractName}_${symbol}_${underlyingAddress}`, {
+    const deployment = await deployments.deploy(`${contractName}_${symbol}_${marketAddress}`, {
       contract: artifact,
       from: signer.address,
       proxy: {
@@ -80,8 +80,8 @@ task("deploy-static-rewards-market", "deploy dynamic rewards plugin with flywhee
       throw new Error(`Plugin asset: ${pluginAsset} does not match underlying asset: ${underlyingAddress}`);
     }
     console.log({ pluginAddress: plugin.address });
-    // STEP 2: whitelist plugins
 
+    // STEP 2: whitelist plugins
     console.log(`Whitelisting plugin: ${pluginAddress} ...`);
     await run("plugin:whitelist", {
       oldImplementation: pluginAddress,
