@@ -18,8 +18,8 @@ export interface AbstractPlugin {
   otherParams?: any[];
 }
 
-export interface PluginData extends AbstractPlugin {}
-export interface Plugin extends AbstractPlugin {}
+export type PluginData = AbstractPlugin;
+export type Plugin = AbstractPlugin;
 
 export interface BeefyPlugin extends AbstractPlugin {
   strategy: Strategy.Beefy;
