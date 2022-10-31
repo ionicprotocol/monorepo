@@ -10,7 +10,6 @@ export const PoolButtons = () => {
   return (
     <ButtonGroup spacing={0} flexFlow={'row wrap'} justifyContent="center">
       <Button
-        ml={4}
         onClick={() => {
           setGlobalLoading(true);
           router.push('/create-pool');

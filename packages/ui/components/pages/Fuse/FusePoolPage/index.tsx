@@ -1,6 +1,6 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { AvatarGroup, HStack, Skeleton, Text } from '@chakra-ui/react';
-import { SortingState } from '@tanstack/react-table';
+import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
@@ -15,11 +15,16 @@ import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { MIDAS_LOCALSTORAGE_KEYS, SHRINK_ASSETS } from '@ui/constants/index';
+import {
+  MARKET_COLUMNS,
+  MARKET_LTV,
+  MIDAS_LOCALSTORAGE_KEYS,
+  SHRINK_ASSETS,
+} from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useFlywheelRewardsForPool } from '@ui/hooks/rewards/useFlywheelRewardsForPool';
 import { useRewardTokensOfPool } from '@ui/hooks/rewards/useRewardTokensOfPool';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useRewards } from '@ui/hooks/useRewards';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const FusePoolPage = memo(() => {
@@ -29,19 +34,46 @@ const FusePoolPage = memo(() => {
   const poolId = router.query.poolId as string;
   const chainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(chainId));
-  const { data: marketRewards } = useFlywheelRewardsForPool(data?.comptroller, data?.chainId);
+  const { data: allRewards } = useRewards({ poolId: poolId, chainId: Number(chainId) });
   const rewardTokens = useRewardTokensOfPool(data?.comptroller, data?.chainId);
   const isMobile = useIsMobile();
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
+  const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
 
-    if (oldData && JSON.parse(oldData).marketSorting) {
+    if (
+      oldData &&
+      JSON.parse(oldData).marketSorting &&
+      MARKET_COLUMNS.includes(JSON.parse(oldData).marketSorting[0].id)
+    ) {
       setInitSorting(JSON.parse(oldData).marketSorting);
     } else {
-      setInitSorting([{ id: 'market', desc: true }]);
+      setInitSorting([{ id: MARKET_LTV, desc: true }]);
     }
+
+    const columnVisibility: VisibilityState = {};
+
+    if (
+      oldData &&
+      JSON.parse(oldData).marketColumnVisibility &&
+      JSON.parse(oldData).marketColumnVisibility.length > 0
+    ) {
+      MARKET_COLUMNS.map((columnId) => {
+        if (JSON.parse(oldData).marketColumnVisibility.includes(columnId)) {
+          columnVisibility[columnId] = true;
+        } else {
+          columnVisibility[columnId] = false;
+        }
+      });
+    } else {
+      MARKET_COLUMNS.map((columnId) => {
+        columnVisibility[columnId] = true;
+      });
+    }
+
+    setInitColumnVisibility(columnVisibility);
   }, []);
 
   return (
@@ -135,15 +167,16 @@ const FusePoolPage = memo(() => {
           )}
 
           <MidasBox overflowX="auto" width="100%" mb="4">
-            {data && initSorting ? (
+            {data && initSorting && initColumnVisibility ? (
               <MarketsList
                 assets={data.assets}
-                rewards={marketRewards}
+                rewards={allRewards}
                 comptrollerAddress={data.comptroller}
                 supplyBalanceFiat={data.totalSupplyBalanceFiat}
                 borrowBalanceFiat={data.totalBorrowBalanceFiat}
                 poolChainId={data.chainId}
                 initSorting={initSorting}
+                initColumnVisibility={initColumnVisibility}
               />
             ) : (
               <TableSkeleton tableHeading="Assets" />

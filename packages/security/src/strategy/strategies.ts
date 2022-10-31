@@ -336,7 +336,7 @@ export const strategies: ERC4626Strategy[] = [
   },
   {
     address: "0xdE58CF12595e92ebB07D664eE59A642e360bea58",
-    strategy: Strategy.Arrakis,
+    strategy: Strategy.Arrakis, // TODO should be called Mimo
     name: "Arrakis PAR-USDC Vault",
     complexity: StrategyComplexity.MEDIUM,
     timeInMarket: StrategyTimeInMarket.EXPERIMENTAL,
@@ -351,13 +351,28 @@ export const strategies: ERC4626Strategy[] = [
   },
   {
     address: "0xd682451F627d54cfdA74a80972aDaeF133cdc15e",
-    strategy: Strategy.Arrakis,
+    strategy: Strategy.Arrakis, // TODO should be called Mimo
     name: "Balancer LP MIMO80-PAR20",
     complexity: StrategyComplexity.MEDIUM,
     timeInMarket: StrategyTimeInMarket.EXPERIMENTAL,
     riskIL: AssetRiskIL.HIGH,
     liquidity: AssetRiskLiquidity.LOW,
     mktCap: AssetRiskMktCap.SMALL,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.ESTABLISHED,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
+  {
+    address: "0xdF23f2E94a322685DD4E967dE6165242cf00B85B",
+    strategy: Strategy.Arrakis,
+    name: "Arrakis PAR-USDC Vault",
+    complexity: StrategyComplexity.MEDIUM,
+    timeInMarket: StrategyTimeInMarket.EXPERIMENTAL,
+    riskIL: AssetRiskIL.LOW,
+    liquidity: AssetRiskLiquidity.LOW,
+    mktCap: AssetRiskMktCap.MEDIUM,
     supplyCentralised: AssetRiskSupply.DECENTRALIZED,
     reputation: PlatformRiskReputation.ESTABLISHED,
     audit: PlatformRiskAudit.AUDIT,

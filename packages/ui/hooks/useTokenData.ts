@@ -1,17 +1,4 @@
-import {
-  arbitrum,
-  bsc,
-  chapel,
-  evmos,
-  ganache,
-  moonbeam,
-  neondevnet,
-  polygon,
-} from '@midas-capital/chains';
-import {
-  ChainSupportedAssets as ChainSupportedAssetsType,
-  SupportedChains,
-} from '@midas-capital/types';
+import { SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ethers } from 'ethers';
@@ -21,17 +8,7 @@ import { config } from '@ui/config/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { TokensDataMap } from '@ui/types/TokensDataMap';
-
-const ChainSupportedAssets: ChainSupportedAssetsType = {
-  [SupportedChains.bsc]: bsc.assets,
-  [SupportedChains.polygon]: polygon.assets,
-  [SupportedChains.ganache]: ganache.assets,
-  [SupportedChains.evmos]: evmos.assets,
-  [SupportedChains.chapel]: chapel.assets,
-  [SupportedChains.moonbeam]: moonbeam.assets,
-  [SupportedChains.neon_devnet]: neondevnet.assets,
-  [SupportedChains.arbitrum]: arbitrum.assets,
-};
+import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 export const fetchTokenData = async (
   addresses: string[],

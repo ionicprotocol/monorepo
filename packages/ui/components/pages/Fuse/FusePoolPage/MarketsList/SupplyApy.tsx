@@ -1,24 +1,20 @@
-import { HStack, Text, useColorModeValue, VStack } from '@chakra-ui/react';
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import { Text, useColorModeValue, VStack } from '@chakra-ui/react';
 import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
-import { formatUnits } from 'ethers/lib/utils';
 import { useEffect, useMemo, useState } from 'react';
 
-import { NoApyInformTooltip } from './NoApyInformTooltip';
-
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
-import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
+import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface SupplyApyProps {
   asset: MarketData;
-  rewards: FlywheelMarketRewardsInfo[];
+  rewards: UseRewardsData;
   poolChainId: number;
 }
 
@@ -36,10 +32,12 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
   const { cCard } = useColors();
   const supplyApyColor = useColorModeValue('cyan.500', 'cyan');
 
-  const rewardsOfThisMarket = useMemo(
-    () => rewards.find((r) => r.market === asset.cToken),
-    [asset.cToken, rewards]
-  );
+  const rewardsOfThisMarket = useMemo(() => {
+    if (rewards && asset.cToken && rewards[asset.cToken]) {
+      return rewards[asset.cToken];
+    }
+    return [];
+  }, [asset.cToken, rewards]);
 
   const [aBNBcApr, setaBNBcApr] = useState('');
 
@@ -64,41 +62,16 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
       </Text>
 
+      {/* // TODO remove hardcoded Ankr Stuff here  */}
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
         <Text color={cCard.txtColor} variant="smText">
           + {Number(aBNBcApr).toFixed(2)}%
         </Text>
       )}
 
-      {rewardsOfThisMarket?.rewardsInfo && rewardsOfThisMarket?.rewardsInfo.length !== 0 ? (
-        rewardsOfThisMarket?.rewardsInfo.map((info) => (
-          <HStack key={info.rewardToken} justifyContent={'flex-end'} spacing={0}>
-            <HStack mr={2}>
-              <Text variant="smText" mr={-1}>
-                +
-              </Text>
-              <TokenIcon address={info.rewardToken} chainId={poolChainId} size="xs" />
-            </HStack>
-            {info.formattedAPR ? (
-              <Text
-                variant="smText"
-                ml={1}
-                title={formatUnits(info.formattedAPR, 16).toString() + '%'}
-              >
-                {Number(formatUnits(info.formattedAPR, 16)).toFixed(2).toString() + '%'}
-              </Text>
-            ) : (
-              <NoApyInformTooltip pluginAddress={asset.plugin} poolChainId={poolChainId} />
-            )}
-          </HStack>
-        ))
-      ) : asset.plugin ? (
-        <RewardsInfo
-          pluginAddress={asset.plugin}
-          poolChainId={poolChainId}
-          underlyingAddress={asset.underlyingToken}
-        />
-      ) : null}
+      {rewardsOfThisMarket.map((reward, index) => (
+        <RewardsInfo key={`reward_${index}`} reward={reward} chainId={poolChainId} />
+      ))}
     </VStack>
   );
 };

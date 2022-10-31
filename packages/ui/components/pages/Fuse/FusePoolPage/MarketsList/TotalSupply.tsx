@@ -10,15 +10,9 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { longFormat, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 
-export const TotalSupplied = ({
-  asset,
-  poolChainId,
-}: {
-  asset: MarketData;
-  poolChainId: number;
-}) => {
+export const TotalSupply = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
-  const totalSupplied = useMemo(() => {
+  const totalSupply = useMemo(() => {
     return Number(utils.formatUnits(asset.totalSupply, asset.underlyingDecimals));
   }, [asset.totalSupply, asset.underlyingDecimals]);
 
@@ -33,12 +27,12 @@ export const TotalSupplied = ({
         </Text>
       </SimpleTooltip>
       <SimpleTooltip
-        label={`${longFormat(totalSupplied)} ${
+        label={`${longFormat(totalSupply)} ${
           tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol
         }`}
       >
         <Text
-          className="totalSupplied"
+          className="totalSupply"
           mt={1}
           variant="smText"
           maxWidth="90px"
@@ -48,7 +42,7 @@ export const TotalSupplied = ({
           overflow="hidden"
         >
           {tokenFormatter(asset.totalSupply, asset.underlyingDecimals)}
-          {totalSupplied > DOWN_LIMIT && totalSupplied < UP_LIMIT && '+'}{' '}
+          {totalSupply > DOWN_LIMIT && totalSupply < UP_LIMIT && '+'}{' '}
           {tokenData?.extraData?.shortName ?? tokenData?.symbol ?? asset.underlyingSymbol}
         </Text>
       </SimpleTooltip>

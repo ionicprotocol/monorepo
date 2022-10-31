@@ -71,6 +71,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
     extraDocs: defaultDocs("https://bscscan.com", BNB),
+    disabled: true,
   },
   {
     symbol: assetSymbols.WBNB,
@@ -446,6 +447,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", EPX),
+    disabled: true,
   },
   {
     symbol: assetSymbols.DDD,
@@ -454,6 +456,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", DDD),
+    disabled: true,
   },
   {
     symbol: assetSymbols.pSTAKE,
@@ -470,6 +473,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", SD),
+    disabled: true,
   },
 ];
 

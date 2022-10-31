@@ -3,10 +3,12 @@ import { theme as DefaultTheme, extendTheme } from '@chakra-ui/react';
 import { AvatarStyleConfig } from '@ui/theme/components/Avatar';
 import { BadgeStyleConfig } from '@ui/theme/components/Badge';
 import { ButtonStyleConfig } from '@ui/theme/components/Button';
+import { CheckboxStyleConfig } from '@ui/theme/components/Checkbox';
 import { DividierStyleConfig } from '@ui/theme/components/Divider';
 import { IconButtonStyleConfig } from '@ui/theme/components/IconButton';
 import { InputConfigStyle } from '@ui/theme/components/Input';
 import { LinkStyleConfig } from '@ui/theme/components/Link';
+import { MenuStyleConfig } from '@ui/theme/components/Menu';
 import { ModalStyleConfig } from '@ui/theme/components/Modal';
 import { PopoverStyleConfig } from '@ui/theme/components/Popover';
 import { SelectConfigStyle } from '@ui/theme/components/Select';
@@ -36,9 +38,11 @@ export const COLOR_PALETTE = {
   white50: '#FFFFFF80',
   whiteBg: '#F6F4F1',
   silverMetallic: '#A5ADB4',
-  silverMetallic10: '#353636',
-  silverMetallic20: '#414344',
+  silverMetallic10: '#eeedea',
+  silverMetallic10Alpha: '#a5adb41a',
+  silverMetallic20: '#e6e6e5',
   silverMetallic30: '#DEDEDE',
+  silverMetallic40: '#d6d7d9',
   silverMetallic50: '#ced1d2',
   silverMetallic80: '#8c9298',
   gunmetal: '#253439',
@@ -123,6 +127,8 @@ export const theme = extendTheme({
     Badge: BadgeStyleConfig,
     Text: TextStyleConfig,
     Switch: SwitchConfigStyle,
+    Menu: MenuStyleConfig,
+    Checkbox: CheckboxStyleConfig,
     Divider: DividierStyleConfig,
     Tabs: TabsStyleConfig,
   },

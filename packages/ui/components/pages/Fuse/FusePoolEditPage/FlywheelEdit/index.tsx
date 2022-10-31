@@ -15,6 +15,8 @@ import {
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
+import { SupportedChains } from '@midas-capital/types';
+import { utils } from 'ethers';
 import React, { useCallback, useMemo, useState } from 'react';
 
 import AddFlywheelModal from '@ui/components/pages/Fuse/FusePoolEditPage/FlywheelEdit/AddFlywheelModal';
@@ -24,6 +26,7 @@ import { MidasBox } from '@ui/components/shared/Box';
 import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { TokenIconGroup } from '@ui/components/shared/TokenIconGroup';
+import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useIsUpgradeable } from '@ui/hooks/fuse/useIsUpgradable';
@@ -34,6 +37,7 @@ import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 import { PoolData } from '@ui/types/TokensDataMap';
+import { ChainSupportedAssets } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 
 const FlywheelEdit = ({ pool }: { pool: PoolData }) => {
@@ -161,6 +165,13 @@ const FlywheelRow = ({
 
   // Balances
   const { data: fwBalance } = useTokenBalance(flywheel.rewardToken, flywheel.rewards);
+  const fwTokenDecimal = useMemo(() => {
+    const asset = ChainSupportedAssets[pool.chainId as SupportedChains].find((asset) => {
+      return asset.underlying === flywheel.rewardToken;
+    });
+
+    return asset ? asset.decimals : DEFAULT_DECIMALS;
+  }, [flywheel.rewardToken, pool.chainId]);
   const marketsOfPool = useMemo(() => pool.assets.map((a) => a.cToken), [pool]);
   const activeMarkets = useMemo(
     () => flywheel.markets.filter((m) => marketsOfPool.includes(m)),
@@ -199,7 +210,8 @@ const FlywheelRow = ({
         )}
       </Td>
       <Td>
-        {(parseFloat(fwBalance?.toString() ?? '0') / 1e18).toFixed(3)} {tokenData?.symbol}
+        {fwBalance ? Number(utils.formatUnits(fwBalance, fwTokenDecimal)).toFixed(3) : 0}{' '}
+        {tokenData?.symbol}
       </Td>
       <Td>
         <Badge colorScheme={isAdmin ? 'green' : 'red'}>{isAdmin ? 'Admin' : 'Not Admin'}</Badge>
