@@ -9,6 +9,7 @@ import {
   Link,
   Spinner,
   Text,
+  useColorModeValue,
   useDisclosure,
   VStack,
 } from '@chakra-ui/react';
@@ -77,8 +78,11 @@ export const AdditionalInfo = ({
       onOpen();
     }
   };
+  const greenColor = useColorModeValue('green.500', 'green');
+  const yellowColor = useColorModeValue('yellow.500', 'yellow');
+  const redColor = useColorModeValue('red.500', 'red');
   const setColorByScore = (score: number) => {
-    return score > 0.8 ? 'green' : score > 0.6 ? 'yellow' : 'red';
+    return score > 0.8 ? greenColor : score > 0.6 ? yellowColor : redColor;
   };
 
   return (
