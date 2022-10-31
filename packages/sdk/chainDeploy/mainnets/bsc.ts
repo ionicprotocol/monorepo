@@ -456,7 +456,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     from: deployer,
     args: [],
     log: true,
-    waitConfirmations: 1
+    waitConfirmations: 1,
   });
   if (curveSwapLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);

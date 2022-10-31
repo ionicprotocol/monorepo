@@ -1,8 +1,8 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
-import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
 import { ICurvePool__factory } from "../../../lib/contracts/typechain/factories/ICurvePool__factory";
+import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
 
 export type StrategiesAndDatas = {
@@ -201,11 +201,7 @@ const getCurvePoolUnderlyingTokens = async (fuse: MidasBase, poolAddress: string
 
   while (true) {
     try {
-      const curvePool = new Contract(
-        poolAddress,
-        ICurvePool__factory.abi,
-        fuse.provider
-      );
+      const curvePool = new Contract(poolAddress, ICurvePool__factory.abi, fuse.provider);
       const underlying = await curvePool.callStatic.coins(tokens.length);
       tokens.push(underlying);
     } catch (ignored) {
@@ -214,4 +210,4 @@ const getCurvePoolUnderlyingTokens = async (fuse: MidasBase, poolAddress: string
   }
 
   return tokens;
-}
+};
