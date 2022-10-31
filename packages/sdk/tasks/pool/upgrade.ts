@@ -84,15 +84,16 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
-          if (admin == deployer.address) {
-            const autoImplOn = await comptroller.callStatic.autoImplementation();
-            if (!autoImplOn) {
+          const autoImplOn = await comptroller.callStatic.autoImplementation();
+          if (!autoImplOn) {
+            if (admin == deployer.address) {
               const tx = await comptroller._toggleAutoImplementations(true);
               await tx.wait();
               console.log(`turned autoimpl on ${tx.hash}`);
+            } else {
+              console.log(`the admin of the pool ${admin} is not the deployer and cannot turn on the auto impl`);
+              continue;
             }
-          } else {
-            console.log(`the admin of the pool ${admin} is not the deployer`);
           }
 
           console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);

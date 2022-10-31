@@ -14,6 +14,14 @@ const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } 
     FundingStrategyContract.XBombLiquidatorFunder,
     underlying(assets, assetSymbols.BOMB),
   ],
+  [underlying(assets, assetSymbols.MAI)]: [
+    FundingStrategyContract.CurveSwapLiquidatorFunder,
+    underlying(assets, assetSymbols.val3EPS),
+  ],
+  [underlying(assets, assetSymbols.val3EPS)]: [
+    FundingStrategyContract.CurveSwapLiquidatorFunder,
+    underlying(assets, assetSymbols.BUSD),
+  ],
 };
 
 export default fundingStrategies;

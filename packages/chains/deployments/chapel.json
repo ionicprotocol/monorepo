@@ -10426,6 +10426,25 @@
         {
           "inputs": [
             {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -10691,7 +10710,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x6B98340336cE524835F14d354a36ad880Ef30782",
+      "address": "0x0321F30b68781aE723d8D871C89b2D72dFc41Ff1",
       "abi": [
         {
           "anonymous": false,
@@ -11314,6 +11333,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -13044,7 +13082,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x6f8D2a75ba90b95FfF93601D0FF9084625F6CaB3",
+      "address": "0xa04e40073a999C03D6A81ce75d7A3C2abf6EaDB4",
       "abi": [
         {
           "anonymous": false,
@@ -21650,7 +21688,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0xf9E5b3616950f2681Cff5fA0d739Eb9aCFAB9648",
+      "address": "0x45a1411ecc9d2B8E8F7a86a8459194b96223e9ad",
       "abi": [
         {
           "inputs": [
