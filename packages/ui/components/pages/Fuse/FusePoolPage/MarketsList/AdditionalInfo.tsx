@@ -82,7 +82,7 @@ export const AdditionalInfo = ({
   const yellowColor = useColorModeValue('yellow.500', 'yellow');
   const redColor = useColorModeValue('red.500', 'red');
   const setColorByScore = (score: number) => {
-    return score > 0.8 ? greenColor : score > 0.6 ? yellowColor : redColor;
+    return score >= 0.7 ? greenColor : score >= 0.6 ? yellowColor : redColor;
   };
 
   return (
@@ -299,7 +299,7 @@ export const AdditionalInfo = ({
                   </Text>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.complexityScore > SCORE_LIMIT ? (
+                  {strategyScore.complexityScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon color={setColorByScore(strategyScore.complexityScore)} />
                   ) : (
                     <TriangleDownIcon color={setColorByScore(strategyScore.complexityScore)} />
@@ -325,7 +325,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.timeInMarketScore > SCORE_LIMIT ? (
+                  {strategyScore.timeInMarketScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon color={setColorByScore(strategyScore.timeInMarketScore)} />
                   ) : (
                     <TriangleDownIcon color={setColorByScore(strategyScore.timeInMarketScore)} />
@@ -356,7 +356,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.assetRiskILScore > SCORE_LIMIT ? (
+                  {strategyScore.assetRiskILScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskILScore)} />
                   ) : (
                     <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskILScore)} />
@@ -383,7 +383,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.assetRiskLiquidityScore > SCORE_LIMIT ? (
+                  {strategyScore.assetRiskLiquidityScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon
                       color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
                     />
@@ -415,7 +415,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.assetRiskMktCapScore > SCORE_LIMIT ? (
+                  {strategyScore.assetRiskMktCapScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskMktCapScore)} />
                   ) : (
                     <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskMktCapScore)} />
@@ -441,7 +441,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.assetRiskSupplyScore > SCORE_LIMIT ? (
+                  {strategyScore.assetRiskSupplyScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskSupplyScore)} />
                   ) : (
                     <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskSupplyScore)} />
@@ -476,7 +476,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.platformRiskReputationScore > SCORE_LIMIT ? (
+                  {strategyScore.platformRiskReputationScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon
                       color={setColorByScore(strategyScore.platformRiskReputationScore)}
                     />
@@ -508,7 +508,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.platformRiskAuditScore > SCORE_LIMIT ? (
+                  {strategyScore.platformRiskAuditScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon color={setColorByScore(strategyScore.platformRiskAuditScore)} />
                   ) : (
                     <TriangleDownIcon
@@ -534,7 +534,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.platformRiskContractsVerifiedScore > SCORE_LIMIT ? (
+                  {strategyScore.platformRiskContractsVerifiedScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon
                       color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
                     />
@@ -575,7 +575,7 @@ export const AdditionalInfo = ({
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
-                  {strategyScore.platformRiskAdminWithTimelockScore > SCORE_LIMIT ? (
+                  {strategyScore.platformRiskAdminWithTimelockScore >= SCORE_LIMIT ? (
                     <TriangleUpIcon
                       color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
                     />
