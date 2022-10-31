@@ -231,7 +231,7 @@ export const configureAddressesProviderStrategies = async ({
       if (!configPool) {
         const tx = await ap.setCurveSwapPool(onChainPool.poolAddress, []);
         await tx.wait();
-        console.log("cirve swap pool removed: ", tx.hash);
+        console.log("curve swap pool removed: ", tx.hash);
       }
     }
   }
