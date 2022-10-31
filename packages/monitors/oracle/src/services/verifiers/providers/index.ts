@@ -1,8 +1,6 @@
-import { MidasSdk } from "@midas-capital/sdk";
 import { OracleTypes } from "@midas-capital/types";
-import { Contract } from "ethers";
 
-import { PriceFeedInvalidity } from "../..";
+import { PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
 
 import { verifyChainLinkOraclePriceFeed } from "./chainlink";
 import { verifyDiaOraclePriceFeed } from "./dia";
@@ -10,12 +8,6 @@ import { verifyFluxOraclePriceFeed } from "./flux";
 import { verifyUniswapV2PriceFeed } from "./uniswapV2";
 export { verifyPriceValue } from "./price";
 export { getMpoPrice } from "./mpo";
-
-export interface VerifyFeedParams {
-  midasSdk: MidasSdk;
-  underlyingOracle: Contract;
-  underlying: string;
-}
 
 export async function verifyProviderFeed(
   oracle: OracleTypes,

@@ -1,9 +1,8 @@
 import { Contract } from "ethers";
 
-import { InvalidReason, logger, PriceFeedInvalidity } from "../../";
-import { config } from "../../config";
-
-import { VerifyFeedParams } from ".";
+import { logger } from "../../..";
+import { config as serviceConfig } from "../../../config";
+import { FeedVerifierConfig, InvalidReason, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
 
 export async function verifyUniswapV2PriceFeed({
   midasSdk,
@@ -26,6 +25,9 @@ export async function verifyUniswapV2PriceFeed({
     midasSdk.artifacts.UniswapTwapPriceOracleV2Root.abi,
     midasSdk.provider
   );
+
+  const config = serviceConfig as FeedVerifierConfig;
+
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
     [baseToken],

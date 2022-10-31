@@ -2,10 +2,10 @@ import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 import { logger } from "ethers";
 
-import { OracleFailure, PriceFeedInvalidity, PriceValueInvalidity } from "..";
 import { config } from "../config";
+import { OracleFailure, PriceFeedInvalidity } from "../types";
 
-export class DiscordAlert {
+export class DiscordService {
   asset: SupportedAsset;
   chainId: SupportedChains;
 
@@ -36,7 +36,7 @@ export class DiscordAlert {
     }
   }
 
-  public async sendInvalidFeedAlert(feedValidity: PriceFeedInvalidity | PriceValueInvalidity) {
+  public async sendInvalidFeedAlert(feedValidity: PriceFeedInvalidity) {
     const embed = this.create()
       .setTitle(feedValidity.invalidReason)
       .setDescription(feedValidity.message)

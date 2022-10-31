@@ -2,9 +2,9 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Wallet } from "ethers";
 
-import { logger } from "../../";
-import { config } from "../../config";
-import { DiscordAlert } from "../../controllers";
+import { logger } from "../../..";
+import { config } from "../../../config";
+import { DiscordService } from "../../discord";
 
 export const getMpoPrice = async (
   midasSdk: MidasSdk,
@@ -22,7 +22,7 @@ export const getMpoPrice = async (
   } catch (e) {
     const msg = `Failed to fetch price for ${asset.underlying} (${asset.symbol})`;
 
-    const alert = new DiscordAlert(asset, midasSdk.chainId);
+    const alert = new DiscordService(asset, midasSdk.chainId);
     await alert.sendMpoFailureAlert(msg);
 
     logger.error(msg);

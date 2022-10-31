@@ -1,9 +1,8 @@
 import { Contract } from "ethers";
 
-import { config } from "../../config";
-import { InvalidReason, logger, PriceFeedInvalidity } from "../../index";
-
-import { VerifyFeedParams } from ".";
+import { config as serviceConfig } from "../../../config";
+import { logger } from "../../../index";
+import { FeedVerifierConfig, InvalidReason, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
 
 export async function verifyChainLinkOraclePriceFeed({
   midasSdk,
@@ -23,6 +22,9 @@ export async function verifyChainLinkOraclePriceFeed({
   const [, , , updatedAt] = await chainLinkFeed.callStatic.latestRoundData();
   const updatedAtts = updatedAt.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
+
+  const config = serviceConfig as FeedVerifierConfig;
+
   const isValid = timeSinceLastUpdate < config.maxObservationDelay;
   if (!isValid) {
     return {

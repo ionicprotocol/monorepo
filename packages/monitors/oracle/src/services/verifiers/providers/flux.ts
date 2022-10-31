@@ -1,6 +1,4 @@
-import { PriceFeedInvalidity } from "../../";
-
-import { VerifyFeedParams } from ".";
+import { PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
 
 export async function verifyFluxOraclePriceFeed({
   midasSdk,
