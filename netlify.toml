@@ -44,11 +44,20 @@ ARBITRUM = "false"
 directory = "./packages/functions/dist/functions/src/functions"
 node_bundler = "esbuild"
 
-[functions."bsc-save-price"]
+[functions."bsc-plugin-data"]
 schedule = "@hourly"
 
-[functions."moonbeam-save-price"]
+[functions."moonbeam-plugin-data"]
 schedule = "@hourly"
 
-[functions."polygon-save-price"]
+[functions."polygon-plugin-data"]
+schedule = "@hourly"
+
+[functions."bsc-plugin-rewards"]
+schedule = "@hourly"
+
+[functions."moonbeam-plugin-rewards"]
+schedule = "@hourly"
+
+[functions."polygon-plugin-rewards"]
 schedule = "@hourly"

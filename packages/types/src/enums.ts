@@ -26,6 +26,7 @@ export enum FundingStrategyContract {
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   XBombLiquidatorFunder = "XBombLiquidatorFunder",
   UniswapV3LiquidatorFunder = "UniswapV3LiquidatorFunder",
+  CurveSwapLiquidatorFunder = "CurveSwapLiquidatorFunder",
 }
 
 export enum DelegateContractName {

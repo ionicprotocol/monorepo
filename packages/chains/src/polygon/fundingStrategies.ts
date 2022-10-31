@@ -60,6 +60,10 @@ const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } 
     FundingStrategyContract.JarvisLiquidatorFunder,
     underlying(assets, assetSymbols.USDC),
   ],
+  [underlying(assets, assetSymbols.PAR)]: [
+    FundingStrategyContract.UniswapV3LiquidatorFunder, // or CurveSwapLiquidatorFunder
+    underlying(assets, assetSymbols.USDC),
+  ],
 };
 
 export default fundingStrategies;
