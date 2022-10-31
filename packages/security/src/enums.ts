@@ -121,7 +121,8 @@ export const STRATEGY_HELP = {
     },
     DECENTRALIZED: {
       title: "Decentralized",
-      explanation: "Decentralized",
+      explanation:
+        "The supply is concentrated is spread across many users instead of being concentrated in the hands of a few whales, which makes it so that price manipulations are less likely to occur. The more people that have a vested interest over a coin, the better and more organic the price action is.",
     },
   },
   reputation: {
