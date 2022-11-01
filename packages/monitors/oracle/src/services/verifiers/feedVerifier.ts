@@ -41,7 +41,6 @@ export class FeedVerifier extends AbstractOracleVerifier {
       return null;
     }
     const { sdk, asset, underlyingOracle } = this;
-
     const feedArgs: VerifyFeedParams = {
       midasSdk: sdk,
       underlyingOracle: underlyingOracle,

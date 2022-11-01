@@ -1,5 +1,5 @@
-import { SupportedAssetPriceFeed } from "..";
 import { config, supabase } from "../config";
+import { SupportedAssetPriceFeed } from "../types";
 
 const updateOracleMonitorData = async (assets: SupportedAssetPriceFeed[]) => {
   for (const asset of assets) {
@@ -8,13 +8,8 @@ const updateOracleMonitorData = async (assets: SupportedAssetPriceFeed[]) => {
         {
           underlyingAddress: asset.asset.underlying.toLowerCase(),
           oracle: asset.asset.oracle,
-          priceValid: asset.priceValidity == null ? true : false,
           feedValid: asset.feedValidity == null ? true : false,
-          priceInvalidReason: asset.priceValidity ? asset.priceValidity.invalidReason : null,
-          priceInvalidMsg: asset.priceValidity ? asset.priceValidity.invalidReason : null,
-          feedInvalidReason: asset.feedValidity ? asset.feedValidity.invalidReason : null,
           chain: config.chainId,
-          priceBN: asset.mpoPrice,
         },
       ]);
       if (error) {

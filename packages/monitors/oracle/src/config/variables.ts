@@ -36,20 +36,8 @@ const priceChangeVerifierConfig: PriceChangeVerifierConfig = {
   maxPriceDeviation: parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
 };
 
-const configs = {
+export const configs = {
   [Services.FeedVerifier]: feedVerifierConfig,
   [Services.PriceVerifier]: priceVerifierConfig,
   [Services.PriceChangeVerifier]: priceChangeVerifierConfig,
 };
-
-const getConfig = () => {
-  if (!process.env.SERVICE_TO_RUN) {
-    throw new Error("SERVICE_TO_RUN env variable is not set");
-  }
-  const serviceToRun = process.env.SERVICE_TO_RUN as Services;
-
-  return configs[serviceToRun];
-};
-
-const config = getConfig();
-export default config;

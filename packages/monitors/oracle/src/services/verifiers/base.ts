@@ -18,7 +18,6 @@ export abstract class AbstractOracleVerifier {
     this.sdk = midasSdk;
     this.mpo = midasSdk.createMasterPriceOracle();
     this.alert = new DiscordService(asset, midasSdk.chainId);
-    this.init();
   }
   abstract init(): Promise<AbstractOracleVerifier | null>;
   abstract verify(): Promise<PriceFeedInvalidity | null>;

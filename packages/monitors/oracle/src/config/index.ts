@@ -1,2 +1,2 @@
 export { default as supabase } from "./supabase";
-export { default as config } from "./variables";
+export { config, verifier } from "./getter";
