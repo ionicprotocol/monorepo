@@ -144,7 +144,8 @@ export const MarketsList = ({
   }, [assets]);
 
   const totalApy = useMemo(() => {
-    if (!sdk) return {};
+    if (!sdk) return undefined;
+
     const result: { [market: string]: number } = {};
     for (const asset of assets) {
       let marketTotalAPY =
@@ -158,8 +159,11 @@ export const MarketsList = ({
       }
       result[asset.cToken] = marketTotalAPY;
     }
+
     return result;
-  }, [rewards, assets]);
+  }, [rewards, assets, poolChainId, sdk]);
+
+  const debouncedTotalApy = useDebounce(totalApy, 1000);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -505,6 +509,13 @@ export const MarketsList = ({
     const data = { ...oldObj, marketSorting: sorting, marketColumnVisibility: arr };
     localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
   }, [sorting, columnVisibility]);
+
+  useEffect(() => {
+    if (debouncedTotalApy && sorting.length > 0 && sorting[0].id === SUPPLY_APY) {
+      table.setSorting([...sorting]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [table, debouncedTotalApy]);
 
   return (
     <Box>

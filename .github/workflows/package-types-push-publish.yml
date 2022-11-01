@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
     paths:
       - 'packages/types/**'
       - '.github/workflows/package-types-push-publish.yml'
@@ -35,6 +36,7 @@ jobs:
 
       - uses: JS-DevTools/npm-publish@v1
         with:
+          if: github.ref == 'refs/heads/main'
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}
           access: 'public'
