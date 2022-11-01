@@ -15,6 +15,10 @@ export async function runVerifier(midasSdk: MidasSdk) {
     if (result !== null) {
       const poolsWithAsset = await verifierService.poolService.getPoolsWithAsset();
       console.log(poolsWithAsset);
+
+      // Take action on the pools with the asset
+      // TODO: make this safer -- we don't want to brick pools
+
       //   const action = await verifierService.adminService.pauseAllPools(poolsWithAsset);
     } else {
       logger.debug("No invalidity found");
