@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
     paths:
       - 'packages/chains/**'
       - 'packages/types/**'
@@ -35,6 +36,7 @@ jobs:
         run: yarn workspace @midas-capital/chains lint
 
       - uses: JS-DevTools/npm-publish@v1
+        if: github.ref == 'refs/heads/main'
         with:
           token: ${{ secrets.NPM_TOKEN }}
           tag: ${{env.GITHUB_REF_NAME == 'main' && 'latest' || 'beta'}}

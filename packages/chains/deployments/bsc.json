@@ -30883,7 +30883,7 @@
       ]
     },
     "CurveLpTokenLiquidatorNoRegistry": {
-      "address": "0x24BDEFc7E632f1A49859FcA1057237ABD8ec9F56",
+      "address": "0x8683557815883E9F9c4b79CF7DC034709A805d49",
       "abi": [
         {
           "inputs": [
@@ -31803,7 +31803,7 @@
       ]
     },
     "CurveSwapLiquidator": {
-      "address": "0x3C58A61EeA1555CF05Cad68eAC282F621E29cdc3",
+      "address": "0x306eB0D74d7D5acc32fDe6c9eF4Fe745da756a58",
       "abi": [
         {
           "inputs": [
@@ -31827,12 +31827,114 @@
           "outputs": [
             {
               "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
+    "CurveSwapLiquidatorFunder": {
+      "address": "0x82d586443096EcCAa043A1D4FD7Bea6425F3DF99",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convert",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
               "name": "outputToken",
               "type": "address"
             },
             {
               "internalType": "uint256",
               "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "estimateInputAmount",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
               "type": "uint256"
             }
           ],
@@ -44392,6 +44494,25 @@
         {
           "inputs": [
             {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -44657,7 +44778,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x031d08F4A37A5C6019a0F94d78C9A55dF4b4623F",
+      "address": "0xC8E74dBCc065aaE2C5f57d3878174119b7169e0E",
       "abi": [
         {
           "anonymous": false,
@@ -45280,6 +45401,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -47868,7 +48008,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xDC0B63d86465eaE60316A6492B3aF04A91eF7760",
+      "address": "0xCEB591BFEb1D2285DFD058Bc6cb93AAf52C42353",
       "abi": [
         {
           "anonymous": false,
@@ -62097,7 +62237,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0x7C33879Bb74cB9EFdF4148119167b298b95d8070",
+      "address": "0xC7F2Cc08D76ab9B9C98aB65e1682f686Aa6D2B09",
       "abi": [
         {
           "inputs": [
