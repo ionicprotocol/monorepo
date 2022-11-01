@@ -1,7 +1,7 @@
 import { Contract } from "ethers";
 
 import { logger } from "../../..";
-import { config as serviceConfig } from "../../../config";
+import { getConfig } from "../../../config";
 import { FeedVerifierConfig, InvalidReason, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
 
 export async function verifyUniswapV2PriceFeed({
@@ -26,7 +26,7 @@ export async function verifyUniswapV2PriceFeed({
     midasSdk.provider
   );
 
-  const config = serviceConfig as FeedVerifierConfig;
+  const config = getConfig() as FeedVerifierConfig;
 
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],

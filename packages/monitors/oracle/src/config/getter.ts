@@ -1,4 +1,4 @@
-import { Services } from "../types";
+import { Services, TVerifier } from "../types";
 
 import { configs } from "./variables";
 import { verifiers } from "./verifiers";
@@ -12,7 +12,7 @@ export const getConfig = () => {
   return configs[serviceToRun];
 };
 
-export const getVerifier = () => {
+export const getVerifier = (): TVerifier => {
   if (!process.env.SERVICE_TO_RUN) {
     throw new Error("SERVICE_TO_RUN env variable is not set");
   }
@@ -20,6 +20,3 @@ export const getVerifier = () => {
 
   return verifiers[verifierToUse];
 };
-
-export const config = getConfig();
-export const verifier = getVerifier();

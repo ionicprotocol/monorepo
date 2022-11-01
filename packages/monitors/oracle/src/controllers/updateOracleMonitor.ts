@@ -1,7 +1,9 @@
-import { config, supabase } from "../config";
+import { getConfig, getSupabaseClient } from "../config";
 import { SupportedAssetPriceFeed } from "../types";
 
 const updateOracleMonitorData = async (assets: SupportedAssetPriceFeed[]) => {
+  const config = getConfig();
+  const supabase = getSupabaseClient();
   for (const asset of assets) {
     try {
       const { error } = await supabase.from(config.supabaseOracleMonitorTableName).insert([

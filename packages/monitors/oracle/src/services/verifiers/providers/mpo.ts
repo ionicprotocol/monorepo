@@ -3,7 +3,7 @@ import { SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Wallet } from "ethers";
 
 import { logger } from "../../..";
-import { config } from "../../../config";
+import { getConfig } from "../../../config";
 import { DiscordService } from "../../discord";
 
 export const getMpoPrice = async (
@@ -12,6 +12,7 @@ export const getMpoPrice = async (
 ): Promise<{ mpoPrice: BigNumber; underlyingOracleAddress: string }> => {
   logger.info(`Fetching price for ${asset.underlying} (${asset.symbol})`);
 
+  const config = getConfig();
   const signer = new Wallet(config.adminPrivateKey, midasSdk.provider);
   const mpo = midasSdk.createMasterPriceOracle(signer);
 

@@ -1,6 +1,10 @@
+import { arbitrum, bsc, moonbeam, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedAsset } from "@midas-capital/types";
+import { ChainConfig, SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Contract } from "ethers";
+import { FeedVerifier, PriceChangeVerifier, PriceVerifier } from "./services";
+
+export type TVerifier = typeof FeedVerifier | typeof PriceVerifier | typeof PriceChangeVerifier;
 
 export enum Services {
   FeedVerifier = "feed-verifier",
@@ -66,3 +70,10 @@ export type PriceVerifierConfig = BaseConfig & {
 };
 
 export type PriceChangeVerifierConfig = PriceVerifierConfig;
+
+export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
+  [bsc.chainId]: bsc,
+  [polygon.chainId]: polygon,
+  [moonbeam.chainId]: moonbeam,
+  [arbitrum.chainId]: arbitrum,
+};

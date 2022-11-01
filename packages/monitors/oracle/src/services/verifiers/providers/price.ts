@@ -2,7 +2,7 @@ import { SupportedChains } from "@midas-capital/types";
 import { utils } from "ethers";
 
 import { logger } from "../../..";
-import { config } from "../../../config";
+import { getConfig } from "../../../config";
 import { InvalidReason, PriceFeedInvalidity, PriceVerifierConfig, VerifyPriceParams } from "../../../types";
 import { getDefiLlamaPrice } from "../../../utils";
 
@@ -23,11 +23,10 @@ export async function verifyPriceValue({
   const priceDiffPercent = (priceDiff / assetPriceUSD) * 100;
   logger.info(`Price difference for asset is ${priceDiffPercent}%`);
 
-  if (priceDiffPercent > (config as PriceVerifierConfig).maxPriceDeviation) {
+  const config = getConfig() as PriceVerifierConfig;
+  if (priceDiffPercent > config.maxPriceDeviation) {
     return {
-      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${
-        (config as PriceVerifierConfig).maxPriceDeviation
-      }%`,
+      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.maxPriceDeviation}%`,
       invalidReason: InvalidReason.DEVIATION_ABOVE_THRESHOLD,
     };
   }
