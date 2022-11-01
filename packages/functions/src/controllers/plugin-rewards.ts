@@ -11,8 +11,12 @@ const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => 
       Object.entries(plugins).map(async ([pluginAddress, pluginData]) => {
         try {
           const apyProvider = apyProviders[pluginData.strategy];
-          if (!apyProvider)
-            throw `No APYProvider available for: '${pluginData.strategy}' of ${pluginAddress}`;
+          if (!apyProvider) {
+            console.info(
+              `No APYProvider available for: '${pluginData.strategy}' of ${pluginAddress}`
+            );
+            return undefined;
+          }
 
           return {
             pluginAddress,
