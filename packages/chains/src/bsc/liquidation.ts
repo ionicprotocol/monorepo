@@ -26,10 +26,7 @@ const liquidationDefaults: LiquidationDefaults = {
   curveSwapPools: [
     {
       poolAddress: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
-      coins: [
-        underlying(assets, assetSymbols.MAI),
-        underlying(assets, assetSymbols.val3EPS),
-      ],
+      coins: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)],
     },
     {
       poolAddress: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d", // val3EPS LP token

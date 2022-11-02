@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - development
     paths:
       - 'packages/security/**'
       - '.github/workflows/package-security-push-publish.yml'

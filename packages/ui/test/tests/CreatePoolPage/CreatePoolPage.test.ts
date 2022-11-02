@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import { Browser, Page } from 'puppeteer';
 
 import { JEST_EXE_TIME } from '@ui/test/constants';
+import { Config } from '@ui/test/helpers/Config';
 import { TestHelper } from '@ui/test/helpers/TestHelper';
 import { CreatePoolPage } from '@ui/test/pages/pools/CreatePoolPage';
 
@@ -14,27 +15,27 @@ let metamask: Dappeteer;
 
 let createPoolPage: CreatePoolPage;
 
-const name = 'e2e testing';
-const oracle = '0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA';
-const closeFactor = '50';
-const liquidationIncentive = '8';
-
-const baseUrl = 'http://localhost:3000/56/create-pool';
+const { chainId, networkName, symbol, rpc } = Config.init();
+const { name, oracle, closeFactor, liquidationIncentive, testUrl } = Config.createPool();
 
 // jest.retryTimes(1);
 jest.setTimeout(JEST_EXE_TIME);
 
-describe.skip('Create Pool:', () => {
+describe('Create Pool:', () => {
   beforeAll(async () => {
-    [metamask, page, browser] = await TestHelper.initDappeteer();
+    [metamask, page, browser] = await TestHelper.initDappeteer({
+      networkName,
+      rpc,
+      chainId,
+      symbol,
+    });
 
-    createPoolPage = new CreatePoolPage(page, metamask, baseUrl);
+    createPoolPage = new CreatePoolPage(page, metamask, testUrl);
 
-    await page.goto(baseUrl);
+    await page.goto(testUrl);
     await page.bringToFront();
-
-    await createPoolPage.connectMetamaskWallet();
     await createPoolPage.acceptTerms();
+    await createPoolPage.connectMetamaskWallet();
   });
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -45,8 +46,6 @@ describe.skip('Create Pool:', () => {
   });
 
   test(`User can create pool`, async () => {
-    await page.bringToFront();
-    await page.goto(baseUrl);
     await createPoolPage.createPool(name, oracle, closeFactor, liquidationIncentive);
   });
 });
