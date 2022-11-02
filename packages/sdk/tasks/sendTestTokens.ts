@@ -12,7 +12,7 @@ export default task("send-tokens", "Edit deployers")
     let tx: providers.TransactionResponse;
     for (const tokenName of tokens) {
       const token = await ethers.getContract(`${tokenName}Token`, await ethers.getSigner(deployer));
-      tx = await token.approve(deployer, BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One));
+      tx = await token.approve(deployer, constants.MaxUint256);
       tx = await token.transferFrom(deployer, _sendTo, BigNumber.from(_sendAmount).mul(BigNumber.from(10).pow(18)));
       console.log(await tx.wait());
       const balance = await token.balanceOf(deployer);
