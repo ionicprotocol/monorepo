@@ -1,3 +1,5 @@
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+
 import { AccountButton } from '@ui/components/shared/AccountButton';
 import ClaimAllRewardsButton from '@ui/components/shared/ClaimAllRewardsButton';
 import ConnectWalletButton from '@ui/components/shared/ConnectWalletButton';
@@ -10,6 +12,20 @@ export const WalletButtons = () => {
 
   return (
     <Row mainAxisAlignment="center" crossAxisAlignment="center">
+      <ConnectButton
+        showBalance={{
+          smallScreen: false,
+          largeScreen: true,
+        }}
+        accountStatus={{
+          smallScreen: 'avatar',
+          largeScreen: 'full',
+        }}
+        chainStatus={{
+          smallScreen: 'icon',
+          largeScreen: 'full',
+        }}
+      />
       {!address ? (
         <ConnectWalletButton />
       ) : (
