@@ -29,16 +29,16 @@ function MidasDapp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <WagmiConfig client={client}>
-        <QueryClientProvider client={queryClient}>
-          <MultiMidasProvider>
-            <RainbowKit>
+        <RainbowKit>
+          <QueryClientProvider client={queryClient}>
+            <MultiMidasProvider>
               <Layout>
                 <Component {...pageProps} />
               </Layout>
-            </RainbowKit>
-          </MultiMidasProvider>
-          {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
-        </QueryClientProvider>
+            </MultiMidasProvider>
+            {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
+          </QueryClientProvider>
+        </RainbowKit>
       </WagmiConfig>
     </ChakraProvider>
   );

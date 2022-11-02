@@ -20,6 +20,7 @@ import {
   FundOperationMode,
   NativePricedFuseAsset,
 } from '@midas-capital/types';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
@@ -74,7 +75,7 @@ const AmountSelect = ({
   poolChainId,
 }: AmountSelectProps) => {
   const { currentSdk, setPendingTxHash, address, currentChain } = useMultiMidas();
-
+  const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
@@ -248,6 +249,10 @@ const AmountSelect = ({
             if (errorCode !== null) {
               fundOperationError(errorCode, minBorrowUSD);
             } else {
+              addRecentTransaction({
+                hash: tx.hash,
+                description: `${asset.underlyingSymbol} Token Supply`,
+              });
               setPendingTxHash(tx.hash);
             }
           } catch (error) {

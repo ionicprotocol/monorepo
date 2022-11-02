@@ -12,6 +12,7 @@ const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) 
     id: data.chainId,
     name: data.specificParams.metadata.name,
     network: data.specificParams.metadata.name,
+    iconUrl: data.specificParams.metadata.img,
     nativeCurrency: {
       name: data.specificParams.metadata.nativeCurrency.name,
       symbol: data.specificParams.metadata.nativeCurrency.symbol,
