@@ -18,7 +18,7 @@ const { supplyAmount, borrowAmount, repayAmount, withdrawAmount, assetSymbol, te
 
 jest.setTimeout(JEST_EXE_TIME);
 
-describe('Fund Operation:', () => {
+describe.skip('Fund Operation:', () => {
   beforeAll(async () => {
     [metamask, page, browser] = await TestHelper.initDappeteer({
       networkName,

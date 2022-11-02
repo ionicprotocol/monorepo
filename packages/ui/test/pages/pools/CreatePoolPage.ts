@@ -11,6 +11,7 @@ export class CreatePoolPage extends AppPage {
   private CloseFactorInputSelector = '#closeFactor input';
   private LiqIncentInputSelector = '#liqIncent input';
   private CreatePoolBtnSelector = '#createPool';
+  private SuccessToast = '#toast-success';
 
   constructor(page: Page, metamask: Dappeteer, baseUrl: string) {
     super(page, metamask, baseUrl);
@@ -31,6 +32,7 @@ export class CreatePoolPage extends AppPage {
   }
 
   public async setPoolName(name: string): Promise<void> {
+    await this.blockingWait(1);
     const NameInput = await this.Page.waitForSelector(this.NameInputSelector);
 
     if (NameInput) {
@@ -39,24 +41,44 @@ export class CreatePoolPage extends AppPage {
   }
 
   public async setOracle(oracle: string): Promise<void> {
+    await this.blockingWait(1);
     await this.Page.select(this.OracleSelectSelector, oracle);
   }
 
   public async setCloseFactor(closeFactor: string): Promise<void> {
+    await this.blockingWait(1);
     await this.Page.$eval(this.CloseFactorInputSelector, (el) => (el.textContent = closeFactor));
   }
 
   public async setLiquidationIncentive(liqIncent: string): Promise<void> {
+    await this.blockingWait(1);
     await this.Page.$eval(this.LiqIncentInputSelector, (el) => (el.textContent = liqIncent));
   }
 
   public async confirmCreate(): Promise<void> {
+    await this.blockingWait(1);
     const createPoolBtn = await this.Page.$(this.CreatePoolBtnSelector);
     if (createPoolBtn) {
       await createPoolBtn.click();
-      await this.blockingWait(3, true);
-      await this.Metamask.confirmTransaction();
-      // await this.bringToFront();
+      let finished = false;
+      while (!finished) {
+        try {
+          await this.blockingWait(5);
+          await Promise.race([
+            this.Metamask.confirmTransaction(),
+            new Promise((resolve) => setTimeout(resolve, 5000)),
+          ]).catch();
+
+          await this.Page.bringToFront();
+          const toast = await this.Page.waitForSelector(this.SuccessToast, { timeout: 10000 });
+          if (toast) {
+            finished = true;
+          }
+        } catch {}
+      }
+      await this.Page.waitForNavigation();
+      const url = this.Page.url();
+      expect(url).toContain('http://localhost:3000/56/pool');
     }
   }
 }
