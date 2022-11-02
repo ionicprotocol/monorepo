@@ -376,6 +376,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
             chainDeployParams.wtoken,
           ],
         },
+        onUpgrade: {
+          methodName: "reinitialize",
+          args: [chainDeployParams.wtoken],
+        },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
       owner: deployer,
