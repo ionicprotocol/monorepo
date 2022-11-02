@@ -9,6 +9,7 @@ import {
   Text,
   useClipboard,
 } from '@chakra-ui/react';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
@@ -44,7 +45,8 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
 
   const [copiedText, setCopiedText] = useState<string>('');
   const { hasCopied, onCopy } = useClipboard(copiedText);
-  const { setGlobalLoading, setPendingTxHash, currentSdk } = useMultiMidas();
+  const { setGlobalLoading, currentSdk } = useMultiMidas();
+  const addRecentTransaction = useAddRecentTransaction();
   const scanUrl = useMemo(
     () => poolData?.chainId && getScanUrlByChainId(poolData.chainId),
     [poolData?.chainId]
@@ -57,12 +59,12 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
     setIsLoading(true);
     const unitroller = currentSdk.createUnitroller(comptroller);
     const tx = await unitroller._acceptAdmin();
-    setPendingTxHash(tx.hash);
+    addRecentTransaction({ hash: tx.hash, description: 'Accept ownership' });
     await tx.wait();
     setIsLoading(false);
 
     await queryClient.refetchQueries();
-  }, [comptroller, currentSdk, queryClient, setPendingTxHash]);
+  }, [comptroller, currentSdk, queryClient, addRecentTransaction]);
 
   useEffect(() => {
     if (copiedText) {

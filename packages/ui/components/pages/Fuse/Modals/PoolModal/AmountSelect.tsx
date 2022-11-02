@@ -74,7 +74,7 @@ const AmountSelect = ({
   supplyBalanceFiat,
   poolChainId,
 }: AmountSelectProps) => {
-  const { currentSdk, setPendingTxHash, address, currentChain } = useMultiMidas();
+  const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
@@ -253,7 +253,6 @@ const AmountSelect = ({
                 hash: tx.hash,
                 description: `${asset.underlyingSymbol} Token Supply`,
               });
-              setPendingTxHash(tx.hash);
             }
           } catch (error) {
             setFailedStep(3);
@@ -277,7 +276,10 @@ const AmountSelect = ({
           fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${asset.underlyingSymbol} Token Repay`,
+          });
         }
       } else if (mode === FundOperationMode.BORROW) {
         const resp = await currentSdk.borrow(asset.cToken, amount);
@@ -286,7 +288,10 @@ const AmountSelect = ({
           fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${asset.underlyingSymbol} Token Borrow`,
+          });
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
         const maxAmount = await fetchMaxAmount(mode, currentSdk, address, asset);
@@ -301,7 +306,10 @@ const AmountSelect = ({
           fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${asset.underlyingSymbol} Token Withdraw`,
+          });
         }
 
         LogRocket.track('Fuse-Withdraw');
@@ -326,8 +334,10 @@ const AmountSelect = ({
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
 
       const resp = await WToken.deposit({ from: address, value: amount });
-
-      setPendingTxHash(resp.hash);
+      addRecentTransaction({
+        hash: resp.hash,
+        description: 'Wrap Token',
+      });
       onClose();
     } catch (e) {
       handleGenericError(e, errorToast);

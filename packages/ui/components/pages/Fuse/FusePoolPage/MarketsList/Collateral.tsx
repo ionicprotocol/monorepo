@@ -1,4 +1,5 @@
 import { Switch } from '@chakra-ui/react';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { ContractTransaction } from 'ethers';
 import LogRocket from 'logrocket';
 import * as React from 'react';
@@ -20,11 +21,12 @@ export const Collateral = ({
   comptrollerAddress: string;
   poolChainId: number;
 }) => {
-  const { setPendingTxHash, currentChain } = useMultiMidas();
+  const { currentChain } = useMultiMidas();
   const sdk = useSdk(poolChainId);
   const errorToast = useErrorToast();
   const infoToast = useInfoToast();
   const isMobile = useIsMobile();
+  const addRecentTransaction = useAddRecentTransaction();
 
   const onToggleCollateral = async () => {
     if (!sdk) return;
@@ -63,7 +65,7 @@ export const Collateral = ({
       return;
     }
 
-    setPendingTxHash(call.hash);
+    addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
 
     LogRocket.track('Fuse-ToggleCollateral');
   };
