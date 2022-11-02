@@ -57,14 +57,14 @@ export async function approveAndMint(
   let tx: providers.TransactionResponse;
 
   if (underlyingToken === constants.AddressZero) {
-    tx = await cTokenContract.approve(signer.address, BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One));
+    tx = await cTokenContract.approve(signer.address, constants.MaxUint256);
     await tx.wait();
     tx = await cTokenContract.mint({ value: amount, from: signer.address });
   } else {
     const assetContract = new Contract(underlyingToken, ERC20Abi, signer);
     tx = await assetContract.approve(
       cTokenContract.address,
-      BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One)
+      constants.MaxUint256
     );
     await tx.wait();
     tx = await cTokenContract.mint(amount);
