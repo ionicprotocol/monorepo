@@ -82,7 +82,7 @@ export const AdditionalInfo = ({
   const yellowColor = useColorModeValue('yellow.500', 'yellow');
   const redColor = useColorModeValue('red.500', 'red');
   const setColorByScore = (score: number) => {
-    return score >= 0.8 ? greenColor : score >= 0.6 ? yellowColor : redColor;
+    return score >= 8 ? greenColor : score >= 6 ? yellowColor : redColor;
   };
 
   return (
