@@ -75,7 +75,8 @@ export const assets: SupportedAsset[] = [
     decimals: 10,
     oracle: OracleTypes.DiaStDotPriceOracle,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
-    <p>You can get wstDOT by staking your xcDOT on <a href="https://polkadot.lido.fi/wrap" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a></p>`,
+    <p>You can get <code>stDOT</code> by staking your xcDOT on <a href="https://polkadot.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a>.</p><br />
+    <p>And wrap <code>stDOT</code> to get <code>wstDOT</code> <a href="https://polkadot.lido.fi/wrap" target="_blank" style="color: #BCAC83; cursor="pointer">at Lido here</a>.</p>`,
   },
   {
     symbol: assetSymbols.ETH,
