@@ -120,7 +120,7 @@ export const STRATEGY_HELP = {
         "When the supply is concentrated in a few hands, they can greatly affect the price by selling. Whales can manipulate the price of the coin. The more people that have a vested interest over a coin, the better and more organic the price action is.",
     },
     DECENTRALIZED: {
-      title: "Decentralized",
+      title: "Supply split across many holders",
       explanation:
         "The supply is concentrated is spread across many users instead of being concentrated in the hands of a few whales, which makes it so that price manipulations are less likely to occur. The more people that have a vested interest over a coin, the better and more organic the price action is.",
     },
