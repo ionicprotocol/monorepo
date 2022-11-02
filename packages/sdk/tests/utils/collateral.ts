@@ -62,10 +62,7 @@ export async function approveAndMint(
     tx = await cTokenContract.mint({ value: amount, from: signer.address });
   } else {
     const assetContract = new Contract(underlyingToken, ERC20Abi, signer);
-    tx = await assetContract.approve(
-      cTokenContract.address,
-      constants.MaxUint256
-    );
+    tx = await assetContract.approve(cTokenContract.address, constants.MaxUint256);
     await tx.wait();
     tx = await cTokenContract.mint(amount);
   }
