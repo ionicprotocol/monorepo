@@ -34,6 +34,7 @@ import {
   MIDAS_SECURITY_DOCS_URL,
   RESERVE_FACTOR_TOOLTIP,
   SCORE_LIMIT,
+  SCORE_RANGE_MAX,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
@@ -82,7 +83,7 @@ export const AdditionalInfo = ({
   const yellowColor = useColorModeValue('yellow.500', 'yellow');
   const redColor = useColorModeValue('red.500', 'red');
   const setColorByScore = (score: number) => {
-    return score >= 8 ? greenColor : score >= 6 ? yellowColor : redColor;
+    return score >= 0.8 ? greenColor : score >= 0.6 ? yellowColor : redColor;
   };
 
   return (
@@ -295,7 +296,7 @@ export const AdditionalInfo = ({
                     variant="mdText"
                     color={setColorByScore(strategyScore.totalScore)}
                   >
-                    {strategyScore.totalScore.toFixed(2)}
+                    {(strategyScore.totalScore * SCORE_RANGE_MAX).toFixed(2)}
                   </Text>
                 </Flex>
                 <Flex gap={4}>
@@ -308,7 +309,9 @@ export const AdditionalInfo = ({
                   <PopoverTooltip
                     body={
                       <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">Score: {strategyScore.complexityScore}</Text>
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.complexityScore * SCORE_RANGE_MAX}
+                        </Text>
                         <Text>
                           {STRATEGY_HELP.complexity[strategyScore.strategy.complexity].explanation}
                         </Text>
@@ -336,7 +339,9 @@ export const AdditionalInfo = ({
                   <PopoverTooltip
                     body={
                       <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">Score: {strategyScore.timeInMarketScore}</Text>
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.timeInMarketScore * SCORE_RANGE_MAX}
+                        </Text>
                         <Text>
                           {
                             STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket]
@@ -366,7 +371,9 @@ export const AdditionalInfo = ({
                   <PopoverTooltip
                     body={
                       <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">Score: {strategyScore.assetRiskILScore}</Text>
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.assetRiskILScore * SCORE_RANGE_MAX}
+                        </Text>
                         <Text>
                           {STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].explanation}
                         </Text>
@@ -397,7 +404,7 @@ export const AdditionalInfo = ({
                     body={
                       <VStack alignItems="flex-start">
                         <Text fontWeight="bold">
-                          Score: {strategyScore.assetRiskLiquidityScore}
+                          Score: {strategyScore.assetRiskLiquidityScore * SCORE_RANGE_MAX}
                         </Text>
                         <Text>
                           {STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].explanation}
@@ -424,7 +431,9 @@ export const AdditionalInfo = ({
                   <PopoverTooltip
                     body={
                       <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">Score: {strategyScore.assetRiskMktCapScore}</Text>
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.assetRiskMktCapScore * SCORE_RANGE_MAX}
+                        </Text>
                         <Text>
                           {STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].explanation}
                         </Text>
@@ -455,7 +464,9 @@ export const AdditionalInfo = ({
                   <PopoverTooltip
                     body={
                       <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">Score: {strategyScore.assetRiskSupplyScore}</Text>
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.assetRiskSupplyScore * SCORE_RANGE_MAX}
+                        </Text>
                         <Text>
                           {
                             STRATEGY_HELP.supplyCentralised[
@@ -490,7 +501,7 @@ export const AdditionalInfo = ({
                     body={
                       <VStack alignItems="flex-start">
                         <Text fontWeight="bold">
-                          Score: {strategyScore.platformRiskReputationScore}
+                          Score: {strategyScore.platformRiskReputationScore * SCORE_RANGE_MAX}
                         </Text>
                         <Text>
                           {STRATEGY_HELP.reputation[strategyScore.strategy.reputation].explanation}
@@ -519,7 +530,9 @@ export const AdditionalInfo = ({
                   <PopoverTooltip
                     body={
                       <VStack alignItems="flex-start">
-                        <Text fontWeight="bold">Score: {strategyScore.platformRiskAuditScore}</Text>
+                        <Text fontWeight="bold">
+                          Score: {strategyScore.platformRiskAuditScore * SCORE_RANGE_MAX}
+                        </Text>
                         <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].explanation}</Text>
                       </VStack>
                     }
@@ -553,7 +566,8 @@ export const AdditionalInfo = ({
                     body={
                       <VStack alignItems="flex-start">
                         <Text fontWeight="bold">
-                          Score: {strategyScore.platformRiskContractsVerifiedScore}
+                          Score:{' '}
+                          {strategyScore.platformRiskContractsVerifiedScore * SCORE_RANGE_MAX}
                         </Text>
                         <Text>
                           {
@@ -594,7 +608,8 @@ export const AdditionalInfo = ({
                     body={
                       <VStack alignItems="flex-start">
                         <Text fontWeight="bold">
-                          Score: {strategyScore.platformRiskAdminWithTimelockScore}
+                          Score:{' '}
+                          {strategyScore.platformRiskAdminWithTimelockScore * SCORE_RANGE_MAX}
                         </Text>
                         <Text>
                           {

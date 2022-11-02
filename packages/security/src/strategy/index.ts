@@ -29,17 +29,15 @@ export function withErc4626StrategyScorer<TBase extends SecurityBaseConstructor>
 
       const timeInMarket = timeInMarketScore * scoring.SCORING_WEIGHTS.TIME_IN_MARKET;
 
-      const assetRiskScore =
-        (assetRiskILScore * assetRiskLiquidityScore * assetRiskMktCapScore * assetRiskSupplyScore) / 1000;
+      const assetRiskScore = assetRiskILScore * assetRiskLiquidityScore * assetRiskMktCapScore * assetRiskSupplyScore;
 
       const assetRisk = assetRiskScore * scoring.SCORING_WEIGHTS.ASSET_RISK;
 
       const platformRiskScore =
-        (platformRiskReputationScore *
-          platformRiskAuditScore *
-          platformRiskContractsVerifiedScore *
-          platformRiskAdminWithTimelockScore) /
-        1000;
+        platformRiskReputationScore *
+        platformRiskAuditScore *
+        platformRiskContractsVerifiedScore *
+        platformRiskAdminWithTimelockScore;
 
       const platformRisk = platformRiskScore * scoring.SCORING_WEIGHTS.PLATFORM_RISK;
 
