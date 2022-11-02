@@ -11,6 +11,7 @@ import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
+import { NoRewardInfo } from './NoRewardInfo';
 
 interface SupplyApyProps {
   asset: MarketData;
@@ -69,9 +70,13 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         </Text>
       )}
 
-      {rewardsOfThisMarket.map((reward, index) => (
-        <RewardsInfo key={`reward_${index}`} reward={reward} chainId={poolChainId} />
-      ))}
+      {rewardsOfThisMarket.length > 0 ? (
+        rewardsOfThisMarket.map((reward, index) => (
+          <RewardsInfo key={`reward_${index}`} reward={reward} chainId={poolChainId} />
+        ))
+      ) : asset.plugin ? (
+        <NoRewardInfo poolChainId={poolChainId} pluginAddress={asset.plugin} />
+      ) : null}
     </VStack>
   );
 };
