@@ -8802,6 +8802,25 @@
         {
           "inputs": [
             {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "uint256",
               "name": "_defaultInterestFeeRate",
               "type": "uint256"
@@ -9067,7 +9086,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x81919cf47361d095658a1CEb31dcE11e84600075",
+      "address": "0x77f756946665c1F15c4E343846D6dA8FA9F73690",
       "abi": [
         {
           "anonymous": false,
@@ -9690,6 +9709,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "_ctoken",
+              "type": "address"
+            }
+          ],
+          "name": "getMinBorrowEth",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -11135,7 +11173,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x4Ec7e50E1a4eA877E8075bC463e3e959608f6308",
+      "address": "0x66BBfA7d24f77A990B0E360Ce0c2D141cbcE39bB",
       "abi": [
         {
           "anonymous": false,

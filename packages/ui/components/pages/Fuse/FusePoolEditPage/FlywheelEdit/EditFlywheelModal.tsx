@@ -136,9 +136,19 @@ const EditFlywheelModal = ({
 
   const { cPage } = useColors();
 
+  const rewardsSpeed = useMemo(() => {
+    return rewardsInfo?.rewardsPerSecond
+      ? Number(
+          toFixedNoRound(utils.formatUnits(rewardsInfo.rewardsPerSecond, rewardTokenDecimal), 8)
+        )
+      : 0;
+  }, [rewardsInfo, rewardTokenDecimal]);
+
   useEffect(() => {
     if (rewardsInfo?.rewardsPerSecond) {
-      setSupplySpeed(toFixedNoRound(utils.formatEther(rewardsInfo.rewardsPerSecond), 8));
+      setSupplySpeed(
+        toFixedNoRound(utils.formatUnits(rewardsInfo.rewardsPerSecond, rewardTokenDecimal), 8)
+      );
     }
     if (rewardsInfo?.rewardsEndTimestamp !== undefined && rewardsInfo?.rewardsEndTimestamp >= 0) {
       if (rewardsInfo?.rewardsEndTimestamp === 0) {
@@ -147,7 +157,7 @@ const EditFlywheelModal = ({
         setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
       }
     }
-  }, [rewardsInfo]);
+  }, [rewardsInfo, rewardTokenDecimal]);
 
   const fund = useCallback(async () => {
     if (!currentSdk) return;
@@ -419,12 +429,20 @@ const EditFlywheelModal = ({
                       </Button>
                       <Button
                         onClick={updateRewardInfo}
+                        disabled={isTransactionPending || rewardsSpeed === Number(supplySpeed)}
+                        ml={2}
+                        hidden={!isSpeedEditable}
+                      >
+                        {isTransactionPending ? <Spinner /> : 'Save'}
+                      </Button>
+                      <Button
+                        variant="silver"
+                        onClick={() => setSpeedEditable(false)}
                         disabled={isTransactionPending}
                         ml={2}
                         hidden={!isSpeedEditable}
-                        width="15%"
                       >
-                        {isTransactionPending ? <Spinner /> : 'Save'}
+                        Cancel
                       </Button>
                     </HStack>
                   </VStack>
