@@ -3,6 +3,8 @@ import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
+import { NoRewardInfo } from './NoRewardInfo';
+
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -11,7 +13,6 @@ import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getABNBcContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
-import { NoRewardInfo } from './NoRewardInfo';
 
 interface SupplyApyProps {
   asset: MarketData;
