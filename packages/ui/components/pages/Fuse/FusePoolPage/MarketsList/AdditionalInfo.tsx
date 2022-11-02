@@ -295,7 +295,7 @@ export const AdditionalInfo = ({
                     variant="mdText"
                     color={setColorByScore(strategyScore.totalScore)}
                   >
-                    {strategyScore.totalScore}
+                    {strategyScore.totalScore.toFixed(2)}
                   </Text>
                 </Flex>
                 <Flex gap={4}>
