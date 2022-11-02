@@ -1,7 +1,7 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import { beamSwapDocs, beamSwapStableDocs, defaultDocs, wrappedAssetDocs } from "../common";
-import { stellaSwapDocs } from "../common/docs";
+import { curveFinanceMoonbeamDocs, stellaSwapDocs } from "../common/docs";
 
 const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
 const xcDOT = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
@@ -195,7 +195,7 @@ export const assets: SupportedAsset[] = [
     name: "Curve.fi xcDOT-stDOT LP Token",
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: beamSwapDocs(xcDOT, stDOT, "xcDOT-stDOT", xcDOT_stDOT),
+    extraDocs: curveFinanceMoonbeamDocs(14, "xcDOT-stDOT", xcDOT_stDOT, true),
   },
   {
     symbol: assetSymbols["3pool"],
