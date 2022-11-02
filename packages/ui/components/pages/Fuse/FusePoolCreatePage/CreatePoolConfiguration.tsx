@@ -12,8 +12,8 @@ import {
   Spinner,
   Switch,
   Text,
-  useDisclosure,
 } from '@chakra-ui/react';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
 import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
@@ -24,7 +24,6 @@ import { OptionRow } from '@ui/components/pages/Fuse/FusePoolCreatePage/OptionRo
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
-import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
@@ -50,10 +49,10 @@ export const CreatePoolConfiguration = () => {
   const warningToast = useWarningToast();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
+  const { openConnectModal } = useConnectModal();
 
   const { currentSdk, currentChain, address } = useMultiMidas();
   const router = useRouter();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [isCreating, setIsCreating] = useState(false);
 
   const { cCard, cSolidBtn } = useColors();
@@ -389,7 +388,7 @@ export const CreatePoolConfiguration = () => {
             </Center>
           </Button>
         ) : (
-          <>
+          openConnectModal && (
             <Button
               id="connectWalletToCreate"
               width="100%"
@@ -397,12 +396,11 @@ export const CreatePoolConfiguration = () => {
               mt={4}
               fontSize="xl"
               maxWidth={'550px'}
-              onClick={onOpen}
+              onClick={openConnectModal}
             >
               Connect wallet
             </Button>
-            <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
-          </>
+          )
         )}
       </Center>
     </Box>

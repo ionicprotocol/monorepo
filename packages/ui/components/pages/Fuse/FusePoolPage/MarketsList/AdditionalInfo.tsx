@@ -1,17 +1,7 @@
 import { ExternalLinkIcon } from '@chakra-ui/icons';
-import {
-  Box,
-  Button,
-  Center,
-  Flex,
-  Grid,
-  HStack,
-  Link,
-  Spinner,
-  Text,
-  useDisclosure,
-} from '@chakra-ui/react';
+import { Box, Button, Center, Flex, Grid, HStack, Link, Spinner, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
@@ -22,8 +12,6 @@ import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
 import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/FundButton';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
-import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
-import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import {
   ADMIN_FEE_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
@@ -58,15 +46,16 @@ export const AdditionalInfo = ({
 
   const { data } = useChartData(asset.cToken, poolChainId);
   const { currentChain } = useMultiMidas();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { switchNetworkAsync } = useSwitchNetwork();
+  const { openConnectModal } = useConnectModal();
+  const { openChainModal } = useChainModal();
 
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
       await switchNetworkAsync(chainConfig.chainId);
-    } else {
-      onOpen();
+    } else if (openChainModal) {
+      openChainModal();
     }
   };
 
@@ -99,17 +88,15 @@ export const AdditionalInfo = ({
         </HStack>
         {!currentChain ? (
           <Box>
-            <Button variant="_solid" onClick={onOpen}>
+            <Button variant="_solid" onClick={openConnectModal}>
               Connect Wallet
             </Button>
-            <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
           </Box>
         ) : currentChain.unsupported || currentChain.id !== poolChainId ? (
           <Box>
             <Button variant="_solid" onClick={handleSwitch}>
               Switch {chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
             </Button>
-            <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
           </Box>
         ) : (
           <HStack>

@@ -15,7 +15,10 @@ const RainbowKit = ({ children }: { children: ReactNode }) => {
       theme={
         colorMode === 'light'
           ? {
-              ...lightTheme({ overlayBlur: 'small' }),
+              ...lightTheme(),
+              blurs: {
+                modalOverlay: 'blur(8px)',
+              },
               colors: {
                 ...lightTheme().colors,
                 accentColor: COLOR_PALETTE.ecru,
@@ -27,9 +30,19 @@ const RainbowKit = ({ children }: { children: ReactNode }) => {
                 modalTextSecondary: COLOR_PALETTE.raisinBlack,
                 modalBorder: COLOR_PALETTE.ecru,
               },
+              radii: {
+                actionButton: '12px',
+                connectButton: '12px',
+                menuButton: '12px',
+                modal: '12px',
+                modalMobile: '12px',
+              },
             }
           : {
-              ...darkTheme({ overlayBlur: 'small' }),
+              ...darkTheme(),
+              blurs: {
+                modalOverlay: 'blur(8px)',
+              },
               colors: {
                 ...darkTheme().colors,
                 accentColor: COLOR_PALETTE.ecru,
@@ -40,6 +53,13 @@ const RainbowKit = ({ children }: { children: ReactNode }) => {
                 modalText: COLOR_PALETTE.whiteBg,
                 modalTextSecondary: COLOR_PALETTE.whiteBg,
                 modalBorder: COLOR_PALETTE.ecru,
+              },
+              radii: {
+                actionButton: '12px',
+                connectButton: '12px',
+                menuButton: '12px',
+                modal: '12px',
+                modalMobile: '12px',
               },
             }
       }

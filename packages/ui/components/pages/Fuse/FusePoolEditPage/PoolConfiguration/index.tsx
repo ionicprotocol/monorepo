@@ -18,6 +18,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
+import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -29,10 +30,8 @@ import { useSwitchNetwork } from 'wagmi';
 import { WhitelistInfo } from '@ui/components/pages/Fuse/FusePoolCreatePage/WhitelistInfo';
 import TransferOwnershipModal from '@ui/components/pages/Fuse/FusePoolEditPage/PoolConfiguration/TransferOwnershipModal';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
-import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { Center, Column } from '@ui/components/shared/Flex';
 import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
-import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { CLOSE_FACTOR, LIQUIDATION_INCENTIVE } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -58,18 +57,19 @@ const PoolConfiguration = ({
   const poolId = router.query.poolId as string;
 
   const { currentSdk, address, currentChain } = useMultiMidas();
+  const { openConnectModal } = useConnectModal();
+  const { openChainModal } = useChainModal();
 
   const queryClient = useQueryClient();
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { switchNetworkAsync } = useSwitchNetwork();
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
       await switchNetworkAsync(chainConfig.chainId);
-    } else {
-      onOpen();
+    } else if (openChainModal) {
+      openChainModal();
     }
   };
   const { data } = useExtraPoolInfo(comptrollerAddress, poolChainId);
@@ -358,17 +358,15 @@ const PoolConfiguration = ({
           <Text variant="mdText" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
           {!currentChain ? (
             <Box>
-              <Button variant="_solid" onClick={onOpen}>
+              <Button variant="_solid" onClick={openConnectModal}>
                 Connect Wallet
               </Button>
-              <ConnectWalletModal isOpen={isOpen} onClose={onClose} />
             </Box>
           ) : currentChain.id !== poolChainId ? (
             <Box>
               <Button variant="_solid" onClick={handleSwitch}>
                 Switch{chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
               </Button>
-              <SwitchNetworkModal isOpen={isOpen} onClose={onClose} />
             </Box>
           ) : null}
         </Flex>

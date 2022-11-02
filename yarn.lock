@@ -5476,8 +5476,8 @@ __metadata:
   linkType: hard
 
 "@tenderly/hardhat-tenderly@npm:^1.1.6":
-  version: 1.2.0
-  resolution: "@tenderly/hardhat-tenderly@npm:1.2.0"
+  version: 1.3.0
+  resolution: "@tenderly/hardhat-tenderly@npm:1.3.0"
   dependencies:
     "@ethersproject/bignumber": ^5.7.0
     "@nomiclabs/hardhat-ethers": ^2.1.1
@@ -5489,10 +5489,8 @@ __metadata:
     js-yaml: ^4.1.0
   peerDependencies:
     hardhat: ^2.10.2
-    tenderly: ^0.0.1
-  bin:
-    tenderly: dist/internal/cli/index.js
-  checksum: de40b4ffd7cb56a5582fc4d27ee2ae3c1b2153ee3d503438b53facd45cf7b830e8e5631a7c2a45158b83e8c5f50d375e850c9b3dad7d5ef620348ddfcbf1055e
+    tenderly: ^0.0.2
+  checksum: c5da1297818a5a42e4655aee0938b918dfc5b70b9f0316729e9e03707d134821041c7ef3642c8435c43b96b5e2dcffbfef9b13015b35e8381163ea23fcefa8af
   languageName: node
   linkType: hard
 
@@ -15955,8 +15953,8 @@ __metadata:
   linkType: hard
 
 "ioredis@npm:^5.2.3":
-  version: 5.2.3
-  resolution: "ioredis@npm:5.2.3"
+  version: 5.2.4
+  resolution: "ioredis@npm:5.2.4"
   dependencies:
     "@ioredis/commands": ^1.1.1
     cluster-key-slot: ^1.1.0
@@ -15967,7 +15965,7 @@ __metadata:
     redis-errors: ^1.2.0
     redis-parser: ^3.0.0
     standard-as-callback: ^2.1.0
-  checksum: 2cb7f0f4217e6774accad3620af1b7114722721c1d1824be2c9f0c2a77ab9629f2e0848d18b1a7208bc37796ae1207cb3e0898fce61900cfe797da0382724ad1
+  checksum: c3a7df407a41ae516bede8b6db853c568198b13fe4a4785f66be5cd541087121b9d45fb9a6b1b6a5fb668c29ce52ab4685642b994803bdfa0a35f794ea8ef7ae
   languageName: node
   linkType: hard
 
