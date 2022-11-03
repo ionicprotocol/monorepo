@@ -167,13 +167,14 @@ export const AdditionalInfo = ({
       >
         {strategyScore !== undefined && (
           <GridItem rowSpan={2}>
-            <VStack width="100%" spacing={0} borderRadius="20" height="100%">
+            <VStack width="100%" spacing={0} borderRadius="20">
               <Box
                 width="100%"
-                p={4}
+                px={4}
                 background={cCard.headingBgColor}
                 borderWidth={2}
                 borderColor={cCard.headingBgColor}
+                height={14}
               >
                 <Flex justifyContent="space-between" alignItems="center" height="100%">
                   <Flex gap={2} alignSelf="center">
@@ -614,10 +615,11 @@ export const AdditionalInfo = ({
           <VStack width="100%" spacing={0} borderRadius="20">
             <Box
               width="100%"
-              p={4}
+              px={4}
               background={cCard.headingBgColor}
               borderWidth={2}
               borderColor={cCard.headingBgColor}
+              height={14}
             >
               <Flex justifyContent="space-between" alignItems="center" height="100%">
                 <Text>Market Details</Text>
@@ -692,7 +694,7 @@ export const AdditionalInfo = ({
               background={cCard.headingBgColor}
               borderWidth={2}
               borderColor={cCard.headingBgColor}
-              height="60px"
+              height={14}
             >
               <Flex alignItems="center" height="100%">
                 <Text py={0.5}>Utilization Rate</Text>
