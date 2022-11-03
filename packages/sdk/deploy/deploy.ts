@@ -520,7 +520,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const quoter = await ethers.getContract("Quoter");
   const quoterAddress = await addressesProvider.callStatic.getAddress("Quoter");
   if (quoterAddress !== quoter.address) {
-    let tx = await addressesProvider.setAddress("Quoter", quoter.address);
+    tx = await addressesProvider.setAddress("Quoter", quoter.address);
     await tx.wait();
     console.log("setAddress Quoter: ", tx.hash);
   }
