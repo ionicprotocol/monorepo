@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -20,7 +20,6 @@ import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
-import { BiHelpCircle } from 'react-icons/bi';
 import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -168,7 +167,7 @@ export const AdditionalInfo = ({
       >
         {strategyScore !== undefined && (
           <GridItem rowSpan={2}>
-            <VStack width="100%" spacing={0} borderRadius="20">
+            <VStack width="100%" spacing={0} borderRadius="20" height="100%">
               <Box
                 width="100%"
                 p={4}
@@ -189,7 +188,7 @@ export const AdditionalInfo = ({
                     <Center height="100%">
                       <SimpleTooltip label="Link to Docs">
                         <Link href={MIDAS_SECURITY_DOCS_URL} isExternal>
-                          <BiHelpCircle fontSize={18} />
+                          <InfoOutlineIcon />
                         </Link>
                       </SimpleTooltip>
                     </Center>
@@ -215,7 +214,7 @@ export const AdditionalInfo = ({
               </Box>
               <Box width="100%" height="100%" borderWidth={2} borderColor={cCard.headingBgColor}>
                 <VStack alignItems="flex-start" p={4} gap={2}>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.complexityScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -249,11 +248,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.timeInMarketScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -289,11 +288,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.assetRiskILScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -325,11 +324,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.assetRiskLiquidityScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -360,11 +359,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.assetRiskMktCapScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -395,11 +394,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.assetRiskSupplyScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -439,11 +438,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.platformRiskReputationScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -477,11 +476,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.platformRiskAuditScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -512,11 +511,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.platformRiskContractsVerifiedScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -557,11 +556,11 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
-                  <Flex gap={4}>
+                  <Flex gap={2}>
                     {strategyScore.platformRiskAdminWithTimelockScore >= SCORE_LIMIT ? (
                       <Center>
                         <BsTriangleFill
@@ -602,7 +601,7 @@ export const AdditionalInfo = ({
                       }
                     >
                       <Center height="100%">
-                        <BiHelpCircle fontSize={18} />
+                        <InfoOutlineIcon />
                       </Center>
                     </PopoverTooltip>
                   </Flex>
