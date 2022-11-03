@@ -517,12 +517,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("setAddress DefaultProxyAdmin: ", tx.hash);
   }
 
-  const quoter = await ethers.getContract("Quoter");
-  const quoterAddress = await addressesProvider.callStatic.getAddress("Quoter");
-  if (quoterAddress !== quoter.address) {
-    tx = await addressesProvider.setAddress("Quoter", quoter.address);
-    await tx.wait();
-    console.log("setAddress Quoter: ", tx.hash);
+  const quoter = await ethers.getContractOrNull("Quoter");
+  if (quoter != null) {
+    const quoterAddress = await addressesProvider.callStatic.getAddress("Quoter");
+    if (quoterAddress !== quoter.address) {
+      tx = await addressesProvider.setAddress("Quoter", quoter.address);
+      await tx.wait();
+      console.log("setAddress Quoter: ", tx.hash);
+    }
   }
 
   await configureAddressesProviderStrategies({
