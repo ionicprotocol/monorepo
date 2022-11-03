@@ -3349,13 +3349,8 @@ __metadata:
   linkType: hard
 
 "@netlify/build@npm:^28.0.1":
-<<<<<<< HEAD
-  version: 28.1.6
-  resolution: "@netlify/build@npm:28.1.6"
-=======
   version: 28.1.7
   resolution: "@netlify/build@npm:28.1.7"
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   dependencies:
     "@bugsnag/js": ^7.0.0
     "@netlify/cache-utils": ^5.0.1
@@ -3413,11 +3408,7 @@ __metadata:
     yargs: ^17.6.0
   bin:
     netlify-build: bin.js
-<<<<<<< HEAD
-  checksum: c46581d508b154b134b76383b77eb80fea6fc6de7323fb5cc8817bfc59a9427361ec8841859bf854aae759dc38251a232eecc8c669e362c930a7dad335c2ab7d
-=======
   checksum: d7b65597a7e4762b59ae046ec49000ab283c900b01fc655fa6f7a9a9bd6565d196e64e48ae279e7d91b461be1921f58a45131d60626035ac4cac8fdfdd8a7a16
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   languageName: node
   linkType: hard
 
@@ -5132,11 +5123,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"@supabase/supabase-js@npm:^2.0.0":
-=======
 "@supabase/supabase-js@npm:^2.0.5":
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   version: 2.0.5
   resolution: "@supabase/supabase-js@npm:2.0.5"
   dependencies:
@@ -5147,27 +5134,6 @@ __metadata:
     "@supabase/storage-js": ^2.0.0
     cross-fetch: ^3.1.5
   checksum: 805c3e186505805a1a7f732c9e1866c955d66e6327e7045be5b562d62da8f0836e8b06c8b70238a7c63426350c832e3c8976c725eeda0cd8a44789b869146aea
-<<<<<<< HEAD
-  languageName: node
-  linkType: hard
-
-"@swc/core-android-arm-eabi@npm:1.3.11":
-  version: 1.3.11
-  resolution: "@swc/core-android-arm-eabi@npm:1.3.11"
-  dependencies:
-    "@swc/wasm": 1.2.122
-  conditions: os=android & cpu=arm
-  languageName: node
-  linkType: hard
-
-"@swc/core-android-arm64@npm:1.3.11":
-  version: 1.3.11
-  resolution: "@swc/core-android-arm64@npm:1.3.11"
-  dependencies:
-    "@swc/wasm": 1.2.130
-  conditions: os=android & cpu=arm64
-=======
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   languageName: node
   linkType: hard
 
@@ -5352,11 +5318,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"@tanstack/react-query-devtools@npm:^4.12.0":
-=======
 "@tanstack/react-query-devtools@npm:^4.14.1":
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   version: 4.14.1
   resolution: "@tanstack/react-query-devtools@npm:4.14.1"
   dependencies:
@@ -5382,11 +5344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"@tanstack/react-query@npm:^4.10.1, @tanstack/react-query@npm:^4.12.0":
-=======
 "@tanstack/react-query@npm:^4.10.1, @tanstack/react-query@npm:^4.14.1":
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   version: 4.14.1
   resolution: "@tanstack/react-query@npm:4.14.1"
   dependencies:
@@ -5996,24 +5954,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"@types/node@npm:*, @types/node@npm:^18.0.0, @types/node@npm:^18.7.16":
-  version: 18.11.9
-  resolution: "@types/node@npm:18.11.9"
-  checksum: cc0aae109e9b7adefc32eecb838d6fad931663bb06484b5e9cbbbf74865c721b03d16fd8d74ad90e31dbe093d956a7c2c306ba5429ba0c00f3f7505103d7a496
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:18.11.0":
-  version: 18.11.0
-  resolution: "@types/node@npm:18.11.0"
-  checksum: f27f899ab428e5732f04fadadc9203f44bdf3abf56474540ee27da90e4f2ba133faf87263cada4d2271955f92ee6a142bd50683c86290fe5070c19aac44fd654
-=======
 "@types/node@npm:*, @types/node@npm:18.11.9, @types/node@npm:^18.0.0, @types/node@npm:^18.7.16":
   version: 18.11.9
   resolution: "@types/node@npm:18.11.9"
   checksum: cc0aae109e9b7adefc32eecb838d6fad931663bb06484b5e9cbbbf74865c721b03d16fd8d74ad90e31dbe093d956a7c2c306ba5429ba0c00f3f7505103d7a496
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   languageName: node
   linkType: hard
 
@@ -14030,11 +13974,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"framer-motion@npm:^7.5.4":
-=======
 "framer-motion@npm:^7.6.4":
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   version: 7.6.4
   resolution: "framer-motion@npm:7.6.4"
   dependencies:
@@ -22125,15 +22065,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"puppeteer-core@npm:19.2.1":
-  version: 19.2.1
-  resolution: "puppeteer-core@npm:19.2.1"
-=======
 "puppeteer-core@npm:19.2.2":
   version: 19.2.2
   resolution: "puppeteer-core@npm:19.2.2"
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   dependencies:
     cross-fetch: 3.1.5
     debug: 4.3.4
@@ -22145,15 +22079,6 @@ __metadata:
     tar-fs: 2.1.1
     unbzip2-stream: 1.4.3
     ws: 8.10.0
-<<<<<<< HEAD
-  checksum: 67023d63bb9dbbd28f4d1888111cca8f44e80a4e50f2756fd60b2d8e04d7e4fe9725f733f7ef802ca8600b4cf6e4bcf0f5e52ed6c66b07bada8e6e0f87565223
-  languageName: node
-  linkType: hard
-
-"puppeteer@npm:^19.0.0":
-  version: 19.2.1
-  resolution: "puppeteer@npm:19.2.1"
-=======
   checksum: 5d275456667b57f3fb3caedfa4bc00474bd24f6028e3b1520281404584675dfb5e1b7d2daf6a57f62ca52f71eea899b0cc429aca5b65a9646da8b4588786431c
   languageName: node
   linkType: hard
@@ -22161,20 +22086,14 @@ __metadata:
 "puppeteer@npm:^19.2.2":
   version: 19.2.2
   resolution: "puppeteer@npm:19.2.2"
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   dependencies:
     cosmiconfig: 7.0.1
     devtools-protocol: 0.0.1056733
     https-proxy-agent: 5.0.1
     progress: 2.0.3
     proxy-from-env: 1.1.0
-<<<<<<< HEAD
-    puppeteer-core: 19.2.1
-  checksum: 0999151a3d9101cfe384e5d3b66dda564ede50572f60d36392423799a39749552ce5639369c6a3c3e283ec7279ddbce9fdda09ee8e2541ca5589d633bdecc284
-=======
     puppeteer-core: 19.2.2
   checksum: 8b66180ee62e624bd494c5fdcb36e023caca4058a151c30a99e938346c74a33951132c17149b72c90a87cb04ad1a5e220b554d69fd0bcd206345c9983d71edbe
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   languageName: node
   linkType: hard
 
@@ -22419,11 +22338,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
-"react-hook-form@npm:^7.37.0":
-=======
 "react-hook-form@npm:^7.39.1":
->>>>>>> 2b0d23e10f464581d72121ebfe4c5d43f3b3ed63
   version: 7.39.1
   resolution: "react-hook-form@npm:7.39.1"
   peerDependencies:
