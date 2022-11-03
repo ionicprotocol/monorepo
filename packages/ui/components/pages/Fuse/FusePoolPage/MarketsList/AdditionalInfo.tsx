@@ -168,7 +168,7 @@ export const AdditionalInfo = ({
       >
         {strategyScore !== undefined && (
           <GridItem rowSpan={2}>
-            <VStack width="100%" spacing={0} borderRadius="20" height="100%">
+            <VStack width="100%" spacing={0} borderRadius="20">
               <Box
                 width="100%"
                 p={4}
@@ -176,7 +176,7 @@ export const AdditionalInfo = ({
                 borderWidth={2}
                 borderColor={cCard.headingBgColor}
               >
-                <Flex justifyContent="space-between">
+                <Flex justifyContent="space-between" alignItems="center" height="100%">
                   <Flex gap={2} alignSelf="center">
                     <Text>Strategy Safety Score:</Text>
                     <Text
@@ -611,120 +611,126 @@ export const AdditionalInfo = ({
             </VStack>
           </GridItem>
         )}
-
-        <VStack width="100%" spacing={0} borderRadius="20">
-          <Box
-            width="100%"
-            p={4}
-            background={cCard.headingBgColor}
-            borderWidth={2}
-            borderColor={cCard.headingBgColor}
-          >
-            <Flex justifyContent="space-between">
-              <Text>Market Details</Text>
-              <HStack>
-                <Link
-                  href={`${scanUrl}/address/${asset.underlyingToken}`}
-                  isExternal
-                  rel="noreferrer"
-                >
-                  <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
-                    Token Contract
-                  </Button>
-                </Link>
-                <Link href={`${scanUrl}/address/${asset.cToken}`} isExternal rel="noreferrer">
-                  <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
-                    Market Contract
-                  </Button>
-                </Link>
-              </HStack>
-            </Flex>
-          </Box>
-          <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
-            <Grid
-              templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
-              gap={2}
+        <GridItem>
+          <VStack width="100%" spacing={0} borderRadius="20">
+            <Box
               width="100%"
-              height="100%"
+              p={4}
+              background={cCard.headingBgColor}
+              borderWidth={2}
+              borderColor={cCard.headingBgColor}
             >
-              <CaptionedStat
-                stat={midUsdFormatter(asset.totalSupplyFiat)}
-                caption={'Asset Supplied'}
-                crossAxisAlignment="center"
-              />
-              <CaptionedStat
-                stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
-                caption={'Asset Borrowed'}
-                crossAxisAlignment="center"
-              />
-              <CaptionedStat
-                stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
-                caption={'Asset Utilization'}
-                crossAxisAlignment="center"
-              />
-              <CaptionedStat
-                stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
-                caption={'Loan-to-Value'}
-                crossAxisAlignment="center"
-                tooltip={LOAN_TO_VALUE_TOOLTIP}
-              />
-
-              <CaptionedStat
-                stat={Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0) + '%'}
-                caption={'Reserve Factor'}
-                crossAxisAlignment="center"
-                tooltip={RESERVE_FACTOR_TOOLTIP}
-              />
-              <CaptionedStat
-                stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
-                caption={'Admin Fee'}
-                crossAxisAlignment="center"
-                tooltip={ADMIN_FEE_TOOLTIP}
-              />
-            </Grid>
-          </Box>
-        </VStack>
-        <VStack width="100%" spacing={0} borderRadius="20">
-          <Box
-            width="100%"
-            p={4}
-            background={cCard.headingBgColor}
-            borderWidth={2}
-            borderColor={cCard.headingBgColor}
-          >
-            <Text>Utilization Rate</Text>
-          </Box>
-          <Box
-            width="100%"
-            height="250px"
-            borderWidth={2}
-            borderColor={cCard.headingBgColor}
-            pb={4}
-          >
-            {asset.isBorrowPaused ? (
-              <Center height="100%">
-                <Text variant="smText">This asset is not borrowable.</Text>
-              </Center>
-            ) : data ? (
-              data.rates === null ? (
-                <Center height="100%">
-                  <Text variant="smText">
-                    No graph is available for this asset(&apos)s interest curves.
-                  </Text>
-                </Center>
-              ) : (
-                <UtilizationChart
-                  irmToCurve={data}
-                  currentUtilization={asset.utilization.toFixed(0)}
+              <Flex justifyContent="space-between" alignItems="center" height="100%">
+                <Text>Market Details</Text>
+                <HStack>
+                  <Link
+                    href={`${scanUrl}/address/${asset.underlyingToken}`}
+                    isExternal
+                    rel="noreferrer"
+                  >
+                    <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                      Token Contract
+                    </Button>
+                  </Link>
+                  <Link href={`${scanUrl}/address/${asset.cToken}`} isExternal rel="noreferrer">
+                    <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                      Market Contract
+                    </Button>
+                  </Link>
+                </HStack>
+              </Flex>
+            </Box>
+            <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
+              <Grid
+                templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
+                gap={2}
+                width="100%"
+                height="100%"
+              >
+                <CaptionedStat
+                  stat={midUsdFormatter(asset.totalSupplyFiat)}
+                  caption={'Asset Supplied'}
+                  crossAxisAlignment="center"
                 />
-              )
-            ) : (
-              <Center height="100%">
-                <Spinner />
-              </Center>
-            )}
-          </Box>
-        </VStack>
+                <CaptionedStat
+                  stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
+                  caption={'Asset Borrowed'}
+                  crossAxisAlignment="center"
+                />
+                <CaptionedStat
+                  stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
+                  caption={'Asset Utilization'}
+                  crossAxisAlignment="center"
+                />
+                <CaptionedStat
+                  stat={Number(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0) + '%'}
+                  caption={'Loan-to-Value'}
+                  crossAxisAlignment="center"
+                  tooltip={LOAN_TO_VALUE_TOOLTIP}
+                />
+
+                <CaptionedStat
+                  stat={Number(utils.formatUnits(asset.reserveFactor, 16)).toFixed(0) + '%'}
+                  caption={'Reserve Factor'}
+                  crossAxisAlignment="center"
+                  tooltip={RESERVE_FACTOR_TOOLTIP}
+                />
+                <CaptionedStat
+                  stat={Number(utils.formatUnits(asset.adminFee, 16)).toFixed(1) + '%'}
+                  caption={'Admin Fee'}
+                  crossAxisAlignment="center"
+                  tooltip={ADMIN_FEE_TOOLTIP}
+                />
+              </Grid>
+            </Box>
+          </VStack>
+        </GridItem>
+        <GridItem>
+          <VStack width="100%" spacing={0} borderRadius="20">
+            <Box
+              width="100%"
+              px={4}
+              background={cCard.headingBgColor}
+              borderWidth={2}
+              borderColor={cCard.headingBgColor}
+              height="60px"
+            >
+              <Flex alignItems="center" height="100%">
+                <Text py={0.5}>Utilization Rate</Text>
+              </Flex>
+            </Box>
+            <Box
+              width="100%"
+              height="250px"
+              borderWidth={2}
+              borderColor={cCard.headingBgColor}
+              pb={4}
+            >
+              {asset.isBorrowPaused ? (
+                <Center height="100%">
+                  <Text variant="smText">This asset is not borrowable.</Text>
+                </Center>
+              ) : data ? (
+                data.rates === null ? (
+                  <Center height="100%">
+                    <Text variant="smText">
+                      No graph is available for this asset(&apos)s interest curves.
+                    </Text>
+                  </Center>
+                ) : (
+                  <UtilizationChart
+                    irmToCurve={data}
+                    currentUtilization={asset.utilization.toFixed(0)}
+                  />
+                )
+              ) : (
+                <Center height="100%">
+                  <Spinner />
+                </Center>
+              )}
+            </Box>
+          </VStack>
+        </GridItem>
       </Grid>
     </Box>
   );
