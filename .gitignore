@@ -8,8 +8,7 @@
 # !.yarn/cache
 .pnp.*
 node_modules*
-!/packages/fuse-liquidator-bot/.env
-!/packages/fuse-twap-bot/.env
+!/packages/bots/liquidator/.env
 /.idea/
 .vscode
 
