@@ -1,4 +1,4 @@
-import { ExternalLinkIcon, QuestionIcon, TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -19,6 +19,8 @@ import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
 import { useMemo } from 'react';
+import { BiHelpCircle } from 'react-icons/bi';
+import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
 import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
@@ -27,6 +29,7 @@ import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import ConnectWalletModal from '@ui/components/shared/ConnectWalletModal';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import SwitchNetworkModal from '@ui/components/shared/SwitchNetworkModal';
 import {
   ADMIN_FEE_TOOLTIP,
@@ -42,7 +45,7 @@ import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
-import { getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
+import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
 
 const UtilizationChart = dynamic(() => import('@ui/components/shared/UtilizationChart'), {
   ssr: false,
@@ -79,6 +82,11 @@ export const AdditionalInfo = ({
       onOpen();
     }
   };
+  const vaultUrl = useMemo(() => {
+    if (strategyScore?.strategy.address) {
+      return deployedPlugins[poolChainId][strategyScore.strategy.address].apyDocsUrl;
+    }
+  }, [strategyScore, poolChainId]);
   const greenColor = useColorModeValue('green.500', 'green');
   const yellowColor = useColorModeValue('yellow.500', 'yellow');
   const redColor = useColorModeValue('red.500', 'red');
@@ -281,16 +289,8 @@ export const AdditionalInfo = ({
               borderColor={cCard.headingBgColor}
             >
               <Flex justifyContent="space-between">
-                <Text>Safety Score</Text>
-                <Link href={MIDAS_SECURITY_DOCS_URL} isExternal>
-                  How it works
-                </Link>
-              </Flex>
-            </Box>
-            <Box width="100%" borderWidth={2} borderColor={cCard.headingBgColor}>
-              <VStack alignItems="flex-start" p={4} gap={2}>
-                <Flex gap={4}>
-                  <Text>Strategy Total Score</Text>
+                <Flex gap={2} alignSelf="center">
+                  <Text>Strategy Safety Score:</Text>
                   <Text
                     fontWeight="bold"
                     variant="mdText"
@@ -298,12 +298,51 @@ export const AdditionalInfo = ({
                   >
                     {(strategyScore.totalScore * SCORE_RANGE_MAX).toFixed(2)}
                   </Text>
+                  <Center height="100%">
+                    <SimpleTooltip label="Link to Docs">
+                      <Link href={MIDAS_SECURITY_DOCS_URL} isExternal>
+                        <BiHelpCircle fontSize={18} />
+                      </Link>
+                    </SimpleTooltip>
+                  </Center>
                 </Flex>
+
+                <HStack>
+                  {asset.plugin && (
+                    <Link href={`${scanUrl}/address/${asset.plugin}`} isExternal rel="noreferrer">
+                      <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                        Strategy Address
+                      </Button>
+                    </Link>
+                  )}
+                  {vaultUrl && (
+                    <Link href={vaultUrl} isExternal rel="noreferrer">
+                      <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                        Vault
+                      </Button>
+                    </Link>
+                  )}
+                </HStack>
+              </Flex>
+            </Box>
+            <Box width="100%" borderWidth={2} borderColor={cCard.headingBgColor}>
+              <VStack alignItems="flex-start" p={4} gap={2}>
                 <Flex gap={4}>
                   {strategyScore.complexityScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon color={setColorByScore(strategyScore.complexityScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.complexityScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon color={setColorByScore(strategyScore.complexityScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.complexityScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>{STRATEGY_HELP.complexity[strategyScore.strategy.complexity].title}</Text>
                   <PopoverTooltip
@@ -318,20 +357,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.timeInMarketScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon color={setColorByScore(strategyScore.timeInMarketScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.timeInMarketScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon color={setColorByScore(strategyScore.timeInMarketScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.timeInMarketScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>
                     {STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].title}
@@ -351,20 +397,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskILScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskILScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.assetRiskILScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskILScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.assetRiskILScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>{STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].title}</Text>
 
@@ -380,24 +433,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskLiquidityScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon
-                      color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon
-                      color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.assetRiskLiquidityScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>{STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].title}</Text>
                   <PopoverTooltip
@@ -412,20 +468,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskMktCapScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskMktCapScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.assetRiskMktCapScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskMktCapScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.assetRiskMktCapScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>{STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].title}</Text>
                   <PopoverTooltip
@@ -440,20 +503,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.assetRiskSupplyScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon color={setColorByScore(strategyScore.assetRiskSupplyScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.assetRiskSupplyScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon color={setColorByScore(strategyScore.assetRiskSupplyScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.assetRiskSupplyScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>
                     {
@@ -477,24 +547,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskReputationScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon
-                      color={setColorByScore(strategyScore.platformRiskReputationScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.platformRiskReputationScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon
-                      color={setColorByScore(strategyScore.platformRiskReputationScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.platformRiskReputationScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>{STRATEGY_HELP.reputation[strategyScore.strategy.reputation].title}</Text>
                   <PopoverTooltip
@@ -509,22 +582,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskAuditScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon color={setColorByScore(strategyScore.platformRiskAuditScore)} />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.platformRiskAuditScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon
-                      color={setColorByScore(strategyScore.platformRiskAuditScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.platformRiskAuditScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].title}</Text>
                   <PopoverTooltip
@@ -537,24 +615,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskContractsVerifiedScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon
-                      color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon
-                      color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.platformRiskContractsVerifiedScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>
                     {
@@ -579,24 +660,27 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
                 <Flex gap={4}>
                   {strategyScore.platformRiskAdminWithTimelockScore >= SCORE_LIMIT ? (
-                    <TriangleUpIcon
-                      color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={14}
+                        color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
+                      />
+                    </Center>
                   ) : (
-                    <TriangleDownIcon
-                      color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
-                    />
+                    <Center>
+                      <BsTriangleFill
+                        size={12}
+                        color={setColorByScore(strategyScore.platformRiskAdminWithTimelockScore)}
+                        style={{ transform: 'rotate(180deg)' }}
+                      />
+                    </Center>
                   )}
                   <Text>
                     {
@@ -621,13 +705,9 @@ export const AdditionalInfo = ({
                       </VStack>
                     }
                   >
-                    <Text fontWeight="bold">
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                      />
-                    </Text>
+                    <Center height="100%">
+                      <BiHelpCircle fontSize={18} />
+                    </Center>
                   </PopoverTooltip>
                 </Flex>
               </VStack>
