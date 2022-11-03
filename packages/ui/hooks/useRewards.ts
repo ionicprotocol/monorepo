@@ -1,3 +1,4 @@
+import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -26,9 +27,22 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
     async () => {
       if (chainId && sdk && poolData) {
         try {
-          const allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(
-            poolData.comptroller
-          );
+          let allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
+          try {
+            allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(
+              poolData.comptroller
+            );
+          } catch (exception) {
+            // Fallback to rewards without APRs
+            // TODO LogRocket
+            console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+            try {
+              allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPool(poolData.comptroller);
+            } catch (exception) {
+              // TODO LogRocket
+              console.error('Unable to get onchain Flywheel Rewards Fallback', exception);
+            }
+          }
 
           const rewardsOfMarkets: UseRewardsData = {};
           await Promise.all(
@@ -55,14 +69,13 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
                   )
                   .filter((f) => !!f) as string[];
                 for (const info of flywheelRewards.rewardsInfo) {
-                  if (
-                    !flywheelsInPluginResponse.includes(info.flywheel.toLowerCase()) &&
-                    info.formattedAPR
-                  ) {
+                  if (!flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())) {
                     allRewards.push({
                       flywheel: info.flywheel,
                       updated_at: new Date().toISOString(),
-                      apy: parseFloat(utils.formatUnits(info.formattedAPR, 18)),
+                      apy: info.formattedAPR
+                        ? parseFloat(utils.formatUnits(info.formattedAPR, 18))
+                        : undefined,
                       token: info.rewardToken,
                     } as FlywheelReward);
                   }
