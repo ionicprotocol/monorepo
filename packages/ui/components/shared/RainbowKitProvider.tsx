@@ -29,6 +29,8 @@ const RainbowKit = ({ children }: { children: ReactNode }) => {
                 modalText: COLOR_PALETTE.raisinBlack,
                 modalTextSecondary: COLOR_PALETTE.raisinBlack,
                 modalBorder: COLOR_PALETTE.ecru,
+                connectButtonBackgroundError: COLOR_PALETTE.ecru,
+                connectButtonTextError: COLOR_PALETTE.raisinBlack,
               },
               radii: {
                 actionButton: '12px',
@@ -53,6 +55,8 @@ const RainbowKit = ({ children }: { children: ReactNode }) => {
                 modalText: COLOR_PALETTE.whiteBg,
                 modalTextSecondary: COLOR_PALETTE.whiteBg,
                 modalBorder: COLOR_PALETTE.ecru,
+                connectButtonBackgroundError: COLOR_PALETTE.ecru,
+                connectButtonTextError: COLOR_PALETTE.raisinBlack,
               },
               radii: {
                 actionButton: '12px',
