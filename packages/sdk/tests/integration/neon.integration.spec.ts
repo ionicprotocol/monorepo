@@ -73,7 +73,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     // Supply 0.1 tokenOne from other account
     const supply1Amount = "1";
 
-    const btcbSuply = await sdk
+    const btcbSupply = await sdk
       .setSigner(alice)
       .supply(
         deployedErc20One.assetAddress,
@@ -83,7 +83,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
         ethers.utils.parseEther(supply1Amount)
       );
     console.log(
-      `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSuply.errorCode}`
+      `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSupply.errorCode}`
     );
 
     const supply2Amount = "8500";
