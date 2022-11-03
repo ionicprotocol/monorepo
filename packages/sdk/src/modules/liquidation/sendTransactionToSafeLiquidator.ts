@@ -38,9 +38,13 @@ export default async function sendTransactionToSafeLiquidator(
   // Send transaction
   try {
     sentTx = await signer.sendTransaction(txRequest);
+    const receipt = await sentTx.wait();
+    if (receipt.status === 0) {
+      throw `Error sending ${method} transaction: Transaction reverted with status 0`;
+    }
+    console.log("Successfully sent", method, "transaction hash:", sentTx.hash);
+    return sentTx;
   } catch (error) {
     throw `Error sending ${method}, transaction: ${error}`;
   }
-  console.log("Successfully sent", method, "transaction hash:", sentTx.hash);
-  return sentTx;
 }

@@ -35,6 +35,11 @@ export type LiquidatablePool = {
   liquidations: EncodedLiquidationTx[];
 };
 
+export type ErroredPool = {
+  comptroller: string;
+  msg: string;
+};
+
 export type FusePoolUserStruct = {
   account: string;
   totalBorrow: BigNumberish;

@@ -1,10 +1,11 @@
-import { BigNumber, utils, Wallet } from "ethers";
+import { TransactionResponse } from "@ethersproject/providers";
+import { BigNumber, utils } from "ethers";
 
 import { MidasBaseConstructor } from "../..";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
-import { LiquidatablePool } from "./utils";
+import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
 
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
@@ -13,24 +14,24 @@ export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBa
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 
     async getPotentialLiquidations(
-      signer: Wallet,
       excludedComptrollers: Array<string> = [],
       maxHealthFactor: BigNumber = utils.parseEther("1"),
       configOverrides?: ChainLiquidationConfig
-    ): Promise<Array<LiquidatablePool>> {
+    ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
-      const fusePoolWithUsers = await getAllFusePoolUsers(this, maxHealthFactor, excludedComptrollers);
+      const [fusePoolWithUsers, erroredPools] = await getAllFusePoolUsers(this, maxHealthFactor, excludedComptrollers);
       if (configOverrides)
         this.chainLiquidationConfig = {
           ...this.chainLiquidationConfig,
           ...configOverrides,
         };
-      return await gatherLiquidations(this, fusePoolWithUsers, this.chainLiquidationConfig);
+      return [await gatherLiquidations(this, fusePoolWithUsers, this.chainLiquidationConfig), erroredPools];
     }
-    async estimateProfit(liquidation) {}
-    async liquidatePositions(positions: Array<LiquidatablePool>) {
-      await liquidateUnhealthyBorrows(this, positions);
+    async liquidatePositions(
+      liquidatablePool: LiquidatablePool
+    ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionResponse>]> {
+      const [erroredLiquidations, succeededLiquidations] = await liquidateUnhealthyBorrows(this, liquidatablePool);
+      return [erroredLiquidations, succeededLiquidations];
     }
-    async getPositionRation(position) {}
   };
 }
