@@ -88,9 +88,9 @@ export const AdditionalInfo = ({
       return deployedPlugins[poolChainId][strategyScore.strategy.address].apyDocsUrl;
     }
   }, [strategyScore, poolChainId]);
-  const greenColor = useColorModeValue('green.500', 'green');
-  const yellowColor = useColorModeValue('yellow.500', 'yellow');
-  const redColor = useColorModeValue('red.500', 'red');
+  const greenColor = useColorModeValue('#38A169', 'green');
+  const yellowColor = useColorModeValue('#D69E2E', 'yellow');
+  const redColor = useColorModeValue('#E53E3E', 'red');
   const setColorByScore = (score: number) => {
     return score >= 0.8 ? greenColor : score >= 0.6 ? yellowColor : redColor;
   };
