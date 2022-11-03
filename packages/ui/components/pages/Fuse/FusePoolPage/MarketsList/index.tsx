@@ -155,7 +155,10 @@ export const MarketsList = ({
         ) / 100;
 
       if (rewards[asset.cToken]) {
-        marketTotalAPY += rewards[asset.cToken].reduce((acc, cur) => acc + cur.apy, 0);
+        marketTotalAPY += rewards[asset.cToken].reduce(
+          (acc, cur) => (cur.apy ? acc + cur.apy : acc),
+          0
+        );
       }
       result[asset.cToken] = marketTotalAPY;
     }
