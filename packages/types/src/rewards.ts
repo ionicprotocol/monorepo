@@ -1,5 +1,5 @@
 export interface AbstractReward {
-  apy: number;
+  apy?: number;
   updated_at: string;
 }
 
