@@ -3,7 +3,7 @@ import { BigNumber } from "ethers";
 
 import { MidasBase } from "../../MidasSdk";
 
-import { StrategiesAndDatas } from "./redemptionStrategy";
+import { getUniswapV2Router, StrategiesAndDatas } from "./redemptionStrategy";
 import { FusePoolUserWithAssets } from "./utils";
 
 const estimateGas = async (
@@ -81,8 +81,8 @@ const estimateGas = async (
           cTokenCollateral: borrower.collateral[0].cToken,
           minProfitAmount: 0,
           exchangeProfitTo: exchangeToTokenAddress,
-          uniswapV2RouterForBorrow: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-          uniswapV2RouterForCollateral: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+          uniswapV2RouterForBorrow: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER, // TODO ASSET_SPECIFIC_ROUTER
+          uniswapV2RouterForCollateral: getUniswapV2Router(fuse, borrower.collateral[0].cToken),
           redemptionStrategies: strategiesAndDatas.strategies,
           strategyData: strategiesAndDatas.datas,
           flashSwapPair,

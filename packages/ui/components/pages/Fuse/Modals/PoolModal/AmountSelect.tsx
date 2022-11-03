@@ -34,7 +34,7 @@ import Loader from '@ui/components/shared/Loader';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { DEFAULT_DECIMALS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
+import { DEFAULT_DECIMALS, REPAY_STEPS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -100,12 +100,13 @@ const AmountSelect = ({
   const [isDeploying, setIsDeploying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
+  const [steps, setSteps] = useState<string[]>([]);
   const successToast = useSuccessToast();
 
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
     asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
-    mode === FundOperationMode.SUPPLY &&
+    (mode === FundOperationMode.SUPPLY || mode === FundOperationMode.REPAY) &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
 
@@ -207,7 +208,7 @@ const AmountSelect = ({
 
     try {
       setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
-      const isRepayingMax = amount.eq(asset.borrowBalance) && mode === FundOperationMode.REPAY;
+
       let tx: ContractTransaction;
 
       if (mode === FundOperationMode.SUPPLY) {
@@ -215,9 +216,31 @@ const AmountSelect = ({
           setActiveStep(0);
           setFailedStep(0);
           setIsDeploying(true);
+          if (optionToWrap) {
+            try {
+              setActiveStep(1);
+              const WToken = getContract(
+                currentSdk.chainSpecificAddresses.W_TOKEN,
+                WETHAbi,
+                currentSdk.signer
+              );
+
+              setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
+
+              const resp = await WToken.deposit({ from: address, value: amount });
+
+              setPendingTxHash(resp.hash);
+              successToast({
+                description: 'Successfully Wrapped!',
+              });
+            } catch (error) {
+              setFailedStep(1);
+              throw error;
+            }
+          }
 
           try {
-            setActiveStep(1);
+            setActiveStep(optionToWrap ? 2 : 1);
 
             await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
 
@@ -225,12 +248,12 @@ const AmountSelect = ({
               description: 'Successfully Approved!',
             });
           } catch (error) {
-            setFailedStep(1);
+            setFailedStep(optionToWrap ? 2 : 1);
             throw error;
           }
 
           try {
-            setActiveStep(2);
+            setActiveStep(optionToWrap ? 3 : 2);
 
             await currentSdk.enterMarkets(asset.cToken, comptrollerAddress, enableAsCollateral);
 
@@ -238,12 +261,12 @@ const AmountSelect = ({
               description: 'Collateral enabled!',
             });
           } catch (error) {
-            setFailedStep(2);
+            setFailedStep(optionToWrap ? 3 : 2);
             throw error;
           }
 
           try {
-            setActiveStep(3);
+            setActiveStep(optionToWrap ? 4 : 3);
             const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
             if (errorCode !== null) {
               fundOperationError(errorCode, minBorrowUSD);
@@ -251,7 +274,7 @@ const AmountSelect = ({
               setPendingTxHash(tx.hash);
             }
           } catch (error) {
-            setFailedStep(3);
+            setFailedStep(optionToWrap ? 4 : 3);
             throw error;
           }
         } catch (error) {
@@ -261,6 +284,7 @@ const AmountSelect = ({
           return;
         }
       } else if (mode === FundOperationMode.REPAY) {
+        const isRepayingMax = amount.eq(asset.borrowBalance) && mode === FundOperationMode.REPAY;
         const resp = await currentSdk.repay(
           asset.cToken,
           asset.underlyingToken,
@@ -308,28 +332,6 @@ const AmountSelect = ({
     }
   };
 
-  const onWrap = async () => {
-    if (!currentSdk) return;
-
-    try {
-      const WToken = getContract(
-        currentSdk.chainSpecificAddresses.W_TOKEN,
-        WETHAbi,
-        currentSdk.signer
-      );
-
-      setUserAction(UserAction.WAITING_FOR_TRANSACTIONS);
-
-      const resp = await WToken.deposit({ from: address, value: amount });
-
-      setPendingTxHash(resp.hash);
-      onClose();
-    } catch (e) {
-      handleGenericError(e, errorToast);
-      setUserAction(UserAction.NO_ACTION);
-    }
-  };
-
   const updateAvailableToWithdraw = useCallback(async () => {
     if (!currentSdk || !address) return;
 
@@ -342,6 +344,14 @@ const AmountSelect = ({
       updateAvailableToWithdraw();
     }
   }, [mode, updateAvailableToWithdraw]);
+
+  useEffect(() => {
+    if (mode === FundOperationMode.SUPPLY) {
+      optionToWrap ? setSteps(['Wrap Native Token', ...SUPPLY_STEPS]) : setSteps([...SUPPLY_STEPS]);
+    } else if (mode === FundOperationMode.REPAY) {
+      optionToWrap ? setSteps(['Wrap Native Token', ...REPAY_STEPS]) : setSteps([...REPAY_STEPS]);
+    }
+  }, [mode, optionToWrap]);
 
   return (
     <Column
@@ -356,12 +366,8 @@ const AmountSelect = ({
         <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
           <Loader />
           <Box py={4} w="100%" h="100%">
-            {mode === FundOperationMode.SUPPLY && (
-              <TransactionStepper
-                activeStep={activeStep}
-                steps={SUPPLY_STEPS}
-                failedStep={failedStep}
-              />
+            {steps.length > 0 && (
+              <TransactionStepper activeStep={activeStep} steps={steps} failedStep={failedStep} />
             )}
           </Box>
           <Text mt="30px" textAlign="center" variant="smText">
@@ -537,76 +543,53 @@ const AmountSelect = ({
               )}
             </Column>
 
-            {optionToWrap ? (
-              <Text variant="smText" margin="10px" textAlign="center">
-                No {asset.underlyingSymbol} detected. Wrap your {nativeSymbol} to supply{' '}
-                {asset.underlyingSymbol} to the pool
-              </Text>
-            ) : (
-              <>
-                <StatsColumn
-                  amount={amount}
-                  assets={assets}
-                  asset={asset}
-                  mode={mode}
-                  enableAsCollateral={enableAsCollateral}
-                  poolChainId={poolChainId}
-                />
+            <>
+              <StatsColumn
+                amount={amount}
+                assets={assets}
+                asset={asset}
+                mode={mode}
+                enableAsCollateral={enableAsCollateral}
+                poolChainId={poolChainId}
+              />
 
-                {showEnableAsCollateral ? (
-                  <MidasBox p={4} width="100%" mt={4}>
-                    <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-                      <Text variant="smText" fontWeight="bold">
-                        Enable As Collateral:
-                      </Text>
-                      <Switch
-                        h="20px"
-                        isChecked={enableAsCollateral}
-                        onChange={() => {
-                          setEnableAsCollateral((past) => !past);
-                        }}
-                      />
-                    </Row>
-                  </MidasBox>
-                ) : null}
-              </>
-            )}
-            {optionToWrap ? (
-              <Button
-                id="wrapFund"
-                mt={4}
-                width="100%"
-                className={
-                  isMobile ||
-                  depositOrWithdrawAlertFontSize === '14px' ||
-                  depositOrWithdrawAlertFontSize === '15px'
-                    ? 'confirm-button-disable-font-size-scale'
-                    : ''
-                }
-                onClick={onWrap}
-                isDisabled={!amountIsValid}
-              >
-                Wrap {nativeSymbol} to {asset.underlyingSymbol}
-              </Button>
-            ) : (
-              <Button
-                id="confirmFund"
-                mt={4}
-                width="100%"
-                className={
-                  isMobile ||
-                  depositOrWithdrawAlertFontSize === '14px' ||
-                  depositOrWithdrawAlertFontSize === '15px'
-                    ? 'confirm-button-disable-font-size-scale'
-                    : ''
-                }
-                onClick={onConfirm}
-                isDisabled={!amountIsValid}
-                height={16}
-              >
-                {isDeploying ? SUPPLY_STEPS[activeStep] : depositOrWithdrawAlert ?? 'Confirm'}
-              </Button>
-            )}
+              {showEnableAsCollateral ? (
+                <MidasBox p={4} width="100%" mt={4}>
+                  <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
+                    <Text variant="smText" fontWeight="bold">
+                      Enable As Collateral:
+                    </Text>
+                    <Switch
+                      h="20px"
+                      isChecked={enableAsCollateral}
+                      onChange={() => {
+                        setEnableAsCollateral((past) => !past);
+                      }}
+                    />
+                  </Row>
+                </MidasBox>
+              ) : null}
+            </>
+            <Button
+              id="confirmFund"
+              mt={4}
+              width="100%"
+              className={
+                isMobile ||
+                depositOrWithdrawAlertFontSize === '14px' ||
+                depositOrWithdrawAlertFontSize === '15px'
+                  ? 'confirm-button-disable-font-size-scale'
+                  : ''
+              }
+              onClick={onConfirm}
+              isDisabled={!amountIsValid}
+              height={16}
+            >
+              {isDeploying
+                ? SUPPLY_STEPS[activeStep]
+                : depositOrWithdrawAlert ??
+                  `${optionToWrap ? `Wrap ${nativeSymbol} & ` : ''}Confirm`}
+            </Button>
           </Column>
         </>
       )}
