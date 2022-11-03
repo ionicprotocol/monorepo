@@ -48,12 +48,11 @@ export const WalletButtons = () => {
                           width={6}
                           height={6}
                           borderRadius="50%"
-                          mr={2}
                         />
                       )}
-                      {chain.name}
+                      {!isMobile && <Text ml={2}>{chain.name}</Text>}
                     </Button>
-                    <Button onClick={openAccountModal}>
+                    <Button onClick={openAccountModal} px={2}>
                       {account.hasPendingTransactions ? (
                         <HStack>
                           <Center height="100%">
