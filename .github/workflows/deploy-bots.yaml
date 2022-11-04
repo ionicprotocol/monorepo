@@ -146,8 +146,6 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      NODEREAL_BSC_API_KEY: '${{ secrets.NODEREAL_BSC_API_KEY }}'
-      NODEREAL_MATIC_API_KEY: '${{ secrets.NODEREAL_MATIC_API_KEY }}'
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-liquidator-image.outputs.json).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.build-and-push-oracles-monitor-image.outputs.json).tags[0] }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -176,12 +174,12 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      MORALIS_API_KEY: '${{ secrets.MORALIS_API_KEY }}'
       POKT_API_KEY: '${{ secrets.POKT_API_KEY }}'
-      GETBLOCK_API_KEY: '${{ secrets.GETBLOCK_API_KEY }}'
-      NODEREAL_BSC_API_KEY: '${{ secrets.NODEREAL_BSC_API_KEY }}'
-      NODEREAL_MATIC_API_KEY: '${{ secrets.NODEREAL_MATIC_API_KEY }}'
-      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      CHAINSTACK_BSC_RPC_URL: '${{ secrets.CHAINSTACK_BSC_RPC_URL }}'
+      CHAINSTACK_POLYGON_RPC_URL: '${{ secrets.CHAINSTACK_POLYGON_RPC_URL }}'
+      LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
+      ECS_NOTIFIER_DISCORD_WEBHOOK_URL: ${{ secrets.ECS_NOTIFIER_DISCORD_WEBHOOK_URL }}
+      ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.liquidator-tags).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.oracles-monitor-tags).tags[0] }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
