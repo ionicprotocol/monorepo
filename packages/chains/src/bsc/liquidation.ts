@@ -8,6 +8,7 @@ const liquidationDefaults: LiquidationDefaults = {
   DEFAULT_ROUTER: chainAddresses.UNISWAP_V2_ROUTER,
   ASSET_SPECIFIC_ROUTER: {
     [underlying(assets, assetSymbols["asBNBx-WBNB"])]: "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7",
+    [underlying(assets, assetSymbols.BNBx)]: "0xcF0feBd3f17CEf5b47b0cD257aCf6025c5BFf3b7", // ApeSwap router
   },
   SUPPORTED_OUTPUT_CURRENCIES: [constants.AddressZero, WBNB],
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, WBNB],
@@ -34,6 +35,14 @@ const liquidationDefaults: LiquidationDefaults = {
         underlying(assets, assetSymbols.BUSD),
         underlying(assets, assetSymbols.USDC),
         underlying(assets, assetSymbols.USDT),
+      ],
+    },
+    {
+      poolAddress: "0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", // 3brl pool
+      coins: [
+        underlying(assets, assetSymbols.jBRL),
+        underlying(assets, assetSymbols.BRZ),
+        underlying(assets, assetSymbols.BRZw),
       ],
     },
   ],

@@ -98,7 +98,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`
     );
 
-    const borrowAmount = "0.22";
+    const borrowAmount = "0.21";
 
     const btcbBorrow = await sdk
       .setSigner(bob)

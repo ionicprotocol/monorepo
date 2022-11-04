@@ -75,6 +75,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["CAKE-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
+  [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
 };
 
 export default redemptionStrategies;

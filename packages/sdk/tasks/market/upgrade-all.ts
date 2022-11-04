@@ -26,11 +26,13 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     undefined,
     types.string
   )
+  .addFlag("setLatest", "Set the new implementation as the latest for the autoimplementations")
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner("deployer");
     const oldErc20Delegate = taskArgs.oldDelegate;
     const oldErc20PluginDelegate = taskArgs.oldPluginDelegate;
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
+    const setLatest = taskArgs.setLatest;
 
     // @ts-ignoreutils/fuseSdk
     const midasSdkModule = await import("../../tests/utils/midasSdk");
@@ -77,8 +79,43 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
       arrayOfTrue
     );
 
-    const receipt = await tx.wait();
-    console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
+    await tx.wait();
+    console.log("Set whitelist for ERC20 Delegate with status:", tx.hash);
+
+    if (setLatest) {
+      if (oldErc20Delegate) {
+        const tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          oldErc20Delegate,
+          erc20Delegate.address,
+          false,
+          "0x00"
+        );
+        await tx.wait();
+        console.log("_setLatestCErc20Delegate:", tx.hash);
+      }
+
+      if (oldErc20PluginDelegate) {
+        const tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          oldErc20PluginDelegate,
+          erc20PluginDelegate.address,
+          false,
+          "0x00"
+        );
+        await tx.wait();
+        console.log("_setLatestCErc20Delegate (plugin):", tx.hash);
+      }
+
+      if (oldErc20PluginRewardsDelegate) {
+        const tx = await fuseFeeDistributor._setLatestCErc20Delegate(
+          oldErc20PluginRewardsDelegate,
+          erc20PluginRewardsDelegate.address,
+          false,
+          "0x00"
+        );
+        await tx.wait();
+        console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
+      }
+    }
   });
 
 task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")

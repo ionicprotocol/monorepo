@@ -18,7 +18,7 @@ variable "ethereum_admin_private_key" {
   type = string
 }
 
-variable "moralis_api_key" {
+variable "chainstack_bsc_rpc_url" {
   type = string
 }
 
@@ -26,15 +26,7 @@ variable "pokt_api_key" {
   type = string
 }
 
-variable "nodereal_bsc_api_key" {
-  type = string
-}
-
-variable "nodereal_matic_api_key" {
-  type = string
-}
-
-variable "getblock_api_key" {
+variable "chainstack_polygon_rpc_url" {
   type = string
 }
 
@@ -52,9 +44,19 @@ variable "oracles_monitor_image" {
   type    = string
   default = "ghcr.io/midas-protocol/oracles-monitor:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
 }
-variable "discord_webhook_url" {
+variable "ecs_notifier_discord_webhook_url" {
   type = string
 }
+
+variable "oracles_discord_webhook_url" {
+  type = string
+}
+
+
+variable "liquidation_discord_webhook_url" {
+  type = string
+}
+
 
 variable "supabase_key" {
   type = string

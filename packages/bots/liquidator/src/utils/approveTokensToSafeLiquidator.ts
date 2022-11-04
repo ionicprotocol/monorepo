@@ -3,9 +3,9 @@ import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
 import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, constants, Contract, logger, Wallet } from "ethers";
 
-import { fetchGasLimitForTransaction } from "./utils";
+import config from "../config";
 
-import { config, setUpSdk } from "./index";
+import { fetchGasLimitForTransaction, setUpSdk } from ".";
 
 export default async function approveTokensToSafeLiquidator(chainId: number, provider: JsonRpcProvider) {
   const midasSdk = setUpSdk(chainId, provider);
@@ -53,6 +53,10 @@ async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: st
   try {
     sentTx = await signer.sendTransaction(txRequest);
     await sentTx.wait();
+    const receipt = await sentTx.wait();
+    if (receipt.status === 0) {
+      throw `Error sending approve transaction for ${erc20Address}`;
+    }
   } catch (error) {
     throw "Error sending " + erc20Address + " approval transaction: " + error;
   }

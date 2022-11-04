@@ -12,7 +12,7 @@ From the top level:
 
 ```
 >>> yarn
->>> yarn workspace @midas-capital/fuse-liquidator-bot build
+>>> yarn workspace @midas-capital/liquidator build
 ```
 
 Or with docker:

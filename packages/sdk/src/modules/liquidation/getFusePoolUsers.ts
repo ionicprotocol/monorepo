@@ -4,7 +4,7 @@ import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
 import { MidasBase } from "../../MidasSdk";
 
-import { FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
+import { ErroredPool, FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
 
 function getUserTotals(assets: FusePoolLensType.FusePoolAssetStructOutput[]): {
   totalBorrow: BigNumber;
@@ -65,17 +65,23 @@ async function getFusePoolUsers(
 export default async function getAllFusePoolUsers(
   fuse: MidasBase,
   maxHealth: BigNumber,
-
   excludedComptrollers: Array<string>
-): Promise<PublicPoolUserWithData[]> {
+): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
   const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
+  const erroredPools: Array<ErroredPool> = [];
   for (const pool of allPools) {
-    if (!excludedComptrollers.includes(pool.comptroller)) {
-      const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(fuse, pool.comptroller, maxHealth);
-      fusePoolUsers.push(poolUserParams);
+    const { comptroller } = pool;
+    if (!excludedComptrollers.includes(comptroller)) {
+      try {
+        const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(fuse, comptroller, maxHealth);
+        fusePoolUsers.push(poolUserParams);
+      } catch (e) {
+        const msg = `Error getting pool users for ${comptroller}` + e;
+        erroredPools.push({ comptroller, msg });
+      }
     }
   }
   // }
-  return fusePoolUsers;
+  return [fusePoolUsers, erroredPools];
 }
