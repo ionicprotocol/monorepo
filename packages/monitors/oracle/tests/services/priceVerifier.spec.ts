@@ -3,10 +3,10 @@ import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import { restore } from "sinon";
 
-import { getConfig } from "../../src/config";
+import { configs, getConfig } from "../../src/config";
 import { PriceVerifier } from "../../src/services/verifiers";
 import { AbstractOracleVerifier } from "../../src/services/verifiers/base";
-import { chainIdToConfig, PriceVerifierConfig } from "../../src/types";
+import { chainIdToConfig, PriceVerifierConfig, Services } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 
@@ -18,6 +18,7 @@ describe("Price verifier", () => {
   const chainConfig = chainIdToConfig[SupportedChains.bsc];
   const assetsToTest = [assetSymbols.WBNB, assetSymbols.BUSD, assetSymbols.BTCB, assetSymbols.USDT, assetSymbols.DAI];
   const assets = chainConfig.assets.filter((x) => assetsToTest.some((y) => y === x.symbol));
+  const config = configs[Services.PriceVerifier];
 
   beforeEach(() => {
     env = process.env;
@@ -25,7 +26,7 @@ describe("Price verifier", () => {
 
     const signer = getSigner(SupportedChains.bsc);
     sdk = new MidasSdk(signer, chainIdToConfig[SupportedChains.bsc]);
-    priceVerifier = new PriceVerifier(sdk, assets[0]);
+    priceVerifier = new PriceVerifier(sdk, assets[0], config);
   });
   afterEach(function () {
     process.env = env;

@@ -2,7 +2,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { SupportedChains } from "@midas-capital/types";
 import { Signer, Wallet } from "ethers";
 
-import { getConfig } from "../src/config";
+import { baseConfig } from "../src/config/variables";
 import { chainIdToConfig } from "../src/types";
 /**
  * Creates an eth-address compatible string with given prefix
@@ -25,14 +25,12 @@ export const mkBytes32 = (prefix = "0xa"): string => {
 };
 
 export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
-  const config = getConfig();
   const { specificParams } = chainIdToConfig[chainId];
-  const providerUrl = config.rpcUrl || specificParams.metadata.rpcUrls.default;
+  const providerUrl = baseConfig.rpcUrl || specificParams.metadata.rpcUrls.default;
   return new JsonRpcProvider(providerUrl);
 };
 
 export const getSigner = (chainId: SupportedChains): Signer => {
-  const config = getConfig();
   const provider = getProvider(chainId);
-  return new Wallet(config.adminPrivateKey, provider);
+  return new Wallet(baseConfig.adminPrivateKey, provider);
 };
