@@ -134,3 +134,5 @@ export const POOLS_COLUMNS = [
   EXPANDER,
 ];
 export const FEATURE_REQUESTS_URL = 'https://midascapital.canny.io/feature-requests';
+export const COINGECKO_API = 'https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=';
+export const DEFI_LLAMA_API = 'https://coins.llama.fi/prices/current/';
