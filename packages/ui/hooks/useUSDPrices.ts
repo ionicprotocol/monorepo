@@ -3,6 +3,8 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { SupportedChains } from 'types/dist/cjs';
 
+import { COINGECKO_API, DEFI_LLAMA_API } from '../constants';
+
 interface Price {
   value: number;
   symbol: string;
@@ -20,14 +22,21 @@ async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string
 
       if (config) {
         const _cgId = config.specificParams.cgId;
-        const { data } = await axios.get(
-          `https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${_cgId}`
-        );
+        try {
+          const { data } = await axios.get(`${COINGECKO_API}${_cgId}`);
 
-        if (data[_cgId]) {
-          prices[id.toString()] = { value: data[_cgId].usd, symbol: '$' };
-        } else {
-          // for neondevnet set 0.05
+          if (data[_cgId] && data[_cgId].usd) {
+            prices[id.toString()] = { value: data[_cgId].usd, symbol: '$' };
+          }
+        } catch (e) {
+          const { data } = await axios.get(`${DEFI_LLAMA_API}coingecko:${_cgId}`);
+
+          if (data.coins[`coingecko:${_cgId}`] && data.coins[`coingecko:${_cgId}`].price) {
+            prices[id.toString()] = { value: data.coins[`coingecko:${_cgId}`].price, symbol: '$' };
+          }
+        }
+
+        if (!prices[id.toString()]) {
           if (config.chainId === ChainConfigs.neondevnet.chainId) {
             prices[id.toString()] = {
               value: 0.05,
