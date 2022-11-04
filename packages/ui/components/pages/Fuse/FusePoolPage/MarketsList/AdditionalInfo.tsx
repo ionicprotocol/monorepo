@@ -43,6 +43,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
+import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
@@ -72,6 +73,7 @@ export const AdditionalInfo = ({
   const { currentChain } = useMultiMidas();
   const { cCard } = useColors();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const windowWidth = useWindowSize();
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { switchNetworkAsync } = useSwitchNetwork();
   const strategyScore = useStrategyRating(poolChainId, asset.plugin);
@@ -95,7 +97,7 @@ export const AdditionalInfo = ({
   };
 
   return (
-    <Box>
+    <Box width={{ base: windowWidth.width * 0.9, md: 'auto' }} minWidth="400px">
       <Flex
         gap={4}
         justifyContent="flex-end"
