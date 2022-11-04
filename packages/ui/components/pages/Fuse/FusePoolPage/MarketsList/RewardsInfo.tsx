@@ -1,5 +1,5 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
-import { Divider, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
+import { Box, Divider, HStack, Link, Text, VStack } from '@chakra-ui/react';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -61,10 +61,14 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
           )}
 
           <VStack width={'100%'} alignItems={'flex-start'}>
-            <HStack justifyContent={'space-between'} width={'100%'}>
-              <div>Current APY:</div>
-              <div>{`${(reward.apy * 100).toFixed(2) + '%'}`}</div>
-            </HStack>
+            {reward.apy ? (
+              <HStack justifyContent={'space-between'} width={'100%'}>
+                <div>Current APY:</div>
+                <div>{`${(reward.apy * 100).toFixed(2) + '%'}`}</div>)
+              </HStack>
+            ) : (
+              <Text>More information about this soon.</Text>
+            )}
 
             <HStack justifyContent={'space-between'} width={'100%'}>
               <Text>Updated:</Text>
@@ -92,9 +96,15 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
           <Text>+ 🔌</Text>
         )}
 
-        <Text color={cCard.txtColor} title={reward.apy * 100 + '%'} variant="smText">
-          {(reward.apy * 100).toFixed(2) + '%'}
-        </Text>
+        {reward.apy ? (
+          <Text color={cCard.txtColor} title={reward.apy * 100 + '%'} variant="smText">
+            {(reward.apy * 100).toFixed(2) + '%'}
+          </Text>
+        ) : (
+          <Box marginTop="-2px !important">
+            <InfoOutlineIcon />
+          </Box>
+        )}
       </HStack>
     </PopoverTooltip>
   );
