@@ -8290,7 +8290,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x3a93f61B5718e403479A01c9046f51e2A6b0790A",
+      "address": "0x0d1b9c6450b61193bf4B75Fad5d23d5F66F02198",
       "abi": [
         {
           "inputs": [
@@ -8306,31 +8306,6 @@
         {
           "anonymous": false,
           "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "ActionPaused",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
             {
               "indexed": false,
               "internalType": "string",
@@ -8396,6 +8371,31 @@
             }
           ],
           "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "MarketActionPaused",
           "type": "event"
         },
         {
@@ -22097,7 +22097,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x9b29D57b1a31EE332d18080414B3a5C4b435cff4",
+      "address": "0xCB8Ba9BbD0B61bBf83B78fdc91c2E64e51976572",
       "abi": [
         {
           "anonymous": false,

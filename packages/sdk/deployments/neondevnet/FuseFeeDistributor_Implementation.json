@@ -1,5 +1,5 @@
 {
-  "address": "0x77f756946665c1F15c4E343846D6dA8FA9F73690",
+  "address": "0x222c065B633cE12581903a1BBbdEC96a6eda1C2F",
   "abi": [
     {
       "anonymous": false,
@@ -892,24 +892,24 @@
       "type": "receive"
     }
   ],
-  "transactionHash": "0x14e4538b4cd7dcbf376245e38edff91e9355ff540f8f2f8aefb401bd2e3a8524",
+  "transactionHash": "0x35204ddf5313158a763408dc1024a771ca27a46bf7b739a2aa990d585ffb784e",
   "receipt": {
     "to": null,
     "from": "0x82eDcFe00bd0ce1f3aB968aF09d04266Bc092e0E",
-    "contractAddress": "0x77f756946665c1F15c4E343846D6dA8FA9F73690",
+    "contractAddress": "0x222c065B633cE12581903a1BBbdEC96a6eda1C2F",
     "transactionIndex": 0,
     "gasUsed": "133841000",
     "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0x0e883fbaee60a8051c5d05018d00ccd7a0e18c08d88e2d209eaba31257e2c29f",
-    "transactionHash": "0x14e4538b4cd7dcbf376245e38edff91e9355ff540f8f2f8aefb401bd2e3a8524",
+    "blockHash": "0x7f0b2147e9c72a3690384a15f13ee2b358e14d390a9129d344311a17b3a73f99",
+    "transactionHash": "0x35204ddf5313158a763408dc1024a771ca27a46bf7b739a2aa990d585ffb784e",
     "logs": [],
-    "blockNumber": 172516581,
+    "blockNumber": 173153207,
     "cumulativeGasUsed": "133841000",
     "status": 1,
     "byzantium": true
   },
   "args": [],
-  "numDeployments": 2,
+  "numDeployments": 1,
   "metadata": {
     "compiler": {
       "version": "0.8.10+commit.fc410830"
@@ -2171,18 +2171,18 @@
         "license": "UNLICENSED"
       },
       "contracts/external/compound/ICToken.sol": {
-        "keccak256": "0x991ea6ca05ab996e74f1ca90a35d3e42d7f4484ac7a8fdfba90299434be296ba",
+        "keccak256": "0x8e3e4829658bfea7716e93372ad499eb33716ac241f1ec30b87ee150ec79bed7",
         "urls": [
-          "bzz-raw://b159a93512d0bf074f9b26dde960ac9e501572ba9d67aa922d5591c3e842fd7b",
-          "dweb:/ipfs/QmZ4K532EnqbU1qteMXbnURkMHqqVHDmTiQ1T8WpfQyQEA"
+          "bzz-raw://3e381c3397a69069ebec7033316ab08f0692ab38c28e8f0f780bf2d511cc8e24",
+          "dweb:/ipfs/QmYRwyqnrxEPNfa2DZZcfJ27SunjN7T2wAWPHpUPjvaGJH"
         ],
         "license": "BSD-3-Clause"
       },
       "contracts/external/compound/IComptroller.sol": {
-        "keccak256": "0xd9fc7687a1efa11362184be4abaad85fe7cda7cd590cf85471f56285148bb9da",
+        "keccak256": "0x4e329ffbd2d3ed8cd82895efb135ca9a580b150641783a3835b40d652e05ba06",
         "urls": [
-          "bzz-raw://f2da2041a7d93758de132ab2a7b388414727a58bb6f471d838b754191275be6d",
-          "dweb:/ipfs/QmQMJjQHxFN6Dg2KrD4KkJgadFDrwV24hZaCRWFoiMc2Tj"
+          "bzz-raw://e469dbb25948ba274801b9704491e99cabe46f63d7f5cd197efbd9cf503d6190",
+          "dweb:/ipfs/QmewmiyxbBRKVfdna4byfwekCyF8UCiuzFDkCdumBmUYTt"
         ],
         "license": "BSD-3-Clause"
       },

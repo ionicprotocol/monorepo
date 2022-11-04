@@ -40,8 +40,8 @@ const deployedPlugins: DeployedPlugins = {
     strategy: Strategy.CurveGauge,
     apyDocsUrl: "https://moonbeam.curve.fi/",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/xcdot",
-    underlying: underlying(assets, assetSymbols.LDO),
-    otherParams: ["0xC106C836771B0B4f4a0612Bd68163Ca93be1D340", [underlying(assets, assetSymbols.LDO)]],
+    underlying: underlying(assets, assetSymbols["xcDOT-stDOT"]),
+    otherParams: ["0xC106C836771B0B4f4a0612Bd68163Ca93be1D340", [underlying(assets, assetSymbols["xcDOT-stDOT"])]],
   },
 };
 
