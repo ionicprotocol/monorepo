@@ -29034,7 +29034,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xD686ebb726FDd6d3C746CE80ec1847F1DaE4cB7e",
+      "address": "0x88766eA5e033c1114E7214bB2b683c039B3ef078",
       "abi": [
         {
           "inputs": [
@@ -29050,31 +29050,6 @@
         {
           "anonymous": false,
           "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "ActionPaused",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
             {
               "indexed": false,
               "internalType": "string",
@@ -29140,6 +29115,31 @@
             }
           ],
           "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "MarketActionPaused",
           "type": "event"
         },
         {
@@ -31842,7 +31842,7 @@
       ]
     },
     "CurveSwapLiquidatorFunder": {
-      "address": "0x82d586443096EcCAa043A1D4FD7Bea6425F3DF99",
+      "address": "0x756755e2ca9591a6ea0E01046E580838Fc9664E7",
       "abi": [
         {
           "inputs": [
@@ -31900,7 +31900,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "inputAmount",
+              "name": "",
               "type": "uint256"
             }
           ],
@@ -52828,7 +52828,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x9333e9A7FE4914e4262849Fd992c62C2C373E597",
+      "address": "0xA788d43BF8bA929eF3E96fd60cb25c08d4079A2d",
       "abi": [
         {
           "anonymous": false,
@@ -62832,6 +62832,108 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "UniswapV2LiquidatorFunder": {
+      "address": "0xbd9697D987E5e181A4161dDFe9989FbC9F801C01",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "convert",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "estimateInputAmount",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]

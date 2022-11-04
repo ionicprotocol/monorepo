@@ -1,5 +1,5 @@
 {
-  "address": "0x66BBfA7d24f77A990B0E360Ce0c2D141cbcE39bB",
+  "address": "0x45a1411ecc9d2B8E8F7a86a8459194b96223e9ad",
   "abi": [
     {
       "anonymous": false,
@@ -760,24 +760,24 @@
       "type": "function"
     }
   ],
-  "transactionHash": "0x73a8c9e65bdb79b530eb53fbbe868e4d3e7e554852928ad570f5b3d74725acbd",
+  "transactionHash": "0x509dc97505a4cd681a80c3dc0b9d3e10a21c1c09a8fbc3f56ecfa4bc20446b8c",
   "receipt": {
     "to": null,
     "from": "0x82eDcFe00bd0ce1f3aB968aF09d04266Bc092e0E",
-    "contractAddress": "0x66BBfA7d24f77A990B0E360Ce0c2D141cbcE39bB",
+    "contractAddress": "0x45a1411ecc9d2B8E8F7a86a8459194b96223e9ad",
     "transactionIndex": 0,
     "gasUsed": "146304400",
     "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0x0409a3886568da78f76471e5224184b81f37683b0e0de75337b540c8984c10a3",
-    "transactionHash": "0x73a8c9e65bdb79b530eb53fbbe868e4d3e7e554852928ad570f5b3d74725acbd",
+    "blockHash": "0x0388224a9b3a4b013ce9fd10496c06a62f941fe4904aab5fec57ed8b60ae00ee",
+    "transactionHash": "0x509dc97505a4cd681a80c3dc0b9d3e10a21c1c09a8fbc3f56ecfa4bc20446b8c",
     "logs": [],
-    "blockNumber": 172516652,
+    "blockNumber": 173153728,
     "cumulativeGasUsed": "146304400",
     "status": 1,
     "byzantium": true
   },
   "args": [],
-  "numDeployments": 2,
+  "numDeployments": 1,
   "metadata": {
     "compiler": {
       "version": "0.8.10+commit.fc410830"
@@ -1712,10 +1712,10 @@
         "license": "UNLICENSED"
       },
       "contracts/compound/Comptroller.sol": {
-        "keccak256": "0x614ac9de2f904749477537413c06dfff31868b513de9fe6901c74ff2fd861673",
+        "keccak256": "0x15b028015fe493f2d2b0fcbc179aa80a57c977204ab421fb9866bb4fb65b82b9",
         "urls": [
-          "bzz-raw://170ba3c316916bb84f205d44f03fb84dad34f36673cc3b5311ca785036daffaf",
-          "dweb:/ipfs/QmVmLst4iE4aQHe5wJNWXq9b8GQLgUoV1hhTJ7zEf9HfVF"
+          "bzz-raw://fa6981dcccb1a22fe029d90cc625e5833961d7c967b91ac1c892bcecd10dd923",
+          "dweb:/ipfs/QmXRSSyiHWQ7xnw4qbwvf2XLoNkxcNH5pBDep2MzoBxqzp"
         ],
         "license": "UNLICENSED"
       },
@@ -1792,18 +1792,18 @@
         "license": "UNLICENSED"
       },
       "contracts/external/compound/ICToken.sol": {
-        "keccak256": "0x991ea6ca05ab996e74f1ca90a35d3e42d7f4484ac7a8fdfba90299434be296ba",
+        "keccak256": "0x8e3e4829658bfea7716e93372ad499eb33716ac241f1ec30b87ee150ec79bed7",
         "urls": [
-          "bzz-raw://b159a93512d0bf074f9b26dde960ac9e501572ba9d67aa922d5591c3e842fd7b",
-          "dweb:/ipfs/QmZ4K532EnqbU1qteMXbnURkMHqqVHDmTiQ1T8WpfQyQEA"
+          "bzz-raw://3e381c3397a69069ebec7033316ab08f0692ab38c28e8f0f780bf2d511cc8e24",
+          "dweb:/ipfs/QmYRwyqnrxEPNfa2DZZcfJ27SunjN7T2wAWPHpUPjvaGJH"
         ],
         "license": "BSD-3-Clause"
       },
       "contracts/external/compound/IComptroller.sol": {
-        "keccak256": "0xd9fc7687a1efa11362184be4abaad85fe7cda7cd590cf85471f56285148bb9da",
+        "keccak256": "0x4e329ffbd2d3ed8cd82895efb135ca9a580b150641783a3835b40d652e05ba06",
         "urls": [
-          "bzz-raw://f2da2041a7d93758de132ab2a7b388414727a58bb6f471d838b754191275be6d",
-          "dweb:/ipfs/QmQMJjQHxFN6Dg2KrD4KkJgadFDrwV24hZaCRWFoiMc2Tj"
+          "bzz-raw://e469dbb25948ba274801b9704491e99cabe46f63d7f5cd197efbd9cf503d6190",
+          "dweb:/ipfs/QmewmiyxbBRKVfdna4byfwekCyF8UCiuzFDkCdumBmUYTt"
         ],
         "license": "BSD-3-Clause"
       },

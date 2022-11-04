@@ -1,5 +1,5 @@
 {
-  "exclude": ["fuse-liquidator-bot"],
+  "exclude": ["liquidator"],
   "compilerOptions": {
     /* Basic Options */
     "target": "es5",

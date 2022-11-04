@@ -38198,7 +38198,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x41557f6633d8fd643EdbB27A64E957120863ecaf",
+      "address": "0x7C68Ca5911FBe1A113CCf92b85297153B941B006",
       "abi": [
         {
           "inputs": [
@@ -38214,31 +38214,6 @@
         {
           "anonymous": false,
           "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "ActionPaused",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
             {
               "indexed": false,
               "internalType": "string",
@@ -38304,6 +38279,31 @@
             }
           ],
           "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "MarketActionPaused",
           "type": "event"
         },
         {
@@ -41006,7 +41006,7 @@
       ]
     },
     "CurveSwapLiquidatorFunder": {
-      "address": "0xCAA7462B4c3E0fa71F1fbD8e902dac70cA096357",
+      "address": "0xfb9e92F20c44c820CA954bacdAB4b372D21F6B77",
       "abi": [
         {
           "inputs": [
@@ -41064,7 +41064,7 @@
             },
             {
               "internalType": "uint256",
-              "name": "inputAmount",
+              "name": "",
               "type": "uint256"
             }
           ],
@@ -49268,7 +49268,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0xEdfe7dC401Fb49F0D87CB5F1B8c3CaFb128cD991",
+      "address": "0xAf9Bd00D41414E26823D472cE55a62D87e29F2Fe",
       "abi": [
         {
           "anonymous": false,

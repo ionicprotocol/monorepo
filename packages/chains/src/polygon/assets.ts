@@ -2,7 +2,7 @@ import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@mid
 
 import {
   arrakisDocs,
-  balacerDocs,
+  balancerDocs,
   curveFinancePolygonDocs,
   defaultDocs,
   jarvisDocs,
@@ -418,7 +418,7 @@ export const assets: SupportedAsset[] = [
     name: "80MIMO-20PAR",
     decimals: 18,
     oracle: OracleTypes.BalancerLpTokenPriceOracle,
-    extraDocs: balacerDocs(
+    extraDocs: balancerDocs(
       "polygon",
       "0x82d7f08026e21c7713cfad1071df7c8271b17eae0002000000000000000004b6",
       "80MIMO-20PAR",

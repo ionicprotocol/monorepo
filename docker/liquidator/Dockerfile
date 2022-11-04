@@ -32,7 +32,7 @@ COPY package.json /tmp/build/
 COPY packages/sdk/package.json /tmp/build/packages/sdk/
 COPY packages/types/package.json /tmp/build/packages/types/
 COPY packages/chains/package.json /tmp/build/packages/chains/
-COPY packages/bots/fuse-liquidator-bot/package.json /tmp/build/packages/bots/fuse-liquidator-bot/
+COPY packages/bots/liquidator/package.json /tmp/build/packages/bots/liquidator/
 
 RUN touch /tmp/build/yarn.lock
 
@@ -44,7 +44,7 @@ RUN yarn install
 COPY packages/sdk /tmp/build/packages/sdk
 COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
-COPY packages/bots/fuse-liquidator-bot /tmp/build/packages/bots/fuse-liquidator-bot
+COPY packages/bots/liquidator /tmp/build/packages/bots/liquidator
 
 # ----- build -----
 RUN yarn build:deploy:liquidator
@@ -57,11 +57,11 @@ FROM node as runtime
 
 # ----- Copy files required at runtime by the app -----
 COPY --from=build --chown=node:node /tmp/build /home/node
-COPY docker/wait-for-hh.sh /home/node/packages/bots/fuse-liquidator-bot/wait-for-hh.sh
+COPY docker/wait-for-hh.sh /home/node/packages/bots/liquidator/wait-for-hh.sh
 
-RUN chmod +x /home/node/packages/bots/fuse-liquidator-bot/wait-for-hh.sh
+RUN chmod +x /home/node/packages/bots/liquidator/wait-for-hh.sh
 
-WORKDIR /home/node/packages/bots/fuse-liquidator-bot
+WORKDIR /home/node/packages/bots/liquidator
 
 CMD ["node", "build/index.js"]
 

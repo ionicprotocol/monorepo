@@ -11,7 +11,7 @@ export {
   BNBxDocs,
   stkBNBDocs,
   curveFinancePolygonDocs,
-  balacerDocs,
+  balancerDocs,
   curveFinanceArbitrumDocs,
   jarvisDocs,
   wrappedAssetDocs,
