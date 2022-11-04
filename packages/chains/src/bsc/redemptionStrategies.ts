@@ -32,8 +32,8 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.val3EPS),
   ],
   [underlying(assets, assetSymbols.BOMB)]: [
-    RedemptionStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.xBOMB),
+    RedemptionStrategyContract.UniswapV2LiquidatorFunder,
+    underlying(assets, assetSymbols.BTCB),
   ],
   [underlying(assets, assetSymbols.xBOMB)]: [
     RedemptionStrategyContract.XBombLiquidatorFunder,
