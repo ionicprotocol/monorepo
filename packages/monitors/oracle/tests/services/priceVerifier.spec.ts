@@ -2,11 +2,11 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import { restore } from "sinon";
+
 import { getConfig } from "../../src/config";
 import { PriceVerifier } from "../../src/services/verifiers";
 import { AbstractOracleVerifier } from "../../src/services/verifiers/base";
 import { chainIdToConfig, PriceVerifierConfig } from "../../src/types";
-
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 

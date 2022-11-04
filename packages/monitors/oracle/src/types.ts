@@ -2,6 +2,7 @@ import { arbitrum, bsc, moonbeam, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig, SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Contract } from "ethers";
+
 import { FeedVerifier, PriceChangeVerifier, PriceVerifier } from "./services";
 
 export type TVerifier = typeof FeedVerifier | typeof PriceVerifier | typeof PriceChangeVerifier;

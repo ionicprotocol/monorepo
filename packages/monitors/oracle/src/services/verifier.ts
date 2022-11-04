@@ -1,7 +1,7 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset } from "@midas-capital/types";
-import { getVerifier } from "../config";
 
+import { getVerifier } from "../config";
 import { PriceFeedInvalidity } from "../types";
 
 import { AdminService } from "./admin";
