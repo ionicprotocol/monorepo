@@ -1,6 +1,5 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
-import { BigNumber } from "ethers";
 
 import { config, logger } from "..";
 
@@ -10,7 +9,6 @@ export class Liquidator {
   sdk: MidasSdk;
   alert: DiscordService;
 
-  config: Record<string, BigNumber | string | number>;
   constructor(midasSdk: MidasSdk) {
     this.sdk = midasSdk;
     this.alert = new DiscordService(midasSdk.chainId);
@@ -28,11 +26,12 @@ export class Liquidator {
   async liquidate(liquidations: LiquidatablePool): Promise<void> {
     const [erroredLiquidations, succeededLiquidations] = await this.sdk.liquidatePositions(liquidations);
     if (erroredLiquidations.length > 0) {
-      const msg = liquidations.liquidations
+      logger.warn(`${erroredLiquidations.length} Liquidations failed`);
+      const msg = erroredLiquidations
         .map((liquidation, index) => {
-          return `# Liquidation ${index}:\n - Method: ${liquidation.method}\n - Value: ${
-            liquidation.value
-          }\n - Args: ${JSON.stringify(liquidation.args)}\n`;
+          return `# Liquidation ${index}:\n - Method: ${liquidation.tx.method}\n - Value: ${
+            liquidation.tx.value
+          }\n - Args: ${JSON.stringify(liquidation.tx.args)}\n - Error: ${liquidation.error}\n`;
         })
         .join("\n");
 
@@ -40,10 +39,10 @@ export class Liquidator {
       logger.error(msg);
     }
     if (succeededLiquidations.length > 0) {
-      logger.info(`${succeededLiquidations.length} Liquidations succeeded: \n ${succeededLiquidations.join("\n")}`);
+      logger.info(`${succeededLiquidations.length} Liquidations succeeded`);
       const msg = succeededLiquidations
         .map((tx, index) => {
-          `# Liquidation ${index}:\n - TX Hash: ${tx.hash}`;
+          `\n# Liquidation ${index}:\n - TX Hash: ${tx.hash}`;
         })
         .join("\n");
 

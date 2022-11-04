@@ -20,5 +20,6 @@ import { setUpSdk } from "../src/utils";
     logger.info(
       `Liquidating pool: ${liquidatablePool.comptroller} -- ${liquidatablePool.liquidations.length} liquidations found`
     );
+    await liquidator.liquidate(liquidatablePool);
   }
 })();

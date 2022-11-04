@@ -4,7 +4,7 @@ import {
   ErroredPool,
   LiquidatablePool,
 } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
 import { config, logger } from "..";
@@ -12,9 +12,8 @@ import { config, logger } from "..";
 export class DiscordService {
   lastSentMessages: {
     erroredPools: { pools: Array<ErroredPool>; timestamp: number };
-    liquidations: { tx: EncodedLiquidationTx; timestamp: number };
+    liquidations: { tx: EncodedLiquidationTx | null; timestamp: number };
   };
-  asset: SupportedAsset;
   chainId: SupportedChains;
 
   private errorColor = 0xa83232;
@@ -26,12 +25,14 @@ export class DiscordService {
 
   constructor(chainId: SupportedChains) {
     this.chainId = chainId;
+    this.lastSentMessages = {
+      erroredPools: { pools: [], timestamp: 0 },
+      liquidations: { tx: null, timestamp: 0 },
+    };
   }
 
   private create() {
-    return new MessageBuilder()
-      .addField("Asset", `${this.asset.symbol}:  ${this.asset.underlying}`, true)
-      .addField("Chain", `Chain ID: ${SupportedChains[this.chainId]}`, true);
+    return new MessageBuilder().addField("Chain", `Chain ID: ${SupportedChains[this.chainId]}`, true);
   }
 
   private async send(embed: MessageBuilder) {
@@ -51,7 +52,7 @@ export class DiscordService {
       erroredLiquidation !== previouslyErroredLiquidation &&
       lastSentMessages !== null
     ) {
-      if (this.lastSentMessages.erroredPools?.timestamp - Date.now() > 1000 * 60 * 15) {
+      if (this.lastSentMessages?.erroredPools?.timestamp - Date.now() > 1000 * 60 * 15) {
         const embed = this.create()
           .setTitle(
             `${liquidations.liquidations.length} liquidation(s) failed for comptroller: ${liquidations.comptroller}`
@@ -79,7 +80,7 @@ export class DiscordService {
       erroredComptrollers !== previouslyErroredComptrollers &&
       lastSentMessages !== null
     ) {
-      if (this.lastSentMessages.erroredPools?.timestamp - Date.now() > 1000 * 60 * 30) {
+      if (this.lastSentMessages?.erroredPools?.timestamp - Date.now() > 1000 * 60 * 30) {
         const embed = this.create()
           .setTitle("Liquidation fetching failed for pools")
           .setDescription(msg)
