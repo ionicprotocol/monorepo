@@ -1,14 +1,12 @@
 import { Contract } from "ethers";
 
-import { getConfig } from "../../../config";
 import { logger } from "../../../index";
-import { FeedVerifierConfig, InvalidReason, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
+import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
 
-export async function verifyDiaOraclePriceFeed({
-  midasSdk,
-  underlyingOracle,
-  underlying,
-}: VerifyFeedParams): Promise<PriceFeedInvalidity | null> {
+export async function verifyDiaOraclePriceFeed(
+  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
+  config: FeedVerifierConfig
+): Promise<PriceFeedValidity> {
   logger.debug(`Verifying Dia oracle for ${underlying}`);
   const feedAddress = await underlyingOracle.callStatic.priceFeeds(underlying);
   const diaFeed = new Contract(
@@ -20,8 +18,6 @@ export async function verifyDiaOraclePriceFeed({
   const updatedAtts = timestamp.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
 
-  const config = getConfig() as FeedVerifierConfig;
-
   const isValid = timeSinceLastUpdate < config.maxObservationDelay;
   if (!isValid) {
     return {
@@ -29,5 +25,5 @@ export async function verifyDiaOraclePriceFeed({
       message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay}`,
     };
   }
-  return null;
+  return true;
 }

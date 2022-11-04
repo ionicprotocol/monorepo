@@ -2,7 +2,7 @@ import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
 import { logger } from "../..";
-import { FeedVerifierConfig, PriceFeedInvalidity, VerifyFeedParams } from "../../types";
+import { FeedVerifierConfig, PriceFeedValidity, VerifyFeedParams } from "../../types";
 
 import { AbstractOracleVerifier } from "./base";
 import { verifyProviderFeed } from "./providers";
@@ -36,10 +36,7 @@ export class FeedVerifier extends AbstractOracleVerifier {
     return await this.initUnderlyingOracle();
   }
 
-  public async verify(): Promise<PriceFeedInvalidity | null> {
-    if (!this.oracleType) {
-      return null;
-    }
+  public async verify(): Promise<PriceFeedValidity> {
     const { sdk, asset, underlyingOracle } = this;
     const feedArgs: VerifyFeedParams = {
       midasSdk: sdk,
@@ -50,8 +47,8 @@ export class FeedVerifier extends AbstractOracleVerifier {
   }
 
   private async verifyFeedValidity(oracle: OracleTypes, args: VerifyFeedParams) {
-    const feedInvalidity = await verifyProviderFeed(oracle, args);
-    if (feedInvalidity !== null) {
+    const feedInvalidity = await verifyProviderFeed(oracle, this.config, args);
+    if (feedInvalidity !== true) {
       await this.alert.sendInvalidFeedAlert(feedInvalidity);
       logger.error(feedInvalidity.message);
     }

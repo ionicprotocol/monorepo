@@ -1,14 +1,14 @@
 export { default as setUpSdk } from "./setUpSdk";
 export { updateOracleMonitorData } from "./controllers/index";
 
-export { runVerifier } from "./run";
+export { runVerifiers } from "./run";
 
 import pino from "pino";
 
-import { getConfig } from "./config";
+import { baseConfig } from "./config/variables";
 
 export const logger = pino({
-  level: getConfig().logLevel,
+  level: baseConfig.logLevel,
   transport: {
     target: "pino-pretty",
     options: {

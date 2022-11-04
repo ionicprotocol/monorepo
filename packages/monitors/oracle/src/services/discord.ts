@@ -2,8 +2,7 @@ import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 import { logger } from "ethers";
 
-import { getConfig } from "../config";
-import { OracleFailure, PriceFeedInvalidity } from "../types";
+import { OracleFailure, PriceFeedInvalidity, ServiceConfig } from "../types";
 
 export class DiscordService {
   asset: SupportedAsset;
@@ -15,11 +14,14 @@ export class DiscordService {
   // @ts-ignore
   private infoColor = 0x32a832;
 
-  private hook = new Webhook(getConfig().discordWebhookUrl);
+  private hook: Webhook;
+  private config: ServiceConfig;
 
-  constructor(asset: SupportedAsset, chainId: SupportedChains) {
+  constructor(asset: SupportedAsset, chainId: SupportedChains, config: ServiceConfig) {
     this.asset = asset;
     this.chainId = chainId;
+    this.hook = new Webhook(config.discordWebhookUrl);
+    this.config = config;
   }
 
   private create() {
@@ -29,7 +31,7 @@ export class DiscordService {
   }
 
   private async send(embed: MessageBuilder) {
-    if (getConfig().environment === "production") {
+    if (this.config.environment === "production") {
       this.hook.send(embed);
     } else {
       logger.debug(`Would have sent alert to discord: ${JSON.stringify(embed)}`);

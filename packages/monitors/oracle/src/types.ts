@@ -13,11 +13,20 @@ export enum Services {
   PriceChangeVerifier = "price-change-verifier",
 }
 
+export type ServiceConfig = FeedVerifierConfig | PriceVerifierConfig | PriceChangeVerifierConfig;
+
+export type VerifierConfig = {
+  assets: SupportedAsset[];
+  verifier: TVerifier;
+  config: ServiceConfig;
+};
+
 export enum InvalidReason {
   DEVIATION_ABOVE_THRESHOLD = "DEVIATION_ABOVE_THRESHOLD",
   TWAP_LIQUIDITY_LOW = "TWAP_LIQUIDITY_LOW",
   LAST_OBSERVATION_TOO_OLD = "LAST_OBSERVATION_TOO_OLD",
   UNKNOWN = "UNKNOWN",
+  DEFI_LLAMA_API_ERROR = "DEFI_LLAMA_API_ERROR",
 }
 
 export enum OracleFailure {
@@ -28,6 +37,8 @@ export type PriceFeedInvalidity = {
   invalidReason: InvalidReason;
   message: string;
 };
+
+export type PriceFeedValidity = PriceFeedInvalidity | true;
 
 export type SupportedAssetPriceFeed = {
   asset: SupportedAsset;

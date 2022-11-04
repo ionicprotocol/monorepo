@@ -1,14 +1,12 @@
 import { Contract } from "ethers";
 
-import { getConfig } from "../../../config";
 import { logger } from "../../../index";
-import { FeedVerifierConfig, InvalidReason, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
+import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
 
-export async function verifyChainLinkOraclePriceFeed({
-  midasSdk,
-  underlyingOracle,
-  underlying,
-}: VerifyFeedParams): Promise<PriceFeedInvalidity | null> {
+export async function verifyChainLinkOraclePriceFeed(
+  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
+  config: FeedVerifierConfig
+): Promise<PriceFeedValidity> {
   logger.debug(`Verifying ChainLink oracle for ${underlying}`);
 
   const feedAddress = await underlyingOracle.callStatic.priceFeeds(underlying);
@@ -23,8 +21,6 @@ export async function verifyChainLinkOraclePriceFeed({
   const updatedAtts = updatedAt.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
 
-  const config = getConfig() as FeedVerifierConfig;
-
   const isValid = timeSinceLastUpdate < config.maxObservationDelay;
   if (!isValid) {
     return {
@@ -32,5 +28,5 @@ export async function verifyChainLinkOraclePriceFeed({
       message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay}`,
     };
   }
-  return null;
+  return true;
 }

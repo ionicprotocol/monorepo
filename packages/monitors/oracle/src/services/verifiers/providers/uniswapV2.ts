@@ -1,14 +1,12 @@
 import { Contract } from "ethers";
 
 import { logger } from "../../..";
-import { getConfig } from "../../../config";
-import { FeedVerifierConfig, InvalidReason, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
+import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
 
-export async function verifyUniswapV2PriceFeed({
-  midasSdk,
-  underlyingOracle,
-  underlying,
-}: VerifyFeedParams): Promise<PriceFeedInvalidity | null> {
+export async function verifyUniswapV2PriceFeed(
+  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
+  config: FeedVerifierConfig
+): Promise<PriceFeedValidity> {
   logger.debug(`Verifying Uniswap Twap oracle for ${underlying}`);
 
   const baseToken = await underlyingOracle.callStatic.baseToken();
@@ -26,8 +24,6 @@ export async function verifyUniswapV2PriceFeed({
     midasSdk.provider
   );
 
-  const config = getConfig() as FeedVerifierConfig;
-
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
     [baseToken],
@@ -41,5 +37,5 @@ export async function verifyUniswapV2PriceFeed({
       message: `TWAP oracle is in workable = true state, meaning bot is not updating the values. (Workable pair: ${workable[0]})`,
     };
   }
-  return null;
+  return true;
 }

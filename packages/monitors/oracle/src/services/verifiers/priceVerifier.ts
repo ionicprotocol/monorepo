@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 
 import { logger } from "../..";
-import { PriceFeedInvalidity, PriceVerifierConfig, VerifyPriceParams } from "../../types";
+import { PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../types";
 
 import { AbstractOracleVerifier } from "./base";
 import { verifyPriceValue } from "./providers";
@@ -26,10 +26,7 @@ export class PriceVerifier extends AbstractOracleVerifier {
     return await this.initMpoPrice();
   }
 
-  public async verify(): Promise<PriceFeedInvalidity | null> {
-    if (!this.mpoPrice) {
-      return null;
-    }
+  public async verify(): Promise<PriceFeedValidity> {
     const { sdk, asset, mpoPrice } = this;
 
     const priceArgs: VerifyPriceParams = {
@@ -42,8 +39,8 @@ export class PriceVerifier extends AbstractOracleVerifier {
   }
 
   private async verifyFeedPrice(args: VerifyPriceParams) {
-    const priceValidity = await verifyPriceValue(args);
-    if (priceValidity !== null) {
+    const priceValidity = await verifyPriceValue(args, this.config);
+    if (priceValidity !== true) {
       await this.alert.sendInvalidFeedAlert(priceValidity);
       logger.error(priceValidity.message);
     }

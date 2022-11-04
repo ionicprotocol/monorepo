@@ -7,7 +7,6 @@ export class AdminService {
   adminAddress: string;
   sdk: MidasSdk;
   asset: SupportedAsset;
-  ctoken: Contract;
 
   constructor(sdk: MidasSdk, asset: SupportedAsset) {
     this.asset = asset;
@@ -48,7 +47,7 @@ export class AdminService {
   async pauseMintActivity(pool: Contract, cToken: Contract) {
     const isPaused: boolean = await pool.mintGuardianPaused(cToken.address);
     if (!isPaused) {
-      const tx = await pool._setMintPaused(this.ctoken.address, true);
+      const tx = await pool._setMintPaused(cToken.address, true);
       await tx.wait();
       logger.warn(`Market mint pause tx ${tx.hash}`);
     } else {

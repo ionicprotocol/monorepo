@@ -1,11 +1,10 @@
-import { PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
+import { FeedVerifierConfig, PriceFeedValidity, VerifyFeedParams } from "../../../types";
 
-export async function verifyFluxOraclePriceFeed({
-  midasSdk,
-  underlyingOracle,
-  underlying,
-}: VerifyFeedParams): Promise<PriceFeedInvalidity | null> {
+export async function verifyFluxOraclePriceFeed(
+  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
+  config: FeedVerifierConfig
+): Promise<PriceFeedValidity> {
   const { oracles } = midasSdk;
-  console.log(oracles, underlying, underlyingOracle);
-  return null;
+  console.log(oracles, underlying, underlyingOracle, config);
+  return true;
 }

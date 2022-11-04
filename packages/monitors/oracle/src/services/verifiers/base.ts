@@ -1,8 +1,8 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { OracleTypes, SupportedAsset } from "@midas-capital/types";
-import { BigNumber, Contract } from "ethers";
+import { Contract } from "ethers";
 
-import { PriceFeedInvalidity } from "../../types";
+import { PriceFeedValidity, ServiceConfig } from "../../types";
 import { DiscordService } from "../discord";
 
 export abstract class AbstractOracleVerifier {
@@ -11,14 +11,15 @@ export abstract class AbstractOracleVerifier {
   sdk: MidasSdk;
   mpo: Contract;
   alert: DiscordService;
-  config: Record<string, BigNumber | string | number>;
+  config: ServiceConfig;
 
-  constructor(midasSdk: MidasSdk, asset: SupportedAsset) {
+  constructor(midasSdk: MidasSdk, asset: SupportedAsset, config: ServiceConfig) {
     this.asset = asset;
     this.sdk = midasSdk;
+    this.config = config;
     this.mpo = midasSdk.createMasterPriceOracle();
-    this.alert = new DiscordService(asset, midasSdk.chainId);
+    this.alert = new DiscordService(asset, midasSdk.chainId, config);
   }
   abstract init(): Promise<AbstractOracleVerifier | null>;
-  abstract verify(): Promise<PriceFeedInvalidity | null>;
+  abstract verify(): Promise<PriceFeedValidity>;
 }

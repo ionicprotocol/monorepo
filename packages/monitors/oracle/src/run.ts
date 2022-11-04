@@ -1,30 +1,38 @@
 import { MidasSdk } from "@midas-capital/sdk";
 
+import { assets, configs, verifiers } from "./config";
 import { Verifier } from "./services/verifier";
+import { PriceFeedValidity, ServiceConfig, Services } from "./types";
 
 import { logger } from ".";
 
-export async function runVerifier(midasSdk: MidasSdk) {
-  const supportedAssets = midasSdk.supportedAssets.filter((a) => a.disabled === undefined || !a.disabled);
+async function runVerifier(sdk: MidasSdk, service: Services, config: ServiceConfig) {
+  const results: Array<PriceFeedValidity> = [];
+  logger.info(`RUNNING SERVICE: ${service}`);
 
-  const results = [];
-  for (const asset of supportedAssets.slice(0, 5)) {
-    logger.debug(`Operating on asset: ${asset.symbol} (${asset.underlying})`);
-    const verifierService = await new Verifier(midasSdk, asset).init();
+  for (const asset of assets[service]) {
+    logger.debug(`SERVICE ${service}: Operating on asset: ${asset.symbol} (${asset.underlying})`);
 
-    const result = await verifierService.verify();
-    results.push(result);
-    if (result !== null) {
-      const poolsWithAsset = await verifierService.poolService.getPoolsWithAsset();
-      console.log(poolsWithAsset);
-
-      // Take action on the pools with the asset
-      // TODO: make this safer -- we don't want to brick pools
-
-      //   const action = await verifierService.adminService.pauseAllPools(poolsWithAsset);
+    const verifierClass = await new Verifier(sdk, verifiers[service], asset, config).init();
+    if (verifierClass) {
+      const result = await verifierClass.verify();
+      if (result !== true) {
+        results.push(result);
+        logger.error(`SERVICE ${service}: INVALID REASON: ${result.invalidReason} MSG: ${result.message}`);
+        //   const action = await verifierService.adminService.pauseAllPools(poolsWithAsset);
+      } else {
+        logger.debug(`SERVICE ${service}: Price feed for ${asset.symbol} is valid`);
+      }
     } else {
-      logger.debug("No invalidity found");
+      logger.error(`SERVICE ${service}: Could not initialize verifier for ${asset.symbol}`);
     }
   }
-  return results;
+}
+
+export async function runVerifiers(midasSdk: MidasSdk) {
+  const feedVerifierConfig = configs[Services.FeedVerifier];
+  const priceVerifierConfig = configs[Services.PriceVerifier];
+
+  setInterval(runVerifier, feedVerifierConfig.runInterval, midasSdk, Services.FeedVerifier, feedVerifierConfig);
+  setInterval(runVerifier, priceVerifierConfig.runInterval, midasSdk, Services.PriceVerifier, priceVerifierConfig);
 }

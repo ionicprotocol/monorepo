@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 
 import { logger } from "../..";
-import { PriceChangeVerifierConfig, PriceFeedInvalidity } from "../../types";
+import { PriceChangeVerifierConfig, PriceFeedValidity } from "../../types";
 
 import { AbstractOracleVerifier } from "./base";
 
@@ -25,7 +25,7 @@ export class PriceChangeVerifier extends AbstractOracleVerifier {
     return await this.initMpoPrice();
   }
 
-  public async verify(): Promise<PriceFeedInvalidity | null> {
-    return null;
+  public async verify(): Promise<PriceFeedValidity> {
+    return true;
   }
 }
