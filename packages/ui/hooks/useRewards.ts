@@ -1,3 +1,4 @@
+import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -25,52 +26,69 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
     ['useRewards', chainId, poolData?.comptroller],
     async () => {
       if (chainId && sdk && poolData) {
-        const allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(
-          poolData.comptroller
-        );
-
-        const rewardsOfMarkets: UseRewardsData = {};
-        await Promise.all(
-          poolData.assets.map(async (asset) => {
-            let pluginRewards: RewardsResponse = [];
-            if (asset.plugin) {
-              pluginRewards = await axios
-                .get(`/api/rewards?chainId=${chainId}&pluginAddress=${asset.plugin}`)
-                .then((response) => response.data)
-                .catch((error) => {
-                  console.error(`Unable to fetch reward for ${asset.plugin}`, error);
-                  return [];
-                });
-            }
-
-            const flywheelRewards = allFlywheelRewards.find(
-              (fwRewardsInfo) => fwRewardsInfo.market === asset.cToken
+        try {
+          let allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
+          try {
+            allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(
+              poolData.comptroller
             );
-            const allRewards = [...pluginRewards];
-            if (flywheelRewards) {
-              const flywheelsInPluginResponse = pluginRewards
-                .map((pluginReward) =>
-                  'flywheel' in pluginReward ? pluginReward.flywheel.toLowerCase() : null
-                )
-                .filter((f) => !!f) as string[];
-              for (const info of flywheelRewards.rewardsInfo) {
-                if (
-                  !flywheelsInPluginResponse.includes(info.flywheel.toLowerCase()) &&
-                  info.formattedAPR
-                ) {
-                  allRewards.push({
-                    flywheel: info.flywheel,
-                    updated_at: new Date().toISOString(),
-                    apy: parseFloat(utils.formatUnits(info.formattedAPR, 18)),
-                    token: info.rewardToken,
-                  } as FlywheelReward);
+          } catch (exception) {
+            // Fallback to rewards without APRs
+            // TODO LogRocket
+            console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+            try {
+              allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPool(poolData.comptroller);
+            } catch (exception) {
+              // TODO LogRocket
+              console.error('Unable to get onchain Flywheel Rewards Fallback', exception);
+            }
+          }
+
+          const rewardsOfMarkets: UseRewardsData = {};
+          await Promise.all(
+            poolData.assets.map(async (asset) => {
+              let pluginRewards: RewardsResponse = [];
+              if (asset.plugin) {
+                pluginRewards = await axios
+                  .get(`/api/rewards?chainId=${chainId}&pluginAddress=${asset.plugin}`)
+                  .then((response) => response.data)
+                  .catch((error) => {
+                    console.error(`Unable to fetch reward for ${asset.plugin}`, error);
+                    return [];
+                  });
+              }
+
+              const flywheelRewards = allFlywheelRewards.find(
+                (fwRewardsInfo) => fwRewardsInfo.market === asset.cToken
+              );
+              const allRewards = [...pluginRewards];
+              if (flywheelRewards) {
+                const flywheelsInPluginResponse = pluginRewards
+                  .map((pluginReward) =>
+                    'flywheel' in pluginReward ? pluginReward.flywheel.toLowerCase() : null
+                  )
+                  .filter((f) => !!f) as string[];
+                for (const info of flywheelRewards.rewardsInfo) {
+                  if (!flywheelsInPluginResponse.includes(info.flywheel.toLowerCase())) {
+                    allRewards.push({
+                      flywheel: info.flywheel,
+                      updated_at: new Date().toISOString(),
+                      apy: info.formattedAPR
+                        ? parseFloat(utils.formatUnits(info.formattedAPR, 18))
+                        : undefined,
+                      token: info.rewardToken,
+                    } as FlywheelReward);
+                  }
                 }
               }
-            }
-            rewardsOfMarkets[asset.cToken] = allRewards;
-          })
-        );
-        return rewardsOfMarkets;
+              rewardsOfMarkets[asset.cToken] = allRewards;
+            })
+          );
+          return rewardsOfMarkets;
+        } catch (exception) {
+          // TODO show error toast and send to logrocket
+          console.error(exception);
+        }
       }
       return {};
     },

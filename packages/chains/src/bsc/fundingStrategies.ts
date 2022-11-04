@@ -18,6 +18,10 @@ const fundingStrategies: { [token: string]: [FundingStrategyContract, string] } 
     FundingStrategyContract.CurveSwapLiquidatorFunder,
     underlying(assets, assetSymbols.val3EPS),
   ],
+  [underlying(assets, assetSymbols.BRZ)]: [
+    FundingStrategyContract.CurveSwapLiquidatorFunder,
+    underlying(assets, assetSymbols.jBRL),
+  ],
   [underlying(assets, assetSymbols.val3EPS)]: [
     FundingStrategyContract.CurveSwapLiquidatorFunder,
     underlying(assets, assetSymbols.BUSD),

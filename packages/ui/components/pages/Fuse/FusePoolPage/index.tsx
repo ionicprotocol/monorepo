@@ -167,7 +167,7 @@ const FusePoolPage = memo(() => {
           )}
 
           <MidasBox overflowX="auto" width="100%" mb="4">
-            {data && initSorting && initColumnVisibility ? (
+            {data && initSorting && initColumnVisibility && allRewards ? (
               <MarketsList
                 assets={data.assets}
                 rewards={allRewards}
