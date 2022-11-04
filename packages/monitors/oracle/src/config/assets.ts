@@ -12,21 +12,27 @@ const FEED_VERIFIER_ORACLES = [
 
 const getFeedVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
-  return chainAssets.filter((asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle));
+  return chainAssets.filter(
+    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled === (false || undefined)
+  );
 };
 
 const getPriceVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
-  return chainAssets.filter((asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle));
+  return chainAssets.filter(
+    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled === (false || undefined)
+  );
 };
 
 const getPriceChangeVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
-  return chainAssets.filter((asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle));
+  return chainAssets.filter(
+    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled === (false || undefined)
+  );
 };
 
 export const assets = {
-  [Services.FeedVerifier]: getFeedVerifierAssets().slice(0, 1),
-  [Services.PriceVerifier]: getPriceVerifierAssets().slice(0, 1),
-  [Services.PriceChangeVerifier]: getPriceChangeVerifierAssets().slice(0, 1),
+  [Services.FeedVerifier]: getFeedVerifierAssets().slice(0, 10),
+  [Services.PriceVerifier]: getPriceVerifierAssets().slice(0, 10),
+  [Services.PriceChangeVerifier]: getPriceChangeVerifierAssets().slice(0, 10),
 };

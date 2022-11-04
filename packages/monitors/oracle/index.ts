@@ -19,5 +19,5 @@ import { baseConfig } from "./src/config/variables";
 
   // TODO: implement persistence
   // await updateOracleMonitorData(results);
-  setTimeout(runBot, 150000);
+  setTimeout(runBot, 2 * 1e9);
 })();
