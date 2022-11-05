@@ -32,7 +32,7 @@ const getPriceChangeVerifierAssets = (): SupportedAsset[] => {
 };
 
 export const assets = {
-  [Services.FeedVerifier]: getFeedVerifierAssets().filter((asset) => asset.symbol === "MAI"),
+  [Services.FeedVerifier]: getFeedVerifierAssets(),
   [Services.PriceVerifier]: getPriceVerifierAssets(),
   [Services.PriceChangeVerifier]: getPriceChangeVerifierAssets(),
 };
