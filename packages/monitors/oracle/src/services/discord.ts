@@ -2,7 +2,7 @@ import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
 import { logger } from "..";
-import { OracleFailure, PriceFeedInvalidity, ServiceConfig } from "../types";
+import { InvalidReason, OracleFailure, PriceFeedInvalidity, ServiceConfig } from "../types";
 
 export class DiscordService {
   asset: SupportedAsset;
@@ -16,6 +16,7 @@ export class DiscordService {
 
   private hook: Webhook;
   private config: ServiceConfig;
+  private DISABLED_INVALID_REASONS: InvalidReason[] = [InvalidReason.DEFI_LLAMA_API_ERROR];
 
   constructor(asset: SupportedAsset, chainId: SupportedChains, config: ServiceConfig) {
     this.asset = asset;
@@ -31,7 +32,10 @@ export class DiscordService {
   }
 
   private async send(embed: MessageBuilder) {
-    if (this.config.environment === "production") {
+    if (
+      this.config.environment === "production" &&
+      !this.DISABLED_INVALID_REASONS.includes(embed.getJSON().embeds[0].title?.toString() as InvalidReason)
+    ) {
       await this.hook.send(embed);
     } else {
       logger.debug(`Would have sent alert to discord: ${JSON.stringify(embed)}`);
