@@ -3,10 +3,10 @@ import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import { restore } from "sinon";
 
-import { configs, getConfig } from "../../src/config";
+import { configs } from "../../src/config";
 import { PriceVerifier } from "../../src/services/verifiers";
 import { AbstractOracleVerifier } from "../../src/services/verifiers/base";
-import { chainIdToConfig, PriceVerifierConfig, Services } from "../../src/types";
+import { chainIdToConfig, Services } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 
@@ -34,7 +34,6 @@ describe("Price verifier", () => {
   });
   describe("config", () => {
     it("Expect service config to be correctly set", async () => {
-      const config = getConfig() as PriceVerifierConfig;
       expect(config.maxPriceDeviation).to.be.equal(15);
       expect(process.env.SERVICE_TO_RUN).to.be.equal("price-verifier");
     });
