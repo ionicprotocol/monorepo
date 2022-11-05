@@ -8,13 +8,13 @@ export async function verifyDiaOraclePriceFeed(
   config: FeedVerifierConfig
 ): Promise<PriceFeedValidity> {
   logger.debug(`Verifying Dia oracle for ${underlying}`);
-  const feedAddress = await underlyingOracle.callStatic.priceFeeds(underlying);
+  const { feed, key } = await underlyingOracle.callStatic.priceFeeds(underlying);
   const diaFeed = new Contract(
-    feedAddress,
+    feed,
     ["function getValue(string memory key) external view returns (uint128, uint128)"],
     midasSdk.provider
   );
-  const [, timestamp] = await diaFeed.callStatic.latestRoundData();
+  const [, timestamp] = await diaFeed.callStatic.getValue(key);
   const updatedAtts = timestamp.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
 

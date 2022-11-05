@@ -1,7 +1,7 @@
 import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
-import { logger } from "ethers";
 
+import { logger } from "..";
 import { OracleFailure, PriceFeedInvalidity, ServiceConfig } from "../types";
 
 export class DiscordService {

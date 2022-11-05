@@ -7,7 +7,7 @@ doetenv.config();
 export const baseConfig: BaseConfig = {
   chainId: parseInt(process.env.TARGET_CHAIN_ID ?? "56", 10),
   environment: process.env.NODE_ENV ?? "development",
-  logLevel: process.env.NODE_ENV === "production" ? "info" : "debug",
+  logLevel: process.env.LOG_LEVEL ?? "info",
   rpcUrl: process.env.WEB3_HTTP_PROVIDER_URL ?? "",
   supabaseUrl: process.env.SUPABASE_URL ?? "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
   supabasePublicKey: process.env.SUPABASE_KEY ?? "",

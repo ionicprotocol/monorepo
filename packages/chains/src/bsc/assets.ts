@@ -245,6 +245,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", BOMB),
+    disabled: true,
   },
   {
     symbol: assetSymbols.xBOMB,

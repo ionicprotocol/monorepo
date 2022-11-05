@@ -28,14 +28,12 @@ locals {
   bsc_mainnet_rpc_1    = "https://rpc.ankr.com/bsc"
   bsc_mainnet_chain_id = "56"
 
-  moonbeam_mainnet_rpc_0          = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
-  moonbeam_mainnet_rpc_1          = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
-  moonbeam_mainnet_chain_id       = "1284"
-  moonbeam_mainnet_supported_pais = "0x99588867e817023162F4d4829995299054a5fC57|0xAcc15dC74880C9944775448304B263D191c6077F"
+  moonbeam_mainnet_rpc_0    = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
+  moonbeam_mainnet_rpc_1    = "https://rpc.ankr.com/moonbeam"
+  moonbeam_mainnet_chain_id = "1284"
 
-  evmos_testnet_rpc            = "https://eth.bd.evmos.dev:8545"
-  evmos_testnet_chain_id       = "9000"
-  evmos_testnet_supported_pais = "0x99588867e817023162F4d4829995299054a5fC57|0xAcc15dC74880C9944775448304B263D191c6077F"
+  evmos_testnet_rpc      = "https://eth.bd.evmos.dev:8545"
+  evmos_testnet_chain_id = "9000"
 
   polygon_mainnet_rpc_0    = var.chainstack_polygon_rpc_url
   polygon_mainnet_rpc_1    = "https://rpc.ankr.com/polygon"
