@@ -32,7 +32,7 @@ export class DiscordService {
 
   private async send(embed: MessageBuilder) {
     if (this.config.environment === "production") {
-      this.hook.send(embed);
+      await this.hook.send(embed);
     } else {
       logger.debug(`Would have sent alert to discord: ${JSON.stringify(embed)}`);
     }

@@ -1,4 +1,5 @@
 import { MidasSdk } from "@midas-capital/sdk";
+import { SupportedAsset } from "@midas-capital/types";
 
 import { assets, configs, verifiers } from "./config";
 import { Verifier } from "./services/verifier";
@@ -6,11 +7,16 @@ import { PriceFeedValidity, ServiceConfig, Services } from "./types";
 
 import { logger } from ".";
 
-async function runVerifier(sdk: MidasSdk, service: Services, config: ServiceConfig) {
+export async function runVerifier(
+  sdk: MidasSdk,
+  service: Services,
+  config: ServiceConfig,
+  assetsOverride?: SupportedAsset[]
+) {
   const results: Array<PriceFeedValidity> = [];
   logger.info(`RUNNING SERVICE: ${service}`);
 
-  for (const asset of assets[service]) {
+  for (const asset of assetsOverride ? assetsOverride : assets[service]) {
     logger.debug(`SERVICE ${service}: Operating on asset: ${asset.symbol} (${asset.underlying})`);
 
     const verifierClass = await new Verifier(sdk, verifiers[service], asset, config).init();

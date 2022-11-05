@@ -112,4 +112,4 @@ oracles-monitor-smoke-test:
 				-e NODE_ENV="development" \
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
-				${ORACLES_MONITOR_IMAGE} build/test/run.js
+				${ORACLES_MONITOR_IMAGE} build/tests/run.js
