@@ -1,4 +1,4 @@
-import {assetSymbols, FundingStrategyContract, RedemptionStrategyContract, underlying} from "@midas-capital/types";
+import {assetSymbols, RedemptionStrategyContract, underlying} from "@midas-capital/types";
 
 import assets, { WBNB } from "./assets";
 
@@ -32,7 +32,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.val3EPS),
   ],
   [underlying(assets, assetSymbols.JCHF)]: [
-    FundingStrategyContract.CurveSwapLiquidatorFunder,
+    RedemptionStrategyContract.CurveSwapLiquidatorFunder,
     underlying(assets, assetSymbols.BUSD),
   ],
   [underlying(assets, assetSymbols.BOMB)]: [
