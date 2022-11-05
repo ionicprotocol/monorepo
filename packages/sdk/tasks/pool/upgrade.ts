@@ -30,7 +30,6 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     const oldComptrollerImplementations = [oldImplementation];
     const comptrollerArrayOfTrue = [true];
 
-
     let tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
       oldComptrollerImplementations,
       newComptrollerImplementations,
