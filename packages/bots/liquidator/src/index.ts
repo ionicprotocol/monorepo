@@ -1,6 +1,6 @@
 export { default as approveTokensToSafeLiquidator } from "./utils/approveTokensToSafeLiquidator";
 
-export { default as liquidateAndRepeat } from "./liquidateAndRepeat";
+export { default as liquidatePositions } from "./liquidatePositions";
 
 export { default as config } from "./config";
 

@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 import dotenv from "dotenv";
 
-import { approveTokensToSafeLiquidator, config, liquidateAndRepeat, logger } from "./src";
+import { approveTokensToSafeLiquidator, config, liquidatePositions, logger } from "./src";
 
 dotenv.config();
 
@@ -17,5 +17,6 @@ dotenv.config();
 
   logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
   await approveTokensToSafeLiquidator(config.chainId, provider);
-  await liquidateAndRepeat(config.chainId, provider);
+  await liquidatePositions(config.chainId, provider);
+  setTimeout(runBot, 2 * 1e9);
 })();

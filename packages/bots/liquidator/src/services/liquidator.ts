@@ -27,16 +27,16 @@ export class Liquidator {
     const [erroredLiquidations, succeededLiquidations] = await this.sdk.liquidatePositions(liquidations);
     if (erroredLiquidations.length > 0) {
       logger.warn(`${erroredLiquidations.length} Liquidations failed`);
-      const msg = erroredLiquidations
+      const logMsg = erroredLiquidations
         .map((liquidation, index) => {
           return `# Liquidation ${index}:\n - Method: ${liquidation.tx.method}\n - Value: ${
             liquidation.tx.value
           }\n - Args: ${JSON.stringify(liquidation.tx.args)}\n - Error: ${liquidation.error}\n`;
         })
         .join("\n");
-
-      this.alert.sendLiquidationFailure(liquidations, msg);
-      logger.error(msg);
+      const errorMsg = erroredLiquidations.map((liquidation) => liquidation.error).join("\n");
+      this.alert.sendLiquidationFailure(liquidations, errorMsg);
+      logger.error(logMsg);
     }
     if (succeededLiquidations.length > 0) {
       logger.info(`${succeededLiquidations.length} Liquidations succeeded`);

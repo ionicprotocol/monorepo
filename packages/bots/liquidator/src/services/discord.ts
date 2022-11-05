@@ -12,7 +12,7 @@ import { config, logger } from "..";
 export class DiscordService {
   lastSentMessages: {
     erroredPools: { pools: Array<ErroredPool>; timestamp: number };
-    liquidations: { tx: EncodedLiquidationTx | null; timestamp: number };
+    liquidations: { tx: EncodedLiquidationTx[] | null; timestamp: number };
   };
   chainId: SupportedChains;
 
@@ -37,30 +37,33 @@ export class DiscordService {
 
   private async send(embed: MessageBuilder) {
     if (config.environment === "production") {
-      this.hook.send(embed);
+      await this.hook.send(embed);
     } else {
       logger.debug(`Would have sent alert to discord: ${JSON.stringify(embed)}`);
     }
   }
 
   public async sendLiquidationFailure(liquidations: LiquidatablePool, msg: string) {
-    const erroredLiquidation = JSON.stringify(liquidations.liquidations);
-    const previouslyErroredLiquidation = JSON.stringify(this.lastSentMessages?.liquidations?.tx ?? "");
-    const lastSentMessages = this.lastSentMessages?.liquidations?.timestamp;
-    if (
-      previouslyErroredLiquidation !== null &&
-      erroredLiquidation !== previouslyErroredLiquidation &&
-      lastSentMessages !== null
-    ) {
-      if (this.lastSentMessages?.erroredPools?.timestamp - Date.now() > 1000 * 60 * 15) {
+    const { comptroller, liquidations: currentLiquidations } = liquidations;
+    const { liquidations: previousLiquidations } = this.lastSentMessages;
+
+    const encodedCurrentLiquidation = JSON.stringify(currentLiquidations);
+    const encodedPreviousLiquidation = JSON.stringify(previousLiquidations.tx);
+
+    const lastSentMessages = this.lastSentMessages.liquidations.timestamp;
+
+    if (previousLiquidations.tx === null || encodedPreviousLiquidation !== encodedCurrentLiquidation) {
+      if (Date.now() - lastSentMessages > 1000 * 60 * 15 || lastSentMessages === 0) {
         const embed = this.create()
-          .setTitle(
-            `${liquidations.liquidations.length} liquidation(s) failed for comptroller: ${liquidations.comptroller}`
-          )
+          .setTitle(`${currentLiquidations.length} liquidation(s) failed for comptroller: ${comptroller}`)
+          .addField("Method", currentLiquidations[0].method, true)
+          .addField("Value", currentLiquidations[0].value.toString(), true)
+          .addField("Args", JSON.stringify(currentLiquidations[0].args), false)
           .setDescription(msg)
           .setTimestamp()
           .setColor(this.errorColor);
         await this.send(embed);
+        this.lastSentMessages.liquidations = { tx: liquidations.liquidations, timestamp: Date.now() };
       }
     }
   }
@@ -69,18 +72,14 @@ export class DiscordService {
       .map((pool) => pool.comptroller)
       .sort()
       .join(",");
-    const previouslyErroredComptrollers = this.lastSentMessages?.erroredPools?.pools
+    const previouslyErroredComptrollers = this.lastSentMessages.erroredPools.pools
       .map((pool) => pool.comptroller)
       .sort()
       .join(",");
-    const lastSentMessages = this.lastSentMessages?.erroredPools?.timestamp;
+    const lastSentMessages = this.lastSentMessages.erroredPools.timestamp;
 
-    if (
-      previouslyErroredComptrollers !== null &&
-      erroredComptrollers !== previouslyErroredComptrollers &&
-      lastSentMessages !== null
-    ) {
-      if (this.lastSentMessages?.erroredPools?.timestamp - Date.now() > 1000 * 60 * 30) {
+    if (previouslyErroredComptrollers === null || previouslyErroredComptrollers !== erroredComptrollers) {
+      if (Date.now() - this.lastSentMessages.erroredPools.timestamp > 1000 * 60 * 30 || lastSentMessages === 0) {
         const embed = this.create()
           .setTitle("Liquidation fetching failed for pools")
           .setDescription(msg)
