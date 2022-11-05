@@ -7,10 +7,14 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 
 export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)
-  .addParam("newImplementation", "The address of the new comptroller implementation", undefined, types.string)
+  .addOptionalParam("newImplementation", "The address of the new comptroller implementation", undefined, types.string)
   .addFlag("setLatest", "Set the new implementation as the latest for the autoimplementations")
   .setAction(async ({ oldImplementation, newImplementation, setLatest }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
+    if (!newImplementation) {
+      const currentLatestComptroller = await ethers.getContract("Comptroller");
+      newImplementation = currentLatestComptroller.address;
+    }
 
     // @ts-ignoreutils/fuseSdk
     const midasSdkModule = await import("../../tests/utils/midasSdk");
@@ -22,9 +26,10 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       deployer
     );
 
-    const oldComptrollerImplementations = [oldImplementation];
     const newComptrollerImplementations = [newImplementation];
+    const oldComptrollerImplementations = [oldImplementation];
     const comptrollerArrayOfTrue = [true];
+
 
     let tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
       oldComptrollerImplementations,
@@ -42,9 +47,10 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
         latestComptrollerImplementation === constants.AddressZero ||
         latestComptrollerImplementation !== newImplementation
       ) {
+        console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
         tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
+        console.log("latest impl set", tx.hash);
         await tx.wait();
-        console.log(`Set the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
       } else {
         console.log(`No change in the latest Comptroller implementation ${newImplementation}`);
       }
