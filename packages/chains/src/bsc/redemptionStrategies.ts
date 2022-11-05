@@ -32,7 +32,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.val3EPS),
   ],
   [underlying(assets, assetSymbols.JCHF)]: [
-    RedemptionStrategyContract.CurveSwapLiquidatorFunder,
+    RedemptionStrategyContract.CurveSwapLiquidator,
     underlying(assets, assetSymbols.BUSD),
   ],
   [underlying(assets, assetSymbols.BOMB)]: [
