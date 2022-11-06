@@ -46,10 +46,7 @@ const liquidationDefaults: LiquidationDefaults = {
     },
     {
       poolAddress: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", // curve v2 pool
-      coins: [
-        underlying(assets, assetSymbols.JCHF),
-        underlying(assets, assetSymbols.BUSD),
-      ],
+      coins: [underlying(assets, assetSymbols.JCHF), underlying(assets, assetSymbols.BUSD)],
     },
   ],
 };

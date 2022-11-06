@@ -14,7 +14,7 @@ const specificParams: ChainParams = {
     uniswapV3Fees: {
       [underlying(assets, assetSymbols.USDC)]: {
         [underlying(assets, assetSymbols.PAR)]: 500,
-      }
+      },
     },
     img: "https://d1912tcoux65lj.cloudfront.net/network/polygon.jpg",
     blockExplorerUrls: { default: { name: "polygonscan", url: "https://polygonscan.com" } },

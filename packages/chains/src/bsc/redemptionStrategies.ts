@@ -1,4 +1,4 @@
-import {assetSymbols, RedemptionStrategyContract, underlying} from "@midas-capital/types";
+import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
 
 import assets, { WBNB } from "./assets";
 
