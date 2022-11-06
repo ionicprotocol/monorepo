@@ -84,7 +84,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
       `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSupply.errorCode}`
     );
 
-    const supply2Amount = "8600";
+    const supply2Amount = "8550";
     const busdSupply = await sdk
       .setSigner(bob)
       .supply(
