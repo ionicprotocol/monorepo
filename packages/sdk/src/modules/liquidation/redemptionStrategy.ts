@@ -121,7 +121,13 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       };
 
     case RedemptionStrategyContract.XBombLiquidatorFunder: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
+      const xbomb = inputToken;
+      const bomb = outputToken;
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(["address", "address", "address"], [inputToken, xbomb, bomb]),
+        outputToken,
+      };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {

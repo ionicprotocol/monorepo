@@ -84,7 +84,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
       `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSupply.errorCode}`
     );
 
-    const supply2Amount = "8500";
+    const supply2Amount = "8650";
     const busdSupply = await sdk
       .setSigner(bob)
       .supply(
@@ -98,7 +98,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`
     );
 
-    const borrowAmount = "0.21";
+    const borrowAmount = "0.20";
 
     const btcbBorrow = await sdk
       .setSigner(bob)
