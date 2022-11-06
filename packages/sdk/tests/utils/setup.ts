@@ -130,7 +130,6 @@ export const setUpLiquidation = async (poolName: string) => {
 };
 
 export const liquidateAndVerify = async (
-  assetToLiquidate: EIP20Interface,
   poolName: string,
   poolAddress: string,
   liquidatedUserName: string,
@@ -146,9 +145,8 @@ export const liquidateAndVerify = async (
     namedUser: liquidatedUserName,
   });
   console.log(`Ratio Before: ${ratioBefore}`);
-  const wallet = Wallet.fromMnemonic(process.env.MNEMONIC);
 
-  const liquidations = await sdk.getPotentialLiquidations(wallet, []);
+  const [liquidations, _] = await sdk.getPotentialLiquidations([]);
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];
@@ -178,6 +176,6 @@ export const liquidateAndVerify = async (
   console.log(`Liquidator balance before liquidation: ${ethers.utils.formatEther(liquidatorBalanceBeforeLiquidation)}`);
   console.log(`Liquidator balance after liquidation: ${ethers.utils.formatEther(liquidatorBalanceAfterLiquidation)}`);
 
-  expect(liquidatorBalanceAfterLiquidation).gt(liquidatorBalanceBeforeLiquidation);
+  expect(liquidatorBalanceAfterLiquidation.gt(liquidatorBalanceBeforeLiquidation));
   expect(ratioBefore).to.be.gte(ratioAfter);
 };

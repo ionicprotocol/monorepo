@@ -82,6 +82,5 @@ export default async function getAllFusePoolUsers(
       }
     }
   }
-  // }
   return [fusePoolUsers, erroredPools];
 }
