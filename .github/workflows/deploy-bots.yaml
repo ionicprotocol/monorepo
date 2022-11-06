@@ -5,21 +5,17 @@ on:
     branches: [main, development]
     paths:
       - '.github/workflows/deploy-bots.yaml'
-      - 'packages/fuse-liquidator-bot/**'
-      - 'packages/fuse-twap-bot/**'
-      - 'packages/sdk/**'
+      - 'packages/bots/liquidator/**'
       - 'docker/liquidator/**'
-      - 'docker/twap/**'
+      - 'packages/sdk/**'
       - 'ops/**'
   pull_request:
     branches: [main, development]
     paths:
       - '.github/workflows/deploy-bots.yaml'
-      - 'packages/fuse-liquidator-bot/**'
-      - 'packages/fuse-twap-bot/**'
+      - 'packages/bots/liquidator/**'
       - 'packages/sdk/**'
       - 'docker/liquidator/**'
-      - 'docker/twap/**'
       - 'ops/**'
 
 jobs:
@@ -53,11 +49,8 @@ jobs:
       - name: Build `sdk`
         run: yarn build:sdk
 
-      - name: Lint `fuse-liquidator-bot`
-        run: yarn workspace @midas-capital/fuse-liquidator-bot lint
-
-      - name: Lint `fuse-twap-bot`
-        run: yarn workspace @midas-capital/fuse-twap-bot lint
+      - name: Lint `liquidator`
+        run: yarn workspace @midas-capital/liquidator lint
 
       - name: Lint `oracles-monitor`
         run: yarn workspace @midas-capital/oracles-monitor lint
@@ -100,49 +93,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           file: docker/liquidator/Dockerfile
-
-    outputs:
-      json: ${{ steps.meta.outputs.json }}
-
-  build-and-push-twap-image:
-    env:
-      REGISTRY: ghcr.io
-      IMAGE_NAME: midas-protocol/twap
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: '${{ secrets.ACCESS_TOKEN }}'
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
-        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=sha,format=long
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          file: docker/twap/Dockerfile
 
     outputs:
       json: ${{ steps.meta.outputs.json }}
@@ -192,19 +142,10 @@ jobs:
 
   smoke-tests:
     runs-on: ubuntu-latest
-    needs:
-      [
-        build-and-push-liquidator-image,
-        build-and-push-twap-image,
-        build-and-push-oracles-monitor-image,
-        lint-bots,
-      ]
+    needs: [build-and-push-liquidator-image, build-and-push-oracles-monitor-image, lint-bots]
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      NODEREAL_BSC_API_KEY: '${{ secrets.NODEREAL_BSC_API_KEY }}'
-      NODEREAL_MATIC_API_KEY: '${{ secrets.NODEREAL_MATIC_API_KEY }}'
-      TWAP_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-twap-image.outputs.json).tags[0] }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.build-and-push-liquidator-image.outputs.json).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.build-and-push-oracles-monitor-image.outputs.json).tags[0] }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
@@ -214,11 +155,7 @@ jobs:
 
       - name: run smoke tests for liquidator bot
         working-directory: ./ops
-        run: make fuse-liquidator-bot-smoke-test
-
-      - name: run smoke tests for twap bot
-        working-directory: ./ops
-        run: make fuse-twap-bot-smoke-test
+        run: make liquidator-smoke-test
 
       - name: run smoke tests for oracles montior
         working-directory: ./ops
@@ -237,13 +174,12 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      MORALIS_API_KEY: '${{ secrets.MORALIS_API_KEY }}'
       POKT_API_KEY: '${{ secrets.POKT_API_KEY }}'
-      GETBLOCK_API_KEY: '${{ secrets.GETBLOCK_API_KEY }}'
-      NODEREAL_BSC_API_KEY: '${{ secrets.NODEREAL_BSC_API_KEY }}'
-      NODEREAL_MATIC_API_KEY: '${{ secrets.NODEREAL_MATIC_API_KEY }}'
-      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-      TWAP_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.twap-tags).tags[0] }}
+      CHAINSTACK_BSC_RPC_URL: '${{ secrets.CHAINSTACK_BSC_RPC_URL }}'
+      CHAINSTACK_POLYGON_RPC_URL: '${{ secrets.CHAINSTACK_POLYGON_RPC_URL }}'
+      LIQUIDATION_DISCORD_WEBHOOK_URL: ${{ secrets.LIQUIDATION_DISCORD_WEBHOOK_URL }}
+      ECS_NOTIFIER_DISCORD_WEBHOOK_URL: ${{ secrets.ECS_NOTIFIER_DISCORD_WEBHOOK_URL }}
+      ORACLES_DISCORD_WEBHOOK_URL: ${{ secrets.ORACLES_DISCORD_WEBHOOK_URL }}
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.liquidator-tags).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.oracles-monitor-tags).tags[0] }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
