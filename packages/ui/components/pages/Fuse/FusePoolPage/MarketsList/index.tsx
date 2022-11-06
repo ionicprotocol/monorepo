@@ -144,7 +144,8 @@ export const MarketsList = ({
   }, [assets]);
 
   const totalApy = useMemo(() => {
-    if (!sdk) return {};
+    if (!sdk) return undefined;
+
     const result: { [market: string]: number } = {};
     for (const asset of assets) {
       let marketTotalAPY =
@@ -154,12 +155,16 @@ export const MarketsList = ({
         ) / 100;
 
       if (rewards[asset.cToken]) {
-        marketTotalAPY += rewards[asset.cToken].reduce((acc, cur) => acc + cur.apy, 0);
+        marketTotalAPY += rewards[asset.cToken].reduce(
+          (acc, cur) => (cur.apy ? acc + cur.apy : acc),
+          0
+        );
       }
       result[asset.cToken] = marketTotalAPY;
     }
+
     return result;
-  }, [rewards, assets]);
+  }, [rewards, assets, poolChainId, sdk]);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -192,57 +197,60 @@ export const MarketsList = ({
     }
   };
 
-  const assetSort: SortingFn<Market> = (rowA, rowB, columnId) => {
-    if (!sdk) return 0;
+  const assetSort: SortingFn<Market> = React.useCallback(
+    (rowA, rowB, columnId) => {
+      if (!sdk) return 0;
 
-    if (columnId === MARKET_LTV) {
-      return rowB.original.market.underlyingSymbol.localeCompare(
-        rowA.original.market.underlyingSymbol
-      );
-    } else if (columnId === SUPPLY_APY) {
-      const rowASupplyAPY = totalApy ? totalApy[rowA.original.market.cToken] : 0;
-      const rowBSupplyAPY = totalApy ? totalApy[rowB.original.market.cToken] : 0;
-      return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
-    } else if (columnId === BORROW_APY) {
-      const rowABorrowAPY = !rowA.original.market.isBorrowPaused
-        ? sdk.ratePerBlockToAPY(
-            rowA.original.market.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(poolChainId)
-          )
-        : -1;
-      const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
-        ? sdk.ratePerBlockToAPY(
-            rowB.original.market.borrowRatePerBlock,
-            getBlockTimePerMinuteByChainId(poolChainId)
-          )
-        : -1;
-      return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
-    } else if (columnId === SUPPLY_BALANCE) {
-      return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
-        ? 1
-        : -1;
-    } else if (columnId === BORROW_BALANCE) {
-      return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
-        ? 1
-        : -1;
-    } else if (columnId === TOTAL_SUPPLY) {
-      return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
-    } else if (columnId === TOTAL_BORROW) {
-      return rowA.original.market.totalBorrowFiat > rowB.original.market.totalBorrowFiat ? 1 : -1;
-    } else if (columnId === LIQUIDITY) {
-      const liquidityA = !rowA.original.market.isBorrowPaused
-        ? rowA.original.market.liquidityFiat
-        : -1;
-      const liquidityB = !rowB.original.market.isBorrowPaused
-        ? rowB.original.market.liquidityFiat
-        : -1;
-      return liquidityA > liquidityB ? 1 : -1;
-    } else if (columnId === COLLATERAL) {
-      return rowA.original.market.membership ? 1 : -1;
-    } else {
-      return 0;
-    }
-  };
+      if (columnId === MARKET_LTV) {
+        return rowB.original.market.underlyingSymbol.localeCompare(
+          rowA.original.market.underlyingSymbol
+        );
+      } else if (columnId === SUPPLY_APY) {
+        const rowASupplyAPY = totalApy ? totalApy[rowA.original.market.cToken] : 0;
+        const rowBSupplyAPY = totalApy ? totalApy[rowB.original.market.cToken] : 0;
+        return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
+      } else if (columnId === BORROW_APY) {
+        const rowABorrowAPY = !rowA.original.market.isBorrowPaused
+          ? sdk.ratePerBlockToAPY(
+              rowA.original.market.borrowRatePerBlock,
+              getBlockTimePerMinuteByChainId(poolChainId)
+            )
+          : -1;
+        const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
+          ? sdk.ratePerBlockToAPY(
+              rowB.original.market.borrowRatePerBlock,
+              getBlockTimePerMinuteByChainId(poolChainId)
+            )
+          : -1;
+        return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
+      } else if (columnId === SUPPLY_BALANCE) {
+        return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
+          ? 1
+          : -1;
+      } else if (columnId === BORROW_BALANCE) {
+        return rowA.original.market.borrowBalanceFiat > rowB.original.market.borrowBalanceFiat
+          ? 1
+          : -1;
+      } else if (columnId === TOTAL_SUPPLY) {
+        return rowA.original.market.totalSupplyFiat > rowB.original.market.totalSupplyFiat ? 1 : -1;
+      } else if (columnId === TOTAL_BORROW) {
+        return rowA.original.market.totalBorrowFiat > rowB.original.market.totalBorrowFiat ? 1 : -1;
+      } else if (columnId === LIQUIDITY) {
+        const liquidityA = !rowA.original.market.isBorrowPaused
+          ? rowA.original.market.liquidityFiat
+          : -1;
+        const liquidityB = !rowB.original.market.isBorrowPaused
+          ? rowB.original.market.liquidityFiat
+          : -1;
+        return liquidityA > liquidityB ? 1 : -1;
+      } else if (columnId === COLLATERAL) {
+        return rowA.original.market.membership ? 1 : -1;
+      } else {
+        return 0;
+      }
+    },
+    [totalApy, poolChainId, sdk]
+  );
 
   const data: Market[] = useMemo(() => {
     const availableAssets = assets.filter(

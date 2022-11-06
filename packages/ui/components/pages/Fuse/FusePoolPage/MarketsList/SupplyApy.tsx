@@ -3,6 +3,8 @@ import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
+import { NoRewardInfo } from './NoRewardInfo';
+
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
@@ -69,9 +71,13 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         </Text>
       )}
 
-      {rewardsOfThisMarket.map((reward, index) => (
-        <RewardsInfo key={`reward_${index}`} reward={reward} chainId={poolChainId} />
-      ))}
+      {rewardsOfThisMarket.length > 0 ? (
+        rewardsOfThisMarket.map((reward, index) => (
+          <RewardsInfo key={`reward_${index}`} reward={reward} chainId={poolChainId} />
+        ))
+      ) : asset.plugin ? (
+        <NoRewardInfo poolChainId={poolChainId} pluginAddress={asset.plugin} />
+      ) : null}
     </VStack>
   );
 };

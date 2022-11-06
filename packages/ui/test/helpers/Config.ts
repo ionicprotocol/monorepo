@@ -25,6 +25,14 @@ export type InitConfig = {
   rpc: string;
 };
 
+export type CreatePoolConfig = {
+  name: string;
+  oracle: string;
+  closeFactor: string;
+  liquidationIncentive: string;
+  testUrl: string;
+};
+
 export class Config {
   public static init(): InitConfig {
     switch (Number(testChainId)) {
@@ -102,5 +110,14 @@ export class Config {
           testUrl: `${BASE_URL}/97/pool/25`,
         };
     }
+  }
+  public static createPool(): CreatePoolConfig {
+    return {
+      name: 'e2e testing',
+      oracle: '0xB641c21124546e1c979b4C1EbF13aB00D43Ee8eA',
+      closeFactor: '50',
+      liquidationIncentive: '8',
+      testUrl: `${BASE_URL}/create-pool`,
+    };
   }
 }

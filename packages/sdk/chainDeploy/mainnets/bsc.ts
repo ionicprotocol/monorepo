@@ -407,6 +407,19 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
   //// Liquidator Redemption and Funding Strategies
+
+  //// custom uniswap v2 redemptions and funding
+  const uniswapV2LiquidatorFunder = await deployments.deploy("UniswapV2LiquidatorFunder", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (uniswapV2LiquidatorFunder.transactionHash) {
+    await ethers.provider.waitForTransaction(uniswapV2LiquidatorFunder.transactionHash);
+  }
+  console.log("UniswapV2LiquidatorFunder: ", uniswapV2LiquidatorFunder.address);
+
   /// xBOMB<>BOMB
   const xbombLiquidatorFunder = await deployments.deploy("XBombLiquidatorFunder", {
     from: deployer,
@@ -519,6 +532,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     console.log("setAddress CurveSwapLiquidator: ", tx.hash);
   }
   ////
+
+  // update sd apeswap oracle factory
+  await run("oracle:deploy-apeswap-oracle");
 
   console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };

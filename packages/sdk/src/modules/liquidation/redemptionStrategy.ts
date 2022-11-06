@@ -56,7 +56,7 @@ export const getRedemptionStrategiesAndDatas = async (
   ];
 };
 
-const getUniswapV2Router = (fuse: MidasBase, asset: string): string => {
+export const getUniswapV2Router = (fuse: MidasBase, asset: string): string => {
   return Object.values(fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER).includes(asset)
     ? fuse.chainConfig.liquidationDefaults.ASSET_SPECIFIC_ROUTER[asset]
     : fuse.chainConfig.liquidationDefaults.DEFAULT_ROUTER;
@@ -121,7 +121,13 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       };
 
     case RedemptionStrategyContract.XBombLiquidatorFunder: {
-      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
+      const xbomb = inputToken;
+      const bomb = outputToken;
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(["address", "address", "address"], [inputToken, xbomb, bomb]),
+        outputToken,
+      };
     }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {
@@ -146,6 +152,17 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         strategyData: new ethers.utils.AbiCoder().encode(
           ["address", "address[]", "address[]"],
           [getUniswapV2Router(fuse, inputToken), swapToken0Path, swapToken1Path]
+        ),
+        outputToken,
+      };
+    }
+    case RedemptionStrategyContract.UniswapV2LiquidatorFunder: {
+      const swapPath = [inputToken, outputToken];
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          ["address", "address[]"],
+          [getUniswapV2Router(fuse, inputToken), swapPath]
         ),
         outputToken,
       };

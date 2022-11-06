@@ -16,7 +16,7 @@ import { useMemo } from 'react';
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats/PoolStat';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { PoolData } from '@ui/types/TokensDataMap';
-import { midFormat, midUsdFormatter, smallUsdFormatter } from '@ui/utils/bigUtils';
+import { midFormat, midUsdFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import {
   sortTopBorrowedAssets,
   sortTopLiquidityAssets,
@@ -76,7 +76,10 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           <Text fontWeight="bold" mt={1}>
                             {smallUsdFormatter(asset.totalSupplyFiat)}
                           </Text>
-                          <Text>{asset.underlyingSymbol}</Text>
+                          <Text>
+                            {tokenFormatter(asset.totalSupply, asset.underlyingDecimals)}{' '}
+                            {asset.underlyingSymbol}
+                          </Text>
                         </Box>
                       </HStack>
                     )}
@@ -117,7 +120,10 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           <Text fontWeight="bold" mt={1}>
                             {smallUsdFormatter(asset.totalBorrowFiat)}
                           </Text>
-                          <Text>{asset.underlyingSymbol}</Text>
+                          <Text>
+                            {tokenFormatter(asset.totalBorrow, asset.underlyingDecimals)}{' '}
+                            {asset.underlyingSymbol}
+                          </Text>
                         </Box>
                       </HStack>
                     )}
@@ -159,7 +165,10 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
                           <Text fontWeight="bold" mt={1}>
                             {smallUsdFormatter(asset.liquidityFiat)}
                           </Text>
-                          <Text>{asset.underlyingSymbol}</Text>
+                          <Text>
+                            {tokenFormatter(asset.liquidity, asset.underlyingDecimals)}{' '}
+                            {asset.underlyingSymbol}
+                          </Text>
                         </Box>
                       </HStack>
                     )}

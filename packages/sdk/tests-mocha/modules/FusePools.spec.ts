@@ -50,7 +50,7 @@ describe("FusePools", () => {
       CErc20PluginRewardsDelegate: { abi: [], address: mkAddress("0xabc") },
       Comptroller: { abi: [], address: mkAddress("0xabc") },
       FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-      FuseFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
+      MidasFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },

@@ -22,11 +22,11 @@ import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20Plugin
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
-import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
 import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -51,7 +51,7 @@ export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
 export type StaticContracts = {
   FuseFeeDistributor: FuseFeeDistributor;
-  FuseFlywheelLensRouter: FuseFlywheelLensRouter;
+  MidasFlywheelLensRouter: MidasFlywheelLensRouter;
   FusePoolDirectory: FusePoolDirectory;
   FusePoolLens: FusePoolLens;
   FusePoolLensSecondary: FusePoolLensSecondary;
@@ -133,11 +133,11 @@ export class MidasBase {
         this.chainDeployment.FuseFeeDistributor.abi,
         this.provider
       ) as FuseFeeDistributor,
-      FuseFlywheelLensRouter: new Contract(
-        this.chainDeployment.FuseFlywheelLensRouter.address,
-        this.chainDeployment.FuseFlywheelLensRouter.abi,
+      MidasFlywheelLensRouter: new Contract(
+        this.chainDeployment.MidasFlywheelLensRouter.address,
+        this.chainDeployment.MidasFlywheelLensRouter.abi,
         this.provider
-      ) as FuseFlywheelLensRouter,
+      ) as MidasFlywheelLensRouter,
       ...this._contracts,
     };
   }

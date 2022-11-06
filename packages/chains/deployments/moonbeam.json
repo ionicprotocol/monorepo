@@ -8290,7 +8290,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x3a93f61B5718e403479A01c9046f51e2A6b0790A",
+      "address": "0x0d1b9c6450b61193bf4B75Fad5d23d5F66F02198",
       "abi": [
         {
           "inputs": [
@@ -8306,31 +8306,6 @@
         {
           "anonymous": false,
           "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "ActionPaused",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
             {
               "indexed": false,
               "internalType": "string",
@@ -8396,6 +8371,31 @@
             }
           ],
           "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "MarketActionPaused",
           "type": "event"
         },
         {
@@ -22097,7 +22097,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x9b29D57b1a31EE332d18080414B3a5C4b435cff4",
+      "address": "0x692C899bC81eaA9ffB8B4Ac7328dd767F35369E9",
       "abi": [
         {
           "anonymous": false,
@@ -24019,6 +24019,142 @@
         {
           "stateMutability": "payable",
           "type": "receive"
+        }
+      ]
+    },
+    "MidasFlywheelLensRouter": {
+      "address": "0x55F40B04e7161A7D62EBf0676fE0AeF9fe2B772F",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IComptroller",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getMarketRewardsInfo",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "underlyingPrice",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract CErc20",
+                  "name": "market",
+                  "type": "address"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "rewardSpeedPerSecondPerToken",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "rewardTokenPrice",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "formattedAPR",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "flywheel",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "rewardToken",
+                      "type": "address"
+                    }
+                  ],
+                  "internalType": "struct MidasFlywheelLensRouter.RewardsInfo[]",
+                  "name": "rewardsInfo",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct MidasFlywheelLensRouter.MarketRewardsInfo[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CErc20[]",
+              "name": "markets",
+              "type": "address[]"
+            },
+            {
+              "internalType": "contract MidasFlywheelCore[]",
+              "name": "flywheels",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "accrue",
+              "type": "bool[]"
+            }
+          ],
+          "name": "getUnclaimedRewardsByMarkets",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CErc20",
+              "name": "market",
+              "type": "address"
+            },
+            {
+              "internalType": "contract MidasFlywheelCore[]",
+              "name": "flywheels",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "accrue",
+              "type": "bool[]"
+            }
+          ],
+          "name": "getUnclaimedRewardsForMarket",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },
