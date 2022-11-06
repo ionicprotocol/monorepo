@@ -16,7 +16,6 @@ const liquidationDefaults: LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 40,
   jarvisPools: [
-    // jBRL <-> BUSD
     {
       expirationTime: 40 * 60,
       liquidityPoolAddress: "0x0fD8170Dc284CD558325029f6AEc1538c7d99f49",
@@ -43,6 +42,13 @@ const liquidationDefaults: LiquidationDefaults = {
         underlying(assets, assetSymbols.jBRL),
         underlying(assets, assetSymbols.BRZ),
         underlying(assets, assetSymbols.BRZw),
+      ],
+    },
+    {
+      poolAddress: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", // curve v2 pool
+      coins: [
+        underlying(assets, assetSymbols.JCHF),
+        underlying(assets, assetSymbols.BUSD),
       ],
     },
   ],
