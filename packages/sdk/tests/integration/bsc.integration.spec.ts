@@ -111,7 +111,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     tx = await simplePriceOracle.setDirectPrice(erc20One.underlying, erc20OneOriginalUnderlyingPrice.mul(10).div(6));
     await tx.wait();
 
-    await liquidateAndVerify(erc20TwoUnderlying, poolName, poolAddress, "bob", liquidator);
+    await liquidateAndVerify(poolName, poolAddress, "bob", liquidator);
 
     // Set price of tokenOne collateral back to what it was
     tx = await simplePriceOracle.setDirectPrice(erc20One.underlying, erc20OneOriginalUnderlyingPrice);

@@ -2,6 +2,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig } from "@midas-capital/types";
+import { Signer } from "ethers";
 
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -12,7 +13,7 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ganache.chainId]: ganache,
 };
 
-const setUpSdk = (chainId: number, provider: JsonRpcProvider) => {
+const setUpSdk = (chainId: number, provider: Signer | JsonRpcProvider) => {
   return new MidasSdk(provider, chainIdToConfig[chainId]);
 };
 
