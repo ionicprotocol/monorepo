@@ -11,6 +11,7 @@ import {
 import {
   ChainConfig,
   ChainSupportedAssets as ChainSupportedAssetsType,
+  DeployedPlugins as DeployedPluginsType,
   SupportedChains,
 } from '@midas-capital/types';
 import { BigNumber } from 'ethers';
@@ -88,4 +89,15 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
+};
+
+export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
+  [SupportedChains.bsc]: bsc.deployedPlugins,
+  [SupportedChains.polygon]: polygon.deployedPlugins,
+  [SupportedChains.ganache]: ganache.deployedPlugins,
+  [SupportedChains.evmos]: evmos.deployedPlugins,
+  [SupportedChains.chapel]: chapel.deployedPlugins,
+  [SupportedChains.moonbeam]: moonbeam.deployedPlugins,
+  [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
+  [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
 };

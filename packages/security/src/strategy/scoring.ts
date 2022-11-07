@@ -9,13 +9,13 @@ import {
   PlatformRiskReputation,
   StrategyComplexity,
   StrategyTimeInMarket,
-} from "../enums";
+} from "@midas-capital/types";
 
 export const SCORING_WEIGHTS = {
   COMPLEXITY: 0.3,
-  TIME_IN_MARKET: 0.1,
-  ASSET_RISK: 0.2,
-  PLATFORM_RISK: 0.2,
+  TIME_IN_MARKET: 0.2,
+  ASSET_RISK: 0.25,
+  PLATFORM_RISK: 0.25,
 };
 
 export const complexityScore = (complexity: StrategyComplexity) => {

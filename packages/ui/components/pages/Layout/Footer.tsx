@@ -16,10 +16,10 @@ const Footer = () => {
     <Column
       mainAxisAlignment="center"
       crossAxisAlignment="center"
-      py={8}
       width="100%"
       flexShrink={0}
-      mt={24}
+      mt={{ base: 4, md: 20 }}
+      mb={4}
       gap={2}
     >
       <Row mainAxisAlignment="center" crossAxisAlignment="center" width="100%">

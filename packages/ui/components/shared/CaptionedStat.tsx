@@ -1,9 +1,8 @@
-import { QuestionIcon } from '@chakra-ui/icons';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import { HStack, SystemProps, Text, TextProps } from '@chakra-ui/react';
 
 import { Column } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { useColors } from '@ui/hooks/useColors';
 import { useMaybeResponsiveProp } from '@ui/hooks/useMaybeResponsiveProp';
 import { CaptionedStatProps } from '@ui/types/ComponentPropsType';
 
@@ -17,8 +16,6 @@ const CaptionedStat = ({
   const crossAxisAlignmentStatic = useMaybeResponsiveProp(crossAxisAlignment);
   const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as SystemProps['textAlign'];
 
-  const { cCard } = useColors();
-
   return (
     <Column mainAxisAlignment="center" crossAxisAlignment={crossAxisAlignment}>
       <HStack>
@@ -28,13 +25,7 @@ const CaptionedStat = ({
         {tooltip && (
           <SimpleTooltip label={tooltip}>
             <Text fontWeight="bold">
-              <QuestionIcon
-                color={cCard.txtColor}
-                bg={cCard.bgColor}
-                borderRadius={'50%'}
-                ml={1}
-                mb="4px"
-              />
+              <InfoOutlineIcon />
             </Text>
           </SimpleTooltip>
         )}
