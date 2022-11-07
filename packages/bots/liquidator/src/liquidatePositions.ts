@@ -24,5 +24,5 @@ export default async function liquidatePositions(chainId: number, provider: Json
   const midasSdk = setUpSdk(chainId, provider);
   const liquidator = new Liquidator(midasSdk);
   logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
-  setInterval(runLiquidator, midasSdk.chainLiquidationConfig.LIQUIDATION_INTERVAL_SECONDS * 500, liquidator);
+  setInterval(runLiquidator, midasSdk.chainLiquidationConfig.LIQUIDATION_INTERVAL_SECONDS * 1000, liquidator);
 }
