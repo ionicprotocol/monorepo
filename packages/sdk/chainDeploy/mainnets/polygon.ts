@@ -60,6 +60,7 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0x96e8ac4277198ff8b6f785478aa9a39f403cb768dd02cbee326c3e7da348845f"),
     uniswapV2RouterAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
     uniswapV2FactoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
+    uniswapV3FactoryAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
     uniswapOracleInitialDeployTokens: [
       {
         token: underlying(assets, assetSymbols.JRT),
@@ -96,7 +97,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   //
   {
     symbol: assetSymbols.AAVE,
-    aggregator: "0xbE23a3AA13038CfC28aFd0ECe4FdE379fE7fBfc4",
+    aggregator: "0x72484B12719E23115761D5DA1646945632979bB6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -506,6 +507,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     diaNativeFeed: { feed: ethers.constants.AddressZero, key: "" },
   });
+
   /// Dia Price Oracle
   await deployBalancerLpPriceOracle({
     run,
@@ -527,6 +529,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// Liquidator Redemption Strategies
 
+  // Quoter
+  const quoter = await deployments.deploy("Quoter", {
+    from: deployer,
+    args: [deployConfig.uniswap.uniswapV3FactoryAddress],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("Quoter: ", quoter.address);
+
   //// UniswapLpTokenLiquidator
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,
@@ -540,7 +551,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
   //// CurveLPLiquidator
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
     args: [],

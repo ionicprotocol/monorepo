@@ -22,6 +22,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@midas-capital/chains": "workspace:*",
     "@midas-capital/sdk": "workspace:*",
+    "@midas-capital/security": "workspace:*",
     "@midas-capital/types": "workspace:*",
     "@rainbow-me/rainbowkit": "^0.7.4",
     "@supabase/supabase-js": "^2.0.5",

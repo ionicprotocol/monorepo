@@ -3002,9 +3002,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@midas-capital/fuse-liquidator-bot@workspace:packages/bots/fuse-liquidator-bot":
+"@midas-capital/liquidator@workspace:packages/bots/liquidator":
   version: 0.0.0-use.local
-  resolution: "@midas-capital/fuse-liquidator-bot@workspace:packages/bots/fuse-liquidator-bot"
+  resolution: "@midas-capital/liquidator@workspace:packages/bots/liquidator"
   dependencies:
     "@ethersproject/contracts": ^5.6.0
     "@ethersproject/providers": ^5.6.0
@@ -3017,6 +3017,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.30.0
     "@typescript-eslint/parser": ^5.30.0
     axios: ^0.21.1
+    discord-webhook-node: ^1.1.8
     dotenv: ^16.0.0
     eslint: 8.18.0
     eslint-config-prettier: ^8.5.0
@@ -3025,38 +3026,7 @@ __metadata:
     eslint-plugin-prettier: ^4.2.1
     ethers: ^5.6.5
     pino: ^8.0.0
-    pino-pretty: ^8.0.0
-    prettier: 2.7.1
-    rimraf: ^3.0.2
-    ts-node: ^10.7.0
-    typescript: 4.7.4
-  languageName: unknown
-  linkType: soft
-
-"@midas-capital/fuse-twap-bot@workspace:packages/bots/fuse-twap-bot":
-  version: 0.0.0-use.local
-  resolution: "@midas-capital/fuse-twap-bot@workspace:packages/bots/fuse-twap-bot"
-  dependencies:
-    "@ethersproject/contracts": ^5.6.0
-    "@ethersproject/providers": ^5.6.0
-    "@midas-capital/chains": "workspace:*"
-    "@midas-capital/sdk": "workspace:*"
-    "@midas-capital/types": "workspace:*"
-    "@types/eslint": ^8.4.3
-    "@types/node": ^18.0.0
-    "@types/rimraf": ^3
-    "@typescript-eslint/eslint-plugin": ^5.30.0
-    "@typescript-eslint/parser": ^5.30.0
-    axios: ^0.21.1
-    dotenv: ^16.0.0
-    eslint: 8.18.0
-    eslint-config-prettier: ^8.5.0
-    eslint-import-resolver-typescript: ^3.1.2
-    eslint-plugin-import: ^2.26.0
-    eslint-plugin-prettier: ^4.2.1
-    ethers: ^5.6.5
-    pino: ^8.0.0
-    pino-pretty: ^8.0.0
+    pino-pretty: ^9.1.1
     prettier: 2.7.1
     rimraf: ^3.0.2
     ts-node: ^10.7.0
@@ -3073,25 +3043,30 @@ __metadata:
     "@midas-capital/sdk": "workspace:*"
     "@midas-capital/types": "workspace:*"
     "@supabase/supabase-js": ^1.35.4
-    "@types/eslint": ^8.4.3
-    "@types/node": ^18.0.0
-    "@types/rimraf": ^3
-    "@typescript-eslint/eslint-plugin": ^5.30.0
-    "@typescript-eslint/parser": ^5.30.0
+    "@types/chai": ^4.3.1
+    "@types/chai-as-promised": ^7
+    "@types/chai-subset": ^1
+    "@types/mocha": ^9.1.1
     axios: ^0.21.1
+    chai: ^4.3.6
+    chai-as-promised: ^7.1.1
+    chai-subset: ^1.6.0
+    discord-webhook-node: ^1.1.8
     dotenv: ^16.0.0
-    eslint: 8.18.0
-    eslint-config-prettier: ^8.5.0
-    eslint-import-resolver-typescript: ^3.1.2
+    eslint: ^8.23.0
     eslint-plugin-import: ^2.26.0
     eslint-plugin-prettier: ^4.2.1
     ethers: ^5.6.5
+    lint-staged: 13.0.3
+    nyc: ^15.1.0
     pino: ^8.0.0
-    pino-pretty: ^8.0.0
+    pino-pretty: ^9.1.1
     prettier: 2.7.1
     rimraf: ^3.0.2
-    ts-node: ^10.7.0
-    typescript: 4.7.4
+    sinon: ^14.0.0
+    ts-mocha: ^10.0.0
+    ts-node: ^10.8.1
+    typescript: ^4.8.2
   languageName: unknown
   linkType: soft
 
@@ -3146,7 +3121,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@midas-capital/security@workspace:packages/security":
+"@midas-capital/security@workspace:*, @midas-capital/security@workspace:packages/security":
   version: 0.0.0-use.local
   resolution: "@midas-capital/security@workspace:packages/security"
   dependencies:
@@ -3209,6 +3184,7 @@ __metadata:
     "@ethersproject/providers": ^5.7.2
     "@midas-capital/chains": "workspace:*"
     "@midas-capital/sdk": "workspace:*"
+    "@midas-capital/security": "workspace:*"
     "@midas-capital/types": "workspace:*"
     "@netlify/plugin-nextjs": latest
     "@rainbow-me/rainbowkit": ^0.7.4
@@ -11523,6 +11499,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"discord-webhook-node@npm:^1.1.8":
+  version: 1.1.8
+  resolution: "discord-webhook-node@npm:1.1.8"
+  dependencies:
+    form-data: ^3.0.0
+    node-fetch: ^2.6.0
+  checksum: 7e7c52482ce9a26b42d52d99e595b0bb53a0ba79a835dde47a27239f27e56817bb4498b4607461e264a62ae5e2481065b22d7e0289b9f60d26cdbc2e90564ba8
+  languageName: node
+  linkType: hard
+
 "doctrine@npm:^2.1.0":
   version: 2.1.0
   resolution: "doctrine@npm:2.1.0"
@@ -13412,10 +13398,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-copy@npm:^2.1.1":
-  version: 2.1.7
-  resolution: "fast-copy@npm:2.1.7"
-  checksum: af8016c174b02bd4f706ffdf9f138511b17b748665b291fec6c5ca1922cb55da35cf86ded46b31890930bcf9b1c2481c03c793a47110ab81ec385e14972b9d7e
+"fast-copy@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "fast-copy@npm:3.0.0"
+  checksum: 58edbc2dcc10e948f5a67fb278dc3d696a65ac68036c3f872fc6c839522b071d3151c7bcea779946f96e01f9a1fdd9b76621532ee32f51000b1403ee673e14ba
   languageName: node
   linkType: hard
 
@@ -20615,13 +20601,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"on-exit-leak-free@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "on-exit-leak-free@npm:1.0.0"
-  checksum: 813adf176cf95500c0e5cfef2c82f8c92969692c3837b7b939519c31aab3866e856a30254184a347c5da0c885b2a840e37ee44cc72f6432a2284525db6a8ce7f
-  languageName: node
-  linkType: hard
-
 "on-exit-leak-free@npm:^2.1.0":
   version: 2.1.0
   resolution: "on-exit-leak-free@npm:2.1.0"
@@ -21549,18 +21528,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pino-pretty@npm:^8.0.0":
-  version: 8.1.0
-  resolution: "pino-pretty@npm:8.1.0"
+"pino-pretty@npm:^9.1.1":
+  version: 9.1.1
+  resolution: "pino-pretty@npm:9.1.1"
   dependencies:
     colorette: ^2.0.7
     dateformat: ^4.6.3
-    fast-copy: ^2.1.1
+    fast-copy: ^3.0.0
     fast-safe-stringify: ^2.1.1
     help-me: ^4.0.1
     joycon: ^3.1.1
     minimist: ^1.2.6
-    on-exit-leak-free: ^1.0.0
+    on-exit-leak-free: ^2.1.0
     pino-abstract-transport: ^1.0.0
     pump: ^3.0.0
     readable-stream: ^4.0.0
@@ -21569,7 +21548,7 @@ __metadata:
     strip-json-comments: ^3.1.1
   bin:
     pino-pretty: bin.js
-  checksum: 6e8656cdecfd5cf23a328bbb50c5b9d3f27dee838ed797a41037845612dbe610e1083fa896128f7323cf45c862e3954441527ab315be3bab63d14095c7b4cd73
+  checksum: c1d148aa0c5f2d1034cf76c0b397cf9725923d16343e9dff78d56b564090c1c86208aae94f1208f0fb936f456eece7eab6264095337540f42d91aaa13e5b8935
   languageName: node
   linkType: hard
 

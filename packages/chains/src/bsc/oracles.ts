@@ -12,5 +12,6 @@ const oracles: OracleTypes[] = [
   OracleTypes.StkBNBPriceOracle,
   OracleTypes.AnkrBNBcPriceOracle,
   OracleTypes.BNBxPriceOracle,
+  OracleTypes.DiaPriceOracle,
 ];
 export default oracles;

@@ -1,18 +1,17 @@
-import { Strategy } from "@midas-capital/types";
-
 import {
   AssetRiskIL,
   AssetRiskLiquidity,
   AssetRiskMktCap,
   AssetRiskSupply,
+  ERC4626Strategy,
   PlatformRiskAdminWithTimelock,
   PlatformRiskAudit,
   PlatformRiskContractsVerified,
   PlatformRiskReputation,
+  Strategy,
   StrategyComplexity,
   StrategyTimeInMarket,
-} from "../enums";
-import { ERC4626Strategy } from "../types";
+} from "@midas-capital/types";
 
 export const strategies: ERC4626Strategy[] = [
   // BNB CHAIN

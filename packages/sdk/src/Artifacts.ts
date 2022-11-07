@@ -16,6 +16,7 @@ import ComptrollerArtifact from "../lib/contracts/out/Comptroller.sol/Comptrolle
 import CTokenInterfaceArtifact from "../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import CurveLpTokenPriceOracleNoRegistryArtifact from "../lib/contracts/out/CurveLpTokenPriceOracleNoRegistry.sol/CurveLpTokenPriceOracleNoRegistry.json";
 import DAIInterestRateModelV2Artifact from "../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
+import DiaPriceOracleArtifact from "../lib/contracts/out/DiaPriceOracle.sol/DiaPriceOracle.json";
 import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
 import FixedNativePriceOracleArtifact from "../lib/contracts/out/FixedNativePriceOracle.sol/FixedNativePriceOracle.json";
@@ -42,6 +43,7 @@ const CErc20PluginRewardsDelegate: Artifact = CErc20PluginRewardsDelegateArtifac
 const ChainlinkPriceOracleV2: Artifact = ChainlinkPriceOracleV2Artifact;
 const Comptroller: Artifact = ComptrollerArtifact;
 const CTokenInterface: Artifact = CTokenInterfaceArtifact;
+const DiaPriceOracle: Artifact = DiaPriceOracleArtifact;
 const DAIInterestRateModelV2: Artifact = DAIInterestRateModelV2Artifact;
 const EIP20Interface: Artifact = EIP20InterfaceArtifact;
 const ERC20: Artifact = ERC20Artifact;
@@ -85,6 +87,7 @@ const ARTIFACTS = {
   Comptroller,
   CTokenInterface,
   DAIInterestRateModelV2,
+  DiaPriceOracle,
   EIP20Interface,
   ERC20,
   FuseFlywheelDynamicRewards,
@@ -130,6 +133,7 @@ export {
   ChainlinkPriceOracleV2,
   Comptroller,
   CTokenInterface,
+  DiaPriceOracle,
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,

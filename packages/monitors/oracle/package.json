@@ -1,7 +1,7 @@
 {
   "name": "@midas-capital/oracles-monitor",
   "version": "1.0.0",
-  "description": "Monitors all oracles being used by Fuse",
+  "description": "Monitors all oracles being used at Midas Capital",
   "main": "index.js",
   "scripts": {
     "prod": "NODE_ENV=production node build/server.js",
@@ -9,7 +9,7 @@
     "dev": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn src/server.ts",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
-    "test": "NODE_ENV=test nyc ./node_modules/.bin/mocha --require ts-node/register ./src/test/**/**/**/**/*.test.ts",
+    "test": "nyc ts-mocha --require 'tests/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests/**/*.spec.ts'",
     "build": "rimraf build && tsc -p tsconfig.json"
   },
   "repository": {
@@ -22,6 +22,26 @@
     "url": "https://github.com/Midas-Capital"
   },
   "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/chai-as-promised": "^7",
+    "@types/chai-subset": "^1",
+    "@types/mocha": "^9.1.1",
+    "chai": "^4.3.6",
+    "chai-as-promised": "^7.1.1",
+    "chai-subset": "^1.6.0",
+    "eslint": "^8.23.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "lint-staged": "13.0.3",
+    "nyc": "^15.1.0",
+    "prettier": "2.7.1",
+    "rimraf": "^3.0.2",
+    "sinon": "^14.0.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.8.2"
+  },
   "dependencies": {
     "@ethersproject/contracts": "^5.6.0",
     "@ethersproject/providers": "^5.6.0",
@@ -29,26 +49,10 @@
     "@midas-capital/types": "workspace:*",
     "@supabase/supabase-js": "^1.35.4",
     "axios": "^0.21.1",
+    "discord-webhook-node": "^1.1.8",
     "dotenv": "^16.0.0",
     "ethers": "^5.6.5",
     "pino": "^8.0.0",
-    "pino-pretty": "^8.0.0",
-    "prettier": "2.6.2"
-  },
-  "devDependencies": {
-    "@types/eslint": "^8.4.3",
-    "@types/node": "^18.0.0",
-    "@types/rimraf": "^3",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "@typescript-eslint/parser": "^5.30.0",
-    "eslint": "8.18.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-typescript": "^3.1.2",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-prettier": "^4.2.1",
-    "prettier": "2.7.1",
-    "rimraf": "^3.0.2",
-    "ts-node": "^10.7.0",
-    "typescript": "4.7.4"
+    "pino-pretty": "^9.1.1"
   }
 }

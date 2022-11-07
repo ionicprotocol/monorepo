@@ -1,11 +1,12 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { Wallet } from "ethers";
 
-import { logger, verifyAndRepeat } from "./src";
-import { config } from "./src/config";
+import { logger, runVerifiers, setUpSdk } from "./src";
+import { baseConfig } from "./src/config/variables";
 
 (async function runBot() {
-  const provider = new JsonRpcProvider(config.rpcUrl);
-
+  const provider = new JsonRpcProvider(baseConfig.rpcUrl);
+  const signer = new Wallet(baseConfig.adminPrivateKey, provider);
   try {
     await provider.getNetwork();
   } catch (e) {
@@ -13,5 +14,10 @@ import { config } from "./src/config";
     await new Promise((resolve) => setTimeout(resolve, 5000));
     await runBot();
   }
-  verifyAndRepeat(config.chainId, provider);
+  const sdk = setUpSdk(baseConfig.chainId, signer);
+  await runVerifiers(sdk);
+
+  // TODO: implement persistence
+  // await updateOracleMonitorData(results);
+  setTimeout(runBot, 2 * 1e9);
 })();

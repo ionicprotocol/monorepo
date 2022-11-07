@@ -28,6 +28,7 @@ import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/downgradeMarket";
 import "./tasks/oracle/add-apeswap-oracle";
+import "./tasks/configureApStrategies";
 
 dotEnvConfig();
 
