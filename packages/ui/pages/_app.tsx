@@ -1,7 +1,6 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import LogRocket from 'logrocket';
 import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
 import { createClient, WagmiConfig } from 'wagmi';
@@ -13,10 +12,6 @@ import { theme } from '@ui/theme/index';
 import { connectors, provider } from '@ui/utils/connectors';
 
 const queryClient = new QueryClient();
-
-if (!config.isDevelopment) {
-  LogRocket.init('ylr02p/midas-ui');
-}
 
 const client = createClient({
   autoConnect: true,

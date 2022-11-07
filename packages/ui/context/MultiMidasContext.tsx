@@ -5,6 +5,7 @@ import { MidasSdk } from '@midas-capital/sdk';
 import { SupportedChains } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FetchSignerResult, Signer } from '@wagmi/core';
+import LogRocket from 'logrocket';
 import {
   createContext,
   Dispatch,
@@ -18,6 +19,7 @@ import {
 } from 'react';
 import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
+import { config } from '@ui/config/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { useErrorToast, useInfoToast, useSuccessToast } from '@ui/hooks/useToast';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
@@ -119,6 +121,10 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [signer, sdks]);
 
   useEffect(() => {
+    if (!config.isDevelopment) {
+      LogRocket.init('ylr02p/midas-ui');
+    }
+
     mounted.current = true;
 
     const pendingStr = localStorage.getItem('pendingTxHashes');
