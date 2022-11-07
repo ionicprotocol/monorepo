@@ -2,6 +2,7 @@ import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { Button, Link as ChakraLink, HStack, Text, VStack } from '@chakra-ui/react';
 import { JsonRpcProvider } from '@ethersproject/providers';
 import { MidasSdk } from '@midas-capital/sdk';
+import Security from '@midas-capital/security';
 import { SupportedChains } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { FetchSignerResult, Signer } from '@wagmi/core';
@@ -26,6 +27,8 @@ import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 export interface MultiMidasContextData {
   sdks: MidasSdk[];
+  securities: Security[];
+  getSecurity: (chainId: number) => Security | undefined;
   chainIds: SupportedChains[];
   isGlobalLoading: boolean;
   setGlobalLoading: Dispatch<boolean>;
@@ -76,18 +79,22 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   const infoToast = useInfoToast();
   const queryClient = useQueryClient();
 
-  const [sdks, chainIds] = useMemo(() => {
+  const [sdks, securities, chainIds] = useMemo(() => {
     const _sdks: MidasSdk[] = [];
+    const _securities: Security[] = [];
     const _chainIds: SupportedChains[] = [];
     enabledChains.map((chainId) => {
       const config = chainIdToConfig[chainId];
       _sdks.push(
         new MidasSdk(new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default), config)
       );
+      _securities.push(
+        new Security(chainId, new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default))
+      );
       _chainIds.push(chainId);
     });
 
-    return [_sdks, _chainIds.sort()];
+    return [_sdks, _securities, _chainIds.sort()];
   }, [enabledChains]);
 
   const currentSdk = useMemo(() => {
@@ -101,6 +108,11 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
       return sdks.find((sdk) => sdk.chainId === chainId);
     },
     [sdks]
+  );
+
+  const getSecurity = useCallback(
+    (chainId: number) => securities.find((security) => security.chainConfig.chainId === chainId),
+    [securities]
   );
 
   useEffect(() => {
@@ -236,6 +248,8 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   const value = useMemo(() => {
     return {
       sdks,
+      securities,
+      getSecurity,
       chainIds,
       isGlobalLoading,
       setGlobalLoading,
@@ -253,6 +267,8 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     };
   }, [
     sdks,
+    securities,
+    getSecurity,
     chainIds,
     isGlobalLoading,
     setGlobalLoading,
