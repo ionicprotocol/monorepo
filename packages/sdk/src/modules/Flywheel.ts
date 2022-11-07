@@ -3,8 +3,8 @@ import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "
 import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
 import { MidasFlywheel__factory } from "../../lib/contracts/typechain/factories/MidasFlywheel__factory";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { FuseFlywheelLensRouter } from "../../lib/contracts/typechain/FuseFlywheelLensRouter.sol";
 import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
+import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
 
 import { withCreateContracts } from "./CreateContracts";
 
@@ -179,7 +179,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
 
     async getFlywheelMarketRewardsByPoolWithAPR(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const marketRewards = await (
-        this.contracts.FuseFlywheelLensRouter as FuseFlywheelLensRouter
+        this.contracts.MidasFlywheelLensRouter as MidasFlywheelLensRouter
       ).callStatic.getMarketRewardsInfo(pool);
 
       const adaptedMarketRewards = marketRewards

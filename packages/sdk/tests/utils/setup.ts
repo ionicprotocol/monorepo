@@ -77,7 +77,7 @@ export const wrapNativeToken = async ({ amount, account, weth }) => {
 };
 
 export const setUpLiquidation = async (poolName: string) => {
-  const { deployer, rando } = await ethers.getNamedSigners();
+  const { deployer } = await ethers.getNamedSigners();
 
   const sdk = await getOrCreateMidas();
 
@@ -101,7 +101,7 @@ export const setUpLiquidation = async (poolName: string) => {
   const liquidator = (await ethers.getContractAt(
     "FuseSafeLiquidator",
     sdk.contracts.FuseSafeLiquidator.address,
-    rando
+    deployer
   )) as FuseSafeLiquidator;
 
   const [poolAddress] = await createPool({ poolName, signer: deployer });
@@ -130,13 +130,12 @@ export const setUpLiquidation = async (poolName: string) => {
 };
 
 export const liquidateAndVerify = async (
-  assetToLiquidate: EIP20Interface,
   poolName: string,
   poolAddress: string,
   liquidatedUserName: string,
   liquidator: FuseSafeLiquidator
 ) => {
-  const { rando } = await ethers.getNamedSigners();
+  const { deployer } = await ethers.getNamedSigners();
   const sdk = await getOrCreateMidas();
 
   // Check balance before liquidation
@@ -146,13 +145,12 @@ export const liquidateAndVerify = async (
     namedUser: liquidatedUserName,
   });
   console.log(`Ratio Before: ${ratioBefore}`);
-  const wallet = Wallet.fromMnemonic(process.env.MNEMONIC);
 
-  const liquidations = await sdk.getPotentialLiquidations(wallet, []);
+  const [liquidations, _] = await sdk.getPotentialLiquidations([]);
   expect(liquidations.length).to.eq(1);
 
   const desiredLiquidation = liquidations.filter((l) => l.comptroller === poolAddress)[0].liquidations[0];
-  const liquidatorBalanceBeforeLiquidation = await ethers.provider.getBalance(rando.address);
+  const liquidatorBalanceBeforeLiquidation = await ethers.provider.getBalance(deployer.address);
 
   const tx: providers.TransactionResponse = await liquidator[desiredLiquidation.method](...desiredLiquidation.args, {
     value: desiredLiquidation.value,
@@ -173,11 +171,11 @@ export const liquidateAndVerify = async (
   expect(ratioBefore).to.be.gte(ratioAfter);
 
   // Assert balance after liquidation > balance before liquidation
-  const liquidatorBalanceAfterLiquidation = await ethers.provider.getBalance(rando.address);
+  const liquidatorBalanceAfterLiquidation = await ethers.provider.getBalance(deployer.address);
 
   console.log(`Liquidator balance before liquidation: ${ethers.utils.formatEther(liquidatorBalanceBeforeLiquidation)}`);
   console.log(`Liquidator balance after liquidation: ${ethers.utils.formatEther(liquidatorBalanceAfterLiquidation)}`);
 
-  expect(liquidatorBalanceAfterLiquidation).gt(liquidatorBalanceBeforeLiquidation);
+  expect(liquidatorBalanceAfterLiquidation.gt(liquidatorBalanceBeforeLiquidation));
   expect(ratioBefore).to.be.gte(ratioAfter);
 };

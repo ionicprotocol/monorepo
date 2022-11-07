@@ -289,14 +289,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("FusePoolLensSecondary already initialized");
   }
 
-  const fflrReceipt = await deployments.deploy("FuseFlywheelLensRouter", {
+  const fflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
   if (fflrReceipt.transactionHash) await ethers.provider.waitForTransaction(fflrReceipt.transactionHash);
-  console.log("FuseFlywheelLensRouter: ", fflrReceipt.address);
+  console.log("MidasFlywheelLensRouter: ", fflrReceipt.address);
 
   const erc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
   const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
@@ -515,6 +515,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     tx = await addressesProvider.setAddress("DefaultProxyAdmin", dpa.address);
     await tx.wait();
     console.log("setAddress DefaultProxyAdmin: ", tx.hash);
+  }
+
+  const quoter = await ethers.getContractOrNull("Quoter");
+  if (quoter != null) {
+    const quoterAddress = await addressesProvider.callStatic.getAddress("Quoter");
+    if (quoterAddress !== quoter.address) {
+      tx = await addressesProvider.setAddress("Quoter", quoter.address);
+      await tx.wait();
+      console.log("setAddress Quoter: ", tx.hash);
+    }
   }
 
   await configureAddressesProviderStrategies({
