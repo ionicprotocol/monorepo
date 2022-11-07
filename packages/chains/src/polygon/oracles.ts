@@ -5,6 +5,7 @@ const baseOracles = [OracleTypes.FixedNativePriceOracle, OracleTypes.MasterPrice
 const oracles: OracleTypes[] = [
   ...baseOracles,
   OracleTypes.ChainlinkPriceOracleV2,
+  OracleTypes.DiaPriceOracle,
   OracleTypes.CurveLpTokenPriceOracleNoRegistry,
   OracleTypes.UniswapLpTokenPriceOracle,
   OracleTypes.UniswapTwapPriceOracleV2,
