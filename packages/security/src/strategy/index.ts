@@ -1,3 +1,5 @@
+import { StrategyScore } from "@midas-capital/types";
+
 import { SecurityBaseConstructor } from "../";
 
 import * as scoring from "./scoring";
@@ -5,7 +7,7 @@ import { strategies } from "./strategies";
 
 export function withErc4626StrategyScorer<TBase extends SecurityBaseConstructor>(Base: TBase) {
   return class Erc4626StrategyScorer extends Base {
-    getStrategyRating(strategyAddress: string): number {
+    getStrategyRating(strategyAddress: string): StrategyScore {
       const strategy = strategies.find((s) => s.address === strategyAddress);
       if (!strategy) {
         throw new Error("Strategy not found");
@@ -27,20 +29,34 @@ export function withErc4626StrategyScorer<TBase extends SecurityBaseConstructor>
 
       const timeInMarket = timeInMarketScore * scoring.SCORING_WEIGHTS.TIME_IN_MARKET;
 
-      const assetRisk =
-        assetRiskILScore *
-        assetRiskLiquidityScore *
-        assetRiskMktCapScore *
-        assetRiskSupplyScore *
-        scoring.SCORING_WEIGHTS.ASSET_RISK;
+      const assetRiskScore = assetRiskILScore * assetRiskLiquidityScore * assetRiskMktCapScore * assetRiskSupplyScore;
 
-      const platformRisk =
+      const assetRisk = assetRiskScore * scoring.SCORING_WEIGHTS.ASSET_RISK;
+
+      const platformRiskScore =
         platformRiskReputationScore *
         platformRiskAuditScore *
         platformRiskContractsVerifiedScore *
-        platformRiskAdminWithTimelockScore *
-        scoring.SCORING_WEIGHTS.PLATFORM_RISK;
-      return complexity + timeInMarket + assetRisk + platformRisk;
+        platformRiskAdminWithTimelockScore;
+
+      const platformRisk = platformRiskScore * scoring.SCORING_WEIGHTS.PLATFORM_RISK;
+
+      const totalScore = complexity + timeInMarket + assetRisk + platformRisk;
+
+      return {
+        strategy,
+        complexityScore,
+        timeInMarketScore,
+        assetRiskILScore,
+        assetRiskLiquidityScore,
+        assetRiskMktCapScore,
+        assetRiskSupplyScore,
+        platformRiskReputationScore,
+        platformRiskAuditScore,
+        platformRiskContractsVerifiedScore,
+        platformRiskAdminWithTimelockScore,
+        totalScore,
+      };
     }
   };
 }

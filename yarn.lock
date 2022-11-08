@@ -3114,7 +3114,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@midas-capital/security@workspace:packages/security":
+"@midas-capital/security@workspace:*, @midas-capital/security@workspace:packages/security":
   version: 0.0.0-use.local
   resolution: "@midas-capital/security@workspace:packages/security"
   dependencies:
@@ -3177,6 +3177,7 @@ __metadata:
     "@ethersproject/providers": ^5.7.2
     "@midas-capital/chains": "workspace:*"
     "@midas-capital/sdk": "workspace:*"
+    "@midas-capital/security": "workspace:*"
     "@midas-capital/types": "workspace:*"
     "@netlify/plugin-nextjs": latest
     "@supabase/supabase-js": ^2.0.5
