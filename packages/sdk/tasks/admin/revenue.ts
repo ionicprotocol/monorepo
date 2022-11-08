@@ -24,7 +24,8 @@ async function createComptroller(pool: FusePoolDirectory.FusePoolStructOutput): 
   const poolAdmin = await comptroller.callStatic.fuseAdmin();
 
   if (poolAdmin != sdk.contracts.FuseFeeDistributor.address) {
-    console.log(`Skipping pool: ${pool.name} (${pool.comptroller}) because it is not managed by FuseFeeDistributor`);
+    if (LOG)
+      console.log(`Skipping pool: ${pool.name} (${pool.comptroller}) because it is not managed by FuseFeeDistributor`);
     return null;
   }
   return comptroller;
@@ -67,7 +68,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
               }) - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
             );
         } else {
-          console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Fuse Fees`);
+          if (LOG) console.log(`Pool: ${pool.name} (${pool.comptroller}) - Market: ${market} - No Fuse Fees`);
         }
       }
       if (LOG)
