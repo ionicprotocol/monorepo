@@ -1,5 +1,4 @@
-// Chakra and UI
-import { QuestionIcon } from '@chakra-ui/icons';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
@@ -10,7 +9,11 @@ import {
   FormErrorMessage,
   FormLabel,
   HStack,
+  InputGroup,
+  InputRightAddon,
   Link,
+  NumberInput,
+  NumberInputField,
   Select,
   Spacer,
   Switch,
@@ -37,19 +40,24 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
+  DEFAULT_DECIMALS,
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
+  SUPPLY_CAPS,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { TokenData } from '@ui/types/ComponentPropsType';
+import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 
 const IRMChart = dynamic(
@@ -106,12 +114,15 @@ export const AssetSettings = ({
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { currentSdk, setPendingTxHash, currentChain } = useMultiMidas();
   const sdk = useSdk(poolChainId);
+  const cgId = useCgId(Number(poolChainId));
+  const { data: usdPrice } = useUSDPrice(cgId);
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
   const queryClient = useQueryClient();
-  const { cCard, cSelect } = useColors();
+  const { cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
+  const [isEditSupplyCaps, setIsEditSupplyCaps] = useState<boolean>(false);
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const {
@@ -127,6 +138,7 @@ export const AssetSettings = ({
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
       interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
+      supplyCaps: SUPPLY_CAPS.DEFAULT,
     },
   });
 
@@ -137,6 +149,7 @@ export const AssetSettings = ({
     'interestRateModel',
     sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
+  const watchSupplyCaps = Number(watch('supplyCaps', SUPPLY_CAPS.DEFAULT));
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
@@ -150,8 +163,31 @@ export const AssetSettings = ({
       setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
       setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
       setValue('interestRateModel', cTokenData.interestRateModelAddress);
+      setValue('supplyCaps', parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS)));
     }
   }, [cTokenData, setValue]);
+
+  const updateSupplyCaps = async ({ supplyCaps }: { supplyCaps: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
+    setIsUpdating(true);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    try {
+      const tx = await comptroller._setMarketSupplyCaps(
+        [cTokenAddress],
+        [utils.parseUnits(supplyCaps.toString(), selectedAsset.underlyingDecimals)]
+      );
+      await tx.wait();
+      LogRocket.track('Fuse-UpdateSupplyCaps');
+
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated max supply amount!' });
+    } catch (e) {
+      handleGenericError(e, errorToast);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
 
   const updateCollateralFactor = async ({ collateralFactor }: { collateralFactor: number }) => {
     if (!cTokenAddress || !currentSdk) return;
@@ -296,6 +332,17 @@ export const AssetSettings = ({
     }
   };
 
+  const setSupplyCapsDefault = () => {
+    if (cTokenData) {
+      setValue(
+        'supplyCaps',
+        parseInt(utils.formatUnits(cTokenData.supplyCaps, selectedAsset.underlyingDecimals))
+      );
+    }
+
+    setIsEditSupplyCaps(false);
+  };
+
   const setReserveFactorDefault = () => {
     if (cTokenData) {
       setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
@@ -325,6 +372,114 @@ export const AssetSettings = ({
       {cTokenData && (
         <>
           <Flex
+            as="form"
+            w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
+            direction="column"
+            onSubmit={handleSubmit(updateSupplyCaps)}
+          >
+            <FormControl isInvalid={!!errors.supplyCaps}>
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="supplyCaps" margin={0}>
+                  <HStack>
+                    <Text variant="smText" width="max-content">
+                      Supply Caps
+                    </Text>
+                    <SimpleTooltip label={'It shows the market supply caps.'}>
+                      <InfoOutlineIcon ml={1} />
+                    </SimpleTooltip>
+                  </HStack>
+                </FormLabel>
+                <Spacer />
+                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Controller
+                    control={control}
+                    name="supplyCaps"
+                    rules={{
+                      required: 'Supply caps is required',
+                      min: {
+                        value: SUPPLY_CAPS.MIN,
+                        message: `Supply caps must be at least ${SUPPLY_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
+                      },
+                    }}
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <InputGroup>
+                        <NumberInput
+                          width={100}
+                          clampValueOnBlur={false}
+                          value={value === 0 && !isEditSupplyCaps ? 'Unlimited' : value}
+                          onChange={onChange}
+                          min={SUPPLY_CAPS.MIN}
+                          allowMouseWheel
+                          isDisabled={!isEditableAdmin}
+                          isReadOnly={!isEditSupplyCaps}
+                        >
+                          <NumberInputField
+                            paddingLeft={2}
+                            paddingRight={2}
+                            borderRightRadius={0}
+                            ref={ref}
+                            name={name}
+                            textAlign="center"
+                          />
+                        </NumberInput>
+                        <InputRightAddon px={2}>
+                          {selectedAsset.underlyingSymbol}{' '}
+                          {usdPrice &&
+                            value !== 0 &&
+                            `(${smallUsdFormatter(
+                              value *
+                                Number(
+                                  utils.formatUnits(selectedAsset.underlyingPrice, DEFAULT_DECIMALS)
+                                ) *
+                                usdPrice
+                            )})`}
+                        </InputRightAddon>
+                      </InputGroup>
+                    )}
+                  />
+                  <FormErrorMessage maxWidth="200px" marginBottom="-10px">
+                    {errors.supplyCaps && errors.supplyCaps.message}
+                  </FormErrorMessage>
+                </Column>
+              </Flex>
+            </FormControl>
+            {isEditSupplyCaps ? (
+              <ButtonGroup gap={0} mt={2} alignSelf="end">
+                <Button
+                  type="submit"
+                  disabled={
+                    isUpdating ||
+                    !cTokenData ||
+                    watchSupplyCaps ===
+                      parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS))
+                  }
+                >
+                  Save
+                </Button>
+                <Button variant="silver" disabled={isUpdating} onClick={setSupplyCapsDefault}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            ) : (
+              <ButtonGroup gap={0} mt={2} alignSelf="end">
+                <Button
+                  disabled={isUpdating || !isEditableAdmin}
+                  onClick={() => setIsEditSupplyCaps(true)}
+                >
+                  Edit
+                </Button>
+              </ButtonGroup>
+            )}
+          </Flex>
+          <Divider />
+          <Flex
             w="100%"
             wrap="wrap"
             direction={{ base: 'column', sm: 'row' }}
@@ -335,13 +490,7 @@ export const AssetSettings = ({
             <HStack>
               <Text variant="smText">Borrowing Possibility </Text>
               <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
-                <QuestionIcon
-                  color={cCard.txtColor}
-                  bg={cCard.bgColor}
-                  borderRadius={'50%'}
-                  ml={1}
-                  mb="4px"
-                />
+                <InfoOutlineIcon ml={1} />
               </SimpleTooltip>
             </HStack>
             <Spacer />
@@ -379,13 +528,7 @@ export const AssetSettings = ({
                       Loan-to-Value{' '}
                     </Text>
                     <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                        ml={1}
-                        mb="4px"
-                      />
+                      <InfoOutlineIcon ml={1} />
                     </SimpleTooltip>
                   </HStack>
                 </FormLabel>
@@ -469,13 +612,7 @@ export const AssetSettings = ({
                         "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
                       }
                     >
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                        ml={1}
-                        mb="4px"
-                      />
+                      <InfoOutlineIcon ml={1} />
                     </SimpleTooltip>
                   </HStack>
                 </FormLabel>
@@ -551,13 +688,7 @@ export const AssetSettings = ({
                   <HStack>
                     <Text variant="smText">Admin Fee </Text>{' '}
                     <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
-                      <QuestionIcon
-                        color={cCard.txtColor}
-                        bg={cCard.bgColor}
-                        borderRadius={'50%'}
-                        ml={1}
-                        mb="4px"
-                      />
+                      <InfoOutlineIcon ml={1} />
                     </SimpleTooltip>
                   </HStack>
                 </FormLabel>
@@ -640,13 +771,7 @@ export const AssetSettings = ({
                       </>
                     }
                   >
-                    <QuestionIcon
-                      color={cCard.txtColor}
-                      bg={cCard.bgColor}
-                      borderRadius={'50%'}
-                      ml={1}
-                      mb="4px"
-                    />
+                    <InfoOutlineIcon ml={1} />
                   </PopoverTooltip>
                 </HStack>
               </Box>
@@ -679,13 +804,7 @@ export const AssetSettings = ({
                           'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'
                         }
                       >
-                        <QuestionIcon
-                          color={cCard.txtColor}
-                          bg={cCard.bgColor}
-                          borderRadius={'50%'}
-                          ml={1}
-                          mb="4px"
-                        />
+                        <InfoOutlineIcon ml={1} />
                       </SimpleTooltip>
                     </HStack>
                   </FormLabel>
