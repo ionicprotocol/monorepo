@@ -185,6 +185,7 @@ export const AssetSettings = ({
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
+      setIsEditSupplyCaps(false);
       setIsUpdating(false);
     }
   };
