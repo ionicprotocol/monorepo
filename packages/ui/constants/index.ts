@@ -42,6 +42,11 @@ export const ADMIN_FEE = {
   MAX: 30,
 };
 
+export const SUPPLY_CAPS = {
+  MIN: 0,
+  DEFAULT: 0,
+};
+
 export const POOLS_PER_PAGE = 6;
 
 // TODO: We should replace this with NATIVE_DECIMALS from the @midas-capital/chains package

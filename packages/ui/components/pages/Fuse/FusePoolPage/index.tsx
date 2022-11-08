@@ -1,5 +1,5 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { AvatarGroup, Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
@@ -13,7 +13,6 @@ import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBan
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
-import { TableSkeleton } from '@ui/components/shared/TableSkeleton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import {
   MARKET_COLUMNS,
@@ -179,10 +178,37 @@ const FusePoolPage = memo(() => {
                 initColumnVisibility={initColumnVisibility}
               />
             ) : (
-              <TableSkeleton tableHeading="Assets" />
+              <Box py={6}>
+                <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={{ base: 4, lg: 8 }} px={4}>
+                  <HStack>
+                    <Text variant="mdText" width="max-content">
+                      Your Supply Balance :
+                    </Text>
+                    <Skeleton height={8} width={20} />
+                  </HStack>
+                  <HStack>
+                    <Text variant="mdText" width="max-content">
+                      Your Borrow Balance :
+                    </Text>
+                    <Skeleton height={8} width={20} />
+                  </HStack>
+                </Flex>
+                <Flex
+                  flexDirection={{ base: 'column', lg: 'row' }}
+                  alignItems="center"
+                  gap={4}
+                  my={8}
+                  px={4}
+                >
+                  <Text paddingTop="2px" variant="title">
+                    Assets
+                  </Text>
+                  <Skeleton height={8} width={60} />
+                </Flex>
+                <Skeleton height={200} width="100%" />
+              </Box>
             )}
           </MidasBox>
-
           <PoolDetails data={data} />
         </FusePageLayout>
       </PageTransitionLayout>
