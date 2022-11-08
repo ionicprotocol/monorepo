@@ -56,9 +56,9 @@ export const WalletButtons = () => {
                       {account.hasPendingTransactions ? (
                         <HStack>
                           <Center height="100%">
-                            <Spinner size="md" thickness="4px" />
+                            <Spinner size="md" thickness="4px" speed="1s" />
                           </Center>
-                          <Text>Pending</Text>
+                          {!isMobile && <Text>Pending</Text>}
                         </HStack>
                       ) : (
                         <HStack>
