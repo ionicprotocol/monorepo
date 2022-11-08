@@ -67,7 +67,9 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
       {/* // TODO remove hardcoded Ankr Stuff here  */}
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
-        <SimpleTooltip label="It‘s the APY of the autocompounding staking rewards.">
+        <SimpleTooltip
+          label={`The autocompounding APY for staking rewards of ${assetSymbols.aBNBc}`}
+        >
           <Text color={cCard.txtColor} variant="smText">
             + {Number(aBNBcApr).toFixed(2)}%
           </Text>
@@ -76,7 +78,9 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
       {/* // TODO remove hardcoded pStake and Stader here  */}
       {asset.underlyingSymbol === assetSymbols.stkBNB && (
-        <SimpleTooltip label="It‘s the APY of the autocompounding staking rewards.">
+        <SimpleTooltip
+          label={`The autocompounding APY for staking rewards of ${assetSymbols.stkBNB}`}
+        >
           <Text color={cCard.txtColor} variant="smText">
             + 5.2%
           </Text>
@@ -84,7 +88,9 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
       )}
 
       {asset.underlyingSymbol === assetSymbols.BNBx && (
-        <SimpleTooltip label="It‘s the APY of the autocompounding staking rewards.">
+        <SimpleTooltip
+          label={`The autocompounding APY for staking rewards of ${assetSymbols.BNBx}`}
+        >
           <Text color={cCard.txtColor} variant="smText">
             + 5.92%
           </Text>
