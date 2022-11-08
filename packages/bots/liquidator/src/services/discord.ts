@@ -17,7 +17,6 @@ export class DiscordService {
   chainId: SupportedChains;
 
   private errorColor = 0xa83232;
-  // @ts-ignore
   private warningColor = 0xfcdb03;
   private infoColor = 0x32a832;
 
@@ -59,7 +58,8 @@ export class DiscordService {
           .addField("Method", currentLiquidations[0].method, true)
           .addField("Value", currentLiquidations[0].value.toString(), true)
           .addField("Args", JSON.stringify(currentLiquidations[0].args), false)
-          .setDescription(msg)
+          // Max limit of embed size
+          .setDescription(`${msg.slice(0, 4000)}... (truncated, check AWS Logs) @everyone`)
           .setTimestamp()
           .setColor(this.errorColor);
         await this.send(embed);
@@ -84,7 +84,7 @@ export class DiscordService {
           .setTitle("Liquidation fetching failed for pools")
           .setDescription(msg)
           .setTimestamp()
-          .setColor(this.errorColor);
+          .setColor(this.warningColor);
         await this.send(embed);
         this.lastSentMessages.erroredPools = { pools: erroredPools, timestamp: Date.now() };
       } else {

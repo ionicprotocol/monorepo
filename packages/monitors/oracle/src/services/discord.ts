@@ -44,8 +44,8 @@ export class DiscordService {
 
   public async sendInvalidFeedAlert(feedValidity: PriceFeedInvalidity) {
     const embed = this.create()
-      .setTitle(feedValidity.invalidReason)
-      .setDescription(feedValidity.message)
+      .setTitle(`${feedValidity.invalidReason}`)
+      .setDescription(`@everyone ${feedValidity.message}`)
       .setTimestamp()
       .setColor(this.errorColor);
     await this.send(embed);
