@@ -21,7 +21,7 @@ import {
   NativePricedFuseAsset,
 } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -110,6 +110,8 @@ const AmountSelect = ({
     (mode === FundOperationMode.SUPPLY || mode === FundOperationMode.REPAY) &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
+
+  const queryClient = useQueryClient();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -282,6 +284,8 @@ const AmountSelect = ({
                 hash: tx.hash,
                 description: `${asset.underlyingSymbol} Token Supply`,
               });
+              await tx.wait();
+              await queryClient.refetchQueries();
             }
           } catch (error) {
             setFailedStep(optionToWrap ? 4 : 3);
@@ -310,6 +314,8 @@ const AmountSelect = ({
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Repay`,
           });
+          await tx.wait();
+          await queryClient.refetchQueries();
         }
       } else if (mode === FundOperationMode.BORROW) {
         const resp = await currentSdk.borrow(asset.cToken, amount);
@@ -322,6 +328,8 @@ const AmountSelect = ({
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Borrow`,
           });
+          await tx.wait();
+          await queryClient.refetchQueries();
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
         const maxAmount = await fetchMaxAmount(mode, currentSdk, address, asset);
@@ -340,6 +348,8 @@ const AmountSelect = ({
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Withdraw`,
           });
+          await tx.wait();
+          await queryClient.refetchQueries();
         }
 
         LogRocket.track('Fuse-Withdraw');

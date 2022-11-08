@@ -317,6 +317,8 @@ export const AssetSettings = ({
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
       addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
+      await tx.wait();
+      await queryClient.refetchQueries();
 
       LogRocket.track('Fuse-UpdateCollateralFactor');
     } catch (e) {
