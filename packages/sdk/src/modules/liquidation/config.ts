@@ -1,5 +1,5 @@
-import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
-import { BigNumber, constants } from "ethers";
+import { LiquidationStrategy } from "@midas-capital/types";
+import { BigNumber } from "ethers";
 
 import { MidasBase } from "../../MidasSdk";
 
@@ -29,25 +29,4 @@ export const getChainLiquidationConfig = (fuse: MidasBase): ChainLiquidationConf
       ? parseInt(process.env.LIQUIDATION_INTERVAL_SECONDS)
       : fuse.liquidationConfig.LIQUIDATION_INTERVAL_SECONDS,
   };
-};
-
-export const getLiquidationKind = (
-  liquidationStrategy: LiquidationStrategy,
-  underlyingToken: string
-): LiquidationKind => {
-  if (liquidationStrategy === LiquidationStrategy.UNISWAP) {
-    if (underlyingToken == constants.AddressZero) {
-      return LiquidationKind.UNISWAP_NATIVE_BORROW;
-    } else {
-      return LiquidationKind.UNISWAP_TOKEN_BORROW;
-    }
-  } else if (liquidationStrategy === LiquidationStrategy.DEFAULT) {
-    if (underlyingToken == constants.AddressZero) {
-      return LiquidationKind.DEFAULT_NATIVE_BORROW;
-    } else {
-      return LiquidationKind.DEFAULT_TOKEN_BORROW;
-    }
-  } else {
-    throw `Invalid liquidation strategy: ${liquidationStrategy}`;
-  }
 };

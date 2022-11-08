@@ -1,19 +1,22 @@
-import { JsonRpcProvider, TransactionRequest, TransactionResponse } from "@ethersproject/providers";
+import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
 import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
 import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, constants, Contract, logger, Wallet } from "ethers";
 
 import config from "../config";
+import { Liquidator } from "../services";
 
-import { fetchGasLimitForTransaction, setUpSdk } from ".";
+import { fetchGasLimitForTransaction } from ".";
 
-export default async function approveTokensToSafeLiquidator(chainId: number, provider: JsonRpcProvider) {
-  const midasSdk = setUpSdk(chainId, provider);
-  if (midasSdk.liquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT) {
-    for (const tokenAddress of midasSdk.liquidationConfig.SUPPORTED_OUTPUT_CURRENCIES) {
-      logger.info(`Sending approve transaction for ${tokenAddress}`);
-      await approveTokenToSafeLiquidator(midasSdk, tokenAddress);
-      logger.info(`Approve transaction for ${tokenAddress} sent`);
+export default async function approveTokensToSafeLiquidator(liquidator: Liquidator) {
+  const { chainLiquidationConfig } = liquidator.sdk;
+  if (chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT) {
+    for (const tokenAddress of chainLiquidationConfig.SUPPORTED_OUTPUT_CURRENCIES) {
+      if (tokenAddress !== constants.AddressZero) {
+        logger.info(`Sending approve transaction for ${tokenAddress}`);
+        await approveTokenToSafeLiquidator(liquidator.sdk, tokenAddress);
+        logger.info(`Approve transaction for ${tokenAddress} sent`);
+      }
     }
   }
 }
