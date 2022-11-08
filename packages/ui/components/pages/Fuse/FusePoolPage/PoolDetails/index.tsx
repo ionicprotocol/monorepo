@@ -12,7 +12,6 @@ import {
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
-import RouterLink from 'next/link';
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
@@ -96,18 +95,17 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
           <Text variant="mdText" fontWeight="bold">{`Pool Details`}</Text>
 
           {data?.isPowerfulAdmin ? (
-            <RouterLink href={`/${poolData?.chainId}/pool/${poolId}/edit`} passHref>
-              <Link className="no-underline" ml={4}>
-                <Center
-                  px={2}
-                  fontWeight="bold"
-                  cursor="pointer"
-                  onClick={() => setGlobalLoading(true)}
-                >
-                  Edit
-                </Center>
-              </Link>
-            </RouterLink>
+            <Center
+              px={2}
+              fontWeight="bold"
+              cursor="pointer"
+              onClick={() => {
+                setGlobalLoading(true);
+                router.push(`/${poolData?.chainId}/pool/${poolId}/edit`);
+              }}
+            >
+              Edit
+            </Center>
           ) : data?.isPendingAdmin ? (
             <Button onClick={acceptOwnership} isLoading={isLoading} isDisabled={isLoading}>
               Accept Ownership
