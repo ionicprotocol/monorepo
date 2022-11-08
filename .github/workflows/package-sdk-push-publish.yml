@@ -11,46 +11,7 @@ on:
       - '.github/workflows/package-sdk-push-publish.yml'
       - 'yarn.lock'
 jobs:
-  # build-and-test-local:
-  #   env:
-  #     MNEMONIC: "${{ secrets.MNEMONIC }}"
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         submodules: recursive
-  #         token: "${{ secrets.ACCESS_TOKEN }}"
-
-  #     - name: Install Foundry
-  #       uses: onbjerg/foundry-toolchain@v1
-  #       with:
-  #         version: nightly
-
-  #     - uses: actions/setup-node@v2
-  #       with:
-  #         node-version: 16
-  #         cache: "yarn"
-
-  #     - name: Install `packages`
-  #       run: yarn install
-  #       env:
-  #         # Fixes issue: `ethereumjs-abi: The remote archive doesn't match the expected checksum`
-  #         YARN_CHECKSUM_BEHAVIOR: update
-
-  #     # Not needed as we checkout recursively
-  #     # Does not work yet, no access to `contracts` repo
-  #     # - name: Install `foundry libs`
-  #     #   run: yarn workspace @midas-capital/sdk forge install
-
-  #     - name: Build `sdk`
-  #       run: yarn workspace @midas-capital/sdk build
-
-  #     - name: Build `sdk`
-  #       run: yarn workspace @midas-capital/sdk test:hardhat
-
   release:
-    # needs:
-    #   - build-and-test-local
     runs-on: ubuntu-latest
     env:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

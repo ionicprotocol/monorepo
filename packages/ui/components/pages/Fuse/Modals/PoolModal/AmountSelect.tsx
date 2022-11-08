@@ -235,6 +235,7 @@ const AmountSelect = ({
                 description: `Wrap ${nativeSymbol}`,
               });
               successToast({
+                id: 'wrapped',
                 description: 'Successfully Wrapped!',
               });
             } catch (error) {
@@ -249,6 +250,7 @@ const AmountSelect = ({
             await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
 
             successToast({
+              id: 'approved',
               description: 'Successfully Approved!',
             });
           } catch (error) {
@@ -262,6 +264,7 @@ const AmountSelect = ({
             await currentSdk.enterMarkets(asset.cToken, comptrollerAddress, enableAsCollateral);
 
             successToast({
+              id: 'collateralEnabled',
               description: 'Collateral enabled!',
             });
           } catch (error) {
