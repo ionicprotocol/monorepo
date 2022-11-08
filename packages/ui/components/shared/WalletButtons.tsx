@@ -11,7 +11,7 @@ export const WalletButtons = () => {
   const isMobile = useIsSmallScreen();
 
   return (
-    <Row mainAxisAlignment="center" crossAxisAlignment="center">
+    <Row mainAxisAlignment="center" crossAxisAlignment="center" gap={2}>
       <ClaimAllRewardsButton />
       <ConnectButton.Custom>
         {({ account, chain, openAccountModal, openChainModal, openConnectModal, mounted }) => {
