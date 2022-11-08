@@ -20,7 +20,8 @@ import {
   FundOperationMode,
   NativePricedFuseAsset,
 } from '@midas-capital/types';
-import { useQuery } from '@tanstack/react-query';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -73,8 +74,8 @@ const AmountSelect = ({
   supplyBalanceFiat,
   poolChainId,
 }: AmountSelectProps) => {
-  const { currentSdk, setPendingTxHash, address, currentChain } = useMultiMidas();
-
+  const { currentSdk, address, currentChain } = useMultiMidas();
+  const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
@@ -109,6 +110,8 @@ const AmountSelect = ({
     (mode === FundOperationMode.SUPPLY || mode === FundOperationMode.REPAY) &&
     myBalance?.isZero() &&
     !myNativeBalance?.isZero();
+
+  const queryClient = useQueryClient();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -229,7 +232,10 @@ const AmountSelect = ({
 
               const resp = await WToken.deposit({ from: address, value: amount });
 
-              setPendingTxHash(resp.hash);
+              addRecentTransaction({
+                hash: resp.hash,
+                description: `Wrap ${nativeSymbol}`,
+              });
               successToast({
                 id: 'wrapped',
                 description: 'Successfully Wrapped!',
@@ -274,7 +280,12 @@ const AmountSelect = ({
             if (errorCode !== null) {
               fundOperationError(errorCode, minBorrowUSD);
             } else {
-              setPendingTxHash(tx.hash);
+              addRecentTransaction({
+                hash: tx.hash,
+                description: `${asset.underlyingSymbol} Token Supply`,
+              });
+              await tx.wait();
+              await queryClient.refetchQueries();
             }
           } catch (error) {
             setFailedStep(optionToWrap ? 4 : 3);
@@ -299,7 +310,12 @@ const AmountSelect = ({
           fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${asset.underlyingSymbol} Token Repay`,
+          });
+          await tx.wait();
+          await queryClient.refetchQueries();
         }
       } else if (mode === FundOperationMode.BORROW) {
         const resp = await currentSdk.borrow(asset.cToken, amount);
@@ -308,7 +324,12 @@ const AmountSelect = ({
           fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${asset.underlyingSymbol} Token Borrow`,
+          });
+          await tx.wait();
+          await queryClient.refetchQueries();
         }
       } else if (mode === FundOperationMode.WITHDRAW) {
         const maxAmount = await fetchMaxAmount(mode, currentSdk, address, asset);
@@ -323,7 +344,12 @@ const AmountSelect = ({
           fundOperationError(resp.errorCode, minBorrowUSD);
         } else {
           tx = resp.tx;
-          setPendingTxHash(tx.hash);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${asset.underlyingSymbol} Token Withdraw`,
+          });
+          await tx.wait();
+          await queryClient.refetchQueries();
         }
 
         LogRocket.track('Fuse-Withdraw');
