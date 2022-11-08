@@ -24,6 +24,7 @@ import {
   CTokenErrorCodes,
   NativePricedFuseAsset,
 } from '@midas-capital/types';
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractFunction, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
@@ -112,7 +113,8 @@ export const AssetSettings = ({
   poolChainId,
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
-  const { currentSdk, setPendingTxHash, currentChain } = useMultiMidas();
+  const { currentSdk, currentChain } = useMultiMidas();
+  const addRecentTransaction = useAddRecentTransaction();
   const sdk = useSdk(poolChainId);
   const cgId = useCgId(Number(poolChainId));
   const { data: usdPrice } = useUSDPrice(cgId);
@@ -314,7 +316,9 @@ export const AssetSettings = ({
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
-      setPendingTxHash(tx.hash);
+      addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
+      await tx.wait();
+      await queryClient.refetchQueries();
 
       LogRocket.track('Fuse-UpdateCollateralFactor');
     } catch (e) {

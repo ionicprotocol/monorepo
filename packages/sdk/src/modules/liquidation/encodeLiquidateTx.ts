@@ -1,4 +1,4 @@
-import { LiquidationKind } from "@midas-capital/types";
+import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
 import { MidasBase } from "../../MidasSdk";
@@ -8,13 +8,12 @@ import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./
 
 export default async function encodeLiquidateTx(
   fuse: MidasBase,
-  liquidationKind: LiquidationKind,
+  liquidationStrategy: LiquidationStrategy,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
   strategiesAndDatas: StrategiesAndDatas,
   liquidationAmount: BigNumber,
   flashSwapPair: string,
-  minProfitAmountScaled: BigNumber,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
 ): Promise<EncodedLiquidationTx> {
@@ -23,27 +22,12 @@ export default async function encodeLiquidateTx(
     exchangeToTokenAddress,
     liquidationAmount,
     borrower.debt[0].underlyingSymbol,
-    liquidationKind,
+    liquidationStrategy,
     debtFundingStrategies
   );
 
-  switch (liquidationKind) {
-    case LiquidationKind.DEFAULT_NATIVE_BORROW:
-      return {
-        method: "safeLiquidate(address,address,address,uint256,address,address,address[],bytes[])",
-        args: [
-          borrower.account,
-          borrower.debt[0].cToken,
-          borrower.collateral[0].cToken,
-          0,
-          borrower.collateral[0].cToken,
-          exchangeToTokenAddress,
-          strategiesAndDatas.strategies,
-          strategiesAndDatas.datas,
-        ],
-        value: liquidationAmount,
-      };
-    case LiquidationKind.DEFAULT_TOKEN_BORROW:
+  switch (liquidationStrategy) {
+    case LiquidationStrategy.DEFAULT:
       return {
         method: "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])",
         args: [
@@ -52,32 +36,14 @@ export default async function encodeLiquidateTx(
           borrower.debt[0].cToken,
           borrower.collateral[0].cToken,
           0,
-          borrower.collateral[0].cToken,
-          exchangeToTokenAddress,
-          strategiesAndDatas.strategies,
-          strategiesAndDatas.datas,
-        ],
-        value: BigNumber.from(0),
-      };
-    case LiquidationKind.UNISWAP_NATIVE_BORROW:
-      return {
-        method: "safeLiquidateToEthWithFlashLoan",
-        args: [
-          borrower.account,
-          // liquidationAmount.div(20),
-          liquidationAmount,
-          borrower.debt[0].cToken,
-          borrower.collateral[0].cToken,
-          minProfitAmountScaled,
           exchangeToTokenAddress,
           fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
           strategiesAndDatas.strategies,
           strategiesAndDatas.datas,
-          0,
         ],
         value: BigNumber.from(0),
       };
-    case LiquidationKind.UNISWAP_TOKEN_BORROW:
+    case LiquidationStrategy.UNISWAP:
       return {
         method: "safeLiquidateToTokensWithFlashLoan",
         args: [

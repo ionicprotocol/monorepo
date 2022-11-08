@@ -6,6 +6,7 @@ import { AppProps } from 'next/app';
 import { createClient, WagmiConfig } from 'wagmi';
 
 import Layout from '@ui/components/shared/Layout';
+import RainbowKit from '@ui/components/shared/RainbowKitProvider';
 import { config } from '@ui/config/index';
 import { MultiMidasProvider } from '@ui/context/MultiMidasContext';
 import { theme } from '@ui/theme/index';
@@ -23,14 +24,16 @@ function MidasDapp({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
       <WagmiConfig client={client}>
-        <QueryClientProvider client={queryClient}>
-          <MultiMidasProvider>
-            <Layout>
-              <Component {...pageProps} />
-            </Layout>
-          </MultiMidasProvider>
-          {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
-        </QueryClientProvider>
+        <RainbowKit>
+          <QueryClientProvider client={queryClient}>
+            <MultiMidasProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </MultiMidasProvider>
+            {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}
+          </QueryClientProvider>
+        </RainbowKit>
       </WagmiConfig>
     </ChakraProvider>
   );
