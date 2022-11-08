@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { NoRewardInfo } from './NoRewardInfo';
 
 import { RewardsInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/RewardsInfo';
+import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useColors } from '@ui/hooks/useColors';
@@ -66,9 +67,28 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
       {/* // TODO remove hardcoded Ankr Stuff here  */}
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
-        <Text color={cCard.txtColor} variant="smText">
-          + {Number(aBNBcApr).toFixed(2)}%
-        </Text>
+        <SimpleTooltip label="It‘s the APY of the autocompounding staking rewards.">
+          <Text color={cCard.txtColor} variant="smText">
+            + {Number(aBNBcApr).toFixed(2)}%
+          </Text>
+        </SimpleTooltip>
+      )}
+
+      {/* // TODO remove hardcoded pStake and Stader here  */}
+      {asset.underlyingSymbol === assetSymbols.stkBNB && (
+        <SimpleTooltip label="It‘s the APY of the autocompounding staking rewards.">
+          <Text color={cCard.txtColor} variant="smText">
+            + 5.2%
+          </Text>
+        </SimpleTooltip>
+      )}
+
+      {asset.underlyingSymbol === assetSymbols.BNBx && (
+        <SimpleTooltip label="It‘s the APY of the autocompounding staking rewards.">
+          <Text color={cCard.txtColor} variant="smText">
+            + 5.92%
+          </Text>
+        </SimpleTooltip>
       )}
 
       {rewardsOfThisMarket.length > 0 ? (
