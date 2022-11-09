@@ -1,10 +1,10 @@
-import { LiquidationKind, LiquidationStrategy } from "@midas-capital/types";
+import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
 import { MidasBase } from "../../MidasSdk";
 
-import { ChainLiquidationConfig, getLiquidationKind } from "./config";
+import { ChainLiquidationConfig } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
 import { getFundingStrategiesAndDatas } from "./fundingStrategy";
 import { getRedemptionStrategiesAndDatas } from "./redemptionStrategy";
@@ -55,7 +55,7 @@ export default async function getPotentialLiquidation(
     outputPrice = borrower.collateral[0].underlyingPrice;
     outputDecimals = borrower.collateral[0].underlyingDecimals;
   } else {
-    exchangeToTokenAddress = constants.AddressZero;
+    exchangeToTokenAddress = fuse.chainSpecificAddresses.W_TOKEN;
     outputPrice = utils.parseEther("1");
     outputDecimals = BigNumber.from(18);
   }
@@ -94,15 +94,11 @@ export default async function getPotentialLiquidation(
     return null;
   }
   // Depending on liquidation strategy
-  const liquidationKind = getLiquidationKind(
-    chainLiquidationConfig.LIQUIDATION_STRATEGY,
-    borrower.debt[0].underlyingToken
-  );
   let debtFundingStrategies: string[] = [];
   let debtFundingStrategiesData: BytesLike[] = [];
   let flashSwapFundingToken = constants.AddressZero;
 
-  if (liquidationKind == LiquidationKind.UNISWAP_TOKEN_BORROW) {
+  if (chainLiquidationConfig.LIQUIDATION_STRATEGY == LiquidationStrategy.UNISWAP) {
     // chain some liquidation funding strategies
     const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(fuse, borrower.debt[0].underlyingToken);
     debtFundingStrategies = fundingStrategiesAndDatas.strategies;
@@ -154,7 +150,7 @@ export default async function getPotentialLiquidation(
       liquidationAmount,
       strategyAndData,
       flashSwapPair,
-      liquidationKind,
+      chainLiquidationConfig.LIQUIDATION_STRATEGY,
       debtFundingStrategies,
       debtFundingStrategiesData
     );
@@ -179,13 +175,12 @@ export default async function getPotentialLiquidation(
   }
   return await encodeLiquidateTx(
     fuse,
-    liquidationKind,
+    chainLiquidationConfig.LIQUIDATION_STRATEGY,
     borrower,
     exchangeToTokenAddress,
     strategyAndData,
     liquidationAmount,
     flashSwapPair,
-    minProfitAmountEth.div(outputPrice).mul(BigNumber.from(10).pow(outputDecimals)),
     debtFundingStrategies,
     debtFundingStrategiesData
   );

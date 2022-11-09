@@ -55942,6 +55942,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -56108,7 +56115,7 @@
       ]
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0x58430330490CC1605F65B57324321f5B0C556d45",
+      "address": "0xf873d07E895D91Ff3257058931E8d3b6E03FC2B4",
       "abi": [
         {
           "anonymous": false,
@@ -56694,6 +56701,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -57705,6 +57719,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -57871,7 +57892,7 @@
       ]
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0x269013159901993b7a25aadb0d8c53eB13092E00",
+      "address": "0x0F84bb4f1e9F61cFb8C2D18d46c6449e92eB6D52",
       "abi": [
         {
           "anonymous": false,
@@ -58457,6 +58478,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -59468,6 +59496,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -59634,7 +59669,7 @@
       ]
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0xA02759226491808edf5B140433eeb3f28Bd603E0",
+      "address": "0x06c7Ef120028F053DE4Accc9e35C516B23Ce74bA",
       "abi": [
         {
           "anonymous": false,
@@ -60220,6 +60255,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {

@@ -24872,6 +24872,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -25038,7 +25045,7 @@
       ]
     },
     "MidasFlywheel_ATOM_Implementation": {
-      "address": "0x79dA3009AF58bDD4b3f1f13B20c64D50f3b974De",
+      "address": "0xd2D41a173F05B49BFAE56bB8979aC43CE268Ae12",
       "abi": [
         {
           "anonymous": false,
@@ -25624,6 +25631,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -26635,6 +26649,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -26801,7 +26822,7 @@
       ]
     },
     "MidasFlywheel_CELR_Implementation": {
-      "address": "0xcafDAA3A2401710E05c8178681687aFCbecA875B",
+      "address": "0x59223F2961E74b8b98654886893EE93437CBddb6",
       "abi": [
         {
           "anonymous": false,
@@ -27387,6 +27408,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -28398,6 +28426,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -28564,7 +28599,7 @@
       ]
     },
     "MidasFlywheel_GLINT_Implementation": {
-      "address": "0xc9d86bE207471ec3aAC8e2D502ae9abdA4BB7ED5",
+      "address": "0xde1e5F9A33BfdFB0454513562eeD96405446003D",
       "abi": [
         {
           "anonymous": false,
@@ -29150,6 +29185,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -30161,6 +30203,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -30327,7 +30376,7 @@
       ]
     },
     "MidasFlywheel_LDO_Implementation": {
-      "address": "0x66f7EeDeaE1B49709331F3eD83AC7210dac00F37",
+      "address": "0x5264e2A897ddc834C28D4379551d013d0F93E3a3",
       "abi": [
         {
           "anonymous": false,
@@ -30913,6 +30962,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -31924,6 +31980,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -32090,7 +32153,7 @@
       ]
     },
     "MidasFlywheel_STELLA_Implementation": {
-      "address": "0x220Dd385091FDE166b3f6656A5ceacced3a6305c",
+      "address": "0x93e8744AF38B1e9bE1FfEa8E51F1afdfA027c04B",
       "abi": [
         {
           "anonymous": false,
@@ -32676,6 +32739,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -33687,6 +33757,13 @@
         },
         {
           "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -33853,7 +33930,7 @@
       ]
     },
     "MidasFlywheel_WGLMR_Implementation": {
-      "address": "0x7171B1BD2D1278b5614D00F16F0b3A7FD013c637",
+      "address": "0xc31C6530757d71106865Da5dAb15D6225eD53521",
       "abi": [
         {
           "anonymous": false,
@@ -34439,6 +34516,13 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
