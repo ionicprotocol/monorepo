@@ -34,6 +34,10 @@ export const deployFlywheelWithDynamicRewards = async ({
                 deployer,
               ],
             },
+            onUpgrade: {
+              methodName: "reinitialize",
+              args: [],
+            },
           },
           proxyContract: "OpenZeppelinTransparentProxy",
           owner: deployer,
