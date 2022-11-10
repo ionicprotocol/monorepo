@@ -1,6 +1,7 @@
+import '@rainbow-me/rainbowkit/styles.css';
+
+import { getDefaultWallets } from '@rainbow-me/rainbowkit';
 import { Chain, configureChains, defaultChains } from 'wagmi';
-import { InjectedConnector } from 'wagmi/connectors/injected';
-import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -11,6 +12,7 @@ const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) 
     id: data.chainId,
     name: data.specificParams.metadata.name,
     network: data.specificParams.metadata.name,
+    iconUrl: data.specificParams.metadata.img,
     nativeCurrency: {
       name: data.specificParams.metadata.nativeCurrency.name,
       symbol: data.specificParams.metadata.nativeCurrency.symbol,
@@ -34,17 +36,7 @@ export const { chains, provider } = configureChains(
   ]
 );
 
-export const connectors = () => {
-  return [
-    new InjectedConnector({
-      chains,
-      options: { shimChainChangedDisconnect: true, shimDisconnect: false },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        qrcode: true,
-      },
-    }),
-  ];
-};
+export const { connectors } = getDefaultWallets({
+  appName: 'Midas Capital',
+  chains,
+});

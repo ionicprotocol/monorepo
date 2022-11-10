@@ -3,7 +3,7 @@
   "chainId": "245022926",
   "contracts": {
     "AddressesProvider": {
-      "address": "0xd4D0cA503E8befAbE4b75aAC36675Bc1cFA533D1",
+      "address": "0x3B0B043f5c459F9f5dC39ECb04AA39D1E675565B",
       "abi": [
         {
           "anonymous": false,
@@ -754,7 +754,7 @@
       ]
     },
     "AddressesProvider_Implementation": {
-      "address": "0x1540dc2D8b9D6f1C226C0c1224154E91a559164E",
+      "address": "0x21C406b9321fC42884B2bb1a7A2c4E65015234Cf",
       "abi": [
         {
           "anonymous": false,
@@ -1361,7 +1361,7 @@
       ]
     },
     "AddressesProvider_Proxy": {
-      "address": "0xd4D0cA503E8befAbE4b75aAC36675Bc1cFA533D1",
+      "address": "0x3B0B043f5c459F9f5dC39ECb04AA39D1E675565B",
       "abi": [
         {
           "inputs": [
@@ -1510,7 +1510,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB",
+      "address": "0x648745e53fC425816996a15a45e167dCa29Db0B0",
       "abi": [
         {
           "inputs": [],
@@ -2961,7 +2961,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x9c44eD0210a082CFA1378cd88BcE30dbA08daCb3",
+      "address": "0x4930d5b5f65654A7b3554E4bF1F0aaC2cA1980C0",
       "abi": [
         {
           "anonymous": false,
@@ -4465,7 +4465,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x6deEdd5f6C418aDD12916dd56EbEdBcE67678d21",
+      "address": "0xA9Fa989b6829BDEAa77e6F3d2DEBaBdc55d3a1Be",
       "abi": [
         {
           "anonymous": false,
@@ -5994,7 +5994,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xdaFEe93782f31700DAD5B861eCE40aA4441563B1",
+      "address": "0x2e4e0db454d4BC2Ae109787BCF7037a5357a53eb",
       "abi": [
         {
           "inputs": [
@@ -6010,31 +6010,6 @@
         {
           "anonymous": false,
           "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "ActionPaused",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
             {
               "indexed": false,
               "internalType": "string",
@@ -6100,6 +6075,31 @@
             }
           ],
           "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "MarketActionPaused",
           "type": "event"
         },
         {
@@ -7843,7 +7843,7 @@
       ]
     },
     "DefaultProxyAdmin": {
-      "address": "0xb6C070BFDFbbc081F2da688d3e0527A5B5EfCB0C",
+      "address": "0x18b91C76d6Ff8ac0441a110Aa2E4e52621712D3D",
       "abi": [
         {
           "inputs": [
@@ -8008,7 +8008,7 @@
       ]
     },
     "FixedNativePriceOracle": {
-      "address": "0x670dA4bce2FCDD36651A5E13A74718A526b1A79E",
+      "address": "0x9B6d32B4e1dDE60f8bAbf27EB46f53Ab7fE17928",
       "abi": [
         {
           "inputs": [
@@ -8051,7 +8051,7 @@
       ]
     },
     "FuseFeeDistributor": {
-      "address": "0xA21eB35869C4aafeB55a931Db7F56267a59dB620",
+      "address": "0xa04e40073a999C03D6A81ce75d7A3C2abf6EaDB4",
       "abi": [
         {
           "anonymous": false,
@@ -9086,7 +9086,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x77f756946665c1F15c4E343846D6dA8FA9F73690",
+      "address": "0x222c065B633cE12581903a1BBbdEC96a6eda1C2F",
       "abi": [
         {
           "anonymous": false,
@@ -9981,7 +9981,7 @@
       ]
     },
     "FuseFeeDistributor_Proxy": {
-      "address": "0xA21eB35869C4aafeB55a931Db7F56267a59dB620",
+      "address": "0xa04e40073a999C03D6A81ce75d7A3C2abf6EaDB4",
       "abi": [
         {
           "inputs": [
@@ -10130,7 +10130,7 @@
       ]
     },
     "FuseFlywheelLensRouter": {
-      "address": "0xC39Fa556a8d1319555359C90a11Cf5715a5b0019",
+      "address": "0x69BaFbf39e09cCB3138d7Ed0BCB1655823F7D511",
       "abi": [
         {
           "inputs": [
@@ -10266,7 +10266,7 @@
       ]
     },
     "FusePoolDirectory": {
-      "address": "0x44136e215EC68Cbd3c678FA7a58112a52d037eEE",
+      "address": "0x32AD4de77bB9a0C899a2eeF4D8Ece5eC3BD9E0E8",
       "abi": [
         {
           "anonymous": false,
@@ -11173,7 +11173,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x66BBfA7d24f77A990B0E360Ce0c2D141cbcE39bB",
+      "address": "0x45a1411ecc9d2B8E8F7a86a8459194b96223e9ad",
       "abi": [
         {
           "anonymous": false,
@@ -11936,7 +11936,7 @@
       ]
     },
     "FusePoolDirectory_Proxy": {
-      "address": "0x44136e215EC68Cbd3c678FA7a58112a52d037eEE",
+      "address": "0x32AD4de77bB9a0C899a2eeF4D8Ece5eC3BD9E0E8",
       "abi": [
         {
           "inputs": [
@@ -12085,7 +12085,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x750cec6bB47E814ab052Dc8607203569B48636A8",
+      "address": "0x6ceBf3d8325ac38A8Df03283C81db199D4b2886c",
       "abi": [
         {
           "anonymous": false,
@@ -13047,7 +13047,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0xBAA7BE260dbA0DfD53C9C85Ff67585f7C08892a5",
+      "address": "0xAFA468E791AA5c5e45940F695bc2488917A9dBBE",
       "abi": [
         {
           "anonymous": false,
@@ -13346,7 +13346,7 @@
       ]
     },
     "FuseSafeLiquidator": {
-      "address": "0x22A4D1bf93e84E107795c82f0c718a083dD1c215",
+      "address": "0x3DB426bb9591F6367c6b30fDA579647355618b97",
       "abi": [
         {
           "anonymous": false,
@@ -14215,7 +14215,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0xad8A6B8B4133967B283D0d3864C783f3CCfe58F4",
+      "address": "0xb0543004b96e30d2089D455ff88e6b14cE468Aa1",
       "abi": [
         {
           "anonymous": false,
@@ -14944,7 +14944,7 @@
       ]
     },
     "FuseSafeLiquidator_Proxy": {
-      "address": "0x22A4D1bf93e84E107795c82f0c718a083dD1c215",
+      "address": "0x3DB426bb9591F6367c6b30fDA579647355618b97",
       "abi": [
         {
           "inputs": [
@@ -15093,7 +15093,7 @@
       ]
     },
     "JumpRateModel": {
-      "address": "0x9733de87628a5D9Ef216682313d8143cE3b0ebD8",
+      "address": "0xc294e202a1b4AF2Cd4bE146F45627BAC7d0C50Aa",
       "abi": [
         {
           "inputs": [
@@ -15330,7 +15330,7 @@
       ]
     },
     "MasterPriceOracle": {
-      "address": "0xFC43A2A797f731dad53D6BC4Fe9300d68F480203",
+      "address": "0x21c588447c10f330e8bADebd607Bde58d29D8Fa3",
       "abi": [
         {
           "anonymous": false,
@@ -15720,7 +15720,7 @@
       ]
     },
     "MasterPriceOracle_Implementation": {
-      "address": "0xB224d5A1AEbd32C6FDdaf12B44Af07bDd4947E59",
+      "address": "0x9f2C409f30Bfc0f2f3730d1eef846a6ef514281A",
       "abi": [
         {
           "anonymous": false,
@@ -15992,7 +15992,7 @@
       ]
     },
     "MasterPriceOracle_Proxy": {
-      "address": "0xFC43A2A797f731dad53D6BC4Fe9300d68F480203",
+      "address": "0x21c588447c10f330e8bADebd607Bde58d29D8Fa3",
       "abi": [
         {
           "inputs": [
@@ -16140,8 +16140,144 @@
         }
       ]
     },
+    "MidasFlywheelLensRouter": {
+      "address": "0x628C6d2236fC1712D66Df5fbFf9041f7809C959C",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IComptroller",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getMarketRewardsInfo",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "underlyingPrice",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract CErc20Token",
+                  "name": "market",
+                  "type": "address"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "rewardSpeedPerSecondPerToken",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "rewardTokenPrice",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "formattedAPR",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "flywheel",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "rewardToken",
+                      "type": "address"
+                    }
+                  ],
+                  "internalType": "struct MidasFlywheelLensRouter.RewardsInfo[]",
+                  "name": "rewardsInfo",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct MidasFlywheelLensRouter.MarketRewardsInfo[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CErc20Token[]",
+              "name": "markets",
+              "type": "address[]"
+            },
+            {
+              "internalType": "contract MidasFlywheelCore[]",
+              "name": "flywheels",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "accrue",
+              "type": "bool[]"
+            }
+          ],
+          "name": "getUnclaimedRewardsByMarkets",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CErc20Token",
+              "name": "market",
+              "type": "address"
+            },
+            {
+              "internalType": "contract MidasFlywheelCore[]",
+              "name": "flywheels",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "accrue",
+              "type": "bool[]"
+            }
+          ],
+          "name": "getUnclaimedRewardsForMarket",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
     "Pyth": {
-      "address": "0x6D0F7E9E301ff304efE9b552ccf632947Ff937f2",
+      "address": "0xd5a2F2b424E0ABbBFff1166eD3612c1c2B153407",
       "abi": [
         {
           "inputs": [
@@ -16446,7 +16582,7 @@
       ]
     },
     "RewardsDistributorDelegate": {
-      "address": "0xB3177C0b176A2c26369A2ca9503907A15c75F467",
+      "address": "0xB62bB235774436A5D49888f0b9d68f82f1a6c82A",
       "abi": [
         {
           "anonymous": false,
@@ -17200,7 +17336,7 @@
       ]
     },
     "SimplePriceOracle": {
-      "address": "0x1557ccC2cc2B0CC6029330B86FC39CCEA007339b",
+      "address": "0xbBc7A18Bec166D1cd24Dd28eD1423C806e2c2dc8",
       "abi": [
         {
           "anonymous": false,
@@ -17342,7 +17478,7 @@
       ]
     },
     "WhitePaperInterestRateModel": {
-      "address": "0xe693a13526Eb4cff15EbeC54779Ea640E2F36a9f",
+      "address": "0x417045D77DBeDDD2C4f39Cd17d34F6CEdd5Fc968",
       "abi": [
         {
           "inputs": [

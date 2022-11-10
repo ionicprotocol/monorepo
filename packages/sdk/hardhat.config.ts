@@ -28,17 +28,20 @@ import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/downgradeMarket";
 import "./tasks/oracle/add-apeswap-oracle";
+import "./tasks/configureApStrategies";
 
 dotEnvConfig();
 
 const OVERRIDE_RPC_URL = process.env.OVERRIDE_RPC_URL || process.env.ETH_PROVIDER_URL; // Deprecated: ETH_PROVIDER_URL
 const FORK_RPC_URL = process.env.FORK_RPC_URL;
 const FORK_CHAIN_ID = process.env.FORK_CHAIN_ID;
+const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER;
 
 console.info({
   OVERRIDE_RPC_URL,
   FORK_RPC_URL,
   FORK_CHAIN_ID,
+  FORK_BLOCK_NUMBER,
 });
 
 const mnemonic =
@@ -88,6 +91,7 @@ const config: HardhatUserConfig = {
       forking: FORK_RPC_URL
         ? {
             url: FORK_RPC_URL,
+            blockNumber: FORK_BLOCK_NUMBER ? Number(FORK_BLOCK_NUMBER) : undefined,
           }
         : undefined,
     },

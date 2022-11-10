@@ -1,16 +1,13 @@
-import { neondevnet } from "@midas-capital/chains";
 import axios from "axios";
 
-export const getCgPrice = async (coingeckoId: string) => {
-  // set neon price hardcoded as 0.05 for now
-  if (coingeckoId === neondevnet.specificParams.cgId) return 0.05;
-
+export const getDefiLlamaPrice = async (defillamaId: string) => {
   let usdPrice: number;
-
-  usdPrice = (await axios.get(`https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${coingeckoId}`))
-    .data[coingeckoId].usd as number;
-
-  usdPrice = usdPrice ? usdPrice : 1.0;
-
+  try {
+    usdPrice = (await axios.get(`https://coins.llama.fi/prices/current/${defillamaId}`)).data.coins[defillamaId]
+      .price as number;
+    usdPrice = usdPrice ? usdPrice : 1.0;
+  } catch (e) {
+    return null;
+  }
   return usdPrice;
 };

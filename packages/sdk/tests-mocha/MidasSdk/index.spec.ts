@@ -39,7 +39,7 @@ describe("Fuse Index", () => {
     (mockProvider as any).estimateGas = stub().returns(BigNumber.from(3));
     ganache.chainDeployments = {
       FuseFeeDistributor: { abi: [], address: mkAddress("0xfcc") },
-      FuseFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
+      MidasFlywheelLensRouter: { abi: [], address: mkAddress("0xabcdef") },
       FusePoolDirectory: { abi: [], address: mkAddress("0xacc") },
       FusePoolLens: { abi: [], address: mkAddress("0xbcc") },
       FusePoolLensSecondary: { abi: [], address: mkAddress("0xdcc") },

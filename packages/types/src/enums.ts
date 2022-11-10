@@ -18,6 +18,7 @@ export enum RedemptionStrategyContract {
   XBombLiquidatorFunder = "XBombLiquidatorFunder",
   JarvisLiquidatorFunder = "JarvisLiquidatorFunder",
   UniswapLpTokenLiquidator = "UniswapLpTokenLiquidator",
+  UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   CurveSwapLiquidator = "CurveSwapLiquidator",
 }
@@ -67,18 +68,12 @@ export enum IrmTypes {
   AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB = "AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB",
   AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
   AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
+  AdjustableJumpRateModel_JARVIS_jBRL = "AdjustableJumpRateModel_JARVIS_jBRL",
 }
 
 export enum LiquidationStrategy {
   DEFAULT = "DEFAULT",
   UNISWAP = "UNISWAP",
-}
-
-export enum LiquidationKind {
-  DEFAULT_NATIVE_BORROW = "DEFAULT_NATIVE_BORROW",
-  DEFAULT_TOKEN_BORROW = "DEFAULT_TOKEN_BORROW",
-  UNISWAP_NATIVE_BORROW = "UNISWAP_NATIVE_BORROW",
-  UNISWAP_TOKEN_BORROW = "UNISWAP_TOKEN_BORROW",
 }
 
 export enum ComptrollerErrorCodes {

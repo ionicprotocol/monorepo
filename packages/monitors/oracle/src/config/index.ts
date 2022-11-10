@@ -1,2 +1,5 @@
-export { default as supabase } from "./supabase";
-export { default as config } from "./variables";
+export { getSupabaseClient } from "./supabase";
+
+export { assets } from "./assets";
+export { configs } from "./variables";
+export { verifiers } from "./verifiers";

@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-import config from "./variables";
+import { baseConfig } from "./variables";
 
-const supabase = createClient(config.supabaseUrl, config.supabasePublicKey);
-
-export default supabase;
+export const getSupabaseClient = () => {
+  return createClient(baseConfig.supabaseUrl, baseConfig.supabasePublicKey);
+};

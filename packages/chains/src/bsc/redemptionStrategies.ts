@@ -31,9 +31,13 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.CurveSwapLiquidator,
     underlying(assets, assetSymbols.val3EPS),
   ],
+  [underlying(assets, assetSymbols.JCHF)]: [
+    RedemptionStrategyContract.CurveSwapLiquidator,
+    underlying(assets, assetSymbols.BUSD),
+  ],
   [underlying(assets, assetSymbols.BOMB)]: [
-    RedemptionStrategyContract.XBombLiquidatorFunder,
-    underlying(assets, assetSymbols.xBOMB),
+    RedemptionStrategyContract.UniswapV2LiquidatorFunder,
+    underlying(assets, assetSymbols.BTCB),
   ],
   [underlying(assets, assetSymbols.xBOMB)]: [
     RedemptionStrategyContract.XBombLiquidatorFunder,
@@ -75,6 +79,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["CAKE-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["stkBNB-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
   [underlying(assets, assetSymbols["asBNBx-WBNB"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WBNB],
+  [underlying(assets, assetSymbols.BNBx)]: [RedemptionStrategyContract.UniswapV2LiquidatorFunder, WBNB],
 };
 
 export default redemptionStrategies;

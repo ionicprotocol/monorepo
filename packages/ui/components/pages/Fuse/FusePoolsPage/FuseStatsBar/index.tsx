@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -10,6 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
   Spinner,
+  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -71,47 +73,50 @@ const FuseStatsBar = () => {
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
         </Text>
-        <HStack gap={2}>
-          <SimpleTooltip label="Documentation">
-            <Link href={MIDAS_DOCS_URL} isExternal>
-              <motion.div whileHover={{ scale: 1.2 }}>
-                <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
-              </motion.div>
-            </Link>
-          </SimpleTooltip>
-          <SimpleTooltip label="Discord">
-            <Link href={MIDAS_DISCORD_URL} isExternal>
-              <motion.div whileHover={{ scale: 1.2 }}>
-                <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
-              </motion.div>
-            </Link>
-          </SimpleTooltip>
-          <SimpleTooltip label="Telegram">
-            <Link href={MIDAS_TELEGRAM_URL} isExternal>
-              <motion.div whileHover={{ scale: 1.2 }}>
-                <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
-              </motion.div>
-            </Link>
-          </SimpleTooltip>
-          <SimpleTooltip label="Twitter">
-            <Link href={MIDAS_TWITTER_URL} isExternal>
-              <motion.div whileHover={{ scale: 1.2 }}>
-                <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
-              </motion.div>
-            </Link>
-          </SimpleTooltip>
-          <Button
-            variant="_link"
-            as={Link}
-            href={FEATURE_REQUESTS_URL}
-            isExternal
-            fontSize={{ base: 14, md: 16 }}
-            height="auto"
-          >
-            Request a new feature
-          </Button>
+        <Stack direction={{ base: 'column', md: 'row' }} spacing={2}>
+          <HStack justifyContent="center">
+            <SimpleTooltip label="Documentation">
+              <Link href={MIDAS_DOCS_URL} isExternal>
+                <motion.div whileHover={{ scale: 1.2 }}>
+                  <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
+                </motion.div>
+              </Link>
+            </SimpleTooltip>
+            <SimpleTooltip label="Discord">
+              <Link href={MIDAS_DISCORD_URL} isExternal>
+                <motion.div whileHover={{ scale: 1.2 }}>
+                  <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
+                </motion.div>
+              </Link>
+            </SimpleTooltip>
+            <SimpleTooltip label="Telegram">
+              <Link href={MIDAS_TELEGRAM_URL} isExternal>
+                <motion.div whileHover={{ scale: 1.2 }}>
+                  <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
+                </motion.div>
+              </Link>
+            </SimpleTooltip>
+            <SimpleTooltip label="Twitter">
+              <Link href={MIDAS_TWITTER_URL} isExternal>
+                <motion.div whileHover={{ scale: 1.2 }}>
+                  <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
+                </motion.div>
+              </Link>
+            </SimpleTooltip>
+          </HStack>
+          <Flex justifyContent="center">
+            <Button
+              variant="external"
+              rightIcon={<ExternalLinkIcon />}
+              as={Link}
+              href={FEATURE_REQUESTS_URL}
+              isExternal
+            >
+              Request a new feature
+            </Button>
+          </Flex>
           <FuseDashNav />
-        </HStack>
+        </Stack>
       </Flex>
 
       <Popover trigger="hover">

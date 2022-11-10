@@ -1,19 +1,17 @@
-import { SupportedAssetPriceFeed } from "..";
-import { config, supabase } from "../config";
+import { getSupabaseClient } from "../config";
+import { baseConfig } from "../config/variables";
+import { SupportedAssetPriceFeed } from "../types";
 
 const updateOracleMonitorData = async (assets: SupportedAssetPriceFeed[]) => {
+  const supabase = getSupabaseClient();
   for (const asset of assets) {
     try {
-      const { error } = await supabase.from(config.supabaseOracleMonitorTableName).insert([
+      const { error } = await supabase.from(baseConfig.supabaseOracleMonitorTableName).insert([
         {
           underlyingAddress: asset.asset.underlying.toLowerCase(),
           oracle: asset.asset.oracle,
-          valid: asset.valid,
-          invalidReason: asset.invalidReason ? asset.invalidReason : null,
-          extraInfo: asset.extraInfo ? asset.extraInfo : null,
-          chain: config.chainId,
-          priceBN: asset.priceBN.toString(),
-          priceEther: asset.priceEther,
+          feedValid: asset.feedValidity == null ? true : false,
+          chain: baseConfig.chainId,
         },
       ]);
       if (error) {
