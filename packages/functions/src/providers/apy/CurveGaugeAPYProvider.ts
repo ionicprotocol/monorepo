@@ -120,7 +120,6 @@ class CurveAPYProvider extends AbstractAPYProvider {
 
     // Check for additional Rewards
     if (this.gaugeRewards) {
-      console.log(this.gaugeRewards);
       const extraRewards = this.gaugeRewards[lpToken.toLowerCase()];
 
       if (extraRewards) {
