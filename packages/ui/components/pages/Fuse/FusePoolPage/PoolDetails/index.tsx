@@ -1,22 +1,13 @@
-import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
-import {
-  Button,
-  Grid,
-  GridItem,
-  HStack,
-  Link,
-  Skeleton,
-  Text,
-  useClipboard,
-} from '@chakra-ui/react';
+import { Button, Grid, GridItem, HStack, Link, Skeleton, Text } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { parseUnits } from 'ethers/lib/utils';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
+import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { Center, Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -42,8 +33,6 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
   const poolId = router.query.poolId as string;
   const { data } = useExtraPoolInfo(poolData?.comptroller, poolData?.chainId);
 
-  const [copiedText, setCopiedText] = useState<string>('');
-  const { hasCopied, onCopy } = useClipboard(copiedText);
   const { setGlobalLoading, currentSdk } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const scanUrl = useMemo(
@@ -64,19 +53,6 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
 
     await queryClient.refetchQueries();
   }, [comptroller, currentSdk, queryClient, addRecentTransaction]);
-
-  useEffect(() => {
-    if (copiedText) {
-      onCopy();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [copiedText]);
-
-  useEffect(() => {
-    if (!hasCopied) {
-      setCopiedText('');
-    }
-  }, [hasCopied]);
 
   return (
     <MidasBox height="auto" width="100%">
@@ -179,25 +155,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
                     </Button>
                   </SimpleTooltip>
 
-                  <Button
-                    variant="_link"
-                    minW={0}
-                    mt="-8px !important"
-                    p={0}
-                    onClick={() => setCopiedText(data.admin)}
-                    fontSize={18}
-                    height="auto"
-                  >
-                    {copiedText === data.admin ? (
-                      <SimpleTooltip label="Copied">
-                        <CheckIcon />
-                      </SimpleTooltip>
-                    ) : (
-                      <SimpleTooltip label="Click to copy">
-                        <CopyIcon />
-                      </SimpleTooltip>
-                    )}
-                  </Button>
+                  <ClipboardValueIconButton value={data.admin} />
                 </HStack>
               ) : (
                 <Text variant="smText" fontWeight="bold">
@@ -282,25 +240,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
                       {shortAddress(comptroller, 6, 4)}
                     </Button>
                   </SimpleTooltip>
-                  <Button
-                    variant="_link"
-                    minW={0}
-                    mt="-8px !important"
-                    p={0}
-                    onClick={() => setCopiedText(comptroller)}
-                    fontSize={18}
-                    height="auto"
-                  >
-                    {copiedText === comptroller ? (
-                      <SimpleTooltip label="Copied">
-                        <CheckIcon />
-                      </SimpleTooltip>
-                    ) : (
-                      <SimpleTooltip label="Click to copy">
-                        <CopyIcon />
-                      </SimpleTooltip>
-                    )}
-                  </Button>
+                  <ClipboardValueIconButton value={comptroller} />
                 </HStack>
               </HStack>
             </GridItem>
