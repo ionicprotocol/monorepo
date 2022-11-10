@@ -17,6 +17,12 @@ import {
 
 import { estimateGas } from "./index";
 
+// 10 % of debt repaid
+const PROTOCOL_FEE = BigNumber.from(100);
+
+// 2.8 % of debt repaid
+const MARKET_FEE = BigNumber.from(280);
+
 export default async function getPotentialLiquidation(
   fuse: MidasBase,
   borrower: FusePoolUserWithAssets,
@@ -71,7 +77,19 @@ export default async function getPotentialLiquidation(
     .mul(closeFactor)
     .div(BigNumber.from(10).pow(borrower.debt[0].underlyingDecimals.toNumber()));
 
+  const protocolFee = liquidationAmount.mul(PROTOCOL_FEE).div(1000);
+  const marketFee = liquidationAmount.mul(MARKET_FEE).div(1000);
+
+  liquidationAmount = liquidationAmount.add(protocolFee).add(marketFee);
+
   let liquidationValueWei = liquidationAmount.mul(underlyingDebtPrice).div(SCALE_FACTOR_ONE_18_WEI);
+
+  /*
+  it is + , not - for seize amount = repaid_debt + liquidation_penalty
+  the liquidation penalty percentages are all against the amount repaid. if the debt repaid is 1000:
+  - protocol fee is 100 (10% of debt repaid)
+  -  market fee is 28 (2.8 % of debt repaid) 
+  */
 
   // Get seize amount
   let seizeAmountWei = liquidationValueWei.mul(liquidationIncentive).div(SCALE_FACTOR_ONE_18_WEI);
