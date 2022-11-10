@@ -17,11 +17,11 @@ export default task("get-liquidations", "Get potential liquidations")
     // @ts-ignore
     const midasSdkModule = await import("../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
-    const wallet = hre.ethers.Wallet.fromMnemonic(process.env.MNEMONIC);
 
-    const excludedComptrollers = taskArgs.excludedComptrollers.split(",");
-    const liquidations = await sdk.getPotentialLiquidations(
-      wallet,
+    let excludedComptrollers: Array<string> = [];
+    if (taskArgs.excludedComptrollers) excludedComptrollers = taskArgs.excludedComptrollers.split(",");
+
+    const [liquidations, _] = await sdk.getPotentialLiquidations(
       excludedComptrollers,
       hre.ethers.utils.parseEther(taskArgs.maxHealth)
     );
@@ -115,3 +115,35 @@ task("liquidate", "Liquidate a position without a flash loan")
     receipt = await tx.wait();
     console.log(`Liquidated ${receipt.transactionHash}`);
   });
+
+// npx hardhat liquidate:hardcoded --network bsc
+
+task("liquidate:hardcoded", "Liquidate a position without a flash loan").setAction(async (taskArgs, hre) => {
+  const signer = await hre.ethers.getNamedSigner("deployer");
+  const fuseSafeLiquidator = (await hre.ethers.getContract("FuseSafeLiquidator", signer)) as FuseSafeLiquidator;
+
+  console.log(`big num ${BigNumber.from("20853697380464596")}`);
+
+  console.log(`Liquidating...`);
+  const vars: FuseSafeLiquidator.LiquidateToTokensWithFlashSwapVarsStruct = {
+    borrower: "0x02E7b714fae84e4BA80f3CDa5508553e7CF5042A",
+    repayAmount: BigNumber.from("1036500101199996"),
+    cErc20: "0x38982105A2F81dc5dBDEA6c131bB4bF5a416513A",
+    cTokenCollateral: "0xdB1C2240004a3Fd33BF71B2D66b1662604168eAc",
+    flashSwapPair: "0x58F876857a02D6762E0101bb5C46A8c1ED44Dc16",
+    minProfitAmount: BigNumber.from("0"),
+    exchangeProfitTo: hre.ethers.constants.AddressZero,
+    uniswapV2RouterForBorrow: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    uniswapV2RouterForCollateral: "0x10ED43C718714eb63d5aA57B78B54704E256024E",
+    redemptionStrategies: [],
+    strategyData: [],
+    ethToCoinbase: BigNumber.from(0),
+    debtFundingStrategies: [],
+    debtFundingStrategiesData: [],
+  };
+  const tx: providers.TransactionResponse = await fuseSafeLiquidator.safeLiquidateToTokensWithFlashLoan(vars, {
+    gasLimit: 2100000,
+  });
+  const receipt: providers.TransactionReceipt = await tx.wait();
+  console.log(`Liquidated ${receipt.transactionHash}`);
+});

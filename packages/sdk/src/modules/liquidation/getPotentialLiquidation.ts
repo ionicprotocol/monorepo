@@ -1,6 +1,7 @@
 import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
+import { CErc20Delegate } from "../../../lib/contracts/typechain/CErc20Delegate";
 import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
 import { MidasBase } from "../../MidasSdk";
 
@@ -17,11 +18,11 @@ import {
 
 import { estimateGas } from "./index";
 
-// 10 % of debt repaid
-const PROTOCOL_FEE = BigNumber.from(100);
-
-// 2.8 % of debt repaid
-const MARKET_FEE = BigNumber.from(280);
+async function getLiquidationPenalty(collateralCToken: CErc20Delegate, liquidationIncentive: BigNumber) {
+  const protocolSeizeShareMantissa = await collateralCToken.callStatic.protocolSeizeShareMantissa();
+  const feeSeizeShareMantissa = await collateralCToken.callStatic.feeSeizeShareMantissa();
+  return liquidationIncentive.add(protocolSeizeShareMantissa).add(feeSeizeShareMantissa);
+}
 
 export default async function getPotentialLiquidation(
   fuse: MidasBase,
@@ -77,23 +78,35 @@ export default async function getPotentialLiquidation(
     .mul(closeFactor)
     .div(BigNumber.from(10).pow(borrower.debt[0].underlyingDecimals.toNumber()));
 
-  const protocolFee = liquidationAmount.mul(PROTOCOL_FEE).div(1000);
-  const marketFee = liquidationAmount.mul(MARKET_FEE).div(1000);
+  const penalty = await getLiquidationPenalty(
+    fuse.getCTokenInstance(borrower.collateral[0].cToken),
+    liquidationIncentive
+  );
 
-  liquidationAmount = liquidationAmount.add(protocolFee).add(marketFee);
+  /*
+  numerator = mul_(totalPenaltyMantissa, Exp({ mantissa: priceBorrowedMantissa }));
+  denominator = mul_(Exp({ mantissa: priceCollateralMantissa }), Exp({ mantissa: exchangeRateMantissa }));
+  */
+
+  const numerator = penalty.mul(underlyingDebtPrice).div(SCALE_FACTOR_ONE_18_WEI);
+  const denominator = underlyingCollateralPrice.mul(borrower.collateral[0].exchangeRate).div(SCALE_FACTOR_ONE_18_WEI);
+  // preserve precision
+  const ratio = numerator.div(denominator);
 
   let liquidationValueWei = liquidationAmount.mul(underlyingDebtPrice).div(SCALE_FACTOR_ONE_18_WEI);
 
-  /*
-  it is + , not - for seize amount = repaid_debt + liquidation_penalty
-  the liquidation penalty percentages are all against the amount repaid. if the debt repaid is 1000:
-  - protocol fee is 100 (10% of debt repaid)
-  -  market fee is 28 (2.8 % of debt repaid) 
-  */
-
   // Get seize amount
-  let seizeAmountWei = liquidationValueWei.mul(liquidationIncentive).div(SCALE_FACTOR_ONE_18_WEI);
+  let seizeAmountWei = liquidationValueWei.mul(ratio);
   let seizeAmount = seizeAmountWei.mul(SCALE_FACTOR_ONE_18_WEI).div(underlyingCollateralPrice);
+
+  console.log({
+    ratio: utils.formatEther(ratio),
+    numerator: utils.formatEther(numerator),
+    denominator: utils.formatEther(denominator),
+    liquidationValueWei: utils.formatEther(liquidationValueWei),
+    seizeAmount: utils.formatEther(seizeAmount),
+    seizeAmountWei: utils.formatEther(seizeAmountWei),
+  });
 
   // Check if actual collateral is too low to seize seizeAmount; if so, recalculate liquidation amount
   const actualCollateral = borrower.collateral[0].supplyBalance.div(
