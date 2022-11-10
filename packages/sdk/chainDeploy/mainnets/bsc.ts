@@ -292,14 +292,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   // Wombex Lp Token Price Oracle
 
-  const wombexOracle = await deployments.deploy("WombexLpTokenPriceOracle", {
+  const wombatOracle = await deployments.deploy("WombatLpTokenPriceOracle", {
     from: deployer,
     args: [mpo.address],
     waitConfirmations: 1,
     log: true,
   });
 
-  console.log("WombexLpTokenPriceOracle: ", wombexOracle.address);
+  console.log("WombatLpTokenPriceOracle: ", wombatOracle.address);
 
   const existingOracle = await mpo.callStatic.oracles(nativeBnb);
   if (existingOracle === ethers.constants.AddressZero) {
