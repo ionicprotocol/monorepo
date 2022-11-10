@@ -5,7 +5,7 @@ export interface AbstractReward {
 
 export interface FlywheelReward extends AbstractReward {
   token: string;
-  flywheel: string;
+  flywheel?: string;
 }
 
 export interface PluginReward extends AbstractReward {
@@ -14,7 +14,7 @@ export interface PluginReward extends AbstractReward {
 
 export interface PluginWithFlywheelReward extends AbstractReward {
   plugin: string;
-  flywheel: string;
+  flywheel?: string;
   token: string;
 }
 

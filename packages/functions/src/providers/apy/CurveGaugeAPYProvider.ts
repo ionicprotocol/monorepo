@@ -1,6 +1,6 @@
 import {
   CurveGaugePlugin,
-  MimoPlugin,
+  PluginWithFlywheelReward,
   Reward,
   Strategy,
   SupportedChains,
@@ -12,15 +12,37 @@ import { AbstractAPYProvider, APYProviderInitObject } from './AbstractAPYProvide
 interface CurveAPYs {
   [lpTokenAddress: string]: PoolDetails;
 }
+interface GaugeRewards {
+  [lpTokenAddress: string]: ExtraReward[];
+}
+
 type PoolDetails = {
   poolAddress: string; // name is misleading, it's the LP token address
   apy: number;
   apyWeekly: number;
 };
 
+type ExtraReward = {
+  tokenAddress: string;
+  apy: number; // Already scaled to percentage
+};
+
+type Gauge = {
+  gauge: string;
+  swap_token: string;
+  swap: string;
+  extraRewards: ExtraReward[];
+};
+
 interface CurveAPYResponse {
   data: {
     poolDetails: PoolDetails[];
+  };
+}
+
+interface CurveGaugeResponse {
+  data: {
+    gauges: Gauge[];
   };
 }
 
@@ -35,23 +57,30 @@ class CurveAPYProvider extends AbstractAPYProvider {
   };
 
   private curveAPYs: CurveAPYs | undefined;
+  private gaugeRewards: GaugeRewards | undefined;
 
   async init({ chainId }: APYProviderInitObject) {
     const apyEndpoint = CurveAPYProvider.apyEndpoints[chainId];
     if (!apyEndpoint) {
       throw `CurveAPYProvider: Can not be initialized, no APY endpoint available for chain id ${chainId}`;
     }
+    const gaugeEndpoint = CurveAPYProvider.gaugeEndpoints[chainId];
+    if (!gaugeEndpoint) {
+      throw `CurveAPYProvider: Can not be initialized, no Gauge endpoint available for chain id ${chainId}`;
+    }
 
-    const response = await axios.get(apyEndpoint);
-    const responseData: CurveAPYResponse = await response.data;
+    const [apyData, gaugeData]: [CurveAPYResponse, CurveGaugeResponse] = await Promise.all([
+      axios.get(apyEndpoint).then((response) => response.data),
+      axios.get(gaugeEndpoint).then((response) => response.data),
+    ]);
 
-    this.curveAPYs = responseData.data.poolDetails.reduce((acc, cur) => {
+    this.curveAPYs = apyData.data.poolDetails.reduce((acc, cur) => {
       return { ...acc, [cur.poolAddress.toLowerCase()]: cur };
     }, {});
 
-    if (!this.curveAPYs) {
-      throw `CurveAPYProvider: unexpected Curve APY response`;
-    }
+    this.gaugeRewards = gaugeData.data.gauges.reduce((acc, cur) => {
+      return { ...acc, [cur.swap.toLowerCase()]: cur.extraRewards };
+    }, {});
   }
 
   async getApy(pluginAddress: string, pluginData: CurveGaugePlugin): Promise<Reward[]> {
@@ -59,7 +88,7 @@ class CurveAPYProvider extends AbstractAPYProvider {
       throw `CurveAPYProvider: Not a Curve Plugin ${pluginAddress}`;
 
     if (this.curveAPYs === undefined) {
-      throw 'CurveAPYProvider: Not initialized';
+      throw 'CurveAPYProvider: Not initialized `curveAPYs`';
     }
 
     const [_, curveLPTokens] = pluginData.otherParams;
@@ -67,8 +96,9 @@ class CurveAPYProvider extends AbstractAPYProvider {
     if (!lpToken)
       throw 'CurveAPYProvider: expects second `otherParams[1]` to be Curve Vault LP Token';
 
-    console.log({ response: this.curveAPYs, lpToken });
+    const rewards: Reward[] = [];
 
+    // Get lp Rewards
     const apy = this.curveAPYs[lpToken.toLowerCase()].apy;
 
     if (apy === undefined) {
@@ -82,16 +112,36 @@ class CurveAPYProvider extends AbstractAPYProvider {
     if (apy === 0) {
       await functionsAlert(`CurveAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
+    rewards.push({
+      apy: apy / 100,
+      plugin: pluginAddress,
+      updated_at: new Date().toISOString(),
+    });
 
-    console.log({ apy });
+    // Check for additional Rewards
+    if (this.gaugeRewards) {
+      console.log(this.gaugeRewards);
+      const extraRewards = this.gaugeRewards[lpToken.toLowerCase()];
 
-    return [
-      {
-        apy: apy / 100,
-        plugin: pluginAddress,
-        updated_at: new Date().toISOString(),
-      },
-    ];
+      if (extraRewards) {
+        rewards.push(
+          ...extraRewards.map(
+            (extraReward) =>
+              ({
+                apy: extraReward.apy / 100,
+                plugin: pluginAddress,
+                updated_at: new Date().toISOString(),
+                token: extraReward.tokenAddress,
+                flywheel: undefined, // TODO get flywheel, maybe not necessary.
+              } as PluginWithFlywheelReward)
+          )
+        );
+      }
+    } else {
+      console.warn('CurveAPYProvider: `gaugeRewards` not available');
+    }
+
+    return rewards;
   }
 }
 
