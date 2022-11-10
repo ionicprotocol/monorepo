@@ -1,12 +1,25 @@
+import { ethers } from 'ethers';
 import { functionsAlert } from '../alert';
 import { pluginsOfChain } from '../assets';
-import { environment, supabase, SupportedChains } from '../config';
+import { environment, supabase } from '../config';
 import { getAPYProviders } from '../providers/apy';
+import { SupportedChains } from '@midas-capital/types';
 
 const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const plugins = pluginsOfChain[chainId];
-    const apyProviders = await getAPYProviders();
+
+    if (!plugins) {
+      console.warn(`No Plugins available for ${chainId}`);
+      return;
+    }
+
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const apyProviders = await getAPYProviders({
+      chainId: chainId,
+      provider,
+    });
+
     const results = await Promise.all(
       Object.entries(plugins).map(async ([pluginAddress, pluginData]) => {
         try {
