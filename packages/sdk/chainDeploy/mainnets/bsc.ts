@@ -290,7 +290,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
   const nativeBnb = underlying(assets, assetSymbols.BNB);
 
-  // Wombex Lp Token Price Oracle
+  // Wombat Lp Token Price Oracle
 
   const wombatOracle = await deployments.deploy("WombatLpTokenPriceOracle", {
     from: deployer,
@@ -298,7 +298,9 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     waitConfirmations: 1,
     log: true,
   });
-
+  if (wombatOracle.transactionHash) {
+    await ethers.provider.waitForTransaction(wombatOracle.transactionHash);
+  }
   console.log("WombatLpTokenPriceOracle: ", wombatOracle.address);
 
   const existingOracle = await mpo.callStatic.oracles(nativeBnb);
