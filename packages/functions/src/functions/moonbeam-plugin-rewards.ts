@@ -1,10 +1,18 @@
+import { SupportedChains } from '@midas-capital/types';
 import { Handler } from '@netlify/functions';
 import { rpcUrls } from '../assets';
-import { SupportedChains } from '../config';
+
 import { updatePluginRewards } from '../controllers';
 
 const handler: Handler = async (event, context) => {
-  await updatePluginRewards(SupportedChains.moonbeam, rpcUrls[SupportedChains.moonbeam]);
+  const rpcURL = rpcUrls[SupportedChains.moonbeam];
+  if (!rpcURL) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'RPC not set' }),
+    };
+  }
+  await updatePluginRewards(SupportedChains.moonbeam, rpcURL);
 
   return {
     statusCode: 200,

@@ -1,10 +1,18 @@
+import { SupportedChains } from '@midas-capital/types';
 import { Handler } from '@netlify/functions';
 import { rpcUrls } from '../assets';
-import { SupportedChains } from '../config';
+
 import { updatePluginData } from '../controllers';
 
 const handler: Handler = async (event, context) => {
-  await updatePluginData(SupportedChains.polygon, rpcUrls[SupportedChains.polygon]);
+  const rpcURL = rpcUrls[SupportedChains.polygon];
+  if (!rpcURL) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: 'RPC not set' }),
+    };
+  }
+  await updatePluginData(SupportedChains.polygon, rpcURL);
 
   return {
     statusCode: 200,

@@ -59,6 +59,7 @@ export interface StellaPlugin extends AbstractPlugin {
 
 export interface CurveGaugePlugin extends AbstractPlugin {
   strategy: Strategy.CurveGauge;
+  otherParams: [string, string[]];
 }
 
 export type SupportedPlugin =
