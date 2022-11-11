@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
     shortName: "Neon Devnet",
     img: "https://d1912tcoux65lj.cloudfront.net/network/neon.jpg",
     rpcUrls: { default: "https://proxy.devnet.neonlabs.org/solana" },
-    blockExplorerUrls: { default: { name: "NeonScan", url: "https://neonscan.org/" } },
+    blockExplorerUrls: { default: { name: "NeonScan", url: "https://neonscan.org" } },
     nativeCurrency: {
       symbol: "NEON",
       name: "Neon Devnet",
