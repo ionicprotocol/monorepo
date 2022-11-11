@@ -11,6 +11,7 @@ import {
   Center,
   Checkbox,
   Flex,
+  Hide,
   HStack,
   IconButton,
   Img,
@@ -645,16 +646,17 @@ const PoolsRowList = ({
         )}
         <Flex
           className="pagination"
-          flexDirection={{ base: 'column', lg: 'row' }}
           gap={4}
           justifyContent="flex-end"
-          alignItems="flex-end"
+          alignItems="center"
           width={'100%'}
           py={4}
           px={3}
         >
           <HStack>
-            <Text variant="smText">Pools Per Page</Text>
+            <Hide below="lg">
+              <Text variant="smText">Pools Per Page</Text>
+            </Hide>
             <Select
               value={pagination.pageSize}
               onChange={(e) => {

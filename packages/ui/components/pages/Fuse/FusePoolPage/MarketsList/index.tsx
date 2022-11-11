@@ -11,6 +11,7 @@ import {
   Center,
   Checkbox,
   Flex,
+  Hide,
   HStack,
   IconButton,
   Input,
@@ -444,7 +445,6 @@ export const MarketsList = ({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
   });
-  const isMobile = useIsMobile();
   const isSemiSmallScreen = useIsSemiSmallScreen();
 
   const [globalFilter, setGlobalFilter] = useState<string[]>([ALL]);
@@ -517,7 +517,6 @@ export const MarketsList = ({
   return (
     <Box>
       {/* Supply & Borrow Balance */}
-
       <Flex
         px="4"
         mt={4}
@@ -792,6 +791,7 @@ export const MarketsList = ({
           </Popover>
         </Flex>
       </Flex>
+
       {/* Market Table */}
       <Table>
         <Thead>
@@ -901,16 +901,13 @@ export const MarketsList = ({
           )}
         </Tbody>
       </Table>
-      <Flex
-        className="pagination"
-        flexDirection={{ base: 'column', lg: 'row' }}
-        gap={4}
-        justifyContent="flex-end"
-        alignItems="flex-end"
-        p={4}
-      >
+
+      {/* Pagination Elements */}
+      <Flex className="pagination" gap={4} justifyContent="flex-end" alignItems="center" p={4}>
         <HStack>
-          {!isMobile && <Text variant="smText">Markets Per Page</Text>}
+          <Hide below="lg">
+            <Text variant="smText">Markets Per Page</Text>
+          </Hide>
           <Select
             value={pagination.pageSize}
             onChange={(e) => {
