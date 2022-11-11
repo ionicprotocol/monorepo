@@ -67,41 +67,57 @@ export default async function getPotentialLiquidation(
     outputDecimals = BigNumber.from(18);
   }
 
+  const debtAsset = borrower.debt[0];
+  const collateralAsset = borrower.collateral[0];
+
   // Get debt and collateral prices
-  const underlyingDebtPrice = borrower.debt[0].underlyingPrice.div(SCALE_FACTOR_UNDERLYING_DECIMALS(borrower.debt[0]));
-  const underlyingCollateralPrice = borrower.collateral[0].underlyingPrice.div(
-    SCALE_FACTOR_UNDERLYING_DECIMALS(borrower.collateral[0])
-  );
+  const debtAssetUnderlyingPrice = debtAsset.underlyingPrice;
+  const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
+  const debtAssetDecimals = debtAsset.underlyingDecimals;
+  const debtAssetUnderlyingToken = debtAsset.underlyingToken;
+  // xcDOT: 10 decimals
+  const actualCollateral = collateralAsset.supplyBalance;
 
   // Get liquidation amount
-  let liquidationAmount = borrower.debt[0].borrowBalance
-    .mul(closeFactor)
-    .div(BigNumber.from(10).pow(borrower.debt[0].underlyingDecimals.toNumber()));
 
-  const penalty = await getLiquidationPenalty(
-    fuse.getCTokenInstance(borrower.collateral[0].cToken),
-    liquidationIncentive
-  );
+  // USDC: 6 decimals
+  let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
+  const penalty = await getLiquidationPenalty(fuse.getCTokenInstance(collateralAsset.cToken), liquidationIncentive);
 
-  let liquidationValueWei = liquidationAmount.mul(underlyingDebtPrice).div(SCALE_FACTOR_ONE_18_WEI);
+  // Scale to 18 decimals
+  let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
 
-  // Get seize amount
-  let seizeAmountWei = liquidationValueWei.mul(penalty).div(SCALE_FACTOR_ONE_18_WEI);
-  let seizeAmount = seizeAmountWei.mul(SCALE_FACTOR_ONE_18_WEI).div(underlyingCollateralPrice);
+  // 18 decimals
+  let seizeValue = liquidationValue.mul(penalty).div(SCALE_FACTOR_ONE_18_WEI);
+
+  // xcDOT: 10 decimals
+  let seizeAmount = seizeValue // 18 decimals
+    .mul(SCALE_FACTOR_ONE_18_WEI) // -> 36 decimals
+    .div(collateralAssetUnderlyingPrice) // -> 18 decimals
+    .div(SCALE_FACTOR_UNDERLYING_DECIMALS(collateralAsset)); // -> decimals
 
   // Check if actual collateral is too low to seize seizeAmount; if so, recalculate liquidation amount
-  const actualCollateral = borrower.collateral[0].supplyBalance.div(
-    SCALE_FACTOR_UNDERLYING_DECIMALS(borrower.collateral[0])
-  );
 
   if (seizeAmount.gt(actualCollateral)) {
+    // 10 decimals
     seizeAmount = actualCollateral;
-    seizeAmountWei = seizeAmount.mul(underlyingCollateralPrice).div(SCALE_FACTOR_ONE_18_WEI);
-    liquidationValueWei = seizeAmountWei.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
-    liquidationAmount = liquidationValueWei.mul(SCALE_FACTOR_ONE_18_WEI).div(underlyingDebtPrice);
+    // 18 decimals
+    seizeValue = seizeAmount
+      // 28 decimals
+      .mul(collateralAssetUnderlyingPrice)
+      // 18 decimals
+      .div(BigNumber.from(10).pow(debtAssetDecimals));
+
+    // 18 decimals
+    liquidationValue = seizeValue.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
+    // 18 decimals
+    repayAmount = liquidationValue
+      .mul(SCALE_FACTOR_ONE_18_WEI)
+      .div(debtAssetUnderlyingPrice)
+      .div(SCALE_FACTOR_UNDERLYING_DECIMALS(debtAsset));
   }
 
-  if (liquidationAmount.lte(BigNumber.from(0))) {
+  if (repayAmount.lte(BigNumber.from(0))) {
     console.log("Liquidation amount is zero, doing nothing");
     return null;
   }
@@ -112,7 +128,7 @@ export default async function getPotentialLiquidation(
 
   if (chainLiquidationConfig.LIQUIDATION_STRATEGY == LiquidationStrategy.UNISWAP) {
     // chain some liquidation funding strategies
-    const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(fuse, borrower.debt[0].underlyingToken);
+    const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(fuse, debtAssetUnderlyingToken);
     debtFundingStrategies = fundingStrategiesAndDatas.strategies;
     debtFundingStrategiesData = fundingStrategiesAndDatas.datas;
     flashSwapFundingToken = fundingStrategiesAndDatas.flashSwapFundingToken;
@@ -159,7 +175,7 @@ export default async function getPotentialLiquidation(
       fuse,
       borrower,
       exchangeToTokenAddress,
-      liquidationAmount,
+      repayAmount,
       strategyAndData,
       flashSwapPair,
       chainLiquidationConfig.LIQUIDATION_STRATEGY,
@@ -176,9 +192,11 @@ export default async function getPotentialLiquidation(
   // calculate min profits
   const minProfitAmountEth = expectedGasFee.add(chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
 
-  if (seizeAmountWei.lt(minProfitAmountEth)) {
+  // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth).mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
+
+  if (seizeValue.lt(minProfitAmountEth)) {
     console.log(
-      `Seize amount of ${utils.formatEther(seizeAmountWei)} less than min break even of ${utils.formatEther(
+      `Seize amount of ${utils.formatEther(seizeValue)} less than min break even of ${utils.formatEther(
         minProfitAmountEth
       )}, doing nothing`
     );
@@ -190,7 +208,7 @@ export default async function getPotentialLiquidation(
     borrower,
     exchangeToTokenAddress,
     strategyAndData,
-    liquidationAmount,
+    repayAmount,
     flashSwapPair,
     debtFundingStrategies,
     debtFundingStrategiesData
