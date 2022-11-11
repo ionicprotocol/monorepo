@@ -63641,6 +63641,88 @@
         }
       ]
     },
+    "WombatLpTokenLiquidator": {
+      "address": "0x8FEbf08E760043167CB4E2e21E671b70412AcBb1",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "inputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "inputAmount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "strategyData",
+              "type": "bytes"
+            }
+          ],
+          "name": "redeem",
+          "outputs": [
+            {
+              "internalType": "contract IERC20Upgradeable",
+              "name": "outputToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "outputAmount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]
+    },
+    "WombatLpTokenPriceOracle": {
+      "address": "0xD7C43601182B066d2a26a85ab1A3E4c850FA8C93",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract ICToken",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "price",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
     "XBombLiquidatorFunder": {
       "address": "0xEf6b27d767ed1CCbD03Df45867f2fa3054d8c2B5",
       "abi": [

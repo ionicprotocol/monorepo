@@ -17,7 +17,15 @@ import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
 import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
+import { deployWombatOracle } from "../helpers/oracles/wombatLp";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  CurvePoolConfig,
+  CurveV2PoolConfig,
+  DiaAsset,
+  WombatAsset,
+} from "../helpers/types";
 
 const assets = bsc.assets;
 const wbnb = underlying(assets, assetSymbols.WBNB);
@@ -281,6 +289,13 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+const wombatAssets: WombatAsset[] = [
+  {
+    symbol: assetSymbols["WOMBATLP-WBNB"],
+    underlying: underlying(assets, assetSymbols["WOMBATLP-WBNB"]),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -297,16 +312,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await tx.wait();
   }
 
-  ///// Wombat Lp Token Price Oracle
-  const wombatOracle = await deployments.deploy("WombatLpTokenPriceOracle", {
-    from: deployer,
-    args: [],
-    log: true,
+  //// Wombat Price Oracle
+  await deployWombatOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    wombatAssets,
   });
-  if (wombatOracle.transactionHash) {
-    await ethers.provider.waitForTransaction(wombatOracle.transactionHash);
-  }
-  console.log("WombatLpTokenPriceOracle: ", wombatOracle.address);
 
   //// Dia Price Oracle
   await deployDiaOracle({
