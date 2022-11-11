@@ -703,6 +703,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", JRT),
+    disabled: true,
   },
 ];
 

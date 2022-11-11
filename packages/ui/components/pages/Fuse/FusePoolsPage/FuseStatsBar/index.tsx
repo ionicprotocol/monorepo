@@ -1,4 +1,4 @@
-import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { AddIcon, ChatIcon } from '@chakra-ui/icons';
 import {
   Avatar,
   Box,
@@ -11,16 +11,15 @@ import {
   PopoverContent,
   PopoverTrigger,
   Spinner,
-  Stack,
   Text,
   VStack,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
+import { useRouter } from 'next/router';
 import { useMemo } from 'react';
 import { FaDiscord, FaTelegram, FaTwitter } from 'react-icons/fa';
 import { SiGitbook } from 'react-icons/si';
 
-import FuseDashNav from '@ui/components/pages/Fuse/FusePoolsPage/FuseDashNav';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   FEATURE_REQUESTS_URL,
@@ -29,6 +28,7 @@ import {
   MIDAS_TELEGRAM_URL,
   MIDAS_TWITTER_URL,
 } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useTVL } from '@ui/hooks/fuse/useTVL';
 import { useColors } from '@ui/hooks/useColors';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
@@ -37,6 +37,8 @@ const MotionFlex = motion<FlexProps>(Flex);
 
 const FuseStatsBar = () => {
   const { data: tvlData, isLoading } = useTVL();
+  const router = useRouter();
+  const { setGlobalLoading } = useMultiMidas();
 
   const totalTVL = useMemo(() => {
     if (tvlData) {
@@ -73,50 +75,65 @@ const FuseStatsBar = () => {
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
         </Text>
-        <Stack direction={{ base: 'column', md: 'row' }} spacing={2}>
-          <HStack justifyContent="center">
-            <SimpleTooltip label="Documentation">
-              <Link href={MIDAS_DOCS_URL} isExternal>
+
+        <HStack
+          gap={[6, 6, 0]}
+          alignContent="center"
+          justifyContent={['center', 'center', 'flex-start']}
+          width={'100%'}
+          flexWrap="wrap"
+        >
+          <HStack spacing={[8, 8, 6]} px={4}>
+            <Link href={MIDAS_DOCS_URL} isExternal>
+              <SimpleTooltip label="Documentation">
                 <motion.div whileHover={{ scale: 1.2 }}>
                   <SiGitbook fontSize={30} color={cPage.primary.borderColor} />
                 </motion.div>
-              </Link>
-            </SimpleTooltip>
-            <SimpleTooltip label="Discord">
-              <Link href={MIDAS_DISCORD_URL} isExternal>
+              </SimpleTooltip>
+            </Link>
+            <Link href={MIDAS_DISCORD_URL} isExternal>
+              <SimpleTooltip label="Discord">
                 <motion.div whileHover={{ scale: 1.2 }}>
                   <FaDiscord fontSize={28} color={cPage.primary.borderColor} />
                 </motion.div>
-              </Link>
-            </SimpleTooltip>
-            <SimpleTooltip label="Telegram">
-              <Link href={MIDAS_TELEGRAM_URL} isExternal>
+              </SimpleTooltip>
+            </Link>
+            <Link href={MIDAS_TELEGRAM_URL} isExternal>
+              <SimpleTooltip label="Telegram">
                 <motion.div whileHover={{ scale: 1.2 }}>
                   <FaTelegram fontSize={24} color={cPage.primary.borderColor} />
                 </motion.div>
-              </Link>
-            </SimpleTooltip>
-            <SimpleTooltip label="Twitter">
-              <Link href={MIDAS_TWITTER_URL} isExternal>
+              </SimpleTooltip>
+            </Link>
+            <Link href={MIDAS_TWITTER_URL} isExternal>
+              <SimpleTooltip label="Twitter">
                 <motion.div whileHover={{ scale: 1.2 }}>
                   <FaTwitter fontSize={24} color={cPage.primary.borderColor} />
                 </motion.div>
-              </Link>
-            </SimpleTooltip>
+              </SimpleTooltip>
+            </Link>
           </HStack>
-          <Flex justifyContent="center">
+          <HStack gap={2}>
             <Button
-              variant="external"
-              rightIcon={<ExternalLinkIcon />}
+              leftIcon={<AddIcon boxSize={3} />}
+              onClick={() => {
+                setGlobalLoading(true);
+                router.push('/create-pool');
+              }}
+            >
+              Create Pool
+            </Button>
+            <Button
+              leftIcon={<ChatIcon boxSize={4} />}
+              variant={'_ghost'}
               as={Link}
               href={FEATURE_REQUESTS_URL}
               isExternal
             >
-              Request a new feature
+              Request Feature
             </Button>
-          </Flex>
-          <FuseDashNav />
-        </Stack>
+          </HStack>
+        </HStack>
       </Flex>
 
       <Popover trigger="hover">
