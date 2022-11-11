@@ -62,6 +62,7 @@ const EPX = "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71";
 const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
 const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
+const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
 
 const assets: SupportedAsset[] = [
   {
@@ -476,6 +477,14 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", SD),
     disabled: true,
+  },
+  {
+    symbol: assetSymbols["WOMBATLP-WBNB"],
+    underlying: WOMBATLP_WBNB,
+    name: "WombatLp WBNB",
+    decimals: 18,
+    oracle: OracleTypes.WombatLpTokenPriceOracle,
+    extraDocs: defaultDocs("https://bscscan.com", WOMBATLP_WBNB),
   },
 ];
 

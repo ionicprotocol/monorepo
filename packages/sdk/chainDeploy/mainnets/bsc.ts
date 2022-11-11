@@ -290,8 +290,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
   const nativeBnb = underlying(assets, assetSymbols.BNB);
 
-  // Wombat Lp Token Price Oracle
+  const existingOracle = await mpo.callStatic.oracles(nativeBnb);
+  if (existingOracle === ethers.constants.AddressZero) {
+    const fpo = await ethers.getContract("FixedNativePriceOracle", deployer);
+    const tx = await mpo.add([nativeBnb], [fpo.address]);
+    await tx.wait();
+  }
 
+  ///// Wombat Lp Token Price Oracle
   const wombatOracle = await deployments.deploy("WombatLpTokenPriceOracle", {
     from: deployer,
     args: [],
@@ -301,13 +307,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(wombatOracle.transactionHash);
   }
   console.log("WombatLpTokenPriceOracle: ", wombatOracle.address);
-
-  const existingOracle = await mpo.callStatic.oracles(nativeBnb);
-  if (existingOracle === ethers.constants.AddressZero) {
-    const fpo = await ethers.getContract("FixedNativePriceOracle", deployer);
-    const tx = await mpo.add([nativeBnb], [fpo.address]);
-    await tx.wait();
-  }
 
   //// Dia Price Oracle
   await deployDiaOracle({
