@@ -74,6 +74,7 @@ export default async function getPotentialLiquidation(
   const debtAssetUnderlyingPrice = debtAsset.underlyingPrice;
   const collateralAssetUnderlyingPrice = collateralAsset.underlyingPrice;
   const debtAssetDecimals = debtAsset.underlyingDecimals;
+  const collateralAssetDecimals = collateralAsset.underlyingDecimals;
   const debtAssetUnderlyingToken = debtAsset.underlyingToken;
   // xcDOT: 10 decimals
   const actualCollateral = collateralAsset.supplyBalance;
@@ -106,7 +107,7 @@ export default async function getPotentialLiquidation(
       // 28 decimals
       .mul(collateralAssetUnderlyingPrice)
       // 18 decimals
-      .div(BigNumber.from(10).pow(debtAssetDecimals));
+      .div(BigNumber.from(10).pow(collateralAssetDecimals));
 
     // 18 decimals
     liquidationValue = seizeValue.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
