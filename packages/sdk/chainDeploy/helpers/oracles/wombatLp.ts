@@ -10,7 +10,6 @@ export const deployWombatOracle = async ({
   wombatAssets,
 }: WombatDeployFnParams): Promise<{ wombatOracle: WombatLpTokenPriceOracle }> => {
   const { deployer } = await getNamedAccounts();
-  let tx: providers.TransactionResponse;
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
@@ -33,7 +32,7 @@ export const deployWombatOracle = async ({
   const underlyings = wombatAssets.map((w) => w.underlying);
   const oracles = Array(wombatAssets.length).fill(wombatOracle.address);
 
-  tx = await mpo.add(underlyings, oracles);
+  const tx: providers.TransactionResponse = await mpo.add(underlyings, oracles);
   await tx.wait();
 
   console.log(`Master Price Oracle updated for tokens ${underlyings.join(", ")}`);
