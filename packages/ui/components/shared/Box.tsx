@@ -9,7 +9,7 @@ export const MidasBox = ({ children, ...props }: MidasBoxProps) => {
   return (
     <Box
       backgroundColor={cCard.bgColor}
-      borderRadius={12}
+      borderRadius={'xl'}
       borderWidth={2}
       borderColor={cCard.borderColor}
       color={cCard.txtColor}
