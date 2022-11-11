@@ -185,3 +185,8 @@ export const arrakisDocs = (networkName: string, chainId: number, vaultAddress: 
   <p> 4. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };
+
+export const wombatDocs = (pool: string, tokenName: string) => {
+  return `<p><b>How to acquire this token</b></p><br />
+  <p>You can acquire this asset on the <a href="https://app.wombat.exchange/pool?pool=${pool}&token=${tokenName}&action=DEPOSIT"> Wombat Exchange </a> website</p>`;
+};
