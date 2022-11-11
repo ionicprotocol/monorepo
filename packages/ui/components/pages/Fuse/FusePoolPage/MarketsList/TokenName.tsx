@@ -116,9 +116,16 @@ export const TokenName = ({
           )}
           {asset.isBorrowPaused ? (
             asset.isSupplyPaused ? (
-              <SimpleTooltip label="This asset cannot be supplied and borrowed anymore, please withdraw all your tokens from this market.">
+              <SimpleTooltip
+                label="
+                    This asset was paused by the pool administrator.
+                    It cannot be supplied nor borrowed at the moment.
+                    You can still repay and withdraw this asset.
+                    Follow Midas Capital on any outlet for more information.
+                    "
+              >
                 <Badge variant="outline" colorScheme="gray" textTransform="capitalize">
-                  Deprecated
+                  Paused
                 </Badge>
               </SimpleTooltip>
             ) : (

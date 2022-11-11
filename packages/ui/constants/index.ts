@@ -91,6 +91,7 @@ export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
 export const DEPRECATED = 'Deprecated';
+export const PAUSED = 'Paused';
 export const SEARCH = 'Search';
 export const ALL = 'All';
 
