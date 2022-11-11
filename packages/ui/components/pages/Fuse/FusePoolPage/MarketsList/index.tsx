@@ -68,12 +68,12 @@ import {
   BORROW_BALANCE,
   BORROWABLE,
   COLLATERAL,
-  DEPRECATED,
   DOWN_LIMIT,
   LIQUIDITY,
   MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
+  PAUSED,
   PROTECTED,
   REWARDS,
   SEARCH,
@@ -132,15 +132,12 @@ export const MarketsList = ({
     assetsAddress: assets.map((asset) => asset.cToken),
   });
 
-  const [collateralCounts, protectedCounts, borrowableCounts, deprecatedCounts] = useMemo(() => {
-    const availableAssets = assets.filter(
-      (asset) => !asset.isSupplyPaused || (asset.isSupplyPaused && asset.supplyBalanceFiat !== 0)
-    );
+  const [collateralCounts, protectedCounts, borrowableCounts, pausedCounts] = useMemo(() => {
     return [
-      availableAssets.filter((asset) => asset.membership).length,
-      availableAssets.filter((asset) => asset.isBorrowPaused && !asset.isSupplyPaused).length,
-      availableAssets.filter((asset) => !asset.isBorrowPaused).length,
-      availableAssets.filter((asset) => asset.isBorrowPaused && asset.isSupplyPaused).length,
+      assets.filter((asset) => asset.membership).length,
+      assets.filter((asset) => asset.isBorrowPaused && !asset.isSupplyPaused).length,
+      assets.filter((asset) => !asset.isBorrowPaused).length,
+      assets.filter((asset) => asset.isBorrowPaused && asset.isSupplyPaused).length,
     ];
   }, [assets]);
 
@@ -185,7 +182,7 @@ export const MarketsList = ({
           row.original.market.isBorrowPaused &&
           !row.original.market.isSupplyPaused) ||
         (value.includes(BORROWABLE) && !row.original.market.isBorrowPaused) ||
-        (value.includes(DEPRECATED) &&
+        (value.includes(PAUSED) &&
           row.original.market.isBorrowPaused &&
           row.original.market.isSupplyPaused)
       ) {
@@ -254,10 +251,7 @@ export const MarketsList = ({
   );
 
   const data: Market[] = useMemo(() => {
-    const availableAssets = assets.filter(
-      (asset) => !asset.isSupplyPaused || (asset.isSupplyPaused && asset.supplyBalanceFiat !== 0)
-    );
-    return sortAssets(availableAssets).map((asset) => {
+    return sortAssets(assets).map((asset) => {
       return {
         market: asset,
         supplyApy: asset,
@@ -719,19 +713,19 @@ export const MarketsList = ({
                 </PopoverTooltip>
               </CButton>
             )}
-            {deprecatedCounts !== 0 && (
+            {pausedCounts !== 0 && (
               <CButton
-                isSelected={globalFilter.includes(DEPRECATED)}
+                isSelected={globalFilter.includes(PAUSED)}
                 variant="filter"
                 color="gray"
-                onClick={() => onFilter(DEPRECATED)}
+                onClick={() => onFilter(PAUSED)}
                 width="140px"
                 p={0}
               >
                 <PopoverTooltip
                   body={
                     <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                      <Text variant="mdText">Deprecated Asset</Text>
+                      <Text variant="mdText">Paused Asset</Text>
                       <Text variant="smText">Assets that cannot be supplied and borrowed.</Text>
                       <Text variant="smText">Click to filter</Text>
                     </VStack>
@@ -745,7 +739,7 @@ export const MarketsList = ({
                     height="100%"
                     pt="2px"
                     whiteSpace="nowrap"
-                  >{`${deprecatedCounts} Deprecated`}</Center>
+                  >{`${pausedCounts} Paused`}</Center>
                 </PopoverTooltip>
               </CButton>
             )}

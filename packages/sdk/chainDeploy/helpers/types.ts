@@ -79,6 +79,11 @@ export type DiaAsset = {
   key: string;
 };
 
+export type WombatAsset = {
+  symbol: string;
+  underlying: string;
+};
+
 export type GelatoGUniAsset = {
   vaultAddress: string;
 };
@@ -129,6 +134,10 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
   diaAssets: DiaAsset[];
   deployConfig: ChainDeployConfig;
   diaNativeFeed?: Omit<DiaAsset, "symbol" | "underlying">;
+};
+
+export type WombatDeployFnParams = ChainDeployFnParams & {
+  wombatAssets: WombatAsset[];
 };
 
 export type UniswapDeployFnParams = ChainDeployFnParams & {

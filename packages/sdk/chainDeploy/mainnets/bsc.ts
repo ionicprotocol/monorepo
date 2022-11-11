@@ -17,7 +17,15 @@ import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
 import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
-import { ChainDeployFnParams, ChainlinkAsset, CurvePoolConfig, CurveV2PoolConfig, DiaAsset } from "../helpers/types";
+import { deployWombatOracle } from "../helpers/oracles/wombatLp";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  CurvePoolConfig,
+  CurveV2PoolConfig,
+  DiaAsset,
+  WombatAsset,
+} from "../helpers/types";
 
 const assets = bsc.assets;
 const wbnb = underlying(assets, assetSymbols.WBNB);
@@ -281,6 +289,13 @@ const diaAssets: DiaAsset[] = [
   },
 ];
 
+const wombatAssets: WombatAsset[] = [
+  {
+    symbol: assetSymbols["WOMBATLP-WBNB"],
+    underlying: underlying(assets, assetSymbols["WOMBATLP-WBNB"]),
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
   ////
@@ -296,6 +311,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     const tx = await mpo.add([nativeBnb], [fpo.address]);
     await tx.wait();
   }
+
+  //// Wombat Price Oracle
+  await deployWombatOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    wombatAssets,
+  });
 
   //// Dia Price Oracle
   await deployDiaOracle({
@@ -474,6 +498,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (curveSwapLiquidatorFunder.transactionHash)
     await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
   console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
+
+  // wombat Lp token liquidator
+  const wombatLpTokenLiquidator = await deployments.deploy("WombatLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (wombatLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
+  console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
