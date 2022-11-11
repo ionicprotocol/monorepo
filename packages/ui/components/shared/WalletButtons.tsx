@@ -35,7 +35,7 @@ export const WalletButtons = () => {
                 }
 
                 if (chain.unsupported) {
-                  return <Button onClick={openChainModal}>Wrong network</Button>;
+                  return <Button onClick={openChainModal}>Change Network</Button>;
                 }
 
                 return (

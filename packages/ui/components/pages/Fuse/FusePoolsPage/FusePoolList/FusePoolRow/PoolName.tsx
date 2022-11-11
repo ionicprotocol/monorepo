@@ -22,7 +22,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
       height="100%"
       px={{ base: 2, lg: 4 }}
     >
-      <Stack width="350px" mt={rewardTokens.length ? 2 : 0}>
+      <Stack minWidth={'240px'} maxWidth={'300px'} mt={rewardTokens.length ? 2 : 0}>
         <SimpleTooltip label={pool.name}>
           <Box width="fit-content" maxWidth="100%">
             <GradientText
@@ -42,7 +42,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
       </Stack>
       {rewardTokens.length && (
         <HStack m={0}>
-          <Text>This pool is offering rewards</Text>
+          <Text>Earn Rewards</Text>
           <AvatarGroup size="xs" max={5}>
             {rewardTokens.map((token) => (
               <TokenIcon key={token} address={token} chainId={pool.chainId} />
