@@ -13,7 +13,7 @@ export const ExpanderArrow = ({
   canExpand: boolean;
 }) => {
   return (
-    <Box textAlign="center">
+    <Box pr={2}>
       <CIconButton
         aria-label="detail View"
         alignSelf="flex-end"
