@@ -231,7 +231,7 @@ const PoolsRowList = ({
       {
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
-        header: <Text textAlign="left">Pool Name</Text>,
+        header: () => <Text textAlign="left">Pool Name</Text>,
         cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         filterFn: poolFilter,
@@ -242,7 +242,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.assets,
         id: ASSETS,
         cell: ({ getValue }) => <Assets pool={getValue<PoolData>()} />,
-        header: <Text textAlign="left">Assets</Text>,
+        header: () => <Text textAlign="left">Assets</Text>,
         footer: (props) => props.column.id,
         enableSorting: false,
       },
@@ -250,7 +250,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.supplyBalance,
         id: SUPPLY_BALANCE,
         cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
-        header: (
+        header: () => (
           <Text
             textAlign="right"
             textOverflow={'ellipsis'}
@@ -267,7 +267,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.borrowBalance,
         id: BORROW_BALANCE,
         cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
-        header: (
+        header: () => (
           <Text
             textAlign="right"
             textOverflow={'ellipsis'}
@@ -284,7 +284,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
-        header: (
+        header: () => (
           <Text
             textAlign="right"
             title="Total Supply"
@@ -301,7 +301,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.totalBorrow,
         id: TOTAL_BORROW,
         cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
-        header: (
+        header: () => (
           <Text textAlign="left" title="Total Borrow" textOverflow={'ellipsis'} whiteSpace="nowrap">
             Total Borrow
           </Text>
