@@ -10,7 +10,7 @@ import {
   pancakeSwapDocs,
   stkBNBDocs,
 } from "../common";
-import { wrappedAssetDocs } from "../common/docs";
+import { wombatDocs, wrappedAssetDocs } from "../common/docs";
 
 export const WBNB = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 export const BNB = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
@@ -484,7 +484,7 @@ const assets: SupportedAsset[] = [
     name: "WombatLp WBNB",
     decimals: 18,
     oracle: OracleTypes.WombatLpTokenPriceOracle,
-    extraDocs: defaultDocs("https://bscscan.com", WOMBATLP_WBNB),
+    extraDocs: wombatDocs("BNB", "WBNB"),
   },
 ];
 
