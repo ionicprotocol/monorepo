@@ -525,7 +525,6 @@ export const MarketsList = ({
         flexDirection="row"
         flexWrap="wrap"
         justifyContent={['center', 'center', 'flex-start']}
-        gap={{ base: 4, lg: 8 }}
       >
         <HStack>
           <Text variant="mdText" width="max-content">

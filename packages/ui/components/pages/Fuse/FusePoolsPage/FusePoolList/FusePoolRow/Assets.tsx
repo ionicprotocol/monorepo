@@ -1,4 +1,4 @@
-import { AvatarGroup, HStack, Text, VStack } from '@chakra-ui/react';
+import { AvatarGroup, HStack, Text } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
