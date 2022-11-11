@@ -487,6 +487,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveSwapLiquidatorFunder.transactionHash);
   console.log("CurveSwapLiquidatorFunder: ", curveSwapLiquidatorFunder.address);
 
+  // wombat Lp token liquidator
+  const wombatLpTokenLiquidator = await deployments.deploy("WombatLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (wombatLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(wombatLpTokenLiquidator.transactionHash);
+  console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
+
   //// deploy ankr bnb interest rate model
   const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
     from: deployer,
