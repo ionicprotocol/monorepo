@@ -83,30 +83,11 @@ export default async function getPotentialLiquidation(
     liquidationIncentive
   );
 
-  /*
-  numerator = mul_(totalPenaltyMantissa, Exp({ mantissa: priceBorrowedMantissa }));
-  denominator = mul_(Exp({ mantissa: priceCollateralMantissa }), Exp({ mantissa: exchangeRateMantissa }));
-  */
-
-  const numerator = penalty.mul(underlyingDebtPrice).div(SCALE_FACTOR_ONE_18_WEI);
-  const denominator = underlyingCollateralPrice.mul(borrower.collateral[0].exchangeRate).div(SCALE_FACTOR_ONE_18_WEI);
-  // preserve precision
-  const ratio = numerator.div(denominator);
-
   let liquidationValueWei = liquidationAmount.mul(underlyingDebtPrice).div(SCALE_FACTOR_ONE_18_WEI);
 
   // Get seize amount
-  let seizeAmountWei = liquidationValueWei.mul(ratio);
+  let seizeAmountWei = liquidationValueWei.mul(penalty).div(SCALE_FACTOR_ONE_18_WEI);
   let seizeAmount = seizeAmountWei.mul(SCALE_FACTOR_ONE_18_WEI).div(underlyingCollateralPrice);
-
-  console.log({
-    ratio: utils.formatEther(ratio),
-    numerator: utils.formatEther(numerator),
-    denominator: utils.formatEther(denominator),
-    liquidationValueWei: utils.formatEther(liquidationValueWei),
-    seizeAmount: utils.formatEther(seizeAmount),
-    seizeAmountWei: utils.formatEther(seizeAmountWei),
-  });
 
   // Check if actual collateral is too low to seize seizeAmount; if so, recalculate liquidation amount
   const actualCollateral = borrower.collateral[0].supplyBalance.div(
@@ -115,8 +96,8 @@ export default async function getPotentialLiquidation(
 
   if (seizeAmount.gt(actualCollateral)) {
     seizeAmount = actualCollateral;
-    seizeAmountWei = seizeAmount.mul(underlyingCollateralPrice);
-    liquidationValueWei = seizeAmountWei.div(liquidationIncentive);
+    seizeAmountWei = seizeAmount.mul(underlyingCollateralPrice).div(SCALE_FACTOR_ONE_18_WEI);
+    liquidationValueWei = seizeAmountWei.mul(SCALE_FACTOR_ONE_18_WEI).div(penalty);
     liquidationAmount = liquidationValueWei.mul(SCALE_FACTOR_ONE_18_WEI).div(underlyingDebtPrice);
   }
 
@@ -194,7 +175,6 @@ export default async function getPotentialLiquidation(
 
   // calculate min profits
   const minProfitAmountEth = expectedGasFee.add(chainLiquidationConfig.MINIMUM_PROFIT_NATIVE);
-  // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth).mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
 
   if (seizeAmountWei.lt(minProfitAmountEth)) {
     console.log(
