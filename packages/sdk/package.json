@@ -23,7 +23,7 @@
     "setup": "cd lib/contracts && forge build",
     "test:mocha": "nyc ts-mocha --require 'tests-mocha/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests-mocha/**/*.spec.ts'",
     "test": "hardhat test --parallel --no-compile",
-    "test:bsc": "FORK_RPC_URL=${FORK_RPC_URL} FORK_BLOCK_NUMBER=${FORK_BLOCK_NUMBER} FORK_CHAIN_ID=56 hardhat test --no-compile",
+    "test:bsc": "SIMULATION=true FORK_RPC_URL=${FORK_RPC_URL} FORK_CHAIN_ID=56 hardhat test --no-compile",
     "test:forge": "cd lib/contracts && forge test",
     "export": "hardhat export --export-all ./deployments.json",
     "export:all": "npm run export:bsc && npm run export:polygon && npm run export:moonbeam && npm run export:neondevnet && npm run export:chapel",
