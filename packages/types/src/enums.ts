@@ -54,6 +54,7 @@ export enum OracleTypes {
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   StkBNBPriceOracle = "StkBNBPriceOracle",
   BNBxPriceOracle = "BNBxPriceOracle",
+  WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -208,6 +209,8 @@ export enum assetSymbols {
   EPX = "EPX",
   pSTAKE = "pSTAKE",
   SD = "SD", // stader labs
+
+  "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
