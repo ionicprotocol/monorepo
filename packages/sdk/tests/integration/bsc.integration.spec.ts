@@ -60,6 +60,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
   });
 
   it("FL - should liquidate a token borrow for token collateral", async function () {
+    this.timeout(0);
     const { alice, bob } = await ethers.getNamedSigners();
     const sdk = await getOrCreateMidas();
 
@@ -70,6 +71,10 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
 
     // Supply 0.1 tokenOne from other account
     const supply1Amount = "1";
+
+    const mpo = sdk.createMasterPriceOracle();
+    const busdPrice = await mpo.callStatic.price(deployedErc20Two.underlying);
+    const btcbUsdPrice = (await mpo.callStatic.price(deployedErc20One.underlying)).div(busdPrice);
 
     const btcbSupply = await sdk
       .setSigner(alice)
@@ -84,7 +89,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
       `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSupply.errorCode}`
     );
 
-    const supply2Amount = "8600";
+    const supply2Amount = "10000";
     const busdSupply = await sdk
       .setSigner(bob)
       .supply(
@@ -97,12 +102,12 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     console.log(
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`
     );
-
-    const borrowAmount = "0.20";
+    const R = 0.46;
+    const borrowAmount = R * (parseInt(supply2Amount) / btcbUsdPrice.toNumber());
 
     const btcbBorrow = await sdk
       .setSigner(bob)
-      .borrow(deployedErc20One.assetAddress, ethers.utils.parseEther(borrowAmount));
+      .borrow(deployedErc20One.assetAddress, ethers.utils.parseEther(borrowAmount.toString()));
     console.log(
       `Borrowed ${borrowAmount} ${erc20One.symbol} collateral from ${bob.address}, ERROR: ${btcbBorrow.errorCode}`
     );

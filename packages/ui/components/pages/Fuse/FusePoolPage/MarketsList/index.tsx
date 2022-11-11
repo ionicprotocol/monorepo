@@ -11,6 +11,7 @@ import {
   Center,
   Checkbox,
   Flex,
+  Hide,
   HStack,
   IconButton,
   Input,
@@ -444,7 +445,6 @@ export const MarketsList = ({
     pageIndex: 0,
     pageSize: MARKETS_COUNT_PER_PAGE[0],
   });
-  const isMobile = useIsMobile();
   const isSemiSmallScreen = useIsSemiSmallScreen();
 
   const [globalFilter, setGlobalFilter] = useState<string[]>([ALL]);
@@ -516,55 +516,55 @@ export const MarketsList = ({
 
   return (
     <Box>
+      {/* Supply & Borrow Balance */}
       <Flex
         px="4"
-        mt={6}
-        justifyContent="space-between"
-        flexDirection={{ base: 'column', sm: 'row' }}
+        mt={4}
         gap={4}
+        flexDirection="row"
+        flexWrap="wrap"
+        justifyContent={['center', 'center', 'flex-start']}
       >
-        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={{ base: 4, lg: 8 }}>
-          <HStack>
-            <Text variant="mdText" width="max-content">
-              Your Supply Balance :
-            </Text>
-            <SimpleTooltip
-              label={supplyBalanceFiat.toString()}
-              isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
-            >
-              <Text variant="lgText" fontWeight="bold">
-                {smallUsdFormatter(supplyBalanceFiat)}
-                {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
-              </Text>
-            </SimpleTooltip>
-          </HStack>
-          <HStack>
-            <Text variant="mdText" width="max-content">
-              Your Borrow Balance :
-            </Text>
-            <SimpleTooltip
-              label={borrowBalanceFiat.toString()}
-              isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
-            >
-              <Text variant="lgText" fontWeight="bold">
-                {smallUsdFormatter(borrowBalanceFiat)}
-                {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
-              </Text>
-            </SimpleTooltip>
-          </HStack>
-        </Flex>
-      </Flex>
-      <Flex
-        justifyContent="space-between"
-        px="4"
-        py="8"
-        flexDirection={{ base: 'column', md: 'row' }}
-        gap={4}
-      >
-        <Flex className="pagination" flexDirection={{ base: 'column', lg: 'row' }} gap={4}>
-          <Text paddingTop="2px" variant="title">
-            Assets
+        <HStack>
+          <Text variant="mdText" width="max-content">
+            Your Supply Balance :
           </Text>
+          <SimpleTooltip
+            label={supplyBalanceFiat.toString()}
+            isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
+          >
+            <Text variant="lgText" fontWeight="bold">
+              {smallUsdFormatter(supplyBalanceFiat)}
+              {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
+            </Text>
+          </SimpleTooltip>
+        </HStack>
+        <HStack>
+          <Text variant="mdText" width="max-content">
+            Your Borrow Balance :
+          </Text>
+          <SimpleTooltip
+            label={borrowBalanceFiat.toString()}
+            isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
+          >
+            <Text variant="lgText" fontWeight="bold">
+              {smallUsdFormatter(borrowBalanceFiat)}
+              {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
+            </Text>
+          </SimpleTooltip>
+        </HStack>
+      </Flex>
+
+      {/* Table Filter and Search */}
+      <Flex
+        justifyContent={['center', 'center', 'space-between']}
+        p="4"
+        alignItems={'center'}
+        flexDirection={'row'}
+        flexWrap="wrap-reverse"
+        gap={4}
+      >
+        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={4} alignItems="center">
           <ButtonGroup
             isAttached={!isSemiSmallScreen ? true : false}
             gap={isSemiSmallScreen ? 2 : 0}
@@ -791,6 +791,8 @@ export const MarketsList = ({
           </Popover>
         </Flex>
       </Flex>
+
+      {/* Market Table */}
       <Table>
         <Thead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -899,16 +901,13 @@ export const MarketsList = ({
           )}
         </Tbody>
       </Table>
-      <Flex
-        className="pagination"
-        flexDirection={{ base: 'column', lg: 'row' }}
-        gap={4}
-        justifyContent="flex-end"
-        alignItems="flex-end"
-        p={4}
-      >
+
+      {/* Pagination Elements */}
+      <Flex className="pagination" gap={4} justifyContent="flex-end" alignItems="center" p={4}>
         <HStack>
-          {!isMobile && <Text variant="smText">Markets Per Page</Text>}
+          <Hide below="lg">
+            <Text variant="smText">Markets Per Page</Text>
+          </Hide>
           <Select
             value={pagination.pageSize}
             onChange={(e) => {

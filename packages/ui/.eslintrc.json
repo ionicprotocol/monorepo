@@ -21,7 +21,7 @@
     "ecmaVersion": 12,
     "sourceType": "module"
   },
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "unused-imports"],
   "settings": {
     "import/resolver": {
       "node": {
@@ -44,6 +44,11 @@
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "react/display-name": "off",
     "react/prop-types": "off",
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": [
+      "warn",
+      { "vars": "all", "varsIgnorePattern": "^_", "args": "after-used", "argsIgnorePattern": "^_" }
+    ],
     "sort-imports": [
       "error",
       {

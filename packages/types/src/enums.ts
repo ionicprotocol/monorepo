@@ -54,6 +54,7 @@ export enum OracleTypes {
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   StkBNBPriceOracle = "StkBNBPriceOracle",
   BNBxPriceOracle = "BNBxPriceOracle",
+  WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -68,6 +69,7 @@ export enum IrmTypes {
   AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB = "AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB",
   AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
   AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
+  AdjustableJumpRateModel_JARVIS_jBRL = "AdjustableJumpRateModel_JARVIS_jBRL",
 }
 
 export enum LiquidationStrategy {
@@ -207,6 +209,8 @@ export enum assetSymbols {
   EPX = "EPX",
   pSTAKE = "pSTAKE",
   SD = "SD", // stader labs
+
+  "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
   saddleOptFraxUSD = "saddleOptFraxUSD",
