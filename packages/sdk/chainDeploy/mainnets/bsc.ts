@@ -294,8 +294,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   const wombatOracle = await deployments.deploy("WombatLpTokenPriceOracle", {
     from: deployer,
-    args: [mpo.address],
-    waitConfirmations: 1,
+    args: [],
     log: true,
   });
   if (wombatOracle.transactionHash) {
