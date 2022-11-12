@@ -70,7 +70,6 @@ module "bsc_mainnet_liquidation_bot" {
   provider_urls           = [local.bsc_mainnet_rpc_0, local.bsc_mainnet_rpc_1]
   runtime_env_vars = concat(local.liquidation_variables, [
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
-    { name = "EXCLUDED_COMPTROLLERS", value = "0x35F3a59389Dc3174A98610727C2e349E275Dc909" },
   ])
 }
 
@@ -93,6 +92,27 @@ module "polygon_mainnet_liquidation_bot" {
     { name = "TARGET_CHAIN_ID", value = local.polygon_mainnet_chain_id },
   ])
 }
+
+module "moonbeam_mainnet_liquidation_bot" {
+  source                  = "./modules/bot"
+  service_security_groups = module.network.ecs_task_sg
+  execution_role_arn      = module.iam.execution_role_arn
+  cluster_id              = module.ecs.ecs_cluster_id
+  docker_image            = var.liquidator_bot_image
+  region                  = var.region
+  environment             = "mainnet"
+  container_family        = "liquidation"
+  chain_id                = local.bsc_mainnet_chain_id
+  cpu                     = 256
+  memory                  = 512
+  instance_count          = 1
+  subnets                 = module.network.public_subnets
+  provider_urls           = [local.moonbeam_mainnet_rpc_0, local.moonbeam_mainnet_rpc_1]
+  runtime_env_vars = concat(local.liquidation_variables, [
+    { name = "TARGET_CHAIN_ID", value = local.moonbeam_mainnet_chain_id },
+  ])
+}
+
 
 module "ecs_alerting" {
   source              = "./modules/alerts"
