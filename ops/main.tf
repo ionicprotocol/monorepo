@@ -102,7 +102,7 @@ module "moonbeam_mainnet_liquidation_bot" {
   region                  = var.region
   environment             = "mainnet"
   container_family        = "liquidation"
-  chain_id                = local.bsc_mainnet_chain_id
+  chain_id                = local.moonbeam_mainnet_chain_id
   cpu                     = 256
   memory                  = 512
   instance_count          = 1
