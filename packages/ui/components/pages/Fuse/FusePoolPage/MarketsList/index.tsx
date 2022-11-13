@@ -600,6 +600,7 @@ export const MarketsList = ({
                 borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
                 mr="-px"
                 width="115px"
+                height="52px"
               >
                 <PopoverTooltip
                   body={
