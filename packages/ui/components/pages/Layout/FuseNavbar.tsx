@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { WalletButtons } from '@ui/components/shared/WalletButtons';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import useScrollPosition from '@ui/hooks/useScrollPosition';
 
 export const FuseNavbar = () => {
   const { colorMode, toggleColorMode } = useColorMode();
@@ -29,9 +30,18 @@ export const FuseNavbar = () => {
     { fallback: 'lg' }
   );
   const { setGlobalLoading } = useMultiMidas();
+  const scrollPos = useScrollPosition();
 
   return (
-    <HStack w={'100%'} alignItems="flex-start" mb={8}>
+    <HStack
+      w={'100%'}
+      alignItems="flex-start"
+      mb={8}
+      position="sticky"
+      top={0}
+      zIndex={9999}
+      background={cPage.primary.bgColor}
+    >
       <Box
         pt={{ md: 4, base: 3 }}
         pr={{ md: 0, base: 1 }}
@@ -44,10 +54,17 @@ export const FuseNavbar = () => {
         _hover={{ cursor: 'pointer' }}
       >
         <Image
-          src={colorMode === 'light' ? logoPrefix + 'light.svg' : logoPrefix + 'dark.svg'}
+          src={
+            colorMode === 'light'
+              ? scrollPos === 0
+                ? logoPrefix + 'light.svg'
+                : logoPrefix + 'logo-light.svg'
+              : scrollPos === 0
+              ? logoPrefix + 'dark.svg'
+              : logoPrefix + 'logo-dark.svg'
+          }
           alt="Midas Capital"
-          height="auto"
-          width={{ base: '80px', md: '400px' }}
+          height={scrollPos === 0 ? '60px' : '40px'}
         />
       </Box>
       <VStack w={'100%'}>
