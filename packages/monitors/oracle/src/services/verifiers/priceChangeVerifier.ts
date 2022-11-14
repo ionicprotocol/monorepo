@@ -1,7 +1,7 @@
 import { BigNumber } from "ethers";
 
 import { logger } from "../..";
-import { PriceChangeVerifierConfig, PriceFeedValidity } from "../../types";
+import { OracleFailure, PriceChangeVerifierConfig, PriceFeedValidity, VerifierInitValidity } from "../../types";
 
 import { AbstractOracleVerifier } from "./base";
 
@@ -9,19 +9,24 @@ export class PriceChangeVerifier extends AbstractOracleVerifier {
   mpoPrice: BigNumber;
   config: PriceChangeVerifierConfig;
 
-  async initMpoPrice(): Promise<PriceChangeVerifier | null> {
+  async initMpoPrice(): Promise<[PriceChangeVerifier, VerifierInitValidity]> {
     try {
       this.mpoPrice = await this.mpo.callStatic.price(this.asset.underlying);
-      return this;
+      return [this, null];
     } catch (e) {
       const msg = `Failed to fetch price for ${this.asset.symbol} (${this.asset.underlying})`;
-      await this.alert.sendMpoFailureAlert(msg);
       logger.error(msg + e);
-      return null;
+      return [
+        this,
+        {
+          message: msg,
+          invalidReason: OracleFailure.MPO_FAILURE,
+        },
+      ];
     }
   }
 
-  async init(): Promise<PriceChangeVerifier | null> {
+  async init(): Promise<[PriceChangeVerifier, VerifierInitValidity]> {
     return await this.initMpoPrice();
   }
 

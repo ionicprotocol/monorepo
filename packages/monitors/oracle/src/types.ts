@@ -31,12 +31,22 @@ export enum InvalidReason {
 
 export enum OracleFailure {
   MPO_FAILURE = "MPO_FAILURE",
+  NO_ORACLE_FOUND = "NO_ORACLE_FOUND",
 }
 
+export type Failure = InvalidReason | OracleFailure;
+
 export type PriceFeedInvalidity = {
-  invalidReason: InvalidReason;
+  invalidReason: Failure;
   message: string;
 };
+
+export type VerifierInitError = {
+  invalidReason: Failure;
+  message: string;
+};
+
+export type VerifierInitValidity = VerifierInitError | null;
 
 export type PriceFeedValidity = PriceFeedInvalidity | true;
 
@@ -89,3 +99,11 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [moonbeam.chainId]: moonbeam,
   [arbitrum.chainId]: arbitrum,
 };
+
+export type VerificationErrorCache = Array<{ asset: SupportedAsset; error: PriceFeedInvalidity; timestamp: number }>;
+export type InitErrorCache = Array<{ asset: SupportedAsset; error: VerifierInitError; timestamp: number }>;
+
+export enum ErrorKind {
+  init = "init",
+  verification = "verification",
+}
