@@ -5,17 +5,23 @@ on:
     branches: [main, development]
     paths:
       - '.github/workflows/deploy-bots.yaml'
-      - 'packages/bots/liquidator/**'
+      - 'packages/bots/**'
+      - 'packages/monitors/**'
       - 'docker/liquidator/**'
+      - 'docker/oracles-monitor/**'
       - 'packages/sdk/**'
+      - 'packages/chains/**'
       - 'ops/**'
   pull_request:
     branches: [main, development]
     paths:
       - '.github/workflows/deploy-bots.yaml'
-      - 'packages/bots/liquidator/**'
-      - 'packages/sdk/**'
+      - 'packages/bots/**'
+      - 'packages/monitors/**'
       - 'docker/liquidator/**'
+      - 'docker/oracles-monitor/**'
+      - 'packages/sdk/**'
+      - 'packages/chains/**'
       - 'ops/**'
 
 jobs:
