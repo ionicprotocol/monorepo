@@ -1,4 +1,3 @@
-import { CheckIcon, CopyIcon } from '@chakra-ui/icons';
 import {
   AvatarGroup,
   Box,
@@ -8,14 +7,14 @@ import {
   HStack,
   Link,
   Text,
-  useClipboard,
   VStack,
 } from '@chakra-ui/react';
 import { Row } from '@tanstack/react-table';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
 import { PoolRowData } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolList/FusePoolRow/index';
 import ClaimPoolRewardsButton from '@ui/components/shared/ClaimPoolRewardsButton';
+import { ClipboardValueIconButton } from '@ui/components/shared/ClipboardValue';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -37,8 +36,6 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
   const poolDetails = usePoolDetails(pool.assets, pool.chainId);
   const sdk = useMemo(() => getSdk(pool.chainId), [getSdk, pool.chainId]);
   const scanUrl = useMemo(() => getScanUrlByChainId(pool.chainId), [pool.chainId]);
-  const [copiedText, setCopiedText] = useState<string>('');
-  const { hasCopied, onCopy } = useClipboard(copiedText);
 
   const topLendingApy = useMemo(() => {
     if (sdk && poolDetails) {
@@ -61,19 +58,6 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
         .toFixed(2);
     }
   }, [sdk, poolDetails]);
-
-  useEffect(() => {
-    if (copiedText) {
-      onCopy();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [copiedText]);
-
-  useEffect(() => {
-    if (!hasCopied) {
-      setCopiedText('');
-    }
-  }, [hasCopied]);
 
   return (
     <Box>
@@ -287,26 +271,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                       {shortAddress(pool.comptroller, 6, 4)}
                     </Button>
                   </SimpleTooltip>
-
-                  <Button
-                    variant="_link"
-                    minW={0}
-                    mt="-8px !important"
-                    p={0}
-                    onClick={() => setCopiedText(pool.comptroller)}
-                    fontSize={18}
-                    height="auto"
-                  >
-                    {copiedText === pool.comptroller ? (
-                      <SimpleTooltip label="Copied">
-                        <CheckIcon />
-                      </SimpleTooltip>
-                    ) : (
-                      <SimpleTooltip label="Click to copy">
-                        <CopyIcon />
-                      </SimpleTooltip>
-                    )}
-                  </Button>
+                  <ClipboardValueIconButton value={pool.comptroller} />
                 </HStack>
               ) : (
                 <Text variant="smText" fontWeight="bold">

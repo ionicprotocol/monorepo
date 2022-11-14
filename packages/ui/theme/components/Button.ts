@@ -15,13 +15,14 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
   },
   variants: {
     ...theme.components.Button.variants,
-    _ghost: {
+    _ghost: (props) => ({
       ...theme.components.Button.variants?.ghost,
       _hover: {
-        bg: 'ecru80',
-        color: 'raisinBlack',
+        textDecoration: 'unset',
+        bg: mode('ecru', 'ecru')(props),
+        color: mode('raisinBlack', 'raisinBlack')(props),
       },
-    },
+    }),
     _solid: (props) => ({
       ...theme.components.Button.variants?.solid,
       bg: mode('ecru', 'ecru')(props),
@@ -49,12 +50,14 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       borderWidth: 2,
       borderColor: mode('ecru', 'ecru')(props),
       _hover: {
-        bg: mode('ecru80', 'ecru80')(props),
+        textDecoration: 'unset',
+        bg: mode('ecru', 'ecru')(props),
         color: mode('raisinBlack', 'raisinBlack')(props),
       },
     }),
     filter: (props) => ({
       ...theme.components.Button.variants?.solid,
+      height: '52px',
       bg: props.isSelected
         ? mode(
             props.color ? `${props.color}.600` : 'ecru',

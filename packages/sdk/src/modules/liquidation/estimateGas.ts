@@ -1,4 +1,4 @@
-import { LiquidationKind } from "@midas-capital/types";
+import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
 import { MidasBase } from "../../MidasSdk";
@@ -13,30 +13,12 @@ const estimateGas = async (
   liquidationAmount: BigNumber,
   strategiesAndDatas: StrategiesAndDatas,
   flashSwapPair: string,
-  liquidationKind: LiquidationKind,
+  liquidationStrategy: LiquidationStrategy,
   debtFundingStrategies: any[],
   debtFundingStrategiesData: any[]
 ) => {
-  switch (liquidationKind) {
-    case LiquidationKind.DEFAULT_NATIVE_BORROW:
-      return await fuse.contracts.FuseSafeLiquidator.estimateGas[
-        "safeLiquidate(address,address,address,uint256,address,address,address[],bytes[])"
-      ](
-        borrower.account,
-        borrower.debt[0].cToken,
-        borrower.collateral[0].cToken,
-        0,
-        exchangeToTokenAddress,
-        fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategiesAndDatas.strategies,
-        strategiesAndDatas.datas,
-        {
-          gasLimit: 1e9,
-          value: liquidationAmount,
-          from: process.env.ETHEREUM_ADMIN_ACCOUNT,
-        }
-      );
-    case LiquidationKind.DEFAULT_TOKEN_BORROW:
+  switch (liquidationStrategy) {
+    case LiquidationStrategy.DEFAULT:
       return await fuse.contracts.FuseSafeLiquidator.estimateGas[
         "safeLiquidate(address,uint256,address,address,uint256,address,address,address[],bytes[])"
       ](
@@ -54,25 +36,7 @@ const estimateGas = async (
           from: process.env.ETHEREUM_ADMIN_ACCOUNT,
         }
       );
-
-    case LiquidationKind.UNISWAP_NATIVE_BORROW:
-      return await fuse.contracts.FuseSafeLiquidator.estimateGas.safeLiquidateToEthWithFlashLoan(
-        borrower.account,
-        liquidationAmount,
-        borrower.debt[0].cToken,
-        borrower.collateral[0].cToken,
-        0,
-        exchangeToTokenAddress,
-        fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-        strategiesAndDatas.strategies,
-        strategiesAndDatas.datas,
-        0,
-        {
-          gasLimit: 1e9,
-          from: process.env.ETHEREUM_ADMIN_ACCOUNT,
-        }
-      );
-    case LiquidationKind.UNISWAP_TOKEN_BORROW:
+    case LiquidationStrategy.UNISWAP:
       return await fuse.contracts.FuseSafeLiquidator.estimateGas.safeLiquidateToTokensWithFlashLoan(
         {
           borrower: borrower.account,

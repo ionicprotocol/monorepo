@@ -97,7 +97,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
   //
   {
     symbol: assetSymbols.AAVE,
-    aggregator: "0xbE23a3AA13038CfC28aFd0ECe4FdE379fE7fBfc4",
+    aggregator: "0x72484B12719E23115761D5DA1646945632979bB6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {

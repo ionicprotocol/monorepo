@@ -6,6 +6,8 @@ export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 export const ABILLY = 1e9;
 
 export const MIDAS_DOCS_URL = 'https://docs.midascapital.xyz/';
+export const MIDAS_SECURITY_DOCS_URL =
+  'https://docs.midascapital.xyz/security/security-outline/4626-strategy-risk-scoring';
 export const MIDAS_DISCORD_URL = 'https://discord.gg/85YxVuPeMt';
 export const MIDAS_TELEGRAM_URL = 'https://t.me/midascapitaltg';
 export const MIDAS_TWITTER_URL = 'https://twitter.com/MidasCapitalxyz';
@@ -38,6 +40,11 @@ export const ADMIN_FEE = {
   DEFAULT: 5,
   MIN: 0,
   MAX: 30,
+};
+
+export const SUPPLY_CAPS = {
+  MIN: 0,
+  DEFAULT: 0,
 };
 
 export const POOLS_PER_PAGE = 6;
@@ -84,6 +91,7 @@ export const COLLATERAL = 'Collateral';
 export const PROTECTED = 'Protected';
 export const BORROWABLE = 'Borrowable';
 export const DEPRECATED = 'Deprecated';
+export const PAUSED = 'Paused';
 export const SEARCH = 'Search';
 export const ALL = 'All';
 
@@ -97,6 +105,8 @@ export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
 export const SUPPLY_STEPS = ['Approve', 'Enter Market', 'Mint Market Share'];
+export const SCORE_LIMIT = 0.6;
+export const SCORE_RANGE_MAX = 10;
 export const REPAY_STEPS = ['Approve', 'Repay'];
 export const MARKET_LTV = 'Market / LTV';
 export const SUPPLY_APY = 'Supply APY';

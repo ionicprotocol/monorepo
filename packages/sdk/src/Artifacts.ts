@@ -16,6 +16,7 @@ import ComptrollerArtifact from "../lib/contracts/out/Comptroller.sol/Comptrolle
 import CTokenInterfaceArtifact from "../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
 import CurveLpTokenPriceOracleNoRegistryArtifact from "../lib/contracts/out/CurveLpTokenPriceOracleNoRegistry.sol/CurveLpTokenPriceOracleNoRegistry.json";
 import DAIInterestRateModelV2Artifact from "../lib/contracts/out/DAIInterestRateModelV2.sol/DAIInterestRateModelV2.json";
+import DiaPriceOracleArtifact from "../lib/contracts/out/DiaPriceOracle.sol/DiaPriceOracle.json";
 import EIP20InterfaceArtifact from "../lib/contracts/out/EIP20Interface.sol/EIP20Interface.json";
 import ERC20Artifact from "../lib/contracts/out/ERC20.sol/ERC20.json";
 import FixedNativePriceOracleArtifact from "../lib/contracts/out/FixedNativePriceOracle.sol/FixedNativePriceOracle.json";
@@ -42,6 +43,7 @@ const CErc20PluginRewardsDelegate: Artifact = CErc20PluginRewardsDelegateArtifac
 const ChainlinkPriceOracleV2: Artifact = ChainlinkPriceOracleV2Artifact;
 const Comptroller: Artifact = ComptrollerArtifact;
 const CTokenInterface: Artifact = CTokenInterfaceArtifact;
+const DiaPriceOracle: Artifact = DiaPriceOracleArtifact;
 const DAIInterestRateModelV2: Artifact = DAIInterestRateModelV2Artifact;
 const EIP20Interface: Artifact = EIP20InterfaceArtifact;
 const ERC20: Artifact = ERC20Artifact;
@@ -58,6 +60,7 @@ const AdjustableJumpRateModel_TRANSFERO_BRZ: Artifact = AdjustableJumpRateModelA
 const AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB: Artifact = AdjustableJumpRateModelArtifact;
 const AdjustableJumpRateModel_STADER_WBNB: Artifact = AdjustableJumpRateModelArtifact;
 const AdjustableJumpRateModel_MIXBYTES_USDC: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_JARVIS_jBRL: Artifact = AdjustableJumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -85,6 +88,7 @@ const ARTIFACTS = {
   Comptroller,
   CTokenInterface,
   DAIInterestRateModelV2,
+  DiaPriceOracle,
   EIP20Interface,
   ERC20,
   FuseFlywheelDynamicRewards,
@@ -98,6 +102,7 @@ const ARTIFACTS = {
   AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
   AdjustableJumpRateModel_STADER_WBNB,
   AdjustableJumpRateModel_MIXBYTES_USDC,
+  AdjustableJumpRateModel_JARVIS_jBRL,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -130,6 +135,7 @@ export {
   ChainlinkPriceOracleV2,
   Comptroller,
   CTokenInterface,
+  DiaPriceOracle,
   DAIInterestRateModelV2,
   EIP20Interface,
   ERC20,
@@ -144,6 +150,7 @@ export {
   AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
   AdjustableJumpRateModel_STADER_WBNB,
   AdjustableJumpRateModel_MIXBYTES_USDC,
+  AdjustableJumpRateModel_JARVIS_jBRL,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
