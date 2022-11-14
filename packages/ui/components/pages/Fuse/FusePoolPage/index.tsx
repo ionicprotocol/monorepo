@@ -178,35 +178,37 @@ const FusePoolPage = memo(() => {
                 initColumnVisibility={initColumnVisibility}
               />
             ) : (
-              <Box py={6}>
-                <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={{ base: 4, lg: 8 }} px={4}>
-                  <HStack>
-                    <Text variant="mdText" width="max-content">
-                      Your Supply Balance :
-                    </Text>
-                    <Skeleton height={8} width={20} />
-                  </HStack>
-                  <HStack>
-                    <Text variant="mdText" width="max-content">
-                      Your Borrow Balance :
-                    </Text>
-                    <Skeleton height={8} width={20} />
-                  </HStack>
-                </Flex>
-                <Flex
-                  flexDirection={{ base: 'column', lg: 'row' }}
-                  alignItems="center"
-                  gap={4}
-                  my={8}
-                  px={4}
-                >
-                  <Text paddingTop="2px" variant="title">
-                    Assets
-                  </Text>
-                  <Skeleton height={8} width={60} />
-                </Flex>
+              <>
+                <Box p={4} gap={4}>
+                  <Flex
+                    flexDirection={{ base: 'column', lg: 'row' }}
+                    gap={{ base: 4, lg: 8 }}
+                    pb={4}
+                  >
+                    <HStack>
+                      <Text variant="mdText" width="max-content">
+                        Your Supply Balance :
+                      </Text>
+                      <Skeleton height={'27px'} width={20} />
+                    </HStack>
+                    <HStack>
+                      <Text variant="mdText" width="max-content">
+                        Your Borrow Balance :
+                      </Text>
+                      <Skeleton height={'27px'} width={20} />
+                    </HStack>
+                  </Flex>
+                  <Flex alignItems="center" justifyContent={'space-between'}>
+                    <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={'1px'}>
+                      <Skeleton height={'48px'} width={'72px'} />
+                      <Skeleton height={'48px'} width={'120px'} />
+                      <Skeleton height={'48px'} width={'120px'} />
+                    </Flex>
+                    <Skeleton height={'40px'} width={'320px'} />
+                  </Flex>
+                </Box>
                 <Skeleton height={200} width="100%" />
-              </Box>
+              </>
             )}
           </MidasBox>
           <PoolDetails data={data} />
