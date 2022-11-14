@@ -17,6 +17,7 @@ describe("Feed verifier", () => {
   const chainConfig = chainIdToConfig[SupportedChains.bsc];
   const assetsToTest = [assetSymbols.WBNB, assetSymbols.BUSD, assetSymbols.BTCB, assetSymbols.USDT, assetSymbols.DAI];
   const assets = chainConfig.assets.filter((x) => assetsToTest.some((y) => y === x.symbol));
+  // @ts-ignore
   const config = configs[Services.FeedVerifier];
 
   beforeEach(() => {
@@ -29,7 +30,7 @@ describe("Feed verifier", () => {
   });
   describe("instantiate", () => {
     it("should init FeedVerifier", async () => {
-      const verifier = await feedVerifier.init();
+      const [verifier] = await feedVerifier.init();
       expect(verifier).to.be.instanceOf(AbstractOracleVerifier);
       expect(verifier?.underlyingOracle).to.be.instanceOf(Contract);
     });

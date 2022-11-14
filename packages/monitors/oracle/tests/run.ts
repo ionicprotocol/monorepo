@@ -4,7 +4,7 @@ import { Wallet } from "ethers";
 
 import { setUpSdk } from "../src";
 import { assets } from "../src/config";
-import { baseConfig, configs } from "../src/config/variables";
+import { baseConfig } from "../src/config/variables";
 import { runVerifier } from "../src/run";
 import { Services } from "../src/types";
 
@@ -14,10 +14,7 @@ import { Services } from "../src/types";
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);
   const midasSdk = setUpSdk(chainId, signer);
 
-  const feedVerifierConfig = configs[Services.FeedVerifier];
-  const priceVerifierConfig = configs[Services.PriceVerifier];
-
   const assetsOverride = assets[Services.FeedVerifier].slice(0, 1);
-  runVerifier(midasSdk, Services.FeedVerifier, feedVerifierConfig, assetsOverride);
-  runVerifier(midasSdk, Services.PriceVerifier, priceVerifierConfig, assetsOverride);
+  runVerifier(midasSdk, Services.FeedVerifier, assetsOverride);
+  runVerifier(midasSdk, Services.PriceVerifier, assetsOverride);
 })();
