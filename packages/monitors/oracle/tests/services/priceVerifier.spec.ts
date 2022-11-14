@@ -40,7 +40,7 @@ describe("Price verifier", () => {
   });
   describe("instantiate", () => {
     it("should init FeedVerifier", async () => {
-      const verifier = await priceVerifier.init();
+      const [verifier] = await priceVerifier.init();
       expect(verifier).to.be.instanceOf(AbstractOracleVerifier);
       expect(verifier?.mpoPrice).to.be.not.equal(BigNumber.from(0));
     });
