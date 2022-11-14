@@ -2,7 +2,13 @@ import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
 import { logger } from "../..";
-import { FeedVerifierConfig, PriceFeedValidity, VerifyFeedParams } from "../../types";
+import {
+  FeedVerifierConfig,
+  OracleFailure,
+  PriceFeedValidity,
+  VerifierInitValidity,
+  VerifyFeedParams,
+} from "../../types";
 
 import { AbstractOracleVerifier } from "./base";
 import { verifyProviderFeed } from "./providers";
@@ -11,12 +17,11 @@ export class FeedVerifier extends AbstractOracleVerifier {
   underlyingOracle: Contract;
   config: FeedVerifierConfig;
 
-  async initUnderlyingOracle(): Promise<FeedVerifier | null> {
+  async initUnderlyingOracle(): Promise<[FeedVerifier, VerifierInitValidity]> {
     if (!this.asset.oracle) {
-      logger.error(
-        `Asset: ${this.asset.symbol} (${this.asset.underlying}) does not have a price oracle set, considering setting "disabled: true"`
-      );
-      return null;
+      const msg = `Asset: ${this.asset.symbol} (${this.asset.underlying}) does not have a price oracle set, considering setting "disabled: true"`;
+      logger.error(msg);
+      return [this, { message: msg, invalidReason: OracleFailure.NO_ORACLE_FOUND }];
     }
     this.oracleType = this.asset.oracle;
 
@@ -24,15 +29,14 @@ export class FeedVerifier extends AbstractOracleVerifier {
       const oracleAddress = await this.mpo.callStatic.oracles(this.asset.underlying);
       const { oracles, provider } = this.sdk;
       this.underlyingOracle = new Contract(oracleAddress, oracles[this.oracleType].abi, provider);
-      return this;
+      return [this, null];
     } catch (e) {
       const msg = `No oracle found for asset ${this.asset.symbol} (${this.asset.underlying})`;
-      await this.alert.sendMpoFailureAlert(msg);
       logger.error(msg + e);
-      return null;
+      return [this, { message: msg, invalidReason: OracleFailure.NO_ORACLE_FOUND }];
     }
   }
-  async init(): Promise<FeedVerifier | null> {
+  async init(): Promise<[FeedVerifier, VerifierInitValidity]> {
     return await this.initUnderlyingOracle();
   }
 
@@ -49,7 +53,6 @@ export class FeedVerifier extends AbstractOracleVerifier {
   private async verifyFeedValidity(oracle: OracleTypes, args: VerifyFeedParams) {
     const feedInvalidity = await verifyProviderFeed(oracle, this.config, args);
     if (feedInvalidity !== true) {
-      await this.alert.sendInvalidFeedAlert(feedInvalidity);
       logger.error(feedInvalidity.message);
     }
     return feedInvalidity;

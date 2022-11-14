@@ -2,12 +2,9 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset } from "@midas-capital/types";
 import { constants, Contract } from "ethers";
 
-import { AdminService } from "./admin";
-
 export class PoolService {
   sdk: MidasSdk;
   asset: SupportedAsset;
-  adminService: AdminService;
 
   constructor(sdk: MidasSdk, asset: SupportedAsset) {
     this.asset = asset;
@@ -15,7 +12,6 @@ export class PoolService {
   }
 
   async init(): Promise<PoolService> {
-    this.adminService = await new AdminService(this.sdk, this.asset).init();
     return this;
   }
 
