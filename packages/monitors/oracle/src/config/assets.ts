@@ -40,7 +40,7 @@ const getFeedVerifierAssets = (): SupportedAsset[] => {
     (asset) =>
       asset.oracle &&
       FEED_VERIFIER_ORACLES.includes(asset.oracle) &&
-      asset.disabled !== false &&
+      asset.disabled !== true &&
       !PRICE_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
   );
 };
@@ -51,7 +51,7 @@ const getPriceVerifierAssets = (): SupportedAsset[] => {
     (asset) =>
       asset.oracle &&
       PRICE_VERIFIER_ORACLES.includes(asset.oracle) &&
-      asset.disabled !== false &&
+      asset.disabled !== true &&
       !PRICE_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
   );
 };
@@ -59,7 +59,7 @@ const getPriceVerifierAssets = (): SupportedAsset[] => {
 const getPriceChangeVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
   return chainAssets.filter(
-    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled !== false
+    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled !== true
   );
 };
 
