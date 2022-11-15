@@ -40,7 +40,11 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     }
 
     createFirstComptrollerExtension(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      return new Contract(comptrollerAddress, this.chainDeployment.ComptrollerFirstExtension.abi, signerOrProvider) as ComptrollerFirstExtension;
+      return new Contract(
+        comptrollerAddress,
+        this.chainDeployment.ComptrollerFirstExtension.abi,
+        signerOrProvider
+      ) as ComptrollerFirstExtension;
     }
 
     createOracle(oracleAddress: string, type: string, signerOrProvider: SignerOrProvider = this.signer) {

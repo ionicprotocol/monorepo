@@ -35,11 +35,7 @@ task("market:mint-pause", "Pauses minting on a market")
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
     const comptroller = await market.comptroller();
-    const pool = (await hre.ethers.getContractAt(
-      "Comptroller.sol:Comptroller",
-      comptroller,
-      admin
-    )) as Comptroller;
+    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
     const poolExtension = (await hre.ethers.getContractAt(
       "ComptrollerFirstExtension",
       comptroller,
@@ -81,11 +77,7 @@ task("market:borrow-pause", "Pauses borrowing on a market")
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
     const comptroller = await market.comptroller();
-    const pool = (await hre.ethers.getContractAt(
-      "Comptroller.sol:Comptroller",
-      comptroller,
-      admin
-    )) as Comptroller;
+    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
     const poolExtension = (await hre.ethers.getContractAt(
       "ComptrollerFirstExtension",
       comptroller,
@@ -125,11 +117,7 @@ task("market:set-supply-cap", "Pauses borrowing on a market")
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
     const comptroller = await market.comptroller();
-    const pool = (await hre.ethers.getContractAt(
-      "Comptroller.sol:Comptroller",
-      comptroller,
-      admin
-    )) as Comptroller;
+    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
     const poolExtension = (await hre.ethers.getContractAt(
       "ComptrollerFirstExtension",
       comptroller,
@@ -140,7 +128,10 @@ task("market:set-supply-cap", "Pauses borrowing on a market")
     console.log(`Current supply cap is ${currentSupplyCap}`);
 
     const newSupplyCap = hre.ethers.BigNumber.from(taskArgs.maxSupply);
-    const tx: providers.TransactionResponse = await poolExtension._setMarketSupplyCaps([market.address], [newSupplyCap]);
+    const tx: providers.TransactionResponse = await poolExtension._setMarketSupplyCaps(
+      [market.address],
+      [newSupplyCap]
+    );
     await tx.wait();
 
     const newSupplyCapSet = await pool.callStatic.supplyCaps(taskArgs.market);

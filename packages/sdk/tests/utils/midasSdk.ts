@@ -32,7 +32,10 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   chainDeployment.Comptroller = { abi: ComptrollerArtifact.abi, address: Comptroller.address };
   const ComptrollerFirstExtension = await ethers.getContract("ComptrollerFirstExtension");
   const ComptrollerFirstExtensionArtifact = await deployments.getArtifact("ComptrollerFirstExtension");
-  chainDeployment.ComptrollerFirstExtension = { abi: ComptrollerFirstExtensionArtifact.abi, address: ComptrollerFirstExtension.address};
+  chainDeployment.ComptrollerFirstExtension = {
+    abi: ComptrollerFirstExtensionArtifact.abi,
+    address: ComptrollerFirstExtension.address,
+  };
   const FixedNativePriceOracle = await ethers.getContract("FixedNativePriceOracle");
   const FixedNativePriceOracleArtifact = await deployments.getArtifact("FixedNativePriceOracle");
   chainDeployment.FixedNativePriceOracle = {
