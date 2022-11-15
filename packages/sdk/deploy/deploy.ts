@@ -73,6 +73,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("FuseFeeDistributor pool limits set", tx.hash);
 
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
+  const oldFirstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
 
   const comp = await deployments.deploy("Comptroller", {
     contract: "Comptroller.sol:Comptroller",
@@ -82,6 +83,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   if (comp.transactionHash) await ethers.provider.waitForTransaction(comp.transactionHash);
   console.log("Comptroller ", comp.address);
+
+  const compFirstExtension = await deployments.deploy("ComptrollerFirstExtension", {
+    contract: "ComptrollerFirstExtension",
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (compFirstExtension.transactionHash) await ethers.provider.waitForTransaction(compFirstExtension.transactionHash);
+  console.log("ComptrollerFirstExtension", compFirstExtension.address);
 
   const oldErc20Delegate = await ethers.getContractOrNull("CErc20Delegate");
   const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate");
@@ -534,7 +544,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
 
   // upgrade any of the pools if necessary
-  await run("pools:all:upgrade");
+  await run("pools:all:upgrade", { oldFirstExtension });
 
   // upgrade any of the markets if necessary
   await run("markets:all:upgrade");

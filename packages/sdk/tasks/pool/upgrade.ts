@@ -56,8 +56,14 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     }
   });
 
-task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on").setAction(
-  async (taskArgs, { ethers }) => {
+task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on")
+  .addOptionalParam(
+    "oldFirstExtension",
+    "The address of the first comptroller extension to replace",
+    constants.AddressZero,
+    types.string
+  )
+  .setAction(async ({ oldFirstExtension }, { ethers, deployments }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
@@ -113,9 +119,21 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
             console.log(`turned autoimpl off ${tx.hash}`);
           }
         }
+
+        const firstExtension = await deployments.getOrNull("ComptrollerFirstExtension");
+        if (firstExtension) {
+          if (firstExtension.address != oldFirstExtension) {
+            const tx = await fuseFeeDistributor._registerComptrollerExtension(
+              pool.comptroller,
+              firstExtension.address,
+              oldFirstExtension
+            );
+            await tx.wait();
+            console.log(`registered the first extension for pool ${pool.comptroller} with tx ${tx.hash}`);
+          }
+        }
       } catch (e) {
         console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
       }
     }
-  }
-);
+  });
