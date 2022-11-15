@@ -13,7 +13,7 @@ import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import { DEFAULT_DECIMALS } from '@ui/constants/index';
+import { DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
@@ -116,7 +116,7 @@ function MaxBorrowSlider({
               focusThumbOnChange={false}
             >
               <SliderTrack>
-                <SliderFilledTrack bg={sliderValue > 90 ? 'red' : undefined} />
+                <SliderFilledTrack bg={sliderValue > HIGH_RISK_RATIO * 100 ? 'red' : undefined} />
               </SliderTrack>
               <SimpleTooltip label={`${sliderValue}%`} isOpen zIndex={999}>
                 <SliderThumb />
