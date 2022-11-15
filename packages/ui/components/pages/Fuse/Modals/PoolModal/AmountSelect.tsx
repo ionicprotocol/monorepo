@@ -209,7 +209,7 @@ const AmountSelect = ({
     } else if (mode === FundOperationMode.BORROW) {
       depositOrWithdrawAlert = 'You cannot borrow this amount!';
     }
-  } else if (amountIsValid && FundOperationMode.BORROW && isRisky && !isRiskyConfirmed) {
+  } else if (amountIsValid && mode === FundOperationMode.BORROW && isRisky && !isRiskyConfirmed) {
     depositOrWithdrawAlert = 'Confirm Risk Of Borrow';
   } else {
     depositOrWithdrawAlert = null;
@@ -644,7 +644,10 @@ const AmountSelect = ({
                   : ''
               }
               onClick={onConfirm}
-              isDisabled={!amountIsValid || (isRisky && !isRiskyConfirmed)}
+              isDisabled={
+                !amountIsValid ||
+                (mode === FundOperationMode.BORROW && isRisky && !isRiskyConfirmed)
+              }
               height={16}
             >
               {isDeploying
