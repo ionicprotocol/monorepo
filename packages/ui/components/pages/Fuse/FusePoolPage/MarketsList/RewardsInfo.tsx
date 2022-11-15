@@ -26,7 +26,7 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
         <>
           {pluginInfo && (
             <>
-              <Text>
+              <Text mb={2}>
                 This market is using the <b>{pluginInfo?.name}</b> ERC4626 Strategy.
               </Text>
               {pluginInfo?.apyDocsUrl ? (

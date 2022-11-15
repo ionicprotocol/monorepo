@@ -10,7 +10,7 @@ const oracles: OracleTypes[] = [
   OracleTypes.UniswapLpTokenPriceOracle,
   OracleTypes.UniswapTwapPriceOracleV2,
   OracleTypes.StkBNBPriceOracle,
-  OracleTypes.AnkrBNBcPriceOracle,
+  OracleTypes.AnkrCertificateTokenPriceOracle,
   OracleTypes.BNBxPriceOracle,
   OracleTypes.DiaPriceOracle,
 ];
