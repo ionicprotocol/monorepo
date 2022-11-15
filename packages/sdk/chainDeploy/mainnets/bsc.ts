@@ -11,9 +11,9 @@ import {
   deployDiaOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
+  deployAnkrCertificateTokenPriceOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { deployAnkrCertificateTokenPriceOracle } from "../helpers/oracles/AnkrCertificateTokenPriceOracle";
 import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
 import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";

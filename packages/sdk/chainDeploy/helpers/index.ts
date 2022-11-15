@@ -4,7 +4,7 @@ export { deployUniswapOracle } from "./oracles/uniswap";
 export { deployUniswapV3Oracle } from "./oracles/uniswapv3";
 export { deployUniswapLpOracle } from "./oracles/uniswapLp";
 export { deployCurveLpOracle } from "./oracles/curveLp";
-export { deployABNBcOracle } from "./oracles/aBNBcOracle";
+export { deployAnkrCertificateTokenPriceOracle } from "./oracles/AnkrCertificateTokenPriceOracle";
 export { deployChainlinkOracle } from "./oracles/chainlink";
 export { deployDiaOracle } from "./oracles/dia";
 export { deployGelatoGUniPriceOracle } from "./oracles/gelato";
