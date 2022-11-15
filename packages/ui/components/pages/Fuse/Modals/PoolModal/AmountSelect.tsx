@@ -210,7 +210,7 @@ const AmountSelect = ({
       depositOrWithdrawAlert = 'You cannot borrow this amount!';
     }
   } else if (amountIsValid && FundOperationMode.BORROW && isRisky && !isRiskyConfirmed) {
-    depositOrWithdrawAlert = 'It might have a high risk';
+    depositOrWithdrawAlert = 'Confirm Risk Of Borrow';
   } else {
     depositOrWithdrawAlert = null;
   }
@@ -627,7 +627,7 @@ const AmountSelect = ({
                   onChange={() => setIsRiskyConfirmed(!isRiskyConfirmed)}
                 >
                   {
-                    "I'm aware that I'm entering >80% of my borrow limit and thereby have a high risk of getting liquidated"
+                    "I'm aware that I'm entering >80% of my borrow limit and thereby have a high risk of getting liquidated."
                   }
                 </Checkbox>
               </Box>
