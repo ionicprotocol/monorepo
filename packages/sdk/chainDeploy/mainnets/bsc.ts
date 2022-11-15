@@ -6,7 +6,6 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
-  deployABNBcOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
@@ -14,6 +13,7 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
+import { deployAnkrCertificateTokenPriceOracle } from "../helpers/oracles/AnkrCertificateTokenPriceOracle";
 import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
 import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
 import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
@@ -408,7 +408,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   //// Ankr BNB Certificate oracle
-  await deployABNBcOracle({
+  await deployAnkrCertificateTokenPriceOracle({
     run,
     ethers,
     getNamedAccounts,
