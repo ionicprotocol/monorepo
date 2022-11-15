@@ -185,6 +185,7 @@ export enum assetSymbols {
   aBNBc = "aBNBc",
   stkBNB = "stkBNB",
   SAFEMOON = "SAFEMOON",
+  HAY = "HAY",
   "WBNB-DAI" = "WBNB-DAI",
   "WBNB-BUSD" = "WBNB-BUSD",
   "WBNB-USDT" = "WBNB-USDT",
