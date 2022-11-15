@@ -1,4 +1,4 @@
-import { Badge, Box, Center, HStack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { Row } from '@ui/components/shared/Flex';
@@ -32,10 +32,11 @@ export const TokenName = ({
         placement="top-start"
         body={
           <VStack>
-            <Text alignSelf="flex-start" variant="mdText">
+            <Heading size="md" textAlign={'left'} alignSelf="flex-start" mb={2}>
               {tokenData?.symbol ?? asset.underlyingSymbol}
-            </Text>
-            <div
+            </Heading>
+
+            <Text
               dangerouslySetInnerHTML={{
                 __html: asset.extraDocs || asset.underlyingSymbol,
               }}

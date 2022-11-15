@@ -3,6 +3,7 @@ import {
   AlertIcon,
   Box,
   Button,
+  Checkbox,
   Divider,
   Input,
   InputProps,
@@ -35,7 +36,13 @@ import Loader from '@ui/components/shared/Loader';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { DEFAULT_DECIMALS, REPAY_STEPS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
+import {
+  DEFAULT_DECIMALS,
+  HIGH_RISK_RATIO,
+  REPAY_STEPS,
+  SUPPLY_STEPS,
+  UserAction,
+} from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
@@ -102,6 +109,8 @@ const AmountSelect = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [steps, setSteps] = useState<string[]>([]);
+  const [isRisky, setIsRisky] = useState<boolean>(false);
+  const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const successToast = useSuccessToast();
 
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
@@ -121,6 +130,16 @@ const AmountSelect = ({
     }
 
     _setUserEnteredAmount(newAmount);
+
+    if (
+      maxBorrowInAsset &&
+      maxBorrowInAsset.number !== 0 &&
+      Number(newAmount) / maxBorrowInAsset.number > HIGH_RISK_RATIO
+    ) {
+      setIsRisky(true);
+    } else {
+      setIsRisky(false);
+    }
 
     const bigAmount = utils.parseUnits(
       toFixedNoRound(newAmount, tokenData?.decimals || DEFAULT_DECIMALS),
@@ -190,6 +209,8 @@ const AmountSelect = ({
     } else if (mode === FundOperationMode.BORROW) {
       depositOrWithdrawAlert = 'You cannot borrow this amount!';
     }
+  } else if (amountIsValid && FundOperationMode.BORROW && isRisky && !isRiskyConfirmed) {
+    depositOrWithdrawAlert = 'Confirm Risk Of Borrow';
   } else {
     depositOrWithdrawAlert = null;
   }
@@ -599,6 +620,18 @@ const AmountSelect = ({
                 </MidasBox>
               ) : null}
             </>
+            {mode === FundOperationMode.BORROW && isRisky && (
+              <Box pt={4}>
+                <Checkbox
+                  isChecked={isRiskyConfirmed}
+                  onChange={() => setIsRiskyConfirmed(!isRiskyConfirmed)}
+                >
+                  {
+                    "I'm aware that I'm entering >80% of my borrow limit and thereby have a high risk of getting liquidated."
+                  }
+                </Checkbox>
+              </Box>
+            )}
             <Button
               id="confirmFund"
               mt={4}
@@ -611,7 +644,7 @@ const AmountSelect = ({
                   : ''
               }
               onClick={onConfirm}
-              isDisabled={!amountIsValid}
+              isDisabled={!amountIsValid || (isRisky && !isRiskyConfirmed)}
               height={16}
             >
               {isDeploying
