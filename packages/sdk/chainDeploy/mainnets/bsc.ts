@@ -6,12 +6,12 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
-  deployAnkrCertificateTokenPriceOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
