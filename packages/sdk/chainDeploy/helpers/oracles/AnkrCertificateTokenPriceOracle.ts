@@ -1,4 +1,5 @@
 import { providers } from "ethers";
+import { assetSymbols, underlying } from "types/dist/cjs";
 
 import { aBNBcDeployParams } from "../types";
 
@@ -12,7 +13,7 @@ export const deployAnkrCertificateTokenPriceOracle = async ({
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
-  const aBNBc = assets.find((a) => a.symbol === "aBNBc")!.underlying;
+  const aBNBc = underlying(assets, assetSymbols.aBNBc);
 
   const ankrCertificateTokenPriceOracle = await deployments.deploy("AnkrCertificateTokenPriceOracle", {
     from: deployer,
