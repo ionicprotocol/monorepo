@@ -544,7 +544,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
 
   // upgrade any of the pools if necessary
-  await run("pools:all:upgrade", { oldFirstExtension: oldFirstExtension || constants.AddressZero });
+  await run("pools:all:upgrade", { oldFirstExtension: oldFirstExtension?.address || constants.AddressZero });
 
   // upgrade any of the markets if necessary
   await run("markets:all:upgrade");
