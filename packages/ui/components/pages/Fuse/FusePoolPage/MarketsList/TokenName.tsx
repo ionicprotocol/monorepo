@@ -1,4 +1,4 @@
-import { Badge, Box, Center, Code, Divider, Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { Row } from '@ui/components/shared/Flex';
