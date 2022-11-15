@@ -1,5 +1,5 @@
-import { providers } from "ethers";
 import { assetSymbols, underlying } from "@midas-capital/types";
+import { providers } from "ethers";
 
 import { aBNBcDeployParams } from "../types";
 
