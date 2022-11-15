@@ -4,9 +4,7 @@
   "description": "Monitors all oracles being used at Midas Capital",
   "main": "index.js",
   "scripts": {
-    "prod": "NODE_ENV=production node build/server.js",
-    "staging": "NODE_ENV=staging node build/server.js",
-    "dev": "HTTPS=true NODE_ENV=development ts-node-dev --inspect --respawn src/server.ts",
+    "start": "NODE_ENV=development npx ts-node index.ts",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
     "lint-fix": "eslint . -c .eslintrc.json --fix --ext ts,json",
     "test": "nyc ts-mocha --require 'tests/globalTestHook.ts' --check-leaks --exit --timeout 60000 'tests/**/*.spec.ts'",
