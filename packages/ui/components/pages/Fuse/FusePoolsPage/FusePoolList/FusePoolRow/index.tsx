@@ -558,10 +558,9 @@ const PoolsRowList = ({
                               )}
                             </Box>
                           )}
-
-                          <Text>
+                          <Flex>
                             {flexRender(header.column.columnDef.header, header.getContext())}
-                          </Text>
+                          </Flex>
                         </HStack>
                       </Th>
                     );

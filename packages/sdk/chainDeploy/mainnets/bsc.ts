@@ -6,7 +6,7 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
-  deployABNBcOracle,
+  deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
@@ -83,6 +83,13 @@ export const deployConfig: ChainDeployConfig = {
         token: underlying(assets, assetSymbols.SD),
         pair: "0x867EB519b05d9C4798B2EdE0B11197274dfDFcC0", // ApeSwap BUSD-SD
         baseToken: underlying(assets, assetSymbols.BUSD),
+        minPeriod: 1800,
+        deviationThreshold: "10000000000000000",
+      },
+      {
+        token: underlying(assets, assetSymbols.HAY),
+        pair: "0xb84348b32E5C83856c6e31C227639cd678163719", // WBNB-HAY
+        baseToken: underlying(assets, assetSymbols.WBNB),
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
       },
@@ -401,7 +408,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   //// Ankr BNB Certificate oracle
-  await deployABNBcOracle({
+  await deployAnkrCertificateTokenPriceOracle({
     run,
     ethers,
     getNamedAccounts,
