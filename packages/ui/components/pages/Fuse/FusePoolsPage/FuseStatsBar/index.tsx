@@ -151,7 +151,7 @@ const FuseStatsBar = () => {
             borderRadius="20px"
             bg={cPage.secondary.bgColor}
             color={cPage.secondary.txtColor}
-            whileHover={{ scale: 1.06 }}
+            // whileHover={{ scale: 1.06 }}
           >
             {isLoading || totalTVL === undefined ? (
               <Spinner />
