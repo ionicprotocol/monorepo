@@ -5,6 +5,7 @@ import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBI
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
@@ -36,6 +37,10 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signerOrProvider) as Comptroller;
+    }
+
+    createFirstComptrollerExtension(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
+      return new Contract(comptrollerAddress, this.chainDeployment.ComptrollerFirstExtension.abi, signerOrProvider) as ComptrollerFirstExtension;
     }
 
     createOracle(oracleAddress: string, type: string, signerOrProvider: SignerOrProvider = this.signer) {

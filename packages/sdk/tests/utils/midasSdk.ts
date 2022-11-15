@@ -30,6 +30,9 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const Comptroller = await ethers.getContract("Comptroller");
   const ComptrollerArtifact = await deployments.getArtifact("Comptroller.sol:Comptroller");
   chainDeployment.Comptroller = { abi: ComptrollerArtifact.abi, address: Comptroller.address };
+  const ComptrollerFirstExtension = await ethers.getContract("ComptrollerFirstExtension");
+  const ComptrollerFirstExtensionArtifact = await deployments.getArtifact("ComptrollerFirstExtension");
+  chainDeployment.ComptrollerFirstExtension = { abi: ComptrollerFirstExtensionArtifact.abi, address: ComptrollerFirstExtension.address};
   const FixedNativePriceOracle = await ethers.getContract("FixedNativePriceOracle");
   const FixedNativePriceOracleArtifact = await deployments.getArtifact("FixedNativePriceOracle");
   chainDeployment.FixedNativePriceOracle = {
