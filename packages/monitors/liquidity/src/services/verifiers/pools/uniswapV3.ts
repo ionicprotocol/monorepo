@@ -2,10 +2,6 @@ import { JSBI } from "@uniswap/sdk";
 import { ethers } from "ethers";
 import * as fs from "fs";
 
-// ERC20 json abi file
-let ERC20Abi = fs.readFileSync("ERC20.json");
-const ERC20 = JSON.parse(ERC20Abi);
-
 // V3 pool abi json file
 let pool = fs.readFileSync("V3PairAbi.json");
 const IUniswapV3PoolABI = JSON.parse(pool);
@@ -17,7 +13,38 @@ const IUniswapV3FactoryABI = JSON.parse(facto);
 let NFT = fs.readFileSync("UniV3NFT.json");
 const IUniswapV3NFTmanagerABI = JSON.parse(NFT);
 
+import Decimal from "decimal.js";
+import { BigNumber } from "ethers";
+
+import { c1e18, MAX_TICK_PRICE } from "./constants";
+import { ERC20Abi } from "@midas-capital/sdk";
+
+Decimal.set({ precision: 50 });
+
 const provider = new ethers.providers.JsonRpcProvider("https://eth-mainnet.alchemyapi.io/v2/<RPC_Key>");
+
+export const sqrtPriceX96ToPrice = (a: BigNumber, invert: boolean): BigNumber => {
+  const scale = new Decimal(2).pow(96 * 2).div(new Decimal(10).pow(18));
+  const decimal = new Decimal(a.toString());
+  const scaled = decimal.mul(decimal).div(scale);
+
+  if (invert && scaled.eq(0)) return BigNumber.from(MAX_TICK_PRICE.toFixed(0)).mul(c1e18);
+
+  if (invert) {
+    const inverted = new Decimal(10).pow(18).mul(new Decimal(10).pow(18)).div(scaled);
+    return BigNumber.from(inverted.toFixed(0));
+  }
+
+  return BigNumber.from(scaled.toFixed(0));
+};
+
+// a is decimal
+export const priceToSqrtX96Price = (a: Decimal) => {
+  return a
+    .mul(Decimal.pow(2, 2 * 96))
+    .sqrt()
+    .floor();
+};
 
 // V3 standard addresses (different for celo)
 const factory = "0x1F98431c8aD98523631AE4a59f267346ea31F984";
@@ -29,8 +56,9 @@ async function getData(tokenID) {
   let NFTContract = new ethers.Contract(NFTmanager, IUniswapV3NFTmanagerABI, provider);
   let position = await NFTContract.positions(tokenID);
 
-  let token0contract = new ethers.Contract(position.token0, ERC20, provider);
-  let token1contract = new ethers.Contract(position.token1, ERC20, provider);
+  let token0contract = new ethers.Contract(position.token0, ERC20Abi, provider);
+  let token1contract = new ethers.Contract(position.token1, ERC20Abi, provider);
+
   let token0Decimal = await token0contract.decimals();
   let token1Decimal = await token1contract.decimals();
 

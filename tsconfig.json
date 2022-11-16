@@ -40,6 +40,15 @@
     },
     {
       "path": "./packages/security"
+    },
+    {
+      "path": "./packages/bots/liquidator"
+    },
+    {
+      "path": "./packages/monitors/oracle"
+    },
+    {
+      "path": "./packages/monitors/liquidity"
     }
   ]
 }
