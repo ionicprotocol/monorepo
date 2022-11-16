@@ -55,7 +55,7 @@ export const MidasNavbar = () => {
         position="sticky"
         top={0}
         right={0}
-        zIndex={1}
+        zIndex={99999}
         background={cPage.primary.bgColor}
         justifyContent="flex-end"
         p={2}
