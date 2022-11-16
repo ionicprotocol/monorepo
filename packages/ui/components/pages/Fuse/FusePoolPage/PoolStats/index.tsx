@@ -15,6 +15,7 @@ import { useMemo } from 'react';
 
 import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats/PoolStat';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { useColors } from '@ui/hooks/useColors';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { midFormat, midUsdFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import {
@@ -39,6 +40,8 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
       }
     }, [poolData]);
 
+  const { cPage } = useColors();
+
   return (
     <Grid
       templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
@@ -57,7 +60,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         </PopoverTrigger>
         {topSuppliedAssets.length > 0 && topSuppliedAssets[0].totalSupplyFiat > 0 && (
           <PopoverContent p={2} width="fit-content">
-            <PopoverArrow />
+            <PopoverArrow
+              sx={{
+                '--popper-arrow-shadow-color': cPage.primary.borderColor,
+              }}
+            />
             <PopoverBody>
               <VStack width={'100%'} alignItems="flex-start" spacing={0}>
                 <Text fontWeight="bold">Top supplied assets</Text>
@@ -101,7 +108,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         </PopoverTrigger>
         {topBorrowedAssets.length > 0 && topBorrowedAssets[0].totalBorrowFiat > 0 && (
           <PopoverContent p={2} width="fit-content">
-            <PopoverArrow />
+            <PopoverArrow
+              sx={{
+                '--popper-arrow-shadow-color': cPage.primary.borderColor,
+              }}
+            />
             <PopoverBody>
               <VStack width={'100%'} alignItems="flex-start" spacing={0}>
                 <Text fontWeight="bold">Top borrowed assets</Text>
@@ -146,7 +157,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         </PopoverTrigger>
         {topLiquidityAssets.length > 0 && topLiquidityAssets[0].liquidityFiat > 0 && (
           <PopoverContent p={2} width="fit-content">
-            <PopoverArrow />
+            <PopoverArrow
+              sx={{
+                '--popper-arrow-shadow-color': cPage.primary.borderColor,
+              }}
+            />
             <PopoverBody>
               <VStack width={'100%'} alignItems="flex-start" spacing={0}>
                 <Text fontWeight="bold">Top liquidity assets</Text>
@@ -191,7 +206,11 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         </PopoverTrigger>
         {topUtilizationAssets.length > 0 && topUtilizationAssets[0].utilization > 0 && (
           <PopoverContent p={2} width="fit-content">
-            <PopoverArrow />
+            <PopoverArrow
+              sx={{
+                '--popper-arrow-shadow-color': cPage.primary.borderColor,
+              }}
+            />
             <PopoverBody>
               <VStack width={'100%'} alignItems="flex-start" spacing={0}>
                 <Text fontWeight="bold">Top utilization assets</Text>
