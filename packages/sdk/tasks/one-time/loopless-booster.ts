@@ -10,10 +10,14 @@ task("loopless-booster", "deploy and a loopless booster for a flywheel")
     const deployer = await ethers.getNamedSigner("deployer");
 
     if (flywheelAddress == "0xUseThisToVerify") {
-        const flywheel = (await ethers.getContractAt("MidasFlywheelCore", flywheelAddress, deployer)) as MidasFlywheelCore;
-        const currentBoosterAddress = await flywheel.callStatic.flywheelBooster();
+      const flywheel = (await ethers.getContractAt(
+        "MidasFlywheelCore",
+        flywheelAddress,
+        deployer
+      )) as MidasFlywheelCore;
+      const currentBoosterAddress = await flywheel.callStatic.flywheelBooster();
 
-        if (currentBoosterAddress == constants.AddressZero) {
+      if (currentBoosterAddress == constants.AddressZero) {
         const booster = await deployments.deploy("LooplessFlywheelBooster", {
           from: deployer.address,
           log: true,
