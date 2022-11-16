@@ -57,9 +57,6 @@ FROM node as runtime
 
 # ----- Copy files required at runtime by the app -----
 COPY --from=build --chown=node:node /tmp/build /home/node
-COPY docker/wait-for-hh.sh /home/node/packages/monitors/oracle/wait-for-hh.sh
-
-RUN chmod +x /home/node/packages/monitors/oracle/wait-for-hh.sh
 
 WORKDIR /home/node/packages/monitors/oracle
 
