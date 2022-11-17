@@ -3,7 +3,6 @@
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
 import AdjustableJumpRateModelArtifact from "../lib/contracts/out/AdjustableJumpRateModel.sol/AdjustableJumpRateModel.json";
-import AnkrBNBcPriceOracleArtifact from "../lib/contracts/out/AnkrBNBcPriceOracle.sol/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import BalancerLpTokenPriceOracleArtifact from "../lib/contracts/out/BalancerLpTokenPriceOracle.sol/BalancerLpTokenPriceOracle.json";
 import BNBxPriceOracleArtifact from "../lib/contracts/out/BNBxPriceOracle.sol/BNBxPriceOracle.json";
@@ -71,7 +70,6 @@ const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
-const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
 const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
 const BNBxPriceOracle: Artifact = BNBxPriceOracleArtifact;
 const GelatoGUniPriceOracle: Artifact = GelatoGUniPriceOracleArtifact;
@@ -115,7 +113,6 @@ const ARTIFACTS = {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   BalancerLpTokenPriceOracle,
-  AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
   BNBxPriceOracle,
   GelatoGUniPriceOracle,
@@ -159,7 +156,6 @@ export {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   BalancerLpTokenPriceOracle,
-  AnkrBNBcPriceOracle,
   StkBNBPriceOracle,
   BNBxPriceOracle,
   GelatoGUniPriceOracle,
