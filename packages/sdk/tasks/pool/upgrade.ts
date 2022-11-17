@@ -20,11 +20,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const fuseFeeDistributor = new ethers.Contract(
-      sdk.chainDeployment.FuseFeeDistributor.address,
-      sdk.chainDeployment.FuseFeeDistributor.abi,
-      deployer
-    );
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const newComptrollerImplementations = [newImplementation];
     const oldComptrollerImplementations = [oldImplementation];
@@ -48,8 +44,8 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       ) {
         console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
         tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
-        console.log("latest impl set", tx.hash);
         await tx.wait();
+        console.log("latest impl set", tx.hash);
       } else {
         console.log(`No change in the latest Comptroller implementation ${newImplementation}`);
       }
@@ -71,11 +67,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-    const fuseFeeDistributor = new ethers.Contract(
-      sdk.chainDeployment.FuseFeeDistributor.address,
-      sdk.chainDeployment.FuseFeeDistributor.abi,
-      deployer
-    ) as FuseFeeDistributor;
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const pools = await fusePoolDirectory.callStatic.getAllPools();
     for (let i = 0; i < pools.length; i++) {
@@ -120,7 +112,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           }
         }
 
-        const firstExtension = await deployments.getOrNull("ComptrollerFirstExtension");
+        const firstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
         if (firstExtension) {
           if (firstExtension.address != oldFirstExtension) {
             const tx = await fuseFeeDistributor._registerComptrollerExtension(
@@ -130,7 +122,11 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
             );
             await tx.wait();
             console.log(`registered the first extension for pool ${pool.comptroller} with tx ${tx.hash}`);
+          } else {
+            console.log(`not replacing the same extension`);
           }
+        } else {
+          console.log(`no first extension deployed for the comptroller`);
         }
       } catch (e) {
         console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);

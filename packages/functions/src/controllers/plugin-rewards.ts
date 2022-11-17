@@ -38,7 +38,7 @@ const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => 
           };
         } catch (exception) {
           await functionsAlert(
-            `Functions.plugin-rewards: Fetching APY for '${pluginAddress}' (${pluginData.strategy})`,
+            `Functions.plugin-rewards: Plugin '${pluginAddress}' (${pluginData.strategy}) / Chain '${chainId}'`,
             JSON.stringify(exception)
           );
         }

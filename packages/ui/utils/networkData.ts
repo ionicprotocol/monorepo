@@ -75,6 +75,7 @@ export function getEnabledChains() {
 
   if (config.isTestnetEnabled) {
     enabledChains.push(SupportedChains.neon_devnet);
+    enabledChains.push(SupportedChains.chapel);
   }
 
   return enabledChains;
