@@ -4,12 +4,10 @@ import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 
 task("non-owner-pool:upgrade")
-  .addParam("signer", "Named account to use for tx", "deployer", types.string)
-  .addParam("comptroller", "Named account to use for tx", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers }) => {
-    const signer = await ethers.getNamedSigner(taskArgs.signer);
+  .addParam("comptrollerAddress", "Named account to use for tx", "deployer", types.string)
+  .setAction(async ({ comptrollerAddress }, { ethers }) => {
+    const signer = await ethers.getNamedSigner("deployer");
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
-    const comptrollerAddress = await taskArgs.comptroller;
     const sliced = comptrollerAddress.slice(2);
     const comptroller = (await ethers.getContractAt("Comptroller", comptrollerAddress, signer)) as Comptroller;
 

@@ -37,11 +37,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     // @ts-ignoreutils/fuseSdk
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
-    const fuseFeeDistributor = new ethers.Contract(
-      sdk.chainDeployment.FuseFeeDistributor.address,
-      sdk.chainDeployment.FuseFeeDistributor.abi,
-      signer
-    );
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
     const erc20Delegate = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", signer);
     const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", signer);

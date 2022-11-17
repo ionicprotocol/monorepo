@@ -10357,114 +10357,6 @@
         }
       ]
     },
-    "AnkrBNBcPriceOracle": {
-      "address": "0x7AAb1574e8C1B4C51420909072F6e5bfE5b21217",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "contract AnkrOracle",
-              "name": "_ankrOracle",
-              "type": "address"
-            },
-            {
-              "internalType": "contract MasterPriceOracle",
-              "name": "masterPriceOracle",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_baseToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "usdToken",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "inputs": [],
-          "name": "BASE_TOKEN",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "MASTER_PRICE_ORACLE",
-          "outputs": [
-            {
-              "internalType": "contract MasterPriceOracle",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "USD_TOKEN",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract ICToken",
-              "name": "cToken",
-              "type": "address"
-            }
-          ],
-          "name": "getUnderlyingPrice",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "underlying",
-              "type": "address"
-            }
-          ],
-          "name": "price",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]
-    },
     "AnkrCertificateTokenPriceOracle": {
       "address": "0xF9336B94fb6f6B6f12b96a6777aC683046DBC5Df",
       "abi": [
@@ -55316,6 +55208,67 @@
             }
           ],
           "stateMutability": "pure",
+          "type": "function"
+        }
+      ]
+    },
+    "LooplessFlywheelBooster": {
+      "address": "0x783ea1Fc01A33e8792C9Ed7656BD3d2523D228f5",
+      "abi": [
+        {
+          "inputs": [],
+          "name": "BOOSTER_TYPE",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "boostedBalanceOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "boostedTotalSupply",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         }
       ]
