@@ -188,6 +188,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
+  const currentExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
+  if (currentExtensions.length != 1 || currentExtensions[0] != compFirstExtension.address) {
+    tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [compFirstExtension.address]);
+    await tx.wait();
+    console.log(`configured the extensions for comptroller ${comptroller.address}`);
+  } else {
+    console.log(`comptroller extensions already configured`);
+  }
+
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
   if (oldErc20Delegate) {
