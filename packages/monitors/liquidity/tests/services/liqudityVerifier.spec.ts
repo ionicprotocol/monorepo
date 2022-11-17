@@ -1,17 +1,16 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { assetSymbols, SupportedChains } from "@midas-capital/types";
-import { Contract } from "ethers";
 import { restore } from "sinon";
 
 import { configs } from "../../src/config";
-import { FeedVerifier } from "../../src/services/verifiers";
-import { AbstractOracleVerifier } from "../../src/services/verifiers/base";
+import { AMMLiquidityVerifier } from "../../src/services/monitor";
+import { AbstractLiquidityVerifier } from "../../src/services/monitor/base";
 import { chainIdToConfig, Services } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 
 describe("Feed verifier", () => {
-  let feedVerifier: FeedVerifier;
+  let feedVerifier: AMMLiquidityVerifier;
   let sdk: MidasSdk;
 
   const chainConfig = chainIdToConfig[SupportedChains.bsc];
@@ -23,7 +22,7 @@ describe("Feed verifier", () => {
   beforeEach(() => {
     const signer = getSigner(SupportedChains.bsc);
     sdk = new MidasSdk(signer, chainIdToConfig[SupportedChains.bsc]);
-    feedVerifier = new FeedVerifier(sdk, assets[0], config);
+    feedVerifier = new AMMLiquidityVerifier(sdk, config);
   });
   afterEach(function () {
     restore();
@@ -31,8 +30,7 @@ describe("Feed verifier", () => {
   describe("instantiate", () => {
     it("should init FeedVerifier", async () => {
       const [verifier] = await feedVerifier.init();
-      expect(verifier).to.be.instanceOf(AbstractOracleVerifier);
-      expect(verifier?.underlyingOracle).to.be.instanceOf(Contract);
+      expect(verifier).to.be.instanceOf(AbstractLiquidityVerifier);
     });
   });
 });

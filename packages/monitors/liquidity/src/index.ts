@@ -1,5 +1,4 @@
 export { default as setUpSdk } from "./setUpSdk";
-export { updateOracleMonitorData } from "./controllers/index";
 
 export { runVerifiers } from "./run";
 

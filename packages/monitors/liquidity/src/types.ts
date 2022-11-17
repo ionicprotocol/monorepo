@@ -1,19 +1,32 @@
 import { arbitrum, bsc, moonbeam, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig, SupportedAsset } from "@midas-capital/types";
-import { BigNumber, Contract } from "ethers";
+import { Contract } from "ethers";
 
-import { FeedVerifier, PriceChangeVerifier, PriceVerifier } from "./services";
+import { AMMLiquidityVerifier } from "./services";
 
-export type TVerifier = typeof FeedVerifier | typeof PriceVerifier | typeof PriceChangeVerifier;
+export type TVerifier = typeof AMMLiquidityVerifier;
 
 export enum Services {
-  FeedVerifier = "feed-verifier",
-  PriceVerifier = "price-verifier",
-  PriceChangeVerifier = "price-change-verifier",
+  LiquidityDepthVerifier = "liquidity-depth-verifier",
 }
 
-export type ServiceConfig = FeedVerifierConfig | PriceVerifierConfig | PriceChangeVerifierConfig;
+export type LiquidityInvalidity = {
+  invalidReason: Failure;
+  message: string;
+  valueUSD: number;
+};
+
+export type LiquidityValidity = LiquidityInvalidity | true;
+
+export type VerifierInitError = {
+  invalidReason: Failure;
+  message: string;
+};
+
+export type VerifierInitValidity = VerifierInitError | null;
+
+export type ServiceConfig = LiquidityDepthConfig;
 
 export type VerifierConfig = {
   assets: SupportedAsset[];
@@ -22,11 +35,7 @@ export type VerifierConfig = {
 };
 
 export enum InvalidReason {
-  DEVIATION_ABOVE_THRESHOLD = "DEVIATION_ABOVE_THRESHOLD",
   TWAP_LIQUIDITY_LOW = "TWAP_LIQUIDITY_LOW",
-  LAST_OBSERVATION_TOO_OLD = "LAST_OBSERVATION_TOO_OLD",
-  UNKNOWN = "UNKNOWN",
-  DEFI_LLAMA_API_ERROR = "DEFI_LLAMA_API_ERROR",
 }
 
 export enum OracleFailure {
@@ -36,16 +45,35 @@ export enum OracleFailure {
 
 export type Failure = InvalidReason | OracleFailure;
 
-export interface VerifyPriceParams {
-  midasSdk: MidasSdk;
-  asset: SupportedAsset;
-  mpoPrice: BigNumber;
+export enum LiquidityPoolKind {
+  UniswapV2 = "UniswapV2",
+  UniswapV3 = "UniswapV3",
+  CurveV1 = "CurveV1",
+  CurveV2 = "CurveV2",
+  Balancer = "Balancer",
 }
 
-export interface VerifyFeedParams {
+export type UniswapV2AssetConfig = {
+  token0: string;
+  token1: string;
+  alternativeFactory?: string;
+  minLiquidity?: number;
+  affectedUnderlyingAssets?: string[];
+};
+
+export type UniswapV3AssetConfig = UniswapV2AssetConfig & {
+  fee: number;
+};
+
+export type CurveV1PoolConfig = {
+  pool: string;
+  underlyings: string[];
+};
+
+export type AssetConfig = UniswapV2AssetConfig | UniswapV3AssetConfig | CurveV1PoolConfig;
+export interface VerifyLiquidityParams {
   midasSdk: MidasSdk;
-  underlyingOracle: Contract;
-  underlying: string;
+  asset: UniswapV3AssetConfig | UniswapV2AssetConfig | CurveV1PoolConfig;
 }
 
 export type BaseConfig = {
@@ -53,26 +81,15 @@ export type BaseConfig = {
   environment: string;
   logLevel: string;
   rpcUrl: string;
-  supabaseUrl: string;
-  supabasePublicKey: string;
   adminPrivateKey: string;
-  supabaseOracleMonitorTableName: string;
+  adminAccount: string;
   discordWebhookUrl: string;
 };
 
-export type FeedVerifierConfig = BaseConfig & {
-  defaultDeviationThreshold: BigNumber;
-  maxObservationDelay: number;
-  runInterval: number;
-  defaultMinPeriod: BigNumber;
-};
-
-export type PriceVerifierConfig = BaseConfig & {
-  maxPriceDeviation: number;
+export type LiquidityDepthConfig = BaseConfig & {
+  minLiquidity: number;
   runInterval: number;
 };
-
-export type PriceChangeVerifierConfig = PriceVerifierConfig;
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -80,3 +97,11 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [moonbeam.chainId]: moonbeam,
   [arbitrum.chainId]: arbitrum,
 };
+
+export enum ErrorKind {
+  init = "init",
+  verification = "verification",
+}
+
+export type VerificationErrorCache = Array<{ asset: SupportedAsset; error: LiquidityInvalidity; timestamp: number }>;
+export type InitErrorCache = Array<{ asset: SupportedAsset; error: VerifierInitError; timestamp: number }>;

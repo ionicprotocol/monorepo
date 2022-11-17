@@ -2,20 +2,20 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset } from "@midas-capital/types";
 
 import { logger } from "..";
-import { ErrorKind, PriceFeedValidity, ServiceConfig, TVerifier, VerifierInitValidity } from "../types";
+import { ErrorKind, LiquidityValidity, ServiceConfig, TVerifier, VerifierInitValidity } from "../types";
 
 import { AdminService } from "./admin";
 import { DiscordService } from "./discord";
+import { AbstractLiquidityVerifier } from "./monitor/base";
 import { PoolService } from "./pool";
-import { AbstractOracleVerifier } from "./verifiers/base";
 
 export class Verifier {
-  oracleService: AbstractOracleVerifier;
+  oracleService: AbstractLiquidityVerifier;
   adminService: AdminService;
   poolService: PoolService;
 
-  constructor(sdk: MidasSdk, service: TVerifier, asset: SupportedAsset, config: ServiceConfig) {
-    this.poolService = new PoolService(sdk, asset);
+  constructor(sdk: MidasSdk, service: TVerifier, underlyings: string[], config: ServiceConfig) {
+    this.poolService = new PoolService(sdk, assets);
     this.adminService = new AdminService(sdk, asset);
     this.oracleService = new service(sdk, asset, config);
   }
@@ -30,7 +30,7 @@ export class Verifier {
       return [this, null];
     }
   }
-  async verify(): Promise<PriceFeedValidity> {
+  async verify(): Promise<LiquidityValidity> {
     return await this.oracleService.verify();
   }
 }
@@ -38,8 +38,6 @@ export class Verifier {
 export class BatchVerifier {
   assets: SupportedAsset[];
   sdk: MidasSdk;
-  service: TVerifier;
-  config: ServiceConfig;
   alert: DiscordService;
 
   constructor(sdk: MidasSdk, assets: SupportedAsset[]) {

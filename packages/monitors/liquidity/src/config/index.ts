@@ -1,5 +1,2 @@
-export { getSupabaseClient } from "./supabase";
-
-export { assets } from "./assets";
-export { configs } from "./variables";
+export { configs, baseConfig } from "./variables";
 export { verifiers } from "./verifiers";

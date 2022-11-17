@@ -3,17 +3,9 @@ import { MessageBuilder, Webhook } from "discord-webhook-node";
 
 import { logger } from "..";
 import { baseConfig } from "../config/variables";
-import {
-  ErrorKind,
-  InitErrorCache,
-  InvalidReason,
-  PriceFeedInvalidity,
-  VerificationErrorCache,
-  VerifierInitError,
-} from "../types";
+import { ErrorKind, InitErrorCache, LiquidityInvalidity, VerificationErrorCache, VerifierInitError } from "../types";
 
 export class DiscordService {
-  asset: SupportedAsset;
   chainId: SupportedChains;
 
   private errorColor = 0xa83232;
@@ -23,7 +15,6 @@ export class DiscordService {
   private infoColor = 0x32a832;
 
   private hook: Webhook;
-  private DISABLED_INVALID_REASONS: InvalidReason[] = [InvalidReason.DEFI_LLAMA_API_ERROR];
 
   initErrorCache: InitErrorCache;
   verificationErrorCache: VerificationErrorCache;
@@ -33,7 +24,7 @@ export class DiscordService {
   };
   alertFunction: {
     [ErrorKind.init]: (asset: SupportedAsset, error: VerifierInitError) => Promise<void>;
-    [ErrorKind.verification]: (asset: SupportedAsset, error: PriceFeedInvalidity) => Promise<void>;
+    [ErrorKind.verification]: (asset: SupportedAsset, error: LiquidityInvalidity) => Promise<void>;
   };
 
   constructor(chainId: SupportedChains) {
@@ -51,7 +42,7 @@ export class DiscordService {
     };
   }
 
-  async sendErrorNotification(error: VerifierInitError | PriceFeedInvalidity, asset: SupportedAsset, kind: ErrorKind) {
+  async sendErrorNotification(error: VerifierInitError | LiquidityInvalidity, asset: SupportedAsset, kind: ErrorKind) {
     const lastMessageSentIndex = this.messageCache[kind].findIndex(
       (a) => a.asset.underlying === asset.underlying && a.error === error
     );
@@ -76,17 +67,14 @@ export class DiscordService {
   }
 
   private async send(embed: MessageBuilder) {
-    if (
-      baseConfig.environment === "production" &&
-      !this.DISABLED_INVALID_REASONS.includes(embed.getJSON().embeds[0].title?.toString() as InvalidReason)
-    ) {
+    if (baseConfig.environment === "production") {
       await this.hook.send(embed);
     } else {
       logger.debug(`Would have sent alert to discord: ${JSON.stringify(embed)}`);
     }
   }
 
-  public async invalidFeedError(asset: SupportedAsset, error: PriceFeedInvalidity) {
+  public async invalidFeedError(asset: SupportedAsset, error: LiquidityInvalidity) {
     const embed = this.create(asset)
       .setTitle(`${error.invalidReason}`)
       .setDescription(`@everyone ${error.message}`)

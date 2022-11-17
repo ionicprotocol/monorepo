@@ -2,6 +2,8 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset } from "@midas-capital/types";
 import { constants, Contract, logger, Signer } from "ethers";
 
+import { baseConfig } from "../config";
+
 export class AdminService {
   admin: Signer;
   adminAddress: string;
@@ -9,6 +11,7 @@ export class AdminService {
   asset: SupportedAsset;
 
   constructor(sdk: MidasSdk, asset: SupportedAsset) {
+    this.adminAddress = baseConfig.adminAccount;
     this.asset = asset;
     this.admin = sdk.signer;
     this.sdk = sdk;

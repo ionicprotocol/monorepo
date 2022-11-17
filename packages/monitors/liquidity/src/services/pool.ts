@@ -4,10 +4,10 @@ import { constants, Contract } from "ethers";
 
 export class PoolService {
   sdk: MidasSdk;
-  asset: SupportedAsset;
+  underlyings: string[];
 
-  constructor(sdk: MidasSdk, asset: SupportedAsset) {
-    this.asset = asset;
+  constructor(sdk: MidasSdk, underlyings: string[]) {
+    this.underlyings = underlyings;
     this.sdk = sdk;
   }
 
