@@ -13,10 +13,10 @@ import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider"
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
-  const MIN_BORROW_USD = 100;
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = await getChainId();
   console.log("chainId: ", chainId);
+  const MIN_BORROW_USD = chainId === "97" ? 0 : 100;
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);
