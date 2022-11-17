@@ -54,21 +54,28 @@ export const deployUniswapOracle = async ({
 
   const resolverContract = await ethers.getContract("UniswapTwapPriceOracleV2Resolver", deployer);
 
-  const oldPairsLength = await resolverContract.getParis();
-
-  for (let i = 0; i < oldPairsLength; i++) {
-    await resolverContract.removeFromPairs(0);
-  }
+  const oldPairs = await resolverContract.getPairs();
 
   for (const uniConfig of deployConfig.uniswap.uniswapOracleInitialDeployTokens) {
-    const tx = await resolverContract.addPair({
-      pair: uniConfig.pair,
-      baseToken: uniConfig.baseToken,
-      minPeriod: uniConfig.minPeriod,
-      deviationThreshold: uniConfig.deviationThreshold,
-    });
-    await tx.wait();
-    console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${uniConfig.pair}`);
+    let i = 0;
+    for (i; i < oldPairs.length; i++) {
+      if (
+        oldPairs[i].pair.toLowerCase() === uniConfig.pair.toLowerCase() &&
+        oldPairs[i].baseToken.toLowerCase() === uniConfig.baseToken.toLowerCase()
+      ) {
+        break;
+      }
+    }
+    if (i === oldPairs.length) {
+      const tx = await resolverContract.addPair({
+        pair: uniConfig.pair,
+        baseToken: uniConfig.baseToken,
+        minPeriod: uniConfig.minPeriod,
+        deviationThreshold: uniConfig.deviationThreshold,
+      });
+      await tx.wait();
+      console.log(`UniswapTwapPriceOracleV2Resolver pair added - ${uniConfig.pair}`);
+    }
   }
 
   const uniTwapOracleFactory = (await ethers.getContract(
