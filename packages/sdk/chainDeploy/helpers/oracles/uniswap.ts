@@ -54,6 +54,12 @@ export const deployUniswapOracle = async ({
 
   const resolverContract = await ethers.getContract("UniswapTwapPriceOracleV2Resolver", deployer);
 
+  const oldPairsLength = await resolverContract.getParis();
+
+  for (let i = 0; i < oldPairsLength; i++) {
+    await resolverContract.removeFromPairs(0);
+  }
+
   for (const uniConfig of deployConfig.uniswap.uniswapOracleInitialDeployTokens) {
     const tx = await resolverContract.addPair({
       pair: uniConfig.pair,
