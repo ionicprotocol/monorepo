@@ -530,30 +530,47 @@ const AmountSelect = ({
               ) : (
                 <>
                   {mode === FundOperationMode.BORROW && (
-                    <Row
-                      width="100%"
-                      mt={4}
-                      mainAxisAlignment="flex-end"
-                      crossAxisAlignment="center"
-                    >
-                      <Alert status="info" pb={4}>
-                        <AlertIcon />
-                        <Text variant="smText">
-                          {`For safety reasons, you need to borrow at least a value of $${
-                            minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
-                          }${
-                            minBorrowAsset
-                              ? ` / ${toCeil(
-                                  Number(
-                                    utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
-                                  ),
-                                  2
-                                )} ${asset.underlyingSymbol}`
-                              : ''
-                          } for now.`}
-                        </Text>
-                      </Alert>
-                    </Row>
+                    <>
+                      {asset.supplyBalanceFiat > 0 && (
+                        <Row
+                          width="100%"
+                          mt={2}
+                          mainAxisAlignment="flex-end"
+                          crossAxisAlignment="center"
+                        >
+                          <Alert status="info">
+                            <AlertIcon />
+                            <Text variant="smText">
+                              {`You can borrow ${asset.underlyingSymbol} only up to the collateral available from other tokens, balance of ${asset.underlyingSymbol} is not counted`}
+                            </Text>
+                          </Alert>
+                        </Row>
+                      )}
+                      <Row
+                        width="100%"
+                        mt={2}
+                        mainAxisAlignment="flex-end"
+                        crossAxisAlignment="center"
+                      >
+                        <Alert status="info">
+                          <AlertIcon />
+                          <Text variant="smText">
+                            {`For safety reasons, you need to borrow at least a value of $${
+                              minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
+                            }${
+                              minBorrowAsset
+                                ? ` / ${toCeil(
+                                    Number(
+                                      utils.formatUnits(minBorrowAsset, asset.underlyingDecimals)
+                                    ),
+                                    2
+                                  )} ${asset.underlyingSymbol}`
+                                : ''
+                            } for now.`}
+                          </Text>
+                        </Alert>
+                      </Row>
+                    </>
                   )}
                   <MidasBox width="100%" height="70px" mt={3}>
                     <Row
