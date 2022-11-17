@@ -541,7 +541,7 @@ const AmountSelect = ({
                           <Alert status="info">
                             <AlertIcon />
                             <Text variant="smText">
-                              {`You can borrow ${asset.underlyingSymbol} only up to the collateral available from other tokens, balance of ${asset.underlyingSymbol} is not counted`}
+                              {`You can borrow ${asset.underlyingSymbol} only up to the collateral available from other tokens, balance of ${asset.underlyingSymbol} isn’t taken into account`}
                             </Text>
                           </Alert>
                         </Row>
