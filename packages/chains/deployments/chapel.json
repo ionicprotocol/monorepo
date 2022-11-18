@@ -7618,7 +7618,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x1BB0B39d186Ad4cF6510986048aA899d5B71cdbF",
+      "address": "0x7CdEFC1C358dFC34Cb1fE7E61fA34bCD8A481A7A",
       "abi": [
         {
           "inputs": [
@@ -7924,13 +7924,6 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "_fixStorage",
-          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
