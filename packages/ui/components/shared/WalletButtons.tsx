@@ -1,5 +1,6 @@
 import { Button, Center, Flex, HStack, Img, Spinner, Text } from '@chakra-ui/react';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { memo } from 'react';
 import Jazzicon, { jsNumberForAddress } from 'react-jazzicon';
 
 import ClaimAllRewardsButton from '@ui/components/shared/ClaimAllRewardsButton';
@@ -7,7 +8,7 @@ import { Row } from '@ui/components/shared/Flex';
 import { useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { shortAddress } from '@ui/utils/shortAddress';
 
-export const WalletButtons = () => {
+export const WalletButtons = memo(() => {
   const isMobile = useIsSmallScreen();
 
   return (
@@ -76,4 +77,4 @@ export const WalletButtons = () => {
       </ConnectButton.Custom>
     </Row>
   );
-};
+});
