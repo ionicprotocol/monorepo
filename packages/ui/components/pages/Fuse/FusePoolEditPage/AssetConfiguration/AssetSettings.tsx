@@ -172,7 +172,7 @@ export const AssetSettings = ({
   const updateSupplyCaps = async ({ supplyCaps }: { supplyCaps: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const comptroller = currentSdk.createFirstComptrollerExtension(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
     try {
       const tx = await comptroller._setMarketSupplyCaps(
         [cTokenAddress],
@@ -311,7 +311,7 @@ export const AssetSettings = ({
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
 
-    const comptroller = currentSdk.createFirstComptrollerExtension(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
     try {
       if (!cTokenAddress) throw new Error('Missing token address');
       const tx = await comptroller._setBorrowPaused(cTokenAddress, !isPaused);
