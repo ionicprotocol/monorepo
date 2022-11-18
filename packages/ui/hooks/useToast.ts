@@ -10,7 +10,7 @@ const useSuccessToast = (options?: UseToastOptions) => {
       status: 'success',
       duration: 5000,
       isClosable: true,
-      position: 'top-right',
+      position: 'bottom-right',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -26,7 +26,7 @@ const useErrorToast = (options?: UseToastOptions) => {
       status: 'error',
       duration: 10000,
       isClosable: true,
-      position: 'top-right',
+      position: 'bottom-right',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -42,7 +42,7 @@ const useWarningToast = (options?: UseToastOptions) => {
       status: 'warning',
       duration: 10000,
       isClosable: true,
-      position: 'top-right',
+      position: 'bottom-right',
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -58,7 +58,7 @@ const useInfoToast = (options?: UseToastOptions) => {
       status: 'info',
       duration: 5000,
       isClosable: true,
-      position: 'top-right',
+      position: 'bottom-right',
       ..._options,
     } as UseToastOptions;
   }, [options]);
