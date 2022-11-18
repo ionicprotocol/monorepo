@@ -7618,7 +7618,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x72e02db51AF6e8963a35ff79a5bE5b15e44bBb1E",
+      "address": "0x1BB0B39d186Ad4cF6510986048aA899d5B71cdbF",
       "abi": [
         {
           "inputs": [
@@ -7731,19 +7731,6 @@
             }
           ],
           "name": "MarketListed",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            }
-          ],
-          "name": "MarketUnlisted",
           "type": "event"
         },
         {
@@ -7942,6 +7929,26 @@
         },
         {
           "inputs": [],
+          "name": "_fixStorage",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_listExtensions",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "_mintGuardianPaused",
           "outputs": [
             {
@@ -8104,25 +8111,6 @@
             }
           ],
           "name": "_toggleAutoImplementations",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            }
-          ],
-          "name": "_unsupportMarket",
           "outputs": [
             {
               "internalType": "uint256",
@@ -9196,7 +9184,7 @@
       ]
     },
     "ComptrollerFirstExtension": {
-      "address": "0x628C6d2236fC1712D66Df5fbFf9041f7809C959C",
+      "address": "0x6A3Efd3efF60A17accCa4D4Fb8f7144A59F190Cf",
       "abi": [
         {
           "anonymous": false,
@@ -9265,6 +9253,19 @@
             }
           ],
           "name": "MarketActionPaused",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "MarketUnlisted",
           "type": "event"
         },
         {
@@ -9531,6 +9532,25 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "_unsupportMarket",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "nonpayable",
@@ -10718,6 +10738,24 @@
               "type": "address"
             },
             {
+              "internalType": "contract DiamondExtension[]",
+              "name": "extensions",
+              "type": "address[]"
+            }
+          ],
+          "name": "_setComptrollerExtensions",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            },
+            {
               "internalType": "int256",
               "name": "rate",
               "type": "int256"
@@ -10967,6 +11005,30 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "comptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -11032,6 +11094,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getComptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -11321,7 +11402,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xe38A0F34DB15fCC47510cdB0519E149eC20c8806",
+      "address": "0xb412cE162dE2168C92bbdB80A2c74c771e5D91dD",
       "abi": [
         {
           "anonymous": false,
@@ -11653,6 +11734,24 @@
               "type": "address"
             },
             {
+              "internalType": "contract DiamondExtension[]",
+              "name": "extensions",
+              "type": "address[]"
+            }
+          ],
+          "name": "_setComptrollerExtensions",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            },
+            {
               "internalType": "int256",
               "name": "rate",
               "type": "int256"
@@ -11902,6 +12001,30 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "comptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -11967,6 +12090,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getComptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
