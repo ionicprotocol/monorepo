@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { getComptrollerContract } from '@ui/utils/contracts';
 
 export const useIsComptrollerAdmin = (
   comptrollerAddress?: string,
@@ -16,7 +15,7 @@ export const useIsComptrollerAdmin = (
     async () => {
       if (!comptrollerAddress || !sdk) return undefined;
 
-      const comptroller = getComptrollerContract(comptrollerAddress, sdk);
+      const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
 
       return await comptroller.callStatic.admin();
     },
