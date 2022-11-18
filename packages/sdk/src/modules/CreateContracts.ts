@@ -1,4 +1,4 @@
-import { Contract, Signer } from "ethers";
+import { Contract } from "ethers";
 
 import { Artifacts, MidasBaseConstructor } from "..";
 import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBInterestRateModel.sol";
@@ -12,7 +12,9 @@ import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOrac
 import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
 import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import { SignerOrProvider, SupportedProvider } from "../MidasSdk";
+import { SignerOrProvider } from "../MidasSdk";
+
+type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
@@ -36,15 +38,15 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     }
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      return new Contract(comptrollerAddress, this.chainDeployment.Comptroller.abi, signerOrProvider) as Comptroller;
-    }
+      const comptrollerABI: Array<object> = this.chainDeployment.Comptroller.abi;
+      if (this.chainDeployment.ComptrollerFirstExtension) {
+        comptrollerABI.push(this.chainDeployment.ComptrollerFirstExtension.abi);
+      }
+      if (this.chainDeployment.ComptrollerSecondExtension) {
+        comptrollerABI.push(this.chainDeployment.ComptrollerSecondExtension.abi);
+      }
 
-    createFirstComptrollerExtension(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      return new Contract(
-        comptrollerAddress,
-        this.chainDeployment.ComptrollerFirstExtension.abi,
-        signerOrProvider
-      ) as ComptrollerFirstExtension;
+      return new Contract(comptrollerAddress, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
     }
 
     createOracle(oracleAddress: string, type: string, signerOrProvider: SignerOrProvider = this.signer) {
