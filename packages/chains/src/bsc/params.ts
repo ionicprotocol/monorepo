@@ -9,18 +9,18 @@ const specificParams: ChainParams = {
   metadata: {
     chainIdHex: "0x38",
     name: "Binance Smart Chain",
-    shortName: "BSC",
+    shortName: "BNB",
     img: "https://d1912tcoux65lj.cloudfront.net/network/bsc.jpg",
-    blockExplorerUrls: { default: { name: "BscScan", url: "https://bscscan.com" } },
+    blockExplorerUrls: { default: { name: "BnbScan", url: "https://bscscan.com" } },
     rpcUrls: { default: "https://bsc-dataseed.binance.org/" },
     nativeCurrency: {
       symbol: "BNB",
-      name: "BSC",
+      name: "BNB",
     },
     wrappedNativeCurrency: {
       symbol: "WBNB",
       address: WBNB,
-      name: "BSC",
+      name: "BNB",
       decimals: 18,
       color: "#627EEA",
       overlayTextColor: "#fff",
