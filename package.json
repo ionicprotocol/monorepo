@@ -48,6 +48,8 @@
     "dev:node:fork": "yarn workspace @midas-capital/sdk hardhat node --port 8545 --no-deploy",
     "dev:node:bsc": "FORK_CHAIN_ID=56 FORK_RPC_URL=$BSC_RPC_URL yarn workspace @midas-capital/sdk hardhat node --port 8545 --no-deploy",
     "dev:node:polygon": "FORK_CHAIN_ID=137 FORK_RPC_URL=$POLYGON_RPC_URL yarn workspace @midas-capital/sdk hardhat node --port 8546 --no-deploy",
+    "dev:node:chapel": "FORK_CHAIN_ID=97 FORK_RPC_URL=$CHAPEL_RPC_URL yarn workspace @midas-capital/sdk hardhat node --port 8547 --no-deploy",
+    "dev:node:arbitrum": "FORK_CHAIN_ID=42161 FORK_RPC_URL=$ARBITRUM_RPC_URL yarn workspace @midas-capital/sdk hardhat node --port 8548 --no-deploy",
     "dev:simulate:deploy:bsc": "FORK_RPC_URL=${FORK_RPC_URL} FORK_BLOCK_NUMBER= FORK_CHAIN_ID=56 yarn workspace @midas-capital/sdk hardhat node --tags prod",
     "test:ui": "yarn workspace @midas-capital/ui test"
   }

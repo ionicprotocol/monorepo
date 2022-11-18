@@ -14,8 +14,23 @@ task("fork:fund-accounts", "Setup Test Accounts with Tokens")
           "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56",
         ];
         break;
+      case "97":
+        tokens = [
+          "0xae13d989daC2f0dEbFf460aC112a837C89BAa7cd",
+          "0x78867BbEeF44f2326bF8DDd1941a4439382EF2A7",
+          "0x6ce8dA28E2f864420840cF74474eFf5fD80E65B8",
+          "0x8a9424745056Eb399FD19a0EC26A14316684e274",
+        ];
+        break;
       case "137":
         tokens = ["0x596eBE76e2DB4470966ea395B0d063aC6197A8C5"];
+        break;
+      case "42161":
+        tokens = [
+          "0xFF970A61A04b1cA14834A43f5dE4533eBDDB5CC8",
+          "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+          "0x6C2C06790b3E3E3c38e12Ee22F8183b37a13EE55",
+        ];
         break;
       default:
         break;

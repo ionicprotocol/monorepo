@@ -109,12 +109,26 @@ const config: HardhatUserConfig = {
       gasPrice: 20e10,
       url: "http://localhost:8545",
     },
+    localchapel: {
+      accounts: { mnemonic },
+      chainId: 97,
+      gas: 25e6,
+      gasPrice: 20e10,
+      url: "http://localhost:8547",
+    },
     localpolygon: {
       accounts: { mnemonic },
       chainId: 137,
       gas: 25e6,
       gasPrice: 20e10,
       url: "http://localhost:8546",
+    },
+    localarbitrum: {
+      accounts: { mnemonic },
+      chainId: 42161,
+      gas: 25e6,
+      gasPrice: 20e10,
+      url: "http://localhost:8548",
     },
     rinkeby: {
       accounts: { mnemonic },
