@@ -190,6 +190,11 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 42161,
     },
+    fantom: {
+      url: OVERRIDE_RPC_URL || `https://arb1.arbitrum.io/rpc`,
+      accounts: { mnemonic },
+      chainId: 350,
+    },
   },
 };
 
