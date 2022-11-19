@@ -1,4 +1,4 @@
-import { BigNumber, constants, ethers, logger } from "ethers";
+import { BigNumber, constants, ethers } from "ethers";
 
 import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
@@ -76,32 +76,32 @@ async function getPoolsWithShortfall(sdk: MidasBase, comptroller: string) {
 }
 
 export default async function getAllFusePoolUsers(
-  fuse: MidasBase,
+  sdk: MidasBase,
   maxHealth: BigNumber,
   excludedComptrollers: Array<string>
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
-  const allPools = await fuse.contracts.FusePoolDirectory.callStatic.getAllPools();
+  const allPools = await sdk.contracts.FusePoolDirectory.callStatic.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   for (const pool of allPools) {
     const { comptroller, name } = pool;
     if (!excludedComptrollers.includes(comptroller)) {
       try {
-        const hasShortfall = await getPoolsWithShortfall(fuse, comptroller);
+        const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
         if (hasShortfall.length > 0) {
           const users = hasShortfall.map((user) => {
             return `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`;
           });
-          console.log(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
+          sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
           try {
-            const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(fuse, comptroller, maxHealth);
+            const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(sdk, comptroller, maxHealth);
             fusePoolUsers.push(poolUserParams);
           } catch (e) {
             const msg = `Error getting pool users for ${comptroller}` + e;
             erroredPools.push({ comptroller, msg });
           }
         } else {
-          logger.info(`Pool ${name} (${comptroller}) has no users with shortfall`);
+          sdk.logger.info(`Pool ${name} (${comptroller}) has no users with shortfall`);
         }
       } catch (e) {
         const msg = `Error getting shortfalled users for pool ${name} (${comptroller})` + e;

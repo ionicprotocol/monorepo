@@ -7,7 +7,7 @@ import { StrategiesAndDatas } from "./redemptionStrategy";
 import { EncodedLiquidationTx, FusePoolUserWithAssets, logLiquidation } from "./utils";
 
 export default async function encodeLiquidateTx(
-  fuse: MidasBase,
+  sdk: MidasBase,
   liquidationStrategy: LiquidationStrategy,
   borrower: FusePoolUserWithAssets,
   exchangeToTokenAddress: string,
@@ -18,6 +18,7 @@ export default async function encodeLiquidateTx(
   debtFundingStrategiesData: any[]
 ): Promise<EncodedLiquidationTx> {
   logLiquidation(
+    sdk,
     borrower,
     exchangeToTokenAddress,
     liquidationAmount,
@@ -37,7 +38,7 @@ export default async function encodeLiquidateTx(
           borrower.collateral[0].cToken,
           0,
           exchangeToTokenAddress,
-          fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+          sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
           strategiesAndDatas.strategies,
           strategiesAndDatas.datas,
         ],
@@ -55,8 +56,8 @@ export default async function encodeLiquidateTx(
             minProfitAmount: 0,
             flashSwapPair,
             exchangeProfitTo: exchangeToTokenAddress,
-            uniswapV2RouterForBorrow: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
-            uniswapV2RouterForCollateral: fuse.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+            uniswapV2RouterForBorrow: sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
+            uniswapV2RouterForCollateral: sdk.chainSpecificAddresses.UNISWAP_V2_ROUTER,
             redemptionStrategies: strategiesAndDatas.strategies,
             strategyData: strategiesAndDatas.datas,
             ethToCoinbase: 0,
