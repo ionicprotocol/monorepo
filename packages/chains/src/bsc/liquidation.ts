@@ -14,7 +14,7 @@ const liquidationDefaults: LiquidationDefaults = {
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, WBNB],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-  LIQUIDATION_INTERVAL_SECONDS: 40,
+  LIQUIDATION_INTERVAL_SECONDS: 30,
   jarvisPools: [
     {
       expirationTime: 40 * 60,

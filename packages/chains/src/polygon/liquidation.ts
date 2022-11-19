@@ -1,10 +1,4 @@
-import {
-  assetSymbols,
-  LiquidationDefaults,
-  LiquidationStrategy,
-  SupportedAsset,
-  underlying,
-} from "@midas-capital/types";
+import { assetSymbols, LiquidationDefaults, LiquidationStrategy, underlying } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
 import chainAddresses from "./addresses";
@@ -17,7 +11,7 @@ const liquidationDefaults: LiquidationDefaults = {
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, underlying(assets, assetSymbols.WMATIC)],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-  LIQUIDATION_INTERVAL_SECONDS: 20,
+  LIQUIDATION_INTERVAL_SECONDS: 30,
   jarvisPools: [
     // jAUD <-> USDC
     {
