@@ -36,7 +36,7 @@ locals {
   evmos_testnet_chain_id = "9000"
 
   polygon_mainnet_rpc_0    = var.chainstack_polygon_rpc_url
-  polygon_mainnet_rpc_1    = "https://rpc.ankr.com/polygon"
+  polygon_mainnet_rpc_1    = "https://polygon-rpc.com/"
   polygon_mainnet_chain_id = "137"
 
 }
