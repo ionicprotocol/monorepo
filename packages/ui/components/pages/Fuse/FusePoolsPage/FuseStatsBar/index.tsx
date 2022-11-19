@@ -70,7 +70,7 @@ const FuseStatsBar = () => {
         <Text variant="heading" fontWeight="bold">
           Unleash the power of your assets
         </Text>
-        <Text variant="mdText" my={4} zIndex="100" lineHeight={8}>
+        <Text variant="mdText" my={4} lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
@@ -151,7 +151,7 @@ const FuseStatsBar = () => {
             borderRadius="20px"
             bg={cPage.secondary.bgColor}
             color={cPage.secondary.txtColor}
-            whileHover={{ scale: 1.06 }}
+            // whileHover={{ scale: 1.06 }}
           >
             {isLoading || totalTVL === undefined ? (
               <Spinner />

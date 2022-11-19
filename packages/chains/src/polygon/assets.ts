@@ -9,6 +9,7 @@ import {
   quickSwapDocs,
   wrappedAssetDocs,
 } from "../common";
+import { oneInchDocs } from "../common/docs";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -159,7 +160,7 @@ export const assets: SupportedAsset[] = [
     name: "Dai Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", DAI),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/DAI"),
   },
   {
     symbol: assetSymbols.WETH,
@@ -175,7 +176,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", FRAX),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/FRAX"),
   },
   {
     symbol: assetSymbols.FTM,
@@ -263,7 +264,7 @@ export const assets: SupportedAsset[] = [
     name: "SushiToken (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", SUSHI),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/SUSHI"),
   },
   {
     symbol: assetSymbols.YFI,
@@ -279,7 +280,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin (PoS)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", USDC),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDC"),
   },
   {
     symbol: assetSymbols.USDT,
@@ -287,7 +288,7 @@ export const assets: SupportedAsset[] = [
     name: "Tether USD (PoS)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", USDT),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/USDT"),
   },
   {
     symbol: assetSymbols.WBTC,
@@ -295,7 +296,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC (PoS)",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://polygonscan.com", WBTC),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/WBTC"),
   },
   {
     symbol: assetSymbols.WMATIC,
@@ -311,7 +312,7 @@ export const assets: SupportedAsset[] = [
     name: "MIMO Parallel Governance Token (PoS) ",
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
-    extraDocs: defaultDocs("https://polygonscan.com", MIMO),
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/MIMO"),
   },
   // QuickSwap LPs
   {
@@ -432,6 +433,7 @@ export const assets: SupportedAsset[] = [
     name: "agEUR Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/agEUR"),
   },
   {
     symbol: assetSymbols.JEUR,
@@ -447,6 +449,7 @@ export const assets: SupportedAsset[] = [
     name: "PAR Stablecoin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/PAR"),
   },
   {
     symbol: assetSymbols.EURT,

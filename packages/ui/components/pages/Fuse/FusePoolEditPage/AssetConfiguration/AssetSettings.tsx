@@ -200,7 +200,6 @@ export const AssetSettings = ({
     // 70% -> 0.7 * 1e18
     const bigCollateralFactor = utils.parseUnits((collateralFactor / 100).toString());
     try {
-      if (!cTokenAddress) throw new Error('Missing token address');
       const response = await comptroller.callStatic._setCollateralFactor(
         cTokenAddress,
         bigCollateralFactor

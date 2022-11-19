@@ -16,10 +16,7 @@ export const PopoverStyleConfig: ComponentStyleConfig = {
       borderColor: mode('ecru', 'ecru')(props),
     },
     arrow: {
-      borderWidth: 1,
-      borderTopWidth: 0,
-      borderLeftWidth: 0,
-      borderColor: mode('ecru', 'ecru')(props),
+      borderWidth: 0,
     },
   }),
   sizes: {},

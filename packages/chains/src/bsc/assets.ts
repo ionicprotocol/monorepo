@@ -63,6 +63,7 @@ const DDD = "0x84c97300a190676a19D1E13115629A11f8482Bd1";
 const pSTAKE = "0x4C882ec256823eE773B25b414d36F92ef58a7c0C";
 const SD = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
 const WOMBATLP_WBNB = "0x74f019A5C4eD2C2950Ce16FaD7Af838549092c5b";
+const HAY = "0x0782b6d8c4551B9760e74c0545a9bCD90bdc41E5";
 
 const assets: SupportedAsset[] = [
   {
@@ -189,6 +190,14 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://bscscan.com", MAI),
   },
+  {
+    symbol: assetSymbols.HAY,
+    underlying: HAY,
+    name: "HAY",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    extraDocs: defaultDocs("https://bscscan.com", HAY),
+  },
   // Ellipsis
   {
     symbol: assetSymbols["3EPS"],
@@ -260,7 +269,7 @@ const assets: SupportedAsset[] = [
     underlying: aBNBc,
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
-    oracle: OracleTypes.AnkrBNBcPriceOracle,
+    oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
     extraDocs: ankrBNBDocs("aBNBc"),
   },
   {
