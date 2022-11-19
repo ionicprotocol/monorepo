@@ -25,10 +25,10 @@ locals {
   ]
 
   bsc_mainnet_rpc_0    = var.chainstack_bsc_rpc_url
-  bsc_mainnet_rpc_1    = "https://rpc.ankr.com/bsc"
+  bsc_mainnet_rpc_1    = "https://bsc-dataseed.binance.org"
   bsc_mainnet_chain_id = "56"
 
-  moonbeam_mainnet_rpc_0    = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
+  moonbeam_mainnet_rpc_0    = "https://moonbeam.public.blastapi.io"
   moonbeam_mainnet_rpc_1    = "https://rpc.ankr.com/moonbeam"
   moonbeam_mainnet_chain_id = "1284"
 
