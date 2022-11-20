@@ -25,6 +25,8 @@ export const deployConfig: ChainDeployConfig = {
   },
   dynamicFlywheels: [],
   cgId: fantom.specificParams.cgId,
+  stableToken: underlying(assets, assetSymbols.USDC),
+  wBTCToken: underlying(assets, assetSymbols.multiBTC),
 };
 
 const chainlinkAssets: ChainlinkAsset[] = [
@@ -46,11 +48,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.USDC,
     aggregator: "0x2553f4eeb82d5A26427b8d1106C51499CBa5D99c",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
-    symbol: assetSymbols.USDT,
-    aggregator: "0xF64b636c5dFe1d3555A847341cDC449f612307d0",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {

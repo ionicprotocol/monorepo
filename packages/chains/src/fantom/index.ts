@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@midas-capital/types";
 
-// import deployments from "../../deployments/fantom.json";
+import deployments from "../../deployments/fantom.json";
 
 import chainAddresses from "./addresses";
 import assets from "./assets";
@@ -13,7 +13,7 @@ import deployedPlugins from "./plugins";
 import redemptionStrategies from "./redemptionStrategies";
 
 const chainConfig: ChainConfig = {
-  chainId: SupportedChains.arbitrum,
+  chainId: SupportedChains.fantom,
   chainAddresses,
   assets,
   irms,
@@ -23,7 +23,7 @@ const chainConfig: ChainConfig = {
   deployedPlugins,
   redemptionStrategies,
   fundingStrategies,
-  chainDeployments: {},
+  chainDeployments: deployments.contracts,
 };
 
 export default chainConfig;

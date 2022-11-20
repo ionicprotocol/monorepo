@@ -3,6 +3,7 @@ import {
   bsc,
   chapel,
   evmos,
+  fantom,
   ganache,
   moonbeam,
   neondevnet,
@@ -90,6 +91,7 @@ export const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
+  [SupportedChains.fantom]: fantom.assets,
 };
 
 export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
@@ -101,4 +103,5 @@ export const deployedPlugins: { [chainId: string]: DeployedPluginsType } = {
   [SupportedChains.moonbeam]: moonbeam.deployedPlugins,
   [SupportedChains.neon_devnet]: neondevnet.deployedPlugins,
   [SupportedChains.arbitrum]: arbitrum.deployedPlugins,
+  [SupportedChains.fantom]: fantom.deployedPlugins,
 };

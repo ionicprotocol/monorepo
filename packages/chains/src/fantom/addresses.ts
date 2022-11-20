@@ -10,7 +10,7 @@ const chainAddresses: ChainAddresses = {
   UNISWAP_V2_FACTORY: "0x152eE697f2E276fA89E96742e9bB9aB1F2E61bE3",
   PAIR_INIT_HASH: ethers.utils.hexlify("0xcdf2deca40a0bd56de8e3ce5c7df6727e5b1bf2ac96f283fa9c4b3e6b42ea9d2"),
   STABLE_TOKEN: underlying(assets, assetSymbols.USDC),
-  W_BTC_TOKEN: underlying(assets, assetSymbols.WBTC),
+  W_BTC_TOKEN: underlying(assets, assetSymbols.multiBTC),
 };
 
 export default chainAddresses;
