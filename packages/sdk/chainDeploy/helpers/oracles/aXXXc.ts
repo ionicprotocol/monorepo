@@ -1,19 +1,20 @@
-import { assetSymbols, underlying } from "@midas-capital/types";
+import { underlying } from "@midas-capital/types";
 import { providers } from "ethers";
 
-import { aBNBcDeployParams } from "../types";
+import { aXXXcDeployParams } from "../types";
 
 export const deployAnkrCertificateTokenPriceOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
   assets,
-}: aBNBcDeployParams): Promise<{ ankrCertificateTokenPriceOracle: any }> => {
+  certificateAssetSymbol,
+}: aXXXcDeployParams): Promise<{ ankrCertificateTokenPriceOracle: any }> => {
   const { deployer } = await getNamedAccounts();
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
 
-  const aBNBc = underlying(assets, assetSymbols.aBNBc);
+  const aXXXc = underlying(assets, certificateAssetSymbol);
 
   const ankrCertificateTokenPriceOracle = await deployments.deploy("AnkrCertificateTokenPriceOracle", {
     from: deployer,
@@ -21,7 +22,7 @@ export const deployAnkrCertificateTokenPriceOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [aBNBc],
+          args: [aXXXc],
         },
       },
       proxyContract: "OpenZeppelinTransparentProxy",
@@ -34,7 +35,7 @@ export const deployAnkrCertificateTokenPriceOracle = async ({
     await ethers.provider.waitForTransaction(ankrCertificateTokenPriceOracle.transactionHash);
   console.log("ankrCertificateTokenPriceOracle: ", ankrCertificateTokenPriceOracle.address);
 
-  const tx: providers.TransactionResponse = await mpo.add([aBNBc], [ankrCertificateTokenPriceOracle.address]);
+  const tx: providers.TransactionResponse = await mpo.add([aXXXc], [ankrCertificateTokenPriceOracle.address]);
   await tx.wait();
   return { ankrCertificateTokenPriceOracle };
 };
