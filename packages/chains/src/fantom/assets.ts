@@ -63,7 +63,7 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.USDC,
     underlying: USDC,
     name: "USD Coin",
-    decimals: 18,
+    decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://ftmscan.com", USDC),
   },
