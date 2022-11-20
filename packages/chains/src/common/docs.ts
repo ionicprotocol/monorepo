@@ -33,6 +33,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://moraswap.com/exchange/swap",
     },
     [SupportedChains.chapel]: {},
+    [SupportedChains.fantom]: {
+      swapName: "SpookySwap",
+      swapAddress: "https://spooky.fi/#/swap",
+    },
   }[chainId];
 
   return `
@@ -51,10 +55,10 @@ export const ellipsisDocs = (poolAddress: string, poolName: string, tokenAddress
   `;
 };
 
-export const ankrBNBDocs = (variant: string) => {
+export const ankrCertificateDocs = (variant: string, chain: string) => {
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p>Head over to <a href="https://www.ankr.com/staking/stake/bnb/?token=${variant}" target="_blank" style="color: #BCAC83;">Ankr BNB Staking</a>, where you can acquire ${variant} by depositing BNB</p>
+  <p>Head over to <a href="https://www.ankr.com/staking/stake/${chain.toLowerCase()}/?token=${variant}" target="_blank" style="color: #BCAC83;">Ankr ${chain} Staking</a>, where you can acquire ${variant} by depositing ${chain}</p>
   `;
 };
 

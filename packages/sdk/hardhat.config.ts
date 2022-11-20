@@ -190,6 +190,11 @@ const config: HardhatUserConfig = {
       accounts: { mnemonic },
       chainId: 42161,
     },
+    fantom: {
+      url: OVERRIDE_RPC_URL || `https://rpcapi.fantom.network`,
+      accounts: { mnemonic },
+      chainId: 250,
+    },
   },
 };
 
