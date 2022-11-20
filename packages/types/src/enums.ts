@@ -55,6 +55,7 @@ export enum OracleTypes {
   StkBNBPriceOracle = "StkBNBPriceOracle",
   BNBxPriceOracle = "BNBxPriceOracle",
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
+  AdrastiaPriceOracle = "AdrastiaPriceOracle",
 }
 
 export enum IrmTypes {
@@ -218,6 +219,11 @@ export enum assetSymbols {
   saddleOptUSD = "saddleOptUSD",
   WEVMOS = "WEVMOS",
   ATOM = "ATOM",
+  gUSDC = "gUSDC",
+  OSMO = "OSMO",
+  JUNO = "JUNO",
+  axlETH = "axlETH",
+  gUSDT = "gUSDT",
 
   // moonbeam
   GLMR = "GLMR",
@@ -240,15 +246,9 @@ export enum assetSymbols {
   "3pool" = "3pool",
   "xcDOT-stDOT" = "xcDOT-stDOT",
 
-  // moonbase
-  WDEV = "WDEV",
-
   // local
   TOUCH = "TOUCH",
   TRIBE = "TRIBE",
-
-  // aurora
-  WNEAR = "WNEAR",
 
   // neon
   WNEON = "WNEON",

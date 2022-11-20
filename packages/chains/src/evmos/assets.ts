@@ -3,17 +3,17 @@ import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types"
 export const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.WEVMOS,
-    underlying: "0x7C598c96D02398d89FbCb9d41Eab3DF0C16F227D",
+    underlying: "0xD4949664cD82660AaE99bEdc034a0deA8A0bd517",
     name: "Wrapped EVMOS ",
     decimals: 18,
     oracle: OracleTypes.FixedNativePriceOracle,
   },
   {
-    symbol: assetSymbols.USDT,
-    underlying: "0x7FF4a56B32ee13D7D4D405887E0eA37d61Ed919e",
-    name: "Tether USD",
+    symbol: assetSymbols.gUSDT,
+    underlying: "0xecEEEfCEE421D8062EF8d6b4D814efe4dc898265",
+    name: "Gravity Bridged USDT",
     decimals: 18,
-    oracle: OracleTypes.FluxPriceOracle,
+    oracle: OracleTypes.AdrastiaPriceOracle,
   },
   {
     symbol: assetSymbols.USDC,
