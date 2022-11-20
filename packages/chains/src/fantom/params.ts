@@ -8,12 +8,12 @@ const specificParams: ChainParams = {
   blocksPerYear: BigNumber.from((40 * 24 * 365 * 60).toString()),
   cgId: "fantom",
   metadata: {
-    chainIdHex: "0x15E",
+    chainIdHex: "0xFA",
     name: "Fantom Opera",
     shortName: "Fantom",
     img: "https://d1912tcoux65lj.cloudfront.net/network/fantom.jpg",
     blockExplorerUrls: { default: { name: "ftmscan", url: "https://ftmscan.com" } },
-    rpcUrls: { default: "https://rpc.ankr.com/fantom" },
+    rpcUrls: { default: "https://rpcapi.fantom.network" },
     nativeCurrency: {
       symbol: "FTM",
       name: "FTM",

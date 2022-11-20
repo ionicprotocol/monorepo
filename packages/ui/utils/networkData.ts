@@ -73,6 +73,9 @@ export function getEnabledChains() {
   if (config.isArbitrumEnabled) {
     enabledChains.push(SupportedChains.arbitrum);
   }
+  if (config.isFantomEnabled) {
+    enabledChains.push(SupportedChains.fantom);
+  }
 
   if (config.isTestnetEnabled) {
     enabledChains.push(SupportedChains.neon_devnet);
