@@ -172,7 +172,7 @@ export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string)
   <p><b>How to acquire this token</b><p/><br />
   <p> 1. Head over to the <a href="https://arbitrum.curve.fi/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
-  <p>You will get back the <a href="https://arbiscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p>You will get back the <a href="https://arbiscan.io/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };
