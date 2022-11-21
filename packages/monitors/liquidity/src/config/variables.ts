@@ -15,7 +15,7 @@ export const baseConfig: BaseConfig = {
 
 const liquidityVerifierConfig: LiquidityDepthConfig = {
   ...baseConfig,
-  minTwapDepth: parseInt(process.env.MIN_TWAP_DEPTH ?? "500000", 10),
+  minLiquidity: parseInt(process.env.MIN_TWAP_DEPTH ?? "500000", 10),
   runInterval:
     parseInt(process.env.FEED_VERIFIER_RUN_INTERVAL ?? (process.env.NODE_ENV === "production" ? "3600" : "20")) * 1000, // 1 hours
 };

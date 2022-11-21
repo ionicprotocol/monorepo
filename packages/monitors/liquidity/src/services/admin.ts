@@ -1,18 +1,17 @@
 import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedAsset } from "@midas-capital/types";
+import { CErc20Delegate } from "@midas-capital/sdk/dist/cjs/lib/contracts/typechain/CErc20Delegate";
 import { constants, Contract, logger, Signer } from "ethers";
 
 import { baseConfig } from "../config";
+import { ComptrollerWithExtension } from "../types";
 
 export class AdminService {
   admin: Signer;
   adminAddress: string;
   sdk: MidasSdk;
-  asset: SupportedAsset;
 
-  constructor(sdk: MidasSdk, asset: SupportedAsset) {
+  constructor(sdk: MidasSdk) {
     this.adminAddress = baseConfig.adminAccount;
-    this.asset = asset;
     this.admin = sdk.signer;
     this.sdk = sdk;
   }
@@ -21,16 +20,16 @@ export class AdminService {
     return this;
   }
 
-  async pauseAllPools(pools: Array<Contract>) {
+  async pauseAllPoolsWithUnderlying(pools: Array<ComptrollerWithExtension>, underlying: string) {
     for (const pool of pools) {
-      const cTokenAddress = await pool.callStatic.cTokensByUnderlying(this.asset.underlying);
+      const cTokenAddress = await pool.callStatic.cTokensByUnderlying(underlying);
       const cToken = this.sdk.createCToken(cTokenAddress, this.admin);
       await this.pauseMarketActivity(pool, cToken);
     }
   }
 
-  private async getPauseGuardian(pool: Contract) {
-    return await pool.pauseGuardian();
+  private async getPauseGuardian(pool: ComptrollerWithExtension) {
+    return await pool.callStatic.pauseGuardian();
   }
   private async setPauseGuardian(pool: Contract) {
     const tx = await pool._setPauseGuardian(this.adminAddress);
@@ -38,7 +37,7 @@ export class AdminService {
     logger.info(`Set the pause guardian to ${this.adminAddress}`);
   }
 
-  async pauseMarketActivity(pool: Contract, cToken: Contract) {
+  async pauseMarketActivity(pool: ComptrollerWithExtension, cToken: CErc20Delegate) {
     const pauseGuardian = await this.getPauseGuardian(pool);
     if (pauseGuardian === constants.AddressZero) {
       await this.setPauseGuardian(pool);
@@ -47,8 +46,8 @@ export class AdminService {
     await this.pauseBorrowActivity(pool);
   }
 
-  async pauseMintActivity(pool: Contract, cToken: Contract) {
-    const isPaused: boolean = await pool.mintGuardianPaused(cToken.address);
+  async pauseMintActivity(pool: ComptrollerWithExtension, cToken: CErc20Delegate) {
+    const isPaused: boolean = await pool.callStatic.mintGuardianPaused(cToken.address);
     if (!isPaused) {
       const tx = await pool._setMintPaused(cToken.address, true);
       await tx.wait();
@@ -57,8 +56,8 @@ export class AdminService {
       logger.info(`Minting already paused`);
     }
   }
-  async pauseBorrowActivity(pool: Contract) {
-    const markets = await pool.getAllMarkets();
+  async pauseBorrowActivity(pool: ComptrollerWithExtension) {
+    const markets = await pool.callStatic.getAllMarkets();
     for (const market of markets) {
       const isPaused: boolean = await pool.borrowGuardianPaused(market);
       if (!isPaused) {

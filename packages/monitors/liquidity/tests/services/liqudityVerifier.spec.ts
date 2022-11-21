@@ -1,5 +1,6 @@
+import { bsc } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
-import { assetSymbols, SupportedChains } from "@midas-capital/types";
+import { assetFilter, assetSymbols, SupportedChains, underlying } from "@midas-capital/types";
 import { restore } from "sinon";
 
 import { configs } from "../../src/config";
@@ -10,26 +11,28 @@ import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 
 describe("Feed verifier", () => {
-  let feedVerifier: AMMLiquidityVerifier;
+  let liquidityVerifier: AMMLiquidityVerifier;
   let sdk: MidasSdk;
 
-  const chainConfig = chainIdToConfig[SupportedChains.bsc];
-  const assetsToTest = [assetSymbols.WBNB, assetSymbols.BUSD, assetSymbols.BTCB, assetSymbols.USDT, assetSymbols.DAI];
-  const assets = chainConfig.assets.filter((x) => assetsToTest.some((y) => y === x.symbol));
-  // @ts-ignore
-  const config = configs[Services.FeedVerifier];
+  const config = configs[Services.LiquidityDepthVerifier];
 
   beforeEach(() => {
     const signer = getSigner(SupportedChains.bsc);
     sdk = new MidasSdk(signer, chainIdToConfig[SupportedChains.bsc]);
-    feedVerifier = new AMMLiquidityVerifier(sdk, config);
+    const testAssetConfig = {
+      token0: underlying(bsc.assets, assetSymbols.stkBNB),
+      token1: underlying(bsc.assets, assetSymbols.WBNB),
+      identifier: "PCS stkBNB-WBNB",
+      affectedAssets: [assetFilter(bsc.assets, assetSymbols.stkBNB)],
+    };
+    liquidityVerifier = new AMMLiquidityVerifier(sdk, testAssetConfig, config);
   });
   afterEach(function () {
     restore();
   });
   describe("instantiate", () => {
     it("should init FeedVerifier", async () => {
-      const [verifier] = await feedVerifier.init();
+      const [verifier] = await liquidityVerifier.init();
       expect(verifier).to.be.instanceOf(AbstractLiquidityVerifier);
     });
   });

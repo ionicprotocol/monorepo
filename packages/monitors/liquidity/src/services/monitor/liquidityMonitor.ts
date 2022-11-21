@@ -1,5 +1,11 @@
 import { logger } from "../..";
-import { LiquidityDepthConfig, LiquidityValidity, VerifierInitValidity, VerifyLiquidityParams } from "../../types";
+import {
+  LiquidityDepthConfig,
+  LiquidityPoolKind,
+  LiquidityValidity,
+  VerifierInitValidity,
+  VerifyLiquidityParams,
+} from "../../types";
 import { verifyAMMLiquidity } from "../pools";
 
 import { AbstractLiquidityVerifier } from "./base";
@@ -11,19 +17,20 @@ export class AMMLiquidityVerifier extends AbstractLiquidityVerifier {
     return [this, null];
   }
 
-  public async verify(): Promise<LiquidityValidity> {
+  public async verify(poolKind: LiquidityPoolKind): Promise<LiquidityValidity> {
     const { sdk, asset } = this;
 
     const priceArgs: VerifyLiquidityParams = {
       midasSdk: sdk,
       asset,
+      poolKind,
     };
 
     return await this.verifyAMMLiquidity(priceArgs);
   }
 
   private async verifyAMMLiquidity(args: VerifyLiquidityParams) {
-    const ammValidity = await verifyAMMLiquidity(this.sdk, args, this.config);
+    const ammValidity = await verifyAMMLiquidity(this.config, args);
     if (ammValidity !== true) {
       logger.error(ammValidity.message);
     }

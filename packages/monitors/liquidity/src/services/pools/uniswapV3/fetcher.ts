@@ -1,15 +1,19 @@
-import { MidasSdk } from "@midas-capital/sdk";
+import { JsonRpcProvider } from "@ethersproject/providers";
+import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig } from "@midas-capital/types";
-import { BigNumber, utils } from "ethers";
+import { BigNumber, Contract, utils } from "ethers";
+import { Reserve, UniswapV3AssetConfig } from "../../../types";
 
 export class V3Fetcher {
   public chainConfig: ChainConfig;
   public W_TOKEN: string;
   public uniV3Factory: string;
   public uniV3PairInitHash: string;
+  public provider: JsonRpcProvider;
 
   public constructor(sdk: MidasSdk) {
     this.chainConfig = sdk.chainConfig;
+    this.provider = sdk.provider;
     this.W_TOKEN = this.chainConfig.chainAddresses.W_TOKEN;
     if (this.chainConfig.chainAddresses && this.chainConfig.chainAddresses.UNISWAP_V3) {
       this.uniV3Factory = this.chainConfig.chainAddresses.UNISWAP_V3.FACTORY;
@@ -29,5 +33,25 @@ export class V3Fetcher {
       ),
       this.uniV3PairInitHash
     );
+  };
+  getPairReserves = async (asset: UniswapV3AssetConfig): Promise<[Reserve, Reserve]> => {
+    const token0Erc20 = new Contract(asset.token0, ERC20Abi, this.provider);
+    const token1Erc20 = new Contract(asset.token1, ERC20Abi, this.provider);
+
+    const pool = this.computeUniV3PoolAddress(asset.token0, asset.token1, asset.fee);
+
+    const token0balance = await token0Erc20.callStatic.balanceOf(pool);
+    const token1balance = await token1Erc20.callStatic.balanceOf(pool);
+
+    return [
+      {
+        underlying: token0Erc20,
+        reserves: token0balance,
+      },
+      {
+        underlying: token1Erc20,
+        reserves: token1balance,
+      },
+    ];
   };
 }

@@ -1,38 +1,52 @@
 import { bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains, underlying } from "@midas-capital/types";
+import { assetFilter, assetSymbols, underlying } from "@midas-capital/types";
 
-import { chainIdToConfig, Services, UniswapV2AssetConfig } from "../types";
+import { LiquidityMonitorChains, LiquidityPoolKind, MonitoredChainAssets } from "../types";
 
-import { baseConfig } from "./variables";
-
-enum LiquidityMonitorChains {
-  bsc = SupportedChains.bsc,
-  polygon = SupportedChains.polygon,
-  moonbeam = SupportedChains.moonbeam,
-}
-
-const MONITORED_UNISWAP_V2_POOLS: { [key in LiquidityMonitorChains]: UniswapV2AssetConfig[] } = {
-  [SupportedChains.bsc]: [
-    {
-      token0: underlying(bsc.assets, assetSymbols.stkBNB),
-      token1: underlying(bsc.assets, assetSymbols.WBNB),
-    },
-    {
-      token0: underlying(bsc.assets, assetSymbols.BNBx),
-      token1: underlying(bsc.assets, assetSymbols.WBNB),
-    },
-  ],
-  [SupportedChains.polygon]: [],
-  [SupportedChains.moonbeam]: [],
-};
-
-const MONITORED_UNISWAP_V3_POOLS = {
-  [SupportedChains.polygon]: [],
-  [SupportedChains.arbitrum]: [],
-};
-
-const MONITORED_CURVE_POOLS = {
-  [SupportedChains.polygon]: [],
-  [SupportedChains.bsc]: [],
-  [SupportedChains.arbitrum]: [],
+export const MONITORED_CHAIN_ASSETS: MonitoredChainAssets = {
+  [LiquidityMonitorChains.bsc]: {
+    [LiquidityPoolKind.UniswapV2]: [
+      {
+        token0: underlying(bsc.assets, assetSymbols.stkBNB),
+        token1: underlying(bsc.assets, assetSymbols.WBNB),
+        affectedAssets: [assetFilter(bsc.assets, assetSymbols.stkBNB)],
+        identifier: "PCS stkBNB-WBNB",
+      },
+      {
+        token0: underlying(bsc.assets, assetSymbols.BNBx),
+        token1: underlying(bsc.assets, assetSymbols.WBNB),
+        affectedAssets: [assetFilter(bsc.assets, assetSymbols.BNBx)],
+        alternativeFactory: "0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6",
+        identifier: "ApeSwap BNBx-WBNB",
+      },
+    ],
+    [LiquidityPoolKind.UniswapV3]: [],
+    [LiquidityPoolKind.CurveV1]: [],
+    [LiquidityPoolKind.Balancer]: [],
+  },
+  [LiquidityMonitorChains.polygon]: {
+    [LiquidityPoolKind.UniswapV2]: [],
+    [LiquidityPoolKind.UniswapV3]: [],
+    [LiquidityPoolKind.CurveV1]: [],
+    [LiquidityPoolKind.Balancer]: [
+      {
+        poolAddress: underlying(polygon.assets, assetSymbols.MIMO_PAR_80_20),
+        affectedAssets: [assetFilter(polygon.assets, assetSymbols.MIMO_PAR_80_20)],
+        identifier: "Balancer MIMO_PAR_80_20",
+      },
+    ],
+  },
+  [LiquidityMonitorChains.moonbeam]: {
+    [LiquidityPoolKind.UniswapV2]: [],
+    [LiquidityPoolKind.UniswapV3]: [],
+    [LiquidityPoolKind.CurveV1]: [
+      {
+        pool: underlying(moonbeam.assets, assetSymbols["xcDOT-stDOT"]),
+        underlyings: [underlying(moonbeam.assets, assetSymbols.xcDOT), underlying(moonbeam.assets, assetSymbols.stDOT)],
+        affectedAssets: [assetFilter(moonbeam.assets, assetSymbols["xcDOT-stDOT"])],
+        identifier: "Curve xcDOT-stDOT",
+      },
+    ],
+    [LiquidityPoolKind.Balancer]: [],
+  },
 };

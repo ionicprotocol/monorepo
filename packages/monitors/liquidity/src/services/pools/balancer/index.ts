@@ -1,20 +1,22 @@
 import { MidasSdk } from "@midas-capital/sdk";
 
-import { InvalidReason, LiquidityDepthConfig, LiquidityValidity, UniswapV3AssetConfig } from "../../../types";
+import { BalancerPoolConfig, InvalidReason, LiquidityDepthConfig, LiquidityValidity } from "../../../types";
 import { getPoolTVL } from "../utils";
-import { V3Fetcher } from "./fetcher";
 
-export async function verifyUniswapV3LiquidityDepth(
+import { BalancerFetcher } from "./fetcher";
+
+export async function verifyBalancerLiquidityDepth(
   sdk: MidasSdk,
-  asset: UniswapV3AssetConfig,
+  asset: BalancerPoolConfig,
   config: LiquidityDepthConfig
 ): Promise<LiquidityValidity> {
   const minDepth = asset.minLiquidity ?? config.minLiquidity;
 
-  const fetcher = new V3Fetcher(sdk);
-  const reserves = await fetcher.getPairReserves(asset);
+  const fetcher = new BalancerFetcher(sdk, asset.poolAddress);
+  const reserves = await fetcher.getReserves();
 
   const liquidityDepthUSD = await getPoolTVL(sdk, reserves);
+
   if (liquidityDepthUSD < minDepth) {
     return {
       invalidReason: InvalidReason.POOL_LIQUIDITY_BELOW_THRESHOLD,

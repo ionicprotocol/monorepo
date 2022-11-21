@@ -1,9 +1,9 @@
 import { MidasSdk } from "@midas-capital/sdk";
 
 import { InvalidReason, LiquidityDepthConfig, LiquidityValidity, UniswapV2AssetConfig } from "../../../types";
+import { getPoolTVL } from "../utils";
 
 import { V2Fetcher } from "./fetcher";
-import { getPoolTVL } from "./uniswapV2";
 
 export async function verifyUniswapV2LiquidityDepth(
   sdk: MidasSdk,
@@ -14,14 +14,17 @@ export async function verifyUniswapV2LiquidityDepth(
   const minDepth = asset.minLiquidity ?? config.minLiquidity;
 
   const fetcher = new V2Fetcher(sdk, uniswapV2Factory);
-  const reserves = await fetcher.getPairReserves(asset.token0, asset.token1);
+  const reserves = await fetcher.getPairReserves(asset);
+
   const liquidityDepthUSD = await getPoolTVL(sdk, reserves);
 
   if (liquidityDepthUSD < minDepth) {
     return {
-      invalidReason: InvalidReason.TWAP_LIQUIDITY_LOW,
+      invalidReason: InvalidReason.POOL_LIQUIDITY_BELOW_THRESHOLD,
       message: `Pool has too low liquidity`,
-      valueUSD: liquidityDepthUSD,
+      extraInfo: {
+        valueUSD: liquidityDepthUSD,
+      },
     };
   }
   return true;

@@ -2,18 +2,12 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedChains } from "@midas-capital/types";
 import { BigNumber, utils } from "ethers";
 
-import { logger } from "../..";
-import { Reserve } from "../../types";
-import { getDefiLlamaPrice } from "../../utils";
+import { logger } from "../../..";
+import { Reserve } from "../../../types";
+import { getDefiLlamaPrice } from "../../../utils";
+import { getTokenPrices } from "../utils";
 
-export async function getTokenPrices(sdk: MidasSdk, tokens: string[]): Promise<BigNumber[]> {
-  const mpo = sdk.createMasterPriceOracle();
-  const promises = tokens.map((token) => mpo.callStatic.getUnderlyingPrice(token));
-  const prices = await Promise.all(promises);
-  return prices;
-}
-
-export async function getPoolTVL(sdk: MidasSdk, reserves: Reserve[]): Promise<number> {
+export async function getPoolTVL(sdk: MidasSdk, reserves: Reserve[]) {
   const tokenPrices = await getTokenPrices(
     sdk,
     reserves.map((r) => r.underlying.address)

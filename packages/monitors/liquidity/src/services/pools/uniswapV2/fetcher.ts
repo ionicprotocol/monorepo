@@ -1,19 +1,8 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { MidasSdk } from "@midas-capital/sdk";
+import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig } from "@midas-capital/types";
-import { BigNumber, Contract, utils } from "ethers";
-
-export type Reserves = {
-  r0: {
-    underlying: Contract;
-    reserves: BigNumber;
-  };
-  r1: {
-    underlying: Contract;
-    reserves: BigNumber;
-  };
-};
-
+import { Contract } from "ethers";
+import { Reserve, UniswapV2AssetConfig } from "../../../types";
 export class V2Fetcher {
   public chainConfig: ChainConfig;
   public W_TOKEN: string;
@@ -43,19 +32,18 @@ export class V2Fetcher {
     );
   };
 
-  getPairReserves = async (token0: string, token1: string): Promise<Reserves> => {
-    const pairContract = await this.getPairContract(token0, token1);
+  getPairReserves = async (asset: UniswapV2AssetConfig): Promise<[Reserve, Reserve]> => {
+    const pairContract = await this.getPairContract(asset.token0, asset.token1);
     const [r0, r1] = await pairContract.callStatic.getReserves();
-    const reserves = {
-      r0: {
+    return [
+      {
         reserves: r0,
-        underlying: await pairContract.callStatic.token0(),
+        underlying: new Contract(await pairContract.callStatic.token0(), ERC20Abi, this.provider),
       },
-      r1: {
+      {
         reserves: r1,
-        underlying: await pairContract.callStatic.token1(),
+        underlying: new Contract(await pairContract.callStatic.token1(), ERC20Abi, this.provider),
       },
-    };
-    return reserves;
+    ];
   };
 }

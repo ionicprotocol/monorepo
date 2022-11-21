@@ -1,9 +1,9 @@
-import { SupportedAsset, SupportedChains } from "@midas-capital/types";
+import { SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
 import { logger } from "..";
 import { baseConfig } from "../config/variables";
-import { ErrorKind, InitErrorCache, LiquidityInvalidity, VerificationErrorCache, VerifierInitError } from "../types";
+import { ErrorKind, LiquidityInvalidity, TAssetConfig, VerificationErrorCache } from "../types";
 
 export class DiscordService {
   chainId: SupportedChains;
@@ -16,53 +16,46 @@ export class DiscordService {
 
   private hook: Webhook;
 
-  initErrorCache: InitErrorCache;
-  verificationErrorCache: VerificationErrorCache;
   messageCache: {
-    [ErrorKind.init]: InitErrorCache;
     [ErrorKind.verification]: VerificationErrorCache;
   };
   alertFunction: {
-    [ErrorKind.init]: (asset: SupportedAsset, error: VerifierInitError) => Promise<void>;
-    [ErrorKind.verification]: (asset: SupportedAsset, error: LiquidityInvalidity) => Promise<void>;
+    [ErrorKind.verification]: (asset: TAssetConfig, error: LiquidityInvalidity) => Promise<void>;
   };
 
   constructor(chainId: SupportedChains) {
     this.chainId = chainId;
     this.hook = new Webhook(baseConfig.discordWebhookUrl);
-    this.initErrorCache = [];
-    this.verificationErrorCache = [];
     this.messageCache = {
-      [ErrorKind.init]: [],
       [ErrorKind.verification]: [],
     };
     this.alertFunction = {
-      [ErrorKind.init]: this.verifierInitError.bind(this),
       [ErrorKind.verification]: this.invalidFeedError.bind(this),
     };
   }
 
-  async sendErrorNotification(error: VerifierInitError | LiquidityInvalidity, asset: SupportedAsset, kind: ErrorKind) {
-    const lastMessageSentIndex = this.messageCache[kind].findIndex(
-      (a) => a.asset.underlying === asset.underlying && a.error === error
+  async sendErrorNotification(error: LiquidityInvalidity, asset: TAssetConfig) {
+    const lastMessageSentIndex = this.messageCache[ErrorKind.verification].findIndex(
+      (a) => a.error.message === error.message && a.asset.identifier === asset.identifier
     );
     if (lastMessageSentIndex !== -1) {
-      const lastMessageSent = this.messageCache[kind][lastMessageSentIndex];
+      const lastMessageSent = this.messageCache[ErrorKind.verification][lastMessageSentIndex];
       const { timestamp } = lastMessageSent;
+
       const now = Date.now();
       if (now - timestamp > 1000 * 60 * 60) {
-        await this.alertFunction[kind](asset, error);
-        this.messageCache[kind][lastMessageSentIndex].timestamp = now;
+        await this.alertFunction[ErrorKind.verification](asset, error);
+        this.messageCache[ErrorKind.verification][lastMessageSentIndex].timestamp = now;
       }
     } else {
-      await this.alertFunction[kind](asset, error);
-      this.messageCache[kind].push({ asset, error, timestamp: Date.now() });
+      await this.alertFunction[ErrorKind.verification](asset, error);
+      this.messageCache[ErrorKind.verification].push({ asset, error, timestamp: Date.now() });
     }
   }
 
-  private create(asset: SupportedAsset) {
+  private create(asset: TAssetConfig) {
     return new MessageBuilder()
-      .addField("Asset", `${asset.symbol}:  ${asset.underlying}`, true)
+      .addField("Identifier", `${asset.identifier}`, true)
       .addField("Chain", `Chain ID: ${SupportedChains[this.chainId]}`, true);
   }
 
@@ -74,19 +67,10 @@ export class DiscordService {
     }
   }
 
-  public async invalidFeedError(asset: SupportedAsset, error: LiquidityInvalidity) {
+  public async invalidFeedError(asset: TAssetConfig, error: LiquidityInvalidity) {
     const embed = this.create(asset)
       .setTitle(`${error.invalidReason}`)
       .setDescription(`@everyone ${error.message}`)
-      .setTimestamp()
-      .setColor(this.errorColor);
-    await this.send(embed);
-  }
-
-  public async verifierInitError(asset: SupportedAsset, error: VerifierInitError) {
-    const embed = this.create(asset)
-      .setTitle(error.invalidReason)
-      .setDescription(error.message)
       .setTimestamp()
       .setColor(this.errorColor);
     await this.send(embed);

@@ -1,23 +1,26 @@
 import { MidasSdk } from "@midas-capital/sdk";
-import { SupportedAsset } from "@midas-capital/types";
 
-import { assets, configs, verifiers } from "./config";
+import { configs, verifiers } from "./config";
 import { BatchVerifier } from "./services/verifier";
-import { Services } from "./types";
+import { LiquidityPoolKind, MonitoredAssetsConfig, Services } from "./types";
 
 import { logger } from ".";
+import { MONITORED_CHAIN_ASSETS } from "./config/pools";
 
-export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: SupportedAsset[]) {
-  logger.info(`RUNNING SERVICE: ${service}`);
-  const assetsToVerify = assetsOverride ? assetsOverride : assets[service];
+export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: MonitoredAssetsConfig) {
+  const assetsToVerify = assetsOverride ? assetsOverride : MONITORED_CHAIN_ASSETS[sdk.chainId];
+
+  const msg = Object.values(LiquidityPoolKind).forEach((pk) => {
+    return assetsToVerify[pk].map((a) => a.identifier).join(", ");
+  });
+
+  logger.info(`RUNNING SERVICE: ${service} on assets: ${msg}`);
+
   const verifier = new BatchVerifier(sdk, assetsToVerify);
   await verifier.batchVerify(verifiers[service], configs[service]);
 }
 
 export async function runVerifiers(midasSdk: MidasSdk) {
-  const feedVerifierConfig = configs[Services.FeedVerifier];
-  const priceVerifierConfig = configs[Services.PriceVerifier];
-
-  setInterval(runVerifier, feedVerifierConfig.runInterval, midasSdk, Services.FeedVerifier);
-  setInterval(runVerifier, priceVerifierConfig.runInterval, midasSdk, Services.PriceVerifier);
+  const liquidityDepthVerifierConfig = configs[Services.LiquidityDepthVerifier];
+  setInterval(runVerifier, liquidityDepthVerifierConfig.runInterval, midasSdk, Services.LiquidityDepthVerifier);
 }

@@ -1,12 +1,12 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { SupportedChains } from "@midas-capital/types";
+import { bsc } from "@midas-capital/chains";
+import { assetFilter, assetSymbols, SupportedChains, underlying } from "@midas-capital/types";
 import { Wallet } from "ethers";
 
 import { setUpSdk } from "../src";
-import { assets } from "../src/config";
 import { baseConfig } from "../src/config/variables";
 import { runVerifier } from "../src/run";
-import { Services } from "../src/types";
+import { LiquidityPoolKind, Services } from "../src/types";
 
 (async function () {
   const chainId: number = process.env.TARGET_CHAIN_ID ? parseInt(process.env.TARGET_CHAIN_ID) : SupportedChains.ganache;
@@ -14,7 +14,18 @@ import { Services } from "../src/types";
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);
   const midasSdk = setUpSdk(chainId, signer);
 
-  const assetsOverride = assets[Services.FeedVerifier].slice(0, 1);
-  runVerifier(midasSdk, Services.FeedVerifier, assetsOverride);
-  runVerifier(midasSdk, Services.PriceVerifier, assetsOverride);
+  const assets = {
+    [LiquidityPoolKind.UniswapV2]: [
+      {
+        token0: underlying(bsc.assets, assetSymbols.stkBNB),
+        token1: underlying(bsc.assets, assetSymbols.WBNB),
+        identifier: "PCS stkBNB-WBNB",
+        affectedAssets: [assetFilter(bsc.assets, assetSymbols.stkBNB)],
+      },
+    ],
+    [LiquidityPoolKind.UniswapV3]: [],
+    [LiquidityPoolKind.CurveV1]: [],
+    [LiquidityPoolKind.Balancer]: [],
+  };
+  runVerifier(midasSdk, Services.LiquidityDepthVerifier, assets);
 })();
