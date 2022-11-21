@@ -22,14 +22,9 @@ export default task("market:set-plugin", "Set's the plugin of a market")
 
     const cTokenInstances = allMarkets.map((marketAddress) => sdk.createCErc20PluginRewardsDelegate(marketAddress));
 
-    let cTokenInstance = undefined;
-
-    for (let index = 0; index < cTokenInstances.length; index++) {
-      const thisUnderlying = await cTokenInstances[index].callStatic.underlying();
-      if (!cTokenInstance && thisUnderlying === underlying) {
-        cTokenInstance = cTokenInstances[index];
-      }
-    }
+    const cTokenInstance = await cTokenInstances.find(async (cToken) => {
+      return (await cToken.callStatic.underlying()) == underlying;
+    });
 
     console.log(`Setting plugin to ${pluginAddress}`);
     const setPluginTx = await cTokenInstance._updatePlugin(pluginAddress);

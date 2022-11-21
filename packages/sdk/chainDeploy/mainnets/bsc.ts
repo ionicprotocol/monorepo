@@ -421,6 +421,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     assets,
+    certificateAssetSymbol: assetSymbols.aBNBc,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {

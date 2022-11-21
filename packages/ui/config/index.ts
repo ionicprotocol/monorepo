@@ -6,6 +6,7 @@ type CONFIG = {
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
   isArbitrumEnabled: boolean;
+  isFantomEnabled: boolean;
   isTestnetEnabled: boolean;
   allowedAddresses: string[];
   productDomain: string | undefined;
@@ -27,6 +28,7 @@ const config: CONFIG = {
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
   isArbitrumEnabled: process.env.ARBITRUM === 'true',
+  isFantomEnabled: process.env.FANTOM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')

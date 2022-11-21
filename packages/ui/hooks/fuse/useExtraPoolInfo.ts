@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { getComptrollerContract } from '@ui/utils/contracts';
 
 export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: number) => {
   const { address } = useMultiMidas();
@@ -15,7 +14,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
         return null;
       }
 
-      const comptroller = getComptrollerContract(comptrollerAddress, sdk);
+      const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
 
       const [
         { 0: admin, 1: upgradeable },

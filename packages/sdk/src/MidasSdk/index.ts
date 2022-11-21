@@ -21,12 +21,14 @@ import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
 import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
+import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -363,6 +365,22 @@ export class MidasBase {
       this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
       signerOrProvider
     ) as CErc20PluginDelegate;
+  }
+
+  getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.EIP20Interface.abi, signerOrProvider) as EIP20Interface;
+  }
+
+  getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.Unitroller.abi, signerOrProvider) as Unitroller;
+  }
+
+  getFusePoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(
+      this.chainDeployment.FusePoolDirectory.address,
+      this.chainDeployment.FusePoolDirectory.abi,
+      signerOrProvider
+    );
   }
 }
 

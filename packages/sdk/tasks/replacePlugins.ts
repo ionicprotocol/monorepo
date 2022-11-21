@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
@@ -13,6 +13,7 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [arbitrum.chainId]: arbitrum,
   [neondevnet.chainId]: neondevnet,
   [chapel.chainId]: chapel,
+  [fantom.chainId]: fantom,
   [ganache.chainId]: ganache,
 };
 

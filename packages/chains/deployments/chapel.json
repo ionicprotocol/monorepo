@@ -7618,7 +7618,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x36D8d6c2C80fe197942eda84af84029D25Dbe405",
+      "address": "0x7CdEFC1C358dFC34Cb1fE7E61fA34bCD8A481A7A",
       "abi": [
         {
           "inputs": [
@@ -7630,25 +7630,6 @@
           ],
           "stateMutability": "nonpayable",
           "type": "constructor"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "ActionPaused",
-          "type": "event"
         },
         {
           "anonymous": false,
@@ -7712,31 +7693,6 @@
             },
             {
               "indexed": false,
-              "internalType": "string",
-              "name": "action",
-              "type": "string"
-            },
-            {
-              "indexed": false,
-              "internalType": "bool",
-              "name": "pauseState",
-              "type": "bool"
-            }
-          ],
-          "name": "MarketActionPaused",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
               "internalType": "address",
               "name": "account",
               "type": "address"
@@ -7775,57 +7731,6 @@
             }
           ],
           "name": "MarketListed",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            }
-          ],
-          "name": "MarketUnlisted",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "newBorrowCap",
-              "type": "uint256"
-            }
-          ],
-          "name": "NewBorrowCap",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "oldBorrowCapGuardian",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newBorrowCapGuardian",
-              "type": "address"
-            }
-          ],
-          "name": "NewBorrowCapGuardian",
           "type": "event"
         },
         {
@@ -7896,25 +7801,6 @@
           "inputs": [
             {
               "indexed": false,
-              "internalType": "address",
-              "name": "oldPauseGuardian",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newPauseGuardian",
-              "type": "address"
-            }
-          ],
-          "name": "NewPauseGuardian",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
               "internalType": "contract PriceOracle",
               "name": "oldPriceOracle",
               "type": "address"
@@ -7933,25 +7819,6 @@
           "anonymous": false,
           "inputs": [
             {
-              "indexed": true,
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "newSupplyCap",
-              "type": "uint256"
-            }
-          ],
-          "name": "NewSupplyCap",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
               "indexed": false,
               "internalType": "bool",
               "name": "enforce",
@@ -7960,6 +7827,10 @@
           ],
           "name": "WhitelistEnforcementChanged",
           "type": "event"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "fallback"
         },
         {
           "inputs": [
@@ -8058,6 +7929,19 @@
         },
         {
           "inputs": [],
+          "name": "_listExtensions",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "_mintGuardianPaused",
           "outputs": [
             {
@@ -8072,37 +7956,18 @@
         {
           "inputs": [
             {
-              "internalType": "address",
-              "name": "newBorrowCapGuardian",
-              "type": "address"
-            }
-          ],
-          "name": "_setBorrowCapGuardian",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToAdd",
               "type": "address"
             },
             {
-              "internalType": "bool",
-              "name": "state",
-              "type": "bool"
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToReplace",
+              "type": "address"
             }
           ],
-          "name": "_setBorrowPaused",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
+          "name": "_registerExtension",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -8171,85 +8036,6 @@
         {
           "inputs": [
             {
-              "internalType": "contract CTokenInterface[]",
-              "name": "cTokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "newBorrowCaps",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "_setMarketBorrowCaps",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CTokenInterface[]",
-              "name": "cTokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "newSupplyCaps",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "_setMarketSupplyCaps",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "state",
-              "type": "bool"
-            }
-          ],
-          "name": "_setMintPaused",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newPauseGuardian",
-              "type": "address"
-            }
-          ],
-          "name": "_setPauseGuardian",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "contract PriceOracle",
               "name": "newOracle",
               "type": "address"
@@ -8261,44 +8047,6 @@
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bool",
-              "name": "state",
-              "type": "bool"
-            }
-          ],
-          "name": "_setSeizePaused",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bool",
-              "name": "state",
-              "type": "bool"
-            }
-          ],
-          "name": "_setTransferPaused",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
             }
           ],
           "stateMutability": "nonpayable",
@@ -8369,25 +8117,6 @@
         {
           "inputs": [
             {
-              "internalType": "contract CTokenInterface",
-              "name": "cToken",
-              "type": "address"
-            }
-          ],
-          "name": "_unsupportMarket",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -8407,25 +8136,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "flywheelAddress",
-              "type": "address"
-            }
-          ],
-          "name": "addNonAccruingFlywheel",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -9466,6 +9176,897 @@
         }
       ]
     },
+    "ComptrollerFirstExtension": {
+      "address": "0x6A3Efd3efF60A17accCa4D4Fb8f7144A59F190Cf",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "ActionPaused",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "error",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "info",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "detail",
+              "type": "uint256"
+            }
+          ],
+          "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "action",
+              "type": "string"
+            },
+            {
+              "indexed": false,
+              "internalType": "bool",
+              "name": "pauseState",
+              "type": "bool"
+            }
+          ],
+          "name": "MarketActionPaused",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "MarketUnlisted",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newBorrowCap",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewBorrowCap",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldBorrowCapGuardian",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newBorrowCapGuardian",
+              "type": "address"
+            }
+          ],
+          "name": "NewBorrowCapGuardian",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "oldPauseGuardian",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "newPauseGuardian",
+              "type": "address"
+            }
+          ],
+          "name": "NewPauseGuardian",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newSupplyCap",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewSupplyCap",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "_borrowGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_getExtensionFunctions",
+          "outputs": [
+            {
+              "internalType": "bytes4[]",
+              "name": "",
+              "type": "bytes4[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "_mintGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newBorrowCapGuardian",
+              "type": "address"
+            }
+          ],
+          "name": "_setBorrowCapGuardian",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "state",
+              "type": "bool"
+            }
+          ],
+          "name": "_setBorrowPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface[]",
+              "name": "cTokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "newBorrowCaps",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "_setMarketBorrowCaps",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface[]",
+              "name": "cTokens",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "newSupplyCaps",
+              "type": "uint256[]"
+            }
+          ],
+          "name": "_setMarketSupplyCaps",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "state",
+              "type": "bool"
+            }
+          ],
+          "name": "_setMintPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPauseGuardian",
+              "type": "address"
+            }
+          ],
+          "name": "_setPauseGuardian",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "state",
+              "type": "bool"
+            }
+          ],
+          "name": "_setSeizePaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bool",
+              "name": "state",
+              "type": "bool"
+            }
+          ],
+          "name": "_setTransferPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "_unsupportMarket",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "accountAssets",
+          "outputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "flywheelAddress",
+              "type": "address"
+            }
+          ],
+          "name": "addNonAccruingFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "admin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "adminHasRights",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allBorrowers",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "allMarkets",
+          "outputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "autoImplementation",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "borrowCapGuardian",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowCaps",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "cTokensByUnderlying",
+          "outputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "closeFactorMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "comptrollerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "enforceWhitelist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdmin",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdminHasRights",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getFirstMarketSymbol",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "liquidationIncentiveMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "markets",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "isListed",
+              "type": "bool"
+            },
+            {
+              "internalType": "uint256",
+              "name": "collateralFactorMantissa",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "mintGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "nonAccruingRewardsDistributors",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "oracle",
+          "outputs": [
+            {
+              "internalType": "contract PriceOracle",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pauseGuardian",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingAdmin",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "pendingComptrollerImplementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "rewardsDistributors",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "seizeGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "suppliers",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "supplyCaps",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "transferGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "whitelist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "whitelistArray",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
     "DefaultProxyAdmin": {
       "address": "0x0C64dEFA0125678C77dDa2287FDD6000699737Cc",
       "abi": [
@@ -10093,8 +10694,49 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address payable",
+              "name": "pool",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToAdd",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "_registerComptrollerExtension",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "_resetGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "extensions",
+              "type": "address[]"
+            }
+          ],
+          "name": "_setComptrollerExtensions",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -10356,6 +10998,30 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "comptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -10421,6 +11087,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getComptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -10710,7 +11395,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x0321F30b68781aE723d8D871C89b2D72dFc41Ff1",
+      "address": "0xb412cE162dE2168C92bbdB80A2c74c771e5D91dD",
       "abi": [
         {
           "anonymous": false,
@@ -11005,8 +11690,49 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address payable",
+              "name": "pool",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToAdd",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "_registerComptrollerExtension",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "_resetGap",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "extensions",
+              "type": "address[]"
+            }
+          ],
+          "name": "_setComptrollerExtensions",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -11268,6 +11994,30 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "comptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
               "internalType": "address",
               "name": "",
               "type": "address"
@@ -11333,6 +12083,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getComptrollerExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -14956,7 +15725,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
+      "address": "0x03f2bCc0dD178A0a9dfA9101E8A5D802b52269BA",
       "abi": [
         {
           "anonymous": false,
@@ -15104,7 +15873,7 @@
               "type": "address[]"
             },
             {
-              "internalType": "contract IRewardsDistributor[]",
+              "internalType": "address[]",
               "name": "",
               "type": "address[]"
             },
@@ -15143,7 +15912,7 @@
               "type": "address[][]"
             },
             {
-              "internalType": "contract IRewardsDistributor[][]",
+              "internalType": "address[][]",
               "name": "",
               "type": "address[][]"
             },
@@ -15187,7 +15956,7 @@
               "type": "address[]"
             },
             {
-              "internalType": "contract IRewardsDistributor[][]",
+              "internalType": "address[][]",
               "name": "",
               "type": "address[][]"
             }
@@ -17902,7 +18671,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x1C10718a83DE1131B0e64221f2f7Fd71f777672B",
+      "address": "0xE81481Ac128C62C010426C55E13873164DadE979",
       "abi": [
         {
           "anonymous": false,
@@ -19824,6 +20593,142 @@
         {
           "stateMutability": "payable",
           "type": "receive"
+        }
+      ]
+    },
+    "MidasFlywheelLensRouter": {
+      "address": "0xD8b025D2f6C193996eA8556e6fF8FdE7c65eA0bb",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract IComptroller",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "getMarketRewardsInfo",
+          "outputs": [
+            {
+              "components": [
+                {
+                  "internalType": "uint256",
+                  "name": "underlyingPrice",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "contract CErc20Token",
+                  "name": "market",
+                  "type": "address"
+                },
+                {
+                  "components": [
+                    {
+                      "internalType": "uint256",
+                      "name": "rewardSpeedPerSecondPerToken",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "rewardTokenPrice",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "uint256",
+                      "name": "formattedAPR",
+                      "type": "uint256"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "flywheel",
+                      "type": "address"
+                    },
+                    {
+                      "internalType": "address",
+                      "name": "rewardToken",
+                      "type": "address"
+                    }
+                  ],
+                  "internalType": "struct MidasFlywheelLensRouter.RewardsInfo[]",
+                  "name": "rewardsInfo",
+                  "type": "tuple[]"
+                }
+              ],
+              "internalType": "struct MidasFlywheelLensRouter.MarketRewardsInfo[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CErc20Token[]",
+              "name": "markets",
+              "type": "address[]"
+            },
+            {
+              "internalType": "contract MidasFlywheelCore[]",
+              "name": "flywheels",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "accrue",
+              "type": "bool[]"
+            }
+          ],
+          "name": "getUnclaimedRewardsByMarkets",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            },
+            {
+              "internalType": "contract CErc20Token",
+              "name": "market",
+              "type": "address"
+            },
+            {
+              "internalType": "contract MidasFlywheelCore[]",
+              "name": "flywheels",
+              "type": "address[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "accrue",
+              "type": "bool[]"
+            }
+          ],
+          "name": "getUnclaimedRewardsForMarket",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "rewards",
+              "type": "uint256[]"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },

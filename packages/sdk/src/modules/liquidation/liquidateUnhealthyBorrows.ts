@@ -16,7 +16,9 @@ export default async function liquidateUnhealthyBorrows(
   for (const liquidation of liquidatablePool.liquidations) {
     const { method, args, value } = liquidation;
     console.log(
-      `Sending liquidation for:\n comptroller: ${liquidatablePool.comptroller}\n method: ${method}\n params: ${args}\n value: ${value}\n`
+      `Sending liquidation for:\n comptroller: ${
+        liquidatablePool.comptroller
+      }\n method: ${method}\n params: ${JSON.stringify(args)}\n value: ${value}\n`
     );
     try {
       const transactionResponse = await sendTransactionToSafeLiquidator(midasSdk, method, args, value);
