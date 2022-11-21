@@ -6,7 +6,7 @@ import { config, liquidatePositions, logger } from "./src";
 dotenv.config();
 
 (async function runBot() {
-  const provider = new JsonRpcProvider(config.rpcUrl);
+  const provider = new JsonRpcProvider({ url: config.rpcUrl, throttleLimit: 1000, throttleSlotInterval: 1000 });
   try {
     await provider.getNetwork();
   } catch (e) {

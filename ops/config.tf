@@ -25,10 +25,10 @@ locals {
   ]
 
   bsc_mainnet_rpc_0    = var.chainstack_bsc_rpc_url
-  bsc_mainnet_rpc_1    = "https://rpc.ankr.com/bsc"
+  bsc_mainnet_rpc_1    = "https://bsc-dataseed.binance.org"
   bsc_mainnet_chain_id = "56"
 
-  moonbeam_mainnet_rpc_0    = "https://moonbeam-mainnet.gateway.pokt.network/v1/lb/${var.pokt_api_key}"
+  moonbeam_mainnet_rpc_0    = "https://moonbeam.public.blastapi.io"
   moonbeam_mainnet_rpc_1    = "https://rpc.ankr.com/moonbeam"
   moonbeam_mainnet_chain_id = "1284"
 
@@ -36,7 +36,7 @@ locals {
   evmos_testnet_chain_id = "9000"
 
   polygon_mainnet_rpc_0    = var.chainstack_polygon_rpc_url
-  polygon_mainnet_rpc_1    = "https://rpc.ankr.com/polygon"
+  polygon_mainnet_rpc_1    = "https://polygon-rpc.com/"
   polygon_mainnet_chain_id = "137"
 
 }

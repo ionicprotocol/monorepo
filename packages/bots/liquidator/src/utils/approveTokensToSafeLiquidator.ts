@@ -1,7 +1,7 @@
 import { TransactionRequest, TransactionResponse } from "@ethersproject/providers";
 import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
 import { LiquidationStrategy } from "@midas-capital/types";
-import { BigNumber, constants, Contract, logger, Wallet } from "ethers";
+import { BigNumber, constants, Contract, Wallet } from "ethers";
 
 import config from "../config";
 import { Liquidator } from "../services";
@@ -9,7 +9,7 @@ import { Liquidator } from "../services";
 import { fetchGasLimitForTransaction } from ".";
 
 export default async function approveTokensToSafeLiquidator(liquidator: Liquidator) {
-  const { chainLiquidationConfig } = liquidator.sdk;
+  const { chainLiquidationConfig, logger } = liquidator.sdk;
   if (chainLiquidationConfig.LIQUIDATION_STRATEGY === LiquidationStrategy.DEFAULT) {
     for (const tokenAddress of chainLiquidationConfig.SUPPORTED_OUTPUT_CURRENCIES) {
       if (tokenAddress !== constants.AddressZero) {
@@ -49,7 +49,7 @@ async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: st
   };
 
   if (process.env.NODE_ENV !== "production")
-    logger.info("Signing and sending approval transaction for: " + erc20Address);
+    midasSdk.logger.info("Signing and sending approval transaction for: " + erc20Address);
 
   // send transaction
   let sentTx: TransactionResponse;
@@ -63,6 +63,6 @@ async function approveTokenToSafeLiquidator(midasSdk: MidasSdk, erc20Address: st
   } catch (error) {
     throw "Error sending " + erc20Address + " approval transaction: " + error;
   }
-  logger.info("Successfully sent approval transaction for: " + erc20Address);
+  midasSdk.logger.info("Successfully sent approval transaction for: " + erc20Address);
   return sentTx;
 }
