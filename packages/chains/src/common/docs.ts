@@ -65,7 +65,7 @@ export const ankrCertificateDocs = (variant: string, chain: string) => {
 export const stkBNBDocs = () => {
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p>Head over to <a href="https://bnb.pstake.finance/" target="_blank" style="color: #BCAC83;">pStake's BNB Staking</a>, where you can acquire stkBNB by depositing BNB</p>
+  <p><code>stkBNB</code> is the liquid staked representative for BNB issued by pSTAKE. You can liquid stake your BNB  <a href="https://bnb.pstake.finance/" target="_blank" style="color: #BCAC83;">here</a>.
   `;
 };
 
