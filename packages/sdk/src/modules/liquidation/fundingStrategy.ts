@@ -27,7 +27,6 @@ export const getFundingStrategiesAndDatas = async (
   while (fundingToken in midasSdk.fundingStrategies) {
     // chain the funding strategy that can give us the needed funding token
     const [fundingStrategyContract, inputToken] = midasSdk.fundingStrategies[fundingToken];
-    // console.log(`got funding str ${fundingStrategyContract} and output ${inputToken} for ${fundingToken}`);
 
     // avoid going in an endless loop
     if (tokenPath.find((p) => p == inputToken)) {

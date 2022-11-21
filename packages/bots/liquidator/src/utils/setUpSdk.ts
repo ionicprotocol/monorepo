@@ -3,6 +3,8 @@ import { bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capi
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig } from "@midas-capital/types";
 
+import { logger } from "..";
+
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
   [polygon.chainId]: polygon,
@@ -13,7 +15,7 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
 };
 
 const setUpSdk = (chainId: number, provider: JsonRpcProvider) => {
-  return new MidasSdk(provider, chainIdToConfig[chainId]);
+  return new MidasSdk(provider, chainIdToConfig[chainId], logger);
 };
 
 export default setUpSdk;
