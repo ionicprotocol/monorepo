@@ -11,7 +11,7 @@ const specificParams: ChainParams = {
     chainIdHex: "0xFA",
     name: "Fantom Opera",
     shortName: "Fantom",
-    img: "https://d1912tcoux65lj.cloudfront.net/network/fantom.jpg",
+    img: "https://d1912tcoux65lj.cloudfront.net/network/fantom.png",
     blockExplorerUrls: { default: { name: "ftmscan", url: "https://ftmscan.com" } },
     rpcUrls: { default: "https://rpcapi.fantom.network" },
     nativeCurrency: {
@@ -25,7 +25,7 @@ const specificParams: ChainParams = {
       decimals: 18,
       color: "#7A88A1",
       overlayTextColor: "#fff",
-      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/fantom.jpg",
+      logoURL: "https://d1912tcoux65lj.cloudfront.net/network/fantom.png",
     },
   },
 };
