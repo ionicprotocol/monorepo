@@ -78,7 +78,7 @@ export const StatsColumn = ({
         ? updatedAssets.reduce((acc, cur) => acc + cur.borrowBalanceFiat, 0)
         : undefined,
     };
-  }, [currentChain, updatedAsset, asset, assets, updatedAssets, currentChain, currentSdk]);
+  }, [currentChain, updatedAsset, asset, assets, updatedAssets, currentSdk]);
 
   // Calculate Old and new Borrow Limits
   const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
