@@ -1,13 +1,13 @@
-import { NativePricedFuseAsset } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { MarketData } from '../types/TokensDataMap';
 
-export const useBorrowLimit = <T extends NativePricedFuseAsset>(
-  assets: T[],
+export const useBorrowLimitTotal = (
+  assets: MarketData[],
   poolChainId: number,
   options?: { ignoreIsEnabledCheckFor?: string }
 ): number => {

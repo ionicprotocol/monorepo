@@ -2,7 +2,7 @@ import { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect } from 'react';
 
-import FusePoolPage from '@ui/components/pages/Fuse/FusePoolPage';
+import FusePoolPage from '@ui/components/pages/PoolPage';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 
 const FusePage: NextPage = () => {

@@ -27,7 +27,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
 
-  const { data: updatedAssets }: UseQueryResult<MarketData[]> = useQuery(
+  return useQuery(
     [
       'useUpdatedUserAssets',
       currentChain?.id,
@@ -59,8 +59,6 @@ const useUpdatedUserAssets = <T extends MarketData>({
       return assetsWithPrice;
     }
   );
-
-  return useMemo(() => updatedAssets, [updatedAssets]);
 };
 
 export default useUpdatedUserAssets;

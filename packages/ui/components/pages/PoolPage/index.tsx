@@ -5,11 +5,11 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
 
-import { CollateralRatioBar } from '@ui/components/pages/Fuse/FusePoolPage/CollateralRatioBar';
-import { MarketsList } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
-import PoolDetails from '@ui/components/pages/Fuse/FusePoolPage/PoolDetails';
-import { PoolStats } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats';
-import { RewardsBanner } from '@ui/components/pages/Fuse/FusePoolPage/RewardsBanner';
+import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar';
+import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
+import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
+import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
+import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
@@ -26,7 +26,7 @@ import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 import { useRewards } from '@ui/hooks/useRewards';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
-const FusePoolPage = memo(() => {
+const PoolPage = memo(() => {
   const { setGlobalLoading } = useMultiMidas();
 
   const router = useRouter();
@@ -180,11 +180,7 @@ const FusePoolPage = memo(() => {
             ) : (
               <>
                 <Box p={4} gap={4}>
-                  <Flex
-                    flexDirection={{ base: 'column', lg: 'row' }}
-                    gap={{ base: 4, lg: 8 }}
-                    pb={4}
-                  >
+                  <Flex flexDirection={['row']} gap={{ base: 4, lg: 8 }} pb={4}>
                     <HStack>
                       <Text variant="mdText" width="max-content">
                         Your Supply Balance :
@@ -199,7 +195,7 @@ const FusePoolPage = memo(() => {
                     </HStack>
                   </Flex>
                   <Flex alignItems="center" justifyContent={'space-between'}>
-                    <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={'1px'}>
+                    <Flex flexDirection={['row']} gap={2}>
                       <Skeleton height={'48px'} width={'72px'} />
                       <Skeleton height={'48px'} width={'120px'} />
                       <Skeleton height={'48px'} width={'120px'} />
@@ -218,4 +214,4 @@ const FusePoolPage = memo(() => {
   );
 });
 
-export default FusePoolPage;
+export default PoolPage;

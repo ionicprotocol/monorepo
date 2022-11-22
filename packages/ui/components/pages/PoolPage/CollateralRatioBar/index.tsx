@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 
 import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
-import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
+import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
@@ -20,7 +20,7 @@ export const CollateralRatioBar = ({
   poolChainId,
   ...midasBoxProps
 }: CollateralRatioBarProps & MidasBoxProps) => {
-  const maxBorrow = useBorrowLimit(assets, poolChainId);
+  const maxBorrow = useBorrowLimitTotal(assets, poolChainId);
 
   const ratio = (borrowFiat / maxBorrow) * 100;
 

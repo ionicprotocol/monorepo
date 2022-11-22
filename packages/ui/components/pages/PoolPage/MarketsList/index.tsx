@@ -47,16 +47,16 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
-import { AdditionalInfo } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/AdditionalInfo';
-import { BorrowApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/BorrowApy';
-import { BorrowBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/BorrowBalance';
-import { Collateral } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Collateral';
-import { Liquidity } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/Liquidity';
-import { SupplyApy } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyApy';
-import { SupplyBalance } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/SupplyBalance';
-import { TokenName } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TokenName';
-import { TotalBorrow } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TotalBorrow';
-import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/TotalSupply';
+import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo';
+import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
+import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
+import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/Collateral';
+import { Liquidity } from '@ui/components/pages/PoolPage/MarketsList/Liquidity';
+import { SupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
+import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
+import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
+import { TotalBorrow } from '@ui/components/pages/PoolPage/MarketsList/TotalBorrow';
+import { TotalSupply } from '@ui/components/pages/PoolPage/MarketsList/TotalSupply';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';

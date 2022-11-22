@@ -2,7 +2,7 @@ import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useMemo } from 'react';
 
-import PoolModal from '@ui/components/pages/Fuse/Modals/PoolModal/index';
+import AmountModal from '@ui/components/pages/PoolPage/AmountModal';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -41,7 +41,7 @@ export const FundButton = ({
       >
         {modeName}
       </Button>
-      <PoolModal
+      <AmountModal
         defaultMode={mode}
         comptrollerAddress={comptrollerAddress}
         assets={assets}
