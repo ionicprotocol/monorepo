@@ -28,19 +28,16 @@ import LogRocket from 'logrocket';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
+import MaxBorrowSlider from './MaxBorrowSlider';
+import { StatsColumn } from './StatsColumn';
+
 import { MidasBox } from '@ui/components/shared/Box';
 import { Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import {
-  DEFAULT_DECIMALS,
-  HIGH_RISK_RATIO,
-  REPAY_STEPS,
-  SUPPLY_STEPS,
-  UserAction,
-} from '@ui/constants/index';
+import { DEFAULT_DECIMALS, REPAY_STEPS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
@@ -52,8 +49,6 @@ import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
-import MaxBorrowSlider from './MaxBorrowSlider';
-import { StatsColumn } from './StatsColumn';
 
 interface AmountSelectProps {
   asset: MarketData;
@@ -105,7 +100,7 @@ const AmountSelect = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [steps, setSteps] = useState<string[]>([]);
-  const [isRisky, setIsRisky] = useState<boolean>(false);
+  const [isRisky] = useState<boolean>(false);
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const successToast = useSuccessToast();
 

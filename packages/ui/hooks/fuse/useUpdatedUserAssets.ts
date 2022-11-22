@@ -1,7 +1,6 @@
 import { FundOperationMode } from '@midas-capital/types';
-import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
-import { useMemo } from 'react';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCgId } from '@ui/hooks/useChainConfig';

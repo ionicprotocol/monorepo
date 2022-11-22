@@ -1,10 +1,11 @@
 import { utils } from 'ethers';
 import { useMemo } from 'react';
 
+import { MarketData } from '../types/TokensDataMap';
+
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { MarketData } from '../types/TokensDataMap';
 
 export const useBorrowLimitTotal = (
   assets: MarketData[],
