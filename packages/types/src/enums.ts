@@ -7,6 +7,7 @@ export enum SupportedChains {
   neon_devnet = 245022926,
   polygon = 137,
   arbitrum = 42161,
+  fantom = 250,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -328,6 +329,12 @@ export enum assetSymbols {
   DPX = "DPX",
   MAGIC = "MAGIC",
   GMX = "GMX",
+
+  // Fantom
+  WFTM = "WFTM",
+  multiBTC = "multiBTC",
+  multiETH = "multiETH",
+  aFTMc = "aFTMc",
 }
 
 export default assetSymbols;

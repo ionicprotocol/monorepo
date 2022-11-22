@@ -9,6 +9,7 @@ nextConfig = {
     MOONBEAM: process.env.MOONBEAM,
     POLYGON: process.env.POLYGON,
     ARBITRUM: process.env.ARBITRUM,
+    FANTOM: process.env.FANTOM,
     NEXT_PUBLIC_SHOW_TESTNETS: process.env.NEXT_PUBLIC_SHOW_TESTNETS,
     ICON_SERVER: process.env.ICON_SERVER,
     FEATURE_CREATE_POOL: process.env.FEATURE_CREATE_POOL,
