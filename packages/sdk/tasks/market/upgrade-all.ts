@@ -2,10 +2,10 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-import { Comptroller } from "../../typechain/Comptroller";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { CErc20Delegate } from "@typechain/CErc20Delegate";
+import { Comptroller } from "@typechain/Comptroller";
+import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   .addOptionalParam(

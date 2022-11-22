@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 
 import { FuseFlywheelDeployFnParams } from "..";
-import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheel } from "@typechain/MidasFlywheel";
 
 export const deployFlywheelWithDynamicRewards = async ({
   ethers,

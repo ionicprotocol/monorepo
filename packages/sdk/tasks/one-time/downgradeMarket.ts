@@ -1,9 +1,9 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
-import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { CErc20PluginDelegate } from "@typechain/CErc20PluginDelegate";
+import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
+import { MidasERC4626 } from "@typechain/MidasERC4626";
 
 task("market:downgrade", "Downgrades a plugin market to a simple market")
   .addParam("market", "The address of the market to downgrade", undefined, types.string)

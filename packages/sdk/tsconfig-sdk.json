@@ -12,7 +12,11 @@
     "outDir": "./dist/esm",
     "declaration": true,
     "skipLibCheck": true,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "paths": {
+      "@typechain/*": ["./typechain/*"],
+      "@artifacts/*": ["./artifacts/*"],
+    }
   },
   "include": ["./src"],
   "exclude": ["./lib/contracts/typechain"]

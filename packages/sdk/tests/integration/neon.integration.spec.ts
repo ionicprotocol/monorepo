@@ -2,7 +2,7 @@ import { assetSymbols, MarketConfig, SupportedChains } from "@midas-capital/type
 import { BigNumber, Contract, providers } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { EIP20Interface, FuseSafeLiquidator, MasterPriceOracle, SimplePriceOracle } from "../../typechain";
+import { EIP20Interface, FuseSafeLiquidator, MasterPriceOracle, SimplePriceOracle } from "@typechain";
 import { ERC20Abi } from "../../src";
 import { setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import { getOrCreateMidas } from "../utils/midasSdk";

@@ -6,6 +6,10 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "./dist/cjs",
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "paths": {
+      "@typechain/*": ["./typechain/*"],
+      "@artifacts/*": ["./artifacts/*"],
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 
-import { WombatLpTokenPriceOracle } from "../../../typechain/WombatLpTokenPriceOracle.sol";
+import { WombatLpTokenPriceOracle } from "@typechain/WombatLpTokenPriceOracle.sol";
 import { WombatDeployFnParams } from "../types";
 
 export const deployWombatOracle = async ({

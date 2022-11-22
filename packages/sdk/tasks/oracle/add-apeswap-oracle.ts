@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-import { UniswapTwapPriceOracleV2Factory } from "../../typechain";
+import { UniswapTwapPriceOracleV2Factory } from "@typechain";
 
 const apeSwapFactory = "0x0841bd0b734e4f5853f0dd8d7ea041c241fb0da6";
 const sd = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";

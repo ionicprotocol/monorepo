@@ -1,7 +1,7 @@
 import { FundingStrategyContract } from "@midas-capital/types";
 import { BytesLike, constants, ethers } from "ethers";
 
-import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
+import { IUniswapV2Factory__factory } from "@typechain/factories/IUniswapV2Factory__factory";
 import { MidasBase } from "../../MidasSdk";
 
 export type FundingStrategiesAndDatas = {

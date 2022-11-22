@@ -2,7 +2,7 @@ import { polygon } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { AddressesProvider } from "../../typechain/AddressesProvider";
+import { AddressesProvider } from "@typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,

@@ -2,8 +2,8 @@ import { ganache } from "@midas-capital/chains";
 import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { ethers } from "ethers";
 
-import { FixedNativePriceOracle } from "../../typechain/FixedNativePriceOracle";
-import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { FixedNativePriceOracle } from "@typechain/FixedNativePriceOracle";
+import { MasterPriceOracle } from "@typechain/MasterPriceOracle";
 import { ChainDeployConfig } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { ChainDeployFnParams } from "../helpers/types";

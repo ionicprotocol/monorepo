@@ -2,8 +2,8 @@ import { BigNumber, Contract } from "ethers";
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { Comptroller } from "../../typechain/Comptroller";
-import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { Comptroller } from "@typechain/Comptroller";
+import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
 
 const LOG = process.env.LOG ? true : false;
 

@@ -4,7 +4,7 @@ import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/ty
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { WETH } from "../../typechain/WETH";
+import { WETH } from "@typechain/WETH";
 import { MidasSdk } from "../../src";
 
 let midasSdk: MidasSdk;

@@ -8,6 +8,10 @@
     "target": "ES2015",
     "rootDirs": ["./src", "./tests"],
     "outDir": "./dist/cjs",
-    "composite": true
+    "composite": true,
+    "paths": {
+      "@typechain/*": ["sdk/typechain/*"],
+      "@artifacts/*": ["sdk/artifacts/*"],
+    }
   }
 }
