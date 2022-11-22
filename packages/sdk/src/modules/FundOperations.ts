@@ -2,8 +2,8 @@ import axios from "axios";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { Comptroller } from "../../typechain/Comptroller";
 import { getContract } from "../MidasSdk/utils";
 
 export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBase) {

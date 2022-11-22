@@ -17,16 +17,16 @@ import {
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
 
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
-import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
-import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
-import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { Comptroller } from "../../typechain/Comptroller";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { FusePoolLens } from "../../typechain/FusePoolLens";
+import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
+import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter.sol";
 import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";

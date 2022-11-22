@@ -1,7 +1,7 @@
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { Comptroller } from "../../typechain/Comptroller";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 
 task("non-owner-pool:upgrade")
   .addParam("signer", "Named account to use for tx", "deployer", types.string)

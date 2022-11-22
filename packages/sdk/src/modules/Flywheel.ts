@@ -1,10 +1,10 @@
 import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "ethers";
 
-import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
-import { MidasFlywheel__factory } from "../../lib/contracts/typechain/factories/MidasFlywheel__factory";
-import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
-import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
+import { FlywheelStaticRewards__factory } from "../../typechain/factories/FlywheelStaticRewards__factory";
+import { MidasFlywheel__factory } from "../../typechain/factories/MidasFlywheel__factory";
+import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter.sol";
 
 import { withCreateContracts } from "./CreateContracts";
 

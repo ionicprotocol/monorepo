@@ -5,6 +5,15 @@ __metadata:
   version: 6
   cacheKey: 8
 
+"@abimate/core@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@abimate/core@npm:0.1.0"
+  bin:
+    abimate: main.js
+  checksum: 6c5726ea397a4a544308837aa0f398f1e772dc57c21f7496d7ccd3fc6ad333065ae6a39294705622cce1840967b85941c0fc46f616691003748ea3b40f274317
+  languageName: node
+  linkType: hard
+
 "@adobe/css-tools@npm:^4.0.1":
   version: 4.0.1
   resolution: "@adobe/css-tools@npm:4.0.1"
@@ -3074,6 +3083,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@midas-capital/sdk@workspace:packages/sdk"
   dependencies:
+    "@abimate/core": ^0.1.0
     "@keydonix/uniswap-oracle-sdk": ^1.0.7
     "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
     "@midas-capital/chains": "workspace:*"
@@ -12900,7 +12910,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
+  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
   languageName: node
   linkType: hard
 

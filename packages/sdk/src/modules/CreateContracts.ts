@@ -1,16 +1,16 @@
 import { Contract, Signer } from "ethers";
 
 import { Artifacts, MidasBaseConstructor } from "..";
-import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBInterestRateModel.sol";
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
-import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
-import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
-import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
+import { AnkrBNBInterestRateModel } from "../../typechain/AnkrBNBInterestRateModel.sol";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { Comptroller } from "../../typechain/Comptroller";
+import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { JumpRateModel } from "../../typechain/JumpRateModel";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { RewardsDistributorDelegate } from "../../typechain/RewardsDistributorDelegate";
+import { Unitroller } from "../../typechain/Unitroller";
 import { SignerOrProvider, SupportedProvider } from "../MidasSdk";
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {

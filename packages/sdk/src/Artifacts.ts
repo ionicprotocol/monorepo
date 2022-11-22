@@ -2,7 +2,7 @@
 
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
-import AdjustableJumpRateModelArtifact from "../lib/contracts/out/AdjustableJumpRateModel.sol/AdjustableJumpRateModel.json";
+import AdjustableJumpRateModelArtifact from "../artifacts/AdjustableJumpRateModel.json";
 import AnkrBNBcPriceOracleArtifact from "../lib/contracts/out/AnkrBNBcPriceOracle.sol/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import BalancerLpTokenPriceOracleArtifact from "../lib/contracts/out/BalancerLpTokenPriceOracle.sol/BalancerLpTokenPriceOracle.json";
