@@ -1859,7 +1859,7 @@
       ]
     },
     "AnkrCertificateTokenPriceOracle_Implementation": {
-      "address": "0x031C5e133115342687de18a5D9363d2D82C239b0",
+      "address": "0x81F17E70e27829A164E3B3E7E3517510eBC12920",
       "abi": [
         {
           "anonymous": false,
@@ -2213,7 +2213,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xB3177C0b176A2c26369A2ca9503907A15c75F467",
+      "address": "0xdaFEe93782f31700DAD5B861eCE40aA4441563B1",
       "abi": [
         {
           "inputs": [],
@@ -3013,7 +3013,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -3664,7 +3664,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x4Ec7e50E1a4eA877E8075bC463e3e959608f6308",
+      "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB",
       "abi": [
         {
           "anonymous": false,
@@ -4504,7 +4504,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -5168,7 +5168,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x44136e215EC68Cbd3c678FA7a58112a52d037eEE",
+      "address": "0x9c44eD0210a082CFA1378cd88BcE30dbA08daCb3",
       "abi": [
         {
           "anonymous": false,
@@ -6033,7 +6033,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -10688,7 +10688,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xE34Bb04a2534D439eeB13c79966ab6e8A3DE9b48",
+      "address": "0x6b459108523CB748418a34039C985CB2868FBA6A",
       "abi": [
         {
           "anonymous": false,
@@ -12723,7 +12723,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x750cec6bB47E814ab052Dc8607203569B48636A8",
+      "address": "0x6deEdd5f6C418aDD12916dd56EbEdBcE67678d21",
       "abi": [
         {
           "anonymous": false,

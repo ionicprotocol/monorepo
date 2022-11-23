@@ -1,13 +1,15 @@
-import { NativePricedFuseAsset } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useMemo } from 'react';
+
+import { MarketData } from '../types/TokensDataMap';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
-export const useBorrowLimit = <T extends NativePricedFuseAsset>(
-  assets: T[],
+export const useBorrowLimitMarket = (
+  asset: MarketData,
+  assets: MarketData[],
   poolChainId: number,
   options?: { ignoreIsEnabledCheckFor?: string }
 ): number => {
@@ -18,14 +20,18 @@ export const useBorrowLimit = <T extends NativePricedFuseAsset>(
     let _maxBorrow = 0;
 
     for (let i = 0; i < assets.length; i++) {
-      const asset = assets[i];
-      if (options?.ignoreIsEnabledCheckFor === asset.cToken || asset.membership) {
+      const currentAsset = assets[i];
+
+      // Don't include and subtract current markets borrow
+      if (currentAsset.cToken === asset.cToken) continue;
+
+      if (options?.ignoreIsEnabledCheckFor === currentAsset.cToken || currentAsset.membership) {
         _maxBorrow +=
-          asset.supplyBalanceNative *
-          parseFloat(utils.formatUnits(asset.collateralFactor, DEFAULT_DECIMALS)) *
+          currentAsset.supplyBalanceNative *
+          parseFloat(utils.formatUnits(currentAsset.collateralFactor, DEFAULT_DECIMALS)) *
           usdPrice;
       }
     }
     return _maxBorrow;
-  }, [assets, options?.ignoreIsEnabledCheckFor, usdPrice]);
+  }, [assets, options?.ignoreIsEnabledCheckFor, usdPrice, asset.cToken]);
 };

@@ -23,8 +23,8 @@ import { useMemo } from 'react';
 import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
-import { Market } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList';
-import { FundButton } from '@ui/components/pages/Fuse/FusePoolPage/MarketsList/FundButton';
+import { Market } from '@ui/components/pages/PoolPage/MarketsList';
+import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/FundButton';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';

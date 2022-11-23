@@ -1510,7 +1510,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x9e2c57aBEC61ba4DFCd84fc847B118355714FbB4",
+      "address": "0xfC92fE417b1b40C0A023C8Ec3f216ba6Eb26233A",
       "abi": [
         {
           "inputs": [],
@@ -2310,7 +2310,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -2961,7 +2961,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xc3b333e1D3135B092856E773Fd609e9387B068b1",
+      "address": "0xD4C73CA641cE5D8F37E0F679b0aAb838096112ce",
       "abi": [
         {
           "anonymous": false,
@@ -3801,7 +3801,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -4465,7 +4465,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x8b047966B5cDFf492159eaA53218DdFD4413254F",
+      "address": "0x74b1E3E71fB46919eeD1dd25fD29911F3fDDF8B1",
       "abi": [
         {
           "anonymous": false,
@@ -5330,7 +5330,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -11395,7 +11395,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0xb412cE162dE2168C92bbdB80A2c74c771e5D91dD",
+      "address": "0x20cAA77122C0d4dA802e8cb2a8332dadd2e6977f",
       "abi": [
         {
           "anonymous": false,
@@ -13851,7 +13851,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0xa04e40073a999C03D6A81ce75d7A3C2abf6EaDB4",
+      "address": "0xc89352c447CC6fBD56A37b51BB83763850927CD8",
       "abi": [
         {
           "anonymous": false,

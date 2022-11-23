@@ -17,6 +17,7 @@ const deployedPlugins: DeployedPlugins = {
       "0x85Ff07b5F3454143531F36Bd6bEd92654d0681eD",
       [underlying(assets, assetSymbols.STELLA), underlying(assets, assetSymbols.WGLMR)],
     ],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/stella.png",
   },
   // no plugin deployment file stored
   "0x46eC3122C73CA62A18FFCFd434cDc1C341Fe96dB": {
@@ -32,6 +33,7 @@ const deployedPlugins: DeployedPlugins = {
       "0x32Be4b977BaB44e9146Bb414c18911e652C56568",
       [underlying(assets, assetSymbols.STELLA), underlying(assets, assetSymbols.WGLMR)],
     ],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/stella.png",
   },
   // CurveGaugeERC4626_xcDOT-stDOT_0xe4C6Bd326a1715cEbFeD3647A963a308Ae7F8A98.json
   "0xE9c4274341ab4Be0857476e84963b3c36787568D": {
@@ -42,6 +44,7 @@ const deployedPlugins: DeployedPlugins = {
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/xcdot",
     underlying: underlying(assets, assetSymbols["xcDOT-stDOT"]),
     otherParams: ["0xC106C836771B0B4f4a0612Bd68163Ca93be1D340", [underlying(assets, assetSymbols["xcDOT-stDOT"])]],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png",
   },
 };
 

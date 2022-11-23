@@ -15,6 +15,7 @@ export interface AbstractPlugin {
   apyDocsUrl?: string;
   strategyDocsUrl?: string;
   underlying: string;
+  icon?: string;
   otherParams?: any[];
 }
 
@@ -24,6 +25,7 @@ export type Plugin = AbstractPlugin;
 export interface BeefyPlugin extends AbstractPlugin {
   strategy: Strategy.Beefy;
   apyDocsUrl: `https://app.beefy.finance/vault/${string}`;
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png";
 }
 
 export interface DotDotPlugin extends AbstractPlugin {
@@ -45,21 +47,25 @@ export interface MimoPlugin extends AbstractPlugin {
     string, // Rewards Destination
     [string] // Reward Tokens [Mimo]
   ];
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/mimo.png";
 }
 
 export type ArrakisPlugin = MimoPlugin;
 
 export interface BombPlugin extends AbstractPlugin {
   strategy: Strategy.Bomb;
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/bomb.png";
 }
 
 export interface StellaPlugin extends AbstractPlugin {
   strategy: Strategy.Stella;
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/stella.png";
 }
 
 export interface CurveGaugePlugin extends AbstractPlugin {
   strategy: Strategy.CurveGauge;
   otherParams: [string, string[]];
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png";
 }
 
 export type SupportedPlugin =

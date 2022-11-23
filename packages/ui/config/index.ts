@@ -1,47 +1,50 @@
 type CONFIG = {
+  allowedAddresses: string[];
+  hidePools137: string[];
+  hidePools56: string[];
+  hidePools97: string[];
   iconServerURL: string | undefined;
-  isDevelopment: boolean;
+  isArbitrumEnabled: boolean;
   isBscEnabled: boolean;
+  isDevelopment: boolean;
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
-  isArbitrumEnabled: boolean;
   isFantomEnabled: boolean;
   isTestnetEnabled: boolean;
-  allowedAddresses: string[];
+  logrocketAppId: string | undefined;
   productDomain: string | undefined;
   productUrl: string | undefined;
-  supabaseUrl: string;
-  supabasePublicKey: string;
-  supabasePluginTableName: string;
   supabasePluginRewardsTableName: string;
-  hidePools56: string[];
-  hidePools97: string[];
-  hidePools137: string[];
+  supabasePluginTableName: string;
+  supabasePublicKey: string;
+  supabaseUrl: string;
 };
 
 const config: CONFIG = {
-  iconServerURL: process.env.ICON_SERVER,
-  isDevelopment: process.env.NODE_ENV === 'development',
-  isBscEnabled: process.env.BSC === 'true',
-  isEvmosEnabled: process.env.EVMOS === 'true',
-  isMoonbeamEnabled: process.env.MOONBEAM === 'true',
-  isPolygonEnabled: process.env.POLYGON === 'true',
-  isArbitrumEnabled: process.env.ARBITRUM === 'true',
-  isFantomEnabled: process.env.FANTOM === 'true',
-  isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')
     : [],
-  productDomain: process.env.PRODUCT_DOMAIN,
-  productUrl: process.env.PRODUCT_URL,
-  supabaseUrl: process.env.SUPABASE_URL ?? '',
-  supabasePublicKey: process.env.SUPABASE_KEY ?? '',
-  supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
-  supabasePluginRewardsTableName: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
+
+  hidePools137: process.env.HIDE_POOLS_137 ? process.env.HIDE_POOLS_137.split(',') : [],
   hidePools56: process.env.HIDE_POOLS_56 ? process.env.HIDE_POOLS_56.split(',') : [],
   hidePools97: process.env.HIDE_POOLS_97 ? process.env.HIDE_POOLS_97.split(',') : [],
-  hidePools137: process.env.HIDE_POOLS_137 ? process.env.HIDE_POOLS_137.split(',') : [],
+  iconServerURL: process.env.ICON_SERVER,
+  isArbitrumEnabled: process.env.ARBITRUM === 'true',
+  isBscEnabled: process.env.BSC === 'true',
+  isDevelopment: process.env.NODE_ENV === 'development',
+  isEvmosEnabled: process.env.EVMOS === 'true',
+  isMoonbeamEnabled: process.env.MOONBEAM === 'true',
+  isPolygonEnabled: process.env.POLYGON === 'true',
+  isFantomEnabled: process.env.FANTOM === 'true',
+  isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
+  logrocketAppId: process.env.LOGROCKET_APP_ID,
+  productDomain: process.env.PRODUCT_DOMAIN,
+  productUrl: process.env.PRODUCT_URL,
+  supabasePluginRewardsTableName: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
+  supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
+  supabasePublicKey: process.env.SUPABASE_KEY ?? '',
+  supabaseUrl: process.env.SUPABASE_URL ?? '',
 };
 
 export { config };

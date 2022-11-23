@@ -7,7 +7,6 @@ import {
   Divider,
   Input,
   InputProps,
-  Spinner,
   Switch,
   Tab,
   TabList,
@@ -26,26 +25,20 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { BigNumber, constants, ContractTransaction, utils } from 'ethers';
 import LogRocket from 'logrocket';
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import MaxBorrowSlider from '@ui/components/pages/Fuse/Modals/PoolModal/MaxBorrowSlider';
+import MaxBorrowSlider from './MaxBorrowSlider';
+import { StatsColumn } from './StatsColumn';
+
 import { MidasBox } from '@ui/components/shared/Box';
-import { Center, Column, Row } from '@ui/components/shared/Flex';
+import { Column, Row } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import {
-  DEFAULT_DECIMALS,
-  HIGH_RISK_RATIO,
-  REPAY_STEPS,
-  SUPPLY_STEPS,
-  UserAction,
-} from '@ui/constants/index';
+import { DEFAULT_DECIMALS, REPAY_STEPS, SUPPLY_STEPS, UserAction } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
-import { useBorrowLimit } from '@ui/hooks/useBorrowLimit';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useColors } from '@ui/hooks/useColors';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
@@ -53,11 +46,9 @@ import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toCeil, toFixedNoRound } from '@ui/utils/formatNumber';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface AmountSelectProps {
   asset: MarketData;
@@ -109,7 +100,7 @@ const AmountSelect = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [steps, setSteps] = useState<string[]>([]);
-  const [isRisky, setIsRisky] = useState<boolean>(false);
+  const [isRisky] = useState<boolean>(false);
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const successToast = useSuccessToast();
 
@@ -131,15 +122,18 @@ const AmountSelect = ({
 
     _setUserEnteredAmount(newAmount);
 
-    if (
-      maxBorrowInAsset &&
-      maxBorrowInAsset.number !== 0 &&
-      Number(newAmount) / maxBorrowInAsset.number > HIGH_RISK_RATIO
-    ) {
-      setIsRisky(true);
-    } else {
-      setIsRisky(false);
-    }
+    // TODO this is off, it checks borrow ratio in current market
+    // but should check total borrow limit.
+
+    // if (
+    //   maxBorrowInAsset &&
+    //   maxBorrowInAsset.number !== 0 &&
+    //   Number(newAmount) / maxBorrowInAsset.number > HIGH_RISK_RATIO
+    // ) {
+    //   setIsRisky(true);
+    // } else {
+    //   setIsRisky(false);
+    // }
 
     const bigAmount = utils.parseUnits(
       toFixedNoRound(newAmount, tokenData?.decimals || DEFAULT_DECIMALS),
@@ -771,181 +765,6 @@ const TabBar = ({
         </TabList>
       </Tabs>
     </Box>
-  );
-};
-
-interface StatsColumnProps {
-  mode: FundOperationMode;
-  assets: MarketData[];
-  asset: MarketData;
-  amount: BigNumber;
-  enableAsCollateral: boolean;
-  poolChainId: number;
-}
-const StatsColumn = ({
-  mode,
-  assets,
-  asset,
-  amount,
-  enableAsCollateral,
-  poolChainId,
-}: StatsColumnProps) => {
-  const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
-  // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
-  const updatedAssets: MarketData[] | undefined = useUpdatedUserAssets({
-    mode,
-    assets,
-    index,
-    amount,
-    poolChainId,
-  });
-
-  const { currentSdk, currentChain } = useMultiMidas();
-
-  if (!currentSdk || !currentChain) throw new Error("SDK doesn't exist!");
-
-  const blocksPerMinute = useMemo(
-    () => getBlockTimePerMinuteByChainId(currentChain.id),
-    [currentChain]
-  );
-
-  // Define the old and new asset (same asset different numerical values)
-  const updatedAsset = updatedAssets ? updatedAssets[index] : null;
-
-  // Calculate Old and new Borrow Limits
-  const borrowLimit = useBorrowLimit(assets, poolChainId);
-  const updatedBorrowLimit = useBorrowLimit(updatedAssets ?? [], poolChainId, {
-    ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
-  });
-
-  const isSupplyingOrWithdrawing =
-    mode === FundOperationMode.SUPPLY || mode === FundOperationMode.WITHDRAW;
-
-  const supplyAPY = currentSdk.ratePerBlockToAPY(asset.supplyRatePerBlock, blocksPerMinute);
-  const borrowAPR = currentSdk.ratePerBlockToAPY(asset.borrowRatePerBlock, blocksPerMinute);
-
-  const updatedSupplyAPY = currentSdk.ratePerBlockToAPY(
-    updatedAsset?.supplyRatePerBlock ?? constants.Zero,
-    blocksPerMinute
-  );
-
-  const updatedBorrowAPR = currentSdk.ratePerBlockToAPY(
-    updatedAsset?.borrowRatePerBlock ?? constants.Zero,
-    blocksPerMinute
-  );
-
-  // If the difference is greater than a 0.1 percentage point change, alert the user
-  const updatedAPYDiffIsLarge = isSupplyingOrWithdrawing
-    ? Math.abs(updatedSupplyAPY - supplyAPY) > 0.1
-    : Math.abs(updatedBorrowAPR - borrowAPR) > 0.1;
-
-  const supplyBalanceFrom = utils.commify(
-    utils.formatUnits(asset.supplyBalance, asset.underlyingDecimals)
-  );
-  const supplyBalanceTo = updatedAsset
-    ? utils.commify(utils.formatUnits(updatedAsset.supplyBalance, updatedAsset.underlyingDecimals))
-    : '';
-
-  return (
-    <MidasBox width="100%" height="190px" mt={4}>
-      {updatedAsset ? (
-        <Column
-          mainAxisAlignment="space-between"
-          crossAxisAlignment="flex-start"
-          expand
-          py={3}
-          px={4}
-          fontSize="lg"
-        >
-          <Row
-            mainAxisAlignment="space-between"
-            crossAxisAlignment="center"
-            width="100%"
-            // color={color}
-          >
-            <Text variant="smText" fontWeight="bold" flexShrink={0}>
-              Supply Balance:
-            </Text>
-            <SimpleTooltip
-              label={`${supplyBalanceFrom}${
-                isSupplyingOrWithdrawing ? ` → ${supplyBalanceTo} ` : ' '
-              }${asset.underlyingSymbol}`}
-            >
-              <Text
-                fontWeight="bold"
-                flexShrink={0}
-                variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}
-                maxWidth="250px"
-                textOverflow={'ellipsis'}
-                whiteSpace="nowrap"
-                overflow="hidden"
-              >
-                {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
-                {isSupplyingOrWithdrawing ? (
-                  <>
-                    {' → '}
-                    {supplyBalanceTo.slice(0, supplyBalanceTo.indexOf('.') + 3)}
-                  </>
-                ) : null}{' '}
-                {asset.underlyingSymbol}
-              </Text>
-            </SimpleTooltip>
-          </Row>
-
-          <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" flexShrink={0} variant="smText">
-              {isSupplyingOrWithdrawing ? 'Supply APY' : 'Borrow APR'}:
-            </Text>
-            <Text fontWeight="bold" variant={updatedAPYDiffIsLarge ? 'xsText' : 'mdText'}>
-              {isSupplyingOrWithdrawing ? supplyAPY.toFixed(2) : borrowAPR.toFixed(2)}%
-              {updatedAPYDiffIsLarge ? (
-                <>
-                  {' → '}
-                  {isSupplyingOrWithdrawing
-                    ? updatedSupplyAPY.toFixed(2)
-                    : updatedBorrowAPR.toFixed(2)}
-                  %
-                </>
-              ) : null}
-            </Text>
-          </Row>
-
-          <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" flexShrink={0} variant="smText">
-              Borrow Limit:
-            </Text>
-            <Text fontWeight="bold" variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}>
-              {smallUsdFormatter(borrowLimit)}
-              {isSupplyingOrWithdrawing ? (
-                <>
-                  {' → '}
-                  {smallUsdFormatter(updatedBorrowLimit)}
-                </>
-              ) : null}{' '}
-            </Text>
-          </Row>
-
-          <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-            <Text fontWeight="bold" variant="smText">
-              Debt Balance:
-            </Text>
-            <Text fontWeight="bold" variant={isSupplyingOrWithdrawing ? 'xsText' : 'mdText'}>
-              {smallUsdFormatter(asset.borrowBalanceFiat)}
-              {!isSupplyingOrWithdrawing ? (
-                <>
-                  {' → '}
-                  {smallUsdFormatter(updatedAsset.borrowBalanceFiat)}
-                </>
-              ) : null}
-            </Text>
-          </Row>
-        </Column>
-      ) : (
-        <Center height="100%">
-          <Spinner />
-        </Center>
-      )}
-    </MidasBox>
   );
 };
 

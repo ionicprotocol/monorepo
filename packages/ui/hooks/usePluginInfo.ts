@@ -16,6 +16,7 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
               market: '',
               apyDocsUrl: '',
               strategyDocsUrl: '',
+              icon: '',
             };
       }
     },

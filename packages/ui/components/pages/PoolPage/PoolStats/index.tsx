@@ -13,7 +13,7 @@ import {
 } from '@chakra-ui/react';
 import { useMemo } from 'react';
 
-import { PoolStat } from '@ui/components/pages/Fuse/FusePoolPage/PoolStats/PoolStat';
+import { PoolStat } from '@ui/components/pages/PoolPage/PoolStats/PoolStat';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useColors } from '@ui/hooks/useColors';
 import { PoolData } from '@ui/types/TokensDataMap';
