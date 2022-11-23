@@ -94,7 +94,7 @@ const deployedPlugins: DeployedPlugins = {
       "0xa5A14c3814d358230a56e8f011B8fc97A508E890", // _rewardsDestination
       [underlying(assets, assetSymbols.MIMO)], // _rewardTokens
     ],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/arrakis.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/mimo.png",
   },
   // ArrakisERC4626_MIMO80-PAR20 BLP_0x82d7f08026e21c7713CfAd1071df7C8271B17Eae.json
   "0xd682451F627d54cfdA74a80972aDaeF133cdc15e": {
@@ -109,7 +109,7 @@ const deployedPlugins: DeployedPlugins = {
       "0xcb67Bd2aE0597eDb2426802CdF34bb4085d9483A", // _rewardsDestination
       [underlying(assets, assetSymbols.MIMO)], // _rewardTokens
     ],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/arrakis.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/mimo.png",
   },
   // BeefyERC4626_jEUR-PAR_0x30b32BbfcA3A81922F88809F53E625b5EE5286f6.json
   "0xc8E8B4A7E0F854Cf516A75fE742FC791dBec9F86": {
@@ -134,7 +134,7 @@ const deployedPlugins: DeployedPlugins = {
       "0x4DED2939A2A8912E9Cc9eaEFAbECC43CC9864723", // _rewardsDestination
       [underlying(assets, assetSymbols.MIMO)], // _rewardTokens
     ],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/arrakis.png",
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/mimo.png",
   },
 };
 
