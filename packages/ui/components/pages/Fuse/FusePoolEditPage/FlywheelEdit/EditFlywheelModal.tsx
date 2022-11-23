@@ -375,22 +375,24 @@ const EditFlywheelModal = ({
                 ))}
               </Select>
 
-              {selectedMarket && enabledMarkets && !enabledMarkets.includes(selectedMarket.cToken) && (
-                <Center width={'100%'} p={4}>
-                  <Button
-                    onClick={enableForRewards(selectedMarket.cToken)}
-                    disabled={isTransactionPending}
-                    ml={2}
-                    width="100%"
-                  >
-                    {isTransactionPending ? (
-                      <Spinner />
-                    ) : (
-                      `Enable ${selectedMarket?.underlyingSymbol} for Rewards`
-                    )}
-                  </Button>
-                </Center>
-              )}
+              {selectedMarket &&
+                enabledMarkets &&
+                !enabledMarkets.includes(selectedMarket.cToken) && (
+                  <Center width={'100%'} p={4}>
+                    <Button
+                      onClick={enableForRewards(selectedMarket.cToken)}
+                      disabled={isTransactionPending}
+                      ml={2}
+                      width="100%"
+                    >
+                      {isTransactionPending ? (
+                        <Spinner />
+                      ) : (
+                        `Enable ${selectedMarket?.underlyingSymbol} for Rewards`
+                      )}
+                    </Button>
+                  </Center>
+                )}
               {rewardsInfo && rewardsInfo?.enabled && (
                 <>
                   <VStack alignItems="flex-start" width="100%">
