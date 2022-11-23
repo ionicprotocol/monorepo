@@ -1,5 +1,5 @@
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import { Box, Divider, HStack, Link, Text, VStack } from '@chakra-ui/react';
+import { Box, Divider, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -91,6 +91,13 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
               +
             </Text>
             <TokenIcon address={(reward as FlywheelReward).token} chainId={chainId} size="xs" />
+          </>
+        ) : pluginInfo?.icon ? (
+          <>
+            <Text variant="smText" mr={-1}>
+              +
+            </Text>
+            <Image src={pluginInfo.icon} alt="plugin" height={6} />
           </>
         ) : (
           <Text>+ 🔌</Text>
