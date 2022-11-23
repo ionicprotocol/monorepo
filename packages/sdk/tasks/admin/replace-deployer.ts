@@ -5,10 +5,10 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol/DiaPriceOracle";
-import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
+import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
 import { Ownable } from "../../lib/contracts/typechain/Ownable";
 import { OwnableUpgradeable } from "../../lib/contracts/typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "../../lib/contracts/typechain/SafeOwnableUpgradeable";
@@ -177,7 +177,11 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
           {
-            const flywheelCore = (await ethers.getContractAt("MidasFlywheelCore", flywheelAddress, deployer)) as MidasFlywheelCore;
+            const flywheelCore = (await ethers.getContractAt(
+              "MidasFlywheelCore",
+              flywheelAddress,
+              deployer
+            )) as MidasFlywheelCore;
 
             const currentOwner = await flywheelCore.callStatic.owner();
             console.log(`current owner ${currentOwner} of the flywheel at ${flywheelCore.address}`);
@@ -315,7 +319,11 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
           {
-            const flywheelCore = (await ethers.getContractAt("MidasFlywheelCore", flywheelAddress, deployer)) as MidasFlywheelCore;
+            const flywheelCore = (await ethers.getContractAt(
+              "MidasFlywheelCore",
+              flywheelAddress,
+              deployer
+            )) as MidasFlywheelCore;
             const flywheelPendingOwner = await flywheelCore.callStatic.pendingOwner();
             if (flywheelPendingOwner == deployer.address) {
               console.log(`accepting the owner role for flywheel ${flywheelAddress}`);
