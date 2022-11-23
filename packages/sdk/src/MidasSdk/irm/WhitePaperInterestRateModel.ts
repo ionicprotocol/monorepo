@@ -2,8 +2,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import { InterestRateModel } from "@midas-capital/types";
 import { BigNumber, BigNumberish, constants, utils } from "ethers";
 
-import CTokenInterfaceArtifact from "../../../lib/contracts/out/CTokenInterfaces.sol/CTokenInterface.json";
-import WhitePaperInterestRateModelArtifact from "../../../lib/contracts/out/WhitePaperInterestRateModel.sol/WhitePaperInterestRateModel.json";
+import CTokenInterfaceArtifact from "@artifacts/CTokenInterface.json";
+import WhitePaperInterestRateModelArtifact from "@artifacts/WhitePaperInterestRateModel.json";
 import { getContract } from "../utils";
 
 export default class WhitePaperInterestRateModel implements InterestRateModel {
