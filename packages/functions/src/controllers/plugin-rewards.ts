@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import { functionsAlert } from '../alert';
-import { pluginsOfChain } from '../assets';
+import { pluginsOfChain } from '../data/plugins';
 import { environment, supabase } from '../config';
 import { getAPYProviders } from '../providers/apy';
 import { SupportedChains } from '@midas-capital/types';

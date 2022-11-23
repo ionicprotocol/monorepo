@@ -1,6 +1,6 @@
 import { SupportedChains } from '@midas-capital/types';
 import { Handler } from '@netlify/functions';
-import { rpcUrls } from '../assets';
+import { rpcUrls } from '../data/rpcs';
 
 import { updatePluginData } from '../controllers';
 
