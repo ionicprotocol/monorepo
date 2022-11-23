@@ -9771,7 +9771,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x81503F4810A668a6D4e8233842655B554B95D7E4",
+      "address": "0xA239E84924eB92F69A82c227c6dcceB46E65c5Df",
       "abi": [
         {
           "anonymous": false,
