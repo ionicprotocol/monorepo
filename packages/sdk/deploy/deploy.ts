@@ -13,10 +13,10 @@ import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider"
 import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
-  const MIN_BORROW_USD = 100;
   console.log("RPC URL: ", ethers.provider.connection.url);
   const chainId = await getChainId();
   console.log("chainId: ", chainId);
+  const MIN_BORROW_USD = chainId === "97" ? 0 : 100;
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);
@@ -73,6 +73,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log("FuseFeeDistributor pool limits set", tx.hash);
 
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
+  const oldFirstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
 
   const comp = await deployments.deploy("Comptroller", {
     contract: "Comptroller.sol:Comptroller",
@@ -82,6 +83,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   if (comp.transactionHash) await ethers.provider.waitForTransaction(comp.transactionHash);
   console.log("Comptroller ", comp.address);
+
+  const compFirstExtension = await deployments.deploy("ComptrollerFirstExtension", {
+    contract: "ComptrollerFirstExtension",
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (compFirstExtension.transactionHash) await ethers.provider.waitForTransaction(compFirstExtension.transactionHash);
+  console.log("ComptrollerFirstExtension", compFirstExtension.address);
 
   const oldErc20Delegate = await ethers.getContractOrNull("CErc20Delegate");
   const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate");
@@ -176,6 +186,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     } else {
       console.log(`No change in the latest Comptroller implementation ${comptroller.address}`);
     }
+  }
+
+  const currentExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
+  if (currentExtensions.length != 1 || currentExtensions[0] != compFirstExtension.address) {
+    tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [compFirstExtension.address]);
+    await tx.wait();
+    console.log(`configured the extensions for comptroller ${comptroller.address}`);
+  } else {
+    console.log(`comptroller extensions already configured`);
   }
 
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
@@ -534,7 +553,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
 
   // upgrade any of the pools if necessary
-  await run("pools:all:upgrade");
+  await run("pools:all:upgrade", { oldFirstExtension: oldFirstExtension?.address || constants.AddressZero });
 
   // upgrade any of the markets if necessary
   await run("markets:all:upgrade");

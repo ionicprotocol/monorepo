@@ -1,7 +1,7 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import {
-  ankrBNBDocs,
+  ankrCertificateDocs,
   apeSwapDocs,
   BNBxDocs,
   defaultDocs,
@@ -270,7 +270,7 @@ const assets: SupportedAsset[] = [
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
-    extraDocs: ankrBNBDocs("aBNBc"),
+    extraDocs: ankrCertificateDocs("aBNBc", "BNB"),
   },
   {
     symbol: assetSymbols.stkBNB,

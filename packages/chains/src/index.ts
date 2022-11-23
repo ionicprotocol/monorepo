@@ -6,3 +6,4 @@ export { default as neondevnet } from "./neondevnet";
 export { default as evmos } from "./evmos";
 export { default as chapel } from "./chapel";
 export { default as arbitrum } from "./arbitrum";
+export { default as fantom } from "./fantom";

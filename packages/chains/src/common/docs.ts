@@ -33,6 +33,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://moraswap.com/exchange/swap",
     },
     [SupportedChains.chapel]: {},
+    [SupportedChains.fantom]: {
+      swapName: "SpookySwap",
+      swapAddress: "https://spooky.fi/#/swap",
+    },
   }[chainId];
 
   return `
@@ -51,10 +55,10 @@ export const ellipsisDocs = (poolAddress: string, poolName: string, tokenAddress
   `;
 };
 
-export const ankrBNBDocs = (variant: string) => {
+export const ankrCertificateDocs = (variant: string, chain: string) => {
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p>Head over to <a href="https://www.ankr.com/staking/stake/bnb/?token=${variant}" target="_blank" style="color: #BCAC83;">Ankr BNB Staking</a>, where you can acquire ${variant} by depositing BNB</p>
+  <p>Head over to <a href="https://www.ankr.com/staking/stake/${chain.toLowerCase()}/?token=${variant}" target="_blank" style="color: #BCAC83;">Ankr ${chain} Staking</a>, where you can acquire ${variant} by depositing ${chain}</p>
   `;
 };
 
@@ -168,7 +172,7 @@ export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string)
   <p><b>How to acquire this token</b><p/><br />
   <p> 1. Head over to the <a href="https://arbitrum.curve.fi/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
-  <p>You will get back the <a href="https://arbiscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p>You will get back the <a href="https://arbiscan.io/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };
