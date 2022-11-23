@@ -34,7 +34,7 @@ export const assets: SupportedAsset[] = [
     name: "Balancer",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", BAL),
+    extraDocs: defaultDocs("https://arbiscan.io", BAL),
   },
   {
     symbol: assetSymbols.BNB,
@@ -42,7 +42,7 @@ export const assets: SupportedAsset[] = [
     name: "Binance Network",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", BNB),
+    extraDocs: defaultDocs("https://arbiscan.io", BNB),
   },
   {
     symbol: assetSymbols.CRV,
@@ -50,7 +50,7 @@ export const assets: SupportedAsset[] = [
     name: "Curve DAO Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", CRV),
+    extraDocs: defaultDocs("https://arbiscan.io", CRV),
   },
   {
     symbol: assetSymbols.DAI,
@@ -58,7 +58,7 @@ export const assets: SupportedAsset[] = [
     name: "Dai Stablecoin",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", DAI),
+    extraDocs: defaultDocs("https://arbiscan.io", DAI),
   },
   {
     symbol: assetSymbols.WETH,
@@ -74,7 +74,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", FRAX),
+    extraDocs: defaultDocs("https://arbiscan.io", FRAX),
   },
   {
     symbol: assetSymbols.FXS,
@@ -82,7 +82,7 @@ export const assets: SupportedAsset[] = [
     name: "Frax Share",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", FXS),
+    extraDocs: defaultDocs("https://arbiscan.io", FXS),
   },
 
   {
@@ -91,7 +91,7 @@ export const assets: SupportedAsset[] = [
     name: "ChainLink Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", LINK),
+    extraDocs: defaultDocs("https://arbiscan.io", LINK),
   },
   {
     symbol: assetSymbols.SUSHI,
@@ -99,7 +99,7 @@ export const assets: SupportedAsset[] = [
     name: "SushiToken",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", SUSHI),
+    extraDocs: defaultDocs("https://arbiscan.io", SUSHI),
   },
   {
     symbol: assetSymbols.USDC,
@@ -107,7 +107,7 @@ export const assets: SupportedAsset[] = [
     name: "USD Coin (Arb1)",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", USDC),
+    extraDocs: defaultDocs("https://arbiscan.io", USDC),
   },
   {
     symbol: assetSymbols.USDT,
@@ -115,7 +115,7 @@ export const assets: SupportedAsset[] = [
     name: "Tether USD",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", USDT),
+    extraDocs: defaultDocs("https://arbiscan.io", USDT),
   },
   {
     symbol: assetSymbols.WBTC,
@@ -123,7 +123,7 @@ export const assets: SupportedAsset[] = [
     name: "Wrapped BTC",
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", WBTC),
+    extraDocs: defaultDocs("https://arbiscan.io", WBTC),
   },
   {
     symbol: assetSymbols.GOHM,
@@ -131,7 +131,7 @@ export const assets: SupportedAsset[] = [
     name: "Governance OHM",
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", GOHM),
+    extraDocs: defaultDocs("https://arbiscan.io", GOHM),
   },
   {
     symbol: assetSymbols.DPX,
@@ -139,7 +139,7 @@ export const assets: SupportedAsset[] = [
     name: "Dopex Governance Token",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", DPX),
+    extraDocs: defaultDocs("https://arbiscan.io", DPX),
   },
   {
     symbol: assetSymbols.MAGIC,
@@ -147,7 +147,7 @@ export const assets: SupportedAsset[] = [
     name: "MAGIC",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: defaultDocs("https://arbiscan.com", MAGIC),
+    extraDocs: defaultDocs("https://arbiscan.io", MAGIC),
   },
   {
     symbol: assetSymbols.GMX,
@@ -155,7 +155,7 @@ export const assets: SupportedAsset[] = [
     name: "GMX",
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
-    extraDocs: defaultDocs("https://arbiscan.com", GMX),
+    extraDocs: defaultDocs("https://arbiscan.io", GMX),
   },
   // Curve LP tokens
   {

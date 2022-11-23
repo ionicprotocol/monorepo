@@ -42,7 +42,6 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { Flywheel } from '@ui/types/ComponentPropsType';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { getRewardTokenContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
@@ -162,7 +161,7 @@ const EditFlywheelModal = ({
   const fund = useCallback(async () => {
     if (!currentSdk) return;
 
-    const token = getRewardTokenContract(flywheel.rewardToken, currentSdk);
+    const token = currentSdk.getEIP20RewardTokenInstance(flywheel.rewardToken, currentSdk.signer);
 
     setTransactionPending(true);
     try {

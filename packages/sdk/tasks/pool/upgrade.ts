@@ -4,6 +4,7 @@ import { task, types } from "hardhat/config";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
+import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 
 export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)
@@ -20,11 +21,7 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const fuseFeeDistributor = new ethers.Contract(
-      sdk.chainDeployment.FuseFeeDistributor.address,
-      sdk.chainDeployment.FuseFeeDistributor.abi,
-      deployer
-    );
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const newComptrollerImplementations = [newImplementation];
     const oldComptrollerImplementations = [oldImplementation];
@@ -48,16 +45,22 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       ) {
         console.log(`Setting the latest Comptroller implementation for ${oldImplementation} to ${newImplementation}`);
         tx = await fuseFeeDistributor._setLatestComptrollerImplementation(oldImplementation, newImplementation);
-        console.log("latest impl set", tx.hash);
         await tx.wait();
+        console.log("latest impl set", tx.hash);
       } else {
         console.log(`No change in the latest Comptroller implementation ${newImplementation}`);
       }
     }
   });
 
-task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on").setAction(
-  async (taskArgs, { ethers }) => {
+task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose autoimplementatoins are on")
+  .addOptionalParam(
+    "oldFirstExtension",
+    "The address of the first comptroller extension to replace",
+    constants.AddressZero,
+    types.string
+  )
+  .setAction(async ({ oldFirstExtension }, { ethers, deployments }) => {
     const deployer = await ethers.getNamedSigner("deployer");
 
     // @ts-ignoreutils/fuseSdk
@@ -65,57 +68,102 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
     const sdk = await midasSdkModule.getOrCreateMidas();
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-    const fuseFeeDistributor = new ethers.Contract(
-      sdk.chainDeployment.FuseFeeDistributor.address,
-      sdk.chainDeployment.FuseFeeDistributor.abi,
-      deployer
-    ) as FuseFeeDistributor;
+    const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const pools = await fusePoolDirectory.callStatic.getAllPools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);
-      const comptroller = (await new Contract(
-        pool.comptroller,
-        sdk.chainDeployment.Comptroller.abi,
-        deployer
-      )) as Comptroller;
-      const admin = await comptroller.callStatic.admin();
+      const unitroller1 = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
+      const admin = await unitroller1.callStatic.admin();
       console.log("pool admin", admin);
 
       try {
-        const implBefore = await comptroller.callStatic.comptrollerImplementation();
+        const implBefore = await unitroller1.callStatic.comptrollerImplementation();
         const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
+        console.log(`current impl ${implBefore} latest ${latestImpl}`);
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
-          const autoImplOn = await comptroller.callStatic.autoImplementation();
-          if (!autoImplOn) {
-            if (admin == deployer.address) {
-              const tx = await comptroller._toggleAutoImplementations(true);
+          if (admin == deployer.address) {
+            {
+              const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
+
+              let tx = await unitroller._setPendingImplementation(latestImpl);
               await tx.wait();
-              console.log(`turned autoimpl on ${tx.hash}`);
-            } else {
-              console.log(`the admin of the pool ${admin} is not the deployer and cannot turn on the auto impl`);
+              console.log(`set pending impl to ${latestImpl} for ${pool.comptroller} with ${tx.hash}`);
+
+              const comptroller = (await ethers.getContractAt(
+                "Comptroller.sol:Comptroller",
+                latestImpl,
+                deployer
+              )) as Comptroller;
+              tx = await comptroller._become(unitroller.address);
+              await tx.wait();
+              console.log(`upgraded to ${latestImpl} pool ${pool.comptroller} with tx ${tx.hash}`);
+            }
+          } else {
+            const asComptroller = (await ethers.getContractAt(
+              "Comptroller.sol:Comptroller",
+              pool.comptroller,
+              deployer
+            )) as Comptroller;
+
+            const autoImplOn = await asComptroller.callStatic.autoImplementation();
+            if (!autoImplOn) {
+              console.log(`cannot upgrade ${pool.comptroller} , AUTO IMPL is off`);
               continue;
             }
-          }
 
-          console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);
-          const tx = await comptroller.enterMarkets([]);
-          await tx.wait();
-          const implAfter = await comptroller.callStatic.comptrollerImplementation();
-          console.log(`Comptroller implementation after ${implAfter}`);
-
-          if (admin == deployer.address) {
-            const tx = await comptroller._toggleAutoImplementations(false);
+            console.log(`Making an empty call to upgrade ${pool.comptroller} from ${implBefore} to ${latestImpl}`);
+            const tx = await asComptroller.enterMarkets([]);
             await tx.wait();
-            console.log(`turned autoimpl off ${tx.hash}`);
+            const implAfter = await asComptroller.callStatic.comptrollerImplementation();
+            console.log(`Comptroller implementation after ${implAfter}`);
           }
+        }
+
+        const implAfter = await unitroller1.callStatic.comptrollerImplementation();
+        if (implAfter == latestImpl) {
+          const asComptroller = (await ethers.getContractAt(
+            "Comptroller.sol:Comptroller",
+            pool.comptroller,
+            deployer
+          )) as Comptroller;
+
+          const firstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
+          if (firstExtension) {
+            const extensions = await asComptroller.callStatic._listExtensions();
+            console.log(`current extensions ${extensions}`);
+
+            if (!extensions.find((e) => e == firstExtension.address)) {
+              const extensionToReplace = extensions.find((e) => e == oldFirstExtension)
+                ? oldFirstExtension
+                : constants.AddressZero;
+
+              if (firstExtension.address != extensionToReplace) {
+                console.log(`registering ext ${firstExtension.address} replacing ${extensionToReplace}`);
+                const tx = await fuseFeeDistributor._registerComptrollerExtension(
+                  pool.comptroller,
+                  firstExtension.address,
+                  extensionToReplace
+                );
+                await tx.wait();
+                console.log(`registered the first extension for pool ${pool.comptroller} with tx ${tx.hash}`);
+              } else {
+                console.log(`not replacing the same extension`);
+              }
+            } else {
+              console.log(`latest first extension already registered`);
+            }
+          } else {
+            console.log(`no first extension deployed for the comptroller`);
+          }
+        } else {
+          console.log(`FAILED TO UPGRADE ${pool.comptroller} FROM ${implBefore} TO ${latestImpl}`);
         }
       } catch (e) {
         console.error(`error while upgrading the pool ${JSON.stringify(pool)}`, e);
       }
     }
-  }
-);
+  });

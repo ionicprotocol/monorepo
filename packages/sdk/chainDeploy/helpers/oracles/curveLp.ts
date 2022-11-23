@@ -81,10 +81,6 @@ export const deployCurveV2LpOracle = async ({
           methodName: "initialize",
           args: [[], [], deployConfig.stableToken, mpo.address],
         },
-        onUpgrade: {
-          methodName: "reinitialize",
-          args: [deployConfig.stableToken, mpo.address],
-        },
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",

@@ -53,11 +53,10 @@ export const fetchMaxAmount = async (
       asset.cToken
     )) as BigNumber;
 
-    if (maxBorrow) {
-      return maxBorrow;
-    } else {
+    if (!maxBorrow) {
       throw new Error('Could not fetch your max borrow amount! Code: ');
     }
+    return maxBorrow;
   }
 
   if (mode === FundOperationMode.WITHDRAW) {

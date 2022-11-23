@@ -1,4 +1,4 @@
-import { SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
@@ -171,8 +171,9 @@ export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
-export type aBNBcDeployParams = ChainDeployFnParams & {
+export type aXXXcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
+  certificateAssetSymbol: assetSymbols.aBNBc | assetSymbols.aFTMc;
 };
 
 export type stkBNBOracleDeployParams = ChainDeployFnParams & {

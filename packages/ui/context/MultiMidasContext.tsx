@@ -114,8 +114,11 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [signer, sdks]);
 
   useEffect(() => {
-    if (!config.isDevelopment) {
-      LogRocket.init('ylr02p/midas-ui');
+    if (config.logrocketAppId) {
+      console.info('LogRocket initialized');
+      LogRocket.init(config.logrocketAppId);
+    } else {
+      console.info('LogRocket not initialized');
     }
   }, []);
 

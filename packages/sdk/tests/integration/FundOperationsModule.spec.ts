@@ -53,8 +53,7 @@ describe("FundOperationsModule", function () {
     expect(utils.formatUnits(assetAfterSupply.supplyBalance, assetAfterSupply.underlyingDecimals)).to.eq("3.0");
   });
 
-  it("user can borrow", async function () {
-    const { deployer } = await ethers.getNamedSigners();
+  it("borrow same token results in 1004 - insufficient liquidity", async function () {
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
@@ -70,11 +69,43 @@ describe("FundOperationsModule", function () {
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
     const resp = await sdk.borrow(asset.cToken, utils.parseUnits("2", 18));
+    expect(resp.errorCode).to.eq(1004);
+  });
+
+  it("user can borrow", async function () {
+    const { deployer } = await ethers.getNamedSigners();
+    const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
+    const assetsInPool = await sdk.fetchFusePoolData(poolId);
+    const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
+    const asset2 = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "TRIBE");
+
+    const res = await sdk.supply(
+      asset.cToken,
+      asset.underlyingToken,
+      assetsInPool.comptroller,
+      true,
+      utils.parseUnits("3", 18)
+    );
+    tx = res.tx;
+    rec = await tx.wait();
+
+    const res2 = await sdk.supply(
+      asset2.cToken,
+      asset2.underlyingToken,
+      assetsInPool.comptroller,
+      true,
+      utils.parseUnits("1", 18)
+    );
+    tx = res2.tx;
+    rec = await tx.wait();
+
+    expect(rec.status).to.eq(1);
+    const resp = await sdk.borrow(asset.cToken, utils.parseUnits("1", 18));
     tx = resp.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
     const assetAfterBorrow = await poolHelpers.assetInPool(poolId, sdk, await "WETH", deployer.address);
-    expect(utils.formatUnits(assetAfterBorrow.borrowBalance, assetAfterBorrow.underlyingDecimals)).to.eq("2.0");
+    expect(utils.formatUnits(assetAfterBorrow.borrowBalance, assetAfterBorrow.underlyingDecimals)).to.eq("1.0");
   });
 
   it("user can withdraw", async function () {
@@ -105,26 +136,37 @@ describe("FundOperationsModule", function () {
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
-    let res = await sdk.supply(
+    const asset2 = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "TRIBE");
+
+    const res = await sdk.supply(
       asset.cToken,
       asset.underlyingToken,
       assetsInPool.comptroller,
       true,
-      utils.parseUnits("5", 18)
+      utils.parseUnits("3", 18)
     );
     tx = res.tx;
     rec = await tx.wait();
-    expect(rec.status).to.eq(1);
 
-    res = await sdk.borrow(asset.cToken, utils.parseUnits("3", 18));
-    tx = res.tx;
+    const res2 = await sdk.supply(
+      asset2.cToken,
+      asset2.underlyingToken,
+      assetsInPool.comptroller,
+      true,
+      utils.parseUnits("1", 18)
+    );
+    tx = res2.tx;
+    rec = await tx.wait();
+
+    const resBorrow = await sdk.borrow(asset.cToken, utils.parseUnits("2", 18));
+    tx = resBorrow.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
 
     const assetBeforeRepay = await poolHelpers.assetInPool(poolId, sdk, "WETH", deployer.address);
 
-    res = await sdk.repay(asset.cToken, asset.underlyingToken, false, utils.parseUnits("2", 18));
-    tx = res.tx;
+    const resRepay = await sdk.repay(asset.cToken, asset.underlyingToken, false, utils.parseUnits("2", 18));
+    tx = resRepay.tx;
     rec = await tx.wait();
     expect(rec.status).to.eq(1);
     const assetAfterRepay = await poolHelpers.assetInPool(poolId, sdk, "WETH", deployer.address);

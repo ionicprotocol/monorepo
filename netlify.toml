@@ -23,6 +23,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
+FANTOM = "true"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -31,6 +32,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
+FANTOM = "true"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -39,6 +41,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
+FANTOM = "false"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"
