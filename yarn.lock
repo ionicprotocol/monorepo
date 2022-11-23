@@ -3352,25 +3352,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@netlify/build@npm:^28.3.1":
-  version: 28.4.0
-  resolution: "@netlify/build@npm:28.4.0"
+  version: 28.4.1
+  resolution: "@netlify/build@npm:28.4.1"
   dependencies:
     "@bugsnag/js": ^7.0.0
     "@netlify/cache-utils": ^5.0.2
     "@netlify/config": ^20.0.2
     "@netlify/edge-bundler": 4.4.1
-=======
-"@netlify/build@npm:^28.2.0":
-  version: 28.2.2
-  resolution: "@netlify/build@npm:28.2.2"
-  dependencies:
-    "@bugsnag/js": ^7.0.0
-    "@netlify/cache-utils": ^5.0.2
-    "@netlify/config": ^20.0.1
-    "@netlify/edge-bundler": 4.3.2
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     "@netlify/functions-utils": ^5.0.4
     "@netlify/git-utils": ^5.0.2
     "@netlify/plugins-list": ^6.54.0
@@ -3422,11 +3411,7 @@ __metadata:
     yargs: ^17.6.0
   bin:
     netlify-build: bin.js
-<<<<<<< HEAD
-  checksum: 2cadb5436c7983fc394346556de9471c28a7146b91d14c188528225a655bb4b535aefba74aabbe1efbc4266e245e4f0b34a63eccb7d345ffdfa7187b43b370be
-=======
-  checksum: 22056f04913785dfff61b7d4b853a5c43804ae33b603b13f4e565e56d785aef1506b340227648287675f36b06946af5807900035a95454652ec6a9b2fdb4cb68
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
+  checksum: 933fb3211b320d9c51f9ef12b2d0c009b650b2532b158d185f7697b5ae81a81c33969f43ee156134a3f7e2b9e31cd733da53766aa03d2f96c6459ed82d376a4f
   languageName: node
   linkType: hard
 
@@ -3447,15 +3432,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@netlify/config@npm:^20.0.2":
   version: 20.0.2
   resolution: "@netlify/config@npm:20.0.2"
-=======
-"@netlify/config@npm:^20.0.1":
-  version: 20.0.1
-  resolution: "@netlify/config@npm:20.0.1"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     chalk: ^5.0.0
     cron-parser: ^4.1.0
@@ -3471,11 +3450,7 @@ __metadata:
     js-yaml: ^4.0.0
     map-obj: ^5.0.0
     netlify: ^13.0.2
-<<<<<<< HEAD
     netlify-headers-parser: ^7.0.3
-=======
-    netlify-headers-parser: ^7.0.2
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     netlify-redirect-parser: ^14.0.2
     omit.js: ^2.0.2
     p-locate: ^6.0.0
@@ -3487,23 +3462,13 @@ __metadata:
     yargs: ^17.6.0
   bin:
     netlify-config: bin.js
-<<<<<<< HEAD
   checksum: d3f9352469c3c5eb33f54cadfb1a1d86826dc42a0c7d94b573f6749f9af008afbb4dea882091364a42c8f81a2a05cd80d720c740beff69e88178def824286643
   languageName: node
   linkType: hard
 
-"@netlify/edge-bundler@npm:4.4.1, @netlify/edge-bundler@npm:^4.4.1":
+"@netlify/edge-bundler@npm:4.4.1":
   version: 4.4.1
   resolution: "@netlify/edge-bundler@npm:4.4.1"
-=======
-  checksum: 4be1b9bc1e4c59280ff99c3f30eae243e8cb70a3b48416b615628ab8fc196219641d71ccf1d657930daa31d27212f93a273324dca81e586f503e521f5cd048f1
-  languageName: node
-  linkType: hard
-
-"@netlify/edge-bundler@npm:4.3.2, @netlify/edge-bundler@npm:^4.3.2":
-  version: 4.3.2
-  resolution: "@netlify/edge-bundler@npm:4.3.2"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     "@import-maps/resolve": ^1.0.1
     ajv: ^8.11.2
@@ -3524,11 +3489,34 @@ __metadata:
     semver: ^7.3.5
     tmp-promise: ^3.0.3
     uuid: ^9.0.0
-<<<<<<< HEAD
   checksum: 2e8417de221dc0bd3369586e4ede596260a43a35f9405f1bbd87b13922e18a4d5590906281915e02c495d1bc742fd5a3401252e8607d08bba9309360d4f85697
-=======
-  checksum: 59320930ab57f41d959ca6e90dfc06278cebf4c3ed1b7bd6a85bcc30c17616a066ebc41126c2e654a8a57ce66c712cc93ef5f6153f354e7a3d0e6cf99c9f6e49
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
+  languageName: node
+  linkType: hard
+
+"@netlify/edge-bundler@npm:^4.4.1":
+  version: 4.4.2
+  resolution: "@netlify/edge-bundler@npm:4.4.2"
+  dependencies:
+    "@import-maps/resolve": ^1.0.1
+    ajv: ^8.11.2
+    ajv-errors: ^3.0.0
+    better-ajv-errors: ^1.2.0
+    common-path-prefix: ^3.0.0
+    del: ^7.0.0
+    env-paths: ^3.0.0
+    execa: ^6.0.0
+    find-up: ^6.3.0
+    get-port: ^6.1.2
+    glob-to-regexp: ^0.4.1
+    node-fetch: ^3.1.1
+    node-stream-zip: ^1.15.0
+    p-retry: ^5.1.1
+    p-wait-for: ^4.1.0
+    path-key: ^4.0.0
+    semver: ^7.3.5
+    tmp-promise: ^3.0.3
+    uuid: ^9.0.0
+  checksum: 28ab2a6f2f3ab2e40442c01723a42a927f7061533b6486a462f69623e3348dda635194c3be4bb9f6461722d491bdf731644dddcfc3a82a6012c680abd4b9e30c
   languageName: node
   linkType: hard
 
@@ -3743,15 +3731,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@netlify/framework-info@npm:^9.5.2":
   version: 9.5.2
   resolution: "@netlify/framework-info@npm:9.5.2"
-=======
-"@netlify/framework-info@npm:^9.5.1":
-  version: 9.5.1
-  resolution: "@netlify/framework-info@npm:9.5.1"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     ajv: ^8.0.0
     filter-obj: ^3.0.0
@@ -3765,11 +3747,7 @@ __metadata:
     read-pkg-up: ^9.0.0
     semver: ^7.3.4
     url: ^0.11.0
-<<<<<<< HEAD
   checksum: e66d84c2c890dcf08fe8e869044eb42a5baeccc88db884bddb8b05e72ae1e11c5da6f1c8f1185f57ad61d3dc541d68417ce1cbeb87019b2357a463f0204d3459
-=======
-  checksum: 09425a654f58c59681727a6b4c8eca722f65595850ee5420405b4490f301080380ca163384839a214450be4b636323c9d823fa1186153b88bd977d995f1c43bc
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -3985,13 +3963,8 @@ __metadata:
   linkType: hard
 
 "@netlify/plugin-nextjs@npm:latest":
-<<<<<<< HEAD
   version: 4.29.2
   resolution: "@netlify/plugin-nextjs@npm:4.29.2"
-=======
-  version: 4.29.1
-  resolution: "@netlify/plugin-nextjs@npm:4.29.1"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     "@netlify/esbuild": 0.14.39
     "@netlify/functions": ^1.3.0
@@ -4015,24 +3988,14 @@ __metadata:
     semver: ^7.3.5
     slash: ^3.0.0
     tiny-glob: ^0.2.9
-<<<<<<< HEAD
   checksum: cc1dc557f23418d305d118d083f88184ad6a8325ef06f5346f2101f8d4a8a02e1ec4a371222da6157ee583fb442052d85d71d134e84a65e904e1c4976801385c
-=======
-  checksum: 5554c48ec7b157237f22aa1bcfaa7aacff02f2301c782093d988d3d06ecd4c025ffcb5b3b6e296ac2e34312394c2235e4fd734cdf8fa8622388ebc7606ec31b2
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
 "@netlify/plugins-list@npm:^6.54.0":
-<<<<<<< HEAD
   version: 6.57.0
   resolution: "@netlify/plugins-list@npm:6.57.0"
   checksum: f1c115b6d161923f6a68de6693bd18a21ee3f8f2933ee0fac2510fbcbbd406ac4fa295d509bcb208b5c9da31666e0fae1bd7c9309b78f3efd0479a24a2f8b95b
-=======
-  version: 6.56.0
-  resolution: "@netlify/plugins-list@npm:6.56.0"
-  checksum: 99a2e60d396165654d40d15d67e16402d5c94e4be438fe54d13445ec13a0fe88603ce33b1c7c50afd747c1243a6ed396c232b24420cdcdc2f9dca2b4e00ec6ef
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -5169,20 +5132,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/gotrue-js@npm:^2.3.0":
-<<<<<<< HEAD
+"@supabase/gotrue-js@npm:^2.3.1":
   version: 2.3.1
   resolution: "@supabase/gotrue-js@npm:2.3.1"
   dependencies:
     cross-fetch: ^3.1.5
   checksum: 66ac3e19090f532a422baa43f52a661a6c3dc52e0b1ff2637459bcf714b68b3d5600cecc07ff8ecc7ff2b7e7e150bfd6583bc4d31cd9e0e762029d4dc5612e35
-=======
-  version: 2.3.0
-  resolution: "@supabase/gotrue-js@npm:2.3.0"
-  dependencies:
-    cross-fetch: ^3.1.5
-  checksum: 80bcaa3590a9b72f55ca28980e54f80a73f9d2644443323c4e6886f5d495f9a4869cd6ec51fb2c0a7b4ddb9fabea11dc3c978770e2a2d80c8468f6db79c4e05a
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -5256,16 +5211,16 @@ __metadata:
   linkType: hard
 
 "@supabase/supabase-js@npm:^2.0.5":
-  version: 2.1.0
-  resolution: "@supabase/supabase-js@npm:2.1.0"
+  version: 2.1.1
+  resolution: "@supabase/supabase-js@npm:2.1.1"
   dependencies:
     "@supabase/functions-js": ^2.0.0
-    "@supabase/gotrue-js": ^2.3.0
+    "@supabase/gotrue-js": ^2.3.1
     "@supabase/postgrest-js": ^1.1.0
     "@supabase/realtime-js": ^2.1.0
     "@supabase/storage-js": ^2.0.0
     cross-fetch: ^3.1.5
-  checksum: 4e4e23cb9ba85b6339b3e617525a799c7aeb122a6ed3e39c423d6d75c87d67ef2f74d216d4a2a04e1bc11f4a2962fefbb49a9feed26776cd1c01167d501b2068
+  checksum: eee37b067b75571ef5f42294aaa6af19c01f123e3999d61fd8e994ab391066d170f9dcfa2c5652b8e0379eadaaac029b2799a33f72c153a52086273e7f608d94
   languageName: node
   linkType: hard
 
@@ -5496,7 +5451,6 @@ __metadata:
   linkType: hard
 
 "@tanstack/react-table@npm:^8.5.22":
-<<<<<<< HEAD
   version: 8.6.0
   resolution: "@tanstack/react-table@npm:8.6.0"
   dependencies:
@@ -5512,23 +5466,6 @@ __metadata:
   version: 8.6.0
   resolution: "@tanstack/table-core@npm:8.6.0"
   checksum: 87b3d82299e12b1cc0740222396c14aacad36ffea8f12858bef488bcdb31080719a48aeb3b91412dcec122d90152955464bb6b17bfea299a15b54d3a31120765
-=======
-  version: 8.5.30
-  resolution: "@tanstack/react-table@npm:8.5.30"
-  dependencies:
-    "@tanstack/table-core": 8.5.30
-  peerDependencies:
-    react: ">=16"
-    react-dom: ">=16"
-  checksum: 0e61cd98bf68a8c5004dc80bf9ff097205ce5e48e48f72600cce0788db6987c4e770e0a97795a884c17f36647f8faf6cea5817399b1e74158c3c4ecf8c80c79a
-  languageName: node
-  linkType: hard
-
-"@tanstack/table-core@npm:8.5.30":
-  version: 8.5.30
-  resolution: "@tanstack/table-core@npm:8.5.30"
-  checksum: 05d5612ec417a665cb67c35eb94cada149884fc3377ec6b3850eff3081517a913a57b5725f9c609b9eada6de8b980d63bbb30a8d62111730d62aea80e184b997
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -6379,21 +6316,12 @@ __metadata:
   linkType: hard
 
 "@typescript-eslint/eslint-plugin@npm:^5.30.0, @typescript-eslint/eslint-plugin@npm:^5.42.1":
-<<<<<<< HEAD
   version: 5.44.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.44.0"
   dependencies:
     "@typescript-eslint/scope-manager": 5.44.0
     "@typescript-eslint/type-utils": 5.44.0
     "@typescript-eslint/utils": 5.44.0
-=======
-  version: 5.43.0
-  resolution: "@typescript-eslint/eslint-plugin@npm:5.43.0"
-  dependencies:
-    "@typescript-eslint/scope-manager": 5.43.0
-    "@typescript-eslint/type-utils": 5.43.0
-    "@typescript-eslint/utils": 5.43.0
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     debug: ^4.3.4
     ignore: ^5.2.0
     natural-compare-lite: ^1.4.0
@@ -6406,37 +6334,23 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-<<<<<<< HEAD
   checksum: 88784e77e8e35ea50ca9c49d46df94cabc3447f4b332f3ca53974d3b5370cb5dcd85cc9ee0e317b91083812012369209574725dcfc3b2b4056b60371b68ca854
-=======
-  checksum: aa0e9bcd9982e9601ada2088f46c1e9389abd31ceaf6cd1d492684fd711a67d595d4c95d97ba14081c2ea7eb3b98a9ebb33f91ef008e7450ce2f70b2a8ec4309
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
 "@typescript-eslint/parser@npm:^5.21.0, @typescript-eslint/parser@npm:^5.30.0, @typescript-eslint/parser@npm:^5.42.1":
-<<<<<<< HEAD
   version: 5.44.0
   resolution: "@typescript-eslint/parser@npm:5.44.0"
   dependencies:
     "@typescript-eslint/scope-manager": 5.44.0
     "@typescript-eslint/types": 5.44.0
     "@typescript-eslint/typescript-estree": 5.44.0
-=======
-  version: 5.43.0
-  resolution: "@typescript-eslint/parser@npm:5.43.0"
-  dependencies:
-    "@typescript-eslint/scope-manager": 5.43.0
-    "@typescript-eslint/types": 5.43.0
-    "@typescript-eslint/typescript-estree": 5.43.0
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     debug: ^4.3.4
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
   peerDependenciesMeta:
     typescript:
       optional: true
-<<<<<<< HEAD
   checksum: 2d09a1a1547a7ae3f76c9a33a54e11d79a194fbb9dbae69988e7aed3370bdf12bafde669211152769d89db822e0cdee4173affc126664fa6f17abba56daa7261
   languageName: node
   linkType: hard
@@ -6457,28 +6371,6 @@ __metadata:
   dependencies:
     "@typescript-eslint/typescript-estree": 5.44.0
     "@typescript-eslint/utils": 5.44.0
-=======
-  checksum: a28e0ef2807f1c3381c6dc1d9ddfd83ea8db657d3f808511adf13023b469ed64fc09619e05d7f68746b05ea68770a0882883c77ce908682965ba266f95e168c9
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/scope-manager@npm:5.43.0":
-  version: 5.43.0
-  resolution: "@typescript-eslint/scope-manager@npm:5.43.0"
-  dependencies:
-    "@typescript-eslint/types": 5.43.0
-    "@typescript-eslint/visitor-keys": 5.43.0
-  checksum: e594c7a32c3fa29e46dd0b0bc62f97f154bd864682ae7da87a14b6f4336f4cb02f6ed0602bbdb15783e4230ecdf8a0ccc6f7c5820850e8f11240c9e4fb0e388d
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/type-utils@npm:5.43.0":
-  version: 5.43.0
-  resolution: "@typescript-eslint/type-utils@npm:5.43.0"
-  dependencies:
-    "@typescript-eslint/typescript-estree": 5.43.0
-    "@typescript-eslint/utils": 5.43.0
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     debug: ^4.3.4
     tsutils: ^3.21.0
   peerDependencies:
@@ -6486,7 +6378,6 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-<<<<<<< HEAD
   checksum: 4c7b594f8afa52d57d0512951a874fa390eb791dcefcd0e1efff8817872293b2e4e04eff3c54d1595c1720a34d5fd315729af4e459882033d13cb6069ae9d28f
   languageName: node
   linkType: hard
@@ -6504,25 +6395,6 @@ __metadata:
   dependencies:
     "@typescript-eslint/types": 5.44.0
     "@typescript-eslint/visitor-keys": 5.44.0
-=======
-  checksum: 08dbc0b194d0ef1454a95d76c082503e04d9957e89a056068002e233f8d98113f50b2707f7c4b9b44f428e223d5b4485ee2b4df4e0cde354827c5edc92ede973
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/types@npm:5.43.0":
-  version: 5.43.0
-  resolution: "@typescript-eslint/types@npm:5.43.0"
-  checksum: fc5e5431c305feee4a3faae84f34df482e08d74b910a6f9376b01326c682ceefeeb0e270d03d7778787bc94ef05b3b85ee6d3c9d732290fbdb4a67ae1b110226
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/typescript-estree@npm:5.43.0, @typescript-eslint/typescript-estree@npm:^5.13.0":
-  version: 5.43.0
-  resolution: "@typescript-eslint/typescript-estree@npm:5.43.0"
-  dependencies:
-    "@typescript-eslint/types": 5.43.0
-    "@typescript-eslint/visitor-keys": 5.43.0
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     debug: ^4.3.4
     globby: ^11.1.0
     is-glob: ^4.0.3
@@ -6531,7 +6403,6 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-<<<<<<< HEAD
   checksum: 758731108497cca7ff81cf0a78d086b5a85757a983979d6bb25ad8252b7acbc738c642ecb5f5df82f925a45926b9846e431d5cf9fee5ed2613300b4d0c5d6c3f
   languageName: node
   linkType: hard
@@ -6545,27 +6416,11 @@ __metadata:
     "@typescript-eslint/scope-manager": 5.44.0
     "@typescript-eslint/types": 5.44.0
     "@typescript-eslint/typescript-estree": 5.44.0
-=======
-  checksum: 3479f9413d73369ab3d574580c90a72f74d2ae1ec4afe485eebfad054c3d15c89f23a137bb9d6197dfdae33e444a76a99f6832688787feabbb064e09d39a3f55
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/utils@npm:5.43.0":
-  version: 5.43.0
-  resolution: "@typescript-eslint/utils@npm:5.43.0"
-  dependencies:
-    "@types/json-schema": ^7.0.9
-    "@types/semver": ^7.3.12
-    "@typescript-eslint/scope-manager": 5.43.0
-    "@typescript-eslint/types": 5.43.0
-    "@typescript-eslint/typescript-estree": 5.43.0
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     eslint-scope: ^5.1.1
     eslint-utils: ^3.0.0
     semver: ^7.3.7
   peerDependencies:
     eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-<<<<<<< HEAD
   checksum: bc5bb28e41898464d35b8eb47cc452103852541e3b6be56252c15a5a81c45e10aad3db4c749eb92d752b0c358df8074e23ec6f9e65f8089baadeda7f395c7e31
   languageName: node
   linkType: hard
@@ -6577,19 +6432,6 @@ __metadata:
     "@typescript-eslint/types": 5.44.0
     eslint-visitor-keys: ^3.3.0
   checksum: a012c888209e1d6ae684b2a44fd460ae5a80f5faf07bca4bda6c9c0d8c063ad3297d4c53f7151ae86cf1a43dee09625dc3ee72183323c91089c7288fd573c6f4
-=======
-  checksum: 4c6b383b51506b57230f2624f883ae21e5d8411d138587c04fe3145f915bf8c289cc2a9f7b0b3faba98345ba230504e5014922bcc578aa0badd594d9eaa8f9ef
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/visitor-keys@npm:5.43.0":
-  version: 5.43.0
-  resolution: "@typescript-eslint/visitor-keys@npm:5.43.0"
-  dependencies:
-    "@typescript-eslint/types": 5.43.0
-    eslint-visitor-keys: ^3.3.0
-  checksum: 4820679e50096dcdaadc7c95d32e5dca3ba8510acf1a865e283822bae3940a2faec02ad8abe793f8a25f75b600f1e7215e1fd3b3ba73779eff737fa90d092550
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -6665,15 +6507,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "@wagmi/core@npm:0.7.5":
   version: 0.7.5
   resolution: "@wagmi/core@npm:0.7.5"
-=======
-"@wagmi/core@npm:0.7.4":
-  version: 0.7.4
-  resolution: "@wagmi/core@npm:0.7.4"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     abitype: ^0.1.8
     eventemitter3: ^4.0.7
@@ -6687,11 +6523,7 @@ __metadata:
       optional: true
     "@walletconnect/ethereum-provider":
       optional: true
-<<<<<<< HEAD
   checksum: 8797ff6d59703075b5a2184b609083698c28c7d5676095faa0daa520f7327c9525cc3b8c9ad1799fbb3bb1436e7f580f2bc92a613028639e9c855d48641ca8ac
-=======
-  checksum: a71ab7ac6897e4e4ec402ce8b3e85db4a8cad348b0d8104b1cc1170a2abaddf3145124564adbb09093392c7884baa6b0434363d1bf808536c722bd656a537cdd
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -7180,11 +7012,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-<<<<<<< HEAD
 "ajv@npm:^8.0.0, ajv@npm:^8.11.2":
-=======
-"ajv@npm:^8.0.0, ajv@npm:^8.11.0":
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   version: 8.11.2
   resolution: "ajv@npm:8.11.2"
   dependencies:
@@ -9764,15 +9592,9 @@ __metadata:
   linkType: hard
 
 "ci-info@npm:^3.0.0, ci-info@npm:^3.2.0":
-<<<<<<< HEAD
   version: 3.6.2
   resolution: "ci-info@npm:3.6.2"
   checksum: fd8fc172f925208d17ca8473e05e9e5709c796d31ee23fa0b53f418bc449c237e9c031a55c161102afb4e69ef34ce6f6a5d421886ce087478b222a5c7b9ae1f3
-=======
-  version: 3.6.1
-  resolution: "ci-info@npm:3.6.1"
-  checksum: e463ed7152e795467c298268d58974d5e769fc7a0da2f72a53480042e01809e87908544b883a073391f446f46045b0d656c4a1fda3796c93740cd2be1c2d5f6f
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -14483,13 +14305,8 @@ __metadata:
   linkType: hard
 
 "framer-motion@npm:^7.6.5":
-<<<<<<< HEAD
   version: 7.6.9
   resolution: "framer-motion@npm:7.6.9"
-=======
-  version: 7.6.7
-  resolution: "framer-motion@npm:7.6.7"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     "@motionone/dom": 10.13.1
@@ -14504,11 +14321,7 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-<<<<<<< HEAD
   checksum: db7f86add0873096cf86a4605247560f7a2ef3e8c9ff4524ec7ec7aec74129ad52cd7283c4446aba53f5de89fc8ba70fc4b78c8325ca0622083c6090834ce518
-=======
-  checksum: aa19a79a7ae1c8b4c09b766902990f785586f02b3b706a0c7e564c429b8333204b0bc86955fa6746c80c4dfff66589b4ccdca4de44e7af8cce5ce0fe7eeafae6
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -20166,7 +19979,6 @@ __metadata:
   linkType: hard
 
 "netlify-cli@npm:^12.1.1":
-<<<<<<< HEAD
   version: 12.2.6
   resolution: "netlify-cli@npm:12.2.6"
   dependencies:
@@ -20174,15 +19986,6 @@ __metadata:
     "@netlify/config": ^20.0.2
     "@netlify/edge-bundler": ^4.4.1
     "@netlify/framework-info": ^9.5.2
-=======
-  version: 12.2.4
-  resolution: "netlify-cli@npm:12.2.4"
-  dependencies:
-    "@netlify/build": ^28.2.0
-    "@netlify/config": ^20.0.1
-    "@netlify/edge-bundler": ^4.3.2
-    "@netlify/framework-info": ^9.5.1
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     "@netlify/local-functions-proxy": ^1.1.1
     "@netlify/zip-it-and-ship-it": ^8.1.0
     "@octokit/rest": ^19.0.0
@@ -20247,11 +20050,7 @@ __metadata:
     minimist: ^1.2.5
     multiparty: ^4.2.1
     netlify: ^13.0.2
-<<<<<<< HEAD
     netlify-headers-parser: ^7.0.3
-=======
-    netlify-headers-parser: ^7.0.2
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     netlify-onegraph-internal: 0.10.1
     netlify-redirect-parser: ^14.0.2
     netlify-redirector: ^0.3.1
@@ -20291,7 +20090,6 @@ __metadata:
   bin:
     netlify: bin/run.mjs
     ntl: bin/run.mjs
-<<<<<<< HEAD
   checksum: 4984dd34d95d881ed7599cfd07506726ce750b80675cd6cac7aa64bee018d53a73fdcbbb970556b0ec14f9923a0aad6eb4c061fb1c6894d6a27f3a5903f626e9
   languageName: node
   linkType: hard
@@ -20299,15 +20097,6 @@ __metadata:
 "netlify-headers-parser@npm:^7.0.3":
   version: 7.0.3
   resolution: "netlify-headers-parser@npm:7.0.3"
-=======
-  checksum: b7cee69a74690353d1bcae23165b71f9a1e78d23db0a367a62c004ec98411c027e7a2cd24f38bcd7be2f55b3ddbd8993c25581aec1c0f8ab7f245b2a1fa25f33
-  languageName: node
-  linkType: hard
-
-"netlify-headers-parser@npm:^7.0.2":
-  version: 7.0.2
-  resolution: "netlify-headers-parser@npm:7.0.2"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     escape-string-regexp: ^5.0.0
     fast-safe-stringify: ^2.0.7
@@ -20315,11 +20104,7 @@ __metadata:
     map-obj: ^5.0.0
     path-exists: ^5.0.0
     toml: ^3.0.0
-<<<<<<< HEAD
   checksum: 718b17759694c8f922973ac8b435a0436d256788dd7c2dfa971669aec81559943b14b922ce19d69f282bcf89ded4ae638e539f7e903a8a224bf91cf80fbaa12c
-=======
-  checksum: 671ee63856a357f47bafa8849db2147f6b379ad55736a9af6626c88fee49bd4f457037773522bad9c308a76ff5bca1075f7f03001c23986649ba799d25b46832
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
@@ -22277,12 +22062,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.7.1, prettier@npm:^2.0.5, prettier@npm:^2.1.2, prettier@npm:^2.3.1, prettier@npm:^2.7.1":
+"prettier@npm:2.7.1":
   version: 2.7.1
   resolution: "prettier@npm:2.7.1"
   bin:
     prettier: bin-prettier.js
   checksum: 55a4409182260866ab31284d929b3cb961e5fdb91fe0d2e099dac92eaecec890f36e524b4c19e6ceae839c99c6d7195817579cdffc8e2c80da0cb794463a748b
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.0.5, prettier@npm:^2.1.2, prettier@npm:^2.3.1, prettier@npm:^2.7.1":
+  version: 2.8.0
+  resolution: "prettier@npm:2.8.0"
+  bin:
+    prettier: bin-prettier.js
+  checksum: 72004ce0cc9bb097daf3e3833f62495768724392c1d5b178dd47372337616e9e50ecbb0804f236596223f7b5eb1bbe69cefc8957dca21112c5777e77ef73a564
   languageName: node
   linkType: hard
 
@@ -27103,34 +26897,21 @@ __metadata:
   linkType: hard
 
 "wagmi@npm:^0.8.1":
-<<<<<<< HEAD
   version: 0.8.6
   resolution: "wagmi@npm:0.8.6"
-=======
-  version: 0.8.5
-  resolution: "wagmi@npm:0.8.5"
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   dependencies:
     "@coinbase/wallet-sdk": ^3.5.3
     "@tanstack/query-sync-storage-persister": ^4.14.5
     "@tanstack/react-query": ^4.14.5
     "@tanstack/react-query-persist-client": ^4.14.5
-<<<<<<< HEAD
     "@wagmi/core": 0.7.5
-=======
-    "@wagmi/core": 0.7.4
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
     "@walletconnect/ethereum-provider": ^1.8.0
     abitype: ^0.1.7
     use-sync-external-store: ^1.2.0
   peerDependencies:
     ethers: ">=5.5.1"
     react: ">=17.0.0"
-<<<<<<< HEAD
   checksum: c338adbd70a59fba2688b96375928adc0763c114f7950fa55dcd4a396afdb8df91cfbdab81e0d337f0aaef3259df64a997e9be71d21d4023c2da0dcf1327d249
-=======
-  checksum: a42a04bdf13e1c30642262e1a01772bd27528c0832fa420855a70fb745b5b4b636aaa87925d8aaeb467cde0ff71825975bf4260a561dca4fb1b93b2e14ac9921
->>>>>>> 4d47531e97f77bf81cbe6209be399b5acc84372f
   languageName: node
   linkType: hard
 
