@@ -5,9 +5,7 @@ import { ethers } from 'ethers';
 import { useMemo } from 'react';
 
 import { config } from '@ui/config/index';
-import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { TokenData } from '@ui/types/ComponentPropsType';
-import { TokensDataMap } from '@ui/types/TokensDataMap';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 
 export const fetchTokenData = async (
@@ -74,44 +72,4 @@ export const useTokenData = (address: string, chainId?: number) => {
     },
     { cacheTime: Infinity, staleTime: Infinity, enabled: !!chainId }
   );
-};
-
-export const useTokensDataAsMap = (addresses: string[] = []): TokensDataMap => {
-  const { currentChain } = useMultiMidas();
-
-  const { data: tokensData } = useQuery(
-    ['useTokensDataAsMap', addresses, currentChain?.id],
-    async () => {
-      if (addresses && currentChain?.id) {
-        return await fetchTokenData(addresses, currentChain.id);
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!addresses && addresses.length !== 0 && !!currentChain?.id,
-    }
-  );
-
-  return useMemo(() => {
-    const ret: TokensDataMap = {};
-    if (!tokensData || tokensData.length === 0) return {};
-
-    tokensData.forEach((data) => {
-      const _data = data;
-      if (_data && _data.address) {
-        ret[_data.address] = {
-          address: _data.address,
-          color: _data.color ?? '',
-          decimals: _data.decimals ?? 18,
-          logoURL: _data.logoURL ?? '',
-          name: _data.name ?? '',
-          overlayTextColor: _data.overlayTextColor ?? '',
-          symbol: _data.symbol ?? '',
-        };
-      }
-    });
-
-    return ret;
-  }, [tokensData]);
 };
