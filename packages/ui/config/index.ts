@@ -10,6 +10,7 @@ type CONFIG = {
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
+  isFantomEnabled: boolean;
   isTestnetEnabled: boolean;
   logrocketAppId: string | undefined;
   productDomain: string | undefined;
@@ -35,6 +36,7 @@ const config: CONFIG = {
   isEvmosEnabled: process.env.EVMOS === 'true',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
+  isFantomEnabled: process.env.FANTOM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
   logrocketAppId: process.env.LOGROCKET_APP_ID,
   productDomain: process.env.PRODUCT_DOMAIN,

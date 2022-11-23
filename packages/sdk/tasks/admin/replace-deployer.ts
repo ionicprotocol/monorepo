@@ -5,10 +5,10 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol/DiaPriceOracle";
-import { FuseFlywheelCore } from "../../lib/contracts/typechain/FuseFlywheelCore";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
+import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
 import { Ownable } from "../../lib/contracts/typechain/Ownable";
 import { OwnableUpgradeable } from "../../lib/contracts/typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "../../lib/contracts/typechain/SafeOwnableUpgradeable";
@@ -177,18 +177,21 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
           {
-            // Auth
-            const ffc = (await ethers.getContractAt("FuseFlywheelCore", flywheelAddress, deployer)) as FuseFlywheelCore;
+            const flywheelCore = (await ethers.getContractAt(
+              "MidasFlywheelCore",
+              flywheelAddress,
+              deployer
+            )) as MidasFlywheelCore;
 
-            const currentOwnerFFC = await ffc.callStatic.owner();
-            console.log(`current owner ${currentOwnerFFC} of FFC ${ffc.address}`);
+            const currentOwner = await flywheelCore.callStatic.owner();
+            console.log(`current owner ${currentOwner} of the flywheel at ${flywheelCore.address}`);
 
-            if (currentOwnerFFC == currentDeployer) {
-              tx = await ffc.setOwner(newDeployer);
+            if (currentOwner == currentDeployer) {
+              tx = await flywheelCore._setPendingOwner(newDeployer);
               await tx.wait();
-              console.log(`ffc.setOwner tx mined ${tx.hash}`);
-            } else if (currentOwnerFFC != newDeployer) {
-              console.error(`unknown flywheel owner ${currentOwnerFFC}`);
+              console.log(`_setPendingOwner tx mined ${tx.hash}`);
+            } else if (currentOwner != newDeployer) {
+              console.error(`unknown flywheel owner ${currentOwner}`);
             }
           }
         }
@@ -249,8 +252,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         gasLimit: 21000,
       };
 
-      const estimated = await ethers.provider.estimateGas(transaction);
-      transaction.gasLimit = estimated;
+      transaction.gasLimit = await ethers.provider.estimateGas(transaction);
 
       const feeData = await ethers.provider.getFeeData();
       let feePerGas;
@@ -303,6 +305,35 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
       } else {
         if (pendingAdmin !== ethers.constants.AddressZero) {
           console.error(`the pending admin ${pendingAdmin} is not the new deployer`);
+        }
+      }
+
+      // MidasFlywheelCore - SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
+      {
+        const comptroller = (await ethers.getContractAt(
+          "Comptroller.sol:Comptroller",
+          pool.comptroller,
+          deployer
+        )) as Comptroller;
+        const flywheels = await comptroller.callStatic.getRewardsDistributors();
+        for (let k = 0; k < flywheels.length; k++) {
+          const flywheelAddress = flywheels[k];
+          {
+            const flywheelCore = (await ethers.getContractAt(
+              "MidasFlywheelCore",
+              flywheelAddress,
+              deployer
+            )) as MidasFlywheelCore;
+            const flywheelPendingOwner = await flywheelCore.callStatic.pendingOwner();
+            if (flywheelPendingOwner == deployer.address) {
+              console.log(`accepting the owner role for flywheel ${flywheelAddress}`);
+              tx = await flywheelCore._acceptOwner();
+              await tx.wait();
+              console.log(`flywheelCore._acceptAdmin tx mined ${tx.hash}`);
+            } else {
+              console.log(`not the flywheel ${flywheelAddress} pending owner ${flywheelPendingOwner}`);
+            }
+          }
         }
       }
     }

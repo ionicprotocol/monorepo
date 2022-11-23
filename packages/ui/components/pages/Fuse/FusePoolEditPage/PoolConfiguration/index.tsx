@@ -38,7 +38,6 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { getFPDContract, getUnitrollerContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -206,7 +205,7 @@ const PoolConfiguration = ({
   const renounceOwnership = async () => {
     if (!currentSdk) return;
 
-    const unitroller = getUnitrollerContract(comptrollerAddress, currentSdk);
+    const unitroller = currentSdk.getUnitrollerInstance(comptrollerAddress, currentSdk.signer);
 
     try {
       const response = await unitroller.callStatic._toggleAdminRights(false);
@@ -319,7 +318,7 @@ const PoolConfiguration = ({
     }
     try {
       setIsSaving(true);
-      const FusePoolDirectory = getFPDContract(currentSdk);
+      const FusePoolDirectory = currentSdk.getFusePoolDirectoryInstance(currentSdk.signer);
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
       });
