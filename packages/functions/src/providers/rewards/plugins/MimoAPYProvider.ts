@@ -1,8 +1,8 @@
 import { MimoPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
 import { BigNumber, utils } from 'ethers';
-import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider } from './AbstractAPYProvider';
+import { functionsAlert } from '../../../alert';
+import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
 interface MimoAPYResponse
   extends Array<{
     network: number;
@@ -16,7 +16,7 @@ interface MimoAPYs {
   [key: string]: number;
 }
 
-class MimoAPYProvider extends AbstractAPYProvider {
+class MimoAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoint = 'https://app.mimo.capital/.netlify/functions/demand-miner-payees';
   private mimoAPYs: MimoAPYs | undefined;
 
