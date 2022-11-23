@@ -33,6 +33,7 @@
     "ethers": "^5.7.2",
     "framer-motion": "^7.6.9",
     "fuse.js": "^6.6.2",
+    "i18next": "^22.0.6",
     "logrocket": "^3.0.1",
     "mathjs": "^11.4.0",
     "next": "^13.0.5",
