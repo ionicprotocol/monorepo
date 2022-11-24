@@ -2,6 +2,7 @@ import {
   arbitrum,
   bsc,
   chapel,
+  evmos,
   fantom,
   ganache,
   moonbeam,
@@ -21,6 +22,7 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ganache.chainId]: ganache,
   [arbitrum.chainId]: arbitrum,
   [fantom.chainId]: fantom,
+  [evmos.chainId]: evmos,
 };
 
 export const supportedChainIdToConfig: {

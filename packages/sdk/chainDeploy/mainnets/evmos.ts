@@ -31,7 +31,7 @@ export const deployConfig: ChainDeployConfig = {
 const fluxAssets: FluxAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.ATOM),
-    feed: "00x0c6d78894824876be96774d18f56fb21D7ec7874x",
+    feed: "0x0c6d78894824876be96774d18f56fb21D7ec7874",
   },
   {
     underlying: underlying(assets, assetSymbols.axlUSDC),
