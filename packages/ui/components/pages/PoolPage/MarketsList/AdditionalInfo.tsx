@@ -125,7 +125,6 @@ export const AdditionalInfo = ({
               assets={assets}
               asset={asset}
               isDisabled={asset.isSupplyPaused}
-              supplyBalanceFiat={supplyBalanceFiat}
               poolChainId={poolChainId}
             />
             <FundButton
