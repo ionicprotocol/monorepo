@@ -79,6 +79,16 @@ export type DiaAsset = {
   key: string;
 };
 
+export type FluxAsset = {
+  underlying: string;
+  feed: string;
+};
+
+export type AdrastiaAsset = {
+  underlying: string;
+  feed: string;
+};
+
 export type WombatAsset = {
   symbol: string;
   underlying: string;
@@ -134,6 +144,24 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
   diaAssets: DiaAsset[];
   deployConfig: ChainDeployConfig;
   diaNativeFeed?: Omit<DiaAsset, "symbol" | "underlying">;
+};
+
+export type FluxDeployFnParams = ChainDeployFnParams & {
+  fluxAssets: FluxAsset[];
+  deployConfig: ChainDeployConfig;
+  nativeUsdFeed: string;
+};
+
+export type AdrastiaDeployFnParams = ChainDeployFnParams & {
+  adrastiaAssets: AdrastiaAsset[];
+  deployConfig: ChainDeployConfig;
+  nativeUsdFeed: string;
+};
+
+export type NativeUsdDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  nativeUsdOracleAddress: string;
+  quoteAddress: string;
 };
 
 export type WombatDeployFnParams = ChainDeployFnParams & {

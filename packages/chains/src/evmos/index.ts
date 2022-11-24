@@ -1,6 +1,6 @@
 import { ChainConfig, SupportedChains } from "@midas-capital/types";
 
-import deployments from "../../deployments/evmos.json";
+// import deployments from "../../deployments/evmos.json";
 
 import chainAddresses from "./addresses";
 import assets from "./assets";
@@ -23,7 +23,7 @@ const chainConfig: ChainConfig = {
   deployedPlugins,
   redemptionStrategies,
   fundingStrategies,
-  chainDeployments: deployments.contracts,
+  chainDeployments: {},
 };
 
 export default chainConfig;
