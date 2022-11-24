@@ -131,16 +131,6 @@ const config: HardhatUserConfig = {
       gasPrice: 20e10,
       url: "http://localhost:8548",
     },
-    rinkeby: {
-      accounts: { mnemonic },
-      chainId: 4,
-      url: OVERRIDE_RPC_URL || process.env.RINKEBY_ETH_PROVIDER_URL || "https://rpc.ankr.com/eth_rinkeby",
-    },
-    kovan: {
-      accounts: { mnemonic },
-      chainId: 42,
-      url: "https://kovan.infura.io/v3/10bc2717e7f14941a3ab5bea569da361",
-    },
     bsc: {
       accounts: { mnemonic },
       chainId: 56,
@@ -156,18 +146,10 @@ const config: HardhatUserConfig = {
       chainId: 1,
       url: OVERRIDE_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
     },
-    evmostestnet: {
+    evmos: {
       accounts: { mnemonic },
-      chainId: 9000,
-      url: "https://eth.bd.evmos.dev:8545",
-    },
-    moonbase: {
-      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbase.moonbeam.network`,
-      accounts: { mnemonic },
-      chainId: 1287,
-      saveDeployments: true,
-      gasPrice: 1000000000,
-      gas: 8000000,
+      chainId: 9001,
+      url: "https://eth.bd.evmos.org:8545",
     },
     moonbeam: {
       url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
