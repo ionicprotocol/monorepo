@@ -271,6 +271,8 @@ export enum assetSymbols {
   "JNZD-NZDS" = "jNZD-NZDS",
   "EURE-JEUR" = "EURE-jEUR",
   "JCHF-BUSD" = "jCHF-BUSD",
+  "MAI-USDC" = "MAI-USDC",
+  am3CRV = "am3CRV",
   AGEUR = "agEUR",
   EURT = "EURT",
   EURE = "EURE",
