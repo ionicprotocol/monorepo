@@ -136,6 +136,28 @@ const deployedPlugins: DeployedPlugins = {
     ],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/mimo.png",
   },
+  // BeefyERC4626_am3CRV_0xd412eff9163742f6D3A4AD56B5C83D8864E8Ec3F.json
+  "0xE389531Fb6b4Df3218a5e2f543A43201FfF70cCe": {
+    market: "0xd412eff9163742f6D3A4AD56B5C83D8864E8Ec3F",
+    name: "Beefy am3CRV Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/curve-am3crv",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols.am3CRV),
+    otherParams: ["0xAA7C2879DaF8034722A0977f13c343aF0883E92e", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_MAI-USDC_0x9df035a2DC13ab63FcF05bb27B3722E68c7AE6b9.json
+  "0x11EE50FB7DB66d044C3342546C27457f958e1ceD": {
+    market: "0x9df035a2DC13ab63FcF05bb27B3722E68c7AE6b9",
+    name: "Beefy am3CRV Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/mai-usdc-mimatic",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols["MAI-USDC"]),
+    otherParams: ["0xebe0c8d842AA5A57D7BEf8e524dEabA676F91cD1", "50"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
 };
 
 export default deployedPlugins;

@@ -174,6 +174,18 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
+  // BeefyERC4626_2brl_0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F_Implementation.json
+  "0xBCAc816440f7ef66Fea896b307352b86a83F94E8": {
+    market: "0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F",
+    name: "Beefy EPS 2brl  Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-2brl",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
+    underlying: underlying(assets, assetSymbols["2brl"]),
+    otherParams: ["0xf867cD98F3762D899F5F26FF5Dd62A5C566A3E0C", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
 };
 
 export default deployedPlugins;
