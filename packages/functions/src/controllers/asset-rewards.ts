@@ -7,7 +7,7 @@ import { SupportedChains } from '@midas-capital/types';
 const updateAssetRewards = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    const apyProviders = await getAPYProviders({
+    const apyProviders = await getAPYProviders(chainId, {
       chainId: chainId,
       provider,
     });
@@ -24,14 +24,15 @@ const updateAssetRewards = async (chainId: SupportedChains, rpcUrl: string) => {
         }
       })
     );
+    console.log(JSON.stringify(results, undefined, 2));
 
     // todo
     const rows = results.filter((r) => !!r).map((r) => r);
 
-    const { error } = await supabase.from(environment.supabasePluginRewardsTableName).insert(rows);
-    if (error) {
-      throw `Error occurred during saving plugin reward results to database: ${error.message}`;
-    }
+    // const { error } = await supabase.from(environment.supabasePluginRewardsTableName).insert(rows);
+    // if (error) {
+    //   throw `Error occurred during saving plugin reward results to database: ${error.message}`;
+    // }
   } catch (exception) {
     await functionsAlert('Functions.plugin-rewards: Generic Error', JSON.stringify(exception));
   }

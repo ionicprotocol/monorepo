@@ -14,12 +14,12 @@ const handler: Handler = async (event, context) => {
     };
   }
   await Promise.all([
-    updatePluginRewards(SupportedChains.moonbeam, rpcURL).catch((error) =>
-      functionsAlert(
-        `General Error: updatePluginRewards / Chain '${SupportedChains.moonbeam}'`,
-        JSON.stringify(error)
-      )
-    ),
+    // updatePluginRewards(SupportedChains.moonbeam, rpcURL).catch((error) =>
+    //   functionsAlert(
+    //     `General Error: updatePluginRewards / Chain '${SupportedChains.moonbeam}'`,
+    //     JSON.stringify(error)
+    //   )
+    // ),
     updateAssetRewards(SupportedChains.moonbeam, rpcURL).catch((error) =>
       functionsAlert(
         `General Error: updateAssetRewards / Chain '${SupportedChains.moonbeam}'`,
