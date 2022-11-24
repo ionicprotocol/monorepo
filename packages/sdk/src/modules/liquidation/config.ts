@@ -11,22 +11,22 @@ export type ChainLiquidationConfig = {
   LIQUIDATION_INTERVAL_SECONDS: number;
 };
 
-export const getChainLiquidationConfig = (fuse: MidasBase): ChainLiquidationConfig => {
+export const getChainLiquidationConfig = (sdk: MidasBase): ChainLiquidationConfig => {
   return {
     SUPPORTED_OUTPUT_CURRENCIES: process.env.SUPPORTED_OUTPUT_CURRENCIES
       ? process.env.SUPPORTED_OUTPUT_CURRENCIES.split(",")
-      : fuse.liquidationConfig.SUPPORTED_OUTPUT_CURRENCIES,
+      : sdk.liquidationConfig.SUPPORTED_OUTPUT_CURRENCIES,
     SUPPORTED_INPUT_CURRENCIES: process.env.SUPPORTED_INPUT_CURRENCIES
       ? process.env.SUPPORTED_INPUT_CURRENCIES.split(",")
-      : fuse.liquidationConfig.SUPPORTED_INPUT_CURRENCIES,
+      : sdk.liquidationConfig.SUPPORTED_INPUT_CURRENCIES,
     LIQUIDATION_STRATEGY: process.env.LIQUIDATION_STRATEGY
       ? (process.env.LIQUIDATION_STRATEGY as LiquidationStrategy)
-      : fuse.liquidationConfig.LIQUIDATION_STRATEGY,
+      : sdk.liquidationConfig.LIQUIDATION_STRATEGY,
     MINIMUM_PROFIT_NATIVE: process.env.MINIMUM_PROFIT_NATIVE
       ? BigNumber.from(process.env.MINIMUM_PROFIT_NATIVE)
-      : fuse.liquidationConfig.MINIMUM_PROFIT_NATIVE,
+      : sdk.liquidationConfig.MINIMUM_PROFIT_NATIVE,
     LIQUIDATION_INTERVAL_SECONDS: process.env.LIQUIDATION_INTERVAL_SECONDS
       ? parseInt(process.env.LIQUIDATION_INTERVAL_SECONDS)
-      : fuse.liquidationConfig.LIQUIDATION_INTERVAL_SECONDS,
+      : sdk.liquidationConfig.LIQUIDATION_INTERVAL_SECONDS,
   };
 };

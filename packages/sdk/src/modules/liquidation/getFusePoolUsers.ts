@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, constants, ethers } from "ethers";
 
 import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
@@ -62,22 +62,49 @@ async function getFusePoolUsers(
   };
 }
 
+async function getPoolsWithShortfall(sdk: MidasBase, comptroller: string) {
+  const comptrollerInstance: Comptroller = sdk.getComptrollerInstance(comptroller);
+  const users = await comptrollerInstance.callStatic.getAllBorrowers();
+  const promises = users.map((user) => {
+    return comptrollerInstance.callStatic.getHypotheticalAccountLiquidity(user, constants.AddressZero, 0, 0);
+  });
+  const results = (await Promise.all(promises)).map((r, i) => {
+    return { user: users[i], liquidity: r[1], shortfall: r[2] };
+  });
+  const minimumTransactionCost = await sdk.provider.getGasPrice().then((g) => g.mul(BigNumber.from(500000)));
+  return results.filter((user) => user.shortfall.gt(minimumTransactionCost));
+}
+
 export default async function getAllFusePoolUsers(
-  fuse: MidasBase,
+  sdk: MidasBase,
   maxHealth: BigNumber,
   excludedComptrollers: Array<string>
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
-  const allPools = await fuse.contracts.FusePoolDirectory.getAllPools();
+  const allPools = await sdk.contracts.FusePoolDirectory.callStatic.getAllPools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   for (const pool of allPools) {
-    const { comptroller } = pool;
+    const { comptroller, name } = pool;
     if (!excludedComptrollers.includes(comptroller)) {
       try {
-        const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(fuse, comptroller, maxHealth);
-        fusePoolUsers.push(poolUserParams);
+        const hasShortfall = await getPoolsWithShortfall(sdk, comptroller);
+        if (hasShortfall.length > 0) {
+          const users = hasShortfall.map((user) => {
+            return `- user: ${user.user}, shortfall: ${ethers.utils.formatEther(user.shortfall)}\n`;
+          });
+          sdk.logger.info(`Pool ${name} (${comptroller}) has ${hasShortfall.length} users with shortfall: \n${users}`);
+          try {
+            const poolUserParams: PublicPoolUserWithData = await getFusePoolUsers(sdk, comptroller, maxHealth);
+            fusePoolUsers.push(poolUserParams);
+          } catch (e) {
+            const msg = `Error getting pool users for ${comptroller}` + e;
+            erroredPools.push({ comptroller, msg });
+          }
+        } else {
+          sdk.logger.info(`Pool ${name} (${comptroller}) has no users with shortfall`);
+        }
       } catch (e) {
-        const msg = `Error getting pool users for ${comptroller}` + e;
+        const msg = `Error getting shortfalled users for pool ${name} (${comptroller})` + e;
         erroredPools.push({ comptroller, msg });
       }
     }

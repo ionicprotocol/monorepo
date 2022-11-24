@@ -25,7 +25,7 @@ async function getLiquidationPenalty(collateralCToken: CErc20Delegate, liquidati
 }
 
 export default async function getPotentialLiquidation(
-  fuse: MidasBase,
+  sdk: MidasBase,
   borrower: FusePoolUserWithAssets,
   closeFactor: BigNumber,
   liquidationIncentive: BigNumber,
@@ -62,7 +62,7 @@ export default async function getPotentialLiquidation(
     outputPrice = borrower.collateral[0].underlyingPrice;
     outputDecimals = borrower.collateral[0].underlyingDecimals;
   } else {
-    exchangeToTokenAddress = fuse.chainSpecificAddresses.W_TOKEN;
+    exchangeToTokenAddress = sdk.chainSpecificAddresses.W_TOKEN;
     outputPrice = utils.parseEther("1");
     outputDecimals = BigNumber.from(18);
   }
@@ -83,7 +83,7 @@ export default async function getPotentialLiquidation(
 
   // USDC: 6 decimals
   let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
-  const penalty = await getLiquidationPenalty(fuse.getCTokenInstance(collateralAsset.cToken), liquidationIncentive);
+  const penalty = await getLiquidationPenalty(sdk.getCTokenInstance(collateralAsset.cToken), liquidationIncentive);
 
   // Scale to 18 decimals
   let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
@@ -119,7 +119,7 @@ export default async function getPotentialLiquidation(
   }
 
   if (repayAmount.lte(BigNumber.from(0))) {
-    console.log("Liquidation amount is zero, doing nothing");
+    sdk.logger.info("Liquidation amount is zero, doing nothing");
     return null;
   }
   // Depending on liquidation strategy
@@ -129,7 +129,7 @@ export default async function getPotentialLiquidation(
 
   if (chainLiquidationConfig.LIQUIDATION_STRATEGY == LiquidationStrategy.UNISWAP) {
     // chain some liquidation funding strategies
-    const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(fuse, debtAssetUnderlyingToken);
+    const fundingStrategiesAndDatas = await getFundingStrategiesAndDatas(sdk, debtAssetUnderlyingToken);
     debtFundingStrategies = fundingStrategiesAndDatas.strategies;
     debtFundingStrategiesData = fundingStrategiesAndDatas.datas;
     flashSwapFundingToken = fundingStrategiesAndDatas.flashSwapFundingToken;
@@ -137,27 +137,27 @@ export default async function getPotentialLiquidation(
 
   //  chain some collateral redemption strategies
   const [strategyAndData, tokenPath] = await getRedemptionStrategiesAndDatas(
-    fuse,
+    sdk,
     borrower.collateral[0].underlyingToken,
     flashSwapFundingToken
   );
 
   let flashSwapPair;
   const uniswapV2Factory = IUniswapV2Factory__factory.connect(
-    fuse.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-    fuse.provider
+    sdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
+    sdk.provider
   );
 
-  if (flashSwapFundingToken != fuse.chainConfig.chainAddresses.W_TOKEN) {
+  if (flashSwapFundingToken != sdk.chainConfig.chainAddresses.W_TOKEN) {
     flashSwapPair = await uniswapV2Factory.callStatic.getPair(
       flashSwapFundingToken,
-      fuse.chainConfig.chainAddresses.W_TOKEN
+      sdk.chainConfig.chainAddresses.W_TOKEN
     );
   } else {
     // flashSwapFundingToken is the W_TOKEN
     flashSwapPair = await uniswapV2Factory.callStatic.getPair(
       flashSwapFundingToken,
-      fuse.chainConfig.chainAddresses.STABLE_TOKEN
+      sdk.chainConfig.chainAddresses.STABLE_TOKEN
     );
     if (tokenPath.indexOf(flashSwapPair) > 0) {
       // in case the Uniswap pair LP token is on the path of redemptions, we should use
@@ -165,7 +165,7 @@ export default async function getPotentialLiquidation(
       // when inside the execution of a flash swap from the same pair
       flashSwapPair = await uniswapV2Factory.callStatic.getPair(
         flashSwapFundingToken,
-        fuse.chainConfig.chainAddresses.W_BTC_TOKEN
+        sdk.chainConfig.chainAddresses.W_BTC_TOKEN
       );
     }
   }
@@ -173,7 +173,7 @@ export default async function getPotentialLiquidation(
   let expectedGasAmount: BigNumber;
   try {
     expectedGasAmount = await estimateGas(
-      fuse,
+      sdk,
       borrower,
       exchangeToTokenAddress,
       repayAmount,
@@ -187,7 +187,7 @@ export default async function getPotentialLiquidation(
     expectedGasAmount = BigNumber.from(750000);
   }
   // Get gas fee
-  const gasPrice = await fuse.provider.getGasPrice();
+  const gasPrice = await sdk.provider.getGasPrice();
   const expectedGasFee = gasPrice.mul(expectedGasAmount);
 
   // calculate min profits
@@ -196,7 +196,7 @@ export default async function getPotentialLiquidation(
   // const minSeizeAmount = liquidationValueWei.add(minProfitAmountEth).mul(SCALE_FACTOR_ONE_18_WEI).div(outputPrice);
 
   if (seizeValue.lt(minProfitAmountEth)) {
-    console.log(
+    sdk.logger.info(
       `Seize amount of ${utils.formatEther(seizeValue)} less than min break even of ${utils.formatEther(
         minProfitAmountEth
       )}, doing nothing`
@@ -204,7 +204,7 @@ export default async function getPotentialLiquidation(
     return null;
   }
   return await encodeLiquidateTx(
-    fuse,
+    sdk,
     chainLiquidationConfig.LIQUIDATION_STRATEGY,
     borrower,
     exchangeToTokenAddress,

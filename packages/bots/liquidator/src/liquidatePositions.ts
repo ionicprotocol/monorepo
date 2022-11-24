@@ -3,10 +3,11 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { Liquidator } from "./services";
 import { setUpSdk } from "./utils";
 
-import { config, logger } from "./index";
+import { config } from "./index";
 
 // Liquidate unhealthy borrows and repeat every LIQUIDATION_INTERVAL_SECONDS
 async function runLiquidator(liquidator: Liquidator) {
+  const { logger } = liquidator.sdk;
   const liquidatablePools = await liquidator.fetchLiquidations();
 
   logger.info(`Found ${liquidatablePools.length} pools with liquidations to process`);
@@ -24,6 +25,6 @@ export default async function liquidatePositions(chainId: number, provider: Json
   const midasSdk = setUpSdk(chainId, provider);
   const liquidator = new Liquidator(midasSdk);
 
-  logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
+  midasSdk.logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
   setInterval(runLiquidator, midasSdk.chainLiquidationConfig.LIQUIDATION_INTERVAL_SECONDS * 1000, liquidator);
 }

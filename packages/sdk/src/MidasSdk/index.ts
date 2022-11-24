@@ -21,12 +21,14 @@ import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
 import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
+import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -59,6 +61,15 @@ export type StaticContracts = {
   [contractName: string]: Contract;
 };
 
+export interface Logger {
+  trace(message?: string, ...optionalParams: any[]): void;
+  debug(message?: string, ...optionalParams: any[]): void;
+  info(message?: string, ...optionalParams: any[]): void;
+  warn(message?: string, ...optionalParams: any[]): void;
+  error(message?: string, ...optionalParams: any[]): void;
+  [x: string]: any;
+}
+
 export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public _provider: SupportedProvider;
@@ -90,6 +101,8 @@ export class MidasBase {
   public supportedAssets: SupportedAsset[];
   public redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] };
   public fundingStrategies: { [token: string]: [FundingStrategyContract, string] };
+
+  public logger: Logger;
 
   public get provider(): SupportedProvider {
     return this._provider;
@@ -156,7 +169,8 @@ export class MidasBase {
     return this;
   }
 
-  constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig) {
+  constructor(signerOrProvider: SignerOrProvider, chainConfig: ChainConfig, logger: Logger = console) {
+    this.logger = logger;
     if (!signerOrProvider) throw Error("No Provider or Signer");
 
     if (SignerWithAddress.isSigner(signerOrProvider) || Signer.isSigner(signerOrProvider)) {
@@ -166,7 +180,7 @@ export class MidasBase {
       this._provider = signerOrProvider;
       this._signer = signerOrProvider.getSigner ? signerOrProvider.getSigner() : null;
     } else {
-      console.warn("Incompatible Provider or Signer: ", signerOrProvider);
+      this.logger.warn(`Incompatible Provider or Signer: signerOrProvider`);
       throw Error("Signer or Provider not compatible");
     }
 
@@ -187,14 +201,14 @@ export class MidasBase {
 
     this.availableIrms = chainConfig.irms.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
-        console.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
+        this.logger.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
     });
     this.availableOracles = chainConfig.oracles.filter((o) => {
       if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
-        console.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
+        this.logger.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
@@ -228,7 +242,7 @@ export class MidasBase {
         priceOracle
       );
       const deployReceipt = await deployTx.wait();
-      console.log(`Deployment of pool ${poolName} succeeded!`, deployReceipt.status);
+      this.logger.info(`Deployment of pool ${poolName} succeeded!`, deployReceipt.status);
 
       let poolId: number | undefined;
       try {
@@ -239,7 +253,7 @@ export class MidasBase {
             ? (registerEvent.args[0] as BigNumber).toNumber()
             : undefined;
       } catch (e) {
-        console.warn("Unable to retrieve pool ID from receipt events", e);
+        this.logger.warn("Unable to retrieve pool ID from receipt events", e);
       }
       const existingPools = await contract.callStatic.getAllPools();
       // Compute Unitroller address
@@ -256,22 +270,22 @@ export class MidasBase {
       const unitroller = getPoolUnitroller(poolAddress, this.signer);
       const acceptTx = await unitroller._acceptAdmin();
       const acceptReceipt = await acceptTx.wait();
-      console.log("Accepted admin status for admin:", acceptReceipt.status);
+      this.logger.info(`Accepted admin status for admin: ${acceptReceipt.status}`);
 
       // Whitelist
-      console.log("enforceWhitelist: ", enforceWhitelist);
+      this.logger.info(`enforceWhitelist: ${enforceWhitelist}`);
       if (enforceWhitelist) {
         const comptroller = getPoolComptroller(poolAddress, this.signer);
 
         // Was enforced by pool deployment, now just add addresses
         const whitelistTx = await comptroller._setWhitelistStatuses(whitelist, Array(whitelist.length).fill(true));
         const whitelistReceipt = await whitelistTx.wait();
-        console.log("Whitelist updated:", whitelistReceipt.status);
+        this.logger.info(`Whitelist updated: ${whitelistReceipt.status}`);
       }
 
       return [poolAddress, implementationAddress, priceOracle, poolId];
     } catch (error) {
-      throw Error("Deployment of new Fuse pool failed: " + (error.message ? error.message : error));
+      throw Error(`Deployment of new Fuse pool failed:  ${error.message ? error.message : error}`);
     }
   }
 
@@ -363,6 +377,22 @@ export class MidasBase {
       this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
       signerOrProvider
     ) as CErc20PluginDelegate;
+  }
+
+  getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.EIP20Interface.abi, signerOrProvider) as EIP20Interface;
+  }
+
+  getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.Unitroller.abi, signerOrProvider) as Unitroller;
+  }
+
+  getFusePoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(
+      this.chainDeployment.FusePoolDirectory.address,
+      this.chainDeployment.FusePoolDirectory.abi,
+      signerOrProvider
+    );
   }
 }
 

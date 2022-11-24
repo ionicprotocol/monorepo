@@ -27,6 +27,7 @@ import "./tasks/one-time/arrakis-polygon-plugins";
 import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/downgradeMarket";
+import "./tasks/one-time/loopless-booster";
 import "./tasks/oracle/add-apeswap-oracle";
 import "./tasks/configureApStrategies";
 
@@ -188,6 +189,11 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://arb1.arbitrum.io/rpc`,
       accounts: { mnemonic },
       chainId: 42161,
+    },
+    fantom: {
+      url: OVERRIDE_RPC_URL || `https://rpcapi.fantom.network`,
+      accounts: { mnemonic },
+      chainId: 250,
     },
   },
 };

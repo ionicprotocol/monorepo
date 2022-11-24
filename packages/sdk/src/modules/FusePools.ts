@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, evmos, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import {
   ChainSupportedAssets as ChainSupportedAssetsType,
   FusePoolData,
@@ -30,6 +30,7 @@ const ChainSupportedAssets: ChainSupportedAssetsType = {
   [SupportedChains.moonbeam]: moonbeam.assets,
   [SupportedChains.neon_devnet]: neondevnet.assets,
   [SupportedChains.arbitrum]: arbitrum.assets,
+  [SupportedChains.fantom]: fantom.assets,
 };
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
@@ -161,7 +162,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       const poolData = await Promise.all(
         res.map((_, poolId) => {
           return this.fetchFusePoolData(poolId.toString(), overrides).catch((error) => {
-            console.error(`Pool ID ${poolId} wasn't able to be fetched from FusePoolLens without error.`, error);
+            this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from FusePoolLens without error.`, error);
             return null;
           });
         })

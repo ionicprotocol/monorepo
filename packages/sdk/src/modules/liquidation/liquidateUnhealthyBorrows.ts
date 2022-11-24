@@ -7,7 +7,7 @@ import { EncodedLiquidationTx, LiquidatablePool } from "./utils";
 import { sendTransactionToSafeLiquidator } from "./index";
 
 export default async function liquidateUnhealthyBorrows(
-  midasSdk: MidasBase,
+  sdk: MidasBase,
   liquidatablePool: LiquidatablePool
 ): Promise<[Array<{ tx: EncodedLiquidationTx; error: string }>, Array<TransactionResponse>]> {
   const erroredLiquidations: Array<{ tx: EncodedLiquidationTx; error: string }> = [];
@@ -15,11 +15,11 @@ export default async function liquidateUnhealthyBorrows(
 
   for (const liquidation of liquidatablePool.liquidations) {
     const { method, args, value } = liquidation;
-    console.log(
+    sdk.logger.info(
       `Sending liquidation for:\n comptroller: ${liquidatablePool.comptroller}\n method: ${method}\n params: ${args}\n value: ${value}\n`
     );
     try {
-      const transactionResponse = await sendTransactionToSafeLiquidator(midasSdk, method, args, value);
+      const transactionResponse = await sendTransactionToSafeLiquidator(sdk, method, args, value);
       succeededLiquidations.push(transactionResponse);
     } catch (error) {
       const msg = "Error sending sendTransactionToSafeLiquidator transaction: " + error;
