@@ -149,7 +149,7 @@ const config: HardhatUserConfig = {
     evmos: {
       accounts: { mnemonic },
       chainId: 9001,
-      url: "https://eth.bd.evmos.org:8545",
+      url: OVERRIDE_RPC_URL || "https://eth.bd.evmos.org:8545",
     },
     moonbeam: {
       url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,

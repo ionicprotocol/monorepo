@@ -24,6 +24,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+EVMOS = "true"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -33,6 +34,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
 FANTOM = "true"
+EVMOS = "true"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -42,6 +44,7 @@ MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
 FANTOM = "false"
+EVMOS = "false"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"
