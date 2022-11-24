@@ -45,7 +45,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols.ceWETH,
-    underlying: "0x50dE24B3f0B3136C50FA8A3B8ebc8BD80a269ce5",
+    underlying: "0x153A59d48AcEAbedbDCf7a13F67Ae52b434B810B",
     name: "Celer Bridged WETH",
     decimals: 18,
     oracle: OracleTypes.AdrastiaPriceOracle,
