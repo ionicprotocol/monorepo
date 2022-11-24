@@ -16,8 +16,8 @@
   ],
   "scripts": {
     "build": "yarn run build:forge && yarn run artifacts && yarn run typechain && yarn run build:sdk && du -sk dist/cjs && du -sk dist/esm",
-    "abimate":"abimate ./abis ./artifacts/*.json",
-    "artifacts":"scripts/move-artifacts.sh",
+    "abimate": "abimate ./abis ./artifacts/*.json",
+    "artifacts": "scripts/move-artifacts.sh",
     "typechain": "typechain --target ethers-v5 --out-dir './typechain' './artifacts/*.json' --show-stack-traces",
     "build:forge": "cd lib/contracts && forge install && forge build && forge build --contracts contracts/compound/CErc20PluginRewardsDelegate.sol --optimizer-runs 8 && forge build --contracts contracts/compound/CErc20PluginDelegate.sol --optimizer-runs 2",
     "build:sdk": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
