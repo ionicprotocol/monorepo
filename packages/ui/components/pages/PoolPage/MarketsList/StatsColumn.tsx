@@ -143,8 +143,8 @@ export const StatsColumn = ({
             )}`}
 
             {' → '}
-            {updatedAssets ? (
-              `${smallUsdFormatter(updatedAsset!.borrowBalanceFiat)} of ${smallUsdFormatter(
+            {updatedAssets && updatedAsset ? (
+              `${smallUsdFormatter(updatedAsset.borrowBalanceFiat)} of ${smallUsdFormatter(
                 updatedBorrowLimitMarket
               )}`
             ) : (
