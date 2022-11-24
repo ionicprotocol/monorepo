@@ -141,7 +141,7 @@ export const stellaSwapDocs = (token0: string, token1: string, poolName: string,
 };
 
 export const curveFinancePolygonDocs = (
-  poolNumber: number,
+  poolNumber: number | string,
   poolName: string,
   tokenAddress: string,
   isFactory = false

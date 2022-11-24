@@ -75,6 +75,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["WMATIC-ETH"]),
       underlying(assets, assetSymbols["WMATIC-USDT"]),
       underlying(assets, assetSymbols["WETH-WBTC"]),
+      underlying(assets, assetSymbols["MAI-USDC"]),
     ],
     flashSwapFee: 30,
   },
@@ -373,6 +374,15 @@ const curvePools: CurvePoolConfig[] = [
     lpToken: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
     pool: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
     underlyings: [underlying(assets, assetSymbols.JNZD), underlying(assets, assetSymbols.NZDS)],
+  },
+  {
+    lpToken: "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171",
+    pool: "0x445FE580eF8d70FF569aB36e80c647af338db351",
+    underlyings: [
+      underlying(assets, assetSymbols.DAI),
+      underlying(assets, assetSymbols.USDC),
+      underlying(assets, assetSymbols.USDT),
+    ],
   },
 ];
 

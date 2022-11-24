@@ -2,7 +2,7 @@ import { task } from "hardhat/config";
 
 import { UniswapTwapPriceOracleV2Factory } from "../../lib/contracts/typechain";
 
-const apeSwapFactory = "0x0841bd0b734e4f5853f0dd8d7ea041c241fb0da6";
+const apeSwapFactory = "0x0841BD0B734E4F5853f0dD8d7Ea041c241fb0Da6";
 const sd = "0x3BC5AC0dFdC871B365d159f728dd1B9A0B5481E8";
 const wtoken = "0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c";
 const busd = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";

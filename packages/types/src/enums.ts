@@ -71,6 +71,7 @@ export enum IrmTypes {
   AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
   AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
   AdjustableJumpRateModel_JARVIS_jBRL = "AdjustableJumpRateModel_JARVIS_jBRL",
+  AdjustableJumpRateModel_JARVIS_jEUR = "AdjustableJumpRateModel_JARVIS_jEUR",
 }
 
 export enum LiquidationStrategy {
@@ -271,6 +272,8 @@ export enum assetSymbols {
   "JNZD-NZDS" = "jNZD-NZDS",
   "EURE-JEUR" = "EURE-jEUR",
   "JCHF-BUSD" = "jCHF-BUSD",
+  "MAI-USDC" = "MAI-USDC",
+  am3CRV = "am3CRV",
   AGEUR = "agEUR",
   EURT = "EURT",
   EURE = "EURE",

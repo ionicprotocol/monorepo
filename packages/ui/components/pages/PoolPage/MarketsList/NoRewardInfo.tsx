@@ -1,5 +1,5 @@
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
-import { Box, Link as ChakraLink } from '@chakra-ui/react';
+import { Link as ChakraLink, HStack, Image, Text } from '@chakra-ui/react';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
@@ -39,9 +39,13 @@ export const NoRewardInfo = ({
         </>
       }
     >
-      <Box marginTop="-2px !important">
-        +🔌 <InfoOutlineIcon />
-      </Box>
+      <HStack marginTop="-2px !important">
+        <Text variant="smText" mr={-1}>
+          +
+        </Text>
+        {pluginInfo?.icon ? <Image src={pluginInfo.icon} alt="" height="6" /> : '🔌'}{' '}
+        <InfoOutlineIcon />
+      </HStack>
     </PopoverTooltip>
   );
 };
