@@ -1,4 +1,5 @@
 import { Contract } from "ethers";
+import { Fragment } from "ethers/lib/utils";
 
 import { Artifacts, MidasBaseConstructor } from "..";
 import { AnkrBNBInterestRateModel } from "../../lib/contracts/typechain/AnkrBNBInterestRateModel.sol";
@@ -38,12 +39,13 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     }
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      const comptrollerABI: Array<object> = this.chainDeployment.Comptroller.abi;
+      const comptrollerABI: Array<Fragment> = this.chainDeployment.Comptroller.abi;
+
       if (this.chainDeployment.ComptrollerFirstExtension) {
-        comptrollerABI.push(this.chainDeployment.ComptrollerFirstExtension.abi);
+        comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
       }
       if (this.chainDeployment.ComptrollerSecondExtension) {
-        comptrollerABI.push(this.chainDeployment.ComptrollerSecondExtension.abi);
+        comptrollerABI.push(...this.chainDeployment.ComptrollerSecondExtension.abi);
       }
 
       return new Contract(comptrollerAddress, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
