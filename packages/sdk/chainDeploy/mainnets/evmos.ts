@@ -1,5 +1,6 @@
 import { evmos } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
+import { ethers } from "ethers";
 
 import { ChainDeployConfig, deployAdrastiaOracle, deployFluxOracle, deployNativeUsdPriceFeed } from "../helpers";
 import { AdrastiaAsset, ChainDeployFnParams, FluxAsset } from "../helpers/types";
@@ -17,7 +18,7 @@ export const deployConfig: ChainDeployConfig = {
   uniswap: {
     hardcoded: [],
     uniswapData: [],
-    pairInitHashCode: "0x",
+    pairInitHashCode: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
     uniswapV2RouterAddress: "0xFCd2Ce20ef8ed3D43Ab4f8C2dA13bbF1C6d9512F",
     uniswapV2FactoryAddress: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
     uniswapOracleInitialDeployTokens: [],
