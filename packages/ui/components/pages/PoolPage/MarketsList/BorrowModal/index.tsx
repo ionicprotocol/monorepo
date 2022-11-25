@@ -18,13 +18,14 @@ import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Alerts } from './Alerts';
+import { AmountInput } from './AmountInput';
 import { Balance } from './Balance';
 import { BorrowError } from './BorrowError';
-import { PendingTransaction } from './PendingTransaction';
-import { AmountInput } from './AmountInput';
 import MaxBorrowSlider from './MaxBorrowSlider';
+import { PendingTransaction } from './PendingTransaction';
+
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
-import { Column, Row } from '@ui/components/shared/Flex';
+import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';

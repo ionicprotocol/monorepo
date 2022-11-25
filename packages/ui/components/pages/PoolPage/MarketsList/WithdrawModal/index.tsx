@@ -17,12 +17,13 @@ import { BigNumber, constants } from 'ethers';
 import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 
-import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
 import { AmountInput } from './AmountInput';
 import { Balance } from './Balance';
 import { PendingTransaction } from './PendingTransaction';
 import { WithdrawError } from './WithdrawError';
-import { Column, Row } from '@ui/components/shared/Flex';
+
+import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
+import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';

@@ -18,12 +18,13 @@ import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
+import { AmountInput } from './AmountInput';
 import { Balance } from './Balance';
 import { PendingTransaction } from './PendingTransaction';
 import { RepayError } from './RepayError';
-import { AmountInput } from './AmountInput';
+
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
-import { Column, Row } from '@ui/components/shared/Flex';
+import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REPAY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';

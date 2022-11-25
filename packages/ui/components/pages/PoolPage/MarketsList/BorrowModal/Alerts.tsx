@@ -1,7 +1,6 @@
 import { Alert, AlertIcon, Text } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
-import { Row } from '@ui/components/shared/Flex';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
