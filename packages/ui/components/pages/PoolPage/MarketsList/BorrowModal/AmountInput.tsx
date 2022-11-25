@@ -45,14 +45,13 @@ export const AmountInput = ({
   };
 
   return (
-    <MidasBox width="100%" height="70px" mt={3}>
+    <MidasBox width="100%">
       <Row width="100%" p={4} mainAxisAlignment="space-between" crossAxisAlignment="center" expand>
         <Input
           id="fundInput"
           type="number"
           inputMode="decimal"
           fontSize={22}
-          fontWeight="bold"
           variant="unstyled"
           placeholder="0.0"
           value={userEnteredAmount}

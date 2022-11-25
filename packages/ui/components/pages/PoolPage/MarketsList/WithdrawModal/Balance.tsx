@@ -1,9 +1,8 @@
-import { Text } from '@chakra-ui/react';
+import { HStack, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useEffect, useState } from 'react';
 
-import { Column, Row } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -26,17 +25,15 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
   }, [address, asset, currentSdk]);
 
   return (
-    <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%">
-      <Row width="100%" mainAxisAlignment="flex-end" crossAxisAlignment="center">
-        <Text variant="smText" mr={2}>
-          Available To Withdraw:
+    <HStack width="100%" justifyContent={'flex-end'}>
+      <Text variant="smText" mr={2}>
+        Available To Withdraw:
+      </Text>
+      <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
+        <Text maxWidth="250px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
+          {availableToWithdraw} {asset.underlyingSymbol}
         </Text>
-        <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
-          <Text maxWidth="250px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
-            {availableToWithdraw} {asset.underlyingSymbol}
-          </Text>
-        </SimpleTooltip>
-      </Row>
-    </Column>
+      </SimpleTooltip>
+    </HStack>
   );
 };

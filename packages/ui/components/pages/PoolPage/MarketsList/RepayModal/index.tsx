@@ -2,8 +2,10 @@ import {
   Box,
   Button,
   Divider,
+  HStack,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Text,
@@ -16,10 +18,10 @@ import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/RepayModal//Balance';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/RepayModal//PendingTransaction';
-import { RepayError } from '@ui/components/pages/PoolPage/MarketsList/RepayModal//RepayError';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/RepayModal/AmountInput';
+import { Balance } from './Balance';
+import { PendingTransaction } from './PendingTransaction';
+import { RepayError } from './RepayError';
+import { AmountInput } from './AmountInput';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -70,7 +72,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['ValidAmount', amount, currentSdk.chainId, address],
+    ['isValidRepayAmount', amount, currentSdk.chainId, address],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -214,38 +216,35 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
               <PendingTransaction activeStep={activeStep} failedStep={failedStep} steps={steps} />
             ) : (
               <>
-                <Row
-                  width="100%"
-                  mainAxisAlignment="center"
-                  crossAxisAlignment="center"
-                  p={4}
-                  height="72px"
-                  flexShrink={0}
-                >
-                  <Box height="36px" width="36px">
+                <HStack width="100%" p={4} justifyContent="center">
+                  <Text variant="title">Repay</Text>
+                  <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
-                    {tokenData?.symbol || asset.underlyingSymbol} Repay
-                  </Text>
-                </Row>
+                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <ModalCloseButton top={4} right={4} />
+                </HStack>
 
                 <Divider />
                 <Column
                   mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  px={4}
-                  py={4}
+                  p={4}
+                  gap={4}
                   height="100%"
                   width="100%"
                 >
-                  <Balance asset={asset} />
-                  <AmountInput
-                    asset={asset}
-                    optionToWrap={optionToWrap}
-                    poolChainId={poolChainId}
-                    setAmount={setAmount}
-                  />
+                  <Column gap={1} width="100%">
+                    <AmountInput
+                      asset={asset}
+                      optionToWrap={optionToWrap}
+                      poolChainId={poolChainId}
+                      setAmount={setAmount}
+                    />
+
+                    <Balance asset={asset} />
+                  </Column>
+
                   <StatsColumn
                     mode={FundOperationMode.REPAY}
                     amount={amount}
@@ -253,9 +252,9 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
                     asset={asset}
                     poolChainId={poolChainId}
                   />
+
                   <Button
                     id="confirmFund"
-                    mt={4}
                     width="100%"
                     onClick={onConfirm}
                     isDisabled={!amountIsValid}

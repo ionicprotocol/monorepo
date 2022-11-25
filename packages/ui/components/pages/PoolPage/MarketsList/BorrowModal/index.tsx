@@ -3,8 +3,10 @@ import {
   Button,
   Checkbox,
   Divider,
+  HStack,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Text,
@@ -15,12 +17,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal//Alerts';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal//Balance';
-import { BorrowError } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal//BorrowError';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal//PendingTransaction';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/AmountInput';
-import MaxBorrowSlider from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/MaxBorrowSlider';
+import { Alerts } from './Alerts';
+import { Balance } from './Balance';
+import { BorrowError } from './BorrowError';
+import { PendingTransaction } from './PendingTransaction';
+import { AmountInput } from './AmountInput';
+import MaxBorrowSlider from './MaxBorrowSlider';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -103,7 +105,7 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
   } = useBorrowMinimum(asset, poolChainId);
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['ValidAmount', amount, minBorrowAsset, currentSdk.chainId, address],
+    ['isValidBorrowAmount', amount, minBorrowAsset, currentSdk.chainId, address],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -200,39 +202,37 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
               <PendingTransaction />
             ) : (
               <>
-                <Row
-                  width="100%"
-                  mainAxisAlignment="center"
-                  crossAxisAlignment="center"
-                  p={4}
-                  height="72px"
-                  flexShrink={0}
-                >
-                  <Box height="36px" width="36px">
+                <HStack width="100%" p={4} justifyContent="center">
+                  <Text variant="title">Borrow</Text>
+                  <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
-                    {tokenData?.symbol || asset.underlyingSymbol} Borrow
-                  </Text>
-                </Row>
+                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <ModalCloseButton top={4} right={4} />
+                </HStack>
 
                 <Divider />
+
                 <Column
                   mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  px={4}
-                  py={4}
+                  p={4}
                   height="100%"
                   width="100%"
+                  gap={4}
                 >
-                  <Balance asset={asset} />
                   <Alerts poolChainId={poolChainId} asset={asset} />
-                  <AmountInput
-                    asset={asset}
-                    poolChainId={poolChainId}
-                    userEnteredAmount={userEnteredAmount}
-                    updateAmount={updateAmount}
-                  />
+                  <Column gap={1} w="100%">
+                    <AmountInput
+                      asset={asset}
+                      poolChainId={poolChainId}
+                      userEnteredAmount={userEnteredAmount}
+                      updateAmount={updateAmount}
+                    />
+
+                    <Balance asset={asset} />
+                  </Column>
+
                   {maxBorrowInAsset && maxBorrowInAsset.number !== 0 && (
                     <MaxBorrowSlider
                       userEnteredAmount={userEnteredAmount}
@@ -264,7 +264,6 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
 
                   <Button
                     id="confirmFund"
-                    mt={4}
                     width="100%"
                     onClick={onConfirm}
                     isDisabled={!amountIsValid || (isRisky && !isRiskyConfirmed)}

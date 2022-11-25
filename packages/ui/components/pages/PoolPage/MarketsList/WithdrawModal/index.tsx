@@ -2,8 +2,10 @@ import {
   Box,
   Button,
   Divider,
+  HStack,
   Modal,
   ModalBody,
+  ModalCloseButton,
   ModalContent,
   ModalOverlay,
   Text,
@@ -16,10 +18,10 @@ import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/AmountInput';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/Balance';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/PendingTransaction';
-import { WithdrawError } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/WithdrawError';
+import { AmountInput } from './AmountInput';
+import { Balance } from './Balance';
+import { PendingTransaction } from './PendingTransaction';
+import { WithdrawError } from './WithdrawError';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -60,7 +62,7 @@ export const WithdrawModal = ({
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['ValidAmount', amount, currentSdk.chainId, address],
+    ['isValidWithdrawAmount', amount, currentSdk.chainId, address],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -165,32 +167,30 @@ export const WithdrawModal = ({
               <PendingTransaction />
             ) : (
               <>
-                <Row
-                  width="100%"
-                  mainAxisAlignment="center"
-                  crossAxisAlignment="center"
-                  p={4}
-                  height="72px"
-                  flexShrink={0}
-                >
-                  <Box height="36px" width="36px">
+                <HStack width="100%" m={4} justifyContent="center">
+                  <Text variant="title">Withdraw</Text>
+                  <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text id="symbol" variant="title" fontWeight="bold" ml={3}>
-                    {tokenData?.symbol || asset.underlyingSymbol} Withdraw
-                  </Text>
-                </Row>
+                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <ModalCloseButton top={4} right={4} />
+                </HStack>
+
                 <Divider />
                 <Column
                   mainAxisAlignment="flex-start"
                   crossAxisAlignment="center"
-                  px={4}
-                  py={4}
+                  p={4}
+                  gap={4}
                   height="100%"
                   width="100%"
                 >
-                  <Balance asset={asset} />
-                  <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
+                  <Column gap={1} width="100%">
+                    <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
+
+                    <Balance asset={asset} mt={1} />
+                  </Column>
+
                   <StatsColumn
                     mode={FundOperationMode.WITHDRAW}
                     amount={amount}
@@ -200,7 +200,6 @@ export const WithdrawModal = ({
                   />
                   <Button
                     id="confirmFund"
-                    mt={4}
                     width="100%"
                     onClick={onConfirm}
                     isDisabled={!amountIsValid}
