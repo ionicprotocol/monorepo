@@ -2,7 +2,10 @@ import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useMemo } from 'react';
 
-import AmountModal from '@ui/components/pages/PoolPage/AmountModal';
+import { BorrowModal } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal';
+import { RepayModal } from '@ui/components/pages/PoolPage/MarketsList/RepayModal';
+import { SupplyModal } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal';
+import { WithdrawModal } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -12,7 +15,6 @@ export const FundButton = ({
   asset,
   mode,
   isDisabled,
-  supplyBalanceFiat,
   poolChainId,
 }: {
   comptrollerAddress: string;
@@ -20,7 +22,6 @@ export const FundButton = ({
   asset: MarketData;
   mode: FundOperationMode;
   isDisabled?: boolean;
-  supplyBalanceFiat?: number;
   poolChainId: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
@@ -41,16 +42,43 @@ export const FundButton = ({
       >
         {modeName}
       </Button>
-      <AmountModal
-        defaultMode={mode}
-        comptrollerAddress={comptrollerAddress}
-        assets={assets}
-        asset={asset}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        supplyBalanceFiat={supplyBalanceFiat}
-        poolChainId={poolChainId}
-      />
+      {mode === FundOperationMode.SUPPLY && (
+        <SupplyModal
+          isOpen={isModalOpen}
+          asset={asset}
+          assets={assets}
+          comptrollerAddress={comptrollerAddress}
+          onClose={closeModal}
+          poolChainId={poolChainId}
+        />
+      )}
+      {mode === FundOperationMode.WITHDRAW && (
+        <WithdrawModal
+          isOpen={isModalOpen}
+          asset={asset}
+          assets={assets}
+          onClose={closeModal}
+          poolChainId={poolChainId}
+        />
+      )}
+      {mode === FundOperationMode.BORROW && (
+        <BorrowModal
+          isOpen={isModalOpen}
+          asset={asset}
+          assets={assets}
+          onClose={closeModal}
+          poolChainId={poolChainId}
+        />
+      )}
+      {mode === FundOperationMode.REPAY && (
+        <RepayModal
+          isOpen={isModalOpen}
+          asset={asset}
+          assets={assets}
+          onClose={closeModal}
+          poolChainId={poolChainId}
+        />
+      )}
     </Box>
   );
 };

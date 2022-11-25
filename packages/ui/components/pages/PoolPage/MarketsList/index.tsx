@@ -973,7 +973,7 @@ const ControlledSearchInput = ({ onUpdate }: { onUpdate: (value: string) => void
         type="text"
         value={searchText}
         onChange={onSearch}
-        placeholder="Symbol, Token Name"
+        placeholder="Token, Name"
         maxWidth={{ base: '100%', lg: 60, md: 60, sm: 290 }}
         _focusVisible={{}}
       />

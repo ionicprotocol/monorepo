@@ -91,7 +91,7 @@ export const StatsColumn = ({
   });
 
   return (
-    <MidasBox width="100%" mt={4}>
+    <MidasBox width="100%">
       <Column
         mainAxisAlignment="space-between"
         crossAxisAlignment="flex-start"
@@ -100,14 +100,13 @@ export const StatsColumn = ({
         gap={2}
       >
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text variant="smText" fontWeight="bold" flexShrink={0}>
+          <Text variant="smText" flexShrink={0}>
             Market Supply Balance:
           </Text>
           <SimpleTooltip
             label={`${supplyBalanceFrom}${` → ${supplyBalanceTo} `}${asset.underlyingSymbol}`}
           >
             <Text
-              fontWeight="bold"
               flexShrink={0}
               variant={'smText'}
               textOverflow={'ellipsis'}
@@ -134,19 +133,28 @@ export const StatsColumn = ({
         <Divider />
 
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text fontWeight="bold" flexShrink={0} variant="smText">
+          <Text flexShrink={0} variant="smText">
             Borrowed in Market
           </Text>
-          <Text fontWeight="bold" variant={'smText'}>
+          <Text
+            variant={'smText'}
+            color={
+              updatedAsset?.borrowBalanceFiat &&
+              updatedBorrowLimitMarket !== undefined &&
+              updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.01
+                ? 'fail'
+                : undefined
+            }
+          >
             {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
               borrowLimitMarket
             )}`}
 
             {' → '}
-            {updatedAssets ? (
-              `${smallUsdFormatter(updatedAsset!.borrowBalanceFiat)} of ${smallUsdFormatter(
-                updatedBorrowLimitMarket
-              )}`
+            {updatedAssets && updatedAsset ? (
+              `${smallUsdFormatter(
+                Math.max(updatedAsset.borrowBalanceFiat, 0)
+              )} of ${smallUsdFormatter(updatedBorrowLimitMarket)}`
             ) : (
               <Skeleton display="inline">{`${smallUsdFormatter(
                 asset.borrowBalanceFiat
@@ -156,14 +164,23 @@ export const StatsColumn = ({
         </Row>
 
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text fontWeight="bold" flexShrink={0} variant="smText">
+          <Text flexShrink={0} variant="smText">
             Borrowed in Total:
           </Text>
-          <Text fontWeight="bold" variant={'smText'}>
+          <Text
+            variant={'smText'}
+            color={
+              updatedTotalBorrows !== undefined &&
+              updatedBorrowLimitTotal !== undefined &&
+              updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
+                ? 'warn'
+                : undefined
+            }
+          >
             {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal)}`}
             {' → '}
             {updatedAssets && updatedTotalBorrows !== undefined ? (
-              `${smallUsdFormatter(updatedTotalBorrows)} of ${smallUsdFormatter(
+              `${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
                 updatedBorrowLimitTotal
               )}`
             ) : (
@@ -176,10 +193,10 @@ export const StatsColumn = ({
 
         <Divider />
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text fontWeight="bold" flexShrink={0} variant="smText">
+          <Text flexShrink={0} variant="smText">
             Market Supply APY:
           </Text>
-          <Text fontWeight="bold" variant={'smText'}>
+          <Text variant={'smText'}>
             {supplyAPY.toFixed(2) + '%'}
 
             <>
@@ -194,10 +211,10 @@ export const StatsColumn = ({
         </Row>
 
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text fontWeight="bold" flexShrink={0} variant="smText">
+          <Text flexShrink={0} variant="smText">
             Market Borrow APR:
           </Text>
-          <Text fontWeight="bold" variant={'smText'}>
+          <Text variant={'smText'}>
             {borrowAPR.toFixed(2) + '%'}
 
             <>
