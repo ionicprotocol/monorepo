@@ -213,7 +213,7 @@ const PoolPage = memo(() => {
                     <Skeleton height={'40px'} width={'320px'} />
                   </Flex>
                 </Box>
-                <Skeleton height={200} width="100%" />
+                <Skeleton height={360} width="100%" />
               </>
             )}
           </MidasBox>

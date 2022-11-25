@@ -222,7 +222,15 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
                   width="100%"
                   gap={4}
                 >
-                  <Alerts poolChainId={poolChainId} asset={asset} />
+                  {maxBorrowInAsset && maxBorrowInAsset.number !== 0 && (
+                    <MaxBorrowSlider
+                      userEnteredAmount={userEnteredAmount}
+                      updateAmount={updateAmount}
+                      borrowableAmount={maxBorrowInAsset.number}
+                      asset={asset}
+                      poolChainId={poolChainId}
+                    />
+                  )}
                   <Column gap={1} w="100%">
                     <AmountInput
                       asset={asset}
@@ -234,15 +242,6 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
                     <Balance asset={asset} />
                   </Column>
 
-                  {maxBorrowInAsset && maxBorrowInAsset.number !== 0 && (
-                    <MaxBorrowSlider
-                      userEnteredAmount={userEnteredAmount}
-                      updateAmount={updateAmount}
-                      borrowableAmount={maxBorrowInAsset.number}
-                      asset={asset}
-                      poolChainId={poolChainId}
-                    />
-                  )}
                   <StatsColumn
                     mode={FundOperationMode.BORROW}
                     amount={amount}
@@ -263,6 +262,7 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
                     </Box>
                   )}
 
+                  <Alerts poolChainId={poolChainId} asset={asset} />
                   <Button
                     id="confirmFund"
                     width="100%"

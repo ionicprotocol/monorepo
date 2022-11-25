@@ -141,7 +141,7 @@ export const StatsColumn = ({
             color={
               updatedAsset?.borrowBalanceFiat &&
               updatedBorrowLimitMarket !== undefined &&
-              updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.01
+              updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.001
                 ? 'fail'
                 : undefined
             }
@@ -173,7 +173,9 @@ export const StatsColumn = ({
               updatedTotalBorrows !== undefined &&
               updatedBorrowLimitTotal !== undefined &&
               updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
-                ? 'warn'
+                ? updatedTotalBorrows / updatedBorrowLimitTotal >= 0.95
+                  ? 'fail'
+                  : 'warn'
                 : undefined
             }
           >
