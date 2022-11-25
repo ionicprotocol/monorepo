@@ -202,7 +202,7 @@ const PoolPage = memo(() => {
                         borderStartRadius={'xl'}
                         borderEndRadius={0}
                       />
-                      <Skeleton height={'52px'} width={'120px'} />
+                      <Skeleton height={'52px'} width={'120px'} borderRadius={0} />
                       <Skeleton
                         height={'52px'}
                         width={'120px'}
