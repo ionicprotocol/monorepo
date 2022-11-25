@@ -394,7 +394,7 @@ export const strategies: ERC4626Strategy[] = [
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
   {
-    address: "0xE389531Fb6b4Df3218a5e2f543A43201FfF70cCe",
+    address: "0xAe8a8253cd70A8Ad4749aAd850A99e2f30552f10",
     strategy: Strategy.Beefy,
     name: "Beefy am3CRV Vault",
     complexity: StrategyComplexity.LOW,
