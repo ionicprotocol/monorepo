@@ -114,9 +114,9 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [signer, sdks]);
 
   useEffect(() => {
-    if (config.logrocketAppId) {
+    if (window.location.hostname === 'app.midascapital.xyz') {
       console.info('LogRocket initialized');
-      LogRocket.init(config.logrocketAppId);
+      LogRocket.init('ylr02p/midas-ui');
     } else {
       console.info('LogRocket not initialized');
     }
