@@ -552,200 +552,181 @@ export const MarketsList = ({
       {/* Table Filter and Search */}
       <Flex
         justifyContent={['center', 'center', 'space-between']}
-        p="4"
+        p={4}
         alignItems={'center'}
         flexDirection={'row'}
         flexWrap="wrap-reverse"
         gap={4}
       >
-        <Flex flexDirection={{ base: 'column', lg: 'row' }} gap={4} alignItems="center">
-          <ButtonGroup
-            isAttached={!isSemiSmallScreen ? true : false}
-            gap={isSemiSmallScreen ? 2 : 0}
-            spacing={0}
-            flexFlow={'row wrap'}
-            justifyContent="flex-start"
+        <ButtonGroup
+          isAttached={!isSemiSmallScreen ? true : false}
+          gap={isSemiSmallScreen ? 2 : 0}
+          spacing={0}
+          flexFlow={'row wrap'}
+          justifyContent="flex-start"
+        >
+          <CButton
+            isSelected={globalFilter.includes(ALL)}
+            onClick={() => onFilter(ALL)}
+            disabled={data.length === 0}
+            variant="filter"
+            width="80px"
+            p={0}
           >
-            <CButton
-              isSelected={globalFilter.includes(ALL)}
-              onClick={() => onFilter(ALL)}
-              disabled={data.length === 0}
-              variant="filter"
-              width="80px"
-              p={0}
+            <PopoverTooltip
+              body={
+                <VStack alignItems="flex-start" whiteSpace="pre-wrap">
+                  <Text variant="mdText">All Assets</Text>
+                  <Text variant="smText">Assets that are available in this pool.</Text>
+                  <Text variant="smText">Click to filter</Text>
+                </VStack>
+              }
+              width="100%"
+              height="100%"
+            >
+              <Center width="100%" height="100%" fontWeight="bold">{`${data.length} All`}</Center>
+            </PopoverTooltip>
+          </CButton>
+          {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
+            <GradientButton
+              isSelected={globalFilter.includes(REWARDS)}
+              onClick={() => onFilter(REWARDS)}
+              borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
+              mr="-px"
+              width="115px"
+              height="48px"
             >
               <PopoverTooltip
                 body={
                   <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                    <Text variant="mdText">All Assets</Text>
-                    <Text variant="smText">Assets that are available in this pool.</Text>
+                    <Text variant="mdText" fontWeight="bold">
+                      Rewards Asset
+                    </Text>
+                    <Text variant="smText">Assets that have rewards.</Text>
                     <Text variant="smText">Click to filter</Text>
                   </VStack>
                 }
                 width="100%"
                 height="100%"
               >
-                <Center
-                  width="100%"
-                  height="100%"
-                  fontWeight="bold"
-                  pt="2px"
-                >{`${data.length} All`}</Center>
+                <Center width="100%" height="100%" fontWeight="bold" pt="2px">
+                  <GradientText isEnabled={!globalFilter.includes(REWARDS)} color={cCard.bgColor}>
+                    {`${
+                      (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
+                    } Rewards`}
+                  </GradientText>
+                </Center>
+              </PopoverTooltip>
+            </GradientButton>
+          )}
+          {collateralCounts !== 0 && (
+            <CButton
+              isSelected={globalFilter.includes(COLLATERAL)}
+              variant="filter"
+              color="cyan"
+              onClick={() => onFilter(COLLATERAL)}
+              width="125px"
+              p={0}
+            >
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start" whiteSpace="pre-wrap">
+                    <Text variant="mdText">Collateral Asset</Text>
+                    <Text variant="smText">
+                      Assets that can be deposited as collateral to borrow other assets.
+                    </Text>
+                    <Text variant="smText">Click to filter</Text>
+                  </VStack>
+                }
+                width="100%"
+                height="100%"
+              >
+                <Center width="100%" height="100%" fontWeight="bold">
+                  {`${collateralCounts} Collateral`}
+                </Center>
               </PopoverTooltip>
             </CButton>
-            {allClaimableRewards && Object.keys(allClaimableRewards).length !== 0 && (
-              <GradientButton
-                isSelected={globalFilter.includes(REWARDS)}
-                onClick={() => onFilter(REWARDS)}
-                borderWidth={globalFilter.includes(REWARDS) ? 0 : 2}
-                mr="-px"
-                width="115px"
-                height="52px"
+          )}
+          {borrowableCounts !== 0 && (
+            <CButton
+              isSelected={globalFilter.includes(BORROWABLE)}
+              variant="filter"
+              color="orange"
+              onClick={() => onFilter(BORROWABLE)}
+              width="135px"
+              p={0}
+            >
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start" whiteSpace="pre-wrap">
+                    <Text variant="mdText">Borrowable Asset</Text>
+                    <Text variant="smText">Assets that can be borrowed.</Text>
+                    <Text variant="smText">Click to filter</Text>
+                  </VStack>
+                }
+                width="100%"
+                height="100%"
               >
-                <PopoverTooltip
-                  body={
-                    <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                      <Text variant="mdText" fontWeight="bold">
-                        Rewards Asset
-                      </Text>
-                      <Text variant="smText">Assets that have rewards.</Text>
-                      <Text variant="smText">Click to filter</Text>
-                    </VStack>
-                  }
-                  width="100%"
-                  height="100%"
-                >
-                  <Center width="100%" height="100%" fontWeight="bold" pt="2px">
-                    <GradientText isEnabled={!globalFilter.includes(REWARDS)} color={cCard.bgColor}>
-                      {`${
-                        (allClaimableRewards && Object.keys(allClaimableRewards).length) || 0
-                      } Rewards`}
-                    </GradientText>
-                  </Center>
-                </PopoverTooltip>
-              </GradientButton>
-            )}
-            {collateralCounts !== 0 && (
-              <CButton
-                isSelected={globalFilter.includes(COLLATERAL)}
-                variant="filter"
-                color="cyan"
-                onClick={() => onFilter(COLLATERAL)}
-                width="125px"
-                p={0}
+                <Center width="100%" height="100%" fontWeight="bold">
+                  {`${borrowableCounts} Borrowable`}
+                </Center>
+              </PopoverTooltip>
+            </CButton>
+          )}
+          {protectedCounts !== 0 && (
+            <CButton
+              isSelected={globalFilter.includes(PROTECTED)}
+              variant="filter"
+              color="purple"
+              onClick={() => onFilter(PROTECTED)}
+              width="125px"
+              p={0}
+            >
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start" whiteSpace="pre-wrap">
+                    <Text variant="mdText">Protected Asset</Text>
+                    <Text variant="smText">Assets that cannot be borrowed.</Text>
+                    <Text variant="smText">Click to filter</Text>
+                  </VStack>
+                }
+                width="100%"
+                height="100%"
               >
-                <PopoverTooltip
-                  body={
-                    <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                      <Text variant="mdText">Collateral Asset</Text>
-                      <Text variant="smText">
-                        Assets that can be deposited as collateral to borrow other assets.
-                      </Text>
-                      <Text variant="smText">Click to filter</Text>
-                    </VStack>
-                  }
-                  width="100%"
-                  height="100%"
-                >
-                  <Center
-                    width="100%"
-                    height="100%"
-                    fontWeight="bold"
-                    pt="2px"
-                  >{`${collateralCounts} Collateral`}</Center>
-                </PopoverTooltip>
-              </CButton>
-            )}
-            {borrowableCounts !== 0 && (
-              <CButton
-                isSelected={globalFilter.includes(BORROWABLE)}
-                variant="filter"
-                color="orange"
-                onClick={() => onFilter(BORROWABLE)}
-                width="135px"
-                p={0}
+                <Center fontWeight="bold" width="100%" height="100%">
+                  {`${protectedCounts} Protected`}
+                </Center>
+              </PopoverTooltip>
+            </CButton>
+          )}
+          {pausedCounts !== 0 && (
+            <CButton
+              isSelected={globalFilter.includes(PAUSED)}
+              variant="filter"
+              color="gray"
+              onClick={() => onFilter(PAUSED)}
+              width="140px"
+              p={0}
+            >
+              <PopoverTooltip
+                body={
+                  <VStack alignItems="flex-start" whiteSpace="pre-wrap">
+                    <Text variant="mdText">Paused Asset</Text>
+                    <Text variant="smText">Assets that cannot be supplied and borrowed.</Text>
+                    <Text variant="smText">Click to filter</Text>
+                  </VStack>
+                }
+                width="100%"
+                height="100%"
               >
-                <PopoverTooltip
-                  body={
-                    <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                      <Text variant="mdText">Borrowable Asset</Text>
-                      <Text variant="smText">Assets that can be borrowed.</Text>
-                      <Text variant="smText">Click to filter</Text>
-                    </VStack>
-                  }
-                  width="100%"
-                  height="100%"
-                >
-                  <Center
-                    width="100%"
-                    height="100%"
-                    pt="2px"
-                    fontWeight="bold"
-                  >{`${borrowableCounts} Borrowable`}</Center>
-                </PopoverTooltip>
-              </CButton>
-            )}
-            {protectedCounts !== 0 && (
-              <CButton
-                isSelected={globalFilter.includes(PROTECTED)}
-                variant="filter"
-                color="purple"
-                onClick={() => onFilter(PROTECTED)}
-                width="125px"
-                p={0}
-              >
-                <PopoverTooltip
-                  body={
-                    <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                      <Text variant="mdText">Protected Asset</Text>
-                      <Text variant="smText">Assets that cannot be borrowed.</Text>
-                      <Text variant="smText">Click to filter</Text>
-                    </VStack>
-                  }
-                  width="100%"
-                  height="100%"
-                >
-                  <Center
-                    fontWeight="bold"
-                    width="100%"
-                    height="100%"
-                    pt="2px"
-                  >{`${protectedCounts} Protected`}</Center>
-                </PopoverTooltip>
-              </CButton>
-            )}
-            {pausedCounts !== 0 && (
-              <CButton
-                isSelected={globalFilter.includes(PAUSED)}
-                variant="filter"
-                color="gray"
-                onClick={() => onFilter(PAUSED)}
-                width="140px"
-                p={0}
-              >
-                <PopoverTooltip
-                  body={
-                    <VStack alignItems="flex-start" whiteSpace="pre-wrap">
-                      <Text variant="mdText">Paused Asset</Text>
-                      <Text variant="smText">Assets that cannot be supplied and borrowed.</Text>
-                      <Text variant="smText">Click to filter</Text>
-                    </VStack>
-                  }
-                  width="100%"
-                  height="100%"
-                >
-                  <Center
-                    fontWeight="bold"
-                    width="100%"
-                    height="100%"
-                    pt="2px"
-                    whiteSpace="nowrap"
-                  >{`${pausedCounts} Paused`}</Center>
-                </PopoverTooltip>
-              </CButton>
-            )}
-          </ButtonGroup>
-        </Flex>
+                <Center fontWeight="bold" width="100%" height="100%" whiteSpace="nowrap">
+                  {`${pausedCounts} Paused`}
+                </Center>
+              </PopoverTooltip>
+            </CButton>
+          )}
+        </ButtonGroup>
+
         <Flex className="searchAsset" justifyContent="flex-start" alignItems="flex-end" gap={2}>
           <ControlledSearchInput onUpdate={(searchText) => setSearchText(searchText)} />
           <Popover placement="bottom-end">

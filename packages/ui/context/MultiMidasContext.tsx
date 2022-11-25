@@ -16,7 +16,6 @@ import {
 } from 'react';
 import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { config } from '@ui/config/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
 
