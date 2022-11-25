@@ -195,15 +195,25 @@ const PoolPage = memo(() => {
                     </HStack>
                   </Flex>
                   <Flex alignItems="center" justifyContent={'space-between'}>
-                    <Flex flexDirection={['row']} gap={2}>
-                      <Skeleton height={'48px'} width={'72px'} />
-                      <Skeleton height={'48px'} width={'120px'} />
-                      <Skeleton height={'48px'} width={'120px'} />
+                    <Flex flexDirection={['row']} gap={0}>
+                      <Skeleton
+                        height={'52px'}
+                        width={'72px'}
+                        borderStartRadius={'xl'}
+                        borderEndRadius={0}
+                      />
+                      <Skeleton height={'52px'} width={'120px'} borderRadius={0} />
+                      <Skeleton
+                        height={'52px'}
+                        width={'120px'}
+                        borderStartRadius={0}
+                        borderEndRadius={'xl'}
+                      />
                     </Flex>
                     <Skeleton height={'40px'} width={'320px'} />
                   </Flex>
                 </Box>
-                <Skeleton height={200} width="100%" />
+                <Skeleton height={360} width="100%" />
               </>
             )}
           </MidasBox>

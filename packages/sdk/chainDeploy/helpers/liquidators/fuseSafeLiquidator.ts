@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig, CurveSwapPool, JarvisLiquidityPool } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
@@ -15,6 +15,7 @@ const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [chapel.chainId]: chapel,
   [ganache.chainId]: ganache,
   [fantom.chainId]: fantom,
+  [evmos.chainId]: evmos,
 };
 
 export const deployFuseSafeLiquidator = async ({

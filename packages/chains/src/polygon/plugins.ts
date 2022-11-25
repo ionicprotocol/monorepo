@@ -137,7 +137,7 @@ const deployedPlugins: DeployedPlugins = {
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/mimo.png",
   },
   // BeefyERC4626_am3CRV_0xd412eff9163742f6D3A4AD56B5C83D8864E8Ec3F.json
-  "0xE389531Fb6b4Df3218a5e2f543A43201FfF70cCe": {
+  "0xAe8a8253cd70A8Ad4749aAd850A99e2f30552f10": {
     market: "0xd412eff9163742f6D3A4AD56B5C83D8864E8Ec3F",
     name: "Beefy am3CRV Vault",
     strategy: Strategy.Beefy,

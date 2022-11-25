@@ -2,6 +2,7 @@ import {
   arbitrum,
   bsc,
   chapel,
+  evmos,
   fantom,
   ganache,
   moonbeam,
@@ -21,6 +22,7 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [ganache.chainId]: ganache,
   [arbitrum.chainId]: arbitrum,
   [fantom.chainId]: fantom,
+  [evmos.chainId]: evmos,
 };
 
 export const supportedChainIdToConfig: {
@@ -40,6 +42,7 @@ export const supportedChainIdToConfig: {
   [chapel.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
   [ganache.chainId]: { enabled: config.isDevelopment, supported: config.isDevelopment },
   [fantom.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
+  [evmos.chainId]: { enabled: true, supported: config.isDevelopment || config.isTestnetEnabled },
 };
 
 export interface FusePoolsPerChain {
