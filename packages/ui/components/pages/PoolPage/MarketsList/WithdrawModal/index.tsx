@@ -189,7 +189,7 @@ export const WithdrawModal = ({
                   <Column gap={1} width="100%">
                     <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
 
-                    <Balance asset={asset} mt={1} />
+                    <Balance asset={asset} />
                   </Column>
 
                   <StatsColumn
