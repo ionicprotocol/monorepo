@@ -12,4 +12,9 @@ const config = {
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
 };
 
+export enum EXCLUDED_ERROR_CODES {
+  NETWORK_ERROR,
+  SERVER_ERROR,
+}
+
 export default config;
