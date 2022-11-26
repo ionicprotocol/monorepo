@@ -16,7 +16,6 @@ import {
 } from 'react';
 import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { config } from '@ui/config/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
 
@@ -114,9 +113,9 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [signer, sdks]);
 
   useEffect(() => {
-    if (config.logrocketAppId) {
+    if (window.location.hostname === 'app.midascapital.xyz') {
       console.info('LogRocket initialized');
-      LogRocket.init(config.logrocketAppId);
+      LogRocket.init('ylr02p/midas-ui');
     } else {
       console.info('LogRocket not initialized');
     }

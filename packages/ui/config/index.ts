@@ -12,7 +12,6 @@ type CONFIG = {
   isPolygonEnabled: boolean;
   isFantomEnabled: boolean;
   isTestnetEnabled: boolean;
-  logrocketAppId: string | undefined;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabasePluginRewardsTableName: string;
@@ -38,7 +37,6 @@ const config: CONFIG = {
   isPolygonEnabled: process.env.POLYGON === 'true',
   isFantomEnabled: process.env.FANTOM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
-  logrocketAppId: process.env.LOGROCKET_APP_ID,
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
   supabasePluginRewardsTableName: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
