@@ -18,13 +18,12 @@ import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import { AmountInput } from './AmountInput';
-import { Balance } from './Balance';
-import { EnableCollateral } from './EnableCollateral';
-import { PendingTransaction } from './PendingTransaction';
-import { SupplyError } from './SupplyError';
-
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
+import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/AmountInput';
+import { Balance } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/Balance';
+import { EnableCollateral } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/EnableCollateral';
+import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/PendingTransaction';
+import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/SupplyError';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SUPPLY_STEPS } from '@ui/constants/index';

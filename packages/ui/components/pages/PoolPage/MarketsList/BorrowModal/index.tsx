@@ -17,13 +17,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alerts } from './Alerts';
-import { AmountInput } from './AmountInput';
-import { Balance } from './Balance';
-import { BorrowError } from './BorrowError';
-import MaxBorrowSlider from './MaxBorrowSlider';
-import { PendingTransaction } from './PendingTransaction';
-
+import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/Alerts';
+import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/AmountInput';
+import { Balance } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/Balance';
+import { BorrowError } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/BorrowError';
+import MaxBorrowSlider from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/MaxBorrowSlider';
+import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/PendingTransaction';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -231,7 +230,7 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
                       poolChainId={poolChainId}
                     />
                   )}
-                  <Column gap={1} w="100%">
+                  <Column gap={1} w="100%" mt={4}>
                     <AmountInput
                       asset={asset}
                       poolChainId={poolChainId}
