@@ -73,13 +73,19 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
     const pools = await fusePoolDirectory.callStatic.getAllPools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
-      console.log("pool name", pool.name);
-      const unitroller1 = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
-      const admin = await unitroller1.callStatic.admin();
+      console.log("pool", { name: pool.name, address: pool.comptroller });
+      const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
+      const asComptroller = (await ethers.getContractAt(
+        "Comptroller.sol:Comptroller",
+        pool.comptroller,
+        deployer
+      )) as Comptroller;
+
+      const admin = await unitroller.callStatic.admin();
       console.log("pool admin", admin);
 
       try {
-        const implBefore = await unitroller1.callStatic.comptrollerImplementation();
+        const implBefore = await unitroller.callStatic.comptrollerImplementation();
         const latestImpl = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(implBefore);
         console.log(`current impl ${implBefore} latest ${latestImpl}`);
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
@@ -87,8 +93,6 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         } else {
           if (admin == deployer.address) {
             {
-              const unitroller = (await ethers.getContractAt("Unitroller", pool.comptroller, deployer)) as Unitroller;
-
               let tx = await unitroller._setPendingImplementation(latestImpl);
               await tx.wait();
               console.log(`set pending impl to ${latestImpl} for ${pool.comptroller} with ${tx.hash}`);
@@ -103,12 +107,6 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
               console.log(`upgraded to ${latestImpl} pool ${pool.comptroller} with tx ${tx.hash}`);
             }
           } else {
-            const asComptroller = (await ethers.getContractAt(
-              "Comptroller.sol:Comptroller",
-              pool.comptroller,
-              deployer
-            )) as Comptroller;
-
             const autoImplOn = await asComptroller.callStatic.autoImplementation();
             if (!autoImplOn) {
               console.log(`cannot upgrade ${pool.comptroller} , AUTO IMPL is off`);
@@ -123,14 +121,9 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           }
         }
 
-        const implAfter = await unitroller1.callStatic.comptrollerImplementation();
+        // check the extensions if the latest impl
+        const implAfter = await unitroller.callStatic.comptrollerImplementation();
         if (implAfter == latestImpl) {
-          const asComptroller = (await ethers.getContractAt(
-            "Comptroller.sol:Comptroller",
-            pool.comptroller,
-            deployer
-          )) as Comptroller;
-
           const firstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
           if (firstExtension) {
             const extensions = await asComptroller.callStatic._listExtensions();
