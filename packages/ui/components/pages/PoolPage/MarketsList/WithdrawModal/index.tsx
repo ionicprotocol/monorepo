@@ -22,6 +22,7 @@ import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/WithdrawM
 import { Balance } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/Balance';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/PendingTransaction';
 import { WithdrawError } from '@ui/components/pages/PoolPage/MarketsList/WithdrawModal/WithdrawError';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -172,7 +173,13 @@ export const WithdrawModal = ({
                   <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <EllipsisText
+                    variant="title"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    maxWidth="100px"
+                  >
+                    {tokenData?.symbol || asset.underlyingSymbol}
+                  </EllipsisText>
                   <ModalCloseButton top={4} right={4} />
                 </HStack>
 

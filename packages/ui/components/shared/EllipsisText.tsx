@@ -1,4 +1,4 @@
-import { Text, TextProps } from '@chakra-ui/react';
+import { Text } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -12,7 +12,7 @@ export const EllipsisText = ({
   tooltip: string;
   maxWidth: string;
   children: ReactNode;
-  props?: TextProps;
+  [key: string]: ReactNode;
 }) => {
   return (
     <SimpleTooltip label={tooltip}>

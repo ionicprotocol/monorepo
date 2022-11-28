@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REPAY_STEPS } from '@ui/constants/index';
@@ -221,7 +222,13 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
                   <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <EllipsisText
+                    variant="title"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    maxWidth="100px"
+                  >
+                    {tokenData?.symbol || asset.underlyingSymbol}
+                  </EllipsisText>
                   <ModalCloseButton top={4} right={4} />
                 </HStack>
 
