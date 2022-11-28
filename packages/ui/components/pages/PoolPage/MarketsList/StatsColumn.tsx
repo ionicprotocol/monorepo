@@ -81,14 +81,19 @@ export const StatsColumn = ({
   }, [currentChain, updatedAsset, asset, assets, updatedAssets, currentSdk]);
 
   // Calculate Old and new Borrow Limits
-  const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
-  const updatedBorrowLimitTotal = useBorrowLimitTotal(updatedAssets ?? [], poolChainId, {
+  const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
+  const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets ?? [], poolChainId, {
     ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
   });
-  const borrowLimitMarket = useBorrowLimitMarket(asset, assets, poolChainId);
-  const updatedBorrowLimitMarket = useBorrowLimitMarket(asset, updatedAssets ?? [], poolChainId, {
-    ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
-  });
+  const { data: borrowLimitMarket } = useBorrowLimitMarket(asset, assets, poolChainId);
+  const { data: updatedBorrowLimitMarket } = useBorrowLimitMarket(
+    asset,
+    updatedAssets ?? [],
+    poolChainId,
+    {
+      ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
+    }
+  );
 
   return (
     <MidasBox width="100%">
@@ -141,14 +146,14 @@ export const StatsColumn = ({
               variant={'smText'}
               color={
                 updatedAsset?.borrowBalanceFiat &&
-                updatedBorrowLimitMarket !== undefined &&
+                updatedBorrowLimitMarket &&
                 updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.001
                   ? 'fail'
                   : undefined
               }
             >
               {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
-                borrowLimitMarket
+                borrowLimitMarket || 0
               )}`}
             </Text>
             <Text>{'→'}</Text>
@@ -157,7 +162,7 @@ export const StatsColumn = ({
                 variant={'smText'}
                 color={
                   updatedAsset?.borrowBalanceFiat &&
-                  updatedBorrowLimitMarket !== undefined &&
+                  updatedBorrowLimitMarket &&
                   updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.001
                     ? 'fail'
                     : undefined
@@ -165,12 +170,12 @@ export const StatsColumn = ({
               >
                 {`${smallUsdFormatter(
                   Math.max(updatedAsset.borrowBalanceFiat, 0)
-                )} of ${smallUsdFormatter(updatedBorrowLimitMarket)}`}
+                )} of ${smallUsdFormatter(updatedBorrowLimitMarket || 0)}`}
               </Text>
             ) : (
               <Skeleton display="inline">{`${smallUsdFormatter(
                 asset.borrowBalanceFiat
-              )} of ${smallUsdFormatter(borrowLimitMarket)}`}</Skeleton>
+              )} of ${smallUsdFormatter(borrowLimitMarket || 0)}`}</Skeleton>
             )}
           </HStack>
         </Row>
@@ -184,7 +189,7 @@ export const StatsColumn = ({
               variant={'smText'}
               color={
                 updatedTotalBorrows !== undefined &&
-                updatedBorrowLimitTotal !== undefined &&
+                updatedBorrowLimitTotal &&
                 updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
                   ? updatedTotalBorrows / updatedBorrowLimitTotal >= 0.95
                     ? 'fail'
@@ -192,7 +197,7 @@ export const StatsColumn = ({
                   : undefined
               }
             >
-              {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal)}`}
+              {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}
             </Text>
             <Text>{'→'}</Text>
             {updatedAssets && updatedTotalBorrows !== undefined ? (
@@ -200,7 +205,7 @@ export const StatsColumn = ({
                 variant={'smText'}
                 color={
                   updatedTotalBorrows !== undefined &&
-                  updatedBorrowLimitTotal !== undefined &&
+                  updatedBorrowLimitTotal &&
                   updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
                     ? updatedTotalBorrows / updatedBorrowLimitTotal >= 0.95
                       ? 'fail'
@@ -209,13 +214,13 @@ export const StatsColumn = ({
                 }
               >
                 {`${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
-                  updatedBorrowLimitTotal
+                  updatedBorrowLimitTotal || 0
                 )}`}
               </Text>
             ) : (
               <Skeleton display="inline">{`${smallUsdFormatter(
                 totalBorrows
-              )} of ${smallUsdFormatter(borrowLimitTotal)}`}</Skeleton>
+              )} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}</Skeleton>
             )}
           </HStack>
         </Row>

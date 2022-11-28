@@ -89,7 +89,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { MarketData } from '@ui/types/TokensDataMap';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sorts';
@@ -107,24 +107,23 @@ export type Market = {
 };
 
 export const MarketsList = ({
-  assets,
+  poolData,
   rewards = {},
-  comptrollerAddress,
-  supplyBalanceFiat,
-  borrowBalanceFiat,
-  poolChainId,
   initSorting,
   initColumnVisibility,
 }: {
-  assets: MarketData[];
+  poolData: PoolData;
   rewards?: UseRewardsData;
-  comptrollerAddress: string;
-  supplyBalanceFiat: number;
-  borrowBalanceFiat: number;
-  poolChainId: number;
   initSorting: SortingState;
   initColumnVisibility: VisibilityState;
 }) => {
+  const {
+    assets,
+    comptroller: comptrollerAddress,
+    totalSupplyBalanceFiat: supplyBalanceFiat,
+    totalBorrowBalanceFiat: borrowBalanceFiat,
+    chainId: poolChainId,
+  } = poolData;
   const sdk = useSdk(poolChainId);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
@@ -855,6 +854,7 @@ export const MarketsList = ({
                         rows={table.getCoreRowModel().rows}
                         comptrollerAddress={comptrollerAddress}
                         supplyBalanceFiat={supplyBalanceFiat}
+                        borrowBalanceFiat={borrowBalanceFiat}
                         poolChainId={poolChainId}
                       />
                     </Td>

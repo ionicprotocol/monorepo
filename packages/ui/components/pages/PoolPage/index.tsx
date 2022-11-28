@@ -168,12 +168,8 @@ const PoolPage = memo(() => {
           <MidasBox overflowX="auto" width="100%" mb="4">
             {data && initSorting && initColumnVisibility && allRewards ? (
               <MarketsList
-                assets={data.assets}
+                poolData={data}
                 rewards={allRewards}
-                comptrollerAddress={data.comptroller}
-                supplyBalanceFiat={data.totalSupplyBalanceFiat}
-                borrowBalanceFiat={data.totalBorrowBalanceFiat}
-                poolChainId={data.chainId}
                 initSorting={initSorting}
                 initColumnVisibility={initColumnVisibility}
               />
