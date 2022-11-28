@@ -27,7 +27,7 @@ If applicable, add screenshots to help explain your problem.
  - Chain: 
  - Pool Id: 
  - Transaction Hash: 
- - Error logs
+ - Error logs (screenshot): 
 
 **Platform**
 - Wallet used: 
