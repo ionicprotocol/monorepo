@@ -10,7 +10,7 @@ const specificParams: ChainParams = {
   metadata: {
     chainIdHex: "0x2329",
     name: "Evmos Mainnet",
-    shortName: "Evmos Mainnet",
+    shortName: "EVMOS",
     img: "https://d1912tcoux65lj.cloudfront.net/network/evmos.png",
     rpcUrls: { default: "https://eth.bd.evmos.org:8545" },
     blockExplorerUrls: { default: { name: "Evmos", url: "https://evm.evmos.org" } },

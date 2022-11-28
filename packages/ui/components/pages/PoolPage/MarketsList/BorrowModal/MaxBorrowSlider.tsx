@@ -74,8 +74,8 @@ function MaxBorrowSlider({
   };
 
   return (
-    <Box width="100%" my={4}>
-      <HStack width="100%" mt={10} spacing={4} mb={0}>
+    <Box width="100%">
+      <HStack width="100%" mt={9} spacing={4} mb={0}>
         <Text variant="smText">$0.00</Text>
         <HStack width="100%" spacing={0}>
           {borrowedPercent !== 0 && (

@@ -2,6 +2,7 @@ import { MidasSdk } from "@midas-capital/sdk";
 import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
 
 import { config, logger } from "..";
+import { EXCLUDED_ERROR_CODES } from "../config";
 
 import { DiscordService } from "./discord";
 
@@ -14,13 +15,23 @@ export class Liquidator {
     this.alert = new DiscordService(midasSdk.chainId);
   }
   async fetchLiquidations(): Promise<LiquidatablePool[]> {
-    const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations(config.excludedComptrollers);
-    if (erroredPools.length > 0) {
-      const msg = erroredPools.map((pool) => `Comptroller: ${pool.comptroller} - msg: ${pool.msg}`).join("\n");
-      logger.error(`Errored fetching liquidations from pools: ${msg}`);
-      this.alert.sendLiquidationFetchingFailure(erroredPools, msg);
+    try {
+      const [liquidatablePools, erroredPools] = await this.sdk.getPotentialLiquidations(config.excludedComptrollers);
+      const filteredErroredPools = erroredPools.filter(
+        (pool) => !Object.values(EXCLUDED_ERROR_CODES).includes(pool.error.code)
+      );
+      if (filteredErroredPools.length > 0) {
+        const msg = erroredPools.map((pool) => `Comptroller: ${pool.comptroller} - msg: ${pool.msg}`).join("\n");
+        logger.error(`Errored fetching liquidations from pools: ${msg}`);
+        this.alert.sendLiquidationFetchingFailure(erroredPools, msg);
+      }
+      return liquidatablePools;
+    } catch (error: any) {
+      if (!Object.values(EXCLUDED_ERROR_CODES).includes(error.code)) {
+        logger.error(`Error fetching liquidations: ${error}`);
+      }
+      return [];
     }
-    return liquidatablePools;
   }
 
   async liquidate(liquidations: LiquidatablePool): Promise<void> {
