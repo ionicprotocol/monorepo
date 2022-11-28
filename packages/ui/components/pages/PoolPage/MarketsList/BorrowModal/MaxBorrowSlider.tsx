@@ -57,7 +57,7 @@ function MaxBorrowSlider({
       borrowableAmount * Number(utils.formatUnits(asset.underlyingPrice)) * price;
     const borrowableLimit = borrowBalanceFiat + borrowableUsd;
     const borrowedPercent = Number(((borrowBalanceFiat / borrowLimitTotal) * 100).toFixed(0));
-    const borrowablePercent = Number(((borrowableAmount / borrowLimitTotal) * 100).toFixed(0));
+    const borrowablePercent = Number(((borrowableUsd / borrowLimitTotal) * 100).toFixed(0));
     const borrowLimitMarketPercent = Number(
       (((borrowLimitMarket - borrowableLimit) / borrowLimitTotal) * 100).toFixed(0)
     );
@@ -119,7 +119,7 @@ function MaxBorrowSlider({
               <SliderMark
                 value={borrowedPercent}
                 mt={4}
-                ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 4.5}px`}
+                ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 8.5}px`}
                 fontSize="sm"
               >
                 <Text variant="smText">{smallUsdFormatter(borrowBalanceFiat)}</Text>
@@ -154,7 +154,7 @@ function MaxBorrowSlider({
             <SliderMark
               value={0}
               mt={4}
-              ml={`-${smallUsdFormatter(borrowableLimit).length * 4.5}px`}
+              ml={`-${smallUsdFormatter(borrowableLimit).length * 0.5}px`}
               fontSize="sm"
             >
               <Text variant="smText">{smallUsdFormatter(borrowableLimit)}</Text>
