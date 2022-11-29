@@ -25,6 +25,7 @@ import FuseFlywheelDynamicRewardsArtifacts from "../lib/contracts/out/FuseFlywhe
 import GelatoGUniPriceOracleArtifact from "../lib/contracts/out/GelatoGUniPriceOracle.sol/GelatoGUniPriceOracle.json";
 import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRateModel.json";
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
+import MidasERC4626Artifact from "../lib/contracts/out/MidasERC4626.sol/MidasERC4626.json";
 import MidasFlywheelArtifact from "../lib/contracts/out/MidasFlywheel.sol/MidasFlywheel.json";
 import RewardsDistributorDelegateArtifact from "../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
 import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
@@ -79,6 +80,7 @@ const GelatoGUniPriceOracle: Artifact = GelatoGUniPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
 const WhitePaperInterestRateModel: Artifact = WhitePaperInterestRateModelArtifact;
+const MidasERC4626: Artifact = MidasERC4626Artifact;
 
 const ARTIFACTS = {
   CErc20Delegate,
@@ -124,6 +126,7 @@ const ARTIFACTS = {
   UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
+  MidasERC4626,
 };
 
 export type Artifacts = typeof ARTIFACTS;
@@ -170,6 +173,7 @@ export {
   UniswapTwapPriceOracleV2Root,
   Unitroller,
   WhitePaperInterestRateModel,
+  MidasERC4626,
 };
 
 export default ARTIFACTS;
