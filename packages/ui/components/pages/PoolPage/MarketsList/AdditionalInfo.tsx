@@ -33,6 +33,7 @@ import {
   ADMIN_FEE_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
   MIDAS_SECURITY_DOCS_URL,
+  PERFORMANCE_FEE_TOOLTIP,
   RESERVE_FACTOR_TOOLTIP,
   SCORE_LIMIT,
   SCORE_RANGE_MAX,
@@ -703,6 +704,7 @@ export const AdditionalInfo = ({
                     stat={performanceFee + '%'}
                     caption={'Performance Fee'}
                     crossAxisAlignment="center"
+                    tooltip={PERFORMANCE_FEE_TOOLTIP}
                   />
                 )}
               </Grid>
