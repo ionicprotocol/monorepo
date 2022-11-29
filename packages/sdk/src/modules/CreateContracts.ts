@@ -67,11 +67,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
         cTokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
       }
 
-      return new Contract(
-        address,
-        cTokenABI,
-        signerOrProvider
-      ) as CTokenWithExtensions;
+      return new Contract(address, cTokenABI, signerOrProvider) as CTokenWithExtensions;
     }
 
     createCErc20PluginRewardsDelegate(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
