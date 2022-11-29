@@ -101,9 +101,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     contract: "CTokenFirstExtension",
     from: deployer,
     args: [],
-    log: true
+    log: true,
   });
-  if (cTokenFirstExtension.transactionHash) await ethers.provider.waitForTransaction(cTokenFirstExtension.transactionHash);
+  if (cTokenFirstExtension.transactionHash)
+    await ethers.provider.waitForTransaction(cTokenFirstExtension.transactionHash);
   console.log("CTokenFirstExtension", cTokenFirstExtension.address);
 
   const erc20Del = await deployments.deploy("CErc20Delegate", {
@@ -234,7 +235,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  const erc20PluginDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginDel.address);
+  const erc20PluginDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
+    erc20PluginDel.address
+  );
   if (erc20PluginDelExtensions != 1 || erc20PluginDelExtensions[0] != cTokenFirstExtension.address) {
     tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginDel.address, [cTokenFirstExtension.address]);
     await tx.wait();
@@ -262,9 +265,13 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  const erc20PluginRewardsDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20PluginRewardsDel.address);
+  const erc20PluginRewardsDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
+    erc20PluginRewardsDel.address
+  );
   if (erc20PluginRewardsDelExtensions != 1 || erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address) {
-    tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDel.address, [cTokenFirstExtension.address]);
+    tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDel.address, [
+      cTokenFirstExtension.address,
+    ]);
     await tx.wait();
     console.log(`configured the extensions for the CErc20PluginRewardsDelegate ${erc20PluginRewardsDel.address}`);
   } else {
