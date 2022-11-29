@@ -6,7 +6,6 @@ import AdjustableJumpRateModelArtifact from "../lib/contracts/out/AdjustableJump
 import AnkrBNBInterestRateModelArtifact from "../lib/contracts/out/AnkrBNBInterestRateModel.sol/AnkrBNBInterestRateModel.json";
 import AnkrCertificateTokenPriceOracleArtifact from "../lib/contracts/out/AnkrCertificateTokenPriceOracle.sol/AnkrCertificateTokenPriceOracle.json";
 import BalancerLpTokenPriceOracleArtifact from "../lib/contracts/out/BalancerLpTokenPriceOracle.sol/BalancerLpTokenPriceOracle.json";
-import BNBxPriceOracleArtifact from "../lib/contracts/out/BNBxPriceOracle.sol/BNBxPriceOracle.json";
 import CErc20DelegateArtifact from "../lib/contracts/out/CErc20Delegate.sol/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "../lib/contracts/out/CErc20Delegator.sol/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "../lib/contracts/out/CErc20PluginDelegate.sol/CErc20PluginDelegate.json";
@@ -75,7 +74,6 @@ const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
 const AnkrCertificateTokenPriceOracle: Artifact = AnkrCertificateTokenPriceOracleArtifact;
 const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
-const BNBxPriceOracle: Artifact = BNBxPriceOracleArtifact;
 const GelatoGUniPriceOracle: Artifact = GelatoGUniPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
@@ -121,7 +119,6 @@ const ARTIFACTS = {
   BalancerLpTokenPriceOracle,
   AnkrCertificateTokenPriceOracle,
   StkBNBPriceOracle,
-  BNBxPriceOracle,
   GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   Unitroller,
@@ -167,7 +164,6 @@ export {
   BalancerLpTokenPriceOracle,
   AnkrCertificateTokenPriceOracle,
   StkBNBPriceOracle,
-  BNBxPriceOracle,
   GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,
