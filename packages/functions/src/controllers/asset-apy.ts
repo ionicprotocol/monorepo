@@ -4,7 +4,7 @@ import { environment, supabase } from '../config';
 import { getAPYProviders } from '../providers/rewards/assets';
 import { SupportedChains } from '@midas-capital/types';
 
-const updateAssetRewards = async (chainId: SupportedChains, rpcUrl: string) => {
+export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) => {
   try {
     const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
     const apyProviders = await getAPYProviders(chainId, {
@@ -15,7 +15,10 @@ const updateAssetRewards = async (chainId: SupportedChains, rpcUrl: string) => {
     const results = await Promise.all(
       Object.entries(apyProviders).map(async ([assetAddress, assetAPYProvider]) => {
         try {
-          return assetAPYProvider.getApy(assetAddress, {});
+          return {
+            asset: assetAddress,
+            rewards: await assetAPYProvider.getApy(assetAddress, {}),
+          };
         } catch (exception) {
           await functionsAlert(
             `Functions.asset-rewards: Asset '${assetAddress}' / Chain '${chainId}'`,
@@ -24,18 +27,23 @@ const updateAssetRewards = async (chainId: SupportedChains, rpcUrl: string) => {
         }
       })
     );
-    console.log(JSON.stringify(results, undefined, 2));
 
-    // todo
-    const rows = results.filter((r) => !!r).map((r) => r);
+    const rows = results
+      .filter((r) => !!r)
+      .filter((r) => !!r?.rewards)
+      .map((r) => ({
+        chain_id: chainId,
+        asset_address: r?.asset.toLowerCase(),
+        rewards: r?.rewards,
+      }));
 
-    // const { error } = await supabase.from(environment.supabasePluginRewardsTableName).insert(rows);
-    // if (error) {
-    //   throw `Error occurred during saving plugin reward results to database: ${error.message}`;
-    // }
+    const { error } = await supabase.from(environment.supabaseAssetApyTableName).insert(rows);
+    if (error) {
+      throw `Error occurred during saving plugin reward results to database: ${error.message}`;
+    }
   } catch (exception) {
     await functionsAlert('Functions.plugin-rewards: Generic Error', JSON.stringify(exception));
   }
 };
 
-export default updateAssetRewards;
+export default updateAssetApy;
