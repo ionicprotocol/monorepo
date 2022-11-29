@@ -143,7 +143,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const marketsToUpgrade = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
-        const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market)) as CErc20Delegate;
+        const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
 
         console.log("market", {
           cToken: market,
@@ -157,8 +157,17 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
-          console.log(`will upgrade ${market} to ${latestImpl}`);
-          marketsToUpgrade.push(market);
+          try {
+            console.log(`upgrading ${market} to ${latestImpl}`);
+            const tx = await cTokenInstance.accrueInterest();
+            const receipt: TransactionReceipt = await tx.wait();
+            console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+
+            const implAfter = await cTokenInstance.callStatic.implementation();
+            console.log(`implementation after ${implAfter}`);
+          } catch (e) {
+            console.error(`failed to upgrade market ${market}`, e);
+          }
         }
       }
 
@@ -171,19 +180,6 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
 
         for (let k = 0; k < marketsToUpgrade.length; k++) {
           const market = marketsToUpgrade[k];
-          try {
-            const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
-
-            console.log(`upgrading ${market}`);
-            const tx = await cTokenInstance.accrueInterest();
-            const receipt: TransactionReceipt = await tx.wait();
-            console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
-
-            const implAfter = await cTokenInstance.callStatic.implementation();
-            console.log(`implementation after ${implAfter}`);
-          } catch (e) {
-            console.error(`failed to upgrade market ${market}`, e);
-          }
         }
       }
 
