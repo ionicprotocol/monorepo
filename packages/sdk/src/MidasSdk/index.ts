@@ -27,6 +27,7 @@ import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirecto
 import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "../../lib/contracts/typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "../../lib/contracts/typechain/FuseSafeLiquidator";
+import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
@@ -393,6 +394,10 @@ export class MidasBase {
       this.chainDeployment.FusePoolDirectory.abi,
       signerOrProvider
     );
+  }
+
+  getMidasErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.MidasERC4626.abi, signerOrProvider) as MidasERC4626;
   }
 }
 
