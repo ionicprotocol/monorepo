@@ -1,5 +1,5 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
-import { bsc } from "@midas-capital/chains";
+import { moonbeam } from "@midas-capital/chains";
 import { assetFilter, assetSymbols, SupportedChains, underlying } from "@midas-capital/types";
 import { Wallet } from "ethers";
 
@@ -16,15 +16,25 @@ import { LiquidityPoolKind, Services } from "../src/types";
 
   const assets = {
     [LiquidityPoolKind.UniswapV2]: [
-      {
-        token0: underlying(bsc.assets, assetSymbols.stkBNB),
-        token1: underlying(bsc.assets, assetSymbols.WBNB),
-        identifier: "PCS stkBNB-WBNB",
-        affectedAssets: [assetFilter(bsc.assets, assetSymbols.stkBNB)],
-      },
+      // {
+      //   token0: underlying(bsc.assets, assetSymbols.stkBNB),
+      //   token1: underlying(bsc.assets, assetSymbols.WBNB),
+      //   identifier: "PCS stkBNB-WBNB",
+      //   affectedAssets: [assetFilter(bsc.assets, assetSymbols.stkBNB)],
+      // },
     ],
     [LiquidityPoolKind.UniswapV3]: [],
-    [LiquidityPoolKind.CurveV1]: [],
+    [LiquidityPoolKind.Curve]: [
+      {
+        identifier: "Curve xcDOT-stDOT",
+        poolAddress: underlying(moonbeam.assets, assetSymbols["xcDOT-stDOT"]),
+        affectedAssets: [
+          assetFilter(moonbeam.assets, assetSymbols.xcDOT),
+          assetFilter(moonbeam.assets, assetSymbols.wstDOT),
+        ],
+        minLiquidity: 10e6,
+      },
+    ],
     [LiquidityPoolKind.Balancer]: [],
   };
   runVerifier(midasSdk, Services.LiquidityDepthVerifier, assets);

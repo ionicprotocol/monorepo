@@ -21,13 +21,13 @@ export const MONITORED_CHAIN_ASSETS: MonitoredChainAssets = {
       },
     ],
     [LiquidityPoolKind.UniswapV3]: [],
-    [LiquidityPoolKind.CurveV1]: [],
+    [LiquidityPoolKind.Curve]: [],
     [LiquidityPoolKind.Balancer]: [],
   },
   [LiquidityMonitorChains.polygon]: {
     [LiquidityPoolKind.UniswapV2]: [],
     [LiquidityPoolKind.UniswapV3]: [],
-    [LiquidityPoolKind.CurveV1]: [],
+    [LiquidityPoolKind.Curve]: [],
     [LiquidityPoolKind.Balancer]: [
       {
         poolAddress: underlying(polygon.assets, assetSymbols.MIMO_PAR_80_20),
@@ -39,11 +39,13 @@ export const MONITORED_CHAIN_ASSETS: MonitoredChainAssets = {
   [LiquidityMonitorChains.moonbeam]: {
     [LiquidityPoolKind.UniswapV2]: [],
     [LiquidityPoolKind.UniswapV3]: [],
-    [LiquidityPoolKind.CurveV1]: [
+    [LiquidityPoolKind.Curve]: [
       {
-        pool: underlying(moonbeam.assets, assetSymbols["xcDOT-stDOT"]),
-        underlyings: [underlying(moonbeam.assets, assetSymbols.xcDOT), underlying(moonbeam.assets, assetSymbols.stDOT)],
-        affectedAssets: [assetFilter(moonbeam.assets, assetSymbols["xcDOT-stDOT"])],
+        poolAddress: underlying(moonbeam.assets, assetSymbols["xcDOT-stDOT"]),
+        affectedAssets: [
+          assetFilter(moonbeam.assets, assetSymbols.xcDOT),
+          assetFilter(moonbeam.assets, assetSymbols.stDOT),
+        ],
         identifier: "Curve xcDOT-stDOT",
       },
     ],

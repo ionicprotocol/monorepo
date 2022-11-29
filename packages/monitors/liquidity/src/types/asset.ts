@@ -11,16 +11,14 @@ export type UniswapV2AssetConfig = BaseAssetConfig & {
   token1: string;
   alternativeFactory?: string;
   minLiquidity?: number;
-  affectedUnderlyingAssets?: string[];
 };
 
 export type UniswapV3AssetConfig = UniswapV2AssetConfig & {
   fee: number;
 };
 
-export type CurveV1PoolConfig = BaseAssetConfig & {
-  pool: string;
-  underlyings: string[];
+export type CurvePoolConfig = BaseAssetConfig & {
+  poolAddress: string;
   minLiquidity?: number;
 };
 
@@ -29,7 +27,7 @@ export type BalancerPoolConfig = BaseAssetConfig & {
   minLiquidity?: number;
 };
 
-export type TAssetConfig = UniswapV2AssetConfig | UniswapV3AssetConfig | CurveV1PoolConfig | BalancerPoolConfig;
+export type TAssetConfig = UniswapV2AssetConfig | UniswapV3AssetConfig | CurvePoolConfig | BalancerPoolConfig;
 
 export type Reserve = {
   underlying: Contract;

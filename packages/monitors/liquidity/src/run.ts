@@ -10,11 +10,12 @@ import { MONITORED_CHAIN_ASSETS } from "./config/pools";
 export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: MonitoredAssetsConfig) {
   const assetsToVerify = assetsOverride ? assetsOverride : MONITORED_CHAIN_ASSETS[sdk.chainId];
 
-  const msg = Object.values(LiquidityPoolKind).forEach((pk) => {
-    return assetsToVerify[pk].map((a) => a.identifier).join(", ");
+  let msg: Array<string> = [];
+  Object.values(LiquidityPoolKind).forEach((pk) => {
+    msg = [...msg, ...assetsToVerify[pk].map((a) => a.identifier).filter((a) => a)];
   });
 
-  logger.info(`RUNNING SERVICE: ${service} on assets: ${msg}`);
+  logger.info(`RUNNING SERVICE: ${service} on assets: ${msg.join(", ")}`);
 
   const verifier = new BatchVerifier(sdk, assetsToVerify);
   await verifier.batchVerify(verifiers[service], configs[service]);
