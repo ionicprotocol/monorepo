@@ -1,4 +1,4 @@
-import { arbitrum, bsc, chapel, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
 import { ChainConfig } from "@midas-capital/types";
 
 import { ChainLinkFeedHeartbeat } from "./oracle/scorers/chainlink/types";
@@ -23,6 +23,8 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [neondevnet.chainId]: neondevnet,
   [chapel.chainId]: chapel,
   [ganache.chainId]: ganache,
+  [fantom.chainId]: fantom,
+  [evmos.chainId]: evmos,
 };
 
 /* Strategy Risk Enums */

@@ -9,15 +9,14 @@ import {
   deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
+  deployCurveV2LpOracle,
   deployDiaOracle,
+  deployStkBNBOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
+  deployWombatOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
-import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
-import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
-import { deployWombatOracle } from "../helpers/oracles/wombatLp";
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
@@ -56,33 +55,40 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: underlying(assets, assetSymbols.BTCB),
         pair: underlying(assets, assetSymbols["BTCB-BOMB"]),
         minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
+        deviationThreshold: "50000000000000000", // 5%
       },
       {
         token: underlying(assets, assetSymbols.DDD),
         pair: "0xc19956eCA8A3333671490EF6D6d4329Df049dddD", // WBNB-DDD
         baseToken: wbnb,
         minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
+        deviationThreshold: "50000000000000000", // 5%
       },
       {
         token: underlying(assets, assetSymbols.EPX),
         pair: "0x30B8A03ba1269cC2daf1Be481bca699DC98D8726", // WBNB-EPX
         baseToken: wbnb,
         minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
+        deviationThreshold: "50000000000000000", // 5%
       },
       {
         token: underlying(assets, assetSymbols.pSTAKE),
         pair: "0x2bF1c14b71C375B35B4C157790bC4D6e557714FE", // WBNB-pSTAKE
         baseToken: wbnb,
         minPeriod: 1800,
-        deviationThreshold: "10000000000000000",
+        deviationThreshold: "50000000000000000",
       },
       {
         token: underlying(assets, assetSymbols.SD),
         pair: "0x867EB519b05d9C4798B2EdE0B11197274dfDFcC0", // ApeSwap BUSD-SD
         baseToken: underlying(assets, assetSymbols.BUSD),
+        minPeriod: 1800,
+        deviationThreshold: "50000000000000000",
+      },
+      {
+        token: underlying(assets, assetSymbols.HAY),
+        pair: "0xb84348b32E5C83856c6e31C227639cd678163719", // WBNB-HAY
+        baseToken: underlying(assets, assetSymbols.WBNB),
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
       },
@@ -222,6 +228,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.ALPACA,
     aggregator: "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.BNBx,
+    aggregator: "0xc4429B539397a3166eF3ef132c29e34715a3ABb4",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
 ];
@@ -398,15 +409,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     assets,
   });
 
-  //// BNBx  oracle
-  await deployBNBxPriceOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    assets,
-  });
-
   //// Ankr BNB Certificate oracle
   await deployAnkrCertificateTokenPriceOracle({
     run,
@@ -414,6 +416,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     getNamedAccounts,
     deployments,
     assets,
+    certificateAssetSymbol: assetSymbols.aBNBc,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {

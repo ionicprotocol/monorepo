@@ -38,6 +38,7 @@ export type LiquidatablePool = {
 export type ErroredPool = {
   comptroller: string;
   msg: string;
+  error?: any;
 };
 
 export type FusePoolUserStruct = {

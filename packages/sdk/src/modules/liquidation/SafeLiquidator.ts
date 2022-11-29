@@ -25,7 +25,17 @@ export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBa
           ...this.chainLiquidationConfig,
           ...configOverrides,
         };
-      return [await gatherLiquidations(this, fusePoolWithUsers, this.chainLiquidationConfig), erroredPools];
+      const [liquidateablePools, erroredLiquidations] = await gatherLiquidations(
+        this,
+        fusePoolWithUsers,
+        this.chainLiquidationConfig
+      );
+
+      // get unique comptrollers
+      const errored = [...erroredPools, ...erroredLiquidations].filter(
+        (value, idx, array) => array.findIndex((v2) => v2.comptroller === value.comptroller) === idx
+      );
+      return [liquidateablePools, errored];
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool
