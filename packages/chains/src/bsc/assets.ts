@@ -285,7 +285,7 @@ const assets: SupportedAsset[] = [
     underlying: BNBx,
     name: "Liquid Staked BNB (Stader)",
     decimals: 18,
-    oracle: OracleTypes.BNBxPriceOracle,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: BNBxDocs(),
   },
   {
