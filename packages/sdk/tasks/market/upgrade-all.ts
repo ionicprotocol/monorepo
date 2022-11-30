@@ -2,10 +2,10 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
+import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   .addOptionalParam(
@@ -143,7 +143,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const marketsToUpgrade = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
-        const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
+        const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market, signer)) as CTokenFirstExtension;
 
         console.log("market", {
           cToken: market,
