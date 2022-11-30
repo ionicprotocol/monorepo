@@ -62,7 +62,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     }
 
     createCTokenWithExtensions(address: string, signerOrProvider = this.provider) {
-      const cTokenABI: Array<Fragment> = this.chainDeployment.CToken.abi;
+      const cTokenABI: Array<Fragment> = this.chainDeployment.CErc20Delegate.abi;
       if (this.chainDeployment.CTokenFirstExtension) {
         cTokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
       }
