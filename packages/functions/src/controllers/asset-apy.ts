@@ -33,11 +33,12 @@ export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) =
       .filter((r) => !!r?.rewards)
       .map((r) => ({
         chain_id: chainId,
-        asset_address: r?.asset.toLowerCase(),
+        address: r?.asset.toLowerCase(),
         rewards: r?.rewards,
+        updated_at: new Date().toISOString(),
       }));
 
-    const { error } = await supabase.from(environment.supabaseAssetApyTableName).insert(rows);
+    const { error } = await supabase.from(environment.supabaseAssetApyTableName).upsert(rows);
     if (error) {
       throw `Error occurred during saving plugin reward results to database: ${error.message}`;
     }
