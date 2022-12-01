@@ -105,7 +105,7 @@ export const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.WETH_wh,
     underlying: whWETH,
-    name: "Wormhwole Wrapped ETH",
+    name: "Wormhole Wrapped ETH",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", whWETH),
