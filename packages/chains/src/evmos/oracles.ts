@@ -6,6 +6,9 @@ const oracles: OracleTypes[] = [
   ...baseOracles,
   OracleTypes.UniswapLpTokenPriceOracle,
   OracleTypes.UniswapTwapPriceOracleV2,
+  OracleTypes.AdrastiaPriceOracle,
+  OracleTypes.FluxPriceOracle,
+  OracleTypes.NativeUSDPriceOracle,
 ];
 
 export default oracles;

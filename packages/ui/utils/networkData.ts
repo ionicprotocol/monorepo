@@ -76,6 +76,9 @@ export function getEnabledChains() {
   if (config.isFantomEnabled) {
     enabledChains.push(SupportedChains.fantom);
   }
+  if (config.isEvmosEnabled) {
+    enabledChains.push(SupportedChains.evmos);
+  }
 
   if (config.isTestnetEnabled) {
     enabledChains.push(SupportedChains.neon_devnet);

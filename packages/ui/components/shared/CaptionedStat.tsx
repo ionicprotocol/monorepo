@@ -17,7 +17,7 @@ const CaptionedStat = ({
   const textAlign = crossAxisAlignmentStatic.replace('flex-', '') as SystemProps['textAlign'];
 
   return (
-    <Column mainAxisAlignment="center" crossAxisAlignment={crossAxisAlignment}>
+    <Column mainAxisAlignment="center" crossAxisAlignment={crossAxisAlignment} gap={2}>
       <HStack>
         <Caption mt={spacing ?? 0} textAlign={textAlign}>
           {caption}
@@ -37,7 +37,7 @@ const CaptionedStat = ({
 
 const Stat = ({ text }: { text: string }) => {
   return (
-    <Text variant="smText" fontWeight="bold" lineHeight="2.5rem">
+    <Text variant="smText" fontWeight="bold">
       {text}
     </Text>
   );

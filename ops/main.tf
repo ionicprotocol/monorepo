@@ -70,6 +70,7 @@ module "bsc_mainnet_liquidation_bot" {
   provider_urls           = [local.bsc_mainnet_rpc_0, local.bsc_mainnet_rpc_1]
   runtime_env_vars = concat(local.liquidation_variables, [
     { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
+    { name = "EXCLUDED_COMPTROLLERS", value = local.bsc_excluded_comptrollers },
   ])
 }
 
@@ -90,6 +91,7 @@ module "polygon_mainnet_liquidation_bot" {
   provider_urls           = [local.polygon_mainnet_rpc_0, local.polygon_mainnet_rpc_1]
   runtime_env_vars = concat(local.liquidation_variables, [
     { name = "TARGET_CHAIN_ID", value = local.polygon_mainnet_chain_id },
+    { name = "EXCLUDED_COMPTROLLERS", value = local.polygon_excluded_comptrollers },
   ])
 }
 
