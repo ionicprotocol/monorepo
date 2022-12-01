@@ -1510,7 +1510,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xD03b7c6766AA34b551Df97507E90957A6c918F96",
+      "address": "0x1af120e4F19c2ff4E1be38684cfAb2905E1C05cE",
       "abi": [
         {
           "inputs": [],
@@ -2153,7 +2153,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "pure",
           "type": "function"
         },
         {
@@ -2699,7 +2699,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x991a96552ac7E81A4619bBEcdBFc865d6Cf1e5ED",
+      "address": "0x910FD3DfEbDEe71f7ABD6f085d75572C4E6953EB",
       "abi": [
         {
           "inputs": [
@@ -3369,7 +3369,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "pure",
           "type": "function"
         },
         {
@@ -3928,7 +3928,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x5aBBC5874dc49E3aea88D362ED645120276B432c",
+      "address": "0xec1f902e7d5E06fB20C3606806047A6B0Db9b029",
       "abi": [
         {
           "inputs": [
@@ -4623,7 +4623,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "pure",
           "type": "function"
         },
         {
