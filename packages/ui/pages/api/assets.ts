@@ -25,7 +25,6 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Assets
   }
   const { chainId } = validatedQuery;
   const client = createClient(config.supabaseUrl, config.supabasePublicKey);
-  console.log({ chainId, table: config.supabaseAssetApyTableName });
 
   const databaseResponse = await client
     .from(config.supabaseAssetApyTableName)
