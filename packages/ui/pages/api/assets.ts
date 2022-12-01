@@ -1,4 +1,4 @@
-import type { AssetReward, Reward } from '@midas-capital/types';
+import type { AssetReward } from '@midas-capital/types';
 import { createClient } from '@supabase/supabase-js';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import * as yup from 'yup';
@@ -35,7 +35,7 @@ const handler = async (request: NextApiRequest, response: NextApiResponse<Assets
   if (databaseResponse.error) {
     return response.status(500);
   }
-  console.log({ databaseResponse, data: databaseResponse.data });
+
   if (databaseResponse.data && databaseResponse.data.length > 0) {
     return response.json(
       databaseResponse.data.reduce((acc: AssetsResponse, cur) => {

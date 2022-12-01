@@ -9,6 +9,7 @@ import { RewardsInfo } from '@ui/components/pages/PoolPage/MarketsList/RewardsIn
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -23,6 +24,10 @@ interface SupplyApyProps {
 
 export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
   const sdk = useSdk(poolChainId);
+  const { data: assetInfos } = useAssets(poolChainId);
+  const assetRewards = useMemo(() => {
+    if (assetInfos) return assetInfos[asset.underlyingToken.toLowerCase()];
+  }, [asset, assetInfos]);
   const supplyAPY = useMemo(() => {
     if (sdk) {
       return sdk.ratePerBlockToAPY(
@@ -61,9 +66,26 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
   return (
     <VStack alignItems={'flex-end'}>
-      <Text color={supplyApyColor} fontWeight="bold" variant="smText">
-        {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
-      </Text>
+      {supplyAPY && (
+        <Text color={supplyApyColor} fontWeight="bold" variant="smText">
+          {supplyAPY.toFixed(2)}%
+        </Text>
+      )}
+
+      {assetRewards &&
+        assetRewards.map((reward, index) => {
+          if (!reward.apy) return null;
+          return (
+            <SimpleTooltip
+              key={`asset-reward-${index}`}
+              label={`The compounding APY for staking rewards of ${asset.underlyingSymbol}`}
+            >
+              <Text color={cCard.txtColor} variant="smText">
+                + {Number(reward.apy * 100).toFixed(2)}%
+              </Text>
+            </SimpleTooltip>
+          );
+        })}
 
       {/* // TODO remove hardcoded Ankr Stuff here  */}
       {asset.underlyingSymbol === assetSymbols.aBNBc && (
@@ -72,27 +94,6 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         >
           <Text color={cCard.txtColor} variant="smText">
             + {Number(aBNBcApr).toFixed(2)}%
-          </Text>
-        </SimpleTooltip>
-      )}
-
-      {/* // TODO remove hardcoded pStake and Stader here  */}
-      {asset.underlyingSymbol === assetSymbols.stkBNB && (
-        <SimpleTooltip
-          label={`The autocompounding APY for staking rewards of ${assetSymbols.stkBNB}`}
-        >
-          <Text color={cCard.txtColor} variant="smText">
-            + 5.2%
-          </Text>
-        </SimpleTooltip>
-      )}
-
-      {asset.underlyingSymbol === assetSymbols.BNBx && (
-        <SimpleTooltip
-          label={`The autocompounding APY for staking rewards of ${assetSymbols.BNBx}`}
-        >
-          <Text color={cCard.txtColor} variant="smText">
-            + 5.92%
           </Text>
         </SimpleTooltip>
       )}
