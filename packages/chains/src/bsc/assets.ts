@@ -3,11 +3,11 @@ import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@mid
 import {
   ankrCertificateDocs,
   apeSwapDocs,
-  BNBxDocs,
   defaultDocs,
   ellipsisDocs,
   jarvisDocs,
   pancakeSwapDocs,
+  StaderXDocs,
   stkBNBDocs,
 } from "../common";
 import { wombatDocs, wrappedAssetDocs } from "../common/docs";
@@ -286,7 +286,7 @@ const assets: SupportedAsset[] = [
     name: "Liquid Staked BNB (Stader)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
-    extraDocs: BNBxDocs(),
+    extraDocs: StaderXDocs("bnbchain", "BNBx"),
   },
   {
     symbol: assetSymbols["epsBNBx-BNB"],
