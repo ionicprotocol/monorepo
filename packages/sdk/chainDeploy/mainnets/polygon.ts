@@ -6,6 +6,7 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
@@ -177,6 +178,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.MATICx,
+    aggregator: "0x5d37E4b374E6907de8Fc7fb33EE3b0af403C7403",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.MKR,
     aggregator: "0xa070427bF5bA5709f70e98b94Cb2F435a242C46C",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -194,6 +200,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.SOL,
     aggregator: "0x10C8264C0935b3B9870013e057f330Ff3e9C56dC",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.stMATIC,
+    aggregator: "0x97371dF4492605486e23Da797fA68e55Fc38a13f",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -336,53 +347,58 @@ const chainlinkAssets: ChainlinkAsset[] = [
 // https://polygon.curve.fi/
 const curvePools: CurvePoolConfig[] = [
   {
-    lpToken: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
+    lpToken: underlying(assets, assetSymbols["AGEUR-JEUR"]),
     pool: "0x2fFbCE9099cBed86984286A54e5932414aF4B717",
     underlyings: [underlying(assets, assetSymbols.AGEUR), underlying(assets, assetSymbols.JEUR)],
   },
   {
-    lpToken: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
+    lpToken: underlying(assets, assetSymbols["JEUR-PAR"]),
     pool: "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97",
     underlyings: [underlying(assets, assetSymbols.PAR), underlying(assets, assetSymbols.JEUR)],
   },
   {
-    lpToken: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
+    lpToken: underlying(assets, assetSymbols["JEUR-EURT"]),
     pool: "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1",
     underlyings: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.EURT)],
   },
   {
-    lpToken: "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4",
+    lpToken: underlying(assets, assetSymbols["EURE-JEUR"]),
     pool: "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4",
     underlyings: [underlying(assets, assetSymbols.JEUR), underlying(assets, assetSymbols.EURE)],
   },
   {
-    lpToken: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
+    lpToken: underlying(assets, assetSymbols["JJPY-JPYC"]),
     pool: "0xaA91CDD7abb47F821Cf07a2d38Cc8668DEAf1bdc",
     underlyings: [underlying(assets, assetSymbols.JJPY), underlying(assets, assetSymbols.JPYC)],
   },
   {
-    lpToken: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
+    lpToken: underlying(assets, assetSymbols["JCAD-CADC"]),
     pool: "0xA69b0D5c0C401BBA2d5162138613B5E38584F63F",
     underlyings: [underlying(assets, assetSymbols.JCAD), underlying(assets, assetSymbols.CADC)],
   },
   {
-    lpToken: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
+    lpToken: underlying(assets, assetSymbols["JSGD-XSGD"]),
     pool: "0xeF75E9C7097842AcC5D0869E1dB4e5fDdf4BFDDA",
     underlyings: [underlying(assets, assetSymbols.JSGD), underlying(assets, assetSymbols.XSGD)],
   },
   {
-    lpToken: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
+    lpToken: underlying(assets, assetSymbols["JNZD-NZDS"]),
     pool: "0x976A750168801F58E8AEdbCfF9328138D544cc09",
     underlyings: [underlying(assets, assetSymbols.JNZD), underlying(assets, assetSymbols.NZDS)],
   },
   {
-    lpToken: "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171",
+    lpToken: underlying(assets, assetSymbols.am3CRV),
     pool: "0x445FE580eF8d70FF569aB36e80c647af338db351",
     underlyings: [
       underlying(assets, assetSymbols.DAI),
       underlying(assets, assetSymbols.USDC),
       underlying(assets, assetSymbols.USDT),
     ],
+  },
+  {
+    lpToken: underlying(assets, assetSymbols.WMATIC_STMATIC_CURVE),
+    pool: "0xFb6FE7802bA9290ef8b00CA16Af4Bc26eb663a28",
+    underlyings: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.stMATIC)],
   },
 ];
 
@@ -449,6 +465,12 @@ const diaAssets: DiaAsset[] = [
 const balancerLpAssets: BalancerLpAsset[] = [
   {
     lpTokenAddress: underlying(assets, assetSymbols.MIMO_PAR_80_20),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_MATICX_BLP),
+  },
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.WMATIC_STMATIC_BLP),
   },
 ];
 
@@ -518,7 +540,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     diaNativeFeed: { feed: ethers.constants.AddressZero, key: "" },
   });
 
-  /// Dia Price Oracle
+  /// Balancer LP Price Oracle
   await deployBalancerLpPriceOracle({
     run,
     ethers,
@@ -526,6 +548,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     balancerLpAssets,
+  });
+
+  /// Ankr Certificate Price Oracle
+  await deployAnkrCertificateTokenPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+    certificateAssetSymbol: assetSymbols.aMATICc,
   });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
