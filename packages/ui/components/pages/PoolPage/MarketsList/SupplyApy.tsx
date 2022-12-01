@@ -66,11 +66,9 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
   return (
     <VStack alignItems={'flex-end'}>
-      {supplyAPY && (
-        <Text color={supplyApyColor} fontWeight="bold" variant="smText">
-          {supplyAPY.toFixed(2)}%
-        </Text>
-      )}
+      <Text color={supplyApyColor} fontWeight="bold" variant="smText">
+        {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
+      </Text>
 
       {assetRewards &&
         assetRewards.map((reward, index) => {
