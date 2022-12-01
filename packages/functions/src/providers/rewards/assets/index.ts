@@ -12,7 +12,7 @@ type ProviderMapForChain = {
 };
 
 const providerMap: ProviderMapForChain = {
-  [SupportedChains.moonbeam]: {
+  [SupportedChains.bsc]: {
     '0x1bdd3Cf7F79cfB8EdbB955f20ad99211551BA275': new MockAPYProvider(0.0592),
     '0xc2E9d07F66A89c44062459A47a0D2Dc038E4fb16': new MockAPYProvider(0.052),
   },

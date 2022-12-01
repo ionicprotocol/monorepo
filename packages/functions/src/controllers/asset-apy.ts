@@ -43,7 +43,7 @@ export const updateAssetApy = async (chainId: SupportedChains, rpcUrl: string) =
       throw `Error occurred during saving plugin reward results to database: ${error.message}`;
     }
   } catch (exception) {
-    await functionsAlert('Functions.plugin-rewards: Generic Error', JSON.stringify(exception));
+    await functionsAlert('Functions.asset-apy: Generic Error', JSON.stringify(exception));
   }
 };
 

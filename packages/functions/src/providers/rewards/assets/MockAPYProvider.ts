@@ -6,7 +6,9 @@ class MockAPYProvider extends AbstractAssetAPYProvider {
     super();
   }
 
-  async init() {}
+  init() {
+    return Promise.resolve();
+  }
 
   async getApy(assetAddress: string): Promise<Reward[]> {
     return [
