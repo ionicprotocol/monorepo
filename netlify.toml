@@ -47,20 +47,8 @@ FANTOM = "false"
 directory = "./packages/functions/dist/functions/src/functions"
 node_bundler = "esbuild"
 
-[functions."bsc-plugin-data"]
+[functions."plugin-rewards-*"]
 schedule = "@hourly"
 
-[functions."moonbeam-plugin-data"]
-schedule = "@hourly"
-
-[functions."polygon-plugin-data"]
-schedule = "@hourly"
-
-[functions."bsc-plugin-rewards"]
-schedule = "@hourly"
-
-[functions."moonbeam-plugin-rewards"]
-schedule = "@hourly"
-
-[functions."polygon-plugin-rewards"]
+[functions."asset-apys-*"]
 schedule = "@hourly"

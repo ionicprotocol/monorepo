@@ -1,12 +1,12 @@
 import { BeefyPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
-import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider } from './AbstractAPYProvider';
+import { functionsAlert } from '../../../alert';
+import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
 interface BeefyAPYResponse {
   [key: string]: number;
 }
 
-class BeefyAPYProvider extends AbstractAPYProvider {
+class BeefyAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoint = 'https://api.beefy.finance/apy';
   private beefyAPYs: BeefyAPYResponse | undefined;
 

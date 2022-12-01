@@ -6,8 +6,8 @@ import {
   SupportedChains,
 } from '@midas-capital/types';
 import axios from 'axios';
-import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider, APYProviderInitObject } from './AbstractAPYProvider';
+import { functionsAlert } from '../../../alert';
+import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPluginAPYProvider';
 
 interface CurveAPYs {
   [lpTokenAddress: string]: PoolDetails;
@@ -46,7 +46,7 @@ interface CurveGaugeResponse {
   };
 }
 
-class CurveAPYProvider extends AbstractAPYProvider {
+class CurveAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoints: Partial<Record<SupportedChains, string>> = {
     [SupportedChains.moonbeam]: 'https://api.curve.fi/api/getFactoryAPYs-moonbeam',
     [SupportedChains.polygon]: 'https://api.curve.fi/api/getFactoryAPYs-polygon',
