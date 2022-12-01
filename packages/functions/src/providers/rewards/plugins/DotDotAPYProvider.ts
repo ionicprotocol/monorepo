@@ -1,7 +1,7 @@
 import { DotDotPlugin, Reward, Strategy } from '@midas-capital/types';
 import axios from 'axios';
-import { functionsAlert } from '../../alert';
-import { AbstractAPYProvider } from './AbstractAPYProvider';
+import { functionsAlert } from '../../../alert';
+import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
 interface DotDotAPYResponse {
   success: boolean;
   data: {
@@ -19,7 +19,7 @@ interface DotDotAPYResponse {
   };
 }
 
-class DotDotAPYProvider extends AbstractAPYProvider {
+class DotDotAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoint = 'https://api.dotdot.finance/api/lpDetails';
   private dotDotAPYs: DotDotAPYResponse['data']['tokens'] | undefined;
 

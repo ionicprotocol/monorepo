@@ -1,12 +1,12 @@
 import { Strategy } from '@midas-capital/types';
-import { AbstractAPYProvider, APYProviderInitObject } from './AbstractAPYProvider';
+import { AbstractPluginAPYProvider, APYProviderInitObject } from './AbstractPluginAPYProvider';
 import BeefyAPYProvider from './BeefyAPYProvider';
 import DotDotAPYProvider from './DotDotAPYProvider';
 import MimoAPYProvider from './MimoAPYProvider';
 import CurveGaugeAPYProvider from './CurveGaugeAPYProvider';
 
 type ProviderMap = {
-  [key in Strategy]?: AbstractAPYProvider;
+  [key in Strategy]?: AbstractPluginAPYProvider;
 };
 
 const providerMap: ProviderMap = {
