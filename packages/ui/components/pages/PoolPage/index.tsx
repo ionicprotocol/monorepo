@@ -154,7 +154,7 @@ const PoolPage = memo(() => {
 
           {chainId === SupportedChains.bsc.toString() && poolId === '7' && (
             <Banner
-              text="Due to the exploit on aBNBc, this pool is currently paused. We are taking a snapshot for everyone that had aBNBc in the about handling the situation for anybody that provided WBNB liquidity to the pool. More information: "
+              text="Due to the exploit affecting aBNBc, this pool is currently paused. We are taking a snapshot for everyone that supplied to this pool. Handling of the situation is currently being done by Ankr. More information: "
               linkText="https://twitter.com/ankr/status/1598624443642703872"
               linkUrl="https://twitter.com/ankr/status/1598624443642703872"
               status="warning"
