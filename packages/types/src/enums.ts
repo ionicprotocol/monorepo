@@ -236,9 +236,24 @@ export enum assetSymbols {
   GLMR = "GLMR",
   WGLMR = "WGLMR",
   GLINT = "GLINT",
+  // Stella
+  "USDC.wh-GLMR" = "USDC.wh-GLMR",
+  "DOT.xc-GLMR" = "DOT.xc-GLMR",
+  "WETH.wh-GLMR" = "WETH.wh-GLMR",
+  "WBTC.wh-GLMR" = "WBTC.wh-GLMR",
+  "STELLA-GLMR" = "STELLA-GLMR",
+  "CELR-GLMR" = "CELR-GLMR",
+  "ATOM-GLMR" = "ATOM-GLMR",
+  STELLA = "STELLA",
+  CELR = "CELR",
+  LDO = "LDO",
+  "LDO-GLMR" = "LDO-GLMR",
+
+  // BeamSwap
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
   "WGLMR-xcDOT" = "WGLMR-xcDOT",
+
   DOT = "DOT",
   xcDOT = "xcDOT",
   stDOT = "stDOT",
@@ -246,6 +261,8 @@ export enum assetSymbols {
   xcKSM = "xcKSM",
   stKSM = "stKSM",
   multiWBTC = "multiWBTC",
+  WBTC_wh = "WBTC.wh",
+  WETH_wh = "WETH.wh",
   multiUSDC = "multiUSDC",
   USDC_wh = "USDC.wh",
   multiUSDT = "multiUSDT",
@@ -327,15 +344,6 @@ export enum assetSymbols {
   arrakis_USDC_USDT_005 = "Arrakis Vault V1 USDC-USDT (0.05)",
   arrakis_USDC_DAI_005 = "G-UNI USDC-DAI Vault (0.05)",
   arrakis_WETH_DAI_03 = "G-UNI WETH-DAI Vault (0.3)",
-
-  // Stella
-  "STELLA-GLMR" = "STELLA-GLMR",
-  "CELR-GLMR" = "CELR-GLMR",
-  "ATOM-GLMR" = "ATOM-GLMR",
-  STELLA = "STELLA",
-  CELR = "CELR",
-  LDO = "LDO",
-  "LDO-GLMR" = "LDO-GLMR",
 
   // Arbitrum
   "2pool" = "2pool",
