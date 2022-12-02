@@ -95,7 +95,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           oldErc20PluginDelegate,
           erc20PluginDelegate.address,
           false,
-          "0x00"
+          constants.AddressZero
         );
         await tx.wait();
         console.log("_setLatestCErc20Delegate (plugin):", tx.hash);
@@ -106,7 +106,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           oldErc20PluginRewardsDelegate,
           erc20PluginRewardsDelegate.address,
           false,
-          "0x00"
+          constants.AddressZero
         );
         await tx.wait();
         console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
@@ -114,7 +114,13 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     }
   });
 
-task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
+type MarketImpl = {
+  address: string,
+  implBefore: string,
+  latestImpl: string,
+}
+
+task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
@@ -133,25 +139,13 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
-      if (!autoImplOn) {
-        if (admin == signer.address) {
-          const tx = await comptroller._toggleAutoImplementations(true);
-          await tx.wait();
-          console.log(`turned autoimpl on ${tx.hash}`);
-        } else {
-          console.log(`signer is not the admin ${admin} and cannot turn the autoimpl on`);
-          continue;
-          }
-      }
-
       const markets = await comptroller.callStatic.getAllMarkets();
+      const marketsToUpgrade: MarketImpl[] = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
         const cTokenInstance = (await ethers.getContractAt(
           "CTokenFirstExtension",
-          market,
-          signer
+          market
         )) as CTokenFirstExtension;
 
         console.log("market", {
@@ -166,11 +160,40 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
         if (latestImpl == constants.AddressZero || latestImpl == implBefore) {
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
+          console.log(`will upgrade ${market} to ${latestImpl}`);
+          marketsToUpgrade.push({
+            address: market,
+            implBefore,
+            latestImpl
+          });
+        }
+      }
+
+      if (marketsToUpgrade.length > 0) {
+        const autoImplOn = await comptroller.callStatic.autoImplementation();
+        if (!autoImplOn) {
+          if (admin == signer.address) {
+            const tx = await comptroller._toggleAutoImplementations(true);
+            await tx.wait();
+            console.log(`turned autoimpl on ${tx.hash}`);
+          } else {
+            console.log(`signer is not the admin ${admin} and cannot turn the autoimpl on`);
+            continue;
+          }
+        }
+
+        for (let j = 0; j < marketsToUpgrade.length; j++) {
+          const market = marketsToUpgrade[j];
+          const cTokenInstance = (await ethers.getContractAt(
+            "CTokenFirstExtension",
+            market.address,
+            signer
+          )) as CTokenFirstExtension;
           try {
-            console.log(`upgrading ${market} to ${latestImpl}`);
+            console.log(`upgrading ${market.address} from ${market.implBefore} to ${market.latestImpl}`);
             const tx = await cTokenInstance.accrueInterest();
-            const receipt: TransactionReceipt = await tx.wait();
-            console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+            await tx.wait();
+            console.log("accrueInterest:", tx.hash);
 
             const implAfter = await cTokenInstance.callStatic.implementation();
             console.log(`implementation after ${implAfter}`);

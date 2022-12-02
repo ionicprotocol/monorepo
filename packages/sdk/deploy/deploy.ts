@@ -210,7 +210,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
   const erc20DelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Del.address);
-  if (erc20DelExtensions != 1 || erc20DelExtensions[0] != cTokenFirstExtension.address) {
+  if (erc20DelExtensions.length != 1 || erc20DelExtensions[0] != cTokenFirstExtension.address) {
     tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20Del.address, [cTokenFirstExtension.address]);
     await tx.wait();
     console.log(`configured the extensions for the CErc20Delegate ${erc20Del.address}`);
@@ -238,7 +238,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const erc20PluginDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
     erc20PluginDel.address
   );
-  if (erc20PluginDelExtensions != 1 || erc20PluginDelExtensions[0] != cTokenFirstExtension.address) {
+  if (erc20PluginDelExtensions.length != 1 || erc20PluginDelExtensions[0] != cTokenFirstExtension.address) {
     tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginDel.address, [cTokenFirstExtension.address]);
     await tx.wait();
     console.log(`configured the extensions for the CErc20PluginDelegate ${erc20PluginDel.address}`);
@@ -268,7 +268,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const erc20PluginRewardsDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
     erc20PluginRewardsDel.address
   );
-  if (erc20PluginRewardsDelExtensions != 1 || erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address) {
+  if (erc20PluginRewardsDelExtensions.length != 1 || erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address) {
     tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDel.address, [
       cTokenFirstExtension.address,
     ]);
