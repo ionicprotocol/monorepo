@@ -253,6 +253,7 @@ export enum assetSymbols {
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
   "WGLMR-xcDOT" = "WGLMR-xcDOT",
+
   DOT = "DOT",
   xcDOT = "xcDOT",
   stDOT = "stDOT",

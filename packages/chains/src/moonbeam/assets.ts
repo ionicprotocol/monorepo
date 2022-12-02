@@ -28,6 +28,7 @@ const LDO = "0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0";
 const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
 const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57";
 const USDC_ETH = "0x0Aa48bF937ee8F41f1a52D225EF5A6F6961e39FA";
+const WGLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
 
 // StellaSwap
 const GLMR_ATOM = "0xf4C10263f2A4B1f75b8a5FD5328fb61605321639";
@@ -181,6 +182,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", FTM),
+  },
+  {
+    symbol: assetSymbols["WGLMR-xcDOT"],
+    underlying: WGLMR_xcDOT,
+    name: "BeamSwap WGLMR-xcDOT LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: beamSwapDocs(WGLMR, xcDOT, "WGLMR-xcDOT", WGLMR_xcDOT),
   },
   {
     symbol: assetSymbols["GLMR-USDC"],
