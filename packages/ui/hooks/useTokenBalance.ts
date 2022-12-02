@@ -16,7 +16,7 @@ export const fetchTokenBalance = async (
   } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
     balance = await currentSdk.provider.getBalance(address);
   } else {
-    const contract = currentSdk.getCTokenInstance(tokenAddress);
+    const contract = currentSdk.createCTokenWithExtensions(tokenAddress);
     balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
   }
 

@@ -229,7 +229,7 @@ export const AssetSettings = ({
   const updateReserveFactor = async ({ reserveFactor }: { reserveFactor: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = currentSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCTokenWithExtensions(cTokenAddress || '');
 
     // 10% -> 0.1 * 1e18
     const bigReserveFactor = utils.parseUnits((reserveFactor / 100).toString());
@@ -257,7 +257,7 @@ export const AssetSettings = ({
   const updateAdminFee = async ({ adminFee }: { adminFee: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = currentSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCTokenWithExtensions(cTokenAddress || '');
 
     // 5% -> 0.05 * 1e18
     const bigAdminFee = utils.parseUnits((adminFee / 100).toString());
@@ -285,7 +285,7 @@ export const AssetSettings = ({
   const updateInterestRateModel = async ({ interestRateModel }: { interestRateModel: string }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
-    const cToken = currentSdk.createCToken(cTokenAddress || '');
+    const cToken = currentSdk.createCTokenWithExtensions(cTokenAddress || '');
 
     try {
       const tx: ContractTransaction = await testForCTokenErrorAndSend(
