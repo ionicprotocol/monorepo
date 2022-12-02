@@ -1859,7 +1859,7 @@
       ]
     },
     "AnkrCertificateTokenPriceOracle_Implementation": {
-      "address": "0x81F17E70e27829A164E3B3E7E3517510eBC12920",
+      "address": "0xFe85a28755D9210BDC0D00c53F7873015cAbAd5d",
       "abi": [
         {
           "anonymous": false,
@@ -2213,7 +2213,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xdaFEe93782f31700DAD5B861eCE40aA4441563B1",
+      "address": "0x73D07Bb27CeCb6522cbeCD040CF3c61827B48f24",
       "abi": [
         {
           "inputs": [],
@@ -2221,60 +2221,42 @@
           "type": "constructor"
         },
         {
-          "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "cashPrior",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "interestAccumulated",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "borrowIndex",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "totalBorrows",
-              "type": "uint256"
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
             }
           ],
-          "name": "AccrueInterest",
-          "type": "event"
+          "name": "ExtensionNotFound",
+          "type": "error"
         },
         {
-          "anonymous": false,
           "inputs": [
             {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
             },
             {
-              "indexed": true,
               "internalType": "address",
-              "name": "spender",
+              "name": "_currentImpl",
               "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
             }
           ],
-          "name": "Approval",
-          "type": "event"
+          "name": "FunctionAlreadyAdded",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
+            }
+          ],
+          "name": "FunctionNotFound",
+          "type": "error"
         },
         {
           "anonymous": false,
@@ -2627,6 +2609,10 @@
           "type": "event"
         },
         {
+          "stateMutability": "nonpayable",
+          "type": "fallback"
+        },
+        {
           "inputs": [
             {
               "internalType": "bytes",
@@ -2641,6 +2627,19 @@
         },
         {
           "inputs": [],
+          "name": "_listExtensions",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
@@ -2649,19 +2648,18 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "newAdminFeeMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setAdminFee",
-          "outputs": [
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToAdd",
+              "type": "address"
+            },
             {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToReplace",
+              "type": "address"
             }
           ],
+          "name": "_registerExtension",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -2685,62 +2683,6 @@
           ],
           "name": "_setImplementationSafe",
           "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract InterestRateModel",
-              "name": "newInterestRateModel",
-              "type": "address"
-            }
-          ],
-          "name": "_setInterestRateModel",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            }
-          ],
-          "name": "_setNameAndSymbol",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "newReserveFactorMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setReserveFactor",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -2797,19 +2739,6 @@
         },
         {
           "inputs": [],
-          "name": "accrueInterest",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "adminFeeMantissa",
           "outputs": [
             {
@@ -2822,89 +2751,16 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            }
-          ],
-          "name": "allowance",
+          "inputs": [],
+          "name": "asCTokenExtensionInterface",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "contract CTokenExtensionInterface",
               "name": "",
-              "type": "uint256"
+              "type": "address"
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "approve",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOfUnderlying",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -2979,19 +2835,6 @@
         },
         {
           "inputs": [],
-          "name": "borrowRatePerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "comptroller",
           "outputs": [
             {
@@ -3013,7 +2856,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "pure",
           "type": "function"
         },
         {
@@ -3024,32 +2867,6 @@
               "internalType": "uint8",
               "name": "",
               "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "exchangeRateCurrent",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "exchangeRateStored",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -3493,19 +3310,6 @@
         },
         {
           "inputs": [],
-          "name": "supplyRatePerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "symbol",
           "outputs": [
             {
@@ -3541,19 +3345,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalBorrowsCurrent",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -3596,59 +3387,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "transfer",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "src",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferFrom",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "underlying",
           "outputs": [
@@ -3664,63 +3402,45 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x5fF63E442AC4724EC342f4a3d26924233832EcBB",
+      "address": "0x6805410425A19761c7cB2C77961d8f811Ac4Ce27",
       "abi": [
         {
-          "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "cashPrior",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "interestAccumulated",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "borrowIndex",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "totalBorrows",
-              "type": "uint256"
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
             }
           ],
-          "name": "AccrueInterest",
-          "type": "event"
+          "name": "ExtensionNotFound",
+          "type": "error"
         },
         {
-          "anonymous": false,
           "inputs": [
             {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
             },
             {
-              "indexed": true,
               "internalType": "address",
-              "name": "spender",
+              "name": "_currentImpl",
               "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
             }
           ],
-          "name": "Approval",
-          "type": "event"
+          "name": "FunctionAlreadyAdded",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
+            }
+          ],
+          "name": "FunctionNotFound",
+          "type": "error"
         },
         {
           "anonymous": false,
@@ -4092,17 +3812,8 @@
           "type": "event"
         },
         {
-          "inputs": [],
-          "name": "PRECISION",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
+          "stateMutability": "nonpayable",
+          "type": "fallback"
         },
         {
           "inputs": [
@@ -4119,6 +3830,19 @@
         },
         {
           "inputs": [],
+          "name": "_listExtensions",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
@@ -4127,19 +3851,18 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "newAdminFeeMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setAdminFee",
-          "outputs": [
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToAdd",
+              "type": "address"
+            },
             {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToReplace",
+              "type": "address"
             }
           ],
+          "name": "_registerExtension",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -4163,62 +3886,6 @@
           ],
           "name": "_setImplementationSafe",
           "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract InterestRateModel",
-              "name": "newInterestRateModel",
-              "type": "address"
-            }
-          ],
-          "name": "_setInterestRateModel",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            }
-          ],
-          "name": "_setNameAndSymbol",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "newReserveFactorMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setReserveFactor",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -4288,19 +3955,6 @@
         },
         {
           "inputs": [],
-          "name": "accrueInterest",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "adminFeeMantissa",
           "outputs": [
             {
@@ -4313,89 +3967,16 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            }
-          ],
-          "name": "allowance",
+          "inputs": [],
+          "name": "asCTokenExtensionInterface",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "contract CTokenExtensionInterface",
               "name": "",
-              "type": "uint256"
+              "type": "address"
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "approve",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOfUnderlying",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -4470,19 +4051,6 @@
         },
         {
           "inputs": [],
-          "name": "borrowRatePerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "comptroller",
           "outputs": [
             {
@@ -4504,7 +4072,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "pure",
           "type": "function"
         },
         {
@@ -4515,32 +4083,6 @@
               "internalType": "uint8",
               "name": "",
               "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "exchangeRateCurrent",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "exchangeRateStored",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -4997,19 +4539,6 @@
         },
         {
           "inputs": [],
-          "name": "supplyRatePerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "symbol",
           "outputs": [
             {
@@ -5045,19 +4574,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "totalBorrowsCurrent",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -5100,59 +4616,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "transfer",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "src",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "transferFrom",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "underlying",
           "outputs": [
@@ -5168,63 +4631,45 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x9c44eD0210a082CFA1378cd88BcE30dbA08daCb3",
+      "address": "0x9Be6440fB4fAA9707A8c03F9F7d2E4796930A951",
       "abi": [
         {
-          "anonymous": false,
           "inputs": [
             {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "cashPrior",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "interestAccumulated",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "borrowIndex",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "totalBorrows",
-              "type": "uint256"
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
             }
           ],
-          "name": "AccrueInterest",
-          "type": "event"
+          "name": "ExtensionNotFound",
+          "type": "error"
         },
         {
-          "anonymous": false,
           "inputs": [
             {
-              "indexed": true,
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
             },
             {
-              "indexed": true,
               "internalType": "address",
-              "name": "spender",
+              "name": "_currentImpl",
               "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
             }
           ],
-          "name": "Approval",
-          "type": "event"
+          "name": "FunctionAlreadyAdded",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
+            }
+          ],
+          "name": "FunctionNotFound",
+          "type": "error"
         },
         {
           "anonymous": false,
@@ -5596,17 +5041,8 @@
           "type": "event"
         },
         {
-          "inputs": [],
-          "name": "PRECISION",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
+          "stateMutability": "nonpayable",
+          "type": "fallback"
         },
         {
           "inputs": [
@@ -5623,6 +5059,19 @@
         },
         {
           "inputs": [],
+          "name": "_listExtensions",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "_prepare",
           "outputs": [],
           "stateMutability": "payable",
@@ -5631,19 +5080,18 @@
         {
           "inputs": [
             {
-              "internalType": "uint256",
-              "name": "newAdminFeeMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setAdminFee",
-          "outputs": [
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToAdd",
+              "type": "address"
+            },
             {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
+              "internalType": "contract DiamondExtension",
+              "name": "extensionToReplace",
+              "type": "address"
             }
           ],
+          "name": "_registerExtension",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -5667,62 +5115,6 @@
           ],
           "name": "_setImplementationSafe",
           "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract InterestRateModel",
-              "name": "newInterestRateModel",
-              "type": "address"
-            }
-          ],
-          "name": "_setInterestRateModel",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "string",
-              "name": "_name",
-              "type": "string"
-            },
-            {
-              "internalType": "string",
-              "name": "_symbol",
-              "type": "string"
-            }
-          ],
-          "name": "_setNameAndSymbol",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "newReserveFactorMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setReserveFactor",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -5792,19 +5184,6 @@
         },
         {
           "inputs": [],
-          "name": "accrueInterest",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "adminFeeMantissa",
           "outputs": [
             {
@@ -5814,54 +5193,6 @@
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            }
-          ],
-          "name": "allowance",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "spender",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "approve",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -5883,41 +5214,16 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOf",
+          "inputs": [],
+          "name": "asCTokenExtensionInterface",
           "outputs": [
             {
-              "internalType": "uint256",
+              "internalType": "contract CTokenExtensionInterface",
               "name": "",
-              "type": "uint256"
+              "type": "address"
             }
           ],
           "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address"
-            }
-          ],
-          "name": "balanceOfUnderlying",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -5980,19 +5286,6 @@
         {
           "inputs": [],
           "name": "borrowIndex",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "borrowRatePerBlock",
           "outputs": [
             {
               "internalType": "uint256",
@@ -6033,7 +5326,7 @@
               "type": "string"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "pure",
           "type": "function"
         },
         {
@@ -6044,32 +5337,6 @@
               "internalType": "uint8",
               "name": "",
               "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "exchangeRateCurrent",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "exchangeRateStored",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -6526,6 +5793,692 @@
         },
         {
           "inputs": [],
+          "name": "symbol",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalAdminFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalBorrows",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalFuseFees",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalReserves",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "totalSupply",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "underlying",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "CTokenFirstExtension": {
+      "address": "0x170bC031feF700fBFA3FFb2cFfe5FFEb247D2b1E",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "error",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "info",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "detail",
+              "type": "uint256"
+            }
+          ],
+          "name": "Failure",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldAdminFeeMantissa",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newAdminFeeMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewAdminFee",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldFuseFeeMantissa",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newFuseFeeMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewFuseFee",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "contract InterestRateModel",
+              "name": "oldInterestRateModel",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "contract InterestRateModel",
+              "name": "newInterestRateModel",
+              "type": "address"
+            }
+          ],
+          "name": "NewMarketInterestRateModel",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "oldReserveFactorMantissa",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newReserveFactorMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewReserveFactor",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Transfer",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "_getExtensionFunctions",
+          "outputs": [
+            {
+              "internalType": "bytes4[]",
+              "name": "",
+              "type": "bytes4[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "newAdminFeeMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "_setAdminFee",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract InterestRateModel",
+              "name": "newInterestRateModel",
+              "type": "address"
+            }
+          ],
+          "name": "_setInterestRateModel",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "string",
+              "name": "_name",
+              "type": "string"
+            },
+            {
+              "internalType": "string",
+              "name": "_symbol",
+              "type": "string"
+            }
+          ],
+          "name": "_setNameAndSymbol",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "newReserveFactorMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "_setReserveFactor",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "accrualBlockNumber",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "accrueInterest",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "adminFeeMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            }
+          ],
+          "name": "allowance",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "approve",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "asCTokenInterface",
+          "outputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "balanceOf",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            }
+          ],
+          "name": "balanceOfUnderlying",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "borrowIndex",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "borrowRatePerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "comptroller",
+          "outputs": [
+            {
+              "internalType": "contract ComptrollerInterface",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "decimals",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "exchangeRateCurrent",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "exchangeRateStored",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "feeSeizeShareMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseAdmin",
+          "outputs": [
+            {
+              "internalType": "address payable",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "fuseFeeMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "implementation",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "interestRateModel",
+          "outputs": [
+            {
+              "internalType": "contract InterestRateModel",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "name",
+          "outputs": [
+            {
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "protocolSeizeShareMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "reserveFactorMantissa",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "supplyRatePerBlock",
           "outputs": [
             {
@@ -6679,19 +6632,6 @@
             }
           ],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "underlying",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
           "type": "function"
         }
       ]
@@ -6911,7 +6851,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x89eBC78346dD9CdFb331d8f8029c445C698260f3",
+      "address": "0xcaf6A178292dDf42e5E10E2C5B54f349DFe1d9e3",
       "abi": [
         {
           "inputs": [
@@ -6923,6 +6863,44 @@
           ],
           "stateMutability": "nonpayable",
           "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
+            }
+          ],
+          "name": "ExtensionNotFound",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
+            },
+            {
+              "internalType": "address",
+              "name": "_currentImpl",
+              "type": "address"
+            }
+          ],
+          "name": "FunctionAlreadyAdded",
+          "type": "error"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes4",
+              "name": "_functionSelector",
+              "type": "bytes4"
+            }
+          ],
+          "name": "FunctionNotFound",
+          "type": "error"
         },
         {
           "anonymous": false,
@@ -7122,7 +7100,7 @@
           "type": "event"
         },
         {
-          "stateMutability": "payable",
+          "stateMutability": "nonpayable",
           "type": "fallback"
         },
         {
@@ -7230,7 +7208,7 @@
               "type": "address[]"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -7609,7 +7587,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "nonpayable",
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -9849,34 +9827,6 @@
             },
             {
               "internalType": "bool[]",
-              "name": "allowResign",
-              "type": "bool[]"
-            },
-            {
-              "internalType": "bool[]",
-              "name": "statuses",
-              "type": "bool[]"
-            }
-          ],
-          "name": "_editCEtherDelegateWhitelist",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "oldImplementations",
-              "type": "address[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "newImplementations",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bool[]",
               "name": "statuses",
               "type": "bool[]"
             }
@@ -10020,6 +9970,24 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "cErc20Delegate",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "extensions",
+              "type": "address[]"
+            }
+          ],
+          "name": "_setCErc20DelegateExtensions",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "comptroller",
               "type": "address"
             },
@@ -10089,34 +10057,6 @@
             }
           ],
           "name": "_setLatestCErc20Delegate",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "oldImplementation",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "allowResign",
-              "type": "bool"
-            },
-            {
-              "internalType": "bytes",
-              "name": "becomeImplementationData",
-              "type": "bytes"
-            }
-          ],
-          "name": "_setLatestCEtherDelegate",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -10223,6 +10163,30 @@
           "name": "_withdrawAssets",
           "outputs": [],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "cErc20DelegateExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -10386,6 +10350,25 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "cErc20Delegate",
+              "type": "address"
+            }
+          ],
+          "name": "getCErc20DelegateExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "comptroller",
               "type": "address"
             }
@@ -10455,35 +10438,6 @@
             }
           ],
           "name": "latestCErc20Delegate",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            },
-            {
-              "internalType": "bytes",
-              "name": "",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "oldImplementation",
-              "type": "address"
-            }
-          ],
-          "name": "latestCEtherDelegate",
           "outputs": [
             {
               "internalType": "address",
@@ -10688,7 +10642,7 @@
       ]
     },
     "FuseFeeDistributor_Implementation": {
-      "address": "0x6b459108523CB748418a34039C985CB2868FBA6A",
+      "address": "0xC6D57300974368BE5B979e62EA76cab5C6bc3130",
       "abi": [
         {
           "anonymous": false,
@@ -10827,34 +10781,6 @@
             }
           ],
           "name": "_editCErc20DelegateWhitelist",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "oldImplementations",
-              "type": "address[]"
-            },
-            {
-              "internalType": "address[]",
-              "name": "newImplementations",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bool[]",
-              "name": "allowResign",
-              "type": "bool[]"
-            },
-            {
-              "internalType": "bool[]",
-              "name": "statuses",
-              "type": "bool[]"
-            }
-          ],
-          "name": "_editCEtherDelegateWhitelist",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -11016,6 +10942,24 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "cErc20Delegate",
+              "type": "address"
+            },
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "extensions",
+              "type": "address[]"
+            }
+          ],
+          "name": "_setCErc20DelegateExtensions",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "comptroller",
               "type": "address"
             },
@@ -11085,34 +11029,6 @@
             }
           ],
           "name": "_setLatestCErc20Delegate",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "oldImplementation",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "newImplementation",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "allowResign",
-              "type": "bool"
-            },
-            {
-              "internalType": "bytes",
-              "name": "becomeImplementationData",
-              "type": "bytes"
-            }
-          ],
-          "name": "_setLatestCEtherDelegate",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -11219,6 +11135,30 @@
           "name": "_withdrawAssets",
           "outputs": [],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "cErc20DelegateExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
           "type": "function"
         },
         {
@@ -11382,6 +11322,25 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "cErc20Delegate",
+              "type": "address"
+            }
+          ],
+          "name": "getCErc20DelegateExtensions",
+          "outputs": [
+            {
+              "internalType": "contract DiamondExtension[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "comptroller",
               "type": "address"
             }
@@ -11451,35 +11410,6 @@
             }
           ],
           "name": "latestCErc20Delegate",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            },
-            {
-              "internalType": "bytes",
-              "name": "",
-              "type": "bytes"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "oldImplementation",
-              "type": "address"
-            }
-          ],
-          "name": "latestCEtherDelegate",
           "outputs": [
             {
               "internalType": "address",
@@ -12723,7 +12653,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x6deEdd5f6C418aDD12916dd56EbEdBcE67678d21",
+      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
       "abi": [
         {
           "anonymous": false,
