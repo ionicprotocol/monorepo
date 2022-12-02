@@ -9,15 +9,14 @@ import {
   deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
+  deployCurveV2LpOracle,
   deployDiaOracle,
+  deployStkBNBOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
+  deployWombatOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { deployBNBxPriceOracle } from "../helpers/oracles/bnbXOracle";
-import { deployCurveV2LpOracle } from "../helpers/oracles/curveLp";
-import { deployStkBNBOracle } from "../helpers/oracles/stkBNBOracle";
-import { deployWombatOracle } from "../helpers/oracles/wombatLp";
 import {
   ChainDeployFnParams,
   ChainlinkAsset,
@@ -231,6 +230,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0xe0073b60833249ffd1bb2af809112c2fbf221DF6",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.BNBx,
+    aggregator: "0xc4429B539397a3166eF3ef132c29e34715a3ABb4",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // TODO use these as funding and redemption strategies
@@ -398,15 +402,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// stk BNB  oracle
   await deployStkBNBOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    assets,
-  });
-
-  //// BNBx  oracle
-  await deployBNBxPriceOracle({
     run,
     ethers,
     getNamedAccounts,

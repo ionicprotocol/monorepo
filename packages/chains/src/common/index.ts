@@ -8,11 +8,12 @@ export {
   apeSwapDocs,
   quickSwapDocs,
   ankrCertificateDocs,
-  BNBxDocs,
+  StaderXDocs,
   stkBNBDocs,
   curveFinancePolygonDocs,
   balancerDocs,
   curveFinanceArbitrumDocs,
   jarvisDocs,
   wrappedAssetDocs,
+  lidoFinanceDocs,
 } from "./docs";

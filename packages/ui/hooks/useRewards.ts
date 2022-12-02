@@ -33,6 +33,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
               poolData.comptroller
             );
 
+            // TODO remove work around once https://github.com/Midas-Protocol/monorepo/issues/987 is fixed
             if (
               poolData.comptroller === '0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185' &&
               chainId === 1284
