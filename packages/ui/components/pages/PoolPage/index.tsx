@@ -4,6 +4,7 @@ import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
+import { SupportedChains } from 'types/dist/cjs';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar';
@@ -11,6 +12,7 @@ import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
+import { Banner } from '@ui/components/shared/Banner';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -149,6 +151,16 @@ const PoolPage = memo(() => {
               </HStack>
             ) : null}
           </HStack>
+
+          {chainId === SupportedChains.bsc.toString() && poolId === '7' && (
+            <Banner
+              text="Due to the exploit on aBNBc, this pool is currently paused. We are taking a snapshot for everyone that was had aBNBc in the about handling the situation for anybody that provided WBNB liquidity to the pool. More information: "
+              linkText="https://twitter.com/ankr/status/1598624443642703872"
+              linkUrl="https://twitter.com/ankr/status/1598624443642703872"
+              status="warning"
+              mt={2}
+            />
+          )}
 
           {rewardTokens.length > 0 && data && (
             <RewardsBanner tokens={rewardTokens} poolChainId={data.chainId} />
