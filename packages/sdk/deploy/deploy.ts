@@ -406,8 +406,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       arrayOfTrue
     );
 
-    receipt = await tx.wait();
-    console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
+    await tx.wait();
+    console.log("_editCErc20DelegateWhitelist:", tx.hash);
   } else {
     console.log(`No old delegates implementations to whitelist the upgrade for`);
   }
