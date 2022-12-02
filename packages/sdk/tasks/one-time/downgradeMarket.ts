@@ -56,22 +56,3 @@ task("market:downgrade", "Downgrades a plugin market to a simple market")
       }
     }
   });
-
-task("markets:fix:extensions", "")
-  .setAction(async ({ market }, { ethers }) => {
-    const signer = await ethers.getNamedSigner("deployer");
-
-    const markets = [
-
-    ];
-
-    for (let i = 0; i < markets.length; i++) {
-      const market = markets[i];
-      const cTokenInstance = (await ethers.getContractAt("CErc20PluginDelegate", market, signer)) as CErc20PluginDelegate;
-      const erc20Delegate = await ethers.getContract("CErc20Delegate");
-
-      let tx = await cTokenInstance._setImplementationSafe(erc20Delegate.address, false, "");
-      await tx.wait();
-      console.log(``);
-    }
-  });

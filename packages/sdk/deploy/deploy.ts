@@ -268,7 +268,10 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const erc20PluginRewardsDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
     erc20PluginRewardsDel.address
   );
-  if (erc20PluginRewardsDelExtensions.length != 1 || erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address) {
+  if (
+    erc20PluginRewardsDelExtensions.length != 1 ||
+    erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address
+  ) {
     tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDel.address, [
       cTokenFirstExtension.address,
     ]);

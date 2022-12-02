@@ -115,10 +115,10 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   });
 
 type MarketImpl = {
-  address: string,
-  implBefore: string,
-  latestImpl: string,
-}
+  address: string;
+  implBefore: string;
+  latestImpl: string;
+};
 
 task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
@@ -143,10 +143,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
       const marketsToUpgrade: MarketImpl[] = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
-        const cTokenInstance = (await ethers.getContractAt(
-          "CTokenFirstExtension",
-          market
-        )) as CTokenFirstExtension;
+        const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
 
         console.log("market", {
           cToken: market,
@@ -164,7 +161,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
           marketsToUpgrade.push({
             address: market,
             implBefore,
-            latestImpl
+            latestImpl,
           });
         }
       }

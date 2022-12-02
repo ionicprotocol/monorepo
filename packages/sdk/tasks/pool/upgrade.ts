@@ -164,7 +164,7 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
 task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed pools")
   .addParam("enable", "If autoimplementations should be on or off", true, types.boolean)
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
-  .setAction(async ({enable, admin}, { ethers }) => {
+  .setAction(async ({ enable, admin }, { ethers }) => {
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
