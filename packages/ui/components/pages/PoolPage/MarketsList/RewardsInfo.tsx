@@ -95,6 +95,7 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
               chainId={chainId}
               size="xs"
               withTooltip={false}
+              withMotion={false}
             />
           </>
         ) : pluginInfo?.icon ? (
