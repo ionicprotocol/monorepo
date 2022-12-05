@@ -43,7 +43,7 @@ export const IconButtonStyleConfig: ComponentStyleConfig = {
       bg: props.isSelected ? mode('ecru', 'ecru')(props) : mode('whiteBg', 'raisinBlack')(props),
       color: props.isSelected
         ? mode('raisinBlack', 'raisinBlack')(props)
-        : mode('ecru', 'ecru')(props),
+        : mode('raisinBlack', 'ecru')(props),
       borderColor: mode('ecru', 'ecru')(props),
       _hover: {
         bg: mode('ecru', 'ecru')(props),
