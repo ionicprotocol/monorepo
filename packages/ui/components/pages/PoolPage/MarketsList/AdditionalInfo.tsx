@@ -19,7 +19,7 @@ import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -39,10 +39,10 @@ import {
   SCORE_RANGE_MAX,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
+import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
@@ -75,11 +75,9 @@ export const AdditionalInfo = ({
   const chainConfig = useMemo(() => getChainConfig(poolChainId), [poolChainId]);
   const { openConnectModal } = useConnectModal();
   const { openChainModal } = useChainModal();
-  const sdk = useSdk(poolChainId);
 
   const { cCard } = useColors();
   const { switchNetworkAsync } = useSwitchNetwork();
-  const [performanceFee, setPerformanceFee] = useState<number>();
   const strategyScore = useStrategyRating(poolChainId, asset.plugin);
   const handleSwitch = async () => {
     if (chainConfig && switchNetworkAsync) {
@@ -100,19 +98,7 @@ export const AdditionalInfo = ({
     return score >= 0.8 ? greenColor : score >= 0.6 ? yellowColor : redColor;
   };
 
-  useEffect(() => {
-    const func = async () => {
-      if (sdk && asset.plugin) {
-        const pluginContract = sdk.getMidasErc4626PluginInstance(asset.plugin);
-        const performanceFee = await pluginContract.callStatic.performanceFee();
-
-        setPerformanceFee(Number(utils.formatUnits(performanceFee)) * 100);
-      }
-    };
-
-    func();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sdk?.chainId, asset.plugin]);
+  const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
 
   return (
     <Box width={{ base: windowWidth.width * 0.9, md: 'auto' }} minWidth="400px">
@@ -699,14 +685,14 @@ export const AdditionalInfo = ({
                   crossAxisAlignment="center"
                   tooltip={ADMIN_FEE_TOOLTIP}
                 />
-                {performanceFee && (
+                {performanceFee !== undefined ? (
                   <CaptionedStat
-                    stat={performanceFee + '%'}
+                    stat={`${performanceFee}%`}
                     caption={'Performance Fee'}
                     crossAxisAlignment="center"
                     tooltip={PERFORMANCE_FEE_TOOLTIP}
                   />
-                )}
+                ) : null}
               </Grid>
             </Box>
           </VStack>

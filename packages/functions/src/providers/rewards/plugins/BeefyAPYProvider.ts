@@ -40,7 +40,9 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     }
 
     if (apy === 0) {
-      await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
+      console.warn(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
+      // Disabled as spamming discord, as beefy is not fixing this.
+      // await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
     return [{ apy, updated_at: new Date().toISOString(), plugin: pluginAddress }];

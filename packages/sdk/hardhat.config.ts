@@ -155,7 +155,6 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
       accounts: { mnemonic },
       chainId: 1284,
-      saveDeployments: true,
     },
     neondevnet: {
       url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,

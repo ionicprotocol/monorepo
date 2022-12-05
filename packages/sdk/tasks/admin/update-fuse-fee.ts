@@ -17,7 +17,7 @@ export default task("fusefee:update", "Update FuseFee")
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const cToken = new Contract(taskArgs.cToken, sdk.chainDeployment.CErc20Delegate.abi, signer);
+    const cToken = new Contract(taskArgs.cToken, sdk.chainDeployment.CTokenFirstExtension.abi, signer);
 
     await cToken._setAdminFee(adminFee);
   });

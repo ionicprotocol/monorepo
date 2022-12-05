@@ -7,6 +7,7 @@ import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
@@ -16,6 +17,7 @@ import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 import { SignerOrProvider } from "../MidasSdk";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
+type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
@@ -44,9 +46,9 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       if (this.chainDeployment.ComptrollerFirstExtension) {
         comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
       }
-      if (this.chainDeployment.ComptrollerSecondExtension) {
-        comptrollerABI.push(...this.chainDeployment.ComptrollerSecondExtension.abi);
-      }
+      // if (this.chainDeployment.ComptrollerSecondExtension) {
+      //   comptrollerABI.push(...this.chainDeployment.ComptrollerSecondExtension.abi);
+      // }
 
       return new Contract(comptrollerAddress, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
     }
@@ -58,6 +60,16 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createCToken(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signerOrProvider) as CErc20Delegate;
     }
+
+    createCTokenWithExtensions(address: string, signerOrProvider = this.provider) {
+      const cTokenABI: Array<Fragment> = this.chainDeployment.CErc20Delegate.abi;
+      if (this.chainDeployment.CTokenFirstExtension) {
+        cTokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
+      }
+
+      return new Contract(address, cTokenABI, signerOrProvider) as CTokenWithExtensions;
+    }
+
     createCErc20PluginRewardsDelegate(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(
         cTokenAddress,
