@@ -265,7 +265,7 @@ export const assets: SupportedAsset[] = [
   },
   {
     symbol: assetSymbols["WBTC.wh-GLMR"],
-    underlying: GLMR_whWETH,
+    underlying: GLMR_whWBTC,
     name: "Stella Swap WGLMR/WBTC.wh LP Token",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
