@@ -57,18 +57,17 @@ import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyB
 import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
 import { TotalBorrow } from '@ui/components/pages/PoolPage/MarketsList/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/PoolPage/MarketsList/TotalSupply';
+import { UserStats } from '@ui/components/pages/PoolPage/UserStats';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ALL,
   BORROW_APY,
   BORROW_BALANCE,
   BORROWABLE,
   COLLATERAL,
-  DOWN_LIMIT,
   LIQUIDITY,
   MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
@@ -81,7 +80,6 @@ import {
   SUPPLY_BALANCE,
   TOTAL_BORROW,
   TOTAL_SUPPLY,
-  UP_LIMIT,
 } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
@@ -89,8 +87,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { MarketData } from '@ui/types/TokensDataMap';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
+import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sorts';
 
@@ -107,24 +104,22 @@ export type Market = {
 };
 
 export const MarketsList = ({
-  assets,
+  poolData,
   rewards = {},
-  comptrollerAddress,
-  supplyBalanceFiat,
-  borrowBalanceFiat,
-  poolChainId,
   initSorting,
   initColumnVisibility,
 }: {
-  assets: MarketData[];
+  poolData: PoolData;
   rewards?: UseRewardsData;
-  comptrollerAddress: string;
-  supplyBalanceFiat: number;
-  borrowBalanceFiat: number;
-  poolChainId: number;
   initSorting: SortingState;
   initColumnVisibility: VisibilityState;
 }) => {
+  const {
+    assets,
+    comptroller: comptrollerAddress,
+    totalSupplyBalanceFiat: supplyBalanceFiat,
+    chainId: poolChainId,
+  } = poolData;
   const sdk = useSdk(poolChainId);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
@@ -519,34 +514,7 @@ export const MarketsList = ({
         flexWrap="wrap"
         justifyContent={['center', 'center', 'flex-start']}
       >
-        <HStack>
-          <Text variant="mdText" width="max-content">
-            Your Supply Balance :
-          </Text>
-          <SimpleTooltip
-            label={supplyBalanceFiat.toString()}
-            isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
-          >
-            <Text variant="lgText" fontWeight="bold">
-              {smallUsdFormatter(supplyBalanceFiat)}
-              {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
-        <HStack>
-          <Text variant="mdText" width="max-content">
-            Your Borrow Balance :
-          </Text>
-          <SimpleTooltip
-            label={borrowBalanceFiat.toString()}
-            isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
-          >
-            <Text variant="lgText" fontWeight="bold">
-              {smallUsdFormatter(borrowBalanceFiat)}
-              {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
+        <UserStats poolData={poolData} />
       </Flex>
 
       {/* Table Filter and Search */}
