@@ -28,10 +28,6 @@ export const deployDiaWstDotPriceOracle = async ({
           methodName: "initialize",
           args: [mpo.address, diaOracleAddress, deployConfig.stableToken],
         },
-        onUpgrade: {
-          methodName: "reinitialize",
-          args: [],
-        },
       },
       owner: deployer,
       proxyContract: "OpenZeppelinTransparentProxy",

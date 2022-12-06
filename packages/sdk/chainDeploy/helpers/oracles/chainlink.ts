@@ -24,15 +24,32 @@ export const deployChainlinkOracle = async ({
   if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
   console.log("ChainlinkPriceOracleV2: ", cpo.address);
 
+  const usdBasedFeeds = chainlinkAssets.filter((asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.USD);
+  const ethBasedFeeds = chainlinkAssets.filter((asset) => asset.feedBaseCurrency === ChainlinkFeedBaseCurrency.ETH);
+
   const chainLinkv2 = await ethers.getContract("ChainlinkPriceOracleV2", deployer);
-  tx = await chainLinkv2.setPriceFeeds(
-    chainlinkAssets.map((c) => underlying(assets, c.symbol)),
-    chainlinkAssets.map((c) => c.aggregator),
-    ChainlinkFeedBaseCurrency.USD
-  );
-  console.log(`Set price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
-  await tx.wait();
-  console.log(`Set price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+  if (usdBasedFeeds.length > 0) {
+    const feedCurrency = ChainlinkFeedBaseCurrency.USD;
+    tx = await chainLinkv2.setPriceFeeds(
+      usdBasedFeeds.map((c) => underlying(assets, c.symbol)),
+      usdBasedFeeds.map((c) => c.aggregator),
+      feedCurrency
+    );
+    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
+    await tx.wait();
+    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+  }
+  if (ethBasedFeeds.length > 0) {
+    const feedCurrency = ChainlinkFeedBaseCurrency.ETH;
+    tx = await chainLinkv2.setPriceFeeds(
+      usdBasedFeeds.map((c) => underlying(assets, c.symbol)),
+      usdBasedFeeds.map((c) => c.aggregator),
+      feedCurrency
+    );
+    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2: ${tx.hash}`);
+    await tx.wait();
+    console.log(`Set ${feedCurrency} price feeds for ChainlinkPriceOracleV2 mined: ${tx.hash}`);
+  }
 
   const underlyings = chainlinkAssets.map((c) => underlying(assets, c.symbol));
   const oracles = Array(chainlinkAssets.length).fill(chainLinkv2.address);

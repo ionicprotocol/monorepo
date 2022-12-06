@@ -12,6 +12,7 @@ export const baseConfig: BaseConfig = {
   supabaseUrl: process.env.SUPABASE_URL ?? "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
   supabasePublicKey: process.env.SUPABASE_KEY ?? "",
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? "",
+  adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
   supabaseOracleMonitorTableName: process.env.SUPABASE_ORACLE_MONITOR_TABLE_NAME ?? "oracle-monitor",
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
 };

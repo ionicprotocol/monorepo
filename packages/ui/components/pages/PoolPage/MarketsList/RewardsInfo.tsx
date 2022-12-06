@@ -90,7 +90,13 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
             <Text variant="smText" mr={-1}>
               +
             </Text>
-            <TokenIcon address={(reward as FlywheelReward).token} chainId={chainId} size="xs" />
+            <TokenIcon
+              address={(reward as FlywheelReward).token}
+              chainId={chainId}
+              size="xs"
+              withTooltip={false}
+              withMotion={false}
+            />
           </>
         ) : pluginInfo?.icon ? (
           <>

@@ -75,6 +75,7 @@ export type BaseConfig = {
   supabaseUrl: string;
   supabasePublicKey: string;
   adminPrivateKey: string;
+  adminAccount: string;
   supabaseOracleMonitorTableName: string;
   discordWebhookUrl: string;
 };

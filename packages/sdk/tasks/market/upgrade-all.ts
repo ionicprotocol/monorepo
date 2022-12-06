@@ -2,8 +2,8 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
 
@@ -76,7 +76,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     );
 
     await tx.wait();
-    console.log("Set whitelist for ERC20 Delegate with status:", tx.hash);
+    console.log("_editCErc20DelegateWhitelist with tx:", tx.hash);
 
     if (setLatest) {
       if (oldErc20Delegate) {
@@ -95,7 +95,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           oldErc20PluginDelegate,
           erc20PluginDelegate.address,
           false,
-          "0x00"
+          constants.AddressZero
         );
         await tx.wait();
         console.log("_setLatestCErc20Delegate (plugin):", tx.hash);
@@ -106,7 +106,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           oldErc20PluginRewardsDelegate,
           erc20PluginRewardsDelegate.address,
           false,
-          "0x00"
+          constants.AddressZero
         );
         await tx.wait();
         console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
@@ -114,7 +114,13 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     }
   });
 
-task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
+type MarketImpl = {
+  address: string;
+  implBefore: string;
+  latestImpl: string;
+};
+
+task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {
     const signer = await ethers.getNamedSigner(taskArgs.admin);
@@ -133,17 +139,11 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
-      if (admin != signer.address && !autoImplOn) {
-        console.log(`signer is not the admin ${admin} and cannot turn the autoimpl on`);
-        continue;
-      }
-
       const markets = await comptroller.callStatic.getAllMarkets();
-      const marketsToUpgrade = [];
+      const marketsToUpgrade: MarketImpl[] = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
-        const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market)) as CErc20Delegate;
+        const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
 
         console.log("market", {
           cToken: market,
@@ -158,31 +158,44 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
           console.log(`No auto upgrade with latest implementation ${latestImpl}`);
         } else {
           console.log(`will upgrade ${market} to ${latestImpl}`);
-          marketsToUpgrade.push(market);
+          marketsToUpgrade.push({
+            address: market,
+            implBefore,
+            latestImpl,
+          });
         }
       }
 
       if (marketsToUpgrade.length > 0) {
-        if (admin == signer.address && !autoImplOn) {
-          const tx = await comptroller._toggleAutoImplementations(true);
-          await tx.wait();
-          console.log(`turned autoimpl on ${tx.hash}`);
+        const autoImplOn = await comptroller.callStatic.autoImplementation();
+        if (!autoImplOn) {
+          if (admin == signer.address) {
+            const tx = await comptroller._toggleAutoImplementations(true);
+            await tx.wait();
+            console.log(`turned autoimpl on ${tx.hash}`);
+          } else {
+            console.log(`signer is not the admin ${admin} and cannot turn the autoimpl on`);
+            continue;
+          }
         }
 
-        for (let k = 0; k < marketsToUpgrade.length; k++) {
-          const market = marketsToUpgrade[k];
+        for (let j = 0; j < marketsToUpgrade.length; j++) {
+          const market = marketsToUpgrade[j];
+          const cTokenInstance = (await ethers.getContractAt(
+            "CTokenFirstExtension",
+            market.address,
+            signer
+          )) as CTokenFirstExtension;
           try {
-            const cTokenInstance = (await ethers.getContractAt("CErc20Delegate", market, signer)) as CErc20Delegate;
-
-            console.log(`upgrading ${market}`);
+            console.log(`upgrading ${market.address} from ${market.implBefore} to ${market.latestImpl}`);
             const tx = await cTokenInstance.accrueInterest();
-            const receipt: TransactionReceipt = await tx.wait();
-            console.log("Autoimplementations upgrade by interacting with the CToken:", receipt.status);
+            await tx.wait();
+            console.log("accrueInterest:", tx.hash);
 
             const implAfter = await cTokenInstance.callStatic.implementation();
             console.log(`implementation after ${implAfter}`);
           } catch (e) {
-            console.error(`failed to upgrade market ${market}`, e);
+            console.error(`failed to upgrade market ${market} of pool ${pool.comptroller}`, e);
           }
         }
       }
@@ -194,44 +207,6 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets accross all pools")
           await tx.wait();
           console.log(`turned autoimpl off ${tx.hash}`);
         }
-      }
-    }
-  });
-
-task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed pools")
-  .addParam("enabled", "If autoimplementations should be on or off", true, types.boolean)
-  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
-  .setAction(async (taskArgs, { ethers }) => {
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
-    const signer = await ethers.getNamedSigner(taskArgs.admin);
-    const enabled = taskArgs.enabled;
-
-    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
-    for (let i = 0; i < pools.length; i++) {
-      const pool = pools[i];
-      console.log(`pool address ${pool.comptroller}`);
-      const comptroller = (await new Contract(
-        pool.comptroller,
-        sdk.chainDeployment.Comptroller.abi,
-        signer
-      )) as Comptroller;
-      const admin = await comptroller.callStatic.admin();
-      console.log(`pool name ${pool.name} admin ${admin}`);
-
-      const autoImplOn = await comptroller.callStatic.autoImplementation();
-      if (autoImplOn != enabled) {
-        if (admin === signer.address) {
-          const tx = await comptroller._toggleAutoImplementations(enabled);
-          const receipt = await tx.wait();
-          console.log(`toggled to ${enabled} with ${receipt.transactionHash}`);
-        } else {
-          console.log(`signer is not the admin`);
-        }
-      } else {
-        console.log(`autoimplementations for the pool is ${autoImplOn}`);
       }
     }
   });

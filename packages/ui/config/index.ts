@@ -15,6 +15,7 @@ type CONFIG = {
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabasePluginRewardsTableName: string;
+  supabaseAssetApyTableName: string;
   supabasePluginTableName: string;
   supabasePublicKey: string;
   supabaseUrl: string;
@@ -40,6 +41,7 @@ const config: CONFIG = {
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
   supabasePluginRewardsTableName: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
+  supabaseAssetApyTableName: process.env.SUPABASE_ASSET_APY_TABLE_NAME ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabaseUrl: process.env.SUPABASE_URL ?? '',

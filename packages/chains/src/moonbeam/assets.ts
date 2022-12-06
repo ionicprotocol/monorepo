@@ -1,7 +1,7 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import { beamSwapDocs, beamSwapStableDocs, defaultDocs, wrappedAssetDocs } from "../common";
-import { curveFinanceMoonbeamDocs, stellaSwapDocs } from "../common/docs";
+import { curveFinanceMoonbeamDocs, lidoFinanceDocs, stellaSwapDocs } from "../common/docs";
 
 const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
 const xcDOT = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
@@ -9,6 +9,8 @@ const multiWBTC = "0x922D641a426DcFFaeF11680e5358F34d97d112E1";
 const stDOT = "0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108";
 const wstDOT = "0x191cf2602Ca2e534c5Ccae7BCBF4C46a704bb949";
 const ETH = "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f";
+const whWETH = "0xab3f0245B83feB11d15AAffeFD7AD465a59817eD";
+const whWBTC = "0xE57eBd2d67B462E9926e04a8e33f01cD0D64346D";
 const BNB = "0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055";
 const multiDAI = "0x765277EebeCA2e31912C9946eAe1021199B39C61";
 const multiUSDC = "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b";
@@ -22,17 +24,25 @@ const STELLA = "0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2";
 const CELR = "0x3795C36e7D12A8c252A20C5a7B455f7c57b60283";
 const LDO = "0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0";
 
-// StellaSwap
+// BeamSwap
 const GLMR_USDC = "0x555B74dAFC4Ef3A5A1640041e3244460Dc7610d1";
-const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57"; // not supported on stella
-const GLMR_ATOM = "0xf4C10263f2A4B1f75b8a5FD5328fb61605321639";
+const GLMR_GLINT = "0x99588867e817023162F4d4829995299054a5fC57";
 const USDC_ETH = "0x0Aa48bF937ee8F41f1a52D225EF5A6F6961e39FA";
-const WGLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
-const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
-const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
+const WGLMR_xcDOT = "0xd8FbdeF502770832E90a6352b275f20F38269b74";
+
+// StellaSwap
+const GLMR_ATOM = "0xf4C10263f2A4B1f75b8a5FD5328fb61605321639";
 const STELLA_GLMR = "0x7F5Ac0FC127bcf1eAf54E3cd01b00300a0861a62";
 const CELR_GLMR = "0xd47BeC28365a82C0C006f3afd617012B02b129D6";
 const LDO_GLMR = "0x00870B0e6994fFb142a91173a882d2F6a9a8Ac4a";
+const GLMR_whUSDC = "0x8CCBbcAF58f5422F6efD4034d8E8a3c9120ADf79";
+const GLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
+const GLMR_whWETH = "0x8577273FB3B72306F3A59E26ab77116f5D428DAa";
+const GLMR_whWBTC = "0xf8f5E8B9Ee84664695B14862212D8092E16331F6";
+
+// Curve Finance
+const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
+const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -52,6 +62,14 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiWBTC),
   },
   {
+    symbol: assetSymbols.WBTC_wh,
+    underlying: whWBTC,
+    name: "Wormhole Wrapped BTC",
+    decimals: 8,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", whWBTC),
+  },
+  {
     symbol: assetSymbols.xcDOT,
     underlying: xcDOT,
     name: "ERC20 DOT",
@@ -65,9 +83,7 @@ export const assets: SupportedAsset[] = [
     name: "Staked ERC20 DOT",
     decimals: 10,
     oracle: OracleTypes.DiaStDotPriceOracle,
-    extraDocs: `
-    <p><b>How to acquire this token</b><p/><br />
-    <p>You can get <code>stDOT</code> by staking your <code>xcDOT</code> on <a href="https://polkadot.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on Polkadot</a></p>`,
+    extraDocs: lidoFinanceDocs("polkadot", "xcDOT", "stDOT"),
   },
   {
     symbol: assetSymbols.wstDOT,
@@ -86,6 +102,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", ETH),
+  },
+  {
+    symbol: assetSymbols.WETH_wh,
+    underlying: whWETH,
+    name: "Wormhole Wrapped ETH",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", whWETH),
   },
   {
     symbol: assetSymbols.BNB,
@@ -160,6 +184,14 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", FTM),
   },
   {
+    symbol: assetSymbols["WGLMR-xcDOT"],
+    underlying: WGLMR_xcDOT,
+    name: "BeamSwap WGLMR-xcDOT LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: beamSwapDocs(WGLMR, xcDOT, "WGLMR-xcDOT", WGLMR_xcDOT),
+  },
+  {
     symbol: assetSymbols["GLMR-USDC"],
     underlying: GLMR_USDC,
     name: "BeamSwap GLMR-USDC LP Token",
@@ -184,14 +216,6 @@ export const assets: SupportedAsset[] = [
     extraDocs: beamSwapDocs(multiUSDC, ETH, "USDC-ETH", USDC_ETH),
   },
   {
-    symbol: assetSymbols["WGLMR-xcDOT"],
-    underlying: WGLMR_xcDOT,
-    name: "BeamSwap WGLMR-xcDOT LP Token",
-    decimals: 18,
-    oracle: OracleTypes.UniswapLpTokenPriceOracle,
-    extraDocs: beamSwapDocs(WGLMR, xcDOT, "WGLMR-xcDOT", WGLMR_xcDOT),
-  },
-  {
     symbol: assetSymbols["xcDOT-stDOT"],
     underlying: xcDOT_stDOT,
     name: "Curve.fi xcDOT-stDOT LP Token",
@@ -214,6 +238,38 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: stellaSwapDocs("ETH", STELLA, "STELLA-GLMR", STELLA_GLMR),
+  },
+  {
+    symbol: assetSymbols["USDC.wh-GLMR"],
+    underlying: GLMR_whUSDC,
+    name: "Stella Swap WGLMR/USDC.wh LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", whUSDC, "WGLMR-USDC.wh", GLMR_whUSDC),
+  },
+  {
+    symbol: assetSymbols["DOT.xc-GLMR"],
+    underlying: GLMR_xcDOT,
+    name: "Stella Swap WGLMR/DOT.xc LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", xcDOT, "WGLMR-DOT.xc", GLMR_xcDOT),
+  },
+  {
+    symbol: assetSymbols["WETH.wh-GLMR"],
+    underlying: GLMR_whWETH,
+    name: "Stella Swap WGLMR/WETH.wh LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", whWETH, "WGLMR-WETH.wh", GLMR_whWETH),
+  },
+  {
+    symbol: assetSymbols["WBTC.wh-GLMR"],
+    underlying: GLMR_whWBTC,
+    name: "Stella Swap WGLMR/WBTC.wh LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs("ETH", whWBTC, "WGLMR-WBTC.wh", GLMR_whWBTC),
   },
   {
     symbol: assetSymbols["CELR-GLMR"],

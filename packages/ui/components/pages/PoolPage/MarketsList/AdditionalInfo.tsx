@@ -33,6 +33,7 @@ import {
   ADMIN_FEE_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
   MIDAS_SECURITY_DOCS_URL,
+  PERFORMANCE_FEE_TOOLTIP,
   RESERVE_FACTOR_TOOLTIP,
   SCORE_LIMIT,
   SCORE_RANGE_MAX,
@@ -41,6 +42,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
+import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
@@ -95,6 +97,8 @@ export const AdditionalInfo = ({
   const setColorByScore = (score: number) => {
     return score >= 0.8 ? greenColor : score >= 0.6 ? yellowColor : redColor;
   };
+
+  const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
 
   return (
     <Box width={{ base: windowWidth.width * 0.9, md: 'auto' }} minWidth="400px">
@@ -643,7 +647,7 @@ export const AdditionalInfo = ({
             <Box width="100%" height="250px" borderWidth={2} borderColor={cCard.headingBgColor}>
               <Grid
                 templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(3, 1fr)' }}
-                gap={2}
+                gap={0}
                 width="100%"
                 height="100%"
               >
@@ -681,6 +685,14 @@ export const AdditionalInfo = ({
                   crossAxisAlignment="center"
                   tooltip={ADMIN_FEE_TOOLTIP}
                 />
+                {performanceFee !== undefined ? (
+                  <CaptionedStat
+                    stat={`${performanceFee}%`}
+                    caption={'Performance Fee'}
+                    crossAxisAlignment="center"
+                    tooltip={PERFORMANCE_FEE_TOOLTIP}
+                  />
+                ) : null}
               </Grid>
             </Box>
           </VStack>

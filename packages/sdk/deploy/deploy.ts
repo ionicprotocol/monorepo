@@ -97,6 +97,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const oldErc20PluginDelegate = await ethers.getContractOrNull("CErc20PluginDelegate");
   const oldErc20PluginRewardsDelegate = await ethers.getContractOrNull("CErc20PluginRewardsDelegate");
 
+  const cTokenFirstExtension = await deployments.deploy("CTokenFirstExtension", {
+    contract: "CTokenFirstExtension",
+    from: deployer,
+    args: [],
+    log: true,
+  });
+  if (cTokenFirstExtension.transactionHash)
+    await ethers.provider.waitForTransaction(cTokenFirstExtension.transactionHash);
+  console.log("CTokenFirstExtension", cTokenFirstExtension.address);
+
   const erc20Del = await deployments.deploy("CErc20Delegate", {
     from: deployer,
     args: [],
@@ -188,8 +198,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     }
   }
 
-  const currentExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
-  if (currentExtensions.length != 1 || currentExtensions[0] != compFirstExtension.address) {
+  const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(comptroller.address);
+  if (comptrollerExtensions.length != 1 || comptrollerExtensions[0] != compFirstExtension.address) {
     tx = await fuseFeeDistributor._setComptrollerExtensions(comptroller.address, [compFirstExtension.address]);
     await tx.wait();
     console.log(`configured the extensions for comptroller ${comptroller.address}`);
@@ -198,6 +208,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   }
 
   const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
+
+  const erc20DelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(erc20Del.address);
+  if (erc20DelExtensions.length != 1 || erc20DelExtensions[0] != cTokenFirstExtension.address) {
+    tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20Del.address, [cTokenFirstExtension.address]);
+    await tx.wait();
+    console.log(`configured the extensions for the CErc20Delegate ${erc20Del.address}`);
+  } else {
+    console.log(`CErc20Delegate extensions already configured`);
+  }
 
   if (oldErc20Delegate) {
     // CErc20Delegate
@@ -214,6 +233,17 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     } else {
       console.log(`No change in the latest CErc20Delegate implementation ${erc20Del.address}`);
     }
+  }
+
+  const erc20PluginDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
+    erc20PluginDel.address
+  );
+  if (erc20PluginDelExtensions.length != 1 || erc20PluginDelExtensions[0] != cTokenFirstExtension.address) {
+    tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginDel.address, [cTokenFirstExtension.address]);
+    await tx.wait();
+    console.log(`configured the extensions for the CErc20PluginDelegate ${erc20PluginDel.address}`);
+  } else {
+    console.log(`CErc20PluginDelegate extensions already configured`);
   }
 
   if (oldErc20PluginDelegate) {
@@ -233,6 +263,22 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     } else {
       console.log(`No change in the latest CErc20PluginDelegate implementation ${erc20PluginDel.address}`);
     }
+  }
+
+  const erc20PluginRewardsDelExtensions = await fuseFeeDistributor.callStatic.getCErc20DelegateExtensions(
+    erc20PluginRewardsDel.address
+  );
+  if (
+    erc20PluginRewardsDelExtensions.length != 1 ||
+    erc20PluginRewardsDelExtensions[0] != cTokenFirstExtension.address
+  ) {
+    tx = await fuseFeeDistributor._setCErc20DelegateExtensions(erc20PluginRewardsDel.address, [
+      cTokenFirstExtension.address,
+    ]);
+    await tx.wait();
+    console.log(`configured the extensions for the CErc20PluginRewardsDelegate ${erc20PluginRewardsDel.address}`);
+  } else {
+    console.log(`CErc20PluginRewardsDelegate extensions already configured`);
   }
 
   if (oldErc20PluginRewardsDelegate) {
@@ -363,8 +409,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       arrayOfTrue
     );
 
-    receipt = await tx.wait();
-    console.log("Set whitelist for ERC20 Delegate with status:", receipt.status);
+    await tx.wait();
+    console.log("_editCErc20DelegateWhitelist:", tx.hash);
   } else {
     console.log(`No old delegates implementations to whitelist the upgrade for`);
   }

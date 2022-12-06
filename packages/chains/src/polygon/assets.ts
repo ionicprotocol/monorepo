@@ -9,7 +9,7 @@ import {
   quickSwapDocs,
   wrappedAssetDocs,
 } from "../common";
-import { oneInchDocs } from "../common/docs";
+import { ankrCertificateDocs, lidoFinanceDocs, oneInchDocs, StaderXDocs } from "../common/docs";
 
 export const WBTC = "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6";
 export const WMATIC = "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270";
@@ -41,13 +41,25 @@ const USDT = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const MIMO = "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC";
 const JRT = "0x596eBE76e2DB4470966ea395B0d063aC6197A8C5";
 
+// liquid staked assets
+const MATICx = "0xfa68FB4628DFF1028CFEc22b4162FCcd0d45efb6";
+const stMATIC = "0x3A58a54C066FdC0f2D55FC9C89F0415C92eBf3C4";
+const aMATICc = "0x0E9b89007eEE9c958c0EDA24eF70723C2C93dD58";
+
 // Balancer
 const MIMO_PAR_80_20 = "0x82d7f08026e21c7713CfAd1071df7C8271B17Eae";
+const WMATIC_STMATIC_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
+const WMATIC_MATICX_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
 
-// Swaps
+// Curve
+const WMATIC_STMATIC_CURVE = "0xe7CEA2F6d7b120174BF3A9Bc98efaF1fF72C997d";
+const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
+
+// QuickSwap
 const WMATIC_USDC = "0x6e7a5FAFcec6BB1e78bAE2A1F0B612012BF14827";
 const WMATIC_USDT = "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3";
 const WMATIC_ETH = "0xadbF1854e5883eB8aa7BAf50705338739e558E5b";
+const WMATIC_MATICx = "0xb0e69f24982791dd49e316313fD3A791020B8bF7";
 const WETH_WBTC = "0xdC9232E2Df177d7a12FdFf6EcBAb114E2231198D";
 const AGEUR_JEUR = "0x2fFbCE9099cBed86984286A54e5932414aF4B717";
 const JEUR_PAR = "0x0f110c55EfE62c16D553A3d3464B77e1853d0e97";
@@ -58,9 +70,8 @@ const JNZD_NZDS = "0x976A750168801F58E8AEdbCfF9328138D544cc09";
 const JEUR_EURT = "0x2C3cc8e698890271c8141be9F6fD6243d56B39f1";
 const EURE_JEUR = "0x2F3E9CA3bFf85B91D9fe6a9f3e8F9B1A6a4c3cF4";
 const MAI_USDC = "0x160532D2536175d65C03B97b0630A9802c274daD";
-const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
 
-// stable fore
+// stable forex
 const AGEUR = "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4";
 const JEUR = "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c";
 const EURE = "0x18ec0A6E18E5bc3784fDd3a3634b31245ab704F6";
@@ -316,6 +327,33 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/MIMO"),
   },
+
+  {
+    symbol: assetSymbols.MATICx,
+    underlying: MATICx,
+    name: "Liquid Staking Matic (PoS)",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: StaderXDocs("polygon", "MATICx"),
+  },
+
+  {
+    symbol: assetSymbols.stMATIC,
+    underlying: stMATIC,
+    name: "Staked MATIC (PoS)",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: lidoFinanceDocs("polygon", "MATIC", "stMATIC"),
+  },
+  {
+    symbol: assetSymbols.aMATICc,
+    underlying: aMATICc,
+    name: "Ankr MATIC Reward Bearing Certificate",
+    decimals: 18,
+    oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
+    extraDocs: ankrCertificateDocs("aMATICc", "MATIC"),
+  },
+
   // QuickSwap LPs
   {
     symbol: assetSymbols["WMATIC-USDC"],
@@ -340,6 +378,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, WETH, "WMATIC-ETH", WMATIC_ETH),
+  },
+  {
+    symbol: assetSymbols["WMATIC-MATICx"],
+    underlying: WMATIC_MATICx,
+    name: "WMATIC-MATICx LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: quickSwapDocs(WMATIC, MATICx, "WMATIC-MATICx", WMATIC_MATICx),
   },
   {
     symbol: assetSymbols["WETH-WBTC"],
@@ -430,10 +476,18 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false),
   },
+  {
+    symbol: assetSymbols.WMATIC_STMATIC_CURVE,
+    underlying: WMATIC_STMATIC_CURVE,
+    name: "Curve.fi WMATIC-STMATIC",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinancePolygonDocs(13, "WMATIC-STMATIC", WMATIC_STMATIC_CURVE, "factory-crypto"),
+  },
 
   // Balancer
   {
-    symbol: assetSymbols["MIMO_PAR_80_20"],
+    symbol: assetSymbols.MIMO_PAR_80_20,
     underlying: MIMO_PAR_80_20,
     name: "80MIMO-20PAR",
     decimals: 18,
@@ -443,6 +497,32 @@ export const assets: SupportedAsset[] = [
       "0x82d7f08026e21c7713cfad1071df7c8271b17eae0002000000000000000004b6",
       "80MIMO-20PAR",
       MIMO_PAR_80_20
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_STMATIC_BLP,
+    underlying: WMATIC_STMATIC_BLP,
+    name: "WMATIC-STMATIC BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0x8159462d255c1d24915cb51ec361f700174cd99400000000000000000000075d",
+      "WMATIC-STMATIC BLP",
+      WMATIC_STMATIC_BLP
+    ),
+  },
+  {
+    symbol: assetSymbols.WMATIC_MATICX_BLP,
+    underlying: WMATIC_MATICX_BLP,
+    name: "WMATIC-MATICX BLP",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    extraDocs: balancerDocs(
+      "polygon",
+      "0xb20fc01d21a50d2c734c4a1262b4404d41fa7bf000000000000000000000075c",
+      "WMATIC-MATIX BLP",
+      WMATIC_MATICX_BLP
     ),
   },
   // stable forex
