@@ -680,6 +680,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     console.log("setAddress bUSD: ", tx.hash);
   }
   ////
-
-  console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };

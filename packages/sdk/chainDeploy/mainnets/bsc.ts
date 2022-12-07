@@ -579,6 +579,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   // update sd apeswap oracle factory
   await run("oracle:deploy-apeswap-oracle");
-
-  console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };
