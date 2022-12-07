@@ -118,6 +118,7 @@ export const MarketsList = ({
   poolChainId,
   initSorting,
   initColumnVisibility,
+  initHidden,
 }: {
   assets: MarketData[];
   rewards?: UseRewardsData;
@@ -127,10 +128,11 @@ export const MarketsList = ({
   poolChainId: number;
   initSorting: SortingState;
   initColumnVisibility: VisibilityState;
+  initHidden: boolean;
 }) => {
   const sdk = useSdk(poolChainId);
   const { address } = useMultiMidas();
-  const [isHidden, setIsHidden] = useState<boolean>(false);
+  const [isHidden, setIsHidden] = useState<boolean>(initHidden);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -511,6 +513,15 @@ export const MarketsList = ({
     } else {
       setGlobalFilter(globalFilter.filter((f) => f !== HIDDEN));
     }
+
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    let oldObj;
+    if (oldData) {
+      oldObj = JSON.parse(oldData);
+    }
+
+    const data = { ...oldObj, isHidden };
+    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHidden]);
 
