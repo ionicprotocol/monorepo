@@ -65,6 +65,7 @@ export interface StellaPlugin extends AbstractPlugin {
 export interface CurveGaugePlugin extends AbstractPlugin {
   strategy: Strategy.CurveGauge;
   otherParams: [string, string[]];
+  flywheel: string;
   icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png";
 }
 

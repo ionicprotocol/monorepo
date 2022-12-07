@@ -131,7 +131,7 @@ class CurveAPYProvider extends AbstractPluginAPYProvider {
                 plugin: pluginAddress,
                 updated_at: new Date().toISOString(),
                 token: extraReward.tokenAddress,
-                flywheel: '0xTODO_FLYWHEEL_MOCK', // TODO get flywheel, maybe not necessary.
+                flywheel: pluginData.flywheel,
               } as PluginWithFlywheelReward)
           )
         );
