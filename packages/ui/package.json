@@ -24,7 +24,7 @@
     "@midas-capital/sdk": "workspace:*",
     "@midas-capital/security": "workspace:*",
     "@midas-capital/types": "workspace:*",
-    "@rainbow-me/rainbowkit": "^0.8.0",
+    "@rainbow-me/rainbowkit": "^0.7.4",
     "@supabase/supabase-js": "^2.1.1",
     "@tanstack/react-query": "^4.19.1",
     "@tanstack/react-query-devtools": "^4.19.1",
@@ -47,7 +47,7 @@
     "react-icons": "^4.7.1",
     "react-jazzicon": "^1.0.4",
     "recharts": "^2.1.16",
-    "wagmi": "^0.8.10",
+    "wagmi": "^0.7.15",
     "yup": "^0.32.11"
   },
   "devDependencies": {
