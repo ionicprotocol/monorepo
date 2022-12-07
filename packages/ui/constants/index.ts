@@ -93,6 +93,7 @@ export const BORROWABLE = 'Borrowable';
 export const DEPRECATED = 'Deprecated';
 export const PAUSED = 'Paused';
 export const SEARCH = 'Search';
+export const HIDDEN = 'Hiden';
 export const ALL = 'All';
 
 export const RESERVE_FACTOR_TOOLTIP =

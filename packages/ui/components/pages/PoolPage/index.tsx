@@ -40,6 +40,7 @@ const PoolPage = memo(() => {
   const isMobile = useIsMobile();
   const [initSorting, setInitSorting] = useState<SortingState | undefined>();
   const [initColumnVisibility, setInitColumnVisibility] = useState<VisibilityState | undefined>();
+  const [initHidden, setInitHidden] = useState<boolean | undefined>();
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
@@ -75,6 +76,12 @@ const PoolPage = memo(() => {
     }
 
     setInitColumnVisibility(columnVisibility);
+
+    if (oldData && JSON.parse(oldData).isHidden) {
+      setInitHidden(true);
+    } else {
+      setInitHidden(false);
+    }
   }, []);
 
   return (
@@ -178,12 +185,17 @@ const PoolPage = memo(() => {
           )}
 
           <MidasBox overflowX="auto" width="100%" mb="4">
-            {data && initSorting && initColumnVisibility && allRewards ? (
+            {data &&
+            initSorting &&
+            initColumnVisibility &&
+            allRewards &&
+            initHidden !== undefined ? (
               <MarketsList
                 poolData={data}
                 rewards={allRewards}
                 initSorting={initSorting}
                 initColumnVisibility={initColumnVisibility}
+                initHidden={initHidden}
               />
             ) : (
               <>
