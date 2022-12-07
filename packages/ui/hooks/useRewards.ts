@@ -32,49 +32,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
             allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(
               poolData.comptroller
             );
-
-            // TODO remove work around once https://github.com/Midas-Protocol/monorepo/issues/987 is fixed
-            if (
-              poolData.comptroller === '0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185' &&
-              chainId === 1284
-            ) {
-              console.warn('Manually updating APYs in Pool, fix me soon!');
-
-              allFlywheelRewards = allFlywheelRewards.map((r) => {
-                // `wstDOT` Market
-                if (r.market === '0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563') {
-                  return {
-                    ...r,
-                    rewardsInfo: r.rewardsInfo.map((info) => {
-                      // only LDO reward token
-                      if (info.rewardToken === '0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0') {
-                        return { ...info, formattedAPR: info.formattedAPR?.div(100000000) }; // make 8 decimals smaller
-                      }
-                      // Or change nothing
-                      return info;
-                    }),
-                  };
-                }
-
-                // `xcDOT` Market
-                if (r.market === '0xa9736bA05de1213145F688e4619E5A7e0dcf4C72') {
-                  return {
-                    ...r,
-                    rewardsInfo: r.rewardsInfo.map((info) => {
-                      // only USDC reward token
-                      if (info.rewardToken === '0x931715FEE2d06333043d11F658C8CE934aC61D0c') {
-                        return { ...info, formattedAPR: info.formattedAPR?.mul(10000) }; // make 4 decimals bigger
-                      }
-                      // Or change nothing
-                      return info;
-                    }),
-                  };
-                }
-
-                // Or change nothing
-                return r;
-              });
-            }
           } catch (exception) {
             // Fallback to rewards without APRs
             // TODO LogRocket
