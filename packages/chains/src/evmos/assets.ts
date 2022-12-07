@@ -92,6 +92,20 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.AdrastiaPriceOracle,
   },
+  {
+    symbol: assetSymbols.DIFF,
+    underlying: "0x3f75ceabCDfed1aCa03257Dc6Bdc0408E2b4b026",
+    name: "DIFF",
+    decimals: 18,
+    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+  },
+  {
+    symbol: assetSymbols["WEVMOS-DIFF"],
+    underlying: "0x932c2D21fa11A545554301E5E6FB48C3accdFF4D",
+    name: "WEVMOS-DIFF",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
 ];
 
 export default assets;
