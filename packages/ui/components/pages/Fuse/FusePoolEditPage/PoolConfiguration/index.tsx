@@ -486,7 +486,7 @@ const PoolConfiguration = ({
 
           <ConfigRow>
             <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
-              <Text variant="smText">Upgradeable:</Text>
+              <Text variant="smText">Ownable:</Text>
               {data.upgradeable ? (
                 <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
                   <Button
