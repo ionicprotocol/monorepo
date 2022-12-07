@@ -4,6 +4,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   SettingsIcon,
+  ViewOffIcon,
 } from '@chakra-ui/icons';
 import {
   Box,
@@ -69,6 +70,7 @@ import {
   BORROWABLE,
   COLLATERAL,
   DOWN_LIMIT,
+  HIDDEN,
   LIQUIDITY,
   MARKET_LTV,
   MARKETS_COUNT_PER_PAGE,
@@ -83,6 +85,7 @@ import {
   TOTAL_SUPPLY,
   UP_LIMIT,
 } from '@ui/constants/index';
+import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
@@ -115,6 +118,7 @@ export const MarketsList = ({
   poolChainId,
   initSorting,
   initColumnVisibility,
+  initHidden,
 }: {
   assets: MarketData[];
   rewards?: UseRewardsData;
@@ -124,8 +128,11 @@ export const MarketsList = ({
   poolChainId: number;
   initSorting: SortingState;
   initColumnVisibility: VisibilityState;
+  initHidden: boolean;
 }) => {
   const sdk = useSdk(poolChainId);
+  const { address } = useMultiMidas();
+  const [isHidden, setIsHidden] = useState<boolean>(initHidden);
 
   const { data: allClaimableRewards } = useAssetsClaimableRewards({
     poolAddress: comptrollerAddress,
@@ -166,11 +173,15 @@ export const MarketsList = ({
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
-      !searchText ||
-      (value.includes(SEARCH) &&
-        (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
-          row.original.market.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
-          row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))
+      (!searchText ||
+        (value.includes(SEARCH) &&
+          (row.original.market.underlyingName.toLowerCase().includes(searchText.toLowerCase()) ||
+            row.original.market.underlyingSymbol.toLowerCase().includes(searchText.toLowerCase()) ||
+            row.original.market.cToken.toLowerCase().includes(searchText.toLowerCase())))) &&
+      (!value.includes(HIDDEN) ||
+        (value.includes(HIDDEN) &&
+          (!row.original.market.supplyBalance.isZero() ||
+            !row.original.market.borrowBalance.isZero())))
     ) {
       if (
         value.includes(ALL) ||
@@ -472,8 +483,12 @@ export const MarketsList = ({
   const { cCard } = useColors();
 
   const onFilter = (filter: string) => {
-    if (globalFilter.includes(SEARCH)) {
+    if (globalFilter.includes(SEARCH) && globalFilter.includes(HIDDEN)) {
+      setGlobalFilter([filter, SEARCH, HIDDEN]);
+    } else if (globalFilter.includes(SEARCH)) {
       setGlobalFilter([filter, SEARCH]);
+    } else if (globalFilter.includes(HIDDEN)) {
+      setGlobalFilter([filter, HIDDEN]);
     } else {
       setGlobalFilter([filter]);
     }
@@ -491,6 +506,24 @@ export const MarketsList = ({
     onSearchFiltered();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchText]);
+
+  useEffect(() => {
+    if (isHidden) {
+      setGlobalFilter([...globalFilter, HIDDEN]);
+    } else {
+      setGlobalFilter(globalFilter.filter((f) => f !== HIDDEN));
+    }
+
+    const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
+    let oldObj;
+    if (oldData) {
+      oldObj = JSON.parse(oldData);
+    }
+
+    const data = { ...oldObj, isHidden };
+    localStorage.setItem(MIDAS_LOCALSTORAGE_KEYS, JSON.stringify(data));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHidden]);
 
   useEffect(() => {
     const oldData = localStorage.getItem(MIDAS_LOCALSTORAGE_KEYS);
@@ -765,6 +798,28 @@ export const MarketsList = ({
               </PopoverBody>
             </PopoverContent>
           </Popover>
+          {address ? (
+            <SimpleTooltip
+              width={200}
+              label="Hide markets you don't supply or borrow from"
+              my={3}
+              placement="top-end"
+            >
+              <span>
+                <CIconButton
+                  aria-label="detail View"
+                  alignSelf="flex-end"
+                  variant="filter"
+                  isSelected={isHidden}
+                  onClick={() => {
+                    setIsHidden(!isHidden);
+                  }}
+                  icon={<ViewOffIcon fontSize={20} />}
+                  // disabled={!canExpand ? true : false}
+                />
+              </span>
+            </SimpleTooltip>
+          ) : null}
         </Flex>
       </Flex>
 
