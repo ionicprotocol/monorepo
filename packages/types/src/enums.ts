@@ -284,6 +284,7 @@ export enum assetSymbols {
   "WMATIC-USDC" = "WMATIC-USDC",
   "WMATIC-ETH" = "WMATIC-ETH",
   "WMATIC-USDT" = "WMATIC-USDT",
+  "WMATIC-MATICx" = "WMATIC-MATICx",
   "WETH-WBTC" = "WETH-WBTC",
   "AGEUR-JEUR" = "agEUR-jEUR",
   "JEUR-PAR" = "jEUR-PAR",
