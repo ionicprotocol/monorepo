@@ -39,9 +39,9 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["2brl"]), // 2BRL
     otherParams: [
-      "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
-      "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
-      "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1aff", // lpDepositor
+      "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c", // _dddFlywheel
+      "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4", // _epxFlywheel
+      "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba", // _rewardsDestination
       [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)], // _rewardTokens
     ],

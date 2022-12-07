@@ -44,6 +44,7 @@ const deployedPlugins: DeployedPlugins = {
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/xcdot",
     underlying: underlying(assets, assetSymbols["xcDOT-stDOT"]),
     otherParams: ["0xC106C836771B0B4f4a0612Bd68163Ca93be1D340", [underlying(assets, assetSymbols["xcDOT-stDOT"])]],
+    flywheel: "0xb13aAD1F212FdE08a5ab51249cf6434574434A4e",
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png",
   },
 };
