@@ -37963,13 +37963,8 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0x1f02c1b5e22ED66208bc5Ac6F7210F3AD347d0B5",
+      "address": "0xA50447991C51013fDc63957f68fbFf2EE4801Ccb",
       "abi": [
-        {
-          "inputs": [],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
         {
           "inputs": [
             {
@@ -38910,6 +38905,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "data",
+              "type": "bytes[]"
+            }
+          ],
+          "name": "multicall",
+          "outputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "results",
+              "type": "bytes[]"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -39152,7 +39166,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0x2973659f142A4C80c352F1bd0780ccB163ff4579",
+      "address": "0xe424B59b3A215272348E5641652B7Df2a66a5b5a",
       "abi": [
         {
           "inputs": [
@@ -40126,6 +40140,25 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "data",
+              "type": "bytes[]"
+            }
+          ],
+          "name": "multicall",
+          "outputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "results",
+              "type": "bytes[]"
+            }
+          ],
+          "stateMutability": "payable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -40381,7 +40414,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x32d8a7B229e86FC66CCc1321f57c243Cde9accC7",
+      "address": "0x11D17b3e103F65D06ca9edc2b1ee7a192d1D90BF",
       "abi": [
         {
           "inputs": [
@@ -41377,6 +41410,25 @@
             }
           ],
           "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "data",
+              "type": "bytes[]"
+            }
+          ],
+          "name": "multicall",
+          "outputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "results",
+              "type": "bytes[]"
+            }
+          ],
+          "stateMutability": "payable",
           "type": "function"
         },
         {
@@ -44011,7 +44063,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x5fae31d48d188CcE7F255Da16095abBbB644F07B",
+      "address": "0x9ef972795276F9e8719151729e8b0EFC37588e27",
       "abi": [
         {
           "inputs": [
@@ -44891,6 +44943,35 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "account",
+              "type": "address"
+            }
+          ],
+          "name": "getAccountLiquidity",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -52161,6 +52242,32 @@
         {
           "inputs": [
             {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "_deprecatePool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "index",
+              "type": "uint256"
+            }
+          ],
+          "name": "_deprecatePool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
               "internalType": "address[]",
               "name": "admins",
               "type": "address[]"
@@ -52798,7 +52905,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x650B448D4Edb13D7355B9E79cB8DC6Cefdf28BEc",
+      "address": "0xbbAabEf3a88f6e3D92B52e148050d15ADd77d9dc",
       "abi": [
         {
           "anonymous": false,
@@ -52938,6 +53045,32 @@
         {
           "inputs": [],
           "name": "_acceptOwner",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "comptroller",
+              "type": "address"
+            }
+          ],
+          "name": "_deprecatePool",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "index",
+              "type": "uint256"
+            }
+          ],
+          "name": "_deprecatePool",
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
@@ -55840,7 +55973,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0xCE9e5b14625C8C33b1E4a018a5863A5fb4900BEc",
+      "address": "0x777fe816941Ff033D220A3B218324C3799f6b1B4",
       "abi": [
         {
           "anonymous": false,
@@ -56824,7 +56957,7 @@
       ]
     },
     "JarvisLiquidatorFunder": {
-      "address": "0x98110E8482E4e286716AC0671438BDd84C4D838c",
+      "address": "0xaC64c0391a54Eba34E23429847986D437bE82da0",
       "abi": [
         {
           "inputs": [
@@ -61410,7 +61543,7 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xA9fddbEf9857f74d664458f9522b3643B9E136DB",
+      "address": "0x771c85e92d6Fdb9c56Ec9F1E6c7ff8F7f135E874",
       "abi": [
         {
           "inputs": [
@@ -61517,7 +61650,7 @@
               "type": "address"
             },
             {
-              "internalType": "contract CErc20Token",
+              "internalType": "contract ERC20",
               "name": "market",
               "type": "address"
             },
@@ -62432,7 +62565,7 @@
       ]
     },
     "MidasFlywheel_JRT_MIMO_SEP22_Implementation": {
-      "address": "0x7061c9560c00b75084c484dffc615959F4495bDE",
+      "address": "0x2d087c684469eDfC985a7Ee4d3aC205C8C745366",
       "abi": [
         {
           "anonymous": false,
@@ -64209,7 +64342,7 @@
       ]
     },
     "MidasFlywheel_MIMO_Implementation": {
-      "address": "0x1D7Fb8F79B716F3949657CC3b92b05427500cfac",
+      "address": "0xd83D45abF1718267241c1551F5f7BF401af7E506",
       "abi": [
         {
           "anonymous": false,
