@@ -14,7 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { STRATEGY_HELP } from '@midas-capital/security';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode, Strategy } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
@@ -237,7 +237,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].complexity[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].complexity[
                           strategyScore.strategy.complexity
                         ].title
                       }
@@ -250,7 +250,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].complexity[
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].complexity[
                                 strategyScore.strategy.complexity
                               ].explanation
                             }
@@ -282,7 +282,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].timeInMarket[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].timeInMarket[
                           strategyScore.strategy.timeInMarket
                         ].title
                       }
@@ -295,9 +295,8 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].timeInMarket[
-                                strategyScore.strategy.timeInMarket
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .timeInMarket[strategyScore.strategy.timeInMarket].explanation
                             }
                           </Text>
                         </VStack>
@@ -327,7 +326,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].riskIL[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].riskIL[
                           strategyScore.strategy.riskIL
                         ].title
                       }
@@ -341,7 +340,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].riskIL[
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].riskIL[
                                 strategyScore.strategy.riskIL
                               ].explanation
                             }
@@ -373,7 +372,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].liquidity[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].liquidity[
                           strategyScore.strategy.liquidity
                         ].title
                       }
@@ -386,7 +385,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].liquidity[
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].liquidity[
                                 strategyScore.strategy.liquidity
                               ].explanation
                             }
@@ -418,7 +417,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].mktCap[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].mktCap[
                           strategyScore.strategy.mktCap
                         ].title
                       }
@@ -431,7 +430,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].mktCap[
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].mktCap[
                                 strategyScore.strategy.mktCap
                               ].explanation
                             }
@@ -463,9 +462,8 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].supplyCentralised[
-                          strategyScore.strategy.supplyCentralised
-                        ].title
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                          .supplyCentralised[strategyScore.strategy.supplyCentralised].title
                       }
                     </Text>
                     <PopoverTooltip
@@ -476,9 +474,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].supplyCentralised[
-                                strategyScore.strategy.supplyCentralised
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .supplyCentralised[strategyScore.strategy.supplyCentralised]
+                                .explanation
                             }
                           </Text>
                         </VStack>
@@ -508,7 +506,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].reputation[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].reputation[
                           strategyScore.strategy.reputation
                         ].title
                       }
@@ -521,7 +519,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].reputation[
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].reputation[
                                 strategyScore.strategy.reputation
                               ].explanation
                             }
@@ -553,7 +551,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].audit[
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].audit[
                           strategyScore.strategy.audit
                         ].title
                       }
@@ -566,7 +564,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].audit[
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].audit[
                                 strategyScore.strategy.audit
                               ].explanation
                             }
@@ -598,9 +596,8 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].contractsVerified[
-                          strategyScore.strategy.contractsVerified
-                        ].title
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                          .contractsVerified[strategyScore.strategy.contractsVerified].title
                       }
                     </Text>
                     <PopoverTooltip
@@ -612,9 +609,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].contractsVerified[
-                                strategyScore.strategy.contractsVerified
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .contractsVerified[strategyScore.strategy.contractsVerified]
+                                .explanation
                             }
                           </Text>
                         </VStack>
@@ -644,9 +641,8 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP[strategyScore.strategy.strategy].adminWithTimelock[
-                          strategyScore.strategy.adminWithTimelock
-                        ].title
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                          .adminWithTimelock[strategyScore.strategy.adminWithTimelock].title
                       }
                     </Text>
                     <PopoverTooltip
@@ -658,9 +654,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP[strategyScore.strategy.strategy].adminWithTimelock[
-                                strategyScore.strategy.adminWithTimelock
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .adminWithTimelock[strategyScore.strategy.adminWithTimelock]
+                                .explanation
                             }
                           </Text>
                         </VStack>
