@@ -147,6 +147,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
+    symbol: assetSymbols.WETH_wh,
+    aggregator: "0x9ce2388a1696e22F870341C3FC1E89710C7569B5",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.WBTC_wh,
+    aggregator: "0x8c4425e141979c66423A83bE2ee59135864487Eb",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
     symbol: assetSymbols.FRAX,
     aggregator: "0x05Ec3Fb5B7CB3bE9D7150FBA1Fb0749407e5Aa8a",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
