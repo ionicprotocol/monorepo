@@ -231,6 +231,8 @@ export enum assetSymbols {
   ceWETH = "ceWETH",
   gWBTC = "gWBTC",
   axlWBTC = "axlWBTC",
+  DIFF = "DIFF",
+  "WEVMOS-DIFF" = "WEVMOS-DIFF",
 
   // moonbeam
   GLMR = "GLMR",

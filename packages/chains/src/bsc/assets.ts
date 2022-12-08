@@ -271,6 +271,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
     extraDocs: ankrCertificateDocs("aBNBc", "BNB"),
+    disabled: true,
   },
   {
     symbol: assetSymbols.stkBNB,

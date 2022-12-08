@@ -77,6 +77,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["WMATIC-USDT"]),
       underlying(assets, assetSymbols["WETH-WBTC"]),
       underlying(assets, assetSymbols["MAI-USDC"]),
+      underlying(assets, assetSymbols["WMATIC-MATICx"]),
     ],
     flashSwapFee: 30,
   },
@@ -680,6 +681,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     console.log("setAddress bUSD: ", tx.hash);
   }
   ////
-
-  console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };
