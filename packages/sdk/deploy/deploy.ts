@@ -609,7 +609,11 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`gas price ${gasPrice}`);
   console.log(`gas used ${deployments.getGasUsed()}`);
   console.log(`cg price ${cgPrice}`);
-  console.log(`total $ value gas used for deployments ${cgPrice * gasPrice.mul(deployments.getGasUsed()).div(1e9).div(1e9)}`);
+  console.log(
+    `total $ value gas used for deployments ${
+      cgPrice * gasPrice.mul(deployments.getGasUsed()).div(1e9).div(1e9).toNumber()
+    }`
+  );
 };
 
 func.tags = ["prod"];

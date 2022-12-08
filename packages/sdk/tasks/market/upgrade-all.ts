@@ -1,5 +1,4 @@
-import { TransactionReceipt } from "@ethersproject/abstract-provider";
-import { constants, Contract } from "ethers";
+import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
