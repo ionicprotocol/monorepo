@@ -13,7 +13,7 @@ import {
   useColorModeValue,
   VStack,
 } from '@chakra-ui/react';
-import { STRATEGY_HELP } from '@midas-capital/security';
+import { STRATEGY_HELP[strategyScore.strategy.strategy] } from '@midas-capital/security';
 import { FundOperationMode } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Row } from '@tanstack/react-table';
@@ -235,7 +235,7 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.complexity[strategyScore.strategy.complexity].title}</Text>
+                    <Text>{STRATEGY_HELP[strategyScore.strategy.strategy].complexity[strategyScore.strategy.complexity].title}</Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -244,7 +244,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.complexity[strategyScore.strategy.complexity]
+                              STRATEGY_HELP[strategyScore.strategy.strategy].complexity[strategyScore.strategy.complexity]
                                 .explanation
                             }
                           </Text>
@@ -274,7 +274,7 @@ export const AdditionalInfo = ({
                       </Center>
                     )}
                     <Text>
-                      {STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].title}
+                      {STRATEGY_HELP[strategyScore.strategy.strategy].timeInMarket[strategyScore.strategy.timeInMarket].title}
                     </Text>
                     <PopoverTooltip
                       body={
@@ -284,7 +284,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket]
+                              STRATEGY_HELP[strategyScore.strategy.strategy].timeInMarket[strategyScore.strategy.timeInMarket]
                                 .explanation
                             }
                           </Text>
@@ -313,7 +313,7 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].title}</Text>
+                    <Text>{STRATEGY_HELP[strategyScore.strategy.strategy].riskIL[strategyScore.strategy.riskIL].title}</Text>
 
                     <PopoverTooltip
                       body={
@@ -322,7 +322,7 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.assetRiskILScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].explanation}
+                            {STRATEGY_HELP[strategyScore.strategy.strategy].riskIL[strategyScore.strategy.riskIL].explanation}
                           </Text>
                         </VStack>
                       }
@@ -349,7 +349,7 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].title}</Text>
+                    <Text>{STRATEGY_HELP[strategyScore.strategy.strategy].liquidity[strategyScore.strategy.liquidity].title}</Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -357,7 +357,7 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.assetRiskLiquidityScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].explanation}
+                            {STRATEGY_HELP[strategyScore.strategy.strategy].liquidity[strategyScore.strategy.liquidity].explanation}
                           </Text>
                         </VStack>
                       }
@@ -384,7 +384,7 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].title}</Text>
+                    <Text>{STRATEGY_HELP[strategyScore.strategy.strategy].mktCap[strategyScore.strategy.mktCap].title}</Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -392,7 +392,7 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.assetRiskMktCapScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].explanation}
+                            {STRATEGY_HELP[strategyScore.strategy.strategy].mktCap[strategyScore.strategy.mktCap].explanation}
                           </Text>
                         </VStack>
                       }
@@ -421,7 +421,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP.supplyCentralised[strategyScore.strategy.supplyCentralised]
+                        STRATEGY_HELP[strategyScore.strategy.strategy].supplyCentralised[strategyScore.strategy.supplyCentralised]
                           .title
                       }
                     </Text>
@@ -433,7 +433,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.supplyCentralised[
+                              STRATEGY_HELP[strategyScore.strategy.strategy].supplyCentralised[
                                 strategyScore.strategy.supplyCentralised
                               ].explanation
                             }
@@ -463,7 +463,7 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.reputation[strategyScore.strategy.reputation].title}</Text>
+                    <Text>{STRATEGY_HELP[strategyScore.strategy.strategy].reputation[strategyScore.strategy.reputation].title}</Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -472,7 +472,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.reputation[strategyScore.strategy.reputation]
+                              STRATEGY_HELP[strategyScore.strategy.strategy].reputation[strategyScore.strategy.reputation]
                                 .explanation
                             }
                           </Text>
@@ -501,7 +501,7 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].title}</Text>
+                    <Text>{STRATEGY_HELP[strategyScore.strategy.strategy].audit[strategyScore.strategy.audit].title}</Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -509,7 +509,7 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.platformRiskAuditScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.audit[strategyScore.strategy.audit].explanation}
+                            {STRATEGY_HELP[strategyScore.strategy.strategy].audit[strategyScore.strategy.audit].explanation}
                           </Text>
                         </VStack>
                       }
@@ -538,7 +538,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP.contractsVerified[strategyScore.strategy.contractsVerified]
+                        STRATEGY_HELP[strategyScore.strategy.strategy].contractsVerified[strategyScore.strategy.contractsVerified]
                           .title
                       }
                     </Text>
@@ -551,7 +551,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.contractsVerified[
+                              STRATEGY_HELP[strategyScore.strategy.strategy].contractsVerified[
                                 strategyScore.strategy.contractsVerified
                               ].explanation
                             }
@@ -583,7 +583,7 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP.adminWithTimelock[strategyScore.strategy.adminWithTimelock]
+                        STRATEGY_HELP[strategyScore.strategy.strategy].adminWithTimelock[strategyScore.strategy.adminWithTimelock]
                           .title
                       }
                     </Text>
@@ -596,7 +596,7 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.adminWithTimelock[
+                              STRATEGY_HELP[strategyScore.strategy.strategy].adminWithTimelock[
                                 strategyScore.strategy.adminWithTimelock
                               ].explanation
                             }
