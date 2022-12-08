@@ -1,14 +1,13 @@
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { utils } from 'ethers';
 
 import { RewardsResponse } from '../pages/api/rewards';
 
 import { useFusePoolData } from './useFusePoolData';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { utils } from 'ethers';
 
 interface UseRewardsProps {
   chainId: number;
@@ -27,22 +26,23 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
     async () => {
       if (chainId && sdk && poolData) {
         try {
-          let allFlywheelRewards: FlywheelMarketRewardsInfo[] = [];
-          try {
-            allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPoolWithAPR(
-              poolData.comptroller
-            );
-          } catch (exception) {
-            // Fallback to rewards without APRs
-            // TODO LogRocket
-            console.error('Unable to get onchain Flywheel Rewards with APY', exception);
-            try {
-              allFlywheelRewards = await sdk.getFlywheelMarketRewardsByPool(poolData.comptroller);
-            } catch (exception) {
-              // TODO LogRocket
-              console.error('Unable to get onchain Flywheel Rewards Fallback', exception);
-            }
-          }
+          const [flywheelRewardsWithAPY, flywheelRewardsWithoutAPY] = await Promise.all([
+            sdk.getFlywheelMarketRewardsByPoolWithAPR(poolData.comptroller).catch((exception) => {
+              console.error('Unable to get onchain Flywheel Rewards with APY', exception);
+              return [];
+            }),
+            sdk.getFlywheelMarketRewardsByPool(poolData.comptroller).catch((exception) => {
+              // TODO LogRocket, this should never happen.
+              console.error('Unable to get onchain Flywheel Rewards without APY', exception);
+              return [];
+            }),
+          ]);
+
+          const allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
+            const rewardWithAPY = flywheelRewardsWithAPY.find((r) => r.market === fwReward.market);
+            if (rewardWithAPY) return rewardWithAPY;
+            return fwReward;
+          });
 
           const rewardsOfMarkets: UseRewardsData = {};
           await Promise.all(
