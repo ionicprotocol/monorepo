@@ -410,14 +410,14 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   //// Ankr BNB Certificate oracle
-  await deployAnkrCertificateTokenPriceOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    assets,
-    certificateAssetSymbol: assetSymbols.aBNBc,
-  });
+  // await deployAnkrCertificateTokenPriceOracle({
+  //   run,
+  //   ethers,
+  //   getNamedAccounts,
+  //   deployments,
+  //   assets,
+  //   certificateAssetSymbol: assetSymbols.aBNBc,
+  // });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,
@@ -579,6 +579,4 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   // update sd apeswap oracle factory
   await run("oracle:deploy-apeswap-oracle");
-
-  console.log(`total gas used for deployments ${deployments.getGasUsed()}`);
 };
