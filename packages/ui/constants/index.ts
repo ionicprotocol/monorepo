@@ -1,5 +1,7 @@
 import { SupportedChainsArray } from '@midas-capital/types';
 
+import { TxStep } from '@ui/types/ComponentPropsType';
+
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(SupportedChainsArray.join('|'));
 export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
@@ -107,7 +109,11 @@ export const PERFORMANCE_FEE_TOOLTIP =
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
-export const SUPPLY_STEPS = ['Approve', 'Enter Market', 'Mint Market Share'];
+export const SUPPLY_STEPS: TxStep[] = [
+  { title: 'Approve', desc: 'Approve', done: false },
+  { title: 'Enter Market', desc: 'Enter Market', done: false },
+  { title: 'Mint market Share', desc: 'Mint Market Share', done: false },
+];
 export const SCORE_LIMIT = 0.6;
 export const SCORE_RANGE_MAX = 10;
 export const REPAY_STEPS = ['Approve', 'Repay'];
