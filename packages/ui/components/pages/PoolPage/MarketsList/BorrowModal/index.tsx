@@ -27,16 +27,17 @@ import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColu
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
+import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
@@ -80,9 +81,14 @@ export const BorrowModal = ({
   const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
   const borrowLimitMarket = useBorrowLimitMarket(asset, assets, poolChainId);
   const [isBorrowing, setIsBorrowing] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS]);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [failedStep, setFailedStep] = useState<number>(0);
   const [isRisky, setIsRisky] = useState<boolean>(false);
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const queryClient = useQueryClient();
+  const successToast = useSuccessToast();
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -170,9 +176,13 @@ export const BorrowModal = ({
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
+    setIsConfirmed(true);
+    const _steps = [...steps];
 
     try {
       setIsBorrowing(true);
+      setActiveStep(1);
+      setFailedStep(0);
 
       const resp = await currentSdk.borrow(asset.cToken, amount);
 
@@ -186,13 +196,22 @@ export const BorrowModal = ({
         });
         await tx.wait();
         await queryClient.refetchQueries();
-      }
 
-      onClose();
+        _steps[0] = {
+          ..._steps[0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
+        successToast({
+          id: 'Borrow',
+          description: 'Successfully borrowed!',
+        });
+      }
     } catch (e) {
+      setFailedStep(1);
       handleGenericError(e, errorToast);
     } finally {
-      setAmount(constants.Zero);
       setIsBorrowing(false);
     }
   };
@@ -204,8 +223,14 @@ export const BorrowModal = ({
       onClose={() => {
         setAmount(constants.Zero);
         onClose();
+        if (!isBorrowing) {
+          setIsConfirmed(false);
+          setSteps([...BORROW_STEPS]);
+        }
       }}
       isCentered
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
@@ -218,8 +243,17 @@ export const BorrowModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            {isBorrowing ? (
-              <PendingTransaction />
+            <ModalCloseButton top={4} right={4} />
+            {isConfirmed ? (
+              <PendingTransaction
+                activeStep={activeStep}
+                failedStep={failedStep}
+                steps={steps}
+                isBorrowing={isBorrowing}
+                poolChainId={poolChainId}
+                amount={amount}
+                asset={asset}
+              />
             ) : (
               <>
                 <HStack width="100%" p={4} justifyContent="center">
@@ -234,7 +268,6 @@ export const BorrowModal = ({
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
-                  <ModalCloseButton top={4} right={4} />
                 </HStack>
 
                 <Divider />

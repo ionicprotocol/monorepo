@@ -65,7 +65,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Repay');
-  const [steps, setSteps] = useState<TxStep[]>([]);
+  const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS]);
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
   const optionToWrap =
     asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&

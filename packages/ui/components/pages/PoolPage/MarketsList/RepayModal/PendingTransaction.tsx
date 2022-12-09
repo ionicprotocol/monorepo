@@ -106,12 +106,16 @@ export const PendingTransaction = ({
           poolChainId={poolChainId}
         />
       </Box>
-      <Text mt={4} textAlign="center" variant="smText">
-        Check your wallet to submit the transactions
-      </Text>
-      <Text variant="smText" mt={2} textAlign="center">
-        Do not close this modal until you submit all transactions!
-      </Text>
+      {isRepaying ? (
+        <VStack mt={4}>
+          <Text textAlign="center" variant="smText">
+            Check your wallet to submit the transactions
+          </Text>
+          <Text variant="smText" textAlign="center">
+            Do not close this modal until you submit all transactions!
+          </Text>
+        </VStack>
+      ) : null}
     </Column>
   );
 };
