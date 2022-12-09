@@ -25,13 +25,13 @@ const TransactionStepper = ({
   activeStep,
   steps,
   failedStep,
-  isSupplying,
+  isLoading,
   poolChainId,
 }: {
   steps: TxStep[];
   activeStep: number;
   failedStep: number;
-  isSupplying: boolean;
+  isLoading: boolean;
   poolChainId: number;
 }) => {
   const { cCard } = useColors();
@@ -69,7 +69,7 @@ const TransactionStepper = ({
                     {failedStep - 1 === index ? (
                       <Icon as={BsFillXCircleFill} width={25} height={25} color={'fail'} />
                     ) : activeStep - 1 === index ? (
-                      isSupplying ? (
+                      isLoading ? (
                         <Spinner width={30} height={30} borderWidth={3} color={cCard.borderColor} />
                       ) : (
                         <Icon as={BsFillCheckCircleFill} width={25} height={25} color={'success'} />

@@ -114,9 +114,14 @@ export const SUPPLY_STEPS: TxStep[] = [
   { title: 'Enter Market', desc: 'Enter Market', done: false },
   { title: 'Mint market Share', desc: 'Mint Market Share', done: false },
 ];
+export const BORROW_STEPS: TxStep[] = [{ title: 'Borrow', desc: 'Borrow', done: false }];
+export const WITHDRAW_STEPS: TxStep[] = [{ title: 'Withdraw', desc: 'Withdraw', done: false }];
+export const REPAY_STEPS: TxStep[] = [
+  { title: 'Approve', desc: 'Approve', done: false },
+  { title: 'Repay', desc: 'Repay', done: false },
+];
 export const SCORE_LIMIT = 0.6;
 export const SCORE_RANGE_MAX = 10;
-export const REPAY_STEPS = ['Approve', 'Repay'];
 export const MARKET_LTV = 'Market / LTV';
 export const SUPPLY_APY = 'Supply APY';
 export const BORROW_APY = 'Borrow APY';

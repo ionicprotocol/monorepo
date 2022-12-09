@@ -248,21 +248,21 @@ export const BorrowModal = ({
                   gap={4}
                 >
                   {maxBorrowInAsset &&
-                    maxBorrowInAsset.number !== 0 &&
-                    borrowLimitTotal &&
-                    borrowLimitTotal !== 0 &&
-                    borrowLimitMarket && (
-                      <MaxBorrowSlider
-                        userEnteredAmount={userEnteredAmount}
-                        updateAmount={updateAmount}
-                        borrowableAmount={maxBorrowInAsset.number}
-                        asset={asset}
-                        poolChainId={poolChainId}
-                        borrowBalanceFiat={borrowBalanceFiat}
-                        borrowLimitTotal={borrowLimitTotal}
-                        borrowLimitMarket={borrowLimitMarket}
-                      />
-                    )}
+                  maxBorrowInAsset.number !== 0 &&
+                  borrowLimitTotal &&
+                  borrowLimitTotal !== 0 &&
+                  borrowLimitMarket ? (
+                    <MaxBorrowSlider
+                      userEnteredAmount={userEnteredAmount}
+                      updateAmount={updateAmount}
+                      borrowableAmount={maxBorrowInAsset.number}
+                      asset={asset}
+                      poolChainId={poolChainId}
+                      borrowBalanceFiat={borrowBalanceFiat}
+                      borrowLimitTotal={borrowLimitTotal}
+                      borrowLimitMarket={borrowLimitMarket}
+                    />
+                  ) : null}
                   <Column gap={1} w="100%" mt={4}>
                     <AmountInput
                       asset={asset}

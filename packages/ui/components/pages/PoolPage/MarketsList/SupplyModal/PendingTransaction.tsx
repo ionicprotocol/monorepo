@@ -102,7 +102,7 @@ export const PendingTransaction = ({
           activeStep={activeStep}
           steps={steps}
           failedStep={failedStep}
-          isSupplying={isSupplying}
+          isLoading={isSupplying}
           poolChainId={poolChainId}
         />
       </Box>
