@@ -191,12 +191,8 @@ const PoolPage = memo(() => {
             allRewards &&
             initHidden !== undefined ? (
               <MarketsList
-                assets={data.assets}
+                poolData={data}
                 rewards={allRewards}
-                comptrollerAddress={data.comptroller}
-                supplyBalanceFiat={data.totalSupplyBalanceFiat}
-                borrowBalanceFiat={data.totalBorrowBalanceFiat}
-                poolChainId={data.chainId}
                 initSorting={initSorting}
                 initColumnVisibility={initColumnVisibility}
                 initHidden={initHidden}

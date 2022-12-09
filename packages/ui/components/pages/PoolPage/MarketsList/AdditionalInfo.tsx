@@ -57,12 +57,14 @@ export const AdditionalInfo = ({
   rows,
   comptrollerAddress,
   supplyBalanceFiat,
+  borrowBalanceFiat,
   poolChainId,
 }: {
   row: Row<Market>;
   rows: Row<Market>[];
   comptrollerAddress: string;
   supplyBalanceFiat: number;
+  borrowBalanceFiat: number;
   poolChainId: number;
 }) => {
   const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
@@ -146,6 +148,7 @@ export const AdditionalInfo = ({
               asset={asset}
               isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
               poolChainId={poolChainId}
+              borrowBalanceFiat={borrowBalanceFiat}
             />
             <FundButton
               mode={FundOperationMode.REPAY}
