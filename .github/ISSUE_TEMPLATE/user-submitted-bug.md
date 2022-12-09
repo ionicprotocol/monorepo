@@ -23,10 +23,11 @@ Steps to reproduce the behavior:
 **Screenshots:** (Add screenshots to help explain your problem)
 
 **Transaction Info:**
- - Chain: 
- - Pool Id: 
- - Transaction Hash: 
- - Error logs (screenshot): 
+- Wallet Address:
+- Chain: 
+- Pool Id: 
+- Transaction Hash: 
+- Error logs (screenshot): 
 
 **Browser/App/Platform Info**
 - Wallet (ex. MetaMask, Trust Wallet, etc): 
@@ -37,6 +38,7 @@ Steps to reproduce the behavior:
   - Operating system:
 
 **Contact Info:**
+- Discord Handle:
 
 **Additional Context:**
 Add any other context about the problem here.
