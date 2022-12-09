@@ -1,6 +1,6 @@
 ---
-name: User Bug report
-about: Create a report to help us improve
+name: User Submitted Bug
+about: Please use this form to submit your issue
 title: "[USER SUBMITTED BUG] Cannot perform action X"
 labels: "[USER SUBMITTED BUG]"
 assignees: ''
