@@ -7,8 +7,7 @@ assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Describe the bug** (A clear and concise description of what the bug is)
 
 **To Reproduce**
 Steps to reproduce the behavior:
@@ -17,11 +16,9 @@ Steps to reproduce the behavior:
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Expected behavior** (A clear and concise description of what you expected to happen)
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**Screenshots** (Add screenshots to help explain your problem)
 
 **Context**
  - Chain: 
@@ -29,9 +26,12 @@ If applicable, add screenshots to help explain your problem.
  - Transaction Hash: 
  - Error logs (screenshot): 
 
-**Platform**
-- Wallet used: 
+**Browser/App/Platform Info**
+- What wallet did you use?
+- Was this on a desktop browser? If so:
+- Browser:
 - Mobile: [ ]
+- Extension
 
 **Additional context**
 Add any other context about the problem here.
