@@ -7,20 +7,22 @@ assignees: ''
 
 ---
 
-**Describe the bug** (A clear and concise description of what the bug is)
+**Describe The Outcome:** (A clear and concise description of what the incorrect behavior is)
 
-**To Reproduce**
+
+**Expected behavior:** (A clear and concise description of what you expected to happen)
+
+
+**Steps To Reproduce:**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior** (A clear and concise description of what you expected to happen)
+**Screenshots:** (Add screenshots to help explain your problem)
 
-**Screenshots** (Add screenshots to help explain your problem)
-
-**Context**
+**Transaction Info:**
  - Chain: 
  - Pool Id: 
  - Transaction Hash: 
@@ -34,5 +36,7 @@ Steps to reproduce the behavior:
 - Was this on a mobile device?  If so:
   - Operating system:
 
-**Additional context**
+**Contact Info:**
+
+**Additional Context:**
 Add any other context about the problem here.
