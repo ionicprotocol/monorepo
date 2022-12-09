@@ -119,7 +119,7 @@ function applyAPYFix(rewards: FlywheelMarketRewardsInfo[]) {
         rewardsInfo: r.rewardsInfo.map((info) => {
           // only LDO reward token
           if (info.rewardToken === '0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0') {
-            return { ...info, formattedAPR: info.formattedAPR?.div(100000000000) }; // make 8 decimals smaller
+            return { ...info, formattedAPR: info.formattedAPR?.div(100000000) }; // make 8 decimals smaller
           }
           // Or change nothing
           return info;
@@ -134,7 +134,7 @@ function applyAPYFix(rewards: FlywheelMarketRewardsInfo[]) {
         rewardsInfo: r.rewardsInfo.map((info) => {
           // only USDC reward token
           if (info.rewardToken === '0x931715FEE2d06333043d11F658C8CE934aC61D0c') {
-            return { ...info, formattedAPR: info.formattedAPR?.div(1000000000) }; // make 4 decimals bigger
+            return { ...info, formattedAPR: info.formattedAPR?.div(100000000) }; // make 4 decimals bigger
           }
           // Or change nothing
           return info;
