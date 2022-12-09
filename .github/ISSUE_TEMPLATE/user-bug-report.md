@@ -1,8 +1,8 @@
 ---
 name: User Bug report
 about: Create a report to help us improve
-title: "[TRIAGE] Cannot perform action X"
-labels: "[Triage]"
+title: "[USER SUBMITTED] Cannot perform action X"
+labels: "[USER SUBMITTED]"
 assignees: ''
 
 ---
