@@ -49,6 +49,7 @@ export const PendingTransaction = ({
             address: asset.cToken,
             symbol: asset.underlyingSymbol,
             decimals: Number(asset.underlyingDecimals),
+            image: asset.logoURL,
           },
         } as {
           type: 'ERC20';
@@ -56,6 +57,7 @@ export const PendingTransaction = ({
             address: Address;
             decimals: number;
             symbol: string;
+            image?: string;
           };
         },
       });
