@@ -1,7 +1,7 @@
 ---
 name: User Submitted Bug
 about: Please use this form to submit your issue
-title: "[USER SUBMITTED BUG] Cannot perform action X"
+title: "[USER SUBMITTED BUG] Title of Issue"
 labels: "[USER SUBMITTED BUG]"
 assignees: ''
 
