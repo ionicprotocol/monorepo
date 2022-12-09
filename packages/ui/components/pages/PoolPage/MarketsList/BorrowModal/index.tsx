@@ -221,9 +221,9 @@ export const BorrowModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={() => {
-        setAmount(constants.Zero);
         onClose();
         if (!isBorrowing) {
+          setAmount(constants.Zero);
           setIsConfirmed(false);
           setSteps([...BORROW_STEPS]);
         }

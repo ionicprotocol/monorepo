@@ -221,9 +221,9 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={() => {
-        setAmount(constants.Zero);
         onClose();
         if (!isRepaying) {
+          setAmount(constants.Zero);
           setIsConfirmed(false);
           optionToWrap
             ? setSteps([

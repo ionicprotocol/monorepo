@@ -237,9 +237,9 @@ export const SupplyModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={() => {
-        setAmount(constants.Zero);
         onClose();
         if (!isSupplying) {
+          setAmount(constants.Zero);
           setIsConfirmed(false);
           optionToWrap
             ? setSteps([
