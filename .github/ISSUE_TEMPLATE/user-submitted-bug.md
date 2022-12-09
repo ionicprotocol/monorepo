@@ -27,11 +27,12 @@ Steps to reproduce the behavior:
  - Error logs (screenshot): 
 
 **Browser/App/Platform Info**
-- What wallet did you use?
+- Wallet (ex. MetaMask, Trust Wallet, etc): 
 - Was this on a desktop browser? If so:
-- Browser:
-- Mobile: [ ]
-- Extension
+  - Browser:
+  - Operating System:
+- Was this on a mobile device?  If so:
+  - Operating system:
 
 **Additional context**
 Add any other context about the problem here.
