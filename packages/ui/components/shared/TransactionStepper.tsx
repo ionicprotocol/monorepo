@@ -40,12 +40,21 @@ const TransactionStepper = ({
   return (
     <>
       <Row mainAxisAlignment="center" crossAxisAlignment="center">
-        <Accordion allowMultiple width="100%" index={Array.from(Array(activeStep).keys())}>
+        <Accordion
+          allowMultiple
+          width="100%"
+          index={Array.from(Array(activeStep).keys())}
+          borderWidth={1}
+          borderColor={cCard.hoverBgColor}
+        >
           {steps.map((step, index) => {
             return (
-              <AccordionItem key={index}>
+              <AccordionItem key={index} border="none">
                 <h2>
-                  <AccordionButton>
+                  <AccordionButton
+                    bgColor={cCard.hoverBgColor}
+                    _hover={{ bgColor: cCard.hoverBgColor }}
+                  >
                     <Box
                       width={30}
                       height={30}
@@ -79,7 +88,7 @@ const TransactionStepper = ({
                     ) : null}
                   </AccordionButton>
                 </h2>
-                <AccordionPanel pt={0} pb={2}>
+                <AccordionPanel py={2}>
                   <VStack alignItems="flex-start" ml={12} spacing={0}>
                     <Text>{step.desc}</Text>
                     <Flex justifyContent="flex-end" width="100%">
