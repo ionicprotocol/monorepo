@@ -172,40 +172,62 @@ export const SupplyModal = ({
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        _steps[optionToWrap ? 1 : 0] = {
-          ..._steps[optionToWrap ? 1 : 0],
-          done: true,
-        };
-        setConfirmedSteps([..._steps]);
-        successToast({
-          id: 'approved',
-          description: 'Successfully Approved!',
-        });
+        const hash = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+        if (hash) {
+          addRecentTransaction({
+            hash: hash,
+            description: `Approve ${asset.underlyingSymbol}`,
+          });
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            done: true,
+            txHash: hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            id: 'approved',
+            description: 'Successfully Approved!',
+          });
+        } else {
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            desc: 'Already approved!',
+            done: true,
+          };
+          setConfirmedSteps([..._steps]);
+        }
       } catch (error) {
         setFailedStep(optionToWrap ? 2 : 1);
         throw error;
       }
-
-      try {
-        setActiveStep(optionToWrap ? 3 : 2);
-        await currentSdk.enterMarkets(asset.cToken, comptrollerAddress, enableAsCollateral);
-        _steps[optionToWrap ? 2 : 1] = {
-          ..._steps[optionToWrap ? 2 : 1],
-          done: true,
-        };
-        setConfirmedSteps([..._steps]);
-        successToast({
-          id: 'collateralEnabled',
-          description: 'Collateral enabled!',
-        });
-      } catch (error) {
-        setFailedStep(optionToWrap ? 3 : 2);
-        throw error;
+      if (enableAsCollateral) {
+        try {
+          setActiveStep(optionToWrap ? 3 : 2);
+          const hash = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
+          addRecentTransaction({
+            hash: hash,
+            description: `Entered ${asset.underlyingSymbol} market`,
+          });
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
+            done: true,
+            txHash: hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            id: 'collateralEnabled',
+            description: 'Collateral enabled!',
+          });
+        } catch (error) {
+          setFailedStep(optionToWrap ? 3 : 2);
+          throw error;
+        }
       }
 
       try {
-        setActiveStep(optionToWrap ? 4 : 3);
+        setActiveStep(
+          optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
+        );
         const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
         if (errorCode !== null) {
           SupplyError(errorCode);
@@ -216,15 +238,21 @@ export const SupplyModal = ({
           });
           await tx.wait();
           await queryClient.refetchQueries();
-          _steps[optionToWrap ? 3 : 2] = {
-            ..._steps[optionToWrap ? 3 : 2],
+          _steps[
+            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+          ] = {
+            ..._steps[
+              optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+            ],
             done: true,
             txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
         }
       } catch (error) {
-        setFailedStep(optionToWrap ? 4 : 3);
+        setFailedStep(
+          optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
+        );
         throw error;
       }
     } catch (error) {
@@ -234,32 +262,48 @@ export const SupplyModal = ({
     }
   };
 
-  useEffect(() => {
-    optionToWrap
-      ? setSteps([
+  const onModalClose = () => {
+    onClose();
+
+    if (!isSupplying) {
+      setAmount(constants.Zero);
+      setIsConfirmed(false);
+      let _steps = [...SUPPLY_STEPS];
+
+      if (!enableAsCollateral) {
+        _steps.splice(1, 1);
+      }
+
+      if (optionToWrap) {
+        _steps = [
           { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
-          ...SUPPLY_STEPS,
-        ])
-      : setSteps([...SUPPLY_STEPS]);
-  }, [optionToWrap]);
+          ..._steps,
+        ];
+      }
+
+      setSteps(_steps);
+    }
+  };
+
+  useEffect(() => {
+    let _steps = [...SUPPLY_STEPS];
+
+    if (!enableAsCollateral) {
+      _steps.splice(1, 1);
+    }
+
+    if (optionToWrap) {
+      _steps = [{ title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false }, ..._steps];
+    }
+
+    setSteps(_steps);
+  }, [optionToWrap, enableAsCollateral]);
 
   return (
     <Modal
       motionPreset="slideInBottom"
       isOpen={isOpen}
-      onClose={() => {
-        onClose();
-        if (!isSupplying) {
-          setAmount(constants.Zero);
-          setIsConfirmed(false);
-          optionToWrap
-            ? setSteps([
-                { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
-                ...SUPPLY_STEPS,
-              ])
-            : setSteps([...SUPPLY_STEPS]);
-        }
-      }}
+      onClose={onModalClose}
       isCentered
       closeOnOverlayClick={false}
       closeOnEsc={false}

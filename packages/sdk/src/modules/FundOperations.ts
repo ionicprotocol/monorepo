@@ -4,6 +4,7 @@ import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import { getContract } from "../MidasSdk/utils";
 
 export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBase) {
@@ -29,7 +30,11 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async approve(cTokenAddress: string, underlyingTokenAddress: string, amount: BigNumber) {
-      const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
+      const token = getContract(
+        underlyingTokenAddress,
+        this.artifacts.EIP20Interface.abi,
+        this.signer
+      ) as EIP20Interface;
       const currentSignerAddress = await this.signer.getAddress();
 
       const hasApprovedEnough = (await token.callStatic.allowance(currentSignerAddress, cTokenAddress)).gte(amount);
@@ -37,19 +42,24 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
         const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
         const approveTx = await token.approve(cTokenAddress, max);
         await approveTx.wait();
+
+        return approveTx.hash;
+      } else {
+        return null;
       }
     }
 
-    async enterMarkets(cTokenAddress: string, comptrollerAddress: string, enableAsCollateral: boolean) {
-      if (enableAsCollateral) {
-        const comptrollerInstance = getContract(
-          comptrollerAddress,
-          this.artifacts.Comptroller.abi,
-          this.signer
-        ) as Comptroller;
+    async enterMarkets(cTokenAddress: string, comptrollerAddress: string) {
+      const comptrollerInstance = getContract(
+        comptrollerAddress,
+        this.artifacts.Comptroller.abi,
+        this.signer
+      ) as Comptroller;
 
-        await comptrollerInstance.enterMarkets([cTokenAddress]);
-      }
+      const tx = await comptrollerInstance.enterMarkets([cTokenAddress]);
+      await tx.wait();
+
+      return tx.hash;
     }
 
     async mint(cTokenAddress: string, amount: BigNumber) {
@@ -76,7 +86,10 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       amount: BigNumber
     ) {
       await this.approve(cTokenAddress, underlyingTokenAddress, amount);
-      await this.enterMarkets(cTokenAddress, comptrollerAddress, enableAsCollateral);
+      if (enableAsCollateral) {
+        await this.enterMarkets(cTokenAddress, comptrollerAddress);
+      }
+
       return await this.mint(cTokenAddress, amount);
     }
 
