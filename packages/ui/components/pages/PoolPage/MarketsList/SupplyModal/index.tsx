@@ -15,7 +15,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
@@ -73,12 +73,22 @@ export const SupplyModal = ({
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
   const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS]);
+  const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
-  const optionToWrap =
-    asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
-    myBalance?.isZero() &&
-    !myNativeBalance?.isZero();
+  const optionToWrap = useMemo(() => {
+    return (
+      asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+      myBalance?.isZero() &&
+      !myNativeBalance?.isZero()
+    );
+  }, [
+    asset.underlyingToken,
+    currentSdk.chainSpecificAddresses.W_TOKEN,
+    myBalance,
+    myNativeBalance,
+  ]);
+
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
@@ -125,6 +135,7 @@ export const SupplyModal = ({
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
     setIsConfirmed(true);
+    setConfirmedSteps([...steps]);
     const _steps = [...steps];
     try {
       setIsSupplying(true);
@@ -148,7 +159,7 @@ export const SupplyModal = ({
             done: true,
             txHash: resp.hash,
           };
-          setSteps([..._steps]);
+          setConfirmedSteps([..._steps]);
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',
@@ -166,7 +177,7 @@ export const SupplyModal = ({
           ..._steps[optionToWrap ? 1 : 0],
           done: true,
         };
-        setSteps([..._steps]);
+        setConfirmedSteps([..._steps]);
         successToast({
           id: 'approved',
           description: 'Successfully Approved!',
@@ -183,7 +194,7 @@ export const SupplyModal = ({
           ..._steps[optionToWrap ? 2 : 1],
           done: true,
         };
-        setSteps([..._steps]);
+        setConfirmedSteps([..._steps]);
         successToast({
           id: 'collateralEnabled',
           description: 'Collateral enabled!',
@@ -210,7 +221,7 @@ export const SupplyModal = ({
             done: true,
             txHash: tx.hash,
           };
-          setSteps([..._steps]);
+          setConfirmedSteps([..._steps]);
         }
       } catch (error) {
         setFailedStep(optionToWrap ? 4 : 3);
@@ -269,7 +280,7 @@ export const SupplyModal = ({
               <PendingTransaction
                 activeStep={activeStep}
                 failedStep={failedStep}
-                steps={steps}
+                steps={confirmedSteps}
                 isSupplying={isSupplying}
                 poolChainId={poolChainId}
                 amount={amount}

@@ -15,7 +15,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
@@ -66,11 +66,21 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Repay');
   const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS]);
+  const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
-  const optionToWrap =
-    asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
-    myBalance?.isZero() &&
-    !myNativeBalance?.isZero();
+
+  const optionToWrap = useMemo(() => {
+    return (
+      asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+      myBalance?.isZero() &&
+      !myNativeBalance?.isZero()
+    );
+  }, [
+    asset.underlyingToken,
+    currentSdk.chainSpecificAddresses.W_TOKEN,
+    myBalance,
+    myNativeBalance,
+  ]);
 
   const queryClient = useQueryClient();
 
@@ -119,6 +129,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
     if (!currentSdk || !address) return;
 
     setIsConfirmed(true);
+    setConfirmedSteps([...steps]);
     const _steps = [...steps];
     try {
       setIsRepaying(true);
@@ -142,7 +153,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             done: true,
             txHash: resp.hash,
           };
-          setSteps([..._steps]);
+          setConfirmedSteps([..._steps]);
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',
@@ -160,7 +171,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
           ..._steps[optionToWrap ? 1 : 0],
           done: true,
         };
-        setSteps([..._steps]);
+        setConfirmedSteps([..._steps]);
         successToast({
           id: 'approved',
           description: 'Successfully Approved!',
@@ -190,7 +201,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             done: true,
             txHash: tx.hash,
           };
-          setSteps([..._steps]);
+          setConfirmedSteps([..._steps]);
         }
         successToast({
           id: 'repaid',
@@ -253,7 +264,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
               <PendingTransaction
                 activeStep={activeStep}
                 failedStep={failedStep}
-                steps={steps}
+                steps={confirmedSteps}
                 isRepaying={isRepaying}
                 poolChainId={poolChainId}
                 amount={amount}
