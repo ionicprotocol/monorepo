@@ -166,16 +166,30 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        _steps[optionToWrap ? 1 : 0] = {
-          ..._steps[optionToWrap ? 1 : 0],
-          done: true,
-        };
-        setConfirmedSteps([..._steps]);
-        successToast({
-          id: 'approved',
-          description: 'Successfully Approved!',
-        });
+        const hash = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+        if (hash) {
+          addRecentTransaction({
+            hash,
+            description: `Approve ${asset.underlyingSymbol}`,
+          });
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            done: true,
+            txHash: hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            id: 'approved',
+            description: 'Successfully Approved!',
+          });
+        } else {
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            desc: 'Already approved!',
+            done: true,
+          };
+          setConfirmedSteps([..._steps]);
+        }
       } catch (error) {
         setFailedStep(optionToWrap ? 2 : 1);
         throw error;
