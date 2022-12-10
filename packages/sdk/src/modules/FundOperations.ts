@@ -57,14 +57,14 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       ) as Comptroller;
 
       const tx = await comptrollerInstance.enterMarkets([cTokenAddress]);
-      await tx.wait();
+      await tx?.wait();
 
-      return tx.hash;
+      return tx?.hash;
     }
 
     async mint(cTokenAddress: string, amount: BigNumber) {
       const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
-      const address = this.signer.getAddress();
+      const address = await this.signer.getAddress();
       // add 10% to default estimated gas
       const gasLimit = (await cToken.estimateGas.mint(amount, { from: address })).mul(11).div(10);
       const response = (await cToken.callStatic.mint(amount, { gasLimit, from: address })) as BigNumber;
