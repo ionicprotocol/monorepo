@@ -139,7 +139,7 @@ const AddAsset = ({
         <>
           {poolData?.assets.length !== 0 && (
             <Box width="100%">
-              <Text textAlign="left" variant="smText" fontWeight="bold" mt={2} px={6}>
+              <Text textAlign="left" size="md" fontWeight="bold" mt={2} px={6}>
                 Added assets
               </Text>
             </Box>
@@ -167,7 +167,7 @@ const AddAsset = ({
           {poolData && availableAssets.length !== 0 ? (
             <>
               <Box width="100%">
-                <Text textAlign="left" variant="smText" fontWeight="bold" px={6} mt={4}>
+                <Text textAlign="left" size="md" fontWeight="bold" px={6} mt={4}>
                   Available supported assets
                 </Text>
               </Box>
@@ -210,11 +210,11 @@ const AddAsset = ({
                       <Flex direction="row" alignContent="center" py={2}>
                         <TokenIcon address={asset.underlying} chainId={poolData.chainId} />
                         <Flex ml={6} direction="column">
-                          <Text variant="lgText" textAlign="left">
+                          <Text size="lg" textAlign="left">
                             {asset.symbol}
                           </Text>
                           <Spacer />
-                          <Text fontWeight="normal" variant="smText" textAlign="left">
+                          <Text fontWeight="normal" size="md" textAlign="left">
                             {asset.name}
                           </Text>
                         </Flex>

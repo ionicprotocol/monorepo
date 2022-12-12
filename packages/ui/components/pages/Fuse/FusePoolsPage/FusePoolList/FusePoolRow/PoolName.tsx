@@ -26,7 +26,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
         <SimpleTooltip label={pool.name}>
           <Box width="fit-content" maxWidth="100%">
             <GradientText
-              variant="lgText"
+              size="lg"
               fontWeight="bold"
               whiteSpace="nowrap"
               overflow="hidden"

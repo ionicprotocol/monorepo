@@ -19,7 +19,7 @@ export const EllipsisText = ({
       <Text
         flexShrink={0}
         maxWidth={maxWidth}
-        variant={'smText'}
+        variant={'size="sm"'}
         textOverflow={'ellipsis'}
         whiteSpace="nowrap"
         overflow="hidden"

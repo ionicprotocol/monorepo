@@ -105,7 +105,7 @@ export const StatsColumn = ({
         gap={2}
       >
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text variant="smText" flexShrink={0}>
+          <Text size="md" flexShrink={0}>
             Market Supply Balance:
           </Text>
           <HStack spacing={1}>
@@ -138,7 +138,7 @@ export const StatsColumn = ({
         <Divider />
 
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+          <Text flexShrink={0} size="md">
             Borrowed in Market
           </Text>
           <HStack spacing={1}>
@@ -181,7 +181,7 @@ export const StatsColumn = ({
         </Row>
 
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+          <Text flexShrink={0} size="md">
             Borrowed in Total:
           </Text>
           <HStack spacing={1}>
@@ -227,7 +227,7 @@ export const StatsColumn = ({
 
         <Divider />
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+          <Text flexShrink={0} size="md">
             Market Supply APY:
           </Text>
           <HStack spacing={1}>
@@ -242,7 +242,7 @@ export const StatsColumn = ({
         </Row>
 
         <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+          <Text flexShrink={0} size="md">
             Market Borrow APR:
           </Text>
           <HStack spacing={1}>

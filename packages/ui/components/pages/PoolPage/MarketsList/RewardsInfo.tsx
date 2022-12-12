@@ -87,7 +87,7 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
       <HStack justifyContent={'flex-end'}>
         {(reward as FlywheelReward).token ? (
           <>
-            <Text variant="smText" mr={-1}>
+            <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
               +
             </Text>
             <TokenIcon
@@ -100,7 +100,7 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
           </>
         ) : pluginInfo?.icon ? (
           <>
-            <Text variant="smText" mr={-1}>
+            <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
               +
             </Text>
             <Image src={pluginInfo.icon} alt="plugin" height={6} />
@@ -110,7 +110,13 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
         )}
 
         {reward.apy ? (
-          <Text color={cCard.txtColor} title={reward.apy * 100 + '%'} variant="smText">
+          <Text
+            color={cCard.txtColor}
+            fontWeight={'medium'}
+            title={reward.apy * 100 + '%'}
+            size="sm"
+            variant="tnumber"
+          >
             {(reward.apy * 100).toFixed(2) + '%'}
           </Text>
         ) : (

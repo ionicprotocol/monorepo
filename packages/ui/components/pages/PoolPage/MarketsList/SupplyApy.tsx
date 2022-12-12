@@ -65,8 +65,8 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
   }, [asset, sdk]);
 
   return (
-    <VStack alignItems={'flex-end'}>
-      <Text color={supplyApyColor} fontWeight="bold" variant="smText">
+    <VStack alignItems={'flex-end'} spacing={0.5}>
+      <Text color={supplyApyColor} fontWeight="medium" variant="tnumber" size="sm">
         {supplyAPY !== undefined && supplyAPY.toFixed(2)}%
       </Text>
 
@@ -78,7 +78,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
               key={`asset-reward-${index}`}
               label={`The compounding APY for staking rewards of ${asset.underlyingSymbol}`}
             >
-              <Text color={cCard.txtColor} variant="smText">
+              <Text color={cCard.txtColor} variant="tnumber" size="sm">
                 + {Number(reward.apy * 100).toFixed(2)}%
               </Text>
             </SimpleTooltip>
@@ -90,7 +90,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         <SimpleTooltip
           label={`The autocompounding APY for staking rewards of ${assetSymbols.aBNBc}`}
         >
-          <Text color={cCard.txtColor} variant="smText">
+          <Text color={cCard.txtColor} variant="tnumber" size="sm">
             + {Number(aBNBcApr).toFixed(2)}%
           </Text>
         </SimpleTooltip>

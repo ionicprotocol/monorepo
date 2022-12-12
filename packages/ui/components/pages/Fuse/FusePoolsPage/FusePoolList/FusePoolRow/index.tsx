@@ -88,6 +88,7 @@ import { useIsMobile, useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
+import TableHeaderCell from '@ui/components/shared/TableHeaderCell';
 
 export type PoolRowData = {
   chain: PoolData;
@@ -232,7 +233,7 @@ const PoolsRowList = ({
       {
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
-        header: () => <Text textAlign="left">Pool Name</Text>,
+        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
         cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         filterFn: poolFilter,
@@ -243,7 +244,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.assets,
         id: ASSETS,
         cell: ({ getValue }) => <Assets pool={getValue<PoolData>()} />,
-        header: () => <Text textAlign="left">Assets</Text>,
+        header: (context) => <TableHeaderCell context={context}>Assets</TableHeaderCell>,
         footer: (props) => props.column.id,
         enableSorting: false,
       },
@@ -251,16 +252,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.supplyBalance,
         id: SUPPLY_BALANCE,
         cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text
-            textAlign="right"
-            textOverflow={'ellipsis'}
-            whiteSpace="nowrap"
-            title="Supply Balance"
-          >
-            Supply Balance
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -268,16 +260,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.borrowBalance,
         id: BORROW_BALANCE,
         cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text
-            textAlign="right"
-            textOverflow={'ellipsis'}
-            whiteSpace="nowrap"
-            title="Borrow Balance"
-          >
-            Borrow Balance
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -285,16 +268,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text
-            textAlign="right"
-            title="Total Supply"
-            textOverflow={'ellipsis'}
-            whiteSpace="nowrap"
-          >
-            Total Supply
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -302,11 +276,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.totalBorrow,
         id: TOTAL_BORROW,
         cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text textAlign="left" title="Total Borrow" textOverflow={'ellipsis'} whiteSpace="nowrap">
-            Total Borrow
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -541,27 +511,7 @@ const PoolsRowList = ({
                         cursor="pointer"
                         lineHeight="unset"
                       >
-                        <HStack
-                          width={'100%'}
-                          justifyContent={
-                            header.column.id === ASSETS || header.column.id === POOL_NAME
-                              ? 'flex-start'
-                              : 'flex-end'
-                          }
-                        >
-                          {header.column.id === ASSETS ? null : (
-                            <Box opacity={header.column.getIsSorted() ? 1 : 0}>
-                              {header.column.getIsSorted() === 'desc' ? (
-                                <ArrowDownIcon fontSize={16} aria-label="sorted descending" />
-                              ) : (
-                                <ArrowUpIcon fontSize={16} aria-label="sorted ascending" />
-                              )}
-                            </Box>
-                          )}
-                          <Flex>
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </Flex>
-                        </HStack>
+                        {flexRender(header.column.columnDef.header, header.getContext())}
                       </Th>
                     );
                   })}
@@ -654,7 +604,7 @@ const PoolsRowList = ({
         >
           <HStack>
             <Hide below="lg">
-              <Text variant="smText">Pools Per Page</Text>
+              <Text size="md">Pools Per Page</Text>
             </Hide>
             <Select
               value={pagination.pageSize}
@@ -671,7 +621,7 @@ const PoolsRowList = ({
             </Select>
           </HStack>
           <HStack gap={2}>
-            <Text variant="smText">
+            <Text size="md">
               {table.getFilteredRowModel().rows.length === 0
                 ? 0
                 : pagination.pageIndex * pagination.pageSize + 1}{' '}

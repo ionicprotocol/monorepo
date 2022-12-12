@@ -59,7 +59,7 @@ export const TokenName = ({
             placement="top-start"
             body={
               <VStack>
-                <Text alignSelf="flex-start" variant="mdText">
+                <Text alignSelf="flex-start" size="md">
                   {tokenData?.symbol ?? asset.underlyingSymbol}
                 </Text>
                 <div
@@ -72,7 +72,7 @@ export const TokenName = ({
           >
             <Text
               fontWeight="bold"
-              variant="mdText"
+              size="md"
               whiteSpace="nowrap"
               overflow="hidden"
               maxWidth="120px"
@@ -87,7 +87,9 @@ export const TokenName = ({
               'The Loan to Value (LTV) ratio defines the maximum amount of tokens in the pool that can be borrowed with a specific collateral. It’s expressed in percentage: if in a pool ETH has 75% LTV, for every 1 ETH worth of collateral, borrowers will be able to borrow 0.75 ETH worth of other tokens in the pool.'
             }
           >
-            <Text variant="xsText">{utils.formatUnits(asset.collateralFactor, 16)}% LTV</Text>
+            <Text size="xs" opacity={0.6} variant="tnumber">
+              {parseFloat(utils.formatUnits(asset.collateralFactor, 16)).toFixed(0)}% LTV
+            </Text>
           </PopoverTooltip>
         </HStack>
         <VStack alignItems={'flex-start'} ml={2} spacing={1}>

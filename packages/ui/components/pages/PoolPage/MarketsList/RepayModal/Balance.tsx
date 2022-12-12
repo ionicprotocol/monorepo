@@ -23,7 +23,7 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
   return (
     <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start" width="100%">
       <Row width="100%" mainAxisAlignment="flex-end" crossAxisAlignment="center">
-        <Text variant="smText" mr={2}>
+        <Text size="md" mr={2}>
           Wallet Balance:
         </Text>
         <SimpleTooltip
@@ -40,10 +40,10 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
 
       {optionToWrap && (
         <Row width="100%" mt={1} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-          <Text variant="smText" mr={2}>
+          <Text size="md" mr={2}>
             Native Token Balance:
           </Text>
-          <Text variant="smText">
+          <Text size="md">
             {myNativeBalance ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals) : 0}{' '}
             {nativeSymbol}
           </Text>
