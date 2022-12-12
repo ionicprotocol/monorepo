@@ -100,9 +100,9 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
   },
   {
-    symbol: assetSymbols["WEVMOS-DIFF"],
-    underlying: "0x932c2D21fa11A545554301E5E6FB48C3accdFF4D",
-    name: "WEVMOS-DIFF",
+    symbol: assetSymbols["WEVMOS-JUNO"],
+    underlying: "0x4Aa9c250874C2d14D0d686833e7b3C5c1837c36c",
+    name: "WEVMOS-JUNO",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },

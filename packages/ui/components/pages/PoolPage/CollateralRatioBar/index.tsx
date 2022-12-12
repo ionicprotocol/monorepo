@@ -1,6 +1,6 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
 import LogRocket from 'logrocket';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
@@ -20,9 +20,15 @@ export const CollateralRatioBar = ({
   poolChainId,
   ...midasBoxProps
 }: CollateralRatioBarProps & MidasBoxProps) => {
-  const maxBorrow = useBorrowLimitTotal(assets, poolChainId);
+  const { data: maxBorrow } = useBorrowLimitTotal(assets, poolChainId);
 
-  const ratio = (borrowFiat / maxBorrow) * 100;
+  const ratio = useMemo(() => {
+    if (maxBorrow && maxBorrow !== 0) {
+      return (borrowFiat / maxBorrow) * 100;
+    } else {
+      return 0;
+    }
+  }, [borrowFiat, maxBorrow]);
 
   useEffect(() => {
     if (ratio > 95) {
@@ -47,7 +53,7 @@ export const CollateralRatioBar = ({
 
         <Tooltip
           label={`You're using ${ratio.toFixed(1)}% of your ${smallUsdFormatter(
-            maxBorrow
+            maxBorrow || 0
           )} borrow limit.`}
         >
           <Box width="100%">
@@ -65,7 +71,7 @@ export const CollateralRatioBar = ({
 
         <Tooltip label="If your borrow amount reaches this value, you will be liquidated.">
           <Text flexShrink={0} mt="2px" ml={3} variant="lgText" fontWeight="bold">
-            {smallUsdFormatter(maxBorrow)}
+            {smallUsdFormatter(maxBorrow || 0)}
           </Text>
         </Tooltip>
       </Row>

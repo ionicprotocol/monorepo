@@ -16,6 +16,7 @@ export const FundButton = ({
   mode,
   isDisabled,
   poolChainId,
+  borrowBalanceFiat,
 }: {
   comptrollerAddress: string;
   assets: MarketData[];
@@ -23,6 +24,7 @@ export const FundButton = ({
   mode: FundOperationMode;
   isDisabled?: boolean;
   poolChainId: number;
+  borrowBalanceFiat?: number;
 }) => {
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
@@ -68,6 +70,7 @@ export const FundButton = ({
           assets={assets}
           onClose={closeModal}
           poolChainId={poolChainId}
+          borrowBalanceFiat={borrowBalanceFiat}
         />
       )}
       {mode === FundOperationMode.REPAY && (

@@ -11,6 +11,10 @@ export function isPluginReward(reward: any): reward is PluginReward {
   return reward.plugin !== undefined;
 }
 
+/**
+ * Rewards accrued from a plugin distributed by a flywheel
+ * Flywheel with Dynamic Rewards
+ */
 export interface PluginWithFlywheelReward extends AbstractReward {
   plugin: string;
   flywheel: string;
@@ -25,6 +29,10 @@ export function isAssetReward(reward: any): reward is AssetReward {
   return reward.asset !== undefined;
 }
 
+/**
+ * Rewards from a Flywheel only, so no plugin involved,
+ * i.E. liquidity mining rewards with Static Rewards
+ */
 export interface FlywheelReward extends AbstractReward {
   token: string;
   flywheel: string;

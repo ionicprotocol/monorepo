@@ -28,16 +28,8 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
     uniswapV2RouterAddress: "0xFCd2Ce20ef8ed3D43Ab4f8C2dA13bbF1C6d9512F",
     uniswapV2FactoryAddress: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: underlying(assets, assetSymbols.DIFF),
-        baseToken: underlying(assets, assetSymbols.WEVMOS),
-        pair: "0x932c2D21fa11A545554301E5E6FB48C3accdFF4D",
-        minPeriod: 1800,
-        deviationThreshold: "50000000000000000",
-      },
-    ],
-    uniswapOracleLpTokens: [underlying(assets, assetSymbols["WEVMOS-DIFF"])],
+    uniswapOracleInitialDeployTokens: [],
+    uniswapOracleLpTokens: [underlying(assets, assetSymbols["WEVMOS-JUNO"])],
     flashSwapFee: 0,
   },
   cgId: "evmos",
@@ -128,15 +120,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     adrastiaAssets,
     deployConfig,
     nativeUsdFeed: nativeUsdPriceOracle.address,
-  });
-
-  //// Uniswap Oracle
-  await deployUniswapOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
   });
 
   //// Uniswap LP Oracle
