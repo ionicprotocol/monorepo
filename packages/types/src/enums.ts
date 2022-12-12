@@ -57,6 +57,7 @@ export enum OracleTypes {
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
   AdrastiaPriceOracle = "AdrastiaPriceOracle",
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
+  SaddleLpTokenPriceOracle = "SaddleLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -228,6 +229,7 @@ export enum assetSymbols {
   JUNO = "JUNO",
   axlWETH = "axlWETH",
   gUSDT = "gUSDT",
+  ceUSDT = "ceUSDT",
   gDAI = "gDAI",
   ceWETH = "ceWETH",
   gWBTC = "gWBTC",
@@ -361,6 +363,8 @@ export enum assetSymbols {
   DPX = "DPX",
   MAGIC = "MAGIC",
   GMX = "GMX",
+  saddleFraxBP = "saddleFraxBP",
+  saddleFraxUsdsBP = "saddleFraxUsdsBP",
 
   // Fantom
   WFTM = "WFTM",
