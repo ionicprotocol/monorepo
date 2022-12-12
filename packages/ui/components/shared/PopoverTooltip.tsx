@@ -22,7 +22,6 @@ export const PopoverTooltip = ({
   footer,
   width,
   height,
-  maxWidth,
   ...popoverProps
 }: {
   header?: PopoverHeaderProps['children'];
@@ -31,7 +30,6 @@ export const PopoverTooltip = ({
   placement?: string;
   width?: string;
   height?: string;
-  maxWidth?: string;
 } & PopoverProps) => {
   const { cPage } = useColors();
 
@@ -43,7 +41,7 @@ export const PopoverTooltip = ({
           onClick={(e) => e.stopPropagation()}
           style={{ cursor: 'default' }}
           width="auto"
-          maxWidth={maxWidth ? maxWidth : '300px'}
+          maxWidth="300px"
           textAlign="start"
         >
           <PopoverArrow
