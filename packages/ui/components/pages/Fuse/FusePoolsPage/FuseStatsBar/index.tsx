@@ -162,7 +162,7 @@ const FuseStatsBar = () => {
                 </Text>
               </>
             )}
-            <Text whiteSpace="nowrap" variant="panelMdText">
+            <Text whiteSpace="nowrap" size="md" color="raisinBlack">
               Total value supplied across Midas
             </Text>
           </MotionFlex>

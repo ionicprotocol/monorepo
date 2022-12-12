@@ -95,11 +95,5 @@ export const TextStyleConfig: ComponentStyleConfig = {
       textAlign: 'right',
       opacity: 0.9,
     },
-    panelMdText: (props) => ({
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
-    panelSmText: (props) => ({
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
   },
 };
