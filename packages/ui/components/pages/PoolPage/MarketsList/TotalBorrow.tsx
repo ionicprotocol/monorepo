@@ -1,6 +1,6 @@
+import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { BalanceCell } from '@ui/components/shared/BalanceCell';
 
 export const TotalBorrow = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);

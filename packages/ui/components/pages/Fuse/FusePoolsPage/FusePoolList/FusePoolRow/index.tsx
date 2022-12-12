@@ -1,12 +1,5 @@
+import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  SettingsIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
   ButtonGroup,
   Center,
   Checkbox,
@@ -65,6 +58,7 @@ import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLis
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
+import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
   ASSETS,
@@ -88,7 +82,6 @@ import { useIsMobile, useIsSmallScreen } from '@ui/hooks/useScreenSize';
 import { Err, PoolsPerChainStatus } from '@ui/types/ComponentPropsType';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { poolSortByAddress } from '@ui/utils/sorts';
-import TableHeaderCell from '@ui/components/shared/TableHeaderCell';
 
 export type PoolRowData = {
   chain: PoolData;

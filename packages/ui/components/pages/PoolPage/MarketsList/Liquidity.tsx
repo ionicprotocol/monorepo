@@ -1,9 +1,9 @@
 import { Text, VStack } from '@chakra-ui/react';
 
+import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { BalanceCell } from '@ui/components/shared/BalanceCell';
 
 export const Liquidity = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);

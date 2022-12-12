@@ -95,8 +95,6 @@ export const TextStyleConfig: ComponentStyleConfig = {
       textAlign: 'right',
       opacity: 0.9,
     },
-    heading: (props) => ({}),
-    title: (props) => ({}),
     panelMdText: (props) => ({
       color: mode('raisinBlack', 'raisinBlack')(props),
     }),

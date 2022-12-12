@@ -5,7 +5,7 @@ export const TableHeaderCell = ({
   context,
   children,
 }: {
-  context: HeaderContext<any, any>;
+  context: HeaderContext<unknown, unknown>;
   children: ReactNode;
 }) => {
   return (

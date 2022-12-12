@@ -55,18 +55,18 @@ import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
-import TableHeaderCell from '@ui/components/shared/TableHeaderCell';
+import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
-  BORROWABLE,
   BORROW_APY,
   BORROW_BALANCE,
+  BORROWABLE,
   COLLATERAL,
   DOWN_LIMIT,
   HIDDEN,
   LIQUIDITY,
-  MARKETS_COUNT_PER_PAGE,
   MARKET_LTV,
+  MARKETS_COUNT_PER_PAGE,
   MIDAS_LOCALSTORAGE_KEYS,
   PAUSED,
   PROTECTED,

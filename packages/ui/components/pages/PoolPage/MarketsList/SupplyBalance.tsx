@@ -1,9 +1,11 @@
 import { Text, VStack } from '@chakra-ui/react';
+
+import { SimpleTooltip } from '../../../shared/SimpleTooltip';
+
+import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { SimpleTooltip } from '../../../shared/SimpleTooltip';
-import { BalanceCell } from '@ui/components/shared/BalanceCell';
 
 export const SupplyBalance = ({
   asset,

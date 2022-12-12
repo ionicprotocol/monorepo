@@ -3,13 +3,7 @@ import { BigNumber, utils } from 'ethers';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { useColors } from '@ui/hooks/useColors';
-import {
-  longFormat,
-  midFormat,
-  smallFormatter,
-  smallUsdFormatter,
-  tokenFormatter,
-} from '@ui/utils/bigUtils';
+import { longFormat, midFormat, smallFormatter } from '@ui/utils/bigUtils';
 
 interface BalanceCellProps {
   primary: {
