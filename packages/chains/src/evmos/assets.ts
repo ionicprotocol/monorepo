@@ -30,6 +30,13 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.AdrastiaPriceOracle,
   },
   {
+    symbol: assetSymbols.ceUSDC,
+    underlying: "0xe46910336479F254723710D57e7b683F3315b22B",
+    name: "Celer Bridged USDC",
+    decimals: 6,
+    oracle: OracleTypes.AdrastiaPriceOracle,
+  },
+  {
     symbol: assetSymbols.axlUSDC,
     underlying: "0x15C3Eb3B621d1Bff62CbA1c9536B7c1AE9149b57",
     name: "Axelar Bridged USD Coin",
@@ -47,6 +54,13 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.ceWETH,
     underlying: "0x153A59d48AcEAbedbDCf7a13F67Ae52b434B810B",
     name: "Celer Bridged WETH",
+    decimals: 18,
+    oracle: OracleTypes.AdrastiaPriceOracle,
+  },
+  {
+    symbol: assetSymbols.gWETH,
+    underlying: "0xc03345448969Dd8C00e9E4A85d2d9722d093aF8E",
+    name: "Gravity Bridged WETH",
     decimals: 18,
     oracle: OracleTypes.AdrastiaPriceOracle,
   },
