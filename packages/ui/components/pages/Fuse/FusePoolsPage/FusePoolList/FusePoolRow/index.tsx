@@ -504,14 +504,20 @@ const PoolsRowList = ({
                         border="none"
                         color={cCard.txtColor}
                         textTransform="capitalize"
-                        height={'64px'}
-                        py={0}
-                        pr={4}
-                        pl={0}
-                        cursor="pointer"
-                        lineHeight="unset"
+                        height={16}
+                        py={4}
+                        cursor={header.column.getCanSort() ? 'pointer' : 'default'}
+                        px={{ base: 1, lg: 2 }}
                       >
-                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        <HStack
+                          justifyContent={
+                            header.column.id === POOL_NAME || header.column.id === ASSETS
+                              ? 'flex-start'
+                              : 'flex-end'
+                          }
+                        >
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </HStack>
                       </Th>
                     );
                   })}
@@ -549,7 +555,13 @@ const PoolsRowList = ({
                     >
                       {row.getVisibleCells().map((cell) => {
                         return (
-                          <Td key={cell.id} border="none" p={0} height={16}>
+                          <Td
+                            key={cell.id}
+                            border="none"
+                            px={{ base: 1, lg: 2 }}
+                            py={0}
+                            height={16}
+                          >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </Td>
                         );

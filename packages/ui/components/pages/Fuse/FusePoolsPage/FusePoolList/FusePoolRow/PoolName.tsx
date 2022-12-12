@@ -14,27 +14,18 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
   });
 
   return (
-    <VStack
-      alignItems={'flex-start'}
-      spacing={1}
-      ml={2}
-      justifyContent="center"
-      height="100%"
-      px={{ base: 2, lg: 4 }}
-    >
-      <Stack minWidth={'240px'} maxWidth={'300px'} mt={rewardTokens.length ? 2 : 0}>
+    <VStack alignItems={'flex-start'} spacing={0} justifyContent="center" height="100%">
+      <Stack minWidth={'240px'} maxWidth={'300px'}>
         <SimpleTooltip label={pool.name}>
           <Box width="fit-content" maxWidth="100%">
             <GradientText
               size="lg"
               fontWeight="bold"
               whiteSpace="nowrap"
-              overflow="hidden"
               textOverflow="ellipsis"
               maxWidth="100%"
               width="fit-content"
               isEnabled={claimableRewards && claimableRewards.length > 0 ? true : false}
-              lineHeight={7}
             >
               {pool.name}
             </GradientText>
@@ -42,7 +33,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
         </SimpleTooltip>
       </Stack>
       {rewardTokens.length && (
-        <HStack m={0}>
+        <HStack spacing={1}>
           <Text>Earn Rewards</Text>
           <AvatarGroup size="xs" max={5}>
             {rewardTokens.map((token) => (

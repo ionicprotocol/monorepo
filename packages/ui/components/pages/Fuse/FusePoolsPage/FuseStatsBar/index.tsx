@@ -68,7 +68,7 @@ const FuseStatsBar = () => {
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
         <Text size="2xl" fontWeight="bold">
-          Unleash the power of your assets
+          Unleash the Power of Your Assets
         </Text>
         <Text size="md" mt={4} mb={8} lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or

@@ -709,11 +709,8 @@ export const MarketsList = ({
                     px={{ base: 1, lg: 2 }}
                   >
                     <HStack
-                      gap={0}
                       justifyContent={
-                        header.index === 0
-                          ? 'flex-start'
-                          : header.column.id === COLLATERAL
+                        header.column.id === MARKET_LTV || header.column.id === COLLATERAL
                           ? 'center'
                           : 'flex-end'
                       }
