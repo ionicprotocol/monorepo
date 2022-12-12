@@ -43,6 +43,7 @@ export const TokenName = ({
             />
           </VStack>
         }
+        maxWidth="430px"
       >
         <Center>
           <TokenIcon
