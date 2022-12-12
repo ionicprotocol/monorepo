@@ -106,6 +106,34 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
   },
+  {
+    symbol: assetSymbols["WEVMOS-gUSDC"],
+    underlying: "0x089B913E5Ba7B32d44A69B09f600b87c70Df57eb",
+    name: "WEVMOS-gUSDC",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WEVMOS-gWETH"],
+    underlying: "0xD7bfB11ED8fd924E77487480d13542328601e5a3",
+    name: "WEVMOS-gWETH",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["WEVMOS-ceUSDC"],
+    underlying: "0x2fD681DB6b1e4775a79c9fF728B86a6EfE460be9",
+    name: "WEVMOS-ceUSDC",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols["ceUSDC-ceUSDT"],
+    underlying: "0xeD5d692caF043489058d8ae9B9C31CA5e468E60f",
+    name: "ceUSDC-ceUSDT",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
 ];
 
 export default assets;
