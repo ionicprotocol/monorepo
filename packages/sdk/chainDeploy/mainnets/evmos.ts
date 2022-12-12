@@ -10,6 +10,7 @@ import {
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { AdrastiaAsset, ChainDeployFnParams, FluxAsset } from "../helpers/types";
 
 const assets = evmos.assets;
@@ -38,6 +39,13 @@ export const deployConfig: ChainDeployConfig = {
     ],
     flashSwapFee: 0,
   },
+  dynamicFlywheels: [
+    {
+      rewardToken: underlying(assets, assetSymbols.DIFF),
+      cycleLength: 1,
+      name: "DIFF",
+    },
+  ],
   cgId: "evmos",
 };
 
@@ -61,6 +69,10 @@ const fluxAssets: FluxAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.gWBTC),
     feed: "0x08fDc3CE77f4449D26461A70Acc222140573956e",
+  },
+  {
+    underlying: underlying(assets, assetSymbols.ceUSDT),
+    feed: "0x8FeAE79dB32595d8Ee57D40aA7De0512cBe36625",
   },
 ];
 const adrastiaAssets: AdrastiaAsset[] = [
@@ -144,4 +156,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
+  // Plugins & Rewards
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 };

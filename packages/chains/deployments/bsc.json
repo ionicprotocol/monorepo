@@ -59334,8 +59334,34 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xbCD2331B61DcE2DF32e282a0ffbB48d8E63E9c58",
+      "address": "0xa4140AC62Fd9E283E801e23c589BEaE0fbfC9CA4",
       "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "name": "log",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "log_uint",
+          "type": "event"
+        },
         {
           "inputs": [
             {
@@ -60356,7 +60382,7 @@
       ]
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0x8F0e7B0C8D08301A5Ca5396c26c89936d6C9fA76",
+      "address": "0x57dF25B8935f95f1cAF9Be6b33D95FA00DE41d95",
       "abi": [
         {
           "anonymous": false,
@@ -62133,7 +62159,7 @@
       ]
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0x7eE9C6b730506cdDdf4EC33A2DAc7c7d94371d98",
+      "address": "0x3F73600F5e61D41224969Cf879603440b917e59C",
       "abi": [
         {
           "anonymous": false,
@@ -63910,7 +63936,7 @@
       ]
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0x643e2551F4fc5750A520B67DF96545137075Ae32",
+      "address": "0x3b663cc6A5a1e5e1BF1eBbEb20c56A2e88293d80",
       "abi": [
         {
           "anonymous": false,
