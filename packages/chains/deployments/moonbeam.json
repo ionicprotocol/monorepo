@@ -37488,6 +37488,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -37768,7 +37781,7 @@
       ]
     },
     "StellaLpERC4626_DOT.xc-GLMR_0x32Be4b977BaB44e9146Bb414c18911e652C56568_Implementation": {
-      "address": "0x7368EF7dBD3AdD4D82186f33ABbF05c32A8f471E",
+      "address": "0x4A792637e7ad93a854c6C8d35208232A33f2C2A2",
       "abi": [
         {
           "anonymous": false,
@@ -38665,6 +38678,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -38920,6 +38946,10 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
         }
       ]
     },
@@ -40093,6 +40123,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -40373,7 +40416,7 @@
       ]
     },
     "StellaLpERC4626_USDC.wh-GLMR_0xeB7b975C105f05bFb02757fB9bb3361D77AAe84A_Implementation": {
-      "address": "0xB92dF9E7c67E25847964d654b436774D870127Ce",
+      "address": "0xd8eBB2C9B8634d38E41AB855bba1DD66428f5b61",
       "abi": [
         {
           "anonymous": false,
@@ -41270,6 +41313,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -41525,6 +41581,10 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
         }
       ]
     },
@@ -42698,6 +42758,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -42978,7 +43051,7 @@
       ]
     },
     "StellaLpERC4626_WBTC.wh-GLMR_0xD7ee88664C269Ec834a471cf47C576B6203cdC45_Implementation": {
-      "address": "0xE4E590CB7ef34B6ccE626a460b019feC22034Ea0",
+      "address": "0x78816bECA06D9249BCAA268c622E62be13AfD880",
       "abi": [
         {
           "anonymous": false,
@@ -43875,6 +43948,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -44130,6 +44216,10 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
         }
       ]
     },
@@ -45303,6 +45393,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -45583,7 +45686,7 @@
       ]
     },
     "StellaLpERC4626_WETH.wh-GLMR_0x95b1eFbd91E35FdAE0720d1BeDA3d4d1fbfefa1C_Implementation": {
-      "address": "0x18a7f2696b3A42e1442Ed4255553Ab16C92EF404",
+      "address": "0xF331AaA6EA301fd52c54Ffb674a4865F90BF692e",
       "abi": [
         {
           "anonymous": false,
@@ -46480,6 +46583,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract WETH",
+              "name": "_wNative",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -46735,6 +46851,10 @@
           "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
+        },
+        {
+          "stateMutability": "payable",
+          "type": "receive"
         }
       ]
     },
