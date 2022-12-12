@@ -223,6 +223,7 @@ export enum assetSymbols {
   ATOM = "ATOM",
   gUSDC = "gUSDC",
   axlUSDC = "axlUSDC",
+  ceUSDC = "ceUSDC",
   OSMO = "OSMO",
   JUNO = "JUNO",
   axlWETH = "axlWETH",
@@ -230,9 +231,14 @@ export enum assetSymbols {
   gDAI = "gDAI",
   ceWETH = "ceWETH",
   gWBTC = "gWBTC",
+  gWETH = "gWETH",
   axlWBTC = "axlWBTC",
   DIFF = "DIFF",
   "WEVMOS-JUNO" = "WEVMOS-JUNO",
+  "WEVMOS-gUSDC" = "WEVMOS-gUSDC",
+  "WEVMOS-ceUSDC" = "WEVMOS-ceUSDC",
+  "WEVMOS-gWETH" = "WEVMOS-gWETH",
+  "ceUSDC-ceUSDT" = "ceUSDC-ceUSDT",
 
   // moonbeam
   GLMR = "GLMR",

@@ -40,6 +40,7 @@ export const TokenName = ({
               dangerouslySetInnerHTML={{
                 __html: asset.extraDocs || asset.underlyingSymbol,
               }}
+              wordBreak="break-word"
             />
           </VStack>
         }
