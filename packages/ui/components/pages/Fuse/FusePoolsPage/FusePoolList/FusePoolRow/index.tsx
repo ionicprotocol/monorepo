@@ -499,7 +499,6 @@ const PoolsRowList = ({
                         textTransform="capitalize"
                         height={16}
                         py={4}
-                        cursor={header.column.getCanSort() ? 'pointer' : 'default'}
                         px={{ base: 1, lg: 2 }}
                       >
                         <HStack

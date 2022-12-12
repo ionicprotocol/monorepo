@@ -705,7 +705,6 @@ export const MarketsList = ({
                     color={cCard.txtColor}
                     textTransform="capitalize"
                     py={4}
-                    cursor="pointer"
                     px={{ base: 1, lg: 2 }}
                   >
                     <HStack
