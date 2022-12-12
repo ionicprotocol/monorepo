@@ -5,7 +5,8 @@ export const TableHeaderCell = ({
   context,
   children,
 }: {
-  context: HeaderContext<unknown, unknown>;
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  context: HeaderContext<any, any>;
   children: ReactNode;
 }) => {
   return (
