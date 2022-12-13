@@ -64,7 +64,7 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
 
     const rewardToken = await brokenFlywheel.callStatic.rewardToken();
     const flywheelBooster = await brokenFlywheel.callStatic.flywheelBooster();
-    const oldStaticRewardsAddress = await brokenFlywheel.flywheelRewards();
+    const oldStaticRewardsAddress = await brokenFlywheel.callStatic.flywheelRewards();
 
     const oldStaticRewards = (await ethers.getContractAt(
       "FlywheelStaticRewards",
@@ -72,15 +72,19 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
       deployer
     )) as FlywheelStaticRewards;
 
-    await oldStaticRewards.setRewardsInfo(fxcDOTMarketAddress, {
+    let tx = await oldStaticRewards.setRewardsInfo(fxcDOTMarketAddress, {
       rewardsPerSecond: 0,
       rewardsEndTimestamp: 1,
     });
+    await tx.wait();
+    console.log("setRewardsInfo: ", tx.hash);
 
-    await oldStaticRewards.setRewardsInfo(fwstDOTMarketAddress, {
+    tx = await oldStaticRewards.setRewardsInfo(fwstDOTMarketAddress, {
       rewardsPerSecond: 0,
       rewardsEndTimestamp: 1,
     });
+    await tx.wait();
+    console.log("setRewardsInfo: ", tx.hash);
 
     const replacingFlywheel = await deployments.deploy("MidasFlywheel", {
       contract: "MidasFlywheel",
@@ -96,6 +100,7 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
         },
         owner: deployer.address,
       },
+      waitConfirmations: 1,
     });
 
     // the replacing rewards contract is needed because on creation it makes an infinite approve to the flywheel
@@ -108,11 +113,12 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
         deployer.address, // owner
         constants.AddressZero, // Authority
       ],
+      waitConfirmations: 1,
     });
 
     // this will transfer all the rewards from the old FlywheelStaticRewards contract
     // which has an infinite approve only to the old flywheel
-    let tx = await brokenFlywheel.setFlywheelRewards(replacingRewards.address);
+    tx = await brokenFlywheel.setFlywheelRewards(replacingRewards.address);
     await tx.wait();
     console.log("setFlywheelRewards: ", tx.hash);
 
