@@ -28,7 +28,7 @@
     "@supabase/supabase-js": "^2.2.0",
     "@tanstack/react-query": "^4.19.1",
     "@tanstack/react-query-devtools": "^4.19.1",
-    "@tanstack/react-table": "8.7.2",
+    "@tanstack/react-table": "8.7.0",
     "axios": "^1.2.1",
     "ethers": "^5.7.2",
     "framer-motion": "^7.7.3",
