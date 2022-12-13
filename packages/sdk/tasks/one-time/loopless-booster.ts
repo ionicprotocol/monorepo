@@ -3,6 +3,7 @@ import { task, types } from "hardhat/config";
 import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
 import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
 
 import { constants } from "ethers";
 
@@ -70,6 +71,23 @@ task("replace-flywheel-with-upgradable", "")
 
       const rewardToken = await brokenFlywheel.callStatic.rewardToken();
       const flywheelBooster = await brokenFlywheel.callStatic.flywheelBooster();
+      const oldStaticRewardsAddress = await brokenFlywheel.flywheelRewards();
+
+      const oldStaticRewards = (await ethers.getContractAt(
+          "FlywheelStaticRewards",
+          oldStaticRewardsAddress,
+          deployer)
+      ) as FlywheelStaticRewards;
+
+      await oldStaticRewards.setRewardsInfo(fxcDOTMarketAddress, {
+        rewardsPerSecond: 0,
+        rewardsEndTimestamp: 1,
+      });
+
+      await oldStaticRewards.setRewardsInfo(fwstDOTMarketAddress, {
+        rewardsPerSecond: 0,
+        rewardsEndTimestamp: 1,
+      });
 
       const replacingFlywheel = await deployments.deploy("MidasFlywheel",  {
         contract: "MidasFlywheel",
@@ -127,6 +145,11 @@ task("replace-flywheel-with-upgradable", "")
         replacingFlywheel.address,
         deployer
       )) as MidasFlywheelCore;
+
+      // the flywheel was initialized with address(0) for the rewards, so set it up
+      tx = await newFlywheel.setFlywheelRewards(replacingRewards.address);
+      await tx.wait();
+      console.log("setFlywheelRewards: ", tx.hash);
 
       tx = await newFlywheel.addStrategyForRewards(fxcDOTMarketAddress);
       await tx.wait();
