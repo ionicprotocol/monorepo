@@ -20,7 +20,7 @@ export const CollateralRatioBar = ({
   poolChainId,
   ...midasBoxProps
 }: CollateralRatioBarProps & MidasBoxProps) => {
-  const { data: maxBorrow } = useBorrowLimitTotal(assets, poolChainId);
+  const maxBorrow = useBorrowLimitTotal(assets, poolChainId);
 
   const ratio = useMemo(() => {
     if (maxBorrow && maxBorrow !== 0) {
