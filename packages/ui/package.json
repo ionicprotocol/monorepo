@@ -25,7 +25,7 @@
     "@midas-capital/security": "workspace:*",
     "@midas-capital/types": "workspace:*",
     "@rainbow-me/rainbowkit": "^0.8.1",
-    "@supabase/supabase-js": "^2.1.4",
+    "@supabase/supabase-js": "^2.2.0",
     "@tanstack/react-query": "^4.19.1",
     "@tanstack/react-query-devtools": "^4.19.1",
     "@tanstack/react-table": "8.7.2",
