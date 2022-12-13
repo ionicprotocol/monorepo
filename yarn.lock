@@ -5213,7 +5213,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/storage-js@npm:^2.0.0":
+"@supabase/storage-js@npm:^2.1.0":
   version: 2.1.0
   resolution: "@supabase/storage-js@npm:2.1.0"
   dependencies:
@@ -5236,16 +5236,16 @@ __metadata:
   linkType: hard
 
 "@supabase/supabase-js@npm:^2.1.4":
-  version: 2.1.4
-  resolution: "@supabase/supabase-js@npm:2.1.4"
+  version: 2.2.0
+  resolution: "@supabase/supabase-js@npm:2.2.0"
   dependencies:
     "@supabase/functions-js": ^2.0.0
     "@supabase/gotrue-js": ^2.5.0
     "@supabase/postgrest-js": ^1.1.0
     "@supabase/realtime-js": ^2.1.0
-    "@supabase/storage-js": ^2.0.0
+    "@supabase/storage-js": ^2.1.0
     cross-fetch: ^3.1.5
-  checksum: 19a524f85bace7bcf02e5a99816fa17d200f263ce0bd0ea7501a321dd30ebe751914184c2797d834c6cc7a9e34a92ef6b35861b950c4d0c01470fdc5ec4132e8
+  checksum: 5e4a2809a72de3590250edb0d737471412dd6d39f80fa9e91dae2f24017f005ca72045de159123f395c2c9e60a18ea783ef456e070ecb0b1d6090d4abec828a6
   languageName: node
   linkType: hard
 
@@ -9461,9 +9461,9 @@ __metadata:
   linkType: hard
 
 "camelcase@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "camelcase@npm:7.0.0"
-  checksum: 162d59607b3b46e910af151348d5e40af579048a5d07f3c06370b096ca0d42ba4a88bd92cf4e3482645ba1ffdd6f744d8273c1b9594e493fc10883d54adf7cbe
+  version: 7.0.1
+  resolution: "camelcase@npm:7.0.1"
+  checksum: 86ab8f3ebf08bcdbe605a211a242f00ed30d8bfb77dab4ebb744dd36efbc84432d1c4adb28975ba87a1b8be40a80fbd1e60e2f06565315918fa7350011a26d3d
   languageName: node
   linkType: hard
 
@@ -20397,9 +20397,9 @@ __metadata:
   linkType: hard
 
 "node-releases@npm:^2.0.6":
-  version: 2.0.6
-  resolution: "node-releases@npm:2.0.6"
-  checksum: e86a926dc9fbb3b41b4c4a89d998afdf140e20a4e8dbe6c0a807f7b2948b42ea97d7fd3ad4868041487b6e9ee98409829c6e4d84a734a4215dff060a7fbeb4bf
+  version: 2.0.7
+  resolution: "node-releases@npm:2.0.7"
+  checksum: d1c5af091d788b7f9dfce5aa77cbf76c28e8e326b891fe64a05b96943a90cd6ba19eae94ef32777c23f5898a7b00d9cf8266adba33d61ebe6611cca74ccfc0b1
   languageName: node
   linkType: hard
 
