@@ -236,6 +236,7 @@ export enum assetSymbols {
   gWETH = "gWETH",
   axlWBTC = "axlWBTC",
   DIFF = "DIFF",
+  GRAV = "GRAV",
   "WEVMOS-JUNO" = "WEVMOS-JUNO",
   "WEVMOS-gUSDC" = "WEVMOS-gUSDC",
   "WEVMOS-ceUSDC" = "WEVMOS-ceUSDC",

@@ -1,4 +1,4 @@
-import { bsc, moonbeam, polygon } from "@midas-capital/chains";
+import { bsc, evmos, moonbeam, polygon } from "@midas-capital/chains";
 import { underlying } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
@@ -6,6 +6,7 @@ const underlyingsMapping = {
   [bsc.chainId]: bsc.assets,
   [moonbeam.chainId]: moonbeam.assets,
   [polygon.chainId]: polygon.assets,
+  [evmos.chainId]: evmos.assets,
 };
 
 task("deploy-dynamic-rewards-market", "deploy dynamic rewards plugin with flywheels")
