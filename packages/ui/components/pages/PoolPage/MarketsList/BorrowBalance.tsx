@@ -21,7 +21,7 @@ export const BorrowBalance = ({
       {!address ? (
         <VStack alignItems="flex-end">
           <SimpleTooltip label="Connect your wallet">
-            <Text size="md" fontWeight="bold" textAlign="center">
+            <Text size="md" fontWeight="medium" textAlign="center">
               -
             </Text>
           </SimpleTooltip>

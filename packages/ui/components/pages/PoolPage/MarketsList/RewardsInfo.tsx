@@ -110,13 +110,7 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
         )}
 
         {reward.apy ? (
-          <Text
-            color={cCard.txtColor}
-            fontWeight={'medium'}
-            title={reward.apy * 100 + '%'}
-            size="sm"
-            variant="tnumber"
-          >
+          <Text fontWeight={'medium'} title={reward.apy * 100 + '%'} size="sm" variant="tnumber">
             {(reward.apy * 100).toFixed(2) + '%'}
           </Text>
         ) : (
