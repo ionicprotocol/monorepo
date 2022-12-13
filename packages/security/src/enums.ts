@@ -305,4 +305,25 @@ export const STRATEGY_HELP = {
       },
     },
   },
+  [Strategy.MiniChefV2]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "MiniChef strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "MiniChef strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "MiniChef strategy is battle tested",
+      },
+    },
+  },
 };
