@@ -1,4 +1,4 @@
-import { Divider, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { Divider, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
@@ -101,14 +101,15 @@ export const StatsColumn = ({
         mainAxisAlignment="space-between"
         crossAxisAlignment="flex-start"
         expand
-        p={4}
+        px={2}
+        py={4}
         gap={2}
       >
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text size="md" flexShrink={0}>
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text size="sm" flexShrink={0}>
             Market Supply Balance:
           </Text>
-          <HStack spacing={1}>
+          <HStack justifyContent="flex-end" width="100%">
             <HStack spacing={1}>
               <EllipsisText maxWidth="65px" tooltip={supplyBalanceFrom}>
                 {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
@@ -133,17 +134,17 @@ export const StatsColumn = ({
               </Skeleton>
             )}
           </HStack>
-        </Row>
+        </VStack>
 
         <Divider />
 
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} size="md">
-            Borrowed in Market
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
+            Borrowed in Market:
           </Text>
-          <HStack spacing={1}>
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
             <Text
-              variant={'smText'}
+              variant="tnumber"
               color={
                 updatedAsset?.borrowBalanceFiat &&
                 updatedBorrowLimitMarket &&
@@ -159,7 +160,7 @@ export const StatsColumn = ({
             <Text>{'→'}</Text>
             {updatedAssets && updatedAsset ? (
               <Text
-                variant={'smText'}
+                variant="tnumber"
                 color={
                   updatedAsset?.borrowBalanceFiat &&
                   updatedBorrowLimitMarket &&
@@ -178,15 +179,15 @@ export const StatsColumn = ({
               )} of ${smallUsdFormatter(borrowLimitMarket || 0)}`}</Skeleton>
             )}
           </HStack>
-        </Row>
+        </VStack>
 
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} size="md">
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
-          <HStack spacing={1}>
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
             <Text
-              variant={'smText'}
+              variant="tnumber"
               color={
                 updatedTotalBorrows !== undefined &&
                 updatedBorrowLimitTotal &&
@@ -202,7 +203,7 @@ export const StatsColumn = ({
             <Text>{'→'}</Text>
             {updatedAssets && updatedTotalBorrows !== undefined ? (
               <Text
-                variant={'smText'}
+                variant="tnumber"
                 color={
                   updatedTotalBorrows !== undefined &&
                   updatedBorrowLimitTotal &&
@@ -223,38 +224,38 @@ export const StatsColumn = ({
               )} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}</Skeleton>
             )}
           </HStack>
-        </Row>
+        </VStack>
 
         <Divider />
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} size="md">
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
             Market Supply APY:
           </Text>
-          <HStack spacing={1}>
-            <Text variant={'smText'}>{supplyAPY.toFixed(2) + '%'}</Text>
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
+            <Text variant="tnumber">{supplyAPY.toFixed(2) + '%'}</Text>
             <Text>{'→'}</Text>
             {updatedSupplyAPY !== undefined ? (
-              <Text variant={'smText'}>{updatedSupplyAPY.toFixed(2) + '%'}</Text>
+              <Text variant="tnumber">{updatedSupplyAPY.toFixed(2) + '%'}</Text>
             ) : (
               <Skeleton display="inline">x.xx</Skeleton>
             )}
           </HStack>
-        </Row>
+        </VStack>
 
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} size="md">
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
             Market Borrow APR:
           </Text>
-          <HStack spacing={1}>
-            <Text variant={'smText'}>{borrowAPR.toFixed(2) + '%'}</Text>
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
+            <Text variant="tnumber">{borrowAPR.toFixed(2) + '%'}</Text>
             <Text>{'→'}</Text>
             {updatedBorrowAPR !== undefined ? (
-              <Text variant={'smText'}>{updatedBorrowAPR.toFixed(2) + '%'}</Text>
+              <Text variant="tnumber">{updatedBorrowAPR.toFixed(2) + '%'}</Text>
             ) : (
               <Skeleton display="inline">x.xx</Skeleton>
             )}
           </HStack>
-        </Row>
+        </VStack>
       </Column>
     </MidasBox>
   );

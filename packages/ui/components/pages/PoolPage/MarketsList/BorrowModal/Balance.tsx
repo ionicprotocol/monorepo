@@ -11,7 +11,7 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
 
   return (
     <Row width="100%" mainAxisAlignment="flex-end" crossAxisAlignment="center">
-      <Text size="md" mr={2}>
+      <Text size="sm" mr={2}>
         Wallet Balance:
       </Text>
       <SimpleTooltip
