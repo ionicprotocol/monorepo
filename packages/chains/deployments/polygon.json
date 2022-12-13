@@ -63960,8 +63960,34 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x771c85e92d6Fdb9c56Ec9F1E6c7ff8F7f135E874",
+      "address": "0xfeafBc3A02958c5fBf5B4803f065c436bD15989A",
       "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "name": "log",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "log_uint",
+          "type": "event"
+        },
         {
           "inputs": [
             {
@@ -64982,7 +65008,7 @@
       ]
     },
     "MidasFlywheel_JRT_MIMO_SEP22_Implementation": {
-      "address": "0x2d087c684469eDfC985a7Ee4d3aC205C8C745366",
+      "address": "0x876092A81bE0CF988637Ec430593322A561c4a84",
       "abi": [
         {
           "anonymous": false,
@@ -66759,7 +66785,7 @@
       ]
     },
     "MidasFlywheel_MIMO_Implementation": {
-      "address": "0xd83D45abF1718267241c1551F5f7BF401af7E506",
+      "address": "0x75847706d1E360c2D4E4B880AE4b50a7ff249Aff",
       "abi": [
         {
           "anonymous": false,

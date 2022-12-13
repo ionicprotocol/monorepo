@@ -24916,8 +24916,34 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0xf58752a1965e96cCE5614368B2578b2CB162fC4d",
+      "address": "0x7bD9B4F093dA76D5ACe516c49c01968C1daC1AF7",
       "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "string",
+              "name": "",
+              "type": "string"
+            }
+          ],
+          "name": "log",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "name": "log_uint",
+          "type": "event"
+        },
         {
           "inputs": [
             {
@@ -25938,7 +25964,7 @@
       ]
     },
     "MidasFlywheel_ATOM_Implementation": {
-      "address": "0xfB8CAcF248f5a8055c13cBFffCf6f74Bf0357D95",
+      "address": "0x7D93900Ec90969b5f9634CebEC9c3f1033B21203",
       "abi": [
         {
           "anonymous": false,
@@ -27715,7 +27741,7 @@
       ]
     },
     "MidasFlywheel_CELR_Implementation": {
-      "address": "0xCe7552AdDae36cc36fF53D06457fF4960952c661",
+      "address": "0xd42EC40ECdBBb755B38A2c211D264bC56d679DC7",
       "abi": [
         {
           "anonymous": false,
@@ -29492,7 +29518,7 @@
       ]
     },
     "MidasFlywheel_GLINT_Implementation": {
-      "address": "0x910162FA2612c44dd363645CeC9aaDE578B251cE",
+      "address": "0xf181F98e9a2dab8269dabA27C494554A76851225",
       "abi": [
         {
           "anonymous": false,
@@ -31269,7 +31295,7 @@
       ]
     },
     "MidasFlywheel_LDO_Implementation": {
-      "address": "0x901bDc860da6595f018c2987d44E491db6A9B060",
+      "address": "0x30C18aD18A339c269e730cfA358747A506C4613F",
       "abi": [
         {
           "anonymous": false,
@@ -33046,7 +33072,7 @@
       ]
     },
     "MidasFlywheel_STELLA_Implementation": {
-      "address": "0x24b78EA77dB220F8f3750B72d476d53036F7759E",
+      "address": "0xC41b7F4358A31bC54fF1915652fEf69A429C67B2",
       "abi": [
         {
           "anonymous": false,
@@ -34823,7 +34849,7 @@
       ]
     },
     "MidasFlywheel_WGLMR_Implementation": {
-      "address": "0x5f3879020C19CbCD6cA63AB624b879c7e92cA1f2",
+      "address": "0xb874360437B7B3BCC960de3b6762f9A18C86e3aF",
       "abi": [
         {
           "anonymous": false,

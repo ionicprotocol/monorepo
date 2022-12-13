@@ -14,3 +14,4 @@ export { deployAdrastiaOracle } from "./oracles/adrastia";
 export { deployCurveV2LpOracle } from "./oracles/curveLp";
 export { deployStkBNBOracle } from "./oracles/stkBNBOracle";
 export { deployWombatOracle } from "./oracles/wombatLp";
+export { deploySaddleLpOracle } from "./oracles/saddleLp";
