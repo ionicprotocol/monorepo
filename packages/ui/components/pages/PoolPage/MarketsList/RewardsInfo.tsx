@@ -14,7 +14,6 @@ interface RewardsInfoProps {
 }
 
 export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
-  const { cCard } = useColors();
   const { data: pluginInfo } = usePluginInfo(
     chainId,
     'plugin' in reward ? reward.plugin : undefined
