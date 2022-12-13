@@ -47,7 +47,7 @@ const deployedPlugins: DeployedPlugins = {
     strategyDocsUrl:
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
     underlying: underlying(assets, assetSymbols["ceUSDC-ceUSDT"]),
-    otherParams: ["8", "0x067eC87844fBD73eDa4a1059F30039584586e09d"], // poolId, minchef address
+    otherParams: ["9", "0x067eC87844fBD73eDa4a1059F30039584586e09d"], // poolId, minchef address
     flywheels: ["0x6537110273d79184205395cfd852dcF3DA6861Ed"], // DIFF flywheel
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/diffusion.png",
   },
