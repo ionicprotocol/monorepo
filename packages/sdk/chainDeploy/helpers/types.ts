@@ -181,6 +181,11 @@ export type CurveLpFnParams = ChainDeployFnParams & {
   curvePools: CurvePoolConfig[];
 };
 
+export type SaddleLpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  saddlePools: CurvePoolConfig[];
+};
+
 export type CurveV2LpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   curveV2Pools: CurveV2PoolConfig[];

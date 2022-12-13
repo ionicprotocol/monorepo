@@ -184,6 +184,16 @@ export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string)
   `;
 };
 
+export const saddleFinanceDocs = (poolName: string, tokenAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://saddle.exchange/#/pools/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Saddle ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
+  <p>You will get back the <a href="https://arbiscan.io/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Saddle ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
 export const curveFinanceMoonbeamDocs = (
   poolNumber: number,
   poolName: string,
