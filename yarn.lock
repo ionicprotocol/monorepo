@@ -3226,7 +3226,7 @@ __metadata:
     "@supabase/supabase-js": ^2.1.1
     "@tanstack/react-query": ^4.19.1
     "@tanstack/react-query-devtools": ^4.19.1
-    "@tanstack/react-table": ^8.7.0
+    "@tanstack/react-table": 8.7.0
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
     "@types/node": 18.11.10
@@ -5475,22 +5475,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-table@npm:^8.7.0":
-  version: 8.7.2
-  resolution: "@tanstack/react-table@npm:8.7.2"
+"@tanstack/react-table@npm:8.7.0":
+  version: 8.7.0
+  resolution: "@tanstack/react-table@npm:8.7.0"
   dependencies:
-    "@tanstack/table-core": 8.7.2
+    "@tanstack/table-core": 8.7.0
   peerDependencies:
     react: ">=16"
     react-dom: ">=16"
-  checksum: 0dd3022c20af3f8c26a462f743f6f546dbdaabdf6af90511815d9651d29e544e57b7c75a9d491eced125eab468533ff2335105ab002cfaece9860e900719674c
+  checksum: 5f739f619dacfd134449bc8cff819d7e1b9549b8c8b20c293f2c786098a53d20fe5755727d8abb6fa56a64583792bbc89d8b1c7cd24ac3497495d2c20bac9e77
   languageName: node
   linkType: hard
 
-"@tanstack/table-core@npm:8.7.2":
-  version: 8.7.2
-  resolution: "@tanstack/table-core@npm:8.7.2"
-  checksum: 251d8501f39884843f03cddf674d2faf2551d0e9ad14737d2bcc50061107d47e68b515a29b692fbe9e6ccc796c2cd718b81aa98d41596b349027ec2b32ede442
+"@tanstack/table-core@npm:8.7.0":
+  version: 8.7.0
+  resolution: "@tanstack/table-core@npm:8.7.0"
+  checksum: 835511727ab5651066a4cbc98916fbc2463ec6d6ddc5c74c1fec5713eeba8e26641653c1a35b69b303f0c58f574416a09e26da44cf7e9a884cb954fc26b12afd
   languageName: node
   linkType: hard
 
@@ -13034,7 +13034,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
+  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
   languageName: node
   linkType: hard
 
