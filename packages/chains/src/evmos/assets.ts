@@ -116,9 +116,16 @@ export const assets: SupportedAsset[] = [
   {
     symbol: assetSymbols.DIFF,
     underlying: "0x3f75ceabCDfed1aCa03257Dc6Bdc0408E2b4b026",
-    name: "DIFF",
+    name: "Diffusion",
     decimals: 18,
-    oracle: OracleTypes.UniswapTwapPriceOracleV2,
+    disabled: true,
+  },
+  {
+    symbol: assetSymbols.GRAV,
+    underlying: "0x80b5a32E4F032B2a058b4F29EC95EEfEEB87aDcd",
+    name: "Graviton",
+    decimals: 6,
+    disabled: true,
   },
   {
     symbol: assetSymbols["WEVMOS-JUNO"],
