@@ -5,7 +5,6 @@ import { FlywheelReward, Reward } from '@midas-capital/types';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { MIDAS_DOCS_URL } from '@ui/constants/index';
-import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 
 interface RewardsInfoProps {
