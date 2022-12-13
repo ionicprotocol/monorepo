@@ -1381,7 +1381,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@chakra-ui/react@npm:^2.4.2":
+"@chakra-ui/react@npm:^2.4.3":
   version: 2.4.3
   resolution: "@chakra-ui/react@npm:2.4.3"
   dependencies:
@@ -1724,7 +1724,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@coinbase/wallet-sdk@npm:^3.5.3":
+"@coinbase/wallet-sdk@npm:^3.6.0":
   version: 3.6.2
   resolution: "@coinbase/wallet-sdk@npm:3.6.2"
   dependencies:
@@ -3212,7 +3212,7 @@ __metadata:
     "@chainsafe/dappeteer": ^3.0.0
     "@chakra-ui/cli": ^2.2.0
     "@chakra-ui/icons": ^2.0.13
-    "@chakra-ui/react": ^2.4.2
+    "@chakra-ui/react": ^2.4.3
     "@emotion/react": ^11.10.5
     "@emotion/styled": ^11.10.5
     "@ethersproject/contracts": ^5.7.0
@@ -3222,21 +3222,21 @@ __metadata:
     "@midas-capital/security": "workspace:*"
     "@midas-capital/types": "workspace:*"
     "@netlify/plugin-nextjs": latest
-    "@rainbow-me/rainbowkit": ^0.7.4
-    "@supabase/supabase-js": ^2.1.1
+    "@rainbow-me/rainbowkit": ^0.8.1
+    "@supabase/supabase-js": ^2.1.4
     "@tanstack/react-query": ^4.19.1
     "@tanstack/react-query-devtools": ^4.19.1
-    "@tanstack/react-table": 8.7.0
+    "@tanstack/react-table": 8.7.2
     "@testing-library/jest-dom": ^5.16.5
     "@testing-library/react": ^13.4.0
-    "@types/node": 18.11.10
+    "@types/node": 18.11.14
     "@types/react": ^18.0.26
     "@types/react-datepicker": ^4.8.0
     "@types/react-dom": ^18.0.9
     "@types/testing-library__jest-dom": ^5
-    "@typescript-eslint/eslint-plugin": ^5.45.0
-    "@typescript-eslint/parser": ^5.45.0
-    axios: ^1.2.0
+    "@typescript-eslint/eslint-plugin": ^5.46.1
+    "@typescript-eslint/parser": ^5.46.1
+    axios: ^1.2.1
     eslint: 8.29.0
     eslint-config-next: 13.0.6
     eslint-config-prettier: ^8.5.0
@@ -3246,28 +3246,28 @@ __metadata:
     eslint-plugin-react: ^7.31.11
     eslint-plugin-unused-imports: ^2.0.0
     ethers: ^5.7.2
-    framer-motion: ^7.6.18
+    framer-motion: ^7.7.3
     fuse.js: ^6.6.2
-    i18next: ^22.0.6
+    i18next: ^22.4.5
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1
     logrocket: ^3.0.1
-    mathjs: ^11.4.0
+    mathjs: ^11.5.0
     next: ^13.0.6
-    next-i18next: ^13.0.0
-    prettier: 2.8.0
-    puppeteer: ^19.3.0
+    next-i18next: ^13.0.1
+    prettier: 2.8.1
+    puppeteer: ^19.4.0
     react: ^18.2.0
     react-datepicker: ^4.8.0
     react-dom: ^18.2.0
     react-error-boundary: ^3.1.4
     react-hook-form: ^7.40.0
-    react-i18next: ^12.0.0
+    react-i18next: ^12.1.1
     react-icons: ^4.7.1
     react-jazzicon: ^1.0.4
-    recharts: ^2.1.16
-    typescript: 4.9.3
-    wagmi: ^0.7.15
+    recharts: ^2.2.0
+    typescript: 4.9.4
+    wagmi: ^0.9.2
     yup: ^0.32.11
   languageName: unknown
   linkType: soft
@@ -4767,9 +4767,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rainbow-me/rainbowkit@npm:^0.7.4":
-  version: 0.7.4
-  resolution: "@rainbow-me/rainbowkit@npm:0.7.4"
+"@rainbow-me/rainbowkit@npm:^0.8.1":
+  version: 0.8.1
+  resolution: "@rainbow-me/rainbowkit@npm:0.8.1"
   dependencies:
     "@vanilla-extract/css": 1.9.1
     "@vanilla-extract/dynamic": 2.0.2
@@ -4781,8 +4781,8 @@ __metadata:
     ethers: ">=5.5.1"
     react: ">=17"
     react-dom: ">=17"
-    wagmi: 0.5.x || 0.6.x || 0.7.x
-  checksum: 969bbef8729eecc7ad26c4a90c5438feac1e0a7d37cd809075487bf95efb4a7dcaab0ae6720d60fff6c82caa23f7235a8756bbedeeaee47c54f0dec579311d9d
+    wagmi: 0.9.x
+  checksum: dfc0898094815c0f3517076354b7b32a70dd1bb82973bc024c63710bb79cd84b49da1dd5f7623caa09c03944b9cf5792ed3f20941408cd07895a75279ec62d50
   languageName: node
   linkType: hard
 
@@ -5235,7 +5235,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@supabase/supabase-js@npm:^2.1.1":
+"@supabase/supabase-js@npm:^2.1.4":
   version: 2.1.4
   resolution: "@supabase/supabase-js@npm:2.1.4"
   dependencies:
@@ -5475,22 +5475,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tanstack/react-table@npm:8.7.0":
-  version: 8.7.0
-  resolution: "@tanstack/react-table@npm:8.7.0"
+"@tanstack/react-table@npm:8.7.2":
+  version: 8.7.2
+  resolution: "@tanstack/react-table@npm:8.7.2"
   dependencies:
-    "@tanstack/table-core": 8.7.0
+    "@tanstack/table-core": 8.7.2
   peerDependencies:
     react: ">=16"
     react-dom: ">=16"
-  checksum: 5f739f619dacfd134449bc8cff819d7e1b9549b8c8b20c293f2c786098a53d20fe5755727d8abb6fa56a64583792bbc89d8b1c7cd24ac3497495d2c20bac9e77
+  checksum: 0dd3022c20af3f8c26a462f743f6f546dbdaabdf6af90511815d9651d29e544e57b7c75a9d491eced125eab468533ff2335105ab002cfaece9860e900719674c
   languageName: node
   linkType: hard
 
-"@tanstack/table-core@npm:8.7.0":
-  version: 8.7.0
-  resolution: "@tanstack/table-core@npm:8.7.0"
-  checksum: 835511727ab5651066a4cbc98916fbc2463ec6d6ddc5c74c1fec5713eeba8e26641653c1a35b69b303f0c58f574416a09e26da44cf7e9a884cb954fc26b12afd
+"@tanstack/table-core@npm:8.7.2":
+  version: 8.7.2
+  resolution: "@tanstack/table-core@npm:8.7.2"
+  checksum: 251d8501f39884843f03cddf674d2faf2551d0e9ad14737d2bcc50061107d47e68b515a29b692fbe9e6ccc796c2cd718b81aa98d41596b349027ec2b32ede442
   languageName: node
   linkType: hard
 
@@ -6067,17 +6067,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^18.0.0, @types/node@npm:^18.7.16":
+"@types/node@npm:*, @types/node@npm:18.11.14, @types/node@npm:^18.0.0, @types/node@npm:^18.7.16":
   version: 18.11.14
   resolution: "@types/node@npm:18.11.14"
   checksum: 1effaf6d55bbcccde9bca763e6454ebf92047726450256ccc0673bf44e4661fbddcd788b0779bad8a13809b05a7bdcbfba81db0713235478b866d553be864be9
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:18.11.10":
-  version: 18.11.10
-  resolution: "@types/node@npm:18.11.10"
-  checksum: 0f60cb090b2ee91fcd3dc4311bc1ed7889b92f14644c0069f100776f86474c12eebbcc6c75bc0d7d96b975a103b4d5d6b3c22b4e88bea6e7f4e2b1bb0daf5ea8
   languageName: node
   linkType: hard
 
@@ -6347,7 +6340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.30.0, @typescript-eslint/eslint-plugin@npm:^5.45.0":
+"@typescript-eslint/eslint-plugin@npm:^5.30.0, @typescript-eslint/eslint-plugin@npm:^5.46.1":
   version: 5.46.1
   resolution: "@typescript-eslint/eslint-plugin@npm:5.46.1"
   dependencies:
@@ -6370,7 +6363,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.30.0, @typescript-eslint/parser@npm:^5.42.0, @typescript-eslint/parser@npm:^5.45.0":
+"@typescript-eslint/parser@npm:^5.30.0, @typescript-eslint/parser@npm:^5.42.0, @typescript-eslint/parser@npm:^5.46.1":
   version: 5.46.1
   resolution: "@typescript-eslint/parser@npm:5.46.1"
   dependencies:
@@ -6539,15 +6532,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wagmi/core@npm:^0.6.12":
-  version: 0.6.12
-  resolution: "@wagmi/core@npm:0.6.12"
+"@wagmi/chains@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@wagmi/chains@npm:0.1.0"
+  checksum: 6c7e117907e4204cdc124c80e414f5c76f3f197d3e920972452c58b9556c9cdf964e76ef77ea70ff0728a0b3c6cadd15f764ca425ca70e7038af9a881cdc11da
+  languageName: node
+  linkType: hard
+
+"@wagmi/core@npm:0.8.2":
+  version: 0.8.2
+  resolution: "@wagmi/core@npm:0.8.2"
   dependencies:
-    abitype: ^0.1.7
+    "@wagmi/chains": ^0.1.0
+    abitype: ^0.2.5
     eventemitter3: ^4.0.7
-    zustand: ^4.1.1
+    zustand: ^4.1.4
   peerDependencies:
-    "@coinbase/wallet-sdk": ">=3.3.0"
+    "@coinbase/wallet-sdk": ">=3.6.0"
     "@walletconnect/ethereum-provider": ">=1.7.5"
     ethers: ">=5.5.1"
   peerDependenciesMeta:
@@ -6555,7 +6556,7 @@ __metadata:
       optional: true
     "@walletconnect/ethereum-provider":
       optional: true
-  checksum: 98fc6ab78be878f7dcc99e4e30f7aa7cd4a1b69f82345210c5cb906896703878f5a6fd2424df19ed9d1e5f2a823ec70effc1e545e1f544f0fc050454da83c1ff
+  checksum: 3bfdee743d0ba7d9460cbc5d7863fe6a7f08ac94da86c507f248d108145b7721f2eabc73ee5f7bad6f0ad570c039578a17387ee8ba571d643fd7d7a42f9e6f54
   languageName: node
   linkType: hard
 
@@ -6868,12 +6869,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"abitype@npm:^0.1.7":
-  version: 0.1.8
-  resolution: "abitype@npm:0.1.8"
+"abitype@npm:^0.2.5":
+  version: 0.2.5
+  resolution: "abitype@npm:0.2.5"
   peerDependencies:
     typescript: ">=4.7.4"
-  checksum: 75db603ca20adaafd66c1097ab190cde333868ce5d5328b670574bd7e99dea92d1857eb5ff24405e4828c7cdaa0fec88142a4cff7883523b8ea2b8c328e8be45
+    zod: ">=3.19.1"
+  peerDependenciesMeta:
+    zod:
+      optional: true
+  checksum: 46d2060d3b89ef49a88059fa0251eadf744f013246b1682f867d1657f695075da7d736caa61e6b427613e508cd691bbed5794321bd7e5862e6a46dd18e7aad3e
   languageName: node
   linkType: hard
 
@@ -7799,7 +7804,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.2.0":
+"axios@npm:^1.2.1":
   version: 1.2.1
   resolution: "axios@npm:1.2.1"
   dependencies:
@@ -13034,7 +13039,7 @@ __metadata:
   dependencies:
     bn.js: ^4.11.8
     ethereumjs-util: ^6.0.0
-  checksum: 03127d09960e5f8a44167463faf25b2894db2f746376dbb8195b789ed11762f93db9c574eaa7c498c400063508e9dfc1c80de2edf5f0e1406b25c87d860ff2f1
+  checksum: ae074be0bb012857ab5d3ae644d1163b908a48dd724b7d2567cfde309dc72222d460438f2411936a70dc949dc604ce1ef7118f7273bd525815579143c907e336
   languageName: node
   linkType: hard
 
@@ -14298,9 +14303,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"framer-motion@npm:^7.6.18":
-  version: 7.7.2
-  resolution: "framer-motion@npm:7.7.2"
+"framer-motion@npm:^7.7.3":
+  version: 7.7.3
+  resolution: "framer-motion@npm:7.7.3"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
     "@motionone/dom": 10.13.1
@@ -14312,7 +14317,7 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
-  checksum: 553240ce140a060b506a935273f8e24b2b242cefc2aa7b1bbc1c22b00ef489d6c0548e444299eceef8e540a45854c36f8f047479f1fb1f361015b4f6b5d9f556
+  checksum: a8d70a74ce6cc0d19758b905ed00a270c63612701238233328a4b80150ad12bc8a5638667f1868aa2e01fa9fe717f3fd2c99cdfcfbabf9bb565f58d4ebca4ce6
   languageName: node
   linkType: hard
 
@@ -15775,12 +15780,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"i18next@npm:^22.0.6":
-  version: 22.4.4
-  resolution: "i18next@npm:22.4.4"
+"i18next@npm:^22.4.5":
+  version: 22.4.5
+  resolution: "i18next@npm:22.4.5"
   dependencies:
     "@babel/runtime": ^7.20.6
-  checksum: a65a17a7a79e6f5947a59237c31ce29e2816ad9e5d1d7511039ae921ea59e7f0e851bd827f859064d49ec4655d6fcff06b441a492d0698db6c9563c2b0e48888
+  checksum: 37942b6ef1dcc9a6451fda9ed18d9ecc55954bd40b615b6f9b27772ae70a8cb2b140344de75fd02069ca72f8e337ba9f2ebca162170e33cc0af55ea42169ebf7
   languageName: node
   linkType: hard
 
@@ -19092,7 +19097,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mathjs@npm:^11.4.0":
+"mathjs@npm:^11.5.0":
   version: 11.5.0
   resolution: "mathjs@npm:11.5.0"
   dependencies:
@@ -19738,11 +19743,11 @@ __metadata:
     "@istanbuljs/nyc-config-typescript": ^1.0.2
     "@resolver-engine/core": ^0.3.3
     "@tsconfig/recommended": ^1.0.1
-    "@typescript-eslint/eslint-plugin": ^5.45.0
-    "@typescript-eslint/parser": ^5.45.0
-    netlify-cli: ^12.2.8
+    "@typescript-eslint/eslint-plugin": ^5.46.1
+    "@typescript-eslint/parser": ^5.46.1
+    netlify-cli: ^12.2.10
     ts-node: ^10.9.1
-    typescript: ^4.9.3
+    typescript: ^4.9.4
   languageName: unknown
   linkType: soft
 
@@ -19962,7 +19967,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netlify-cli@npm:^12.2.8":
+"netlify-cli@npm:^12.2.10":
   version: 12.2.10
   resolution: "netlify-cli@npm:12.2.10"
   dependencies:
@@ -20139,7 +20144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"next-i18next@npm:^13.0.0":
+"next-i18next@npm:^13.0.1":
   version: 13.0.1
   resolution: "next-i18next@npm:13.0.1"
   dependencies:
@@ -22042,16 +22047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.8.0":
-  version: 2.8.0
-  resolution: "prettier@npm:2.8.0"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 72004ce0cc9bb097daf3e3833f62495768724392c1d5b178dd47372337616e9e50ecbb0804f236596223f7b5eb1bbe69cefc8957dca21112c5777e77ef73a564
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^2.0.5, prettier@npm:^2.1.2, prettier@npm:^2.3.1, prettier@npm:^2.7.1":
+"prettier@npm:2.8.1, prettier@npm:^2.0.5, prettier@npm:^2.1.2, prettier@npm:^2.3.1, prettier@npm:^2.7.1":
   version: 2.8.1
   resolution: "prettier@npm:2.8.1"
   bin:
@@ -22426,7 +22422,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"puppeteer@npm:^19.3.0":
+"puppeteer@npm:^19.4.0":
   version: 19.4.0
   resolution: "puppeteer@npm:19.4.0"
   dependencies:
@@ -22704,7 +22700,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-i18next@npm:^12.0.0":
+"react-i18next@npm:^12.1.1":
   version: 12.1.1
   resolution: "react-i18next@npm:12.1.1"
   dependencies:
@@ -23111,7 +23107,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"recharts@npm:^2.1.16":
+"recharts@npm:^2.2.0":
   version: 2.2.0
   resolution: "recharts@npm:2.2.0"
   dependencies:
@@ -26207,17 +26203,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.9.3":
-  version: 4.9.3
-  resolution: "typescript@npm:4.9.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 17b8f816050b412403e38d48eef0e893deb6be522d6dc7caf105e54a72e34daf6835c447735fd2b28b66784e72bfbf87f627abb4818a8e43d1fa8106396128dc
-  languageName: node
-  linkType: hard
-
-"typescript@npm:^4.5.5, typescript@npm:^4.7.4, typescript@npm:^4.8.2, typescript@npm:^4.8.4, typescript@npm:^4.9.3":
+"typescript@npm:4.9.4, typescript@npm:^4.5.5, typescript@npm:^4.7.4, typescript@npm:^4.8.2, typescript@npm:^4.8.4, typescript@npm:^4.9.4":
   version: 4.9.4
   resolution: "typescript@npm:4.9.4"
   bin:
@@ -26237,17 +26223,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.9.3#~builtin<compat/typescript>":
-  version: 4.9.3
-  resolution: "typescript@patch:typescript@npm%3A4.9.3#~builtin<compat/typescript>::version=4.9.3&hash=bda367"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: ef65c22622d864497d0a0c5db693523329b3284c15fe632e93ad9aa059e8dc38ef3bd767d6f26b1e5ecf9446f49bd0f6c4e5714a2eeaf352805dc002479843d1
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.3#~builtin<compat/typescript>":
+"typescript@patch:typescript@4.9.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.5#~builtin<compat/typescript>, typescript@patch:typescript@^4.7.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.8.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.9.4#~builtin<compat/typescript>":
   version: 4.9.4
   resolution: "typescript@patch:typescript@npm%3A4.9.4#~builtin<compat/typescript>::version=4.9.4&hash=bda367"
   bin:
@@ -26846,22 +26822,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wagmi@npm:^0.7.15":
-  version: 0.7.15
-  resolution: "wagmi@npm:0.7.15"
+"wagmi@npm:^0.9.2":
+  version: 0.9.2
+  resolution: "wagmi@npm:0.9.2"
   dependencies:
-    "@coinbase/wallet-sdk": ^3.5.3
+    "@coinbase/wallet-sdk": ^3.6.0
     "@tanstack/query-sync-storage-persister": ^4.14.5
     "@tanstack/react-query": ^4.14.5
     "@tanstack/react-query-persist-client": ^4.14.5
-    "@wagmi/core": ^0.6.12
+    "@wagmi/core": 0.8.2
     "@walletconnect/ethereum-provider": ^1.8.0
-    abitype: ^0.1.7
+    abitype: ^0.2.5
     use-sync-external-store: ^1.2.0
   peerDependencies:
     ethers: ">=5.5.1"
     react: ">=17.0.0"
-  checksum: 7ec17bcc443a82c7b5e0cd189723f9d9f030b4d5978650a6c9e9fa34a13201a9a7e320d178c1f3c2a3942a877174bf46f1ba2af25f0d602c58e02c6a2cf0d15d
+  checksum: b6d145674f68593d1f149835a96f89a7410d4b7c37c9e550f51e9d2dacd4e5f992fa21571ab804f9239f6e0bd6c5515ee90284c20be1ca7743cf48fc2124ed1b
   languageName: node
   linkType: hard
 
@@ -28090,7 +28066,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zustand@npm:^4.1.1":
+"zustand@npm:^4.1.4":
   version: 4.1.5
   resolution: "zustand@npm:4.1.5"
   dependencies:
