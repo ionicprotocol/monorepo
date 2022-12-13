@@ -41,7 +41,7 @@ export class Config {
           chainId: SupportedChains.chapel,
           networkName: 'chapel',
           symbol: 'BNB',
-          rpc: chapel.specificParams.metadata.rpcUrls.default,
+          rpc: chapel.specificParams.metadata.rpcUrls.default.http[0],
         };
       case SupportedChains.bsc:
         return {
@@ -62,7 +62,7 @@ export class Config {
           chainId: SupportedChains.chapel,
           networkName: 'chapel',
           symbol: 'BNB',
-          rpc: chapel.specificParams.metadata.rpcUrls.default,
+          rpc: chapel.specificParams.metadata.rpcUrls.default.http[0],
         };
     }
   }

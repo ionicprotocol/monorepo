@@ -6,6 +6,7 @@ export enum Strategy {
   Stella = "StellaLpERC4626",
   Bomb = "BombERC4626",
   CurveGauge = "CurveGaugeERC4626",
+  MiniChefV2 = "MiniChefV2",
 }
 
 export interface AbstractPlugin {
@@ -69,6 +70,13 @@ export interface CurveGaugePlugin extends AbstractPlugin {
   icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png";
 }
 
+export interface DiffusionMiniChefV2Plugin extends AbstractPlugin {
+  strategy: Strategy.MiniChefV2;
+  otherParams: [string, string]; // poolId, minichef address
+  flywheels: string[];
+  icon: "https://d1912tcoux65lj.cloudfront.net/plugin/diffusion.png";
+}
+
 export type SupportedPlugin =
   | BeefyPlugin
   | DotDotPlugin
@@ -76,7 +84,8 @@ export type SupportedPlugin =
   | BombPlugin
   | StellaPlugin
   | CurveGaugePlugin
-  | ArrakisPlugin;
+  | ArrakisPlugin
+  | DiffusionMiniChefV2Plugin;
 
 export declare type DeployedPlugins = {
   [pluginAddress: string]: SupportedPlugin;

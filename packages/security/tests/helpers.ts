@@ -24,6 +24,6 @@ export const mkBytes32 = (prefix = "0xa"): string => {
 
 export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
   const { specificParams } = chainIdToConfig[chainId];
-  const providerUrl = process.env.ETH_PROVIDER_URL || specificParams.metadata.rpcUrls.default;
+  const providerUrl = process.env.ETH_PROVIDER_URL || specificParams.metadata.rpcUrls.default.http[0];
   return new JsonRpcProvider(providerUrl);
 };

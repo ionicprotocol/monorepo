@@ -10,6 +10,7 @@ import {
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { AdrastiaAsset, ChainDeployFnParams, FluxAsset } from "../helpers/types";
 
 const assets = evmos.assets;
@@ -29,9 +30,32 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2RouterAddress: "0xFCd2Ce20ef8ed3D43Ab4f8C2dA13bbF1C6d9512F",
     uniswapV2FactoryAddress: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
     uniswapOracleInitialDeployTokens: [],
-    uniswapOracleLpTokens: [underlying(assets, assetSymbols["WEVMOS-JUNO"])],
+    uniswapOracleLpTokens: [
+      underlying(assets, assetSymbols["WEVMOS-JUNO"]),
+      underlying(assets, assetSymbols["WEVMOS-gUSDC"]),
+      underlying(assets, assetSymbols["WEVMOS-ceUSDC"]),
+      underlying(assets, assetSymbols["WEVMOS-gWETH"]),
+      underlying(assets, assetSymbols["ceUSDC-ceUSDT"]),
+    ],
     flashSwapFee: 0,
   },
+  dynamicFlywheels: [
+    {
+      rewardToken: underlying(assets, assetSymbols.DIFF),
+      cycleLength: 1,
+      name: "DIFF",
+    },
+    {
+      rewardToken: underlying(assets, assetSymbols.GRAV),
+      cycleLength: 1,
+      name: "Gravity",
+    },
+    {
+      rewardToken: underlying(assets, assetSymbols.WEVMOS),
+      cycleLength: 1,
+      name: "Wrapped EVMOS",
+    },
+  ],
   cgId: "evmos",
 };
 
@@ -45,12 +69,20 @@ const fluxAssets: FluxAsset[] = [
     feed: "0x3B2AF9149360e9F954C18f280aD0F4Adf1B613b8",
   },
   {
+    underlying: underlying(assets, assetSymbols.ceUSDC),
+    feed: "0x3B2AF9149360e9F954C18f280aD0F4Adf1B613b8",
+  },
+  {
     underlying: underlying(assets, assetSymbols.FRAX),
     feed: "0x71712f8142550C0f76719Bc958ba0C28c4D78985",
   },
   {
     underlying: underlying(assets, assetSymbols.gWBTC),
     feed: "0x08fDc3CE77f4449D26461A70Acc222140573956e",
+  },
+  {
+    underlying: underlying(assets, assetSymbols.ceUSDT),
+    feed: "0x8FeAE79dB32595d8Ee57D40aA7De0512cBe36625",
   },
 ];
 const adrastiaAssets: AdrastiaAsset[] = [
@@ -68,6 +100,10 @@ const adrastiaAssets: AdrastiaAsset[] = [
   },
   {
     underlying: underlying(assets, assetSymbols.ceWETH),
+    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+  },
+  {
+    underlying: underlying(assets, assetSymbols.gWETH),
     feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
   },
   {
@@ -130,4 +166,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
+  // Plugins & Rewards
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 };

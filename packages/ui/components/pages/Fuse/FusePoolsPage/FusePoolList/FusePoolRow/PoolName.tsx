@@ -34,6 +34,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
               maxWidth="100%"
               width="fit-content"
               isEnabled={claimableRewards && claimableRewards.length > 0 ? true : false}
+              lineHeight={7}
             >
               {pool.name}
             </GradientText>
