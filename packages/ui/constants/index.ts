@@ -110,9 +110,17 @@ export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
 export const SUPPLY_STEPS: TxStep[] = [
-  { title: 'Approve', desc: 'Approve', done: false },
-  { title: 'Enter Market', desc: 'Enter Market', done: false },
-  { title: 'Mint market Share', desc: 'Mint Market Share', done: false },
+  { title: 'Approve', desc: 'Allow Midas to use your tokens', done: false },
+  {
+    title: 'Enable Collateral',
+    desc: 'Allows supplied assets to be used as collateral',
+    done: false,
+  },
+  {
+    title: 'Mint Market Share',
+    desc: 'Mints tokens which represent your share in this market',
+    done: false,
+  },
 ];
 export const BORROW_STEPS: TxStep[] = [{ title: 'Borrow', desc: 'Borrow', done: false }];
 export const WITHDRAW_STEPS: TxStep[] = [{ title: 'Withdraw', desc: 'Withdraw', done: false }];
