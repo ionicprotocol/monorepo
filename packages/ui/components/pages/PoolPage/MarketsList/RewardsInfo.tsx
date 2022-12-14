@@ -1,24 +1,43 @@
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
 import { FlywheelReward, Reward } from '@midas-capital/types';
+import { useEffect, useState } from 'react';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { MIDAS_DOCS_URL } from '@ui/constants/index';
+import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
+import { MarketData } from '@ui/types/TokensDataMap';
 
 interface RewardsInfoProps {
   reward: Reward;
   chainId: number;
+  asset: MarketData;
 }
 
-export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
+export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
   const { cCard } = useColors();
   const { data: pluginInfo } = usePluginInfo(
     chainId,
     'plugin' in reward ? reward.plugin : undefined
   );
+  const { data: rewardsInfo } = useRewardsInfoForMarket(
+    'flywheel' in reward ? reward.flywheel : '',
+    asset.cToken,
+    chainId
+  );
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
+  useEffect(() => {
+    if (rewardsInfo?.rewardsEndTimestamp !== undefined && rewardsInfo?.rewardsEndTimestamp > 0) {
+      setEndDate(new Date(rewardsInfo.rewardsEndTimestamp * 1000));
+    } else {
+      setEndDate(null);
+    }
+  }, [rewardsInfo]);
+
   return (
     <PopoverTooltip
       placement={'top-start'}
@@ -80,6 +99,18 @@ export const RewardsInfo = ({ reward, chainId }: RewardsInfoProps) => {
                 minute: '2-digit',
               })}`}</Text>
             </HStack>
+            {endDate ? (
+              <HStack justifyContent={'space-between'} width={'100%'}>
+                <Text>End Time:</Text>
+                <Text>{`${endDate.toLocaleDateString(undefined, {
+                  year: 'numeric',
+                  month: 'numeric',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}`}</Text>
+              </HStack>
+            ) : null}
           </VStack>
         </>
       }
