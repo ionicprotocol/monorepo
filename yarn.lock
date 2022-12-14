@@ -5,12 +5,12 @@ __metadata:
   version: 6
   cacheKey: 8
 
-"@abimate/core@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@abimate/core@npm:0.1.0"
+"@abimate/core@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "@abimate/core@npm:0.2.1"
   bin:
     abimate: main.js
-  checksum: 6c5726ea397a4a544308837aa0f398f1e772dc57c21f7496d7ccd3fc6ad333065ae6a39294705622cce1840967b85941c0fc46f616691003748ea3b40f274317
+  checksum: b31713c10510e92b7825296cade68ae0987c28673096749aab23657ec2fe2ca31c63a9214cd386fdbbe4f43abba1a03b0d9bf29f4efe7a664772d938282e2ad0
   languageName: node
   linkType: hard
 
@@ -3118,7 +3118,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@midas-capital/sdk@workspace:packages/sdk"
   dependencies:
-    "@abimate/core": ^0.1.0
+    "@abimate/core": ^0.2.1
     "@keydonix/uniswap-oracle-sdk": ^1.0.7
     "@keydonix/uniswap-oracle-sdk-adapter": ^1.0.7
     "@midas-capital/chains": "workspace:*"

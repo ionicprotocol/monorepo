@@ -59,7 +59,7 @@
   "author": "Midas Capital",
   "license": "ISC",
   "devDependencies": {
-    "@abimate/core": "^0.1.0",
+    "@abimate/core": "^0.2.1",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@tenderly/hardhat-tenderly": "^1.1.6",
