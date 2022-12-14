@@ -26,7 +26,7 @@ export const mkBytes32 = (prefix = "0xa"): string => {
 
 export const getProvider = (chainId: SupportedChains): JsonRpcProvider => {
   const { specificParams } = chainIdToConfig[chainId];
-  const providerUrl = baseConfig.rpcUrl || specificParams.metadata.rpcUrls.default;
+  const providerUrl = baseConfig.rpcUrl || specificParams.metadata.rpcUrls.default.http[0];
   return new JsonRpcProvider(providerUrl);
 };
 

@@ -19,6 +19,11 @@ export type BlockExplorer = {
   url: string;
 };
 
+export type RpcUrls = {
+  http: string[];
+  webSocket?: string[];
+};
+
 export interface ChainMetadata {
   chainIdHex: string;
   shortName: string;
@@ -29,7 +34,7 @@ export interface ChainMetadata {
       [key: string]: number;
     };
   };
-  rpcUrls: { [key: string]: string; default: string };
+  rpcUrls: { [key: string]: RpcUrls; default: RpcUrls };
   blockExplorerUrls: {
     [key: string]: BlockExplorer;
     default: BlockExplorer;
