@@ -1,11 +1,11 @@
-import { Divider, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
+import { Divider, HStack, Skeleton, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
-import { Column, Row } from '@ui/components/shared/Flex';
+import { Column } from '@ui/components/shared/Flex';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
