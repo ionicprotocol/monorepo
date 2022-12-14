@@ -63,7 +63,7 @@ class MyDocument extends Document {
             rel="stylesheet"
           />
           <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500&display=swap"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400&display=swap"
             rel="stylesheet"
           ></link>
 
