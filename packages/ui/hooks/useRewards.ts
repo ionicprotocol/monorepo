@@ -111,21 +111,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
 function applyAPYFix(rewards: FlywheelMarketRewardsInfo[]) {
   console.warn('Manually updating APYs in Pool, fix me soon!');
   return rewards.map((r) => {
-    // `wstDOT` Market
-    if (r.market === '0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563') {
-      return {
-        ...r,
-        rewardsInfo: r.rewardsInfo.map((info) => {
-          // only LDO reward token
-          if (info.rewardToken === '0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0') {
-            return { ...info, formattedAPR: info.formattedAPR?.div(100000000) }; // make 8 decimals smaller
-          }
-          // Or change nothing
-          return info;
-        }),
-      };
-    }
-
     // `xcDOT` Market
     if (r.market === '0xa9736bA05de1213145F688e4619E5A7e0dcf4C72') {
       return {
