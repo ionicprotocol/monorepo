@@ -99,7 +99,6 @@ export class MidasBase {
   public oracles: OracleConfig;
   public chainSpecificAddresses: ChainAddresses;
   public chainSpecificParams: ChainParams;
-  public artifacts: Artifacts;
   public irms: IrmConfig;
   public deployedPlugins: DeployedPlugins;
   public marketToPlugin: Record<string, string>;
@@ -203,24 +202,23 @@ export class MidasBase {
     }, {});
     this.redemptionStrategies = chainConfig.redemptionStrategies;
     this.fundingStrategies = chainConfig.fundingStrategies;
-    this.artifacts = ARTIFACTS;
 
     this.availableIrms = chainConfig.irms.filter((o) => {
-      if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
+      if (ARTIFACTS[o] === undefined || this.chainDeployment[o] === undefined) {
         this.logger.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
     });
     this.availableOracles = chainConfig.oracles.filter((o) => {
-      if (this.artifacts[o] === undefined || this.chainDeployment[o] === undefined) {
+      if (ARTIFACTS[o] === undefined || this.chainDeployment[o] === undefined) {
         this.logger.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
     });
-    this.oracles = oracleConfig(this.chainDeployment, this.artifacts, this.availableOracles);
-    this.irms = irmConfig(this.chainDeployment, this.artifacts, this.availableIrms);
+    this.oracles = oracleConfig(this.chainDeployment, ARTIFACTS, this.availableOracles);
+    this.irms = irmConfig(this.chainDeployment, ARTIFACTS, this.availableIrms);
   }
 
   async deployPool(

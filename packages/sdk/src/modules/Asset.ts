@@ -2,8 +2,8 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
+import CErc20DelegatorArtifact from "@artifacts/CErc20Delegator.json";
 import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
-
 import { withCreateContracts } from "./CreateContracts";
 import { withFlywheel } from "./Flywheel";
 
@@ -112,9 +112,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
         ["address", "address", "uint"],
         [config.comptroller, config.underlying, marketCounter]
       );
-      const byteCodeHash = utils.keccak256(
-        this.artifacts.CErc20Delegator.bytecode.object + constructorData.substring(2)
-      );
+      const byteCodeHash = utils.keccak256(CErc20DelegatorArtifact.bytecode.object + constructorData.substring(2));
       const cErc20DelegatorAddress = utils.getCreate2Address(
         this.chainDeployment.FuseFeeDistributor.address,
         saltsHash,

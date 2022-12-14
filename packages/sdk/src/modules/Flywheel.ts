@@ -7,7 +7,8 @@ import { MidasFlywheel__factory } from "@typechain/factories/MidasFlywheel__fact
 import { FlywheelStaticRewards } from "@typechain/FlywheelStaticRewards";
 import { MidasFlywheel } from "@typechain/MidasFlywheel";
 import { MidasFlywheelLensRouter } from "@typechain/MidasFlywheelLensRouter";
-
+import FlywheelStaticRewardsArtifact from "@artifacts/FlywheelStaticRewards.json";
+import MidasFlywheelArtifact from "@artifacts/MidasFlywheel.json";
 import { withCreateContracts } from "./CreateContracts";
 
 export interface FlywheelClaimableRewards {
@@ -97,14 +98,14 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     async getFlywheelRewardsInfos(flywheelAddress: string) {
       const flywheelCoreInstance = new Contract(
         flywheelAddress,
-        this.artifacts.MidasFlywheel.abi,
+        MidasFlywheelArtifact.abi,
         this.provider
       ) as MidasFlywheel;
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(),
         flywheelCoreInstance.callStatic.getAllStrategies(),
       ]);
-      const fwStatic = new Contract(fwStaticAddress, this.artifacts.FlywheelStaticRewards.abi, this.provider);
+      const fwStatic = new Contract(fwStaticAddress, FlywheelStaticRewardsArtifact.abi, this.provider);
       const rewardsInfos = {};
       await Promise.all(
         enabledMarkets.map(async (m) => {
@@ -224,8 +225,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       }
     ) {
       const midasFlywheel = new ContractFactory(
-        this.artifacts.MidasFlywheel.abi,
-        this.artifacts.MidasFlywheel.bytecode,
+        MidasFlywheelArtifact.abi,
+        MidasFlywheelArtifact.bytecode,
         this.signer
       ) as MidasFlywheel__factory;
       const addressOfSigner = await this.signer.getAddress();
@@ -247,8 +248,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       }
     ) {
       const fwStaticRewardsFactory = new ContractFactory(
-        this.artifacts.FlywheelStaticRewards.abi,
-        this.artifacts.FlywheelStaticRewards.bytecode,
+        FlywheelStaticRewardsArtifact.abi,
+        FlywheelStaticRewardsArtifact.bytecode,
         this.signer
       ) as FlywheelStaticRewards__factory;
       const addressOfSigner = await this.signer.getAddress();

@@ -34,9 +34,6 @@ import UniswapLpTokenPriceOracle from "@artifacts/UniswapLpTokenPriceOracle.json
 import UniswapTwapPriceOracleV2 from "@artifacts/UniswapTwapPriceOracleV2.json";
 import UniswapTwapPriceOracleV2Root from "@artifacts/UniswapTwapPriceOracleV2Root.json";
 import WhitePaperInterestRateModel from "@artifacts/WhitePaperInterestRateModel.json";
-import FlywheelStaticRewards from "@artifacts/FlywheelStaticRewards.json";
-import MidasFlywheel from "@artifacts/MidasFlywheel.json";
-import CErc20Delegator from "@artifacts/CErc20Delegator.json";
 
 const ARTIFACTS = {
   AdjustableJumpRateModel_JARVIS_jBRL,
@@ -51,18 +48,15 @@ const ARTIFACTS = {
   AnkrBNBInterestRateModel,
   AnkrCertificateTokenPriceOracle,
   BalancerLpTokenPriceOracle,
-  CErc20Delegator,
   ChainlinkPriceOracleV2,
   CurveLpTokenPriceOracleNoRegistry,
   DAIInterestRateModelV2,
   DiaPriceOracle,
   FixedNativePriceOracle,
-  FlywheelStaticRewards,
   GelatoGUniPriceOracle,
   JumpRateModel_JARVIS_002_004_4_08,
   JumpRateModel_MIMO_002_004_4_08,
   MasterPriceOracle,
-  MidasFlywheel,
   SimplePriceOracle,
   StkBNBPriceOracle,
   UniswapLpTokenPriceOracle,
