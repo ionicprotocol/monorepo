@@ -187,7 +187,7 @@ export const AdditionalInfo = ({
                     <Text>Strategy Safety Score:</Text>
                     <Text
                       fontWeight="bold"
-                      variant="mdText"
+                      size="md"
                       color={setColorByScore(strategyScore.totalScore)}
                     >
                       {(strategyScore.totalScore * SCORE_RANGE_MAX).toFixed(2)}
@@ -781,12 +781,12 @@ export const AdditionalInfo = ({
             >
               {asset.isBorrowPaused ? (
                 <Center height="100%">
-                  <Text variant="smText">This asset is not borrowable.</Text>
+                  <Text size="md">This asset is not borrowable.</Text>
                 </Center>
               ) : data ? (
                 data.rates === null ? (
                   <Center height="100%">
-                    <Text variant="smText">
+                    <Text size="md">
                       No graph is available for this asset(&apos)s interest curves.
                     </Text>
                   </Center>

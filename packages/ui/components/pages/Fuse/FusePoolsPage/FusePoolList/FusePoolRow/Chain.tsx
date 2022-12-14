@@ -8,15 +8,17 @@ export const Chain = ({ pool }: { pool: PoolData }) => {
   const chainConfig = useChainConfig(pool.chainId);
 
   return (
-    <HStack justifyContent="flex-end" height="100%" width={12}>
+    <HStack justifyContent="center" height="100%">
       {chainConfig && (
         <SimpleTooltip label={chainConfig.specificParams.metadata.name}>
           <Img
+            minWidth="25px"
+            minHeight="25px"
             width="25px"
             height="25px"
             borderRadius="50%"
             src={chainConfig.specificParams.metadata.img}
-            alt=""
+            alt={chainConfig.specificParams.metadata.name}
           />
         </SimpleTooltip>
       )}

@@ -67,10 +67,10 @@ const FuseStatsBar = () => {
         fontSize="sm"
         marginRight={{ base: '0px', lg: '84.5px' }}
       >
-        <Text variant="heading" fontWeight="bold">
-          Unleash the power of your assets
+        <Text size="2xl" fontWeight="bold">
+          Unleash the Power of Your Assets
         </Text>
-        <Text variant="mdText" my={4} lineHeight={8}>
+        <Text size="md" mt={4} mb={8} lineHeight={8}>
           Let your holdings shine with the Midas Touch. From an individual DeFi user to a DAO or
           Treasury, users can take advantage of Midas to earn yield, borrow against, or lend their
           favorite tokens.
@@ -157,12 +157,12 @@ const FuseStatsBar = () => {
               <Spinner />
             ) : (
               <>
-                <Text variant="panelHeading" fontWeight="bold" lineHeight={['60px']}>
+                <Text size="3xl" fontWeight="bold" lineHeight={['60px']}>
                   {smallUsdFormatter(totalTVL)}
                 </Text>
               </>
             )}
-            <Text whiteSpace="nowrap" variant="panelMdText">
+            <Text whiteSpace="nowrap" size="md" color="raisinBlack">
               Total value supplied across Midas
             </Text>
           </MotionFlex>
