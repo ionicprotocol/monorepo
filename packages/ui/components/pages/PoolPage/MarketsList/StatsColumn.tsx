@@ -97,10 +97,10 @@ export const StatsColumn = ({
         crossAxisAlignment="flex-start"
         expand
         px={2}
-        py={4}
+        py={2}
         gap={2}
       >
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack width="100%" alignItems={'flex-start'}>
           <Text size="sm" flexShrink={0}>
             Market Supply Balance:
           </Text>
@@ -129,11 +129,11 @@ export const StatsColumn = ({
               </Skeleton>
             )}
           </HStack>
-        </VStack>
+        </HStack>
 
         <Divider />
 
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
           <Text flexShrink={0} size="sm">
             Borrowed in Market:
           </Text>
@@ -174,9 +174,9 @@ export const StatsColumn = ({
               )} of ${smallUsdFormatter(borrowLimitMarket || 0)}`}</Skeleton>
             )}
           </HStack>
-        </VStack>
+        </HStack>
 
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
           <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
@@ -219,10 +219,10 @@ export const StatsColumn = ({
               )} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}</Skeleton>
             )}
           </HStack>
-        </VStack>
+        </HStack>
 
         <Divider />
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
           <Text flexShrink={0} size="sm">
             Market Supply APY:
           </Text>
@@ -235,9 +235,9 @@ export const StatsColumn = ({
               <Skeleton display="inline">x.xx</Skeleton>
             )}
           </HStack>
-        </VStack>
+        </HStack>
 
-        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
           <Text flexShrink={0} size="sm">
             Market Borrow APR:
           </Text>
@@ -250,7 +250,7 @@ export const StatsColumn = ({
               <Skeleton display="inline">x.xx</Skeleton>
             )}
           </HStack>
-        </VStack>
+        </HStack>
       </Column>
     </MidasBox>
   );

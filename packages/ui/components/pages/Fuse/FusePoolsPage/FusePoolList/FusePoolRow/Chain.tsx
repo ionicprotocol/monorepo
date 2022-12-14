@@ -12,6 +12,8 @@ export const Chain = ({ pool }: { pool: PoolData }) => {
       {chainConfig && (
         <SimpleTooltip label={chainConfig.specificParams.metadata.name}>
           <Img
+            minWidth="25px"
+            minHeight="25px"
             width="25px"
             height="25px"
             borderRadius="50%"
