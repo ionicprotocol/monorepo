@@ -392,7 +392,7 @@ export const AssetSettings = ({
               >
                 <FormLabel htmlFor="supplyCaps" margin={0}>
                   <HStack>
-                    <Text variant="smText" width="max-content">
+                    <Text size="md" width="max-content">
                       Supply Caps
                     </Text>
                     <SimpleTooltip label={'It shows the market supply caps.'}>
@@ -492,7 +492,7 @@ export const AssetSettings = ({
             alignItems="center"
           >
             <HStack>
-              <Text variant="smText">Borrowing Possibility </Text>
+              <Text size="md">Borrowing Possibility </Text>
               <SimpleTooltip label={'It shows the possibility if you can borrow or not.'}>
                 <InfoOutlineIcon ml={1} />
               </SimpleTooltip>
@@ -528,7 +528,7 @@ export const AssetSettings = ({
               >
                 <FormLabel htmlFor="collateralFactor" margin={0}>
                   <HStack>
-                    <Text variant="smText" width="max-content">
+                    <Text size="md" width="max-content">
                       Loan-to-Value{' '}
                     </Text>
                     <SimpleTooltip label={LOAN_TO_VALUE_TOOLTIP}>
@@ -610,7 +610,7 @@ export const AssetSettings = ({
               >
                 <FormLabel htmlFor="reserveFactor" margin={0}>
                   <HStack>
-                    <Text variant="smText">Reserve Factor </Text>
+                    <Text size="md">Reserve Factor </Text>
                     <SimpleTooltip
                       label={
                         "The fraction of interest generated on a given asset that is routed to the asset's Reserve Pool. The Reserve Pool protects lenders against borrower default and liquidation malfunction."
@@ -690,7 +690,7 @@ export const AssetSettings = ({
               >
                 <FormLabel htmlFor="adminFee" margin={0}>
                   <HStack>
-                    <Text variant="smText">Admin Fee </Text>{' '}
+                    <Text size="md">Admin Fee </Text>{' '}
                     <SimpleTooltip label={ADMIN_FEE_TOOLTIP}>
                       <InfoOutlineIcon ml={1} />
                     </SimpleTooltip>
@@ -754,7 +754,7 @@ export const AssetSettings = ({
             <Flex w="100%" direction={{ base: 'column', sm: 'row' }} alignItems="center">
               <Box>
                 <HStack>
-                  <Text variant="smText">Rewards Plugin </Text>
+                  <Text size="md">Rewards Plugin </Text>
                   <PopoverTooltip
                     body={
                       <>
@@ -802,7 +802,7 @@ export const AssetSettings = ({
                 >
                   <FormLabel htmlFor="interestRateModel" margin={0}>
                     <HStack>
-                      <Text variant="smText">Interest Model </Text>
+                      <Text size="md">Interest Model </Text>
                       <SimpleTooltip
                         label={
                           'The interest rate model chosen for an asset defines the rates of interest for borrowers and suppliers at different utilization levels.'

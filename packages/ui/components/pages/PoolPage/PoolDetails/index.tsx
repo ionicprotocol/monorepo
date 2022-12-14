@@ -70,7 +70,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
           height="60px"
           flexShrink={0}
         >
-          <Text variant="mdText" fontWeight="bold">{`Pool Details`}</Text>
+          <Text size="md" fontWeight="bold">{`Pool Details`}</Text>
 
           {data?.isPowerfulAdmin ? (
             <Center
@@ -103,26 +103,26 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             gridArea={{ borderTopWidth: 1, borderColor: 'red' }}
           >
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Total Supplied</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Total Supplied</Text>
+              <Text size="md" fontWeight="bold">
                 {midUsdFormatter(totalSuppliedFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Total Borrowed</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Total Borrowed</Text>
+              <Text size="md" fontWeight="bold">
                 {midUsdFormatter(totalBorrowedFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Available Liquidity</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Available Liquidity</Text>
+              <Text size="md" fontWeight="bold">
                 {midUsdFormatter(totalAvailableLiquidityFiat)}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Pool Utilization</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Pool Utilization</Text>
+              <Text size="md" fontWeight="bold">
                 {totalSuppliedFiat.toString() === '0'
                   ? '0%'
                   : poolData.utilization.toFixed(2) + '%'}
@@ -130,13 +130,13 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             </HStack>
 
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Upgradeable</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Upgradeable</Text>
+              <Text size="md" fontWeight="bold">
                 {data ? (data.upgradeable ? 'Yes' : 'No') : '?'}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Admin</Text>
+              <Text size="md">Admin</Text>
               {data?.admin ? (
                 <HStack>
                   <SimpleTooltip label={`${scanUrl}/address/${data.admin}`}>
@@ -158,22 +158,22 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
                   <ClipboardValueIconButton value={data.admin} />
                 </HStack>
               ) : (
-                <Text variant="smText" fontWeight="bold">
+                <Text size="md" fontWeight="bold">
                   ?
                 </Text>
               )}
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Platform Fee</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Platform Fee</Text>
+              <Text size="md" fontWeight="bold">
                 {assets.length > 0
                   ? Number(utils.formatUnits(assets[0].fuseFee, 16)).toPrecision(2) + '%'
                   : '10%'}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Average Admin Fee</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Average Admin Fee</Text>
+              <Text size="md" fontWeight="bold">
                 {assets
                   .reduce(
                     (a, b, _, { length }) => a + Number(utils.formatUnits(b.adminFee, 16)) / length,
@@ -184,16 +184,16 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             </HStack>
 
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Close Factor</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Close Factor</Text>
+              <Text size="md" fontWeight="bold">
                 {data?.closeFactor
                   ? data.closeFactor.div(parseUnits('1', 16)).toNumber() + '%'
                   : '?%'}
               </Text>
             </HStack>
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Liquidation Incentive</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Liquidation Incentive</Text>
+              <Text size="md" fontWeight="bold">
                 {data?.liquidationIncentive
                   ? data.liquidationIncentive.div(parseUnits('1', 16)).toNumber() - 100 + '%'
                   : '?%'}
@@ -201,15 +201,15 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
             </HStack>
 
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Oracle</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Oracle</Text>
+              <Text size="md" fontWeight="bold">
                 {data ? data.oracle : '?'}
               </Text>
             </HStack>
 
             <HStack px={4} pt={4} pb={3} borderTopWidth={1} borderColor={cCard.dividerColor}>
-              <Text variant="smText">Whitelist</Text>
-              <Text variant="smText" fontWeight="bold">
+              <Text size="md">Whitelist</Text>
+              <Text size="md" fontWeight="bold">
                 {data ? (data.enforceWhitelist ? 'Yes' : 'No') : '?'}
               </Text>
             </HStack>
@@ -223,7 +223,7 @@ const PoolDetails = ({ data: poolData }: { data?: PoolData | null }) => {
                 borderTopWidth={1}
                 borderColor={cCard.dividerColor}
               >
-                <Text variant="smText">Pool Address:</Text>
+                <Text size="md">Pool Address:</Text>
                 <HStack>
                   <SimpleTooltip label={`${scanUrl}/address/${comptroller}`}>
                     <Button

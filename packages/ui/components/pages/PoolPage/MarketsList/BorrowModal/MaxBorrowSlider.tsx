@@ -107,7 +107,7 @@ function MaxBorrowSlider({
   return (
     <Box width="100%">
       <HStack width="100%" mt={9} spacing={4} mb={4}>
-        <Text variant="smText">$0.00</Text>
+        <Text size="md">$0.00</Text>
         <HStack width="100%" spacing={0}>
           {borrowedPercent !== 0 && (
             <Slider
@@ -122,7 +122,7 @@ function MaxBorrowSlider({
                 ml={`-${smallUsdFormatter(borrowBalanceFiat).length * 8.5}px`}
                 fontSize="sm"
               >
-                <Text variant="smText">{smallUsdFormatter(borrowBalanceFiat)}</Text>
+                <Text size="md">{smallUsdFormatter(borrowBalanceFiat)}</Text>
               </SliderMark>
               <SliderTrack>
                 <SliderFilledTrack bg={cPage.primary.borderColor} />
@@ -157,7 +157,7 @@ function MaxBorrowSlider({
               ml={`-${smallUsdFormatter(borrowableLimit).length * 0.5}px`}
               fontSize="sm"
             >
-              <Text variant="smText">{smallUsdFormatter(borrowableLimit)}</Text>
+              <Text size="md">{smallUsdFormatter(borrowableLimit)}</Text>
             </SliderMark>
             <SliderTrack>
               <SliderFilledTrack bg={cPage.primary.borderColor} opacity={0.3} />
@@ -187,7 +187,7 @@ function MaxBorrowSlider({
             </SliderTrack>
           </Slider>
         </HStack>
-        <Text variant="smText">{smallUsdFormatter(borrowLimitTotal)}</Text>
+        <Text size="md">{smallUsdFormatter(borrowLimitTotal)}</Text>
       </HStack>
     </Box>
   );
