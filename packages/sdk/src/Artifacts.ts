@@ -1,7 +1,6 @@
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
 import AdjustableJumpRateModel from "@artifacts/AdjustableJumpRateModel.json";
-
 const AdjustableJumpRateModel_PSTAKE_WBNB: Artifact = AdjustableJumpRateModel;
 const AdjustableJumpRateModel_MIXBYTES_XCDOT: Artifact = AdjustableJumpRateModel;
 const AdjustableJumpRateModel_TRANSFERO_BRZ: Artifact = AdjustableJumpRateModel;
@@ -25,6 +24,9 @@ import FixedNativePriceOracle from "@artifacts/FixedNativePriceOracle.json";
 import GelatoGUniPriceOracle from "@artifacts/GelatoGUniPriceOracle.json";
 
 import JumpRateModel from "@artifacts/JumpRateModel.json";
+const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModel;
+const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModel;
+
 import MasterPriceOracle from "@artifacts/MasterPriceOracle.json";
 import SimplePriceOracle from "@artifacts/SimplePriceOracle.json";
 import StkBNBPriceOracle from "@artifacts/StkBNBPriceOracle.json";
@@ -32,36 +34,40 @@ import UniswapLpTokenPriceOracle from "@artifacts/UniswapLpTokenPriceOracle.json
 import UniswapTwapPriceOracleV2 from "@artifacts/UniswapTwapPriceOracleV2.json";
 import UniswapTwapPriceOracleV2Root from "@artifacts/UniswapTwapPriceOracleV2Root.json";
 import WhitePaperInterestRateModel from "@artifacts/WhitePaperInterestRateModel.json";
-const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModel;
-const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModelArtifact;
+import FlywheelStaticRewards from "@artifacts/FlywheelStaticRewards.json";
+import MidasFlywheel from "@artifacts/MidasFlywheel.json";
+import CErc20Delegator from "@artifacts/CErc20Delegator.json";
 
 const ARTIFACTS = {
-  ChainlinkPriceOracleV2,
-  DAIInterestRateModelV2,
-  DiaPriceOracle,
-  AdjustableJumpRateModel,
-  AdjustableJumpRateModel_PSTAKE_WBNB,
-  AdjustableJumpRateModel_MIXBYTES_XCDOT,
-  AdjustableJumpRateModel_TRANSFERO_BRZ,
-  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
-  AdjustableJumpRateModel_STADER_WBNB,
-  AdjustableJumpRateModel_MIXBYTES_USDC,
   AdjustableJumpRateModel_JARVIS_jBRL,
   AdjustableJumpRateModel_JARVIS_jEUR,
-  JumpRateModel_MIMO_002_004_4_08,
-  JumpRateModel_JARVIS_002_004_4_08,
+  AdjustableJumpRateModel_MIXBYTES_USDC,
+  AdjustableJumpRateModel_MIXBYTES_XCDOT,
+  AdjustableJumpRateModel_PSTAKE_WBNB,
+  AdjustableJumpRateModel_STADER_WBNB,
+  AdjustableJumpRateModel_TRANSFERO_BRZ,
+  AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
+  AdjustableJumpRateModel,
   AnkrBNBInterestRateModel,
-  MasterPriceOracle,
-  FixedNativePriceOracle,
-  CurveLpTokenPriceOracleNoRegistry,
-  UniswapLpTokenPriceOracle,
-  UniswapTwapPriceOracleV2Root,
-  SimplePriceOracle,
-  BalancerLpTokenPriceOracle,
   AnkrCertificateTokenPriceOracle,
-  StkBNBPriceOracle,
+  BalancerLpTokenPriceOracle,
+  CErc20Delegator,
+  ChainlinkPriceOracleV2,
+  CurveLpTokenPriceOracleNoRegistry,
+  DAIInterestRateModelV2,
+  DiaPriceOracle,
+  FixedNativePriceOracle,
+  FlywheelStaticRewards,
   GelatoGUniPriceOracle,
+  JumpRateModel_JARVIS_002_004_4_08,
+  JumpRateModel_MIMO_002_004_4_08,
+  MasterPriceOracle,
+  MidasFlywheel,
+  SimplePriceOracle,
+  StkBNBPriceOracle,
+  UniswapLpTokenPriceOracle,
   UniswapTwapPriceOracleV2,
+  UniswapTwapPriceOracleV2Root,
   WhitePaperInterestRateModel,
 };
 

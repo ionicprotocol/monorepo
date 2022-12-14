@@ -1,5 +1,7 @@
-import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "ethers";
+import { BigNumber, constants, Contract, ContractFactory } from "ethers";
 
+import ComptrollerABI from "@abis/Comptroller";
+import MidasFlywheelABI from "@abis/MidasFlywheel";
 import { FlywheelStaticRewards__factory } from "@typechain/factories/FlywheelStaticRewards__factory";
 import { MidasFlywheel__factory } from "@typechain/factories/MidasFlywheel__factory";
 import { FlywheelStaticRewards } from "@typechain/FlywheelStaticRewards";

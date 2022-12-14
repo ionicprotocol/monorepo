@@ -8,8 +8,9 @@
     "outDir": "./dist/cjs",
     "skipLibCheck": true,
     "paths": {
-      "@typechain/*": ["./typechain/*"],
+      "@abis/*": ["./abis/*"],
       "@artifacts/*": ["./artifacts/*"],
+      "@typechain/*": ["./typechain/*"],
     }
   }
 }

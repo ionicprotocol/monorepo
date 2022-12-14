@@ -14,8 +14,9 @@
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false,
     "paths": {
-      "@typechain/*": ["./typechain/*"],
+      "@abis/*": ["./abis/*"],
       "@artifacts/*": ["./artifacts/*"],
+      "@typechain/*": ["./typechain/*"],
     }
   },
   "include": ["./src"],
