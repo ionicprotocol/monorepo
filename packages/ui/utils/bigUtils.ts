@@ -8,7 +8,12 @@ const formatter = Intl.NumberFormat('en-US', {
   maximumFractionDigits: 5,
 });
 
-const smallFormatter = Intl.NumberFormat('en-US', {
+export const smallFormatter = Intl.NumberFormat('en-US', {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+export const smallUSDFormatter = Intl.NumberFormat('en-US', {
   style: 'currency',
   currency: 'USD',
   minimumFractionDigits: 2,
@@ -34,7 +39,7 @@ export const dynamicFormatter = (value: number, options: Intl.NumberFormatOption
   new Intl.NumberFormat('en-US', options).format(value);
 
 export function smallStringUsdFormatter(num: string | number) {
-  return smallFormatter.format(parseFloat(num.toString()));
+  return smallUSDFormatter.format(parseFloat(num.toString()));
 }
 
 export function stringUsdFormatter(num: string) {
@@ -42,7 +47,7 @@ export function stringUsdFormatter(num: string) {
 }
 
 export function smallUsdFormatter(num: number) {
-  return smallFormatter.format(num);
+  return smallUSDFormatter.format(num);
 }
 
 export function usdFormatter(num: number) {

@@ -1,14 +1,14 @@
+import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { utils } from 'ethers';
 
 import { RewardsResponse } from '../pages/api/rewards';
 
 import { useFusePoolData } from './useFusePoolData';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { utils } from 'ethers';
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 
 interface UseRewardsProps {
   chainId: number;

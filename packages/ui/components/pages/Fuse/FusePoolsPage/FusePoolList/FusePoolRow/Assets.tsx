@@ -21,10 +21,9 @@ export const Assets = ({ pool }: { pool: PoolData }) => {
           <TokenIcon key={i} address={token.address} chainId={pool.chainId} />
         ))}
       </AvatarGroup>
+      {/* TODO list hidden assets in tooltip */}
       {tokens.length - SHRINK_ASSETS > 0 && (
-        <Text fontWeight="bold" pt={1}>
-          +{tokens.length - SHRINK_ASSETS}
-        </Text>
+        <Text fontWeight="medium">+{tokens.length - SHRINK_ASSETS}</Text>
       )}
     </HStack>
   );

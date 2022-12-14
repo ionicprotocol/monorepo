@@ -33,11 +33,15 @@ export const useTVL = () => {
         const chainTVLs: CrossChainTVL = new Map();
         await Promise.all(
           sdks.map(async (sdk) => {
-            chainTVLs.set(sdk.chainId.toString(), {
-              value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
-              name: sdk.chainSpecificParams.metadata.name,
-              logo: sdk.chainSpecificParams.metadata.img,
-            });
+            try {
+              chainTVLs.set(sdk.chainId.toString(), {
+                value: (await fetchFuseNumberTVL(sdk)) * prices[sdk.chainId.toString()].value,
+                name: sdk.chainSpecificParams.metadata.name,
+                logo: sdk.chainSpecificParams.metadata.img,
+              });
+            } catch (e) {
+              console.warn(`Unable to fetch TVL for chain ${sdk.chainId}`, e);
+            }
           })
         );
 

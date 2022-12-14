@@ -81,38 +81,38 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             alignItems="flex-start"
           >
             <VStack>
-              <Text variant="smText" textAlign="center">
+              <Text size="md" textAlign="center">
                 Your Supply Balance
               </Text>
               {address ? (
                 <SimpleTooltip label={`$${pool.totalSupplyBalanceFiat.toString()}`}>
-                  <Text variant="smText" textAlign="center">
+                  <Text size="md" textAlign="center">
                     {smallUsdFormatter(pool.totalSupplyBalanceFiat)}
                     {pool.totalSupplyBalanceFiat > 0 && pool.totalSupplyBalanceFiat < 0.01 && '+'}
                   </Text>
                 </SimpleTooltip>
               ) : (
                 <SimpleTooltip label="Connect your wallet">
-                  <Text variant="smText" fontWeight="bold" textAlign="center">
+                  <Text size="md" fontWeight="bold" textAlign="center">
                     -
                   </Text>
                 </SimpleTooltip>
               )}
             </VStack>
             <VStack>
-              <Text variant="smText" textAlign="center">
+              <Text size="md" textAlign="center">
                 Your Borrow Balance
               </Text>
               {address ? (
                 <SimpleTooltip label={`$${pool.totalBorrowBalanceFiat.toString()}`}>
-                  <Text variant="smText" textAlign="center">
+                  <Text size="md" textAlign="center">
                     {smallUsdFormatter(pool.totalBorrowBalanceFiat)}
                     {pool.totalBorrowBalanceFiat > 0 && pool.totalBorrowBalanceFiat < 0.01 && '+'}
                   </Text>
                 </SimpleTooltip>
               ) : (
                 <SimpleTooltip label="Connect your wallet">
-                  <Text variant="smText" fontWeight="bold" textAlign="center">
+                  <Text size="md" fontWeight="bold" textAlign="center">
                     -
                   </Text>
                 </SimpleTooltip>
@@ -130,7 +130,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
           >
             {rewardTokens.length > 0 && (
               <VStack>
-                <Text variant="smText" textAlign="center" mr={4}>
+                <Text size="md" textAlign="center" mr={4}>
                   Offering Rewards
                 </Text>
                 <AvatarGroup size="sm" max={30}>
@@ -153,7 +153,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={2}
           >
             <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="end">
+              <Text size="md" textAlign="end">
                 Most Supplied Asset
               </Text>
             </GridItem>
@@ -170,7 +170,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               )}
             </GridItem>
             <GridItem colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="left">
+              <Text size="md" textAlign="left">
                 {poolDetails?.mostSuppliedAsset &&
                   usdPrice &&
                   smallUsdFormatter(poolDetails.mostSuppliedAsset.totalSupplyNative * usdPrice)}
@@ -186,7 +186,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={2}
           >
             <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="end">
+              <Text size="md" textAlign="end">
                 Top Lending APY
               </Text>
             </GridItem>
@@ -203,7 +203,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               )}
             </GridItem>
             <GridItem colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="left">
+              <Text size="md" textAlign="left">
                 {topLendingApy && `${topLendingApy}% APY`}
               </Text>
             </GridItem>
@@ -217,7 +217,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             gap={2}
           >
             <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="end">
+              <Text size="md" textAlign="end">
                 Top Stable Borrow APR
               </Text>
             </GridItem>
@@ -234,7 +234,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
               )}
             </GridItem>
             <GridItem colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="left">
+              <Text size="md" textAlign="left">
                 {topBorrowApr && `${topBorrowApr}% APR`}
               </Text>
             </GridItem>
@@ -249,7 +249,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
             py={2}
           >
             <GridItem justifyContent="flex-end" colSpan={6} alignSelf="center">
-              <Text variant="smText" textAlign="end">
+              <Text size="md" textAlign="end">
                 Pool Address
               </Text>
             </GridItem>
@@ -274,7 +274,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                   <ClipboardValueIconButton value={pool.comptroller} />
                 </HStack>
               ) : (
-                <Text variant="smText" fontWeight="bold">
+                <Text size="md" fontWeight="bold">
                   ?
                 </Text>
               )}

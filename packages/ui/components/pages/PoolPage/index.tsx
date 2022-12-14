@@ -94,7 +94,7 @@ const PoolPage = memo(() => {
 
       <PageTransitionLayout>
         <FusePageLayout>
-          <HStack width={'100%'} mx="auto" spacing={6}>
+          <HStack width={'100%'} mx="auto" spacing={4}>
             <ArrowBackIcon
               fontSize="2xl"
               fontWeight="extrabold"
@@ -105,11 +105,11 @@ const PoolPage = memo(() => {
               }}
             />
             {data ? (
-              <Text textAlign="left" variant="title" fontWeight="bold">
+              <Text textAlign="left" size="2xl" fontWeight="bold">
                 {data.name}
               </Text>
             ) : (
-              <Skeleton>Pool Name</Skeleton>
+              <Skeleton height="54px">Pool Name</Skeleton>
             )}
             {data?.assets && data.assets.length > 0 ? (
               <HStack spacing={0}>
@@ -202,13 +202,13 @@ const PoolPage = memo(() => {
                 <Box p={4} gap={4}>
                   <Flex flexDirection={['row']} gap={{ base: 4, lg: 8 }} pb={4}>
                     <HStack>
-                      <Text variant="mdText" width="max-content">
+                      <Text size="md" width="max-content">
                         Your Supply Balance :
                       </Text>
                       <Skeleton height={'27px'} width={20} />
                     </HStack>
                     <HStack>
-                      <Text variant="mdText" width="max-content">
+                      <Text size="md" width="max-content">
                         Your Borrow Balance :
                       </Text>
                       <Skeleton height={'27px'} width={20} />
