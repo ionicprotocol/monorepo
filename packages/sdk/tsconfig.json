@@ -10,9 +10,10 @@
     "outDir": "./dist/cjs",
     "composite": true,
     "paths": {
-      "@typechain/*": ["./sdk/typechain/*"],
+      "@abis/*": ["./sdk/abis/*"],
       "@artifacts/*": ["./sdk/artifacts/*"],
+      "@typechain/*": ["./sdk/typechain/*"]
     }
   },
-  "exclude": ["./artifacts"],
+  "exclude": [],
 }

@@ -3,8 +3,8 @@ import { constants, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { Comptroller } from "@typechain/Comptroller";
-import { CToken } from "@typechain/CToken";
 import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
+import { CToken } from "@typechain/CToken";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("comptroller", "Comptroller Address", undefined, types.string)

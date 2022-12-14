@@ -1,9 +1,11 @@
-import axios from "axios";
-import { BigNumber, constants, ContractTransaction, utils } from "ethers";
-
-import { MidasBaseConstructor } from "..";
+import CErc20DelegateABI from "@abis/CErc20Delegate";
+import ComptrollerABI from "@abis/Comptroller";
+import EIP20InterfaceABI from "@abis/EIP20Interface";
 import { CErc20Delegate } from "@typechain/CErc20Delegate";
 import { Comptroller } from "@typechain/Comptroller";
+import axios from "axios";
+import { BigNumber, constants, ContractTransaction, utils } from "ethers";
+import { MidasBaseConstructor } from "..";
 import { getContract } from "../MidasSdk/utils";
 
 export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBase) {
@@ -29,7 +31,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async approve(cTokenAddress: string, underlyingTokenAddress: string, amount: BigNumber) {
-      const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
+      const token = getContract(underlyingTokenAddress, EIP20InterfaceABI, this.signer);
       const currentSignerAddress = await this.signer.getAddress();
 
       const hasApprovedEnough = (await token.callStatic.allowance(currentSignerAddress, cTokenAddress)).gte(amount);
@@ -42,18 +44,14 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
 
     async enterMarkets(cTokenAddress: string, comptrollerAddress: string, enableAsCollateral: boolean) {
       if (enableAsCollateral) {
-        const comptrollerInstance = getContract(
-          comptrollerAddress,
-          this.artifacts.Comptroller.abi,
-          this.signer
-        ) as Comptroller;
+        const comptrollerInstance = getContract(comptrollerAddress, ComptrollerABI, this.signer) as Comptroller;
 
         await comptrollerInstance.enterMarkets([cTokenAddress]);
       }
     }
 
     async mint(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, CErc20DelegateABI, this.signer) as CErc20Delegate;
       const address = this.signer.getAddress();
       // add 10% to default estimated gas
       const gasLimit = (await cToken.estimateGas.mint(amount, { from: address })).mul(11).div(10);
@@ -82,7 +80,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
 
     async repayBorrow(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, CErc20DelegateABI, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
 
@@ -102,7 +100,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async borrow(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, CErc20DelegateABI, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.borrow(amount)) as BigNumber;
 
@@ -116,7 +114,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async withdraw(cTokenAddress: string, amount: BigNumber) {
-      const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
+      const cToken = getContract(cTokenAddress, CErc20DelegateABI, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.redeemUnderlying(amount)) as BigNumber;
 

@@ -1,19 +1,22 @@
-import { Contract } from "ethers";
+import FlywheelStaticRewardsABI from "@abis/FlywheelStaticRewards";
+import JumpRateModelABI from "@abis/JumpRateModel";
+import MidasFlywheelABI from "@abis/MidasFlywheel";
+import UnitrollerABI from "@abis/Unitroller";
+import { Contract, ContractInterface } from "ethers";
 import { Fragment } from "ethers/lib/utils";
 
-import { AnkrBNBInterestRateModel } from "@typechain/AnkrBNBInterestRateModel";
 import { CErc20Delegate } from "@typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "@typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "@typechain/Comptroller";
+import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "@typechain/CTokenFirstExtension";
 import { FlywheelStaticRewards } from "@typechain/FlywheelStaticRewards";
 import { JumpRateModel } from "@typechain/JumpRateModel";
 import { MasterPriceOracle } from "@typechain/MasterPriceOracle";
 import { MidasFlywheel } from "@typechain/MidasFlywheel";
 import { RewardsDistributorDelegate } from "@typechain/RewardsDistributorDelegate";
 import { Unitroller } from "@typechain/Unitroller";
-import { Artifacts, MidasBaseConstructor } from "..";
-import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
-import { CTokenFirstExtension } from "@typechain/CTokenFirstExtension";
+import { MidasBaseConstructor } from "..";
 import { SignerOrProvider } from "../MidasSdk";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
@@ -21,16 +24,15 @@ type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
 
 export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class CreateContracts extends Base {
-    createContractInstance<T extends Contract>(contract: keyof Artifacts) {
+    createContractInstance<T extends Contract>(abi: ContractInterface) {
       return (address: string, signerOrProvider: SignerOrProvider = this.signer) =>
-        new Contract(address, this.artifacts[contract].abi, signerOrProvider) as T;
+        new Contract(address, abi, signerOrProvider) as T;
     }
 
-    createUnitroller = this.createContractInstance<Unitroller>("Unitroller");
-    createMidasFlywheel = this.createContractInstance<MidasFlywheel>("MidasFlywheel");
-    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
-    createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
-    createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
+    createUnitroller = this.createContractInstance<Unitroller>(UnitrollerABI);
+    createMidasFlywheel = this.createContractInstance<MidasFlywheel>(MidasFlywheelABI);
+    createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsABI);
+    createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelABI);
 
     createRewardsDistributor(distributorAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(
@@ -46,9 +48,6 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       if (this.chainDeployment.ComptrollerFirstExtension) {
         comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
       }
-      // if (this.chainDeployment.ComptrollerSecondExtension) {
-      //   comptrollerABI.push(...this.chainDeployment.ComptrollerSecondExtension.abi);
-      // }
 
       return new Contract(comptrollerAddress, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
     }

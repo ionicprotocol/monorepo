@@ -1,3 +1,9 @@
+import CTokenInterfaceABI from "@abis/CTokenInterface";
+import ComptrollerABI from "@abis/Comptroller";
+import EIP20InterfaceABI from "@abis/EIP20Interface";
+import UnitrollerABI from "@abis/Unitroller";
+import MidasERC4626ABI from "@abis/MidasERC4626";
+
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {
   ChainAddresses,
@@ -15,8 +21,6 @@ import {
   SupportedChains,
 } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { BigNumber, Contract, Signer, utils } from "ethers";
-
 import { CErc20Delegate } from "@typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "@typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "@typechain/CErc20PluginRewardsDelegate";
@@ -30,7 +34,8 @@ import { FuseSafeLiquidator } from "@typechain/FuseSafeLiquidator";
 import { MidasERC4626 } from "@typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "@typechain/MidasFlywheelLensRouter";
 import { Unitroller } from "@typechain/Unitroller";
-import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
+import { BigNumber, Contract, Signer, utils } from "ethers";
+import ARTIFACTS, { Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -75,13 +80,13 @@ export class MidasBase {
   static CTOKEN_ERROR_CODES = CTOKEN_ERROR_CODES;
   public _provider: SupportedProvider;
   public _signer: SupportedSigners | null;
-  static isSupportedProvider(provider): provider is SupportedProvider {
+  static isSupportedProvider(provider: unknown): provider is SupportedProvider {
     return SignerWithAddress.isSigner(provider) || Signer.isSigner(provider);
   }
-  static isSupportedSigner(signer): signer is SupportedSigners {
+  static isSupportedSigner(signer: unknown): signer is SupportedSigners {
     return SignerWithAddress.isSigner(signer) || Signer.isSigner(signer);
   }
-  static isSupportedSignerOrProvider(signerOrProvider): signerOrProvider is SignerOrProvider {
+  static isSupportedSignerOrProvider(signerOrProvider: unknown): signerOrProvider is SignerOrProvider {
     return MidasBase.isSupportedSigner(signerOrProvider) || MidasBase.isSupportedProvider(signerOrProvider);
   }
 
@@ -320,7 +325,7 @@ export class MidasBase {
 
   async getInterestRateModel(assetAddress: string): Promise<InterestRateModel> {
     // Get interest rate model address from asset address
-    const assetContract = getContract(assetAddress, this.artifacts.CTokenInterface.abi, this.provider);
+    const assetContract = getContract(assetAddress, CTokenInterfaceABI, this.provider);
     const interestRateModelAddress: string = await assetContract.callStatic.interestRateModel();
 
     const interestRateModel = await this.identifyInterestRateModel(interestRateModelAddress);
@@ -353,7 +358,7 @@ export class MidasBase {
   };
 
   getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, this.artifacts.Comptroller.abi, signerOrProvider) as Comptroller;
+    return new Contract(address, ComptrollerABI, signerOrProvider) as Comptroller;
   }
 
   getCTokenInstance(address: string, signerOrProvider = this.provider) {
@@ -381,11 +386,11 @@ export class MidasBase {
   }
 
   getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, this.artifacts.EIP20Interface.abi, signerOrProvider) as EIP20Interface;
+    return new Contract(address, EIP20InterfaceABI, signerOrProvider) as EIP20Interface;
   }
 
   getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, this.artifacts.Unitroller.abi, signerOrProvider) as Unitroller;
+    return new Contract(address, UnitrollerABI, signerOrProvider) as Unitroller;
   }
 
   getFusePoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
@@ -397,7 +402,7 @@ export class MidasBase {
   }
 
   getMidasErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, this.artifacts.MidasERC4626.abi, signerOrProvider) as MidasERC4626;
+    return new Contract(address, MidasERC4626ABI, signerOrProvider) as MidasERC4626;
   }
 }
 
