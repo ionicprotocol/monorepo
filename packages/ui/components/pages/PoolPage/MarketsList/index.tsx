@@ -427,6 +427,7 @@ export const MarketsList = ({
         cell: ({ getValue }) => (
           <Collateral
             asset={getValue<MarketData>()}
+            assets={assets}
             comptrollerAddress={comptrollerAddress}
             poolChainId={poolChainId}
           />
