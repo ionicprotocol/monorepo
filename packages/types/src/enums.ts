@@ -7,6 +7,7 @@ export enum SupportedChains {
   neon_devnet = 245022926,
   polygon = 137,
   arbitrum = 42161,
+  fantom = 250,
 }
 
 export const SupportedChainsArray = Object.entries(SupportedChains)
@@ -53,8 +54,10 @@ export enum OracleTypes {
   DiaStDotPriceOracle = "DiaStDotPriceOracle",
   BalancerLpTokenPriceOracle = "BalancerLpTokenPriceOracle",
   StkBNBPriceOracle = "StkBNBPriceOracle",
-  BNBxPriceOracle = "BNBxPriceOracle",
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
+  AdrastiaPriceOracle = "AdrastiaPriceOracle",
+  NativeUSDPriceOracle = "NativeUSDPriceOracle",
+  SaddleLpTokenPriceOracle = "SaddleLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -70,6 +73,7 @@ export enum IrmTypes {
   AdjustableJumpRateModel_STADER_WBNB = "AdjustableJumpRateModel_STADER_WBNB",
   AdjustableJumpRateModel_MIXBYTES_USDC = "AdjustableJumpRateModel_MIXBYTES_USDC",
   AdjustableJumpRateModel_JARVIS_jBRL = "AdjustableJumpRateModel_JARVIS_jBRL",
+  AdjustableJumpRateModel_JARVIS_jEUR = "AdjustableJumpRateModel_JARVIS_jEUR",
 }
 
 export enum LiquidationStrategy {
@@ -218,14 +222,49 @@ export enum assetSymbols {
   saddleOptUSD = "saddleOptUSD",
   WEVMOS = "WEVMOS",
   ATOM = "ATOM",
+  gUSDC = "gUSDC",
+  axlUSDC = "axlUSDC",
+  ceUSDC = "ceUSDC",
+  OSMO = "OSMO",
+  JUNO = "JUNO",
+  axlWETH = "axlWETH",
+  gUSDT = "gUSDT",
+  ceUSDT = "ceUSDT",
+  gDAI = "gDAI",
+  ceWETH = "ceWETH",
+  gWBTC = "gWBTC",
+  gWETH = "gWETH",
+  axlWBTC = "axlWBTC",
+  DIFF = "DIFF",
+  GRAV = "GRAV",
+  "WEVMOS-JUNO" = "WEVMOS-JUNO",
+  "WEVMOS-gUSDC" = "WEVMOS-gUSDC",
+  "WEVMOS-ceUSDC" = "WEVMOS-ceUSDC",
+  "WEVMOS-gWETH" = "WEVMOS-gWETH",
+  "ceUSDC-ceUSDT" = "ceUSDC-ceUSDT",
 
   // moonbeam
   GLMR = "GLMR",
   WGLMR = "WGLMR",
   GLINT = "GLINT",
+  // Stella
+  "USDC.wh-GLMR" = "USDC.wh-GLMR",
+  "DOT.xc-GLMR" = "DOT.xc-GLMR",
+  "WETH.wh-GLMR" = "WETH.wh-GLMR",
+  "WBTC.wh-GLMR" = "WBTC.wh-GLMR",
+  "STELLA-GLMR" = "STELLA-GLMR",
+  "CELR-GLMR" = "CELR-GLMR",
+  "ATOM-GLMR" = "ATOM-GLMR",
+  STELLA = "STELLA",
+  CELR = "CELR",
+  LDO = "LDO",
+  "LDO-GLMR" = "LDO-GLMR",
+
+  // BeamSwap
   "GLMR-USDC" = "GLMR-USDC",
   "GLMR-GLINT" = "GLMR-GLINT",
   "WGLMR-xcDOT" = "WGLMR-xcDOT",
+
   DOT = "DOT",
   xcDOT = "xcDOT",
   stDOT = "stDOT",
@@ -233,6 +272,8 @@ export enum assetSymbols {
   xcKSM = "xcKSM",
   stKSM = "stKSM",
   multiWBTC = "multiWBTC",
+  WBTC_wh = "WBTC.wh",
+  WETH_wh = "WETH.wh",
   multiUSDC = "multiUSDC",
   USDC_wh = "USDC.wh",
   multiUSDT = "multiUSDT",
@@ -240,15 +281,9 @@ export enum assetSymbols {
   "3pool" = "3pool",
   "xcDOT-stDOT" = "xcDOT-stDOT",
 
-  // moonbase
-  WDEV = "WDEV",
-
   // local
   TOUCH = "TOUCH",
   TRIBE = "TRIBE",
-
-  // aurora
-  WNEAR = "WNEAR",
 
   // neon
   WNEON = "WNEON",
@@ -260,6 +295,7 @@ export enum assetSymbols {
   "WMATIC-USDC" = "WMATIC-USDC",
   "WMATIC-ETH" = "WMATIC-ETH",
   "WMATIC-USDT" = "WMATIC-USDT",
+  "WMATIC-MATICx" = "WMATIC-MATICx",
   "WETH-WBTC" = "WETH-WBTC",
   "AGEUR-JEUR" = "agEUR-jEUR",
   "JEUR-PAR" = "jEUR-PAR",
@@ -270,6 +306,8 @@ export enum assetSymbols {
   "JNZD-NZDS" = "jNZD-NZDS",
   "EURE-JEUR" = "EURE-jEUR",
   "JCHF-BUSD" = "jCHF-BUSD",
+  "MAI-USDC" = "MAI-USDC",
+  am3CRV = "am3CRV",
   AGEUR = "agEUR",
   EURT = "EURT",
   EURE = "EURE",
@@ -294,9 +332,16 @@ export enum assetSymbols {
   XSGD = "XSGD",
   MIMO = "MIMO",
   JRT = "JRT",
+  aMATICb = "aMATICb",
+  aMATICc = "aMATICc",
+  MATICx = "MATICx",
+  stMATIC = "stMATIC",
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
+  WMATIC_STMATIC_BLP = "WMATIC_STMATIC BLP",
+  WMATIC_MATICX_BLP = "WMATIC_MATICX BLP",
+  WMATIC_STMATIC_CURVE = "WMATIC_STMATIC CURVE",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
@@ -312,15 +357,6 @@ export enum assetSymbols {
   arrakis_USDC_DAI_005 = "G-UNI USDC-DAI Vault (0.05)",
   arrakis_WETH_DAI_03 = "G-UNI WETH-DAI Vault (0.3)",
 
-  // Stella
-  "STELLA-GLMR" = "STELLA-GLMR",
-  "CELR-GLMR" = "CELR-GLMR",
-  "ATOM-GLMR" = "ATOM-GLMR",
-  STELLA = "STELLA",
-  CELR = "CELR",
-  LDO = "LDO",
-  "LDO-GLMR" = "LDO-GLMR",
-
   // Arbitrum
   "2pool" = "2pool",
   GOHM = "GOHM",
@@ -328,6 +364,14 @@ export enum assetSymbols {
   DPX = "DPX",
   MAGIC = "MAGIC",
   GMX = "GMX",
+  saddleFraxBP = "saddleFraxBP",
+  saddleFraxUsdsBP = "saddleFraxUsdsBP",
+
+  // Fantom
+  WFTM = "WFTM",
+  multiBTC = "multiBTC",
+  multiETH = "multiETH",
+  aFTMc = "aFTMc",
 }
 
 export default assetSymbols;

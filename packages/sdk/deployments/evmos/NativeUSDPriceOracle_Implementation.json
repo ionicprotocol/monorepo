@@ -1,0 +1,650 @@
+{
+  "address": "0x393527A10064435dC6C6bc4aE84bb540E1Ae2aA8",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint8",
+          "name": "version",
+          "type": "uint8"
+        }
+      ],
+      "name": "Initialized",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldOwner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "NewOwner",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "oldPendingOwner",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "newPendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "NewPendingOwner",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "NATIVE_USD_ORACLE_ADDRESS",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "QUOTE_TOKEN_ADDRESS",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "_acceptOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newPendingOwner",
+          "type": "address"
+        }
+      ],
+      "name": "_setPendingOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getValue",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "nativeUsdOracleAddress",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "quoteTokenAddress",
+          "type": "address"
+        }
+      ],
+      "name": "initialize",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "pendingOwner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "renounceOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "transferOwnership",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x52397af9da7ec5f5d4429d8fdc1d9b79d4e1abc21d67410cc8261eaa30a88105",
+  "receipt": {
+    "to": null,
+    "from": "0x82eDcFe00bd0ce1f3aB968aF09d04266Bc092e0E",
+    "contractAddress": "0x393527A10064435dC6C6bc4aE84bb540E1Ae2aA8",
+    "transactionIndex": 0,
+    "gasUsed": "563237",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x8aac83020d0d68655b01efa1bd728213f1ba8acf0f7d1d218fb9c124140c17e5",
+    "transactionHash": "0x52397af9da7ec5f5d4429d8fdc1d9b79d4e1abc21d67410cc8261eaa30a88105",
+    "logs": [],
+    "blockNumber": 7990241,
+    "cumulativeGasUsed": "563237",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "numDeployments": 3,
+  "metadata": {
+    "compiler": {
+      "version": "0.8.10+commit.fc410830"
+    },
+    "language": "Solidity",
+    "output": {
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint8",
+              "name": "version",
+              "type": "uint8",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "Initialized",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldOwner",
+              "type": "address",
+              "indexed": false
+            },
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "NewOwner",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "oldPendingOwner",
+              "type": "address",
+              "indexed": false
+            },
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address",
+              "indexed": false
+            }
+          ],
+          "type": "event",
+          "name": "NewPendingOwner",
+          "anonymous": false
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address",
+              "indexed": true
+            },
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address",
+              "indexed": true
+            }
+          ],
+          "type": "event",
+          "name": "OwnershipTransferred",
+          "anonymous": false
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "NATIVE_USD_ORACLE_ADDRESS",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "QUOTE_TOKEN_ADDRESS",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "_acceptOwner"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newPendingOwner",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "_setPendingOwner"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "getValue",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ]
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "nativeUsdOracleAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "quoteTokenAddress",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "initialize"
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "owner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "view",
+          "type": "function",
+          "name": "pendingOwner",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ]
+        },
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "renounceOwnership"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function",
+          "name": "transferOwnership"
+        }
+      ],
+      "devdoc": {
+        "kind": "dev",
+        "methods": {
+          "_acceptOwner()": {
+            "details": "Owner function for pending owner to accept role and update owner"
+          },
+          "_setPendingOwner(address)": {
+            "details": "Owner function to begin change of owner. The newPendingOwner must call `_acceptOwner` to finalize the transfer.",
+            "params": {
+              "newPendingOwner": "New pending owner."
+            }
+          },
+          "getValue()": {
+            "details": "Returns the price of EVMOS with 18 decimals of precision https://docs.adrastia.io/deployments/evmos"
+          },
+          "owner()": {
+            "details": "Returns the address of the current owner."
+          },
+          "renounceOwnership()": {
+            "details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions anymore. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby removing any functionality that is only available to the owner."
+          },
+          "transferOwnership(address)": {
+            "details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+          }
+        },
+        "version": 1
+      },
+      "userdoc": {
+        "kind": "user",
+        "methods": {
+          "_acceptOwner()": {
+            "notice": "Accepts transfer of owner rights. msg.sender must be pendingOwner"
+          },
+          "_setPendingOwner(address)": {
+            "notice": "Begins transfer of owner rights. The newPendingOwner must call `_acceptOwner` to finalize the transfer."
+          },
+          "pendingOwner()": {
+            "notice": "Pending owner of this contract"
+          }
+        },
+        "version": 1
+      }
+    },
+    "settings": {
+      "remappings": [
+        ":@openzeppelin/=lib/openzeppelin-contracts/",
+        ":@pythnetwork/pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        ":adrastia-core/=lib/adrastia-core/contracts/",
+        ":adrastia/=lib/adrastia-core/contracts/",
+        ":ds-test/=lib/ds-test/src/",
+        ":flywheel-v2/=lib/flywheel-v2/src/",
+        ":flywheel/=lib/flywheel-v2/src/",
+        ":forge-std/=lib/forge-std/src/",
+        ":fuse-flywheel/=lib/fuse-flywheel/src/",
+        ":libcompound/=lib/fuse-flywheel/lib/libcompound/src/",
+        ":openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/",
+        ":openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/",
+        ":ops/=lib/ops/contracts/",
+        ":pyth-neon/=lib/pyth-neon/contracts/",
+        ":pyth-sdk-solidity/=lib/pyth-sdk-solidity/",
+        ":solidity-bytes-utils/=lib/solidity-bytes-utils/",
+        ":solmate/=lib/solmate/src/",
+        ":weird-erc20/=lib/fuse-flywheel/lib/libcompound/lib/solmate/lib/weird-erc20/src/"
+      ],
+      "optimizer": {
+        "enabled": true,
+        "runs": 200
+      },
+      "metadata": {
+        "bytecodeHash": "none"
+      },
+      "compilationTarget": {
+        "contracts/oracles/evmos/NativeUSDPriceOracle.sol": "NativeUSDPriceOracle"
+      },
+      "libraries": {}
+    },
+    "sources": {
+      "contracts/external/compound/ICErc20.sol": {
+        "keccak256": "0xb4174a86be37f5d7b0e1f02af3f81dfbc22ae8e7598cf9203169133372f2cde7",
+        "urls": [
+          "bzz-raw://cc50bcebe851381562e2703c85b1d804b128c15552a498a6960ba1dbc8c44a70",
+          "dweb:/ipfs/QmP4ytBkmFJKjjuDjSLA6sJRuFkcafQwXXU42G19eH5H9T"
+        ],
+        "license": "BSD-3-Clause"
+      },
+      "contracts/external/compound/ICToken.sol": {
+        "keccak256": "0xcc42aa85f96ee47163875e36393c6b0f34577b4a18c925456ff80d26c89b6814",
+        "urls": [
+          "bzz-raw://422550086d97f8e10f2a04c39747469eb7e67d3ad381c005c9361e81e83ba338",
+          "dweb:/ipfs/QmX57zTB2FuzLqZZhtiruqkj1yxzc1wLPXZekbSDG78Gjz"
+        ],
+        "license": "BSD-3-Clause"
+      },
+      "contracts/external/compound/IPriceOracle.sol": {
+        "keccak256": "0x501ba6588dc3bbcbcd7629eb294b2249dce97cb78e1c78feb1815d220b488368",
+        "urls": [
+          "bzz-raw://19fa30ac47cf668858b1d9e8842e1a2d9a6c8bbae85bc12ce8a0f1bbe0868559",
+          "dweb:/ipfs/QmYuypErSBwLnNWjUBZiBvp5xJ95DxbBDCvCSnE3NZjaev"
+        ],
+        "license": "BSD-3-Clause"
+      },
+      "contracts/midas/SafeOwnableUpgradeable.sol": {
+        "keccak256": "0xcabdc6795bc1e53216329a724c95e95a197ae39e1efafe5e7d29903485ce7b7c",
+        "urls": [
+          "bzz-raw://da3f5e15594e371af76de74383c6e19b9ce1a478ff9ea96d377bc65508d535fa",
+          "dweb:/ipfs/QmS8izvxm9ziVKxcxXnvTjgGLxwgHFVWVjoLu8JeVQdYGC"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/oracles/BasePriceOracle.sol": {
+        "keccak256": "0xfdb8a3439685177d0150249ec4984ab05fc8a9e4c9172dc714fbb456d0810d47",
+        "urls": [
+          "bzz-raw://fd1cdf268cb8e8294f6e52b3694316c86c88faadb42c6c626e37705dc8b171f6",
+          "dweb:/ipfs/QmSeDmDZvJ4XbF8s9taT5YMgtZUpkgNnufZufLXkSaYUpZ"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/oracles/MasterPriceOracle.sol": {
+        "keccak256": "0x1001a7192fa0c55bac14165ede7254047e2cb0c92644f8ea1331c40577b2c59b",
+        "urls": [
+          "bzz-raw://676e8fe5741ac14911f13283e4d59cf3982706756c5fa8181f03aa14f6155423",
+          "dweb:/ipfs/QmNRbuwiNBXpTuFmAPUxruA9h95P2m9muiYPXhuuSbKmQc"
+        ],
+        "license": "UNLICENSED"
+      },
+      "contracts/oracles/evmos/NativeUSDPriceOracle.sol": {
+        "keccak256": "0x05740c2ee28cd2e282d3b4b57a539c3e749a6b02fd3eea84e69811932b2e920d",
+        "urls": [
+          "bzz-raw://f69317d4938089e7522ee979babf82c720c3334542fd5a46647d327e17454b95",
+          "dweb:/ipfs/QmeZrWQY5MWPSUqvfQyJUJn5MjQkN4jBmUJ3XHCqyTptkW"
+        ],
+        "license": "UNLICENSED"
+      },
+      "lib/adrastia-core/contracts/interfaces/IPriceOracle.sol": {
+        "keccak256": "0x5b699147d47eef018341b55d7934ab5c933992652b691d157d46a588773bc8ba",
+        "urls": [
+          "bzz-raw://49449b9025e960bed17ec4414ba1805386257e869f76446a60896487461899d9",
+          "dweb:/ipfs/QmbvmEy5rpoGKvS1zbrFT8F47GHqMvfvKrFamFXMcCAse8"
+        ],
+        "license": "MIT"
+      },
+      "lib/adrastia-core/contracts/interfaces/IQuoteToken.sol": {
+        "keccak256": "0x9dbb3d72e389e14ebee052a6004753c97169335084cfa7deb55e6be4f0abff6a",
+        "urls": [
+          "bzz-raw://372ebd46fa6e5f82c90e0678f8b1b5e8de041034bb41d6f6b5eefb6dd97cd0c8",
+          "dweb:/ipfs/Qmejty9Fm6xaNQ4jNeaTMQy8ENrkrEdp2bjZqdGV35bkef"
+        ],
+        "license": "MIT"
+      },
+      "lib/adrastia-core/contracts/interfaces/IUpdateable.sol": {
+        "keccak256": "0xe5c409eaa7fa457e0b0d086671bebf4fb3f394f151d7d4f432979acb06ab7b7c",
+        "urls": [
+          "bzz-raw://2128be8328af4ee0e29651c581ae4578a457b1cf2f05da980586d8e266a5b6cb",
+          "dweb:/ipfs/QmVXQdt7dCAd6MXHp4JHcK1a6oSekGDGfMm3JofAfS5pFX"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol": {
+        "keccak256": "0x247c62047745915c0af6b955470a72d1696ebad4352d7d3011aef1a2463cd888",
+        "urls": [
+          "bzz-raw://d7fc8396619de513c96b6e00301b88dd790e83542aab918425633a5f7297a15a",
+          "dweb:/ipfs/QmXbP4kiZyp7guuS7xe8KaybnwkRPGrBc2Kbi3vhcTfpxb"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol": {
+        "keccak256": "0x6c2b54ec184943843041ab77f61988b5060f6f03acbfe92cdc125f95f00891da",
+        "urls": [
+          "bzz-raw://efc212a7612f6ea70f7aa1f68b9c26e7ceaa412333e23dcf66740f9d51fa689b",
+          "dweb:/ipfs/QmTkcTYoF14eN12FxyX2GQRc9KwdhYfjoJ3XJt1yvJWcaB"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/ERC20Upgradeable.sol": {
+        "keccak256": "0x17aff86be546601617585e91fd98aad74cf39f1be65d8eb6f93b7f3c30181275",
+        "urls": [
+          "bzz-raw://e75109e30d04e3fe6e31e0294ca357a695911b3599582be39e89b1207273773a",
+          "dweb:/ipfs/QmRRgRNTjXRjn7aqyaSfm8rDiCEDyoVhHnENXj6TZbrnGR"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/IERC20Upgradeable.sol": {
+        "keccak256": "0x4e733d3164f73f461eaf9d8087a7ad1ea180bdc8ba0d3d61b0e1ae16d8e63dff",
+        "urls": [
+          "bzz-raw://75b47c3aeca7b66ea6752f8be020ec5c1c502de6ec9065272dae23d3a52196e2",
+          "dweb:/ipfs/QmUebPMHv16tYKFh5BmBQkMfRFb5b8UZ2RgVwdjxCeufVF"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/token/ERC20/extensions/IERC20MetadataUpgradeable.sol": {
+        "keccak256": "0x605434219ebbe4653f703640f06969faa5a1d78f0bfef878e5ddbb1ca369ceeb",
+        "urls": [
+          "bzz-raw://4c9c634f99dd02d73ce7498b03a6305e251c05eeebb71457306561c1fab0fa7d",
+          "dweb:/ipfs/QmbYRBbZHy8YoaQKXdPryiL3CSS7uUaRfRYi1TUj9cTqJQ"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/utils/AddressUpgradeable.sol": {
+        "keccak256": "0x0a3b4afc301241e2629ad192fa02e0f8626e3cf38ab6f45342bfd7afbde16ee0",
+        "urls": [
+          "bzz-raw://b189423f1102ff4487e9c59a65ec400b98cc4aeef478dac8272b482e9f5ad7de",
+          "dweb:/ipfs/QmdpYHrzD8wPe5DMuEiWkXiVLsTkqD7C4tbBjWwkBQwJi2"
+        ],
+        "license": "MIT"
+      },
+      "lib/openzeppelin-contracts-upgradeable/contracts/utils/ContextUpgradeable.sol": {
+        "keccak256": "0x963ea7f0b48b032eef72fe3a7582edf78408d6f834115b9feadd673a4d5bd149",
+        "urls": [
+          "bzz-raw://d6520943ea55fdf5f0bafb39ed909f64de17051bc954ff3e88c9e5621412c79c",
+          "dweb:/ipfs/QmWZ4rAKTQbNG2HxGs46AcTXShsVytKeLs7CUCdCSv5N7a"
+        ],
+        "license": "MIT"
+      }
+    },
+    "version": 1
+  },
+  "bytecode": {
+    "object": "0x608060405234801561001057600080fd5b5061093a806100206000396000f3fe608060405234801561001057600080fd5b506004361061009e5760003560e01c80638da5cb5b116100665780638da5cb5b14610119578063d82be8301461012a578063e30c39781461013d578063f2fde38b14610150578063fc4d33f91461016357600080fd5b80631d45e338146100a357806320965255146100d3578063485cc955146100e95780636e96dfd7146100fe578063715018a614610111575b600080fd5b6066546100b6906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100db61016b565b6040519081526020016100ca565b6100fc6100f73660046106f4565b610298565b005b6100fc61010c366004610727565b6103e0565b6100fc61044a565b6033546001600160a01b03166100b6565b6067546100b6906001600160a01b031681565b6065546100b6906001600160a01b031681565b6100fc61015e366004610727565b61044a565b6100fc61048d565b6066546067546040516340ca7f4f60e11b81526001600160a01b039182166004820152600092919091169082908290638194fe9e90602401602060405180830381865afa1580156101c0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101e49190610749565b90506000826001600160a01b03166327624b076040518163ffffffff1660e01b8152600401602060405180830381865afa158015610226573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061024a9190610772565b90506000826001600160701b031611610267576000935050505090565b6102728160126107ab565b61027d90600a6108b4565b610290906001600160701b0384166108c3565b935050505090565b600054610100900460ff16158080156102b85750600054600160ff909116105b806102d25750303b1580156102d2575060005460ff166001145b61033a5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084015b60405180910390fd5b6000805460ff19166001179055801561035d576000805461ff0019166101001790555b6103656105a1565b606680546001600160a01b038086166001600160a01b031992831617909255606780549285169290911691909117905580156103db576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b505050565b6103e86105d2565b606580546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b91015b60405180910390a15050565b6104526105d2565b60405162461bcd60e51b815260206004820152601060248201526f6e6f74207573656420616e796d6f726560801b6044820152606401610331565b6065546001600160a01b031633146104df5760405162461bcd60e51b81526020600482015260156024820152743737ba103a3432903832b73234b7339037bbb732b960591b6044820152606401610331565b60006104f36033546001600160a01b031690565b6065549091506001600160a01b031661050b8161062c565b606580546001600160a01b0319169055604080516001600160a01b0384168152600060208201527f70aea8d848e8a90fb7661b227dc522eb6395c3dac71b63cb59edd5c9899b2364910160405180910390a1606554604080516001600160a01b03808516825290921660208301527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b910161043e565b600054610100900460ff166105c85760405162461bcd60e51b8152600401610331906108e2565b6105d061067e565b565b6033546001600160a01b031633146105d05760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610331565b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff166106a55760405162461bcd60e51b8152600401610331906108e2565b6105d0600054610100900460ff166106cf5760405162461bcd60e51b8152600401610331906108e2565b6105d03361062c565b80356001600160a01b03811681146106ef57600080fd5b919050565b6000806040838503121561070757600080fd5b610710836106d8565b915061071e602084016106d8565b90509250929050565b60006020828403121561073957600080fd5b610742826106d8565b9392505050565b60006020828403121561075b57600080fd5b81516001600160701b038116811461074257600080fd5b60006020828403121561078457600080fd5b815160ff8116811461074257600080fd5b634e487b7160e01b600052601160045260246000fd5b600060ff821660ff8416808210156107c5576107c5610795565b90039392505050565b600181815b808511156108095781600019048211156107ef576107ef610795565b808516156107fc57918102915b93841c93908002906107d3565b509250929050565b600082610820575060016108ae565b8161082d575060006108ae565b8160018114610843576002811461084d57610869565b60019150506108ae565b60ff84111561085e5761085e610795565b50506001821b6108ae565b5060208310610133831016604e8410600b841016171561088c575081810a6108ae565b61089683836107ce565b80600019048211156108aa576108aa610795565b0290505b92915050565b600061074260ff841683610811565b60008160001904831182151516156108dd576108dd610795565b500290565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b60608201526080019056fea164736f6c634300080a000a",
+    "sourceMap": "1003:1109:230:-:0;;;;;;;;;;;;;;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x608060405234801561001057600080fd5b506004361061009e5760003560e01c80638da5cb5b116100665780638da5cb5b14610119578063d82be8301461012a578063e30c39781461013d578063f2fde38b14610150578063fc4d33f91461016357600080fd5b80631d45e338146100a357806320965255146100d3578063485cc955146100e95780636e96dfd7146100fe578063715018a614610111575b600080fd5b6066546100b6906001600160a01b031681565b6040516001600160a01b0390911681526020015b60405180910390f35b6100db61016b565b6040519081526020016100ca565b6100fc6100f73660046106f4565b610298565b005b6100fc61010c366004610727565b6103e0565b6100fc61044a565b6033546001600160a01b03166100b6565b6067546100b6906001600160a01b031681565b6065546100b6906001600160a01b031681565b6100fc61015e366004610727565b61044a565b6100fc61048d565b6066546067546040516340ca7f4f60e11b81526001600160a01b039182166004820152600092919091169082908290638194fe9e90602401602060405180830381865afa1580156101c0573d6000803e3d6000fd5b505050506040513d601f19601f820116820180604052508101906101e49190610749565b90506000826001600160a01b03166327624b076040518163ffffffff1660e01b8152600401602060405180830381865afa158015610226573d6000803e3d6000fd5b505050506040513d601f19601f8201168201806040525081019061024a9190610772565b90506000826001600160701b031611610267576000935050505090565b6102728160126107ab565b61027d90600a6108b4565b610290906001600160701b0384166108c3565b935050505090565b600054610100900460ff16158080156102b85750600054600160ff909116105b806102d25750303b1580156102d2575060005460ff166001145b61033a5760405162461bcd60e51b815260206004820152602e60248201527f496e697469616c697a61626c653a20636f6e747261637420697320616c72656160448201526d191e481a5b9a5d1a585b1a5e995960921b60648201526084015b60405180910390fd5b6000805460ff19166001179055801561035d576000805461ff0019166101001790555b6103656105a1565b606680546001600160a01b038086166001600160a01b031992831617909255606780549285169290911691909117905580156103db576000805461ff0019169055604051600181527f7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb38474024989060200160405180910390a15b505050565b6103e86105d2565b606580546001600160a01b038381166001600160a01b031983168117909355604080519190921680825260208201939093527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b91015b60405180910390a15050565b6104526105d2565b60405162461bcd60e51b815260206004820152601060248201526f6e6f74207573656420616e796d6f726560801b6044820152606401610331565b6065546001600160a01b031633146104df5760405162461bcd60e51b81526020600482015260156024820152743737ba103a3432903832b73234b7339037bbb732b960591b6044820152606401610331565b60006104f36033546001600160a01b031690565b6065549091506001600160a01b031661050b8161062c565b606580546001600160a01b0319169055604080516001600160a01b0384168152600060208201527f70aea8d848e8a90fb7661b227dc522eb6395c3dac71b63cb59edd5c9899b2364910160405180910390a1606554604080516001600160a01b03808516825290921660208301527fb3d55174552271a4f1aaf36b72f50381e892171636b3fb5447fe00e995e7a37b910161043e565b600054610100900460ff166105c85760405162461bcd60e51b8152600401610331906108e2565b6105d061067e565b565b6033546001600160a01b031633146105d05760405162461bcd60e51b815260206004820181905260248201527f4f776e61626c653a2063616c6c6572206973206e6f7420746865206f776e65726044820152606401610331565b603380546001600160a01b038381166001600160a01b0319831681179093556040519116919082907f8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e090600090a35050565b600054610100900460ff166106a55760405162461bcd60e51b8152600401610331906108e2565b6105d0600054610100900460ff166106cf5760405162461bcd60e51b8152600401610331906108e2565b6105d03361062c565b80356001600160a01b03811681146106ef57600080fd5b919050565b6000806040838503121561070757600080fd5b610710836106d8565b915061071e602084016106d8565b90509250929050565b60006020828403121561073957600080fd5b610742826106d8565b9392505050565b60006020828403121561075b57600080fd5b81516001600160701b038116811461074257600080fd5b60006020828403121561078457600080fd5b815160ff8116811461074257600080fd5b634e487b7160e01b600052601160045260246000fd5b600060ff821660ff8416808210156107c5576107c5610795565b90039392505050565b600181815b808511156108095781600019048211156107ef576107ef610795565b808516156107fc57918102915b93841c93908002906107d3565b509250929050565b600082610820575060016108ae565b8161082d575060006108ae565b8160018114610843576002811461084d57610869565b60019150506108ae565b60ff84111561085e5761085e610795565b50506001821b6108ae565b5060208310610133831016604e8410600b841016171561088c575081810a6108ae565b61089683836107ce565b80600019048211156108aa576108aa610795565b0290505b92915050565b600061074260ff841683610811565b60008160001904831182151516156108dd576108dd610795565b500290565b6020808252602b908201527f496e697469616c697a61626c653a20636f6e7472616374206973206e6f74206960408201526a6e697469616c697a696e6760a81b60608201526080019056fea164736f6c634300080a000a",
+    "sourceMap": "1003:1109:230:-:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;1189:40;;;;;-1:-1:-1;;;;;1189:40:230;;;;;;-1:-1:-1;;;;;178:32:414;;;160:51;;148:2;133:18;1189:40:230;;;;;;;;1634:476;;;:::i;:::-;;;368:25:414;;;356:2;341:18;1634:476:230;222:177:414;1273:230:230;;;;;;:::i;:::-;;:::i;:::-;;1751:386:176;;;;;;:::i;:::-;;:::i;2852:132::-;;;:::i;1441:85:368:-;1513:6;;-1:-1:-1;;;;;1513:6:368;1441:85;;1234:34:230;;;;;-1:-1:-1;;;;;1234:34:230;;;530:27:176;;;;;-1:-1:-1;;;;;530:27:176;;;2988:148;;;;;;:::i;:::-;;:::i;2307:541::-;;;:::i;1634:476:230:-;1805:25;;1887:19;;1867:40;;-1:-1:-1;;;1867:40:230;;-1:-1:-1;;;;;1887:19:230;;;1867:40;;;160:51:414;1675:7:230;;1805:25;;;;;1675:7;;1805:25;;1867:19;;133:18:414;;1867:40:230;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1837:70;;1913:34;1950:6;-1:-1:-1;;;;;1950:25:230;;:27;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;:::i;:::-;1913:64;;2011:1;1988:19;-1:-1:-1;;;;;1988:24:230;;1984:38;;2021:1;2014:8;;;;;1634:476;:::o;1984:38::-;2071:33;2076:28;2071:2;:33;:::i;:::-;2066:39;;:2;:39;:::i;:::-;2035:70;;-1:-1:-1;;;;;2035:28:230;;:70;:::i;:::-;2028:77;;;;;1634:476;:::o;1273:230::-;3268:19:371;3291:13;;;;;;3290:14;;3336:34;;;;-1:-1:-1;3354:12:371;;3369:1;3354:12;;;;:16;3336:34;3335:108;;;-1:-1:-1;3415:4:371;1476:19:379;:23;;;3376:66:371;;-1:-1:-1;3425:12:371;;;;;:17;3376:66;3314:201;;;;-1:-1:-1;;;3314:201:371;;3712:2:414;3314:201:371;;;3694:21:414;3751:2;3731:18;;;3724:30;3790:34;3770:18;;;3763:62;-1:-1:-1;;;3841:18:414;;;3834:44;3895:19;;3314:201:371;;;;;;;;;3525:12;:16;;-1:-1:-1;;3525:16:371;3540:1;3525:16;;;3551:65;;;;3585:13;:20;;-1:-1:-1;;3585:20:371;;;;;3551:65;1377:20:230::1;:18;:20::i;:::-;1403:25;:50:::0;;-1:-1:-1;;;;;1403:50:230;;::::1;-1:-1:-1::0;;;;;;1403:50:230;;::::1;;::::0;;;1459:19:::1;:39:::0;;;;::::1;::::0;;;::::1;::::0;;;::::1;::::0;;3636:99:371;;;;3686:5;3670:21;;-1:-1:-1;;3670:21:371;;;3710:14;;-1:-1:-1;4077:36:414;;3710:14:371;;4065:2:414;4050:18;3710:14:371;;;;;;;3636:99;3258:483;1273:230:230;;:::o;1751:386:176:-;1334:13:368;:11;:13::i;:::-;1907:12:176::1;::::0;;-1:-1:-1;;;;;1979:30:176;;::::1;-1:-1:-1::0;;;;;;1979:30:176;::::1;::::0;::::1;::::0;;;2083:49:::1;::::0;;1907:12;;;::::1;4336:34:414::0;;;4401:2;4386:18;;4379:43;;;;2083:49:176::1;::::0;4271:18:414;2083:49:176::1;;;;;;;;1819:318;1751:386:::0;:::o;2852:132::-;1334:13:368;:11;:13::i;:::-;2953:26:176::1;::::0;-1:-1:-1;;;2953:26:176;;4635:2:414;2953:26:176::1;::::0;::::1;4617:21:414::0;4674:2;4654:18;;;4647:30;-1:-1:-1;;;4693:18:414;;;4686:46;4749:18;;2953:26:176::1;4433:340:414::0;2307:541:176;2434:12;;-1:-1:-1;;;;;2434:12:176;2420:10;:26;2412:60;;;;-1:-1:-1;;;2412:60:176;;4980:2:414;2412:60:176;;;4962:21:414;5019:2;4999:18;;;4992:30;-1:-1:-1;;;5038:18:414;;;5031:51;5099:18;;2412:60:176;4778:345:414;2412:60:176;2527:16;2546:7;1513:6:368;;-1:-1:-1;;;;;1513:6:368;;1441:85;2546:7:176;2585:12;;2527:26;;-1:-1:-1;;;;;;2585:12:176;2647:32;2585:12;2647:18;:32::i;:::-;2717:12;:25;;-1:-1:-1;;;;;;2717:25:176;;;2754:32;;;-1:-1:-1;;;;;4354:15:414;;4336:34;;-1:-1:-1;4401:2:414;4386:18;;4379:43;2754:32:176;;4271:18:414;2754:32:176;;;;;;;2830:12;;2797:46;;;-1:-1:-1;;;;;4354:15:414;;;4336:34;;2830:12:176;;;4401:2:414;4386:18;;4379:43;2797:46:176;;4271:18:414;2797:46:176;4124:304:414;562:83:176;5363:13:371;;;;;;;5355:69;;;;-1:-1:-1;;;5355:69:371;;;;;;;:::i;:::-;624:16:176::1;:14;:16::i;:::-;562:83::o:0;1599:130:368:-;1513:6;;-1:-1:-1;;;;;1513:6:368;929:10:380;1662:23:368;1654:68;;;;-1:-1:-1;;;1654:68:368;;5742:2:414;1654:68:368;;;5724:21:414;;;5761:18;;;5754:30;5820:34;5800:18;;;5793:62;5872:18;;1654:68:368;5540:356:414;2673:187:368;2765:6;;;-1:-1:-1;;;;;2781:17:368;;;-1:-1:-1;;;;;;2781:17:368;;;;;;;2813:40;;2765:6;;;2781:17;2765:6;;2813:40;;2746:16;;2813:40;2736:124;2673:187;:::o;1003:95::-;5363:13:371;;;;;;;5355:69;;;;-1:-1:-1;;;5355:69:371;;;;;;;:::i;:::-;1065:26:368::1;5363:13:371::0;;;;;;;5355:69;;;;-1:-1:-1;;;5355:69:371;;;;;;;:::i;:::-;1176:32:368::1;929:10:380::0;1176:18:368::1;:32::i;404:173:414:-:0;472:20;;-1:-1:-1;;;;;521:31:414;;511:42;;501:70;;567:1;564;557:12;501:70;404:173;;;:::o;582:260::-;650:6;658;711:2;699:9;690:7;686:23;682:32;679:52;;;727:1;724;717:12;679:52;750:29;769:9;750:29;:::i;:::-;740:39;;798:38;832:2;821:9;817:18;798:38;:::i;:::-;788:48;;582:260;;;;;:::o;847:186::-;906:6;959:2;947:9;938:7;934:23;930:32;927:52;;;975:1;972;965:12;927:52;998:29;1017:9;998:29;:::i;:::-;988:39;847:186;-1:-1:-1;;;847:186:414:o;1038:301::-;1108:6;1161:2;1149:9;1140:7;1136:23;1132:32;1129:52;;;1177:1;1174;1167:12;1129:52;1209:9;1203:16;-1:-1:-1;;;;;1252:5:414;1248:42;1241:5;1238:53;1228:81;;1305:1;1302;1295:12;1344:273;1412:6;1465:2;1453:9;1444:7;1440:23;1436:32;1433:52;;;1481:1;1478;1471:12;1433:52;1513:9;1507:16;1563:4;1556:5;1552:16;1545:5;1542:27;1532:55;;1583:1;1580;1573:12;1622:127;1683:10;1678:3;1674:20;1671:1;1664:31;1714:4;1711:1;1704:15;1738:4;1735:1;1728:15;1754:195;1792:4;1829;1826:1;1822:12;1861:4;1858:1;1854:12;1886:3;1881;1878:12;1875:38;;;1893:18;;:::i;:::-;1930:13;;;1754:195;-1:-1:-1;;;1754:195:414:o;1954:422::-;2043:1;2086:5;2043:1;2100:270;2121:7;2111:8;2108:21;2100:270;;;2180:4;2176:1;2172:6;2168:17;2162:4;2159:27;2156:53;;;2189:18;;:::i;:::-;2239:7;2229:8;2225:22;2222:55;;;2259:16;;;;2222:55;2338:22;;;;2298:15;;;;2100:270;;;2104:3;1954:422;;;;;:::o;2381:806::-;2430:5;2460:8;2450:80;;-1:-1:-1;2501:1:414;2515:5;;2450:80;2549:4;2539:76;;-1:-1:-1;2586:1:414;2600:5;;2539:76;2631:4;2649:1;2644:59;;;;2717:1;2712:130;;;;2624:218;;2644:59;2674:1;2665:10;;2688:5;;;2712:130;2749:3;2739:8;2736:17;2733:43;;;2756:18;;:::i;:::-;-1:-1:-1;;2812:1:414;2798:16;;2827:5;;2624:218;;2926:2;2916:8;2913:16;2907:3;2901:4;2898:13;2894:36;2888:2;2878:8;2875:16;2870:2;2864:4;2861:12;2857:35;2854:77;2851:159;;;-1:-1:-1;2963:19:414;;;2995:5;;2851:159;3042:34;3067:8;3061:4;3042:34;:::i;:::-;3112:6;3108:1;3104:6;3100:19;3091:7;3088:32;3085:58;;;3123:18;;:::i;:::-;3161:20;;-1:-1:-1;2381:806:414;;;;;:::o;3192:140::-;3250:5;3279:47;3320:4;3310:8;3306:19;3300:4;3279:47;:::i;3337:168::-;3377:7;3443:1;3439;3435:6;3431:14;3428:1;3425:21;3420:1;3413:9;3406:17;3402:45;3399:71;;;3450:18;;:::i;:::-;-1:-1:-1;3490:9:414;;3337:168::o;5128:407::-;5330:2;5312:21;;;5369:2;5349:18;;;5342:30;5408:34;5403:2;5388:18;;5381:62;-1:-1:-1;;;5474:2:414;5459:18;;5452:41;5525:3;5510:19;;5128:407::o",
+    "linkReferences": {}
+  },
+  "methodIdentifiers": {
+    "NATIVE_USD_ORACLE_ADDRESS()": "1d45e338",
+    "QUOTE_TOKEN_ADDRESS()": "d82be830",
+    "_acceptOwner()": "fc4d33f9",
+    "_setPendingOwner(address)": "6e96dfd7",
+    "getValue()": "20965255",
+    "initialize(address,address)": "485cc955",
+    "owner()": "8da5cb5b",
+    "pendingOwner()": "e30c3978",
+    "renounceOwnership()": "715018a6",
+    "transferOwnership(address)": "f2fde38b"
+  }
+}

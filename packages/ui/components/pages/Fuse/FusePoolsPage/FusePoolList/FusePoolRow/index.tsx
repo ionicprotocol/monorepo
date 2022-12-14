@@ -1,12 +1,5 @@
+import { ChevronLeftIcon, ChevronRightIcon, SettingsIcon } from '@chakra-ui/icons';
 import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  SettingsIcon,
-} from '@chakra-ui/icons';
-import {
-  Box,
   ButtonGroup,
   Center,
   Checkbox,
@@ -65,6 +58,7 @@ import { TotalSupply } from '@ui/components/pages/Fuse/FusePoolsPage/FusePoolLis
 import { AlertHero } from '@ui/components/shared/Alert';
 import { MidasBox } from '@ui/components/shared/Box';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
+import { TableHeaderCell } from '@ui/components/shared/TableHeaderCell';
 import {
   ALL,
   ASSETS,
@@ -232,7 +226,7 @@ const PoolsRowList = ({
       {
         accessorFn: (row) => row.poolName,
         id: POOL_NAME,
-        header: () => <Text textAlign="left">Pool Name</Text>,
+        header: (context) => <TableHeaderCell context={context}>Pool Name</TableHeaderCell>,
         cell: ({ getValue }) => <PoolName pool={getValue<PoolData>()} />,
         footer: (props) => props.column.id,
         filterFn: poolFilter,
@@ -243,7 +237,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.assets,
         id: ASSETS,
         cell: ({ getValue }) => <Assets pool={getValue<PoolData>()} />,
-        header: () => <Text textAlign="left">Assets</Text>,
+        header: (context) => <TableHeaderCell context={context}>Assets</TableHeaderCell>,
         footer: (props) => props.column.id,
         enableSorting: false,
       },
@@ -251,16 +245,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.supplyBalance,
         id: SUPPLY_BALANCE,
         cell: ({ getValue }) => <SupplyBalance pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text
-            textAlign="right"
-            textOverflow={'ellipsis'}
-            whiteSpace="nowrap"
-            title="Supply Balance"
-          >
-            Supply Balance
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Supply Balance</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -268,16 +253,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.borrowBalance,
         id: BORROW_BALANCE,
         cell: ({ getValue }) => <BorrowBalance pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text
-            textAlign="right"
-            textOverflow={'ellipsis'}
-            whiteSpace="nowrap"
-            title="Borrow Balance"
-          >
-            Borrow Balance
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Borrow Balance</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -285,16 +261,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => <TotalSupply pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text
-            textAlign="right"
-            title="Total Supply"
-            textOverflow={'ellipsis'}
-            whiteSpace="nowrap"
-          >
-            Total Supply
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -302,11 +269,7 @@ const PoolsRowList = ({
         accessorFn: (row) => row.totalBorrow,
         id: TOTAL_BORROW,
         cell: ({ getValue }) => <TotalBorrow pool={getValue<PoolData>()} />,
-        header: () => (
-          <Text textAlign="left" title="Total Borrow" textOverflow={'ellipsis'} whiteSpace="nowrap">
-            Total Borrow
-          </Text>
-        ),
+        header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
         footer: (props) => props.column.id,
         sortingFn: poolSort,
       },
@@ -534,33 +497,18 @@ const PoolsRowList = ({
                         border="none"
                         color={cCard.txtColor}
                         textTransform="capitalize"
-                        height={'64px'}
-                        py={0}
-                        pr={4}
-                        pl={0}
-                        cursor="pointer"
-                        lineHeight="unset"
+                        height={16}
+                        py={4}
+                        px={{ base: 1, lg: 2 }}
                       >
                         <HStack
-                          width={'100%'}
                           justifyContent={
-                            header.column.id === ASSETS || header.column.id === POOL_NAME
+                            header.column.id === POOL_NAME || header.column.id === ASSETS
                               ? 'flex-start'
                               : 'flex-end'
                           }
                         >
-                          {header.column.id === ASSETS ? null : (
-                            <Box opacity={header.column.getIsSorted() ? 1 : 0}>
-                              {header.column.getIsSorted() === 'desc' ? (
-                                <ArrowDownIcon fontSize={16} aria-label="sorted descending" />
-                              ) : (
-                                <ArrowUpIcon fontSize={16} aria-label="sorted ascending" />
-                              )}
-                            </Box>
-                          )}
-                          <Flex>
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                          </Flex>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
                         </HStack>
                       </Th>
                     );
@@ -599,7 +547,13 @@ const PoolsRowList = ({
                     >
                       {row.getVisibleCells().map((cell) => {
                         return (
-                          <Td key={cell.id} border="none" p={0} height={16}>
+                          <Td
+                            key={cell.id}
+                            border="none"
+                            px={{ base: 1, lg: 2 }}
+                            py={0}
+                            height={16}
+                          >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </Td>
                         );
@@ -654,7 +608,7 @@ const PoolsRowList = ({
         >
           <HStack>
             <Hide below="lg">
-              <Text variant="smText">Pools Per Page</Text>
+              <Text size="md">Pools Per Page</Text>
             </Hide>
             <Select
               value={pagination.pageSize}
@@ -671,7 +625,7 @@ const PoolsRowList = ({
             </Select>
           </HStack>
           <HStack gap={2}>
-            <Text variant="smText">
+            <Text size="md">
               {table.getFilteredRowModel().rows.length === 0
                 ? 0
                 : pagination.pageIndex * pagination.pageSize + 1}{' '}

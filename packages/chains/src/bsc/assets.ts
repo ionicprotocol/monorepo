@@ -1,13 +1,13 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
 import {
-  ankrBNBDocs,
+  ankrCertificateDocs,
   apeSwapDocs,
-  BNBxDocs,
   defaultDocs,
   ellipsisDocs,
   jarvisDocs,
   pancakeSwapDocs,
+  StaderXDocs,
   stkBNBDocs,
 } from "../common";
 import { wombatDocs, wrappedAssetDocs } from "../common/docs";
@@ -270,7 +270,8 @@ const assets: SupportedAsset[] = [
     name: "Ankr BNB Reward Bearing Certificate",
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
-    extraDocs: ankrBNBDocs("aBNBc"),
+    extraDocs: ankrCertificateDocs("aBNBc", "BNB"),
+    disabled: true,
   },
   {
     symbol: assetSymbols.stkBNB,
@@ -285,8 +286,8 @@ const assets: SupportedAsset[] = [
     underlying: BNBx,
     name: "Liquid Staked BNB (Stader)",
     decimals: 18,
-    oracle: OracleTypes.BNBxPriceOracle,
-    extraDocs: BNBxDocs(),
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: StaderXDocs("bnbchain", "BNBx"),
   },
   {
     symbol: assetSymbols["epsBNBx-BNB"],

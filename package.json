@@ -6,6 +6,7 @@
     "packages/bots/liquidator",
     "packages/functions",
     "packages/monitors/oracle",
+    "packages/monitors/liquidity",
     "packages/chains",
     "packages/sdk",
     "packages/security",
@@ -15,10 +16,10 @@
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
     "@tsconfig/recommended": "^1.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.42.1",
-    "@typescript-eslint/parser": "^5.42.1",
-    "netlify-cli": "^12.1.1",
-    "typescript": "^4.8.4"
+    "@typescript-eslint/eslint-plugin": "^5.46.1",
+    "@typescript-eslint/parser": "^5.46.1",
+    "netlify-cli": "^12.2.10",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "@resolver-engine/core": "^0.3.3",
@@ -36,6 +37,7 @@
     "build:functions": "yarn workspace @midas-capital/functions build",
     "build:liquidator": "yarn workspace @midas-capital/liquidator build",
     "build:oracles-monitor": "yarn workspace @midas-capital/oracles-monitor build",
+    "build:liquidity-monitor": "yarn workspace @midas-capital/liquidity-monitor build",
     "build:deploy:liquidator": "yarn build:sdk && yarn build:liquidator",
     "build:deploy:oracles-monitor": "yarn build:sdk && yarn build:oracles-monitor",
     "build:deploy:ui": "yarn build:sdk && yarn workspace @midas-capital/security build && yarn build:ui && yarn build:functions",

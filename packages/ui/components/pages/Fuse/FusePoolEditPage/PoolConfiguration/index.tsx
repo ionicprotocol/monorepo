@@ -38,7 +38,6 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { getFPDContract, getUnitrollerContract } from '@ui/utils/contracts';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { getChainConfig } from '@ui/utils/networkData';
 
@@ -206,7 +205,7 @@ const PoolConfiguration = ({
   const renounceOwnership = async () => {
     if (!currentSdk) return;
 
-    const unitroller = getUnitrollerContract(comptrollerAddress, currentSdk);
+    const unitroller = currentSdk.getUnitrollerInstance(comptrollerAddress, currentSdk.signer);
 
     try {
       const response = await unitroller.callStatic._toggleAdminRights(false);
@@ -319,7 +318,7 @@ const PoolConfiguration = ({
     }
     try {
       setIsSaving(true);
-      const FusePoolDirectory = getFPDContract(currentSdk);
+      const FusePoolDirectory = currentSdk.getFusePoolDirectoryInstance(currentSdk.signer);
       const tx = await FusePoolDirectory.setPoolName(poolId, inputPoolName, {
         from: address,
       });
@@ -355,7 +354,7 @@ const PoolConfiguration = ({
     <Column height="100%">
       <ConfigRow>
         <Flex alignItems="center" justifyContent="space-between" width="100%">
-          <Text variant="mdText" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
+          <Text size="md" fontWeight="bold">{`Pool ${poolId} Configuration`}</Text>
           {!currentChain ? (
             <Box>
               <Button variant="_solid" onClick={openConnectModal}>
@@ -377,7 +376,7 @@ const PoolConfiguration = ({
           <Flex px={{ base: 4, md: 8 }} py={4} w="100%" direction={{ base: 'column', md: 'row' }}>
             <InputGroup width="100%">
               <InputLeftElement>
-                <Text variant="smText">Pool Name:</Text>
+                <Text size="md">Pool Name:</Text>
               </InputLeftElement>
               <Input
                 value={inputPoolName}
@@ -416,7 +415,7 @@ const PoolConfiguration = ({
           </Flex>
           <Divider />
           <ConfigRow>
-            <Text variant="smText" mr={2}>
+            <Text size="md" mr={2}>
               Assets:
             </Text>
             {assets.length > 0 ? (
@@ -435,12 +434,12 @@ const PoolConfiguration = ({
                 </Text>
               </>
             ) : (
-              <Text variant="smText">None</Text>
+              <Text size="md">None</Text>
             )}
           </ConfigRow>
           <Divider />
           <ConfigRow>
-            <Text variant="smText">Whitelist:</Text>
+            <Text size="md">Whitelist:</Text>
             <Switch
               ml="auto"
               h="20px"
@@ -487,7 +486,7 @@ const PoolConfiguration = ({
 
           <ConfigRow>
             <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
-              <Text variant="smText">Upgradeable:</Text>
+              <Text size="md">Ownable:</Text>
               {data.upgradeable ? (
                 <Flex mt={{ base: 2, md: 0 }} ml="auto" flexWrap="wrap" gap={2}>
                   <Button
@@ -513,7 +512,7 @@ const PoolConfiguration = ({
                   </Button>
                 </Flex>
               ) : (
-                <Text ml="auto" variant="smText">
+                <Text ml="auto" size="md">
                   Admin Rights Disabled
                 </Text>
               )}
@@ -535,7 +534,7 @@ const PoolConfiguration = ({
                   alignItems="center"
                 >
                   <FormLabel htmlFor="closeFactor" margin={0}>
-                    <Text variant="smText">Close Factor:</Text>
+                    <Text size="md">Close Factor:</Text>
                   </FormLabel>
                   <Spacer />
                   <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
@@ -604,7 +603,7 @@ const PoolConfiguration = ({
                   alignItems="center"
                 >
                   <FormLabel htmlFor="liquidationIncentive" margin={0}>
-                    <Text variant="smText">Liquidation Incentive:</Text>
+                    <Text size="md">Liquidation Incentive:</Text>
                   </FormLabel>
                   <Spacer />
                   <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">

@@ -10,11 +10,12 @@ type CONFIG = {
   isEvmosEnabled: boolean;
   isMoonbeamEnabled: boolean;
   isPolygonEnabled: boolean;
+  isFantomEnabled: boolean;
   isTestnetEnabled: boolean;
-  logrocketAppId: string | undefined;
   productDomain: string | undefined;
   productUrl: string | undefined;
   supabasePluginRewardsTableName: string;
+  supabaseAssetApyTableName: string;
   supabasePluginTableName: string;
   supabasePublicKey: string;
   supabaseUrl: string;
@@ -35,11 +36,12 @@ const config: CONFIG = {
   isEvmosEnabled: process.env.EVMOS === 'true',
   isMoonbeamEnabled: process.env.MOONBEAM === 'true',
   isPolygonEnabled: process.env.POLYGON === 'true',
+  isFantomEnabled: process.env.FANTOM === 'true',
   isTestnetEnabled: process.env.NEXT_PUBLIC_SHOW_TESTNETS === 'true',
-  logrocketAppId: process.env.LOGROCKET_APP_ID,
   productDomain: process.env.PRODUCT_DOMAIN,
   productUrl: process.env.PRODUCT_URL,
   supabasePluginRewardsTableName: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME ?? '',
+  supabaseAssetApyTableName: process.env.SUPABASE_ASSET_APY_TABLE_NAME ?? '',
   supabasePluginTableName: process.env.SUPABASE_PLUGIN_TABLE_NAME ?? '',
   supabasePublicKey: process.env.SUPABASE_KEY ?? '',
   supabaseUrl: process.env.SUPABASE_URL ?? '',

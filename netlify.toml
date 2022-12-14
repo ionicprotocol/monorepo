@@ -14,7 +14,7 @@ PRODUCT_URL='https://app.midascapital.xyz'
 HIDE_POOLS_56="2,4,5"
 HIDE_POOLS_97="2,6,11,17,20,21,22,23"
 HIDE_POOLS_137="4"
-FEATURE_CREATE_POOL="0x82eDcFe00bd0ce1f3aB968aF09d04266Bc092e0E"
+FEATURE_CREATE_POOL="0x82eDcFe00bd0ce1f3aB968aF09d04266Bc092e0E,0x2680D8f1ED3BEe1c731cFeedcDa2A74bB7317828"
 
 [context.preview.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -23,6 +23,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
+FANTOM = "true"
 
 [context.development.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "true"
@@ -31,6 +32,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "true"
+FANTOM = "true"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
@@ -39,25 +41,14 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
+FANTOM = "false"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"
 node_bundler = "esbuild"
 
-[functions."bsc-plugin-data"]
+[functions."plugin-rewards-*"]
 schedule = "@hourly"
 
-[functions."moonbeam-plugin-data"]
-schedule = "@hourly"
-
-[functions."polygon-plugin-data"]
-schedule = "@hourly"
-
-[functions."bsc-plugin-rewards"]
-schedule = "@hourly"
-
-[functions."moonbeam-plugin-rewards"]
-schedule = "@hourly"
-
-[functions."polygon-plugin-rewards"]
+[functions."asset-apys-*"]
 schedule = "@hourly"

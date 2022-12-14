@@ -66,6 +66,10 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["CELR-GLMR"]),
       underlying(assets, assetSymbols["ATOM-GLMR"]),
       underlying(assets, assetSymbols["LDO-GLMR"]),
+      underlying(assets, assetSymbols["USDC.wh-GLMR"]),
+      underlying(assets, assetSymbols["WBTC.wh-GLMR"]),
+      underlying(assets, assetSymbols["WETH.wh-GLMR"]),
+      underlying(assets, assetSymbols["DOT.xc-GLMR"]),
     ],
     flashSwapFee: 30,
   },
@@ -140,6 +144,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
   {
     symbol: assetSymbols.USDC_wh,
     aggregator: "0xA122591F60115D63421f66F752EF9f6e0bc73abC",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.WETH_wh,
+    aggregator: "0x9ce2388a1696e22F870341C3FC1E89710C7569B5",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.WBTC_wh,
+    aggregator: "0x8c4425e141979c66423A83bE2ee59135864487Eb",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
@@ -231,7 +245,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // Liquidators
 
   //// CurveLPLiquidator
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
     args: [],

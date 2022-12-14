@@ -1,6 +1,7 @@
 import { MidasSdk } from "@midas-capital/sdk";
+import { Comptroller } from "@midas-capital/sdk/dist/cjs/lib/contracts/typechain/Comptroller";
 import { SupportedAsset } from "@midas-capital/types";
-import { constants, Contract } from "ethers";
+import { constants } from "ethers";
 
 export class PoolService {
   sdk: MidasSdk;
@@ -15,8 +16,8 @@ export class PoolService {
     return this;
   }
 
-  async getPoolsWithAsset(): Promise<Contract[]> {
-    const poolsWithAsset: Contract[] = [];
+  async getPoolsWithAsset(): Promise<Comptroller[]> {
+    const poolsWithAsset: Comptroller[] = [];
     const pools = await this.sdk.contracts.FusePoolDirectory.getAllPools();
     for (const pool of pools) {
       const comptroller = this.sdk.createComptroller(pool.comptroller, this.sdk.signer);

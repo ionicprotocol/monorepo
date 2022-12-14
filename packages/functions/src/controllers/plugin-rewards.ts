@@ -1,8 +1,8 @@
 import { ethers } from 'ethers';
 import { functionsAlert } from '../alert';
-import { pluginsOfChain } from '../assets';
+import { pluginsOfChain } from '../data/plugins';
 import { environment, supabase } from '../config';
-import { getAPYProviders } from '../providers/apy';
+import { getAPYProviders } from '../providers/rewards/plugins';
 import { SupportedChains } from '@midas-capital/types';
 
 const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => {
@@ -37,6 +37,7 @@ const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => 
             rewards: await apyProvider.getApy(pluginAddress, pluginData),
           };
         } catch (exception) {
+          console.error(exception);
           await functionsAlert(
             `Functions.plugin-rewards: Plugin '${pluginAddress}' (${pluginData.strategy}) / Chain '${chainId}'`,
             JSON.stringify(exception)

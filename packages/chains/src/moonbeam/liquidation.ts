@@ -11,7 +11,7 @@ const liquidationDefaults: LiquidationDefaults = {
   SUPPORTED_INPUT_CURRENCIES: [constants.AddressZero, underlying(assets, assetSymbols.WGLMR)],
   LIQUIDATION_STRATEGY: LiquidationStrategy.UNISWAP,
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
-  LIQUIDATION_INTERVAL_SECONDS: 30,
+  LIQUIDATION_INTERVAL_SECONDS: 60,
   jarvisPools: [],
   curveSwapPools: [
     {

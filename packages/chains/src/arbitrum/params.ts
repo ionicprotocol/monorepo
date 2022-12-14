@@ -17,8 +17,8 @@ const specificParams: ChainParams = {
       },
     },
     img: "https://d1912tcoux65lj.cloudfront.net/network/arbitrum.jpg",
-    blockExplorerUrls: { default: { name: "arbiscan", url: "https://arbiscan.com" } },
-    rpcUrls: { default: "https://rpc.ankr.com/arbitrum" },
+    blockExplorerUrls: { default: { name: "arbiscan", url: "https://arbiscan.io" } },
+    rpcUrls: { default: { http: ["https://rpc.ankr.com/arbitrum"] } },
     nativeCurrency: {
       symbol: "ETH",
       name: "ETH",

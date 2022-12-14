@@ -80,17 +80,8 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return await this.mint(cTokenAddress, amount);
     }
 
-    async repay(cTokenAddress: string, underlyingTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
+    async repayBorrow(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-
-      const token = getContract(underlyingTokenAddress, this.artifacts.EIP20Interface.abi, this.signer);
-
-      const currentSignerAddress = await this.signer.getAddress();
-      const hasApprovedEnough = (await token.callStatic.allowance(currentSignerAddress, cTokenAddress)).gte(amount);
-      if (!hasApprovedEnough) {
-        const approveTx = await token.approve(cTokenAddress, max);
-        await approveTx.wait();
-      }
       const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
       const response = (await cToken.callStatic.repayBorrow(isRepayingMax ? max : amount)) as BigNumber;
@@ -103,6 +94,11 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       const tx: ContractTransaction = await cToken.repayBorrow(isRepayingMax ? max : amount);
 
       return { tx, errorCode: null };
+    }
+
+    async repay(cTokenAddress: string, underlyingTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
+      await this.approve(cTokenAddress, underlyingTokenAddress, amount);
+      return await this.repayBorrow(cTokenAddress, isRepayingMax, amount);
     }
 
     async borrow(cTokenAddress: string, amount: BigNumber) {

@@ -1,4 +1,4 @@
-import { SupportedAsset } from "@midas-capital/types";
+import { assetSymbols, SupportedAsset } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 import { HardhatRuntimeEnvironment, RunTaskFunction } from "hardhat/types";
 
@@ -79,6 +79,16 @@ export type DiaAsset = {
   key: string;
 };
 
+export type FluxAsset = {
+  underlying: string;
+  feed: string;
+};
+
+export type AdrastiaAsset = {
+  underlying: string;
+  feed: string;
+};
+
 export type WombatAsset = {
   symbol: string;
   underlying: string;
@@ -136,6 +146,24 @@ export type DiaDeployFnParams = ChainDeployFnParams & {
   diaNativeFeed?: Omit<DiaAsset, "symbol" | "underlying">;
 };
 
+export type FluxDeployFnParams = ChainDeployFnParams & {
+  fluxAssets: FluxAsset[];
+  deployConfig: ChainDeployConfig;
+  nativeUsdFeed: string;
+};
+
+export type AdrastiaDeployFnParams = ChainDeployFnParams & {
+  adrastiaAssets: AdrastiaAsset[];
+  deployConfig: ChainDeployConfig;
+  nativeUsdFeed: string;
+};
+
+export type NativeUsdDeployFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  nativeUsdOracleAddress: string;
+  quoteAddress: string;
+};
+
 export type WombatDeployFnParams = ChainDeployFnParams & {
   wombatAssets: WombatAsset[];
 };
@@ -151,6 +179,11 @@ export type UniswaV3DeployFnParams = ChainDeployFnParams & {
 export type CurveLpFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
   curvePools: CurvePoolConfig[];
+};
+
+export type SaddleLpFnParams = ChainDeployFnParams & {
+  deployConfig: ChainDeployConfig;
+  saddlePools: CurvePoolConfig[];
 };
 
 export type CurveV2LpFnParams = ChainDeployFnParams & {
@@ -171,8 +204,9 @@ export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
   deployConfig: ChainDeployConfig;
 };
 
-export type aBNBcDeployParams = ChainDeployFnParams & {
+export type aXXXcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
+  certificateAssetSymbol: assetSymbols.aBNBc | assetSymbols.aFTMc | assetSymbols.aMATICc;
 };
 
 export type stkBNBOracleDeployParams = ChainDeployFnParams & {

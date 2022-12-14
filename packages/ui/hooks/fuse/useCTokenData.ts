@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { getComptrollerContract, getCTokenContract } from '@ui/utils/contracts';
 
 export const useCTokenData = (
   comptrollerAddress?: string,
@@ -14,8 +13,8 @@ export const useCTokenData = (
     ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
     async () => {
       if (comptrollerAddress && cTokenAddress && sdk) {
-        const comptroller = getComptrollerContract(comptrollerAddress, sdk);
-        const cToken = getCTokenContract(cTokenAddress, sdk);
+        const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
+        const cToken = sdk.getCTokenInstance(cTokenAddress);
         const [
           adminFeeMantissa,
           reserveFactorMantissa,

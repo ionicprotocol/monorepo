@@ -16,7 +16,6 @@ import {
 } from 'react';
 import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
-import { config } from '@ui/config/index';
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
 import { chainIdToConfig } from '@ui/types/ChainMetaData';
 
@@ -69,10 +68,16 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     enabledChains.map((chainId) => {
       const config = chainIdToConfig[chainId];
       _sdks.push(
-        new MidasSdk(new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default), config)
+        new MidasSdk(
+          new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0]),
+          config
+        )
       );
       _securities.push(
-        new Security(chainId, new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default))
+        new Security(
+          chainId,
+          new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0])
+        )
       );
       _chainIds.push(chainId);
     });
@@ -108,15 +113,17 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
     if (sdks.length > 0 && !signer) {
       sdks.map((sdk) => {
         const config = chainIdToConfig[sdk.chainId];
-        sdk.removeSigner(new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default));
+        sdk.removeSigner(
+          new JsonRpcProvider(config.specificParams.metadata.rpcUrls.default.http[0])
+        );
       });
     }
   }, [signer, sdks]);
 
   useEffect(() => {
-    if (config.logrocketAppId) {
+    if (window.location.hostname === 'app.midascapital.xyz') {
       console.info('LogRocket initialized');
-      LogRocket.init(config.logrocketAppId);
+      LogRocket.init('ylr02p/midas-ui');
     } else {
       console.info('LogRocket not initialized');
     }

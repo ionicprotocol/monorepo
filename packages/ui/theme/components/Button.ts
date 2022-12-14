@@ -30,6 +30,10 @@ export const ButtonStyleConfig: ComponentStyleConfig = {
       _hover: {
         bg: mode('ecru80', 'ecru80')(props),
         color: mode('raisinBlack', 'raisinBlack')(props),
+        _disabled: {
+          bg: mode('ecru', 'ecru')(props),
+          color: mode('raisinBlack', 'raisinBlack')(props),
+        },
       },
       _active: { opacity: 0.8 },
     }),

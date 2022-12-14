@@ -79,7 +79,7 @@ const AssetConfiguration = ({
       flexShrink={0}
     >
       <ConfigRow mainAxisAlignment="space-between">
-        <Text variant="mdText" fontWeight="bold">
+        <Text size="md" fontWeight="bold">
           Assets Configuration
         </Text>
 
@@ -95,7 +95,7 @@ const AssetConfiguration = ({
       <Divider />
 
       <ConfigRow>
-        <Text variant="smText" mr={4}>
+        <Text size="md" mr={4}>
           Assets:
         </Text>
         <Flex wrap="wrap">

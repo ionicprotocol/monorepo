@@ -33,6 +33,10 @@ export const wrappedAssetDocs = (chainId: SupportedChains) => {
       swapAddress: "https://moraswap.com/exchange/swap",
     },
     [SupportedChains.chapel]: {},
+    [SupportedChains.fantom]: {
+      swapName: "SpookySwap",
+      swapAddress: "https://spooky.fi/#/swap",
+    },
   }[chainId];
 
   return `
@@ -51,10 +55,10 @@ export const ellipsisDocs = (poolAddress: string, poolName: string, tokenAddress
   `;
 };
 
-export const ankrBNBDocs = (variant: string) => {
+export const ankrCertificateDocs = (variant: string, chain: string) => {
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p>Head over to <a href="https://www.ankr.com/staking/stake/bnb/?token=${variant}" target="_blank" style="color: #BCAC83;">Ankr BNB Staking</a>, where you can acquire ${variant} by depositing BNB</p>
+  <p>Head over to <a href="https://www.ankr.com/staking/stake/${chain.toLowerCase()}/?token=${variant}" target="_blank" style="color: #BCAC83;">Ankr ${chain} Staking</a>, where you can acquire ${variant} by depositing ${chain}</p>
   `;
 };
 
@@ -65,10 +69,11 @@ export const stkBNBDocs = () => {
   `;
 };
 
-export const BNBxDocs = () => {
+export const StaderXDocs = (chainName: string, token: string) => {
+  const baseTokenName = token.slice(0, -1);
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p>Head over to <a href="https://bnbchain.staderlabs.com/liquid-staking/bnbx/" target="_blank" style="color: #BCAC83;">Stader Lab's BNB Staking</a>, where you can acquire BNBx by depositing BNB</p>
+  <p>Head over to <a href="https://${chainName}.staderlabs.com/liquid-staking/${token.toLowerCase()}/" target="_blank" style="color: #BCAC83;">Stader Lab's ${baseTokenName} Staking</a>, where you can acquire ${token} by depositing ${baseTokenName}</p>
   `;
 };
 
@@ -137,16 +142,22 @@ export const stellaSwapDocs = (token0: string, token1: string, poolName: string,
 };
 
 export const curveFinancePolygonDocs = (
-  poolNumber: number,
+  poolNumber: number | string,
   poolName: string,
   tokenAddress: string,
-  isFactory = false
+  isFactoryOrCrypto: boolean | string = false
 ) => {
+  let poolPath: string;
+  if (isFactoryOrCrypto === false) {
+    poolPath = "/";
+  } else if (isFactoryOrCrypto === true) {
+    poolPath = "/factory/";
+  } else {
+    poolPath = "/${isFactoryOrCrypto}/";
+  }
   return `
   <p><b>How to acquire this token</b><p/><br />
-  <p> 1. Head over to the <a href="https://polygon.curve.fi${
-    isFactory ? "/factory/" : "/"
-  }${poolNumber}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
+  <p> 1. Head over to the <a href="https://polygon.curve.fi${poolPath}${poolNumber}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
   <p>You will get back the <a href="https://polygonscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
@@ -168,7 +179,17 @@ export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string)
   <p><b>How to acquire this token</b><p/><br />
   <p> 1. Head over to the <a href="https://arbitrum.curve.fi/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
-  <p>You will get back the <a href="https://arbiscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p>You will get back the <a href="https://arbiscan.io/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
+export const saddleFinanceDocs = (poolName: string, tokenAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://saddle.exchange/#/pools/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Saddle ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
+  <p>You will get back the <a href="https://arbiscan.io/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Saddle ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };
@@ -216,4 +237,12 @@ export const wombatDocs = (pool: string, tokenName: string) => {
   return `
   <p><b>How to acquire this token</b></p><br />
   <p>You can acquire this asset on the <a href="https://app.wombat.exchange/pool?pool=${pool}&token=${tokenName}&action=DEPOSIT"> Wombat Exchange </a> website</p>`;
+};
+
+export const lidoFinanceDocs = (chainName: string, baseToken: string, returnToken: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p>You can get <code>${returnToken}</code> by staking your <code>${baseToken}</code> on <a href="https://${chainName}.lido.fi/" target="_blank" style="color: #BCAC83; cursor="pointer">Lido on ${
+    chainName.charAt(0).toUpperCase() + chainName.slice(1)
+  }</a></p>`;
 };

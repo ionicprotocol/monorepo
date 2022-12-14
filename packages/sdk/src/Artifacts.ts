@@ -1,10 +1,9 @@
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
 import AdjustableJumpRateModelArtifact from "@artifacts/AdjustableJumpRateModel.json";
-import AnkrBNBcPriceOracleArtifact from "@artifacts/AnkrBNBcPriceOracle.json";
 import AnkrBNBInterestRateModelArtifact from "@artifacts/AnkrBNBInterestRateModel.json";
+import AnkrCertificateTokenPriceOracleArtifact from "@artifacts/AnkrCertificateTokenPriceOracle.json";
 import BalancerLpTokenPriceOracleArtifact from "@artifacts/BalancerLpTokenPriceOracle.json";
-import BNBxPriceOracleArtifact from "@artifacts/BNBxPriceOracle.json";
 import CErc20DelegateArtifact from "@artifacts/CErc20Delegate.json";
 import CErc20DelegatorArtifact from "@artifacts/CErc20Delegator.json";
 import CErc20PluginDelegateArtifact from "@artifacts/CErc20PluginDelegate.json";
@@ -23,6 +22,7 @@ import FuseFlywheelDynamicRewardsArtifacts from "@artifacts/FuseFlywheelDynamicR
 import GelatoGUniPriceOracleArtifact from "@artifacts/GelatoGUniPriceOracle.json";
 import JumpRateModelArtifact from "@artifacts/JumpRateModel.json";
 import MasterPriceOracleArtifact from "@artifacts/MasterPriceOracle.json";
+import MidasERC4626Artifact from "@artifacts/MidasERC4626.json";
 import MidasFlywheelArtifact from "@artifacts/MidasFlywheel.json";
 import RewardsDistributorDelegateArtifact from "@artifacts/RewardsDistributorDelegate.json";
 import RewardsDistributorDelegatorArtifact from "@artifacts/RewardsDistributorDelegator.json";
@@ -59,6 +59,7 @@ const AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB: Artifact = Adjustable
 const AdjustableJumpRateModel_STADER_WBNB: Artifact = AdjustableJumpRateModelArtifact;
 const AdjustableJumpRateModel_MIXBYTES_USDC: Artifact = AdjustableJumpRateModelArtifact;
 const AdjustableJumpRateModel_JARVIS_jBRL: Artifact = AdjustableJumpRateModelArtifact;
+const AdjustableJumpRateModel_JARVIS_jEUR: Artifact = AdjustableJumpRateModelArtifact;
 const AnkrBNBInterestRateModel: Artifact = AnkrBNBInterestRateModelArtifact;
 const MasterPriceOracle: Artifact = MasterPriceOracleArtifact;
 const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
@@ -69,13 +70,13 @@ const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
 const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
-const AnkrBNBcPriceOracle: Artifact = AnkrBNBcPriceOracleArtifact;
+const AnkrCertificateTokenPriceOracle: Artifact = AnkrCertificateTokenPriceOracleArtifact;
 const StkBNBPriceOracle: Artifact = StkBNBPriceOracleArtifact;
-const BNBxPriceOracle: Artifact = BNBxPriceOracleArtifact;
 const GelatoGUniPriceOracle: Artifact = GelatoGUniPriceOracleArtifact;
 const UniswapTwapPriceOracleV2: Artifact = UniswapTwapPriceOracleV2Artifact;
 const Unitroller: Artifact = UnitrollerArtifact;
 const WhitePaperInterestRateModel: Artifact = WhitePaperInterestRateModelArtifact;
+const MidasERC4626: Artifact = MidasERC4626Artifact;
 
 const ARTIFACTS = {
   CErc20Delegate,
@@ -101,6 +102,7 @@ const ARTIFACTS = {
   AdjustableJumpRateModel_STADER_WBNB,
   AdjustableJumpRateModel_MIXBYTES_USDC,
   AdjustableJumpRateModel_JARVIS_jBRL,
+  AdjustableJumpRateModel_JARVIS_jEUR,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -113,13 +115,13 @@ const ARTIFACTS = {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   BalancerLpTokenPriceOracle,
-  AnkrBNBcPriceOracle,
+  AnkrCertificateTokenPriceOracle,
   StkBNBPriceOracle,
-  BNBxPriceOracle,
   GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   Unitroller,
   WhitePaperInterestRateModel,
+  MidasERC4626,
 };
 
 export type Artifacts = typeof ARTIFACTS;
@@ -149,6 +151,7 @@ export {
   AdjustableJumpRateModel_STADER_WBNB,
   AdjustableJumpRateModel_MIXBYTES_USDC,
   AdjustableJumpRateModel_JARVIS_jBRL,
+  AdjustableJumpRateModel_JARVIS_jEUR,
   JumpRateModel_MIMO_002_004_4_08,
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
@@ -157,14 +160,14 @@ export {
   RewardsDistributorDelegator,
   SimplePriceOracle,
   BalancerLpTokenPriceOracle,
-  AnkrBNBcPriceOracle,
+  AnkrCertificateTokenPriceOracle,
   StkBNBPriceOracle,
-  BNBxPriceOracle,
   GelatoGUniPriceOracle,
   UniswapTwapPriceOracleV2,
   UniswapTwapPriceOracleV2Root,
   Unitroller,
   WhitePaperInterestRateModel,
+  MidasERC4626,
 };
 
 export default ARTIFACTS;

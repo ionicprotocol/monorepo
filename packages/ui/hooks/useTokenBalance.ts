@@ -3,7 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { getCTokenContract } from '@ui/utils/contracts';
 
 export const fetchTokenBalance = async (
   tokenAddress: string,
@@ -17,7 +16,7 @@ export const fetchTokenBalance = async (
   } else if (tokenAddress === 'NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS') {
     balance = await currentSdk.provider.getBalance(address);
   } else {
-    const contract = getCTokenContract(tokenAddress, currentSdk);
+    const contract = currentSdk.createCTokenWithExtensions(tokenAddress);
     balance = (await contract.callStatic.balanceOf(address)) as BigNumber;
   }
 

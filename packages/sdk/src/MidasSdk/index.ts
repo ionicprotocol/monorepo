@@ -21,12 +21,15 @@ import { CErc20Delegate } from "@typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "@typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "@typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "@typechain/Comptroller";
+import { EIP20Interface } from "@typechain/EIP20Interface";
 import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
 import { FusePoolLens } from "@typechain/FusePoolLens";
 import { FusePoolLensSecondary } from "@typechain/FusePoolLensSecondary";
 import { FuseSafeLiquidator } from "@typechain/FuseSafeLiquidator";
+import { MidasERC4626 } from "@typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "@typechain/MidasFlywheelLensRouter";
+import { Unitroller } from "@typechain/Unitroller";
 import { ARTIFACTS, Artifacts, irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
@@ -375,6 +378,26 @@ export class MidasBase {
       this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
       signerOrProvider
     ) as CErc20PluginDelegate;
+  }
+
+  getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.EIP20Interface.abi, signerOrProvider) as EIP20Interface;
+  }
+
+  getUnitrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.Unitroller.abi, signerOrProvider) as Unitroller;
+  }
+
+  getFusePoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(
+      this.chainDeployment.FusePoolDirectory.address,
+      this.chainDeployment.FusePoolDirectory.abi,
+      signerOrProvider
+    );
+  }
+
+  getMidasErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+    return new Contract(address, this.artifacts.MidasERC4626.abi, signerOrProvider) as MidasERC4626;
   }
 }
 

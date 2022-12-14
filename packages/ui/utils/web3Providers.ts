@@ -6,5 +6,5 @@ export function providerURLForChain(chainId: number) {
     throw new Error(`Unable to get providerUrlForChain() for chainId: ${chainId}`);
   }
 
-  return network.rpcUrls.default;
+  return network.rpcUrls.default.http[0];
 }

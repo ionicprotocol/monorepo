@@ -4,6 +4,7 @@ import { task, types } from "hardhat/config";
 
 import { Comptroller } from "@typechain/Comptroller";
 import { CToken } from "@typechain/CToken";
+import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
 
 export default task("market:unsupport", "Unsupport a market")
   .addParam("comptroller", "Comptroller Address", undefined, types.string)
@@ -34,22 +35,23 @@ task("market:mint-pause", "Pauses minting on a market")
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
     const comptroller = await market.comptroller();
-    const pool: Comptroller = (await hre.ethers.getContractAt(
-      "Comptroller.sol:Comptroller",
+    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
+    const poolExtension = (await hre.ethers.getContractAt(
+      "ComptrollerFirstExtension",
       comptroller,
       admin
-    )) as Comptroller;
+    )) as ComptrollerFirstExtension;
 
     const currentPauseGuardian = await pool.pauseGuardian();
     if (currentPauseGuardian === constants.AddressZero) {
-      tx = await pool._setPauseGuardian(admin.address);
+      tx = await poolExtension._setPauseGuardian(admin.address);
       await tx.wait();
       console.log(`Set the pause guardian to ${admin.address}`);
     }
 
     const isPaused: boolean = await pool.mintGuardianPaused(market.address);
     if (isPaused != taskArgs.paused) {
-      tx = await pool._setMintPaused(market.address, taskArgs.paused);
+      tx = await poolExtension._setMintPaused(market.address, taskArgs.paused);
       await tx.wait();
 
       console.log(`Market mint pause tx ${tx.hash}`);
@@ -75,22 +77,23 @@ task("market:borrow-pause", "Pauses borrowing on a market")
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
     const comptroller = await market.comptroller();
-    const pool: Comptroller = (await hre.ethers.getContractAt(
-      "Comptroller.sol:Comptroller",
+    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
+    const poolExtension = (await hre.ethers.getContractAt(
+      "ComptrollerFirstExtension",
       comptroller,
       admin
-    )) as Comptroller;
+    )) as ComptrollerFirstExtension;
 
     const currentPauseGuardian = await pool.pauseGuardian();
     if (currentPauseGuardian === constants.AddressZero) {
-      tx = await pool._setPauseGuardian(admin.address);
+      tx = await poolExtension._setPauseGuardian(admin.address);
       await tx.wait();
       console.log(`Set the pause guardian to ${admin.address}`);
     }
 
     const isPaused: boolean = await pool.borrowGuardianPaused(market.address);
     if (isPaused != taskArgs.paused) {
-      tx = await pool._setBorrowPaused(market.address, taskArgs.paused);
+      tx = await poolExtension._setBorrowPaused(market.address, taskArgs.paused);
       await tx.wait();
 
       console.log(`Market borrow pause tx ${tx.hash}`);
@@ -114,17 +117,21 @@ task("market:set-supply-cap", "Pauses borrowing on a market")
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
     const comptroller = await market.comptroller();
-    const pool: Comptroller = (await hre.ethers.getContractAt(
-      "Comptroller.sol:Comptroller",
+    const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
+    const poolExtension = (await hre.ethers.getContractAt(
+      "ComptrollerFirstExtension",
       comptroller,
       admin
-    )) as Comptroller;
+    )) as ComptrollerFirstExtension;
 
     const currentSupplyCap = await pool.callStatic.supplyCaps(taskArgs.market);
     console.log(`Current supply cap is ${currentSupplyCap}`);
 
     const newSupplyCap = hre.ethers.BigNumber.from(taskArgs.maxSupply);
-    const tx: providers.TransactionResponse = await pool._setMarketSupplyCaps([market.address], [newSupplyCap]);
+    const tx: providers.TransactionResponse = await poolExtension._setMarketSupplyCaps(
+      [market.address],
+      [newSupplyCap]
+    );
     await tx.wait();
 
     const newSupplyCapSet = await pool.callStatic.supplyCaps(taskArgs.market);

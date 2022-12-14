@@ -18,7 +18,7 @@ export const Banner = ({
     <Alert status={status} justifyContent="center" {...alertProps}>
       <AlertIcon />
       <AlertDescription>
-        <Text variant="mdText">
+        <Text size="md">
           {text}
           {linkText && linkUrl && (
             <Link fontWeight="bold" href={linkUrl} isExternal>

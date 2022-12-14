@@ -14,6 +14,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
     underlying: underlying(assets, assetSymbols.BOMB),
     otherParams: ["0xAf16cB45B8149DA403AF41C63AbFEBFbcd16264b"], // xBOMB
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/bomb.png",
   },
   // No plugin deployment file stored
   // Can we delete this?
@@ -26,6 +27,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/bomb",
     underlying: underlying(assets, assetSymbols["BTCB-BOMB"]), // BOMB
     otherParams: ["0x94E85B8E050F3F281CB9597cc0144F1F7AF1fe9B", "10"], // beefy vault, withdrawal fee
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/bomb.png",
   },
   // DotDotLpERC4626_2brl_0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba.json
   "0x23bBcF59BF843cD55c4DA9bDB81429695C87f847": {
@@ -37,9 +39,9 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["2brl"]), // 2BRL
     otherParams: [
-      "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0", // _dddFlywheel
-      "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4", // _epxFlywheel
-      "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1aff", // lpDepositor
+      "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c", // _dddFlywheel
+      "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4", // _epxFlywheel
+      "0x8189F0afdBf8fE6a9e13c69bA35528ac6abeB1af", // lpDepositor
       "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba", // _rewardsDestination
       [underlying(assets, assetSymbols.DDD), underlying(assets, assetSymbols.EPX)], // _rewardTokens
     ],
@@ -122,6 +124,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
     underlying: underlying(assets, assetSymbols["3EPS"]),
     otherParams: ["0x80ACf5C89A284C4b6Fdbc851Ba9844D29d4c6BEd", "0"], // Beefy Vault, withdraw fee
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
   // BeefyERC4626_stkBNB-WBNB_0x906Ab4476221ADc91Dc112c25081A374E0bd29C0.json
   "0xcfB267a90974a172c38Af238b1010672DE4479Ad": {
@@ -133,6 +136,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/pstake-pool",
     underlying: underlying(assets, assetSymbols["stkBNB-WBNB"]),
     otherParams: ["0xd23ef71883a98c55Eb7ED67ED61fABF554aDEd21", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
   // BeefyERC4626_3brl_0x8CE7E5A358bbb7dc49EB2bf796830Ce76A4AA63a.json
   "0xCeB429c710D523d8243833018852Bbad2CEA9Bb4": {
@@ -144,6 +148,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
     underlying: underlying(assets, assetSymbols["3brl"]),
     otherParams: ["0xF46E3e2eb855baE2A32eD941f0c03b1D9b7b96a0", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
   // BeefyERC4626_epsBNBx-BNB_0x373E0F759828c891EF837b6457a0E7584107dbAb.json
   "0x643fd5AB2485dF7D9Ad43C4c210AbEc8Ae7e44D8": {
@@ -155,6 +160,7 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
     underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
     otherParams: ["0x56ec6031dC969CfA035F6D65e65D8595d5660fB4", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
   // BeefyERC4626_ApeSwap BNBx-WBNB LP_0xF0baaE2dc101e6Ff1439Ed3C9f27b30715d1E6AA.json
   "0x0b4444F3FB85264427397Fede0f94704aa3828b9": {
@@ -166,6 +172,19 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/stader-bnbx-pool",
     underlying: underlying(assets, assetSymbols["asBNBx-WBNB"]),
     otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_2brl_0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F_Implementation.json
+  "0xBCAc816440f7ef66Fea896b307352b86a83F94E8": {
+    market: "0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F",
+    name: "Beefy EPS 2brl  Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-2brl",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
+    underlying: underlying(assets, assetSymbols["2brl"]),
+    otherParams: ["0xf867cD98F3762D899F5F26FF5Dd62A5C566A3E0C", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
 };
 

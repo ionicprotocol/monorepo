@@ -98,14 +98,14 @@ export default async function getAllFusePoolUsers(
             fusePoolUsers.push(poolUserParams);
           } catch (e) {
             const msg = `Error getting pool users for ${comptroller}` + e;
-            erroredPools.push({ comptroller, msg });
+            erroredPools.push({ comptroller, msg, error: e });
           }
         } else {
           sdk.logger.info(`Pool ${name} (${comptroller}) has no users with shortfall`);
         }
       } catch (e) {
         const msg = `Error getting shortfalled users for pool ${name} (${comptroller})` + e;
-        erroredPools.push({ comptroller, msg });
+        erroredPools.push({ comptroller, msg, error: e });
       }
     }
   }
