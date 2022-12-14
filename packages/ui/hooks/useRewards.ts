@@ -44,6 +44,13 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
             if (rewardWithAPY) return rewardWithAPY;
             return fwReward;
           });
+          // TODO remove work around once https://github.com/Midas-Protocol/monorepo/issues/987 is fixed
+          if (
+            poolData.comptroller === '0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185' &&
+            chainId === 1284
+          ) {
+            allFlywheelRewards = applyAPYFix(allFlywheelRewards);
+          }
 
           const rewardsOfMarkets: UseRewardsData = {};
           await Promise.all(
@@ -99,4 +106,27 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
       enabled: !!poolData,
     }
   );
+}
+
+function applyAPYFix(rewards: FlywheelMarketRewardsInfo[]) {
+  console.warn('Manually updating APYs in Pool, fix me soon!');
+  return rewards.map((r) => {
+    // `xcDOT` Market
+    if (r.market === '0xa9736bA05de1213145F688e4619E5A7e0dcf4C72') {
+      return {
+        ...r,
+        rewardsInfo: r.rewardsInfo.map((info) => {
+          // only USDC reward token
+          if (info.rewardToken === '0x931715FEE2d06333043d11F658C8CE934aC61D0c') {
+            return { ...info, formattedAPR: info.formattedAPR?.div(100000000) }; // make 8 decimals smaller
+          }
+          // Or change nothing
+          return info;
+        }),
+      };
+    }
+
+    // Or change nothing
+    return r;
+  });
 }
