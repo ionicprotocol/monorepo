@@ -12,9 +12,7 @@ export const EnableCollateral = ({
   return (
     <MidasBox p={4} width="100%">
       <HStack justifyContent="space-between" alignItems="center" width="100%">
-        <Text variant="smText" fontWeight="bold">
-          Enable As Collateral:
-        </Text>
+        <Text size="sm">Enable As Collateral:</Text>
         <Switch
           isChecked={enableAsCollateral}
           onChange={() => {

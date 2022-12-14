@@ -7,7 +7,6 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { MIDAS_DOCS_URL } from '@ui/constants/index';
 import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
-import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -18,7 +17,6 @@ interface RewardsInfoProps {
 }
 
 export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
-  const { cCard } = useColors();
   const { data: pluginInfo } = usePluginInfo(
     chainId,
     'plugin' in reward ? reward.plugin : undefined
@@ -118,7 +116,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
       <HStack justifyContent={'flex-end'}>
         {(reward as FlywheelReward).token ? (
           <>
-            <Text variant="smText" mr={-1}>
+            <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
               +
             </Text>
             <TokenIcon
@@ -131,7 +129,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
           </>
         ) : pluginInfo?.icon ? (
           <>
-            <Text variant="smText" mr={-1}>
+            <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
               +
             </Text>
             <Image src={pluginInfo.icon} alt="plugin" height={6} />
@@ -141,7 +139,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
         )}
 
         {reward.apy ? (
-          <Text color={cCard.txtColor} title={reward.apy * 100 + '%'} variant="smText">
+          <Text fontWeight={'medium'} title={reward.apy * 100 + '%'} size="sm" variant="tnumber">
             {(reward.apy * 100).toFixed(2) + '%'}
           </Text>
         ) : (

@@ -21,7 +21,7 @@ export const RewardsBanner = ({
     >
       <GradientButton isSelected width="100%" height="50px" justifyContent="flex-start" mt={4}>
         <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" h="100%" w="100" p={3}>
-          <Text variant="smText" ml={2} mt="2px">
+          <Text size="md" ml={2} mt="2px">
             This pool is offering rewards
           </Text>
           <TokenIconGroup

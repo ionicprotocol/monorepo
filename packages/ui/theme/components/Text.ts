@@ -2,13 +2,32 @@ import type { ComponentStyleConfig } from '@chakra-ui/theme';
 import { mode } from '@chakra-ui/theme-tools';
 
 export const TextStyleConfig: ComponentStyleConfig = {
-  baseStyle: {
+  defaultProps: {
+    variant: 'default',
+  },
+  baseStyle: (props) => ({
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  sizes: {},
-  variants: {
-    default: {
+    color: mode('raisinBlack', 'whiteBg')(props),
+  }),
+  sizes: {
+    '2xs': {
+      fontSize: {
+        base: 10,
+        sm: 10,
+        md: 12,
+        lg: 12,
+      },
+    },
+    xs: {
+      fontSize: {
+        base: 12,
+        sm: 12,
+        md: 14,
+        lg: 14,
+      },
+    },
+    sm: {
       fontSize: {
         base: 14,
         sm: 14,
@@ -16,26 +35,15 @@ export const TextStyleConfig: ComponentStyleConfig = {
         lg: 16,
       },
     },
-    heading: (props) => ({
+    md: {
       fontSize: {
-        base: 32,
-        sm: 32,
-        md: 36,
-        lg: 36,
+        base: 16,
+        sm: 16,
+        md: 18,
+        lg: 18,
       },
-      color: mode('raisinBlack', 'whiteBg')(props),
-    }),
-    title: (props) => ({
-      fontSize: {
-        base: 20,
-        sm: 20,
-        md: 24,
-        lg: 24,
-      },
-      color: mode('raisinBlack', 'whiteBg')(props),
-    }),
-    lgText: (props) => ({
-      color: mode('raisinBlack', 'whiteBg')(props),
+    },
+    lg: {
       fontSize: {
         base: 18,
         sm: 18,
@@ -45,108 +53,47 @@ export const TextStyleConfig: ComponentStyleConfig = {
       lineHeight: {
         base: 6,
       },
-    }),
-    mdText: (props) => ({
-      color: mode('raisinBlack', 'whiteBg')(props),
+    },
+    xl: {
       fontSize: {
-        base: 16,
-        sm: 16,
-        md: 18,
-        lg: 18,
+        base: 20,
+        sm: 20,
+        md: 24,
+        lg: 24,
       },
-    }),
-    smText: (props) => ({
-      color: mode('raisinBlack', 'whiteBg')(props),
+    },
+    '2xl': {
       fontSize: {
-        base: 14,
-        sm: 14,
-        md: 16,
-        lg: 16,
+        base: 32,
+        sm: 32,
+        md: 36,
+        lg: 36,
       },
-    }),
-    xsText: (props) => ({
-      color: mode('raisinBlack', 'whiteBg')(props),
-      fontSize: {
-        base: 12,
-        sm: 12,
-        md: 14,
-        lg: 14,
-      },
-    }),
-    panelLgText: (props) => ({
-      fontSize: {
-        base: 18,
-        sm: 18,
-        md: 20,
-        lg: 20,
-      },
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
-    panelMdText: (props) => ({
-      fontSize: {
-        base: 16,
-        sm: 16,
-        md: 18,
-        lg: 18,
-      },
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
-    panelSmText: (props) => ({
-      fontSize: {
-        base: 14,
-        sm: 14,
-        md: 16,
-        lg: 16,
-      },
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
-    panelHeading: (props) => ({
+    },
+    '3xl': {
       fontSize: {
         base: 42,
         sm: 42,
         md: 46,
         lg: 46,
       },
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
-    panelTitle: (props) => ({
-      fontSize: {
-        base: 28,
-        sm: 28,
-        md: 32,
-        lg: 32,
-      },
-      color: mode('raisinBlack', 'raisinBlack')(props),
-    }),
-    toastLgText: (props) => ({
-      fontSize: {
-        base: 18,
-        sm: 18,
-        md: 20,
-        lg: 20,
-      },
-      color: mode('whiteBg', 'raisinBlack')(props),
-    }),
-    toastMdText: (props) => ({
-      fontSize: {
-        base: 16,
-        sm: 16,
-        md: 18,
-        lg: 18,
-      },
-      color: mode('whiteBg', 'raisinBlack')(props),
-    }),
-    toastSmText: (props) => ({
-      fontSize: {
-        base: 14,
-        sm: 14,
-        md: 16,
-        lg: 16,
-      },
-      color: mode('whiteBg', 'raisinBlack')(props),
-    }),
+    },
   },
-  defaultProps: {
-    variant: 'default',
+  variants: {
+    default: {},
+    number: {
+      fontFamily: "'Inter', sans-serif",
+    },
+    tnumber: {
+      fontFamily: "'Inter', sans-serif",
+      fontFeatureSettings: 'tnum',
+      fontWeight: 'normal',
+    },
+    'table-head': {
+      fontWeight: 'normal',
+      lineHeight: 1.25,
+      textAlign: 'right',
+      opacity: 0.9,
+    },
   },
 };

@@ -8,8 +8,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0x8875C45b4813c60C3dC51Aea25d66Dbf2711af9e",
     name: "Diffusion MiniChefV2 WEVMOS-gUSDC",
     strategy: Strategy.MiniChefV2,
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/evmos/diffusion",
     underlying: underlying(assets, assetSymbols["WEVMOS-gUSDC"]),
     otherParams: ["6", "0x067eC87844fBD73eDa4a1059F30039584586e09d"], // poolId, minchef address
     flywheels: ["0x6537110273d79184205395cfd852dcF3DA6861Ed", "0xEdcefE496FFf12897F6794E22BacCc7DE1D4422F"], // DIFF, GRAV flywheels
@@ -20,8 +19,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0xa1d5A953c43584D0AFD85Ce287Fa8a09f726180F",
     name: "Diffusion MiniChefV2 WEVMOS-gWETH",
     strategy: Strategy.MiniChefV2,
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/evmos/diffusion",
     underlying: underlying(assets, assetSymbols["WEVMOS-gWETH"]),
     otherParams: ["7", "0x067eC87844fBD73eDa4a1059F30039584586e09d"], // poolId, minchef address
     flywheels: ["0x6537110273d79184205395cfd852dcF3DA6861Ed", "0xEdcefE496FFf12897F6794E22BacCc7DE1D4422F"], // DIFF, GRAV flywheels
@@ -32,8 +30,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0xa7492b8aa271c43498ACAa75385631b8b326aed3",
     name: "Diffusion MiniChefV2 WEVMOS-ceUSDC",
     strategy: Strategy.MiniChefV2,
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/evmos/diffusion",
     underlying: underlying(assets, assetSymbols["WEVMOS-ceUSDC"]),
     otherParams: ["8", "0x067eC87844fBD73eDa4a1059F30039584586e09d"], // poolId, minchef address
     flywheels: ["0x6537110273d79184205395cfd852dcF3DA6861Ed", "0x1a8Fef140D955f8BCea6BCe4cFfD2cEA0fd02af6"], // DIFF, EVMOS flywheels
@@ -44,8 +41,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0x580216B72d2f70953d3Be4E885863aC295670EE5",
     name: "Diffusion MiniChefV2 ceUSDC-ceUSDT",
     strategy: Strategy.MiniChefV2,
-    strategyDocsUrl:
-      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/ellipsis-x-dotdot",
+    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/evmos/diffusion",
     underlying: underlying(assets, assetSymbols["ceUSDC-ceUSDT"]),
     otherParams: ["9", "0x067eC87844fBD73eDa4a1059F30039584586e09d"], // poolId, minchef address
     flywheels: ["0x6537110273d79184205395cfd852dcF3DA6861Ed"], // DIFF flywheel

@@ -93,7 +93,7 @@ const FusePoolEditPage = memo(() => {
                   router.back();
                 }}
               />
-              <Text textAlign="left" variant="lgText" fontWeight="bold">
+              <Text textAlign="left" size="lg" fontWeight="bold">
                 Back
               </Text>
             </HStack>

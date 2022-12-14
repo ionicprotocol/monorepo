@@ -36,7 +36,7 @@ const EditAssetSettings = ({
   }
   return (
     <Center width="100%" height="100%">
-      <Text variant="smText">Try again later</Text>
+      <Text size="md">Try again later</Text>
     </Center>
   );
 };
