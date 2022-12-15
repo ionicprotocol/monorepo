@@ -63,14 +63,21 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const feeAfter = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
     console.log(`ffd fee updated to ${feeAfter}`);
+  } else {
+    console.log(`not updating the ffd fee`);
   }
 
   const cgPrice = await getCgPrice(chainDeployParams.cgId);
   const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
-  tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
-  await tx.wait();
-  console.log("FuseFeeDistributor pool limits set", tx.hash);
+  try {
+    console.log(`setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`);
+    tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
+    await tx.wait();
+    console.log("FuseFeeDistributor pool limits set", tx.hash);
+  } catch (e) {
+    console.log("error setting the pool limits", e);
+  }
 
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
   const oldFirstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
@@ -610,8 +617,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`gas used ${deployments.getGasUsed()}`);
   console.log(`cg price ${cgPrice}`);
   console.log(
-    `total $ value gas used for deployments ${
-      gasPrice.mul(deployments.getGasUsed() * cgPrice).div(1e9).div(1e9)
+    `total $ value gas used for deployments (scaled by 1e18) ${
+      gasPrice.mul(deployments.getGasUsed() * cgPrice).toNumber() / 1e18
     }`
   );
 };
