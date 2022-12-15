@@ -1,4 +1,4 @@
-import { constants, providers, utils } from "ethers";
+import { BigNumber, constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
@@ -620,7 +620,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`cg price ${cgPrice}`);
   console.log(
     `total $ value gas used for deployments (scaled by 1e18) ${
-      gasPrice.mul(deployments.getGasUsed() * cgPrice).toNumber() / 1e18
+      gasPrice.mul(deployments.getGasUsed()).div(BigNumber.from(10).pow(18)).toNumber() * cgPrice
     }`
   );
 };
