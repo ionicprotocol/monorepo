@@ -6,7 +6,6 @@ import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvid
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
-  deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployCurveV2LpOracle,
@@ -287,6 +286,12 @@ const curvePools: CurvePoolConfig[] = [
     lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
     pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
     underlyings: [underlying(assets, assetSymbols.BNBx), underlying(assets, assetSymbols.BNB)],
+  },
+  {
+    // MAI 3EPS pool
+    lpToken: underlying(assets, assetSymbols.mai3EPS),
+    pool: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
+    underlyings: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)],
   },
 ];
 

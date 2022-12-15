@@ -37,7 +37,7 @@ const CaptionedStat = ({
 
 const Stat = ({ text }: { text: string }) => {
   return (
-    <Text variant="smText" fontWeight="bold">
+    <Text size="md" fontWeight="bold">
       {text}
     </Text>
   );
@@ -48,7 +48,7 @@ const Caption = ({ textAlign, children, ...restOfProps }: TextProps) => {
     <Text
       textTransform="capitalize"
       letterSpacing="wide"
-      variant="smText"
+      size="md"
       textAlign={textAlign}
       {...restOfProps}
     >

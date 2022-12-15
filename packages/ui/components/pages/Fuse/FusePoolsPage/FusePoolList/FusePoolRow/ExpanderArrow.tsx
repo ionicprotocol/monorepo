@@ -1,5 +1,5 @@
 import { ChevronDownIcon, ChevronUpIcon } from '@chakra-ui/icons';
-import { Box } from '@chakra-ui/react';
+import { HStack } from '@chakra-ui/react';
 
 import { CIconButton } from '@ui/components/shared/Button';
 
@@ -13,7 +13,7 @@ export const ExpanderArrow = ({
   canExpand: boolean;
 }) => {
   return (
-    <Box pr={2}>
+    <HStack justifyContent="center">
       <CIconButton
         aria-label="detail View"
         alignSelf="flex-end"
@@ -26,6 +26,6 @@ export const ExpanderArrow = ({
         borderRadius="50%"
         disabled={!canExpand ? true : false}
       />
-    </Box>
+    </HStack>
   );
 };

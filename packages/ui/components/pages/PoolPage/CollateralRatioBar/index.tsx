@@ -20,7 +20,7 @@ export const CollateralRatioBar = ({
   poolChainId,
   ...midasBoxProps
 }: CollateralRatioBarProps & MidasBoxProps) => {
-  const { data: maxBorrow } = useBorrowLimitTotal(assets, poolChainId);
+  const maxBorrow = useBorrowLimitTotal(assets, poolChainId);
 
   const ratio = useMemo(() => {
     if (maxBorrow && maxBorrow !== 0) {
@@ -40,13 +40,13 @@ export const CollateralRatioBar = ({
     <MidasBox width={'100%'} height="65px" p={4} mx="auto" {...midasBoxProps}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" expand>
         <Tooltip label={'Keep this bar from filling up to avoid being liquidated!'}>
-          <Text variant="mdText" flexShrink={0} mr={4}>
+          <Text size="md" flexShrink={0} mr={4}>
             Borrow Limit
           </Text>
         </Tooltip>
 
         <Tooltip label={'This is how much you have borrowed.'}>
-          <Text flexShrink={0} mt="2px" mr={3} variant="lgText" fontWeight="bold">
+          <Text flexShrink={0} mt="2px" mr={3} size="lg" fontWeight="bold">
             {smallUsdFormatter(borrowFiat)}
           </Text>
         </Tooltip>
@@ -70,7 +70,7 @@ export const CollateralRatioBar = ({
         </Tooltip>
 
         <Tooltip label="If your borrow amount reaches this value, you will be liquidated.">
-          <Text flexShrink={0} mt="2px" ml={3} variant="lgText" fontWeight="bold">
+          <Text flexShrink={0} mt="2px" ml={3} size="lg" fontWeight="bold">
             {smallUsdFormatter(maxBorrow || 0)}
           </Text>
         </Tooltip>
