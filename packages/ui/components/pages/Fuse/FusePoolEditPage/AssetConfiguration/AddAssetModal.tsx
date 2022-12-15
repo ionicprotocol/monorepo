@@ -144,7 +144,31 @@ const AddAsset = ({
               </Text>
             </Box>
           )}
-          <Wrap px={5} spacing={2} justify="flex-start" width="100%">
+          <Wrap
+            px={5}
+            spacing={2}
+            justify="flex-start"
+            width="95%"
+            height="200px"
+            overflowY="auto"
+            css={{
+              '&::-webkit-scrollbar': {
+                display: 'block',
+                width: '4px',
+                height: '4px',
+              },
+              '&::-webkit-scrollbar-track': {
+                width: '4px',
+                height: '4px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: cPage.primary.borderColor,
+              },
+              '&::-webkit-scrollbar-corner': {
+                display: 'none',
+              },
+            }}
+          >
             {poolData &&
               poolData.assets.map((asset, index) => {
                 return (
