@@ -41,13 +41,13 @@ task("loopless-booster", "deploy and a loopless booster for a flywheel")
 
 task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, deployments, getChainId }) => {
   const poolAddress = "0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185"; // stDOT Pool
-  const brokenFlywheelAddress = "0x0e7742b50a14Cbc879193f6b2E04EfcDCCC6BE86";
+  const brokenFlywheelAddress = "0xbCeB5Cb9b7Ea70994d8a7cfAC5D48dEA849CED06";
   const fxcDOTMarketAddress = "0xa9736bA05de1213145F688e4619E5A7e0dcf4C72";
-  const fwstDOTMarketAddress = "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563";
+  //const fwstDOTMarketAddress = "0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563";
 
   const deployer = await ethers.getNamedSigner("deployer");
   const chainid = await getChainId();
-  if (chainid == 1284) {
+  if (chainid == '137') {
     const asComptrollerExtension = (await ethers.getContractAt(
       "ComptrollerFirstExtension",
       poolAddress,
@@ -79,12 +79,12 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
     await tx.wait();
     console.log("setRewardsInfo: ", tx.hash);
 
-    tx = await oldStaticRewards.setRewardsInfo(fwstDOTMarketAddress, {
-      rewardsPerSecond: 0,
-      rewardsEndTimestamp: 1,
-    });
-    await tx.wait();
-    console.log("setRewardsInfo: ", tx.hash);
+    // tx = await oldStaticRewards.setRewardsInfo(fwstDOTMarketAddress, {
+    //   rewardsPerSecond: 0,
+    //   rewardsEndTimestamp: 1,
+    // });
+    // await tx.wait();
+    // console.log("setRewardsInfo: ", tx.hash);
 
     const replacingFlywheel = await deployments.deploy("MidasFlywheel", {
       contract: "MidasFlywheel",
@@ -149,9 +149,9 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
     await tx.wait();
     console.log("addStrategyForRewards fxcDOT: ", tx.hash);
 
-    tx = await newFlywheel.addStrategyForRewards(fwstDOTMarketAddress);
-    await tx.wait();
-    console.log("addStrategyForRewards fwstDOT: ", tx.hash);
+    // tx = await newFlywheel.addStrategyForRewards(fwstDOTMarketAddress);
+    // await tx.wait();
+    // console.log("addStrategyForRewards fwstDOT: ", tx.hash);
   } else {
     console.log(`wrong chain`);
   }
