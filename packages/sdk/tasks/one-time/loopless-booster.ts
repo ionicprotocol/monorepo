@@ -47,7 +47,7 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
 
   const deployer = await ethers.getNamedSigner("deployer");
   const chainid = await getChainId();
-  if (chainid == '1284') {
+  if (chainid == "1284") {
     const asComptrollerExtension = (await ethers.getContractAt(
       "ComptrollerFirstExtension",
       poolAddress,

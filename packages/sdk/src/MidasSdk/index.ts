@@ -16,13 +16,14 @@ import {
 } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { BigNumber, Contract, Signer, utils } from "ethers";
+import { Fragment } from "ethers/lib/utils";
 
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
@@ -50,7 +51,6 @@ import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
-import {Fragment} from "ethers/lib/utils";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
 type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
@@ -375,11 +375,7 @@ export class MidasBase {
       ctokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
     }
 
-    return new Contract(
-      address,
-      ctokenABI,
-      signerOrProvider
-    ) as CTokenWithExtensions;
+    return new Contract(address, ctokenABI, signerOrProvider) as CTokenWithExtensions;
   }
 
   getCErc20PluginRewardsInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {

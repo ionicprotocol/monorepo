@@ -27,12 +27,7 @@ export const deployFlywheelWithDynamicRewards = async ({
           execute: {
             init: {
               methodName: "initialize",
-              args: [
-                config.rewardToken,
-                constants.AddressZero,
-                constants.AddressZero,
-                deployer,
-              ],
+              args: [config.rewardToken, constants.AddressZero, constants.AddressZero, deployer],
             },
           },
           proxyContract: "OpenZeppelinTransparentProxy",
