@@ -2,6 +2,7 @@ import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
@@ -135,10 +136,15 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
         pool.comptroller,
         signer
       )) as Comptroller;
+      const comptrollerAsExtension = (await ethers.getContractAt(
+        "ComptrollerFirstExtension",
+        pool.comptroller,
+        signer
+      )) as ComptrollerFirstExtension;
       const admin = await comptroller.callStatic.admin();
       console.log("pool admin", admin);
 
-      const markets = await comptroller.callStatic.getAllMarkets();
+      const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
       const marketsToUpgrade: MarketImpl[] = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];

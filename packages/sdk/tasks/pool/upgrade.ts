@@ -17,10 +17,6 @@ export default task("comptroller:implementation:whitelist", "Whitelists a new co
       newImplementation = currentLatestComptroller.address;
     }
 
-    // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
-
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
     const newComptrollerImplementations = [newImplementation];
