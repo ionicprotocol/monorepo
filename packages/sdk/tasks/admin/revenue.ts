@@ -50,7 +50,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
       let poolFuseFeesTotal = BigNumber.from(0);
 
       for (const market of markets) {
-        const cToken = sdk.createCToken(market, deployer);
+        const cToken = sdk.createCTokenWithExtensions(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const underlyingPrice = await mpo.callStatic.getUnderlyingPrice(market);
 

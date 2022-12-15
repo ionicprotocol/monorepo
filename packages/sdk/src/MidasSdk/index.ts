@@ -20,7 +20,9 @@ import { BigNumber, Contract, Signer, utils } from "ethers";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../lib/contracts/typechain/CErc20PluginRewardsDelegate";
+import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
 import { EIP20Interface } from "../../lib/contracts/typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
@@ -48,6 +50,10 @@ import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+import {Fragment} from "ethers/lib/utils";
+
+type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
+type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
 
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
@@ -353,15 +359,27 @@ export class MidasBase {
   };
 
   getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, this.artifacts.Comptroller.abi, signerOrProvider) as Comptroller;
+    const comptrollerABI: Array<Fragment> = this.chainDeployment.Comptroller.abi;
+
+    if (this.chainDeployment.ComptrollerFirstExtension) {
+      comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
+    }
+
+    return new Contract(address, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
   }
 
   getCTokenInstance(address: string, signerOrProvider = this.provider) {
+    const ctokenABI: Array<Fragment> = this.chainDeployment[DelegateContractName.CErc20Delegate].abi;
+
+    if (this.chainDeployment.CTokenFirstExtension) {
+      ctokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
+    }
+
     return new Contract(
       address,
-      this.chainDeployment[DelegateContractName.CErc20Delegate].abi,
+      ctokenABI,
       signerOrProvider
-    ) as CErc20Delegate;
+    ) as CTokenWithExtensions;
   }
 
   getCErc20PluginRewardsInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
