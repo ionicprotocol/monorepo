@@ -73,7 +73,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelsByPool(poolAddress: string): Promise<MidasFlywheel[]> {
-      const pool = await this.getComptrollerInstance(poolAddress, this.signer);
+      const pool = await this.getComptrollerInstance(poolAddress);
       const allRewardDistributors = await pool.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
         return new Contract(address, this.artifacts.MidasFlywheel.abi, this.provider) as MidasFlywheel;
