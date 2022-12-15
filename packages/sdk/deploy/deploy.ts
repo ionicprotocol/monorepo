@@ -71,7 +71,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
   try {
-    console.log(`setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`);
+    console.log(
+      `setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`
+    );
     tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
     await tx.wait();
     console.log("FuseFeeDistributor pool limits set", tx.hash);
