@@ -1,14 +1,14 @@
+import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { utils } from 'ethers';
 
 import { RewardsResponse } from '../pages/api/rewards';
 
 import { useFusePoolData } from './useFusePoolData';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { utils } from 'ethers';
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 
 interface UseRewardsProps {
   chainId: number;
@@ -39,20 +39,11 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
             }),
           ]);
 
-          let allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
+          const allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
             const rewardWithAPY = flywheelRewardsWithAPY.find((r) => r.market === fwReward.market);
             if (rewardWithAPY) return rewardWithAPY;
             return fwReward;
           });
-
-          // TODO remove work around once https://github.com/Midas-Protocol/monorepo/issues/987 is fixed
-          if (
-            poolData.comptroller === '0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185' &&
-            chainId === 1284
-          ) {
-            allFlywheelRewards = applyAPYFix(allFlywheelRewards);
-          }
-
           const rewardsOfMarkets: UseRewardsData = {};
           await Promise.all(
             poolData.assets.map(async (asset) => {
@@ -112,21 +103,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
 function applyAPYFix(rewards: FlywheelMarketRewardsInfo[]) {
   console.warn('Manually updating APYs in Pool, fix me soon!');
   return rewards.map((r) => {
-    // `wstDOT` Market
-    if (r.market === '0xb3D83F2CAb787adcB99d4c768f1Eb42c8734b563') {
-      return {
-        ...r,
-        rewardsInfo: r.rewardsInfo.map((info) => {
-          // only LDO reward token
-          if (info.rewardToken === '0x9Fda7cEeC4c18008096C2fE2B85F05dc300F94d0') {
-            return { ...info, formattedAPR: info.formattedAPR?.div(100000000) }; // make 8 decimals smaller
-          }
-          // Or change nothing
-          return info;
-        }),
-      };
-    }
-
     // `xcDOT` Market
     if (r.market === '0xa9736bA05de1213145F688e4619E5A7e0dcf4C72') {
       return {

@@ -28,6 +28,7 @@ const USDT = "0x55d398326f99059fF775485246999027B3197955";
 const TUSD = "0x14016E85a25aeb13065688cAFB43044C2ef86784";
 const MAI = "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d";
 const threeEPS = "0xaF4dE8E872131AE328Ce21D909C74705d3Aaf452";
+const maiThreeEPS = "0x80D00D2c8d920a9253c3D65BA901250a55011b37";
 const twoBRL = "0x1B6E11c5DB9B15DE87714eA9934a6c52371CfEA9";
 const threeBRL = "0x27b5Fc5333246F63280dA8e3e533512EfA747c13";
 const val3EPS = "0x5b5bD8913D766D005859CE002533D4838B0Ebbb5";
@@ -197,6 +198,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", HAY),
+    disabled: true,
   },
   // Ellipsis
   {
@@ -206,6 +208,14 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: ellipsisDocs("0x160CAed03795365F3A589f10C379FfA7d75d4E76", "3EPS", threeEPS),
+  },
+  {
+    symbol: assetSymbols.mai3EPS,
+    underlying: maiThreeEPS,
+    name: "Ellipsis.finance MAI 3EPS (MAI/BUSD/USDC/USDT)",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: ellipsisDocs("0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322", "mai3EPS", maiThreeEPS),
   },
   {
     symbol: assetSymbols.val3EPS,

@@ -8,6 +8,7 @@ export {
   apeSwapDocs,
   quickSwapDocs,
   ankrCertificateDocs,
+  saddleFinanceDocs,
   StaderXDocs,
   stkBNBDocs,
   curveFinancePolygonDocs,

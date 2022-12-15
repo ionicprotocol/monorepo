@@ -101,7 +101,7 @@ export const AmountInput = ({
               <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
             </Box>
             <EllipsisText
-              variant="mdText"
+              size="md"
               tooltip={optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
               maxWidth="80px"
               fontWeight="bold"

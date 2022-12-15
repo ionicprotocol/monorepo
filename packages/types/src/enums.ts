@@ -57,6 +57,7 @@ export enum OracleTypes {
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
   AdrastiaPriceOracle = "AdrastiaPriceOracle",
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
+  SaddleLpTokenPriceOracle = "SaddleLpTokenPriceOracle",
 }
 
 export enum IrmTypes {
@@ -176,6 +177,7 @@ export enum assetSymbols {
   CAKE = "CAKE",
   ALPACA = "ALPACA",
   "3EPS" = "3EPS",
+  mai3EPS = "mai3EPS",
   val3EPS = "val3EPS",
   valdai3EPS = "valdai3EPS",
   "2brl" = "2brl",
@@ -223,16 +225,24 @@ export enum assetSymbols {
   ATOM = "ATOM",
   gUSDC = "gUSDC",
   axlUSDC = "axlUSDC",
+  ceUSDC = "ceUSDC",
   OSMO = "OSMO",
   JUNO = "JUNO",
   axlWETH = "axlWETH",
   gUSDT = "gUSDT",
+  ceUSDT = "ceUSDT",
   gDAI = "gDAI",
   ceWETH = "ceWETH",
   gWBTC = "gWBTC",
+  gWETH = "gWETH",
   axlWBTC = "axlWBTC",
   DIFF = "DIFF",
+  GRAV = "GRAV",
   "WEVMOS-JUNO" = "WEVMOS-JUNO",
+  "WEVMOS-gUSDC" = "WEVMOS-gUSDC",
+  "WEVMOS-ceUSDC" = "WEVMOS-ceUSDC",
+  "WEVMOS-gWETH" = "WEVMOS-gWETH",
+  "ceUSDC-ceUSDT" = "ceUSDC-ceUSDT",
 
   // moonbeam
   GLMR = "GLMR",
@@ -355,6 +365,8 @@ export enum assetSymbols {
   DPX = "DPX",
   MAGIC = "MAGIC",
   GMX = "GMX",
+  saddleFraxBP = "saddleFraxBP",
+  saddleFraxUsdsBP = "saddleFraxUsdsBP",
 
   // Fantom
   WFTM = "WFTM",

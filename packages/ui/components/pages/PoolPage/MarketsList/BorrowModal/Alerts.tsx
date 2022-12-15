@@ -22,7 +22,7 @@ export const Alerts = ({ poolChainId, asset }: { poolChainId: number; asset: Mar
       ) : (
         <Alert status="info">
           <AlertIcon />
-          <Text variant="smText">
+          <Text size="md">
             {`For safety reasons, you need to borrow at least a value of $${
               minBorrowUSD ? minBorrowUSD?.toFixed(2) : 100
             }${
