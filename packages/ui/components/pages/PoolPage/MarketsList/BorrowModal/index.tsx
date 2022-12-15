@@ -249,7 +249,7 @@ export const BorrowModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            <ModalCloseButton top={4} right={4} />
+            {!isBorrowing && <ModalCloseButton top={4} right={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}

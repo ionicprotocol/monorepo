@@ -288,7 +288,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             color={cCard.txtColor}
             borderRadius={16}
           >
-            <ModalCloseButton top={4} right={4} />
+            {!isRepaying && <ModalCloseButton top={4} right={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
