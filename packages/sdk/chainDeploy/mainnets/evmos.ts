@@ -10,6 +10,7 @@ import {
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
+import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { AdrastiaAsset, ChainDeployFnParams, FluxAsset } from "../helpers/types";
 
 const assets = evmos.assets;
@@ -28,18 +29,33 @@ export const deployConfig: ChainDeployConfig = {
     pairInitHashCode: ethers.utils.hexlify("0xa192c894487128ec7b68781ed7bd7e3141d1718df9e4e051e0124b7671d9a6ef"),
     uniswapV2RouterAddress: "0xFCd2Ce20ef8ed3D43Ab4f8C2dA13bbF1C6d9512F",
     uniswapV2FactoryAddress: "0x6aBdDa34Fb225be4610a2d153845e09429523Cd2",
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: underlying(assets, assetSymbols.DIFF),
-        baseToken: underlying(assets, assetSymbols.WEVMOS),
-        pair: "0x932c2D21fa11A545554301E5E6FB48C3accdFF4D",
-        minPeriod: 1800,
-        deviationThreshold: "50000000000000000",
-      },
+    uniswapOracleInitialDeployTokens: [],
+    uniswapOracleLpTokens: [
+      underlying(assets, assetSymbols["WEVMOS-JUNO"]),
+      underlying(assets, assetSymbols["WEVMOS-gUSDC"]),
+      underlying(assets, assetSymbols["WEVMOS-ceUSDC"]),
+      underlying(assets, assetSymbols["WEVMOS-gWETH"]),
+      underlying(assets, assetSymbols["ceUSDC-ceUSDT"]),
     ],
-    uniswapOracleLpTokens: [underlying(assets, assetSymbols["WEVMOS-DIFF"])],
     flashSwapFee: 0,
   },
+  dynamicFlywheels: [
+    {
+      rewardToken: underlying(assets, assetSymbols.DIFF),
+      cycleLength: 1,
+      name: "DIFF",
+    },
+    {
+      rewardToken: underlying(assets, assetSymbols.GRAV),
+      cycleLength: 1,
+      name: "Gravity",
+    },
+    {
+      rewardToken: underlying(assets, assetSymbols.WEVMOS),
+      cycleLength: 1,
+      name: "Wrapped EVMOS",
+    },
+  ],
   cgId: "evmos",
 };
 
@@ -53,6 +69,10 @@ const fluxAssets: FluxAsset[] = [
     feed: "0x3B2AF9149360e9F954C18f280aD0F4Adf1B613b8",
   },
   {
+    underlying: underlying(assets, assetSymbols.ceUSDC),
+    feed: "0x3B2AF9149360e9F954C18f280aD0F4Adf1B613b8",
+  },
+  {
     underlying: underlying(assets, assetSymbols.FRAX),
     feed: "0x71712f8142550C0f76719Bc958ba0C28c4D78985",
   },
@@ -60,39 +80,47 @@ const fluxAssets: FluxAsset[] = [
     underlying: underlying(assets, assetSymbols.gWBTC),
     feed: "0x08fDc3CE77f4449D26461A70Acc222140573956e",
   },
+  {
+    underlying: underlying(assets, assetSymbols.ceUSDT),
+    feed: "0x8FeAE79dB32595d8Ee57D40aA7De0512cBe36625",
+  },
 ];
 const adrastiaAssets: AdrastiaAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.gUSDT),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.gUSDC),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.axlWETH),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.ceWETH),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
+  },
+  {
+    underlying: underlying(assets, assetSymbols.gWETH),
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.gDAI),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.axlWBTC),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.OSMO),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.JUNO),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
 ];
 
@@ -104,7 +132,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     // Adrastia WEVMOS/USD price feed: https://docs.adrastia.io/deployments/evmos
-    nativeUsdOracleAddress: "0xd850F64Eda6a62d625209711510f43cD49Ef8798",
+    nativeUsdOracleAddress: "0xeA07Ede816EcD52F17aEEf82a50a608Ca5369145",
     quoteAddress: wevmos,
   });
 
@@ -130,15 +158,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     nativeUsdFeed: nativeUsdPriceOracle.address,
   });
 
-  //// Uniswap Oracle
-  await deployUniswapOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-  });
-
   //// Uniswap LP Oracle
   await deployUniswapLpOracle({
     run,
@@ -147,4 +166,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
+  // Plugins & Rewards
+  const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
+    ethers,
+    getNamedAccounts,
+    deployments,
+    run,
+    deployConfig,
+  });
+  console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
 };

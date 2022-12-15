@@ -245,7 +245,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // Liquidators
 
   //// CurveLPLiquidator
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
     args: [],

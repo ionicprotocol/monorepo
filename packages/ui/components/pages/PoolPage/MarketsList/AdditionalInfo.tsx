@@ -14,7 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { STRATEGY_HELP } from '@midas-capital/security';
-import { FundOperationMode } from '@midas-capital/types';
+import { FundOperationMode, Strategy } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
@@ -57,12 +57,14 @@ export const AdditionalInfo = ({
   rows,
   comptrollerAddress,
   supplyBalanceFiat,
+  borrowBalanceFiat,
   poolChainId,
 }: {
   row: Row<Market>;
   rows: Row<Market>[];
   comptrollerAddress: string;
   supplyBalanceFiat: number;
+  borrowBalanceFiat: number;
   poolChainId: number;
 }) => {
   const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
@@ -146,6 +148,7 @@ export const AdditionalInfo = ({
               asset={asset}
               isDisabled={asset.isBorrowPaused || supplyBalanceFiat === 0}
               poolChainId={poolChainId}
+              borrowBalanceFiat={borrowBalanceFiat}
             />
             <FundButton
               mode={FundOperationMode.REPAY}
@@ -184,7 +187,7 @@ export const AdditionalInfo = ({
                     <Text>Strategy Safety Score:</Text>
                     <Text
                       fontWeight="bold"
-                      variant="mdText"
+                      size="md"
                       color={setColorByScore(strategyScore.totalScore)}
                     >
                       {(strategyScore.totalScore * SCORE_RANGE_MAX).toFixed(2)}
@@ -235,7 +238,13 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.complexity[strategyScore.strategy.complexity].title}</Text>
+                    <Text>
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].complexity[
+                          strategyScore.strategy.complexity
+                        ].title
+                      }
+                    </Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -244,8 +253,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.complexity[strategyScore.strategy.complexity]
-                                .explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].complexity[
+                                strategyScore.strategy.complexity
+                              ].explanation
                             }
                           </Text>
                         </VStack>
@@ -274,7 +284,11 @@ export const AdditionalInfo = ({
                       </Center>
                     )}
                     <Text>
-                      {STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket].title}
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].timeInMarket[
+                          strategyScore.strategy.timeInMarket
+                        ].title
+                      }
                     </Text>
                     <PopoverTooltip
                       body={
@@ -284,8 +298,8 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.timeInMarket[strategyScore.strategy.timeInMarket]
-                                .explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .timeInMarket[strategyScore.strategy.timeInMarket].explanation
                             }
                           </Text>
                         </VStack>
@@ -313,7 +327,13 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].title}</Text>
+                    <Text>
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].riskIL[
+                          strategyScore.strategy.riskIL
+                        ].title
+                      }
+                    </Text>
 
                     <PopoverTooltip
                       body={
@@ -322,7 +342,11 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.assetRiskILScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.riskIL[strategyScore.strategy.riskIL].explanation}
+                            {
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].riskIL[
+                                strategyScore.strategy.riskIL
+                              ].explanation
+                            }
                           </Text>
                         </VStack>
                       }
@@ -349,7 +373,13 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].title}</Text>
+                    <Text>
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].liquidity[
+                          strategyScore.strategy.liquidity
+                        ].title
+                      }
+                    </Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -357,7 +387,11 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.assetRiskLiquidityScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.liquidity[strategyScore.strategy.liquidity].explanation}
+                            {
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].liquidity[
+                                strategyScore.strategy.liquidity
+                              ].explanation
+                            }
                           </Text>
                         </VStack>
                       }
@@ -384,7 +418,13 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].title}</Text>
+                    <Text>
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].mktCap[
+                          strategyScore.strategy.mktCap
+                        ].title
+                      }
+                    </Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -392,7 +432,11 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.assetRiskMktCapScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.mktCap[strategyScore.strategy.mktCap].explanation}
+                            {
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].mktCap[
+                                strategyScore.strategy.mktCap
+                              ].explanation
+                            }
                           </Text>
                         </VStack>
                       }
@@ -421,8 +465,8 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP.supplyCentralised[strategyScore.strategy.supplyCentralised]
-                          .title
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                          .supplyCentralised[strategyScore.strategy.supplyCentralised].title
                       }
                     </Text>
                     <PopoverTooltip
@@ -433,9 +477,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.supplyCentralised[
-                                strategyScore.strategy.supplyCentralised
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .supplyCentralised[strategyScore.strategy.supplyCentralised]
+                                .explanation
                             }
                           </Text>
                         </VStack>
@@ -463,7 +507,13 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.reputation[strategyScore.strategy.reputation].title}</Text>
+                    <Text>
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].reputation[
+                          strategyScore.strategy.reputation
+                        ].title
+                      }
+                    </Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -472,8 +522,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.reputation[strategyScore.strategy.reputation]
-                                .explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].reputation[
+                                strategyScore.strategy.reputation
+                              ].explanation
                             }
                           </Text>
                         </VStack>
@@ -501,7 +552,13 @@ export const AdditionalInfo = ({
                         />
                       </Center>
                     )}
-                    <Text>{STRATEGY_HELP.audit[strategyScore.strategy.audit].title}</Text>
+                    <Text>
+                      {
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].audit[
+                          strategyScore.strategy.audit
+                        ].title
+                      }
+                    </Text>
                     <PopoverTooltip
                       body={
                         <VStack alignItems="flex-start">
@@ -509,7 +566,11 @@ export const AdditionalInfo = ({
                             Score: {strategyScore.platformRiskAuditScore * SCORE_RANGE_MAX}
                           </Text>
                           <Text>
-                            {STRATEGY_HELP.audit[strategyScore.strategy.audit].explanation}
+                            {
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy].audit[
+                                strategyScore.strategy.audit
+                              ].explanation
+                            }
                           </Text>
                         </VStack>
                       }
@@ -538,8 +599,8 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP.contractsVerified[strategyScore.strategy.contractsVerified]
-                          .title
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                          .contractsVerified[strategyScore.strategy.contractsVerified].title
                       }
                     </Text>
                     <PopoverTooltip
@@ -551,9 +612,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.contractsVerified[
-                                strategyScore.strategy.contractsVerified
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .contractsVerified[strategyScore.strategy.contractsVerified]
+                                .explanation
                             }
                           </Text>
                         </VStack>
@@ -583,8 +644,8 @@ export const AdditionalInfo = ({
                     )}
                     <Text>
                       {
-                        STRATEGY_HELP.adminWithTimelock[strategyScore.strategy.adminWithTimelock]
-                          .title
+                        STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                          .adminWithTimelock[strategyScore.strategy.adminWithTimelock].title
                       }
                     </Text>
                     <PopoverTooltip
@@ -596,9 +657,9 @@ export const AdditionalInfo = ({
                           </Text>
                           <Text>
                             {
-                              STRATEGY_HELP.adminWithTimelock[
-                                strategyScore.strategy.adminWithTimelock
-                              ].explanation
+                              STRATEGY_HELP[strategyScore.strategy.strategy as Strategy]
+                                .adminWithTimelock[strategyScore.strategy.adminWithTimelock]
+                                .explanation
                             }
                           </Text>
                         </VStack>
@@ -720,12 +781,12 @@ export const AdditionalInfo = ({
             >
               {asset.isBorrowPaused ? (
                 <Center height="100%">
-                  <Text variant="smText">This asset is not borrowable.</Text>
+                  <Text size="md">This asset is not borrowable.</Text>
                 </Center>
               ) : data ? (
                 data.rates === null ? (
                   <Center height="100%">
-                    <Text variant="smText">
+                    <Text size="md">
                       No graph is available for this asset(&apos)s interest curves.
                     </Text>
                   </Center>

@@ -155,7 +155,7 @@ export const CreatePoolConfiguration = () => {
           <FormControl isInvalid={!!errors.name}>
             <OptionRow>
               <FormLabel htmlFor="name">
-                <Text variant="smText">Name</Text>
+                <Text size="md">Name</Text>
               </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                 <Input
@@ -176,7 +176,7 @@ export const CreatePoolConfiguration = () => {
           <FormControl isInvalid={!!errors.oracle}>
             <OptionRow>
               <FormLabel htmlFor="oracle">
-                <Text variant="smText">Oracle</Text>
+                <Text size="md">Oracle</Text>
               </FormLabel>
               <Column width="60%" mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                 <Select
@@ -207,7 +207,7 @@ export const CreatePoolConfiguration = () => {
             <OptionRow>
               <FormLabel htmlFor="isWhitelisted">
                 <HStack>
-                  <Text variant="smText">Whitelisted</Text>
+                  <Text size="md">Whitelisted</Text>
                   <SimpleTooltip
                     label={
                       "If enabled you will be able to limit the ability to supply to the pool to a select group of addresses. The pool will not show up on the 'all pools' list."
@@ -261,7 +261,7 @@ export const CreatePoolConfiguration = () => {
             <OptionRow>
               <FormLabel htmlFor="closeFactor">
                 <HStack>
-                  <Text variant="smText">Close Factor</Text>
+                  <Text size="md">Close Factor</Text>
                   <SimpleTooltip
                     label={
                       "The percent, ranging from 0% to 100%, of a liquidatable account's borrow that can be repaid in a single liquidate transaction. If a user has multiple borrowed assets, the closeFactor applies to any single borrowed asset, not the aggregated value of a user’s outstanding borrowing. Compound's close factor is 50%."
@@ -310,7 +310,7 @@ export const CreatePoolConfiguration = () => {
             <OptionRow>
               <FormLabel htmlFor="liquidationIncentive">
                 <HStack>
-                  <Text variant="smText">Liquidation Incentive</Text>
+                  <Text size="md">Liquidation Incentive</Text>
                   <SimpleTooltip
                     label={
                       "The additional collateral given to liquidators as an incentive to perform liquidation of underwater accounts. For example, if the liquidation incentive is 10%, liquidators receive an extra 10% of the borrowers collateral for every unit they close. Compound's liquidation incentive is 8%."

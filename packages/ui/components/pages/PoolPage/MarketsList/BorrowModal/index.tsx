@@ -17,22 +17,26 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Alerts } from './Alerts';
-import { AmountInput } from './AmountInput';
-import { Balance } from './Balance';
-import { BorrowError } from './BorrowError';
-import MaxBorrowSlider from './MaxBorrowSlider';
-import { PendingTransaction } from './PendingTransaction';
-
+import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/Alerts';
+import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/AmountInput';
+import { Balance } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/Balance';
+import { BorrowError } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/BorrowError';
+import MaxBorrowSlider from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/MaxBorrowSlider';
+import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/BorrowModal/PendingTransaction';
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
+import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
+import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
@@ -44,12 +48,26 @@ interface BorrowModalProps {
   assets: MarketData[];
   onClose: () => void;
   poolChainId: number;
+  borrowBalanceFiat?: number;
 }
 
-export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: BorrowModalProps) => {
+export const BorrowModal = ({
+  isOpen,
+  asset,
+  assets,
+  onClose,
+  poolChainId,
+  borrowBalanceFiat,
+}: BorrowModalProps) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
-  const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
+
+  const addRecentTransaction = useAddRecentTransaction();
+
+  const cgId = useCgId(poolChainId);
+  const { data: usdPrice } = useUSDPrice(cgId);
+
+  const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
 
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
@@ -59,14 +77,12 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
   const { cCard } = useColors();
 
   const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
+  const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
+  const borrowLimitMarket = useBorrowLimitMarket(asset, assets, poolChainId);
   const [isBorrowing, setIsBorrowing] = useState(false);
   const [isRisky, setIsRisky] = useState<boolean>(false);
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const queryClient = useQueryClient();
-  const borrowedAmount = useMemo(
-    () => Number(utils.formatUnits(asset.borrowBalance, asset.underlyingDecimals)),
-    [asset.borrowBalance, asset.underlyingDecimals]
-  );
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -78,9 +94,12 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
     setUserEnteredAmount(newAmount);
 
     if (
-      maxBorrowInAsset &&
-      maxBorrowInAsset.number !== 0 &&
-      (Number(newAmount) + borrowedAmount) / (maxBorrowInAsset.number + borrowedAmount) >
+      borrowBalanceFiat &&
+      borrowLimitTotal &&
+      borrowLimitTotal !== 0 &&
+      (Number(newAmount) * Number(utils.formatUnits(asset.underlyingPrice)) * price +
+        borrowBalanceFiat) /
+        borrowLimitTotal >
         HIGH_RISK_RATIO
     ) {
       setIsRisky(true);
@@ -208,7 +227,13 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
                   <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <EllipsisText
+                    variant="title"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    maxWidth="100px"
+                  >
+                    {tokenData?.symbol || asset.underlyingSymbol}
+                  </EllipsisText>
                   <ModalCloseButton top={4} right={4} />
                 </HStack>
 
@@ -222,16 +247,23 @@ export const BorrowModal = ({ isOpen, asset, assets, onClose, poolChainId }: Bor
                   width="100%"
                   gap={4}
                 >
-                  {maxBorrowInAsset && maxBorrowInAsset.number !== 0 && (
-                    <MaxBorrowSlider
-                      userEnteredAmount={userEnteredAmount}
-                      updateAmount={updateAmount}
-                      borrowableAmount={maxBorrowInAsset.number}
-                      asset={asset}
-                      poolChainId={poolChainId}
-                    />
-                  )}
-                  <Column gap={1} w="100%">
+                  {maxBorrowInAsset &&
+                    maxBorrowInAsset.number !== 0 &&
+                    borrowLimitTotal &&
+                    borrowLimitTotal !== 0 &&
+                    borrowLimitMarket && (
+                      <MaxBorrowSlider
+                        userEnteredAmount={userEnteredAmount}
+                        updateAmount={updateAmount}
+                        borrowableAmount={maxBorrowInAsset.number}
+                        asset={asset}
+                        poolChainId={poolChainId}
+                        borrowBalanceFiat={borrowBalanceFiat}
+                        borrowLimitTotal={borrowLimitTotal}
+                        borrowLimitMarket={borrowLimitMarket}
+                      />
+                    )}
+                  <Column gap={1} w="100%" mt={4}>
                     <AmountInput
                       asset={asset}
                       poolChainId={poolChainId}

@@ -21,11 +21,11 @@ export const BorrowApy = ({ asset, poolChainId }: { asset: MarketData; poolChain
   return (
     <VStack alignItems={'flex-end'}>
       {asset.isBorrowPaused || borrowAPR === undefined ? (
-        <Text color={borrowApyColor} fontWeight="bold" variant="smText">
+        <Text color={borrowApyColor} fontWeight="medium" size="sm" variant="tnumber">
           -
         </Text>
       ) : (
-        <Text color={borrowApyColor} fontWeight="bold" variant="smText">
+        <Text color={borrowApyColor} fontWeight="medium" size="sm" variant="tnumber">
           {borrowAPR.toFixed(3)}%
         </Text>
       )}

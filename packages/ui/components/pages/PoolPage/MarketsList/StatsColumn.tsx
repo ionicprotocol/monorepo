@@ -1,11 +1,11 @@
-import { Divider, Skeleton, Text } from '@chakra-ui/react';
+import { Divider, HStack, Skeleton, Text } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
-import { Column, Row } from '@ui/components/shared/Flex';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
+import { Column } from '@ui/components/shared/Flex';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import useUpdatedUserAssets from '@ui/hooks/fuse/useUpdatedUserAssets';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
@@ -96,139 +96,161 @@ export const StatsColumn = ({
         mainAxisAlignment="space-between"
         crossAxisAlignment="flex-start"
         expand
-        p={4}
+        px={2}
+        py={2}
         gap={2}
       >
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text variant="smText" flexShrink={0}>
+        <HStack width="100%" alignItems={'flex-start'}>
+          <Text size="sm" flexShrink={0}>
             Market Supply Balance:
           </Text>
-          <SimpleTooltip
-            label={`${supplyBalanceFrom}${` → ${supplyBalanceTo} `}${asset.underlyingSymbol}`}
-          >
-            <Text
-              flexShrink={0}
-              variant={'smText'}
-              textOverflow={'ellipsis'}
-              whiteSpace="nowrap"
-              overflow="hidden"
-            >
-              {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
-              {' ' + asset.underlyingSymbol}
-              <>
-                {' → '}
-                {supplyBalanceTo ? (
-                  supplyBalanceTo.slice(0, supplyBalanceTo.indexOf('.') + 3)
-                ) : (
-                  <Skeleton display="inline">
-                    {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
-                  </Skeleton>
-                )}
-                {' ' + asset.underlyingSymbol}
-              </>
-            </Text>
-          </SimpleTooltip>
-        </Row>
+          <HStack justifyContent="flex-end" width="100%">
+            <HStack spacing={1}>
+              <EllipsisText maxWidth="65px" tooltip={supplyBalanceFrom}>
+                {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
+              </EllipsisText>
+              <EllipsisText maxWidth="45px" tooltip={asset.underlyingSymbol}>
+                {asset.underlyingSymbol}
+              </EllipsisText>
+            </HStack>
+            <Text>{'→'}</Text>
+            {supplyBalanceTo ? (
+              <HStack spacing={1}>
+                <EllipsisText maxWidth="65px" tooltip={supplyBalanceTo}>
+                  {supplyBalanceTo.slice(0, supplyBalanceTo.indexOf('.') + 3)}
+                </EllipsisText>
+                <EllipsisText maxWidth="45px" tooltip={asset.underlyingSymbol}>
+                  {asset.underlyingSymbol}
+                </EllipsisText>
+              </HStack>
+            ) : (
+              <Skeleton display="inline">
+                {supplyBalanceFrom.slice(0, supplyBalanceFrom.indexOf('.') + 3)}
+              </Skeleton>
+            )}
+          </HStack>
+        </HStack>
 
         <Divider />
 
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
-            Borrowed in Market
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
+            Borrowed in Market:
           </Text>
-          <Text
-            variant={'smText'}
-            color={
-              updatedAsset?.borrowBalanceFiat &&
-              updatedBorrowLimitMarket !== undefined &&
-              updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.001
-                ? 'fail'
-                : undefined
-            }
-          >
-            {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
-              borrowLimitMarket
-            )}`}
-
-            {' → '}
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
+            <Text
+              variant="tnumber"
+              color={
+                updatedAsset?.borrowBalanceFiat &&
+                updatedBorrowLimitMarket &&
+                updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.001
+                  ? 'fail'
+                  : undefined
+              }
+            >
+              {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
+                borrowLimitMarket || 0
+              )}`}
+            </Text>
+            <Text>{'→'}</Text>
             {updatedAssets && updatedAsset ? (
-              `${smallUsdFormatter(
-                Math.max(updatedAsset.borrowBalanceFiat, 0)
-              )} of ${smallUsdFormatter(updatedBorrowLimitMarket)}`
+              <Text
+                variant="tnumber"
+                color={
+                  updatedAsset?.borrowBalanceFiat &&
+                  updatedBorrowLimitMarket &&
+                  updatedBorrowLimitMarket - updatedAsset.borrowBalanceFiat < -0.001
+                    ? 'fail'
+                    : undefined
+                }
+              >
+                {`${smallUsdFormatter(
+                  Math.max(updatedAsset.borrowBalanceFiat, 0)
+                )} of ${smallUsdFormatter(updatedBorrowLimitMarket || 0)}`}
+              </Text>
             ) : (
               <Skeleton display="inline">{`${smallUsdFormatter(
                 asset.borrowBalanceFiat
-              )} of ${smallUsdFormatter(borrowLimitMarket)}`}</Skeleton>
+              )} of ${smallUsdFormatter(borrowLimitMarket || 0)}`}</Skeleton>
             )}
-          </Text>
-        </Row>
+          </HStack>
+        </HStack>
 
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
-          <Text
-            variant={'smText'}
-            color={
-              updatedTotalBorrows !== undefined &&
-              updatedBorrowLimitTotal !== undefined &&
-              updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
-                ? updatedTotalBorrows / updatedBorrowLimitTotal >= 0.95
-                  ? 'fail'
-                  : 'warn'
-                : undefined
-            }
-          >
-            {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal)}`}
-            {' → '}
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
+            <Text
+              variant="tnumber"
+              color={
+                updatedTotalBorrows !== undefined &&
+                updatedBorrowLimitTotal &&
+                updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
+                  ? updatedTotalBorrows / updatedBorrowLimitTotal >= 0.95
+                    ? 'fail'
+                    : 'warn'
+                  : undefined
+              }
+            >
+              {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}
+            </Text>
+            <Text>{'→'}</Text>
             {updatedAssets && updatedTotalBorrows !== undefined ? (
-              `${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
-                updatedBorrowLimitTotal
-              )}`
+              <Text
+                variant="tnumber"
+                color={
+                  updatedTotalBorrows !== undefined &&
+                  updatedBorrowLimitTotal &&
+                  updatedTotalBorrows / updatedBorrowLimitTotal >= 0.8
+                    ? updatedTotalBorrows / updatedBorrowLimitTotal >= 0.95
+                      ? 'fail'
+                      : 'warn'
+                    : undefined
+                }
+              >
+                {`${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
+                  updatedBorrowLimitTotal || 0
+                )}`}
+              </Text>
             ) : (
               <Skeleton display="inline">{`${smallUsdFormatter(
                 totalBorrows
-              )} of ${smallUsdFormatter(borrowLimitTotal)}`}</Skeleton>
+              )} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}</Skeleton>
             )}
-          </Text>
-        </Row>
+          </HStack>
+        </HStack>
 
         <Divider />
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
             Market Supply APY:
           </Text>
-          <Text variant={'smText'}>
-            {supplyAPY.toFixed(2) + '%'}
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
+            <Text variant="tnumber">{supplyAPY.toFixed(2) + '%'}</Text>
+            <Text>{'→'}</Text>
+            {updatedSupplyAPY !== undefined ? (
+              <Text variant="tnumber">{updatedSupplyAPY.toFixed(2) + '%'}</Text>
+            ) : (
+              <Skeleton display="inline">x.xx</Skeleton>
+            )}
+          </HStack>
+        </HStack>
 
-            <>
-              {' → '}
-              {updatedSupplyAPY !== undefined ? (
-                updatedSupplyAPY.toFixed(2) + '%'
-              ) : (
-                <Skeleton display="inline">x.xx</Skeleton>
-              )}
-            </>
-          </Text>
-        </Row>
-
-        <Row mainAxisAlignment="space-between" crossAxisAlignment="center" width="100%">
-          <Text flexShrink={0} variant="smText">
+        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+          <Text flexShrink={0} size="sm">
             Market Borrow APR:
           </Text>
-          <Text variant={'smText'}>
-            {borrowAPR.toFixed(2) + '%'}
-
-            <>
-              {' → '}
-              {updatedBorrowAPR !== undefined ? (
-                updatedBorrowAPR.toFixed(2) + '%'
-              ) : (
-                <Skeleton display="inline">xx.xxx</Skeleton>
-              )}
-            </>
-          </Text>
-        </Row>
+          <HStack spacing={1} justifyContent="flex-end" width="100%">
+            <Text variant="tnumber">{borrowAPR.toFixed(2) + '%'}</Text>
+            <Text>{'→'}</Text>
+            {updatedBorrowAPR !== undefined ? (
+              <Text variant="tnumber">{updatedBorrowAPR.toFixed(2) + '%'}</Text>
+            ) : (
+              <Skeleton display="inline">x.xx</Skeleton>
+            )}
+          </HStack>
+        </HStack>
       </Column>
     </MidasBox>
   );

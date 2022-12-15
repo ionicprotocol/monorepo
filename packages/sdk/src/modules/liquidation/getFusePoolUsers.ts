@@ -66,7 +66,7 @@ async function getPoolsWithShortfall(sdk: MidasBase, comptroller: string) {
   const comptrollerInstance: Comptroller = sdk.getComptrollerInstance(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   const promises = users.map((user) => {
-    return comptrollerInstance.callStatic.getHypotheticalAccountLiquidity(user, constants.AddressZero, 0, 0);
+    return comptrollerInstance.callStatic.getAccountLiquidity(user);
   });
   const results = (await Promise.all(promises)).map((r, i) => {
     return { user: users[i], liquidity: r[1], shortfall: r[2] };

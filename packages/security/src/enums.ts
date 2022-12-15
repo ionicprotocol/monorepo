@@ -1,5 +1,5 @@
 import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
-import { ChainConfig } from "@midas-capital/types";
+import { ChainConfig, Strategy } from "@midas-capital/types";
 
 import { ChainLinkFeedHeartbeat } from "./oracle/scorers/chainlink/types";
 
@@ -29,7 +29,7 @@ export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
 
 /* Strategy Risk Enums */
 
-export const STRATEGY_HELP = {
+export const BEEFY_STRATEGY_HELP = {
   complexity: {
     LOW: {
       title: "Low complexity strategy",
@@ -158,7 +158,7 @@ export const STRATEGY_HELP = {
     CONTRACTS_UNVERIFIED: {
       title: "Some contracts are not verified",
       explanation:
-        "Code running in a particular contract is not public by default. Block explorers let developers verify the code behind a particular contract. This is a good practice because it lets other developers audit that the code does what it’s supposed to. Some of the third party contracts that this vault uses are not verified. This means that there are certain things that the Beefy devs have not been able to inspect.",
+        "Code running in a particular contract is not public by default. Block explorers let developers verify the code behind a particular contract. This is a good practice because it lets other developers audit that the code does what it’s supposed to. Some of the third party contracts that this vault uses are not verified. This means that there are certain things that the devs have not been able to inspect.",
     },
   },
   adminWithTimelock: {
@@ -171,6 +171,159 @@ export const STRATEGY_HELP = {
       title: "Dangerous functions are without a timelock",
       explanation:
         "Sometimes the contract owner or admin can execute certain functions that could put user funds in jeopardy. The best thing is to avoid these altogether. If they must be present, it’s important to keep them behind a timelock to give proper warning before using them. This contract has certain dangerous admin functions, and there is no time lock present. They can be executed at a moment's notice.",
+    },
+  },
+};
+
+export const STRATEGY_HELP = {
+  [Strategy.Arrakis]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Arrakis strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Arrakis strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Arrakis strategy is battle tested",
+      },
+    },
+  },
+  [Strategy.Beefy]: {
+    ...BEEFY_STRATEGY_HELP,
+  },
+  [Strategy.Bomb]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Bomb strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Bomb strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Bomb strategy is battle tested",
+      },
+    },
+  },
+  [Strategy.CurveGauge]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Curve Gauge strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Curve Gauge strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Curve Gauge strategy is battle tested",
+      },
+    },
+  },
+  [Strategy.DotDot]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "DotDot strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "DotDot strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "DotDot strategy is battle tested",
+      },
+    },
+  },
+  [Strategy.Mimo]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Mimo strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Mimo strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Mimo strategy is battle tested",
+      },
+    },
+  },
+  [Strategy.Stella]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "Stella strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "Stella strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "Stella strategy is battle tested",
+      },
+    },
+  },
+  [Strategy.MiniChefV2]: {
+    ...BEEFY_STRATEGY_HELP,
+    complexity: {
+      ...BEEFY_STRATEGY_HELP.complexity,
+      MEDIUM: {
+        ...BEEFY_STRATEGY_HELP.complexity.MEDIUM,
+        title: "MiniChef strategy is of medium complexity",
+      },
+      HIGH: {
+        ...BEEFY_STRATEGY_HELP.complexity.HIGH,
+        title: "MiniChef strategy is complex",
+      },
+    },
+    timeInMarket: {
+      ...BEEFY_STRATEGY_HELP.timeInMarket,
+      BATTLE_TESTED: {
+        ...BEEFY_STRATEGY_HELP.timeInMarket.BATTLE_TESTED,
+        title: "MiniChef strategy is battle tested",
+      },
     },
   },
 };

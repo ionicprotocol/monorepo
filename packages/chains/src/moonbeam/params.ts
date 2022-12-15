@@ -12,7 +12,7 @@ const specificParams: ChainParams = {
     shortName: "Moonbeam",
     img: "https://d1912tcoux65lj.cloudfront.net/network/moonbeam.jpg",
     blockExplorerUrls: { default: { name: "Moonbeam", url: "https://moonscan.io" } },
-    rpcUrls: { default: "https://rpc.api.moonbeam.network" },
+    rpcUrls: { default: { http: ["https://rpc.api.moonbeam.network"] } },
     nativeCurrency: {
       symbol: "GLMR",
       name: "Moonbeam",

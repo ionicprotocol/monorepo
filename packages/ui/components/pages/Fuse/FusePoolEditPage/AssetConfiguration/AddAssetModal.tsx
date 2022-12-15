@@ -139,90 +139,120 @@ const AddAsset = ({
         <>
           {poolData?.assets.length !== 0 && (
             <Box width="100%">
-              <Text textAlign="left" variant="smText" fontWeight="bold" mt={2} px={6}>
+              <Text textAlign="left" size="md" fontWeight="bold" mt={2} px={6}>
                 Added assets
               </Text>
             </Box>
           )}
-          <Wrap px={5} spacing={2} justify="flex-start" width="100%">
-            {poolData &&
-              poolData.assets.map((asset, index) => {
-                return (
-                  <WrapItem key={index}>
-                    <Button variant="_solid" px={2}>
-                      <TokenIcon
-                        size="sm"
-                        address={asset.underlyingToken}
-                        chainId={poolData.chainId}
-                      />
-                      <Center pl={1} fontWeight="bold">
-                        {asset.underlyingSymbol}
-                      </Center>
-                    </Button>
-                  </WrapItem>
-                );
-              })}
-          </Wrap>
+          <Box width="100%" pr={2}>
+            <Wrap
+              px={4}
+              spacing={2}
+              justify="flex-start"
+              width="100%"
+              height="200px"
+              overflowY="auto"
+              css={{
+                '&::-webkit-scrollbar': {
+                  display: 'block',
+                  width: '4px',
+                  height: '4px',
+                },
+                '&::-webkit-scrollbar-track': {
+                  width: '4px',
+                  height: '4px',
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: cPage.primary.borderColor,
+                },
+                '&::-webkit-scrollbar-corner': {
+                  display: 'none',
+                },
+              }}
+            >
+              {poolData &&
+                poolData.assets.map((asset, index) => {
+                  return (
+                    <WrapItem key={index}>
+                      <Button variant="_solid" px={2}>
+                        <TokenIcon
+                          size="sm"
+                          address={asset.underlyingToken}
+                          chainId={poolData.chainId}
+                        />
+                        <Center pl={1} fontWeight="bold">
+                          {asset.underlyingSymbol}
+                        </Center>
+                      </Button>
+                    </WrapItem>
+                  );
+                })}
+            </Wrap>
+          </Box>
 
           {poolData && availableAssets.length !== 0 ? (
             <>
               <Box width="100%">
-                <Text textAlign="left" variant="smText" fontWeight="bold" px={6} mt={4}>
+                <Text textAlign="left" size="md" fontWeight="bold" px={6} mt={4}>
                   Available supported assets
                 </Text>
               </Box>
-              <Flex
-                className="addAssetModal"
-                direction="column"
-                width="95%"
-                alignItems="center"
-                height="400px"
-                overflow="auto"
-                css={{
-                  '&::-webkit-scrollbar': {
-                    display: 'block',
-                    width: '4px',
-                    height: '4px',
-                  },
-                  '&::-webkit-scrollbar-track': {
-                    width: '4px',
-                    height: '4px',
-                  },
-                  '&::-webkit-scrollbar-thumb': {
-                    background: cPage.primary.borderColor,
-                  },
-                  '&::-webkit-scrollbar-corner': {
-                    display: 'none',
-                  },
-                }}
-              >
-                {availableAssets.map((asset, index) => {
-                  return (
-                    <Button
-                      variant="listed"
-                      key={index}
-                      width="100%"
-                      justifyContent="flex-start"
-                      onClick={() => setNameOrAddress(asset.underlying)}
-                      disabled={addedAssets && addedAssets.includes(asset.underlying.toLowerCase())}
-                      height="max-content"
-                    >
-                      <Flex direction="row" alignContent="center" py={2}>
-                        <TokenIcon address={asset.underlying} chainId={poolData.chainId} />
-                        <Flex ml={6} direction="column">
-                          <Text variant="lgText" textAlign="left">
-                            {asset.symbol}
-                          </Text>
-                          <Spacer />
-                          <Text fontWeight="normal" variant="smText" textAlign="left">
-                            {asset.name}
-                          </Text>
+              <Box width="100%" pr={2}>
+                <Flex
+                  className="addAssetModal"
+                  direction="column"
+                  width="100%"
+                  alignItems="center"
+                  height="400px"
+                  overflow="auto"
+                  css={{
+                    '&::-webkit-scrollbar': {
+                      display: 'block',
+                      width: '4px',
+                      height: '4px',
+                    },
+                    '&::-webkit-scrollbar-track': {
+                      width: '4px',
+                      height: '4px',
+                    },
+                    '&::-webkit-scrollbar-thumb': {
+                      background: cPage.primary.borderColor,
+                    },
+                    '&::-webkit-scrollbar-corner': {
+                      display: 'none',
+                    },
+                  }}
+                >
+                  {availableAssets.map((asset, index) => {
+                    return (
+                      <Button
+                        variant="listed"
+                        key={index}
+                        width="100%"
+                        justifyContent="flex-start"
+                        onClick={() => setNameOrAddress(asset.underlying)}
+                        disabled={
+                          addedAssets && addedAssets.includes(asset.underlying.toLowerCase())
+                        }
+                        height="max-content"
+                      >
+                        <Flex direction="row" alignContent="center" py={2}>
+                          <TokenIcon address={asset.underlying} chainId={poolData.chainId} />
+                          <Flex ml={6} direction="column">
+                            <Text size="lg" textAlign="left">
+                              {asset.symbol}
+                            </Text>
+                            <Spacer />
+                            <Text fontWeight="normal" size="md" textAlign="left">
+                              {asset.name}
+                            </Text>
+                          </Flex>
                         </Flex>
-                      </Flex>
-                    </Button>
-                  );
-                })}
-              </Flex>
+                      </Button>
+                    );
+                  })}
+                </Flex>
+              </Box>
             </>
           ) : error ? (
             <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>

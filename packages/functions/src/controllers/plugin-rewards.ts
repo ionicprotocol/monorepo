@@ -37,6 +37,7 @@ const updatePluginRewards = async (chainId: SupportedChains, rpcUrl: string) => 
             rewards: await apyProvider.getApy(pluginAddress, pluginData),
           };
         } catch (exception) {
+          console.error(exception);
           await functionsAlert(
             `Functions.plugin-rewards: Plugin '${pluginAddress}' (${pluginData.strategy}) / Chain '${chainId}'`,
             JSON.stringify(exception)

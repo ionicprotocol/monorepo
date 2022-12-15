@@ -1,6 +1,6 @@
 import { Box, Progress, Text, Tooltip } from '@chakra-ui/react';
 import LogRocket from 'logrocket';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { MidasBox, MidasBoxProps } from '@ui/components/shared/Box';
 import { Row } from '@ui/components/shared/Flex';
@@ -22,7 +22,13 @@ export const CollateralRatioBar = ({
 }: CollateralRatioBarProps & MidasBoxProps) => {
   const maxBorrow = useBorrowLimitTotal(assets, poolChainId);
 
-  const ratio = (borrowFiat / maxBorrow) * 100;
+  const ratio = useMemo(() => {
+    if (maxBorrow && maxBorrow !== 0) {
+      return (borrowFiat / maxBorrow) * 100;
+    } else {
+      return 0;
+    }
+  }, [borrowFiat, maxBorrow]);
 
   useEffect(() => {
     if (ratio > 95) {
@@ -34,20 +40,20 @@ export const CollateralRatioBar = ({
     <MidasBox width={'100%'} height="65px" p={4} mx="auto" {...midasBoxProps}>
       <Row mainAxisAlignment="flex-start" crossAxisAlignment="center" expand>
         <Tooltip label={'Keep this bar from filling up to avoid being liquidated!'}>
-          <Text variant="mdText" flexShrink={0} mr={4}>
+          <Text size="md" flexShrink={0} mr={4}>
             Borrow Limit
           </Text>
         </Tooltip>
 
         <Tooltip label={'This is how much you have borrowed.'}>
-          <Text flexShrink={0} mt="2px" mr={3} variant="lgText" fontWeight="bold">
+          <Text flexShrink={0} mt="2px" mr={3} size="lg" fontWeight="bold">
             {smallUsdFormatter(borrowFiat)}
           </Text>
         </Tooltip>
 
         <Tooltip
           label={`You're using ${ratio.toFixed(1)}% of your ${smallUsdFormatter(
-            maxBorrow
+            maxBorrow || 0
           )} borrow limit.`}
         >
           <Box width="100%">
@@ -64,8 +70,8 @@ export const CollateralRatioBar = ({
         </Tooltip>
 
         <Tooltip label="If your borrow amount reaches this value, you will be liquidated.">
-          <Text flexShrink={0} mt="2px" ml={3} variant="lgText" fontWeight="bold">
-            {smallUsdFormatter(maxBorrow)}
+          <Text flexShrink={0} mt="2px" ml={3} size="lg" fontWeight="bold">
+            {smallUsdFormatter(maxBorrow || 0)}
           </Text>
         </Tooltip>
       </Row>

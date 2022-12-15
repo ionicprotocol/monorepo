@@ -18,12 +18,8 @@ import { BigNumber, constants } from 'ethers';
 import { useEffect, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import { AmountInput } from './AmountInput';
-import { Balance } from './Balance';
-import { PendingTransaction } from './PendingTransaction';
-import { RepayError } from './RepayError';
-
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REPAY_STEPS } from '@ui/constants/index';
@@ -35,6 +31,10 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
+import { AmountInput } from 'ui/components/pages/PoolPage/MarketsList/RepayModal/AmountInput';
+import { Balance } from 'ui/components/pages/PoolPage/MarketsList/RepayModal/Balance';
+import { PendingTransaction } from 'ui/components/pages/PoolPage/MarketsList/RepayModal/PendingTransaction';
+import { RepayError } from 'ui/components/pages/PoolPage/MarketsList/RepayModal/RepayError';
 
 interface RepayModalProps {
   isOpen: boolean;
@@ -222,7 +222,13 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
                   <Box height="36px" width="36px" mx={3}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
-                  <Text variant="title">{tokenData?.symbol || asset.underlyingSymbol}</Text>
+                  <EllipsisText
+                    variant="title"
+                    tooltip={tokenData?.symbol || asset.underlyingSymbol}
+                    maxWidth="100px"
+                  >
+                    {tokenData?.symbol || asset.underlyingSymbol}
+                  </EllipsisText>
                   <ModalCloseButton top={4} right={4} />
                 </HStack>
 

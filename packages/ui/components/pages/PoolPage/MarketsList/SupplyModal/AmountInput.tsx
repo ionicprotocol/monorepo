@@ -1,11 +1,11 @@
-import { Box, Button, Input, Text } from '@chakra-ui/react';
+import { Box, Button, Input } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
+import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
-import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast } from '@ui/hooks/useToast';
@@ -100,22 +100,15 @@ export const AmountInput = ({
             <Box height={8} width={8} mr={1}>
               <TokenIcon size="sm" address={asset.underlyingToken} chainId={poolChainId} />
             </Box>
-            <SimpleTooltip
-              label={optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+            <EllipsisText
+              size="md"
+              tooltip={optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+              maxWidth="80px"
+              fontWeight="bold"
+              mr={2}
             >
-              <Text
-                variant="mdText"
-                fontWeight="bold"
-                mr={2}
-                flexShrink={0}
-                maxWidth="100px"
-                textOverflow={'ellipsis'}
-                whiteSpace="nowrap"
-                overflow="hidden"
-              >
-                {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
-              </Text>
-            </SimpleTooltip>
+              {optionToWrap ? asset.underlyingSymbol.slice(1) : asset.underlyingSymbol}
+            </EllipsisText>
           </Row>
           <Button
             height={{ lg: 8, md: 8, sm: 8, base: 8 }}

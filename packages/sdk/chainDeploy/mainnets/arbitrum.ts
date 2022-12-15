@@ -6,6 +6,7 @@ import {
   ChainDeployConfig,
   deployChainlinkOracle,
   deployCurveLpOracle,
+  deploySaddleLpOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
   deployUniswapV3Oracle,
@@ -121,9 +122,18 @@ const chainlinkAssets: ChainlinkAsset[] = [
 // https://arbitrum.curve.fi/
 const curvePools: CurvePoolConfig[] = [
   {
-    lpToken: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
+    lpToken: underlying(assets, assetSymbols["2pool"]),
     pool: "0x7f90122BF0700F9E7e1F688fe926940E8839F353",
     underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.USDT)],
+  },
+];
+
+// https://saddle.exchange/
+const saddlePools: CurvePoolConfig[] = [
+  {
+    lpToken: underlying(assets, assetSymbols.saddleFraxBP),
+    pool: "0x401AFbc31ad2A3Bc0eD8960d63eFcDEA749b4849",
+    underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.FRAX)],
   },
 ];
 
@@ -167,6 +177,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     curvePools,
   });
 
+  //// Saddle LP Oracle
+  await deploySaddleLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    saddlePools,
+  });
+
   // Quoter
   const quoter = await deployments.deploy("Quoter", {
     from: deployer,
@@ -179,7 +199,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   // Liquidators
 
   //// CurveLPLiquidator
-  const curveOracle = await ethers.getContract("CurveLpTokenPriceOracleNoRegistry", deployer);
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
     from: deployer,
     args: [],
