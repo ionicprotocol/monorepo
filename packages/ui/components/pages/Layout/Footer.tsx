@@ -26,49 +26,49 @@ const Footer = () => {
         <Link href={MIDAS_DOCS_URL} isExternal>
           <Text
             mx={2}
-            variant="smText"
+            size="md"
             textDecoration="underline"
             _hover={{ color: cPage.primary.borderColor }}
           >
             {'Docs'}
           </Text>
         </Link>
-        <Text color={cPage.primary.txtColor} variant="smText">
+        <Text color={cPage.primary.txtColor} size="md">
           ·
         </Text>
         <Link href={MIDAS_DISCORD_URL} isExternal>
           <Text
             color={cPage.primary.txtColor}
             mx={2}
-            variant="smText"
+            size="md"
             textDecoration="underline"
             _hover={{ color: cPage.primary.borderColor }}
           >
             {'Discord'}
           </Text>
         </Link>
-        <Text color={cPage.primary.txtColor} variant="smText">
+        <Text color={cPage.primary.txtColor} size="md">
           ·
         </Text>
         <Link href={MIDAS_TELEGRAM_URL} isExternal>
           <Text
             color={cPage.primary.txtColor}
             mx={2}
-            variant="smText"
+            size="md"
             textDecoration="underline"
             _hover={{ color: cPage.primary.borderColor }}
           >
             {'Telegram'}
           </Text>
         </Link>
-        <Text color={cPage.primary.txtColor} variant="smText">
+        <Text color={cPage.primary.txtColor} size="md">
           ·
         </Text>
         <Link href={MIDAS_TWITTER_URL} isExternal>
           <Text
             color={cPage.primary.txtColor}
             mx={2}
-            variant="smText"
+            size="md"
             textDecoration="underline"
             _hover={{ color: cPage.primary.borderColor }}
           >
@@ -76,7 +76,7 @@ const Footer = () => {
           </Text>
         </Link>
       </Row>
-      <Text color={cPage.primary.txtColor} variant="smText" textAlign="center" width="100%">
+      <Text color={cPage.primary.txtColor} size="md" textAlign="center" width="100%">
         © {new Date().getFullYear()} Midas Capital. All rights reserved.
       </Text>
     </Column>

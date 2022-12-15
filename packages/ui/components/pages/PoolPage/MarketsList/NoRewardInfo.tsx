@@ -40,7 +40,7 @@ export const NoRewardInfo = ({
       }
     >
       <HStack marginTop="-2px !important">
-        <Text variant="smText" mr={-1}>
+        <Text size="md" mr={-1}>
           +
         </Text>
         {pluginInfo?.icon ? <Image src={pluginInfo.icon} alt="" height="6" /> : '🔌'}{' '}

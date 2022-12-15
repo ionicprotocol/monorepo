@@ -45,6 +45,16 @@ export const deployConfig: ChainDeployConfig = {
       cycleLength: 1,
       name: "DIFF",
     },
+    {
+      rewardToken: underlying(assets, assetSymbols.GRAV),
+      cycleLength: 1,
+      name: "Gravity",
+    },
+    {
+      rewardToken: underlying(assets, assetSymbols.WEVMOS),
+      cycleLength: 1,
+      name: "Wrapped EVMOS",
+    },
   ],
   cgId: "evmos",
 };

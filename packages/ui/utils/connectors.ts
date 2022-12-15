@@ -1,7 +1,7 @@
 import '@rainbow-me/rainbowkit/styles.css';
 
 import { getDefaultWallets } from '@rainbow-me/rainbowkit';
-import { Chain, configureChains, defaultChains } from 'wagmi';
+import { Chain, configureChains } from 'wagmi';
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc';
 import { publicProvider } from 'wagmi/providers/public';
 
@@ -24,17 +24,14 @@ const supportedChains: Chain[] = Object.values(getSupportedChains()).map((data) 
   };
 });
 
-export const { chains, provider } = configureChains(
-  supportedChains.length !== 0 ? supportedChains : defaultChains,
-  [
-    publicProvider(),
-    jsonRpcProvider({
-      rpc: (chain) => {
-        return { http: chain.rpcUrls.default };
-      },
+export const { chains, provider } = configureChains(supportedChains, [
+  publicProvider(),
+  jsonRpcProvider({
+    rpc: (chain) => ({
+      http: chain.rpcUrls.default.http[0],
     }),
-  ]
-);
+  }),
+]);
 
 export const { connectors } = getDefaultWallets({
   appName: 'Midas Capital',

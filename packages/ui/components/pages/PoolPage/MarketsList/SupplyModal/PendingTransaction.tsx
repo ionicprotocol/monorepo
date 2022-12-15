@@ -19,10 +19,10 @@ export const PendingTransaction = ({
       <Box py={4} w="100%" h="100%">
         <TransactionStepper activeStep={activeStep} steps={steps} failedStep={failedStep} />
       </Box>
-      <Text mt="30px" textAlign="center" variant="smText">
+      <Text mt="30px" textAlign="center" size="md">
         Check your wallet to submit the transactions
       </Text>
-      <Text variant="smText" mt="15px" textAlign="center">
+      <Text size="md" mt="15px" textAlign="center">
         Do not close this modal until you submit all transactions!
       </Text>
     </Column>

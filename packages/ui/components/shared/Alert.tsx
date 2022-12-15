@@ -33,7 +33,9 @@ export const AdminAlert = ({
       {...alertProps}
     >
       <AlertIcon color={cAlert.iconColor} />
-      <Text variant="panelSmText">{isAdmin ? isAdminText : isNotAdminText}</Text>
+      <Text color="raisinBlack" size="sm">
+        {isAdmin ? isAdminText : isNotAdminText}
+      </Text>
       <Box h="100%" ml="auto">
         {rightAdornment}
       </Box>
