@@ -41,9 +41,8 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       if (!hasApprovedEnough) {
         const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
         const approveTx = await token.approve(cTokenAddress, max);
-        await approveTx.wait();
 
-        return approveTx.hash;
+        return approveTx;
       } else {
         return null;
       }
@@ -57,9 +56,8 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       ) as Comptroller;
 
       const tx = await comptrollerInstance.enterMarkets([cTokenAddress]);
-      await tx?.wait();
 
-      return tx?.hash;
+      return tx;
     }
 
     async mint(cTokenAddress: string, amount: BigNumber) {

@@ -149,15 +149,16 @@ export const SupplyModal = ({
             WETHAbi,
             currentSdk.signer
           );
-          const resp = await WToken.deposit({ from: address, value: amount });
+          const tx = await WToken.deposit({ from: address, value: amount });
+
           addRecentTransaction({
-            hash: resp.hash,
+            hash: tx.hash,
             description: `Wrap ${nativeSymbol}`,
           });
           _steps[0] = {
             ..._steps[0],
             done: true,
-            txHash: resp.hash,
+            txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
           successToast({
@@ -172,16 +173,24 @@ export const SupplyModal = ({
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        const hash = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        if (hash) {
+        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+        if (tx) {
           addRecentTransaction({
-            hash: hash,
+            hash: tx.hash,
             description: `Approve ${asset.underlyingSymbol}`,
           });
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
+          await tx.wait();
+
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
             done: true,
-            txHash: hash,
+            txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
           successToast({
@@ -203,15 +212,23 @@ export const SupplyModal = ({
       if (enableAsCollateral) {
         try {
           setActiveStep(optionToWrap ? 3 : 2);
-          const hash = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
+          const tx = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
           addRecentTransaction({
-            hash: hash,
+            hash: tx.hash,
             description: `Entered ${asset.underlyingSymbol} market`,
           });
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
+          await tx.wait();
+
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
             done: true,
-            txHash: hash,
+            txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
           successToast({
@@ -236,8 +253,19 @@ export const SupplyModal = ({
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Supply`,
           });
+          _steps[
+            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+          ] = {
+            ..._steps[
+              optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+            ],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
           await tx.wait();
           await queryClient.refetchQueries();
+
           _steps[
             optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
           ] = {
