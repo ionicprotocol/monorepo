@@ -611,7 +611,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`cg price ${cgPrice}`);
   console.log(
     `total $ value gas used for deployments ${
-      cgPrice * gasPrice.mul(deployments.getGasUsed()).div(1e9).div(1e9).toNumber()
+      gasPrice.mul(deployments.getGasUsed() * cgPrice).div(1e9).div(1e9)
     }`
   );
 };
