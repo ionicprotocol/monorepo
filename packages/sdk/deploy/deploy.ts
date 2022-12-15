@@ -1,4 +1,4 @@
-import { constants, providers, utils } from "ethers";
+import { BigNumber, constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
@@ -71,7 +71,9 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
   try {
-    console.log(`setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`);
+    console.log(
+      `setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`
+    );
     tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
     await tx.wait();
     console.log("FuseFeeDistributor pool limits set", tx.hash);
@@ -618,7 +620,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`cg price ${cgPrice}`);
   console.log(
     `total $ value gas used for deployments (scaled by 1e18) ${
-      gasPrice.mul(deployments.getGasUsed() * cgPrice).toNumber() / 1e18
+      gasPrice.mul(deployments.getGasUsed()).div(BigNumber.from(10).pow(18)).toNumber() * cgPrice
     }`
   );
 };
