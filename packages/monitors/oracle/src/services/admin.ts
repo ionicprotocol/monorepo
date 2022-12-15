@@ -58,7 +58,7 @@ export class AdminService {
     }
   }
   async pauseBorrowActivity(pool: Comptroller, extension: ComptrollerFirstExtension) {
-    const markets = await pool.callStatic.getAllMarkets();
+    const markets = await this.sdk.getComptrollerInstance(pool.address).callStatic.getAllMarkets();
     for (const market of markets) {
       const isPaused: boolean = await pool.callStatic.borrowGuardianPaused(market);
       if (!isPaused) {
