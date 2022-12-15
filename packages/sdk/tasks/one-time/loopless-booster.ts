@@ -156,3 +156,29 @@ task("replace-flywheel-with-upgradable", "").setAction(async ({}, { ethers, depl
     console.log(`wrong chain`);
   }
 });
+
+task("remove-flywheel", "remove a rewards distributor from a pool")
+.setAction(async ({ /*flywheelAddress, poolAddress*/ }, { ethers, getChainId }) => {
+  const poolAddress = "0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185"; // stDOT Pool
+  const brokenFlywheel1Address = "0xbCeB5Cb9b7Ea70994d8a7cfAC5D48dEA849CED06";
+  const brokenFlywheel2Address = "0x0e7742b50a14Cbc879193f6b2E04EfcDCCC6BE86";
+
+  const deployer = await ethers.getNamedSigner("deployer");
+  const chainid = await getChainId();
+
+  if (chainid == "1284") {
+    const asComptrollerExtension = (await ethers.getContractAt(
+      "ComptrollerFirstExtension",
+      poolAddress,
+      deployer
+    )) as ComptrollerFirstExtension;
+
+    let tx = await asComptrollerExtension._removeFlywheel(brokenFlywheel1Address);
+    await tx.wait();
+    console.log("_removeFlywheel: ", tx.hash);
+
+    tx = await asComptrollerExtension._removeFlywheel(brokenFlywheel2Address);
+    await tx.wait();
+    console.log("_removeFlywheel: ", tx.hash);
+  }
+});
