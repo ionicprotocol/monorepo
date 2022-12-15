@@ -1,6 +1,7 @@
 import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
+import { ComptrollerFirstExtension } from "../../lib/contracts/typechain";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
@@ -13,7 +14,6 @@ import { Ownable } from "../../lib/contracts/typechain/Ownable";
 import { OwnableUpgradeable } from "../../lib/contracts/typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "../../lib/contracts/typechain/SafeOwnableUpgradeable";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
-import {ComptrollerFirstExtension} from "../../lib/contracts/typechain";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)

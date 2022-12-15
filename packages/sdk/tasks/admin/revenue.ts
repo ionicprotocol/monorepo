@@ -1,9 +1,9 @@
+import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
 import { BigNumber, Contract } from "ethers";
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
 
 const LOG = process.env.LOG ? true : false;
 
@@ -16,7 +16,9 @@ async function setUpFeeCalculation(hre: HardhatRuntimeEnvironment) {
   return { pools, fpd, mpo };
 }
 
-async function createComptroller(pool: FusePoolDirectory.FusePoolStructOutput): Promise<ComptrollerWithExtension | null> {
+async function createComptroller(
+  pool: FusePoolDirectory.FusePoolStructOutput
+): Promise<ComptrollerWithExtension | null> {
   // @ts-ignore
   const midasSdkModule = await import("../../tests/utils/midasSdk");
   const sdk = await midasSdkModule.getOrCreateMidas();
