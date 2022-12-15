@@ -57,7 +57,7 @@ describe("FundOperation", () => {
 
     beforeEach(() => {
       mockTokenContract = createStubInstance(Contract);
-      mockTokenContract.approve = stub().resolves({ wait: maxApproveStub });
+      mockTokenContract.approve = maxApproveStub;
 
       Object.defineProperty(mockTokenContract, "callStatic", {
         value: {
@@ -197,7 +197,7 @@ describe("FundOperation", () => {
 
     beforeEach(() => {
       mockTokenContract = createStubInstance(Contract);
-      mockTokenContract.approve = stub().resolves({ wait: maxApproveStub });
+      mockTokenContract.approve = maxApproveStub;
 
       Object.defineProperty(mockTokenContract, "callStatic", {
         value: {
