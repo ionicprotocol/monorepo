@@ -24122,7 +24122,7 @@
       ]
     },
     "LooplessFlywheelBooster": {
-      "address": "0xA167819Eb3687Da26318554814DbFfeAFE0EBC08",
+      "address": "0x71a0754CAFE984d6b2db1AB629ec22AdE938bF2e",
       "abi": [
         {
           "inputs": [],
@@ -24994,34 +24994,8 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x44FE7D9bb9b2880BE71c2484F0070D8C35CacB41",
+      "address": "0xaFdB8Ced672d58b2789bc85A4d5c71ae17e894fc",
       "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "string",
-              "name": "",
-              "type": "string"
-            }
-          ],
-          "name": "log",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "log_uint",
-          "type": "event"
-        },
         {
           "inputs": [
             {
