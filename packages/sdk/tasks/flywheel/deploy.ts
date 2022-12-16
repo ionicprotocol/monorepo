@@ -8,7 +8,6 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
   .addParam("pool", "comptroller to which to add the flywheel", undefined, types.string)
   .setAction(async (taskArgs, { ethers, deployments, run }) => {
     const { signer, name, rewardToken, strategy, pool } = taskArgs;
-
     const deployer = await ethers.getNamedSigner(signer);
 
     const flywheelBooster = await ethers.getContract("LooplessFlywheelBooster", deployer);
@@ -42,8 +41,8 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
       waitConfirmations: 1,
     });
 
-    await run("flywheel:add-strategy-for-rewards", { flywheel, strategy });
-    await run("flywheel:add-to-pool", { flywheel, pool });
+    await run("flywheel:add-strategy-for-rewards", { flywheel: flywheel.address, strategy });
+    await run("flywheel:add-to-pool", { flywheel: flywheel.address, pool });
   });
 
 task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
