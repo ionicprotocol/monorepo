@@ -174,7 +174,7 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
-  // BeefyERC4626_2brl_0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F_Implementation.json
+  // BeefyERC4626_2brl_0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F.json
   "0xBCAc816440f7ef66Fea896b307352b86a83F94E8": {
     market: "0xfB760f395E945Fd7D4AA1B22334CB1e4E6F0D19F",
     name: "Beefy EPS 2brl  Vault",
@@ -184,6 +184,54 @@ const deployedPlugins: DeployedPlugins = {
       "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/transfero-stables-pool",
     underlying: underlying(assets, assetSymbols["2brl"]),
     otherParams: ["0xf867cD98F3762D899F5F26FF5Dd62A5C566A3E0C", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_ApeSwap%20BNBx-WBNB%20LP_0xA057E4f8Ff4a9102F3ee2FF614b9cBC0286F2287.json
+  "0xac99ced1a1310fB04618d4801888120ccDD7B87B": {
+    market: "0xA057E4f8Ff4a9102F3ee2FF614b9cBC0286F2287",
+    name: "Beefy BNBx-BNB LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/banana-bnbx-wbnb",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols["asBNBx-WBNB"]),
+    otherParams: ["0xC46DcDe0d91f674C04a61Bb30A52C6B45b95F317", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_epsBNBx-BNB_0xD96643Ba2Bf96e73509C4bb73c0cb259dAf34de1.json
+  "0xA331FaA3Bb84A70466c801E9b14523d8f15f328E": {
+    market: "0xD96643Ba2Bf96e73509C4bb73c0cb259dAf34de1",
+    name: "Beefy eps BNBx-BNB LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-bnb-bnbx-crypto",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    otherParams: ["0x56ec6031dC969CfA035F6D65e65D8595d5660fB4", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_valdai3EPS_0xBEE206C085f228674a2273F8A33ceaD9e34c3d48.json
+  "0x7B77E7713FB2950326B0dE483852da0e1d975d4C": {
+    market: "0xBEE206C085f228674a2273F8A33ceaD9e34c3d48",
+    name: "Beefy valdai 3EPS LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-valdai3eps",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols.valdai3EPS),
+    otherParams: ["0x047d08f4eFB9a0BC166447A12326d39A5167138f", "0"],
+    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
+  },
+  // BeefyERC4626_mai3EPS_0xcB710DD270fa9d57edFadD141BAF3efC0f776716.json
+  "0xDE1A82D80082e6b6E9cbe70002857716A09EA18b": {
+    market: "0xcB710DD270fa9d57edFadD141BAF3efC0f776716",
+    name: "Beefy mai3EPS LP Vault",
+    strategy: Strategy.Beefy,
+    apyDocsUrl: "https://app.beefy.finance/vault/ellipsis-mai",
+    strategyDocsUrl:
+      "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/binance-smart-chain-bsc/jarvis-jfiat-pool",
+    underlying: underlying(assets, assetSymbols.mai3EPS),
+    otherParams: ["0xc1beA7B6b749D1f3A812F39afeB8795a97402dfF", "0"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
 };

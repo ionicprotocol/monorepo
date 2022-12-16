@@ -40,7 +40,7 @@ async function getFusePoolUsers(
   maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: FusePoolUserStruct[] = [];
-  const comptrollerInstance: Comptroller = fuse.getComptrollerInstance(comptroller);
+  const comptrollerInstance = fuse.getComptrollerInstance(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   for (const user of users) {
     const assets = await fuse.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
@@ -63,10 +63,10 @@ async function getFusePoolUsers(
 }
 
 async function getPoolsWithShortfall(sdk: MidasBase, comptroller: string) {
-  const comptrollerInstance: Comptroller = sdk.getComptrollerInstance(comptroller);
+  const comptrollerInstance = sdk.getComptrollerInstance(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   const promises = users.map((user) => {
-    return comptrollerInstance.callStatic.getHypotheticalAccountLiquidity(user, constants.AddressZero, 0, 0);
+    return comptrollerInstance.callStatic.getAccountLiquidity(user);
   });
   const results = (await Promise.all(promises)).map((r, i) => {
     return { user: users[i], liquidity: r[1], shortfall: r[2] };

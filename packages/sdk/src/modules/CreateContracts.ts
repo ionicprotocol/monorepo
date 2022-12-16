@@ -57,10 +57,6 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       return new Contract(oracleAddress, this.chainDeployment[type].abi, signerOrProvider);
     }
 
-    createCToken(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      return new Contract(cTokenAddress, this.chainDeployment.CErc20Delegate.abi, signerOrProvider) as CErc20Delegate;
-    }
-
     createCTokenWithExtensions(address: string, signerOrProvider: SignerOrProvider = this.provider) {
       const cTokenABI: Array<Fragment> = this.chainDeployment.CErc20Delegate.abi;
       if (this.chainDeployment.CTokenFirstExtension) {

@@ -27,16 +27,7 @@ export const deployFlywheelWithDynamicRewards = async ({
           execute: {
             init: {
               methodName: "initialize",
-              args: [
-                config.rewardToken,
-                "0x0000000000000000000000000000000000000009", // need to initialize to address that does NOT have balance, otherwise this fails (i.e. AddressZero)
-                constants.AddressZero,
-                deployer,
-              ],
-            },
-            onUpgrade: {
-              methodName: "reinitialize",
-              args: [],
+              args: [config.rewardToken, constants.AddressZero, constants.AddressZero, deployer],
             },
           },
           proxyContract: "OpenZeppelinTransparentProxy",

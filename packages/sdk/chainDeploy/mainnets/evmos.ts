@@ -88,39 +88,39 @@ const fluxAssets: FluxAsset[] = [
 const adrastiaAssets: AdrastiaAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.gUSDT),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.gUSDC),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.axlWETH),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.ceWETH),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.gWETH),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.gDAI),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.axlWBTC),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.OSMO),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
     underlying: underlying(assets, assetSymbols.JUNO),
-    feed: "0x51d3d22965Bb2CB2749f896B82756eBaD7812b6d",
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
 ];
 
@@ -132,7 +132,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
     // Adrastia WEVMOS/USD price feed: https://docs.adrastia.io/deployments/evmos
-    nativeUsdOracleAddress: "0xd850F64Eda6a62d625209711510f43cD49Ef8798",
+    nativeUsdOracleAddress: "0xeA07Ede816EcD52F17aEEf82a50a608Ca5369145",
     quoteAddress: wevmos,
   });
 
