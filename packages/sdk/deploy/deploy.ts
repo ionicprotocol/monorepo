@@ -613,14 +613,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   // upgrade any of the markets if necessary
   await run("markets:all:upgrade");
 
+  const gasUsed = deployments.getGasUsed();
+
   const gasPrice = await ethers.provider.getGasPrice();
 
   console.log(`gas price ${gasPrice}`);
-  console.log(`gas used ${deployments.getGasUsed()}`);
+  console.log(`gas used ${gasUsed}`);
   console.log(`cg price ${cgPrice}`);
   console.log(
-    `total $ value gas used for deployments (scaled by 1e18) ${
-      gasPrice.mul(deployments.getGasUsed()).div(BigNumber.from(10).pow(18)).toNumber() * cgPrice
+    `total $ value gas used for deployments ${
+      (gasPrice.toNumber() * gasUsed * cgPrice) / 1e18
     }`
   );
 };
