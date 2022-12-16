@@ -15,12 +15,15 @@ import { useMemo } from 'react';
 
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
+import { useRewards } from '@ui/hooks/useRewards';
+import { useBorrowApyPerAsset, useTotalSupplyApyPerAsset } from '@ui/hooks/useTotalApy';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { sortTopUserBorrowedAssets, sortTopUserSuppliedAssets } from '@ui/utils/sorts';
 
-export const UserStats = ({ poolData }: { poolData: PoolData | null | undefined }) => {
+export const UserStats = ({ poolData }: { poolData: PoolData }) => {
   const [topSuppliedAssets, topBorrowedAssets] = useMemo(() => {
     if (poolData && poolData.assets.length > 0) {
       return [
@@ -31,6 +34,55 @@ export const UserStats = ({ poolData }: { poolData: PoolData | null | undefined 
       return [[], []];
     }
   }, [poolData]);
+
+  const { data: assetInfos } = useAssets(poolData.chainId);
+  const { data: allRewards } = useRewards({
+    poolId: poolData.id.toString(),
+    chainId: poolData.chainId,
+  });
+
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyApyPerAsset(
+    poolData.assets,
+    poolData.chainId,
+    allRewards,
+    assetInfos
+  );
+
+  const { data: borrowApyPerAsset } = useBorrowApyPerAsset(poolData.assets, poolData.chainId);
+
+  const totalSupplyApy = useMemo(() => {
+    if (totalSupplyApyPerAsset) {
+      if (poolData.totalSupplyBalanceNative === 0) return 0;
+
+      let _totalApy = 0;
+      poolData.assets.map((asset) => {
+        _totalApy +=
+          (totalSupplyApyPerAsset[asset.cToken] * asset.supplyBalanceNative) /
+          poolData.totalSupplyBalanceNative;
+      });
+
+      return _totalApy * 100;
+    }
+
+    return undefined;
+  }, [poolData.assets, poolData.totalSupplyBalanceNative, totalSupplyApyPerAsset]);
+
+  const totalBorrowApy = useMemo(() => {
+    if (borrowApyPerAsset) {
+      if (poolData.totalBorrowBalanceNative === 0) return 0;
+
+      let _totalApy = 0;
+      poolData.assets.map((asset) => {
+        _totalApy +=
+          (borrowApyPerAsset[asset.cToken] * asset.borrowBalanceNative) /
+          poolData.totalBorrowBalanceNative;
+      });
+
+      return _totalApy * 100;
+    }
+
+    return undefined;
+  }, [poolData.assets, poolData.totalBorrowBalanceNative, borrowApyPerAsset]);
 
   const { cPage } = useColors();
 
@@ -138,41 +190,19 @@ export const UserStats = ({ poolData }: { poolData: PoolData | null | undefined 
         )}
       </Popover>
 
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <Flex>
-            <UserStat label="Supply APY" value={'-'} />
-          </Flex>
-        </PopoverTrigger>
-        <PopoverContent p={2} width="fit-content">
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
-          <PopoverBody>
-            <VStack width={'100%'} alignItems="flex-start" spacing={0}></VStack>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
+      <Flex>
+        <UserStat
+          label="Supply APY"
+          value={totalSupplyApy ? totalSupplyApy?.toFixed(2) + '%' : '-'}
+        />
+      </Flex>
 
-      <Popover trigger="hover">
-        <PopoverTrigger>
-          <Flex>
-            <UserStat label="Borrow APY" value="-" />
-          </Flex>
-        </PopoverTrigger>
-        <PopoverContent p={2} width="fit-content">
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
-          <PopoverBody>
-            <VStack width={'100%'} alignItems="flex-start" spacing={0}></VStack>
-          </PopoverBody>
-        </PopoverContent>
-      </Popover>
+      <Flex>
+        <UserStat
+          label="Borrow APY"
+          value={totalBorrowApy ? totalBorrowApy?.toFixed(2) + '%' : '-'}
+        />
+      </Flex>
     </Grid>
   );
 };

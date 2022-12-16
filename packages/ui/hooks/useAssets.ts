@@ -5,7 +5,7 @@ import axios from 'axios';
 export interface UseAssetsData {
   [asset: string]: AssetReward[];
 }
-export function useAssets(chainId: number) {
+export function useAssets(chainId?: number) {
   return useQuery<UseAssetsData>(
     ['useAssetsAPI', chainId],
     async () => {

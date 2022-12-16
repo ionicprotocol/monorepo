@@ -80,12 +80,13 @@ import {
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
+import { useBorrowApyPerAsset, useTotalSupplyApyPerAsset } from '@ui/hooks/useTotalApy';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
@@ -129,6 +130,8 @@ export const MarketsList = ({
     assetsAddress: assets.map((asset) => asset.cToken),
   });
 
+  const { data: assetInfos } = useAssets(poolChainId);
+
   const [collateralCounts, protectedCounts, borrowableCounts, pausedCounts] = useMemo(() => {
     return [
       assets.filter((asset) => asset.membership).length,
@@ -138,28 +141,13 @@ export const MarketsList = ({
     ];
   }, [assets]);
 
-  const totalApy = useMemo(() => {
-    if (!sdk) return undefined;
-
-    const result: { [market: string]: number } = {};
-    for (const asset of assets) {
-      let marketTotalAPY =
-        sdk.ratePerBlockToAPY(
-          asset.supplyRatePerBlock,
-          getBlockTimePerMinuteByChainId(poolChainId)
-        ) / 100;
-
-      if (rewards[asset.cToken]) {
-        marketTotalAPY += rewards[asset.cToken].reduce(
-          (acc, cur) => (cur.apy ? acc + cur.apy : acc),
-          0
-        );
-      }
-      result[asset.cToken] = marketTotalAPY;
-    }
-
-    return result;
-  }, [rewards, assets, poolChainId, sdk]);
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyApyPerAsset(
+    assets,
+    poolChainId,
+    rewards,
+    assetInfos
+  );
+  const { data: borrowApyPerAsset } = useBorrowApyPerAsset(assets, poolChainId);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -205,22 +193,22 @@ export const MarketsList = ({
           rowA.original.market.underlyingSymbol
         );
       } else if (columnId === SUPPLY_APY) {
-        const rowASupplyAPY = totalApy ? totalApy[rowA.original.market.cToken] : 0;
-        const rowBSupplyAPY = totalApy ? totalApy[rowB.original.market.cToken] : 0;
+        const rowASupplyAPY = totalSupplyApyPerAsset
+          ? totalSupplyApyPerAsset[rowA.original.market.cToken]
+          : 0;
+        const rowBSupplyAPY = totalSupplyApyPerAsset
+          ? totalSupplyApyPerAsset[rowB.original.market.cToken]
+          : 0;
         return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
       } else if (columnId === BORROW_APY) {
-        const rowABorrowAPY = !rowA.original.market.isBorrowPaused
-          ? sdk.ratePerBlockToAPY(
-              rowA.original.market.borrowRatePerBlock,
-              getBlockTimePerMinuteByChainId(poolChainId)
-            )
-          : -1;
-        const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
-          ? sdk.ratePerBlockToAPY(
-              rowB.original.market.borrowRatePerBlock,
-              getBlockTimePerMinuteByChainId(poolChainId)
-            )
-          : -1;
+        const rowABorrowAPY =
+          !rowA.original.market.isBorrowPaused && borrowApyPerAsset
+            ? borrowApyPerAsset[rowA.original.market.cToken]
+            : -1;
+        const rowBBorrowAPY =
+          !rowB.original.market.isBorrowPaused && borrowApyPerAsset
+            ? borrowApyPerAsset[rowB.original.market.cToken]
+            : -1;
         return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
       } else if (columnId === SUPPLY_BALANCE) {
         return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
@@ -248,7 +236,7 @@ export const MarketsList = ({
         return 0;
       }
     },
-    [totalApy, poolChainId, sdk]
+    [totalSupplyApyPerAsset, borrowApyPerAsset, sdk]
   );
 
   const data: Market[] = useMemo(() => {
@@ -295,13 +283,13 @@ export const MarketsList = ({
 
         footer: (props) => props.column.id,
         sortingFn: assetSort,
-        enableSorting: !!totalApy,
+        enableSorting: !!totalSupplyApyPerAsset,
       },
       {
         accessorFn: (row) => row.borrowApy,
         id: BORROW_APY,
         cell: ({ getValue }) => (
-          <BorrowApy asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <BorrowApy asset={getValue<MarketData>()} borrowApyPerAsset={borrowApyPerAsset} />
         ),
         header: (context) => <TableHeaderCell context={context}>Borrow APY</TableHeaderCell>,
         footer: (props) => props.column.id,
@@ -380,7 +368,7 @@ export const MarketsList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress, totalApy]);
+  }, [rewards, comptrollerAddress, totalSupplyApyPerAsset, borrowApyPerAsset]);
 
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
