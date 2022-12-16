@@ -164,7 +164,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         if (rewards.length > 0) {
           flywheelWithRewards.push({
             flywheel: flywheel.address,
-            rewardToken: await flywheel.rewardToken(),
+            rewardToken: await flywheel.callStatic.rewardToken(),
             rewards,
           });
         }

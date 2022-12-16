@@ -7610,7 +7610,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x640746058e16b96d040EFd9447d914A6a325D847",
+      "address": "0x0f2e1779012936E5786578bC250Fe7335FB99E88",
       "abi": [
         {
           "inputs": [
@@ -8234,6 +8234,19 @@
         },
         {
           "inputs": [],
+          "name": "asComptrollerFirstExtension",
+          "outputs": [
+            {
+              "internalType": "contract ComptrollerFirstExtension",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "autoImplementation",
           "outputs": [
             {
@@ -8525,32 +8538,6 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "getAllBorrowers",
-          "outputs": [
-            {
-              "internalType": "address[]",
-              "name": "",
-              "type": "address[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getAllMarkets",
-          "outputs": [
-            {
-              "internalType": "contract CTokenInterface[]",
-              "name": "",
-              "type": "address[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
@@ -8644,32 +8631,6 @@
         },
         {
           "inputs": [],
-          "name": "getRewardsDistributors",
-          "outputs": [
-            {
-              "internalType": "address[]",
-              "name": "",
-              "type": "address[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getWhitelist",
-          "outputs": [
-            {
-              "internalType": "address[]",
-              "name": "",
-              "type": "address[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "isComptroller",
           "outputs": [
             {
@@ -8690,25 +8651,6 @@
             }
           ],
           "name": "isDeprecated",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "user",
-              "type": "address"
-            }
-          ],
-          "name": "isUserOfPool",
           "outputs": [
             {
               "internalType": "bool",
@@ -9236,7 +9178,7 @@
       ]
     },
     "ComptrollerFirstExtension": {
-      "address": "0x02D17D3eAE36909500E1A03894555fbFFE123bca",
+      "address": "0x328E9Ad564D7b0E86D808a5fC3c885bAac7ce952",
       "abi": [
         {
           "anonymous": false,
@@ -9397,6 +9339,29 @@
           "type": "event"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "cTokenBorrow",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "cTokenCollateral",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "blacklisted",
+              "type": "bool"
+            }
+          ],
+          "name": "_blacklistBorrowingAgainstCollateral",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "_borrowGuardianPaused",
           "outputs": [
@@ -9433,6 +9398,48 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "flywheelAddress",
+              "type": "address"
+            }
+          ],
+          "name": "_removeFlywheel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "cTokenBorrow",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "cTokenCollateral",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrowCap",
+              "type": "uint256"
+            }
+          ],
+          "name": "_setBorrowCapForAssetForCollateral",
+          "outputs": [],
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -9865,12 +9872,83 @@
         },
         {
           "inputs": [],
-          "name": "getFirstMarketSymbol",
+          "name": "getAccruingFlywheels",
           "outputs": [
             {
-              "internalType": "string",
+              "internalType": "address[]",
               "name": "",
-              "type": "string"
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllBorrowers",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAllMarkets",
+          "outputs": [
+            {
+              "internalType": "contract CTokenInterface[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getRewardsDistributors",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getWhitelist",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "",
+              "type": "address[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "isUserOfPool",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -19556,7 +19634,7 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x690d58687cD9eB984e34c8e6Afe46674dF68A689",
+      "address": "0xC466D8eE35000D71544812BEf3B12BB23584A819",
       "abi": [
         {
           "anonymous": false,
