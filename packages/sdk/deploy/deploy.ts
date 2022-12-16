@@ -363,14 +363,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("FusePoolLensSecondary already initialized");
   }
 
-  const fflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
+  const mflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
-  if (fflrReceipt.transactionHash) await ethers.provider.waitForTransaction(fflrReceipt.transactionHash);
-  console.log("MidasFlywheelLensRouter: ", fflrReceipt.address);
+  if (mflrReceipt.transactionHash) await ethers.provider.waitForTransaction(mflrReceipt.transactionHash);
+  console.log("MidasFlywheelLensRouter: ", mflrReceipt.address);
 
   const booster = await deployments.deploy("LooplessFlywheelBooster", {
     from: deployer,
