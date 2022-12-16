@@ -372,6 +372,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   if (fflrReceipt.transactionHash) await ethers.provider.waitForTransaction(fflrReceipt.transactionHash);
   console.log("MidasFlywheelLensRouter: ", fflrReceipt.address);
 
+  const booster = await deployments.deploy("LooplessFlywheelBooster", {
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1,
+  });
+  if (booster.transactionHash) await ethers.provider.waitForTransaction(booster.transactionHash);
+  console.log("LooplessFlywheelBooster: ", booster.address);
+
+  await tx.wait();
   const erc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
   const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
   const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", deployer);
@@ -620,11 +630,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   console.log(`gas price ${gasPrice}`);
   console.log(`gas used ${gasUsed}`);
   console.log(`cg price ${cgPrice}`);
-  console.log(
-    `total $ value gas used for deployments ${
-      (gasPrice.toNumber() * gasUsed * cgPrice) / 1e18
-    }`
-  );
+  console.log(`total $ value gas used for deployments ${(gasPrice.toNumber() * gasUsed * cgPrice) / 1e18}`);
 };
 
 func.tags = ["prod"];
