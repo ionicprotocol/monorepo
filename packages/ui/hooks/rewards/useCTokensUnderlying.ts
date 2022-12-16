@@ -13,7 +13,7 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
       if (cTokenAddresses && cTokenAddresses.length && currentSdk) {
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
-            const cTokenInstance = currentSdk.createCToken(cTokenAddress);
+            const cTokenInstance = currentSdk.createCTokenWithExtensions(cTokenAddress);
             _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
           })
         );

@@ -256,7 +256,21 @@ export const strategies: ERC4626Strategy[] = [
     contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
-
+  {
+    address: "0xDE1A82D80082e6b6E9cbe70002857716A09EA18b",
+    strategy: Strategy.Beefy,
+    name: "Beefy mai 3EPS LP Vault",
+    complexity: StrategyComplexity.LOW,
+    timeInMarket: StrategyTimeInMarket.BATTLE_TESTED,
+    riskIL: AssetRiskIL.NONE,
+    liquidity: AssetRiskLiquidity.HIGH,
+    mktCap: AssetRiskMktCap.LARGE,
+    supplyCentralised: AssetRiskSupply.DECENTRALIZED,
+    reputation: PlatformRiskReputation.ESTABLISHED,
+    audit: PlatformRiskAudit.AUDIT,
+    contractsVerified: PlatformRiskContractsVerified.CONTRACTS_VERIFIED,
+    adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
+  },
   // POLYGON
   {
     address: "0xB6a8f36746BcCC1025Ec54eb2c6DCEF8EeE8df2f",
