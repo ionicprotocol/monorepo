@@ -1,3 +1,4 @@
+import { LogLevel } from "@ethersproject/logger";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {
   ChainAddresses,
@@ -51,6 +52,8 @@ import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+
+utils.Logger.setLogLevel(LogLevel.OFF);
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
 type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
