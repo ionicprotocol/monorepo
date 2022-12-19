@@ -76,6 +76,8 @@ const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
     async () => {
       if (flywheelAddress && currentSdk) {
         return currentSdk.getFlywheelEnabledMarkets(flywheelAddress);
+      } else {
+        return null;
       }
     },
     {
