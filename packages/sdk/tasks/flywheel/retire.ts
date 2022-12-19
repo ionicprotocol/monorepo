@@ -1,6 +1,6 @@
 import { task, types } from "hardhat/config";
 
-import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 
 export default task("flyhwheel:nonaccruing", "Sets a flywheel as non-accruing in the comptroller")
   .addParam("signer", "Named account to use fo tx", "deployer", types.string)

@@ -2,9 +2,9 @@ import { arbitrum, bsc, chapel, fantom, ganache, moonbeam, neondevnet, polygon }
 import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
-import { CErc20PluginRewardsDelegate } from "../lib/contracts/typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
+import { CErc20PluginRewardsDelegate } from "../typechain/CErc20PluginRewardsDelegate";
+import { Comptroller } from "../typechain/Comptroller";
+import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,

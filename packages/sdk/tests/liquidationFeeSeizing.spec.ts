@@ -12,7 +12,7 @@ import {
   FuseSafeLiquidator,
   MasterPriceOracle,
   SimplePriceOracle,
-} from "../lib/contracts/typechain";
+} from "../typechain";
 import { MidasSdk } from "../src";
 
 import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";

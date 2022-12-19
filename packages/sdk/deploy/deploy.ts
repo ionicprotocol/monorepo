@@ -9,8 +9,8 @@ import {
   configureFuseSafeLiquidator,
   deployFuseSafeLiquidator,
 } from "../chainDeploy/helpers/liquidators/fuseSafeLiquidator";
-import { AddressesProvider } from "../lib/contracts/typechain/AddressesProvider";
-import { FuseFeeDistributor } from "../lib/contracts/typechain/FuseFeeDistributor";
+import { AddressesProvider } from "../typechain/AddressesProvider";
+import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
