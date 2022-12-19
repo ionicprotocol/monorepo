@@ -1,5 +1,5 @@
 import { MidasSdk } from "@midas-capital/sdk";
-import { Comptroller } from "@midas-capital/sdk/dist/cjs/lib/contracts/typechain/Comptroller";
+import { Comptroller } from "@midas-capital/sdk/dist/cjs/typechain/Comptroller";
 import { SupportedAsset } from "@midas-capital/types";
 import { constants } from "ethers";
 
