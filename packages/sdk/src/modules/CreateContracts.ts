@@ -1,10 +1,11 @@
+import { Contract, ContractInterface } from "ethers";
+import { Fragment } from "ethers/lib/utils";
+
+import { MidasBaseConstructor } from "..";
 import FlywheelStaticRewardsABI from "../../abis/FlywheelStaticRewards";
 import JumpRateModelABI from "../../abis/JumpRateModel";
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
 import UnitrollerABI from "../../abis/Unitroller";
-import { Contract, ContractInterface } from "ethers";
-import { Fragment } from "ethers/lib/utils";
-
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
@@ -16,7 +17,6 @@ import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { RewardsDistributorDelegate } from "../../typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../typechain/Unitroller";
-import { MidasBaseConstructor } from "..";
 import { SignerOrProvider } from "../MidasSdk";
 
 type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;

@@ -1,9 +1,9 @@
 import { expect } from "chai";
 import { deployments, ethers } from "hardhat";
 
-import { CErc20 } from "@typechain/CErc20";
-import { EIP20Interface } from "@typechain/EIP20Interface";
 import MidasSdk from "../../src/MidasSdk";
+import { CErc20 } from "../../typechain/CErc20";
+import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { setUpPriceOraclePrices, tradeNativeForAsset } from "../utils";
 import * as assetHelpers from "../utils/assets";
 import * as collateralHelpers from "../utils/collateral";

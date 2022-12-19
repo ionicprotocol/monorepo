@@ -3,7 +3,7 @@ import { BigNumber, Contract } from "ethers";
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 
 const LOG = process.env.LOG ? true : false;
 

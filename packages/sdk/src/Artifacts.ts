@@ -12,17 +12,13 @@ const AdjustableJumpRateModel_JARVIS_jEUR: Artifact = AdjustableJumpRateModel;
 
 import AnkrBNBInterestRateModel from "../artifacts/AnkrBNBInterestRateModel.json";
 import AnkrCertificateTokenPriceOracle from "../artifacts/AnkrCertificateTokenPriceOracle.json";
-
 import BalancerLpTokenPriceOracle from "../artifacts/BalancerLpTokenPriceOracle.json";
 import ChainlinkPriceOracleV2 from "../artifacts/ChainlinkPriceOracleV2.json";
-
 import CurveLpTokenPriceOracleNoRegistry from "../artifacts/CurveLpTokenPriceOracleNoRegistry.json";
 import DAIInterestRateModelV2 from "../artifacts/DAIInterestRateModelV2.json";
 import DiaPriceOracle from "../artifacts/DiaPriceOracle.json";
-
 import FixedNativePriceOracle from "../artifacts/FixedNativePriceOracle.json";
 import GelatoGUniPriceOracle from "../artifacts/GelatoGUniPriceOracle.json";
-
 import JumpRateModel from "../artifacts/JumpRateModel.json";
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModel;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModel;

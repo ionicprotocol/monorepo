@@ -1,7 +1,7 @@
 import { constants } from "ethers";
 
-import { AddressesProvider } from "@typechain/AddressesProvider";
-import { UniswapTwapPriceOracleV2Factory } from "@typechain/UniswapTwapPriceOracleV2Factory";
+import { AddressesProvider } from "../../../typechain/AddressesProvider";
+import { UniswapTwapPriceOracleV2Factory } from "../../../typechain/UniswapTwapPriceOracleV2Factory";
 import { UniswapDeployFnParams } from "../types";
 
 export const deployUniswapOracle = async ({

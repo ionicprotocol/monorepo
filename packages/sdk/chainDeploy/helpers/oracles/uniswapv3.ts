@@ -1,6 +1,6 @@
-import { AddressesProvider } from "../../typechain/AddressesProvider";
-import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
-import { UniswapV3PriceOracle } from "../../typechain/UniswapV3PriceOracle";
+import { AddressesProvider } from "../../../typechain/AddressesProvider";
+import { MasterPriceOracle } from "../../../typechain/MasterPriceOracle";
+import { UniswapV3PriceOracle } from "../../../typechain/UniswapV3PriceOracle";
 import { UniswaV3DeployFnParams } from "../types";
 
 export const deployUniswapV3Oracle = async ({

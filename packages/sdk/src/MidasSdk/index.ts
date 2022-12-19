@@ -1,8 +1,3 @@
-import CTokenInterfaceABI from "../../abis/CTokenInterface";
-import EIP20InterfaceABI from "../../abis/EIP20Interface";
-import MidasERC4626ABI from "../../abis/MidasERC4626";
-import UnitrollerABI from "../../abis/Unitroller";
-
 import { LogLevel } from "@ethersproject/logger";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {
@@ -21,6 +16,12 @@ import {
   SupportedChains,
 } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { BigNumber, Contract, Signer, utils } from "ethers";
+
+import CTokenInterfaceABI from "../../abis/CTokenInterface";
+import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import MidasERC4626ABI from "../../abis/MidasERC4626";
+import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
@@ -36,9 +37,7 @@ import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
 import { MidasERC4626 } from "../../typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { Unitroller } from "../../typechain/Unitroller";
-import { BigNumber, Contract, Signer, utils } from "ethers";
 import ARTIFACTS, { irmConfig, oracleConfig } from "../Artifacts";
-
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";

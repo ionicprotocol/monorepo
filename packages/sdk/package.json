@@ -17,10 +17,10 @@
   "scripts": {
     "prebuild": "rm -rf dist",
     "build": "yarn run build:forge; yarn run artifacts; yarn run typechain; yarn run abimate; yarn run build:sdk",
-    "postbuild":"du -sk dist/cjs; du -sk dist/esm",
+    "postbuild": "du -sk dist/cjs; du -sk dist/esm",
     "clean": "rm -rf dist; rm -rf ./typechain; rm -rf ./artifacts; rm -rf ./abis",
     "artifacts": "echo '> Gathering artifacts...'; ./scripts/move-artifacts.sh",
-    "typechain": "echo '> Creating typechain types...'; [ ! -d ./typechain ] && typechain --target ethers-v5 --out-dir './typechain' './artifacts/*.json' --show-stack-traces" ,
+    "typechain": "echo '> Creating typechain types...'; [ ! -d ./typechain ] && typechain --target ethers-v5 --out-dir './typechain' './artifacts/*.json' --show-stack-traces",
     "abimate": "echo '> Extracting ABIs from artifacts...'; abimate ./abis ./artifacts/*.json",
     "build:forge": "echo '> Building contracts...'; cd lib/contracts && forge install && forge build",
     "build:sdk": "echo '> Compiling SDK...'; tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",

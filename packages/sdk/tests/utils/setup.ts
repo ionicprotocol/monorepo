@@ -3,12 +3,12 @@ import { expect } from "chai";
 import { constants, providers, Wallet } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
 
-import { EIP20Interface } from "@typechain/EIP20Interface";
-import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
-import { FuseSafeLiquidator } from "@typechain/FuseSafeLiquidator";
-import { MasterPriceOracle } from "@typechain/MasterPriceOracle";
-import { SimplePriceOracle } from "@typechain/SimplePriceOracle";
 import { MidasSdk } from "../../src";
+import { EIP20Interface } from "../../typechain/EIP20Interface";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
 import { getAssetsConf } from "./assets";
 import { getOrCreateMidas } from "./midasSdk";
