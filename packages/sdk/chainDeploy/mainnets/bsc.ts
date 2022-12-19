@@ -2,7 +2,7 @@ import { bsc } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
-import { AddressesProvider } from "@typechain/AddressesProvider";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,

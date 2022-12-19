@@ -1,11 +1,11 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "@typechain/Comptroller";
-import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
-import { CTokenFirstExtension } from "@typechain/CTokenFirstExtension";
-import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
+import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 
 task("market:updatewhitelist", "Updates the markets' implementations whitelist")
   .addOptionalParam(

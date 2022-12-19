@@ -2,7 +2,7 @@ import { ganache } from "@midas-capital/chains";
 import { BigNumber, constants, Contract, ContractReceipt, providers, Signer, utils } from "ethers";
 import { createStubInstance, restore, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import { Comptroller, FusePoolDirectory, Unitroller } from "@typechain";
+import { Comptroller, FusePoolDirectory, Unitroller } from "../../typechain";
 import { ARTIFACTS } from "../../src/Artifacts";
 import { MidasBase } from "../../src/MidasSdk/index";
 import JumpRateModel from "../../src/MidasSdk/irm/JumpRateModel";

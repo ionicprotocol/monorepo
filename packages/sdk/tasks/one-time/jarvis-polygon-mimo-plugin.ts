@@ -2,8 +2,8 @@ import { polygon } from "@midas-capital/chains";
 import { assetSymbols } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "@typechain/Comptroller";
-import { Unitroller } from "@typechain/Unitroller";
+import { Comptroller } from "../../typechain/Comptroller";
+import { Unitroller } from "../../typechain/Unitroller";
 
 const COMPTROLLER = "0xF1ABd146B4620D2AE67F34EA39532367F73bbbd2";
 const mimoFlywheelAddress = "0x6c44d119536CE433dC8bed943B7A1BC7EFCD56F4";
