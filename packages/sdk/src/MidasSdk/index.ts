@@ -1,9 +1,9 @@
 import CTokenInterfaceABI from "@abis/CTokenInterface";
-import ComptrollerABI from "@abis/Comptroller";
 import EIP20InterfaceABI from "@abis/EIP20Interface";
-import UnitrollerABI from "@abis/Unitroller";
 import MidasERC4626ABI from "@abis/MidasERC4626";
+import UnitrollerABI from "@abis/Unitroller";
 
+import { LogLevel } from "@ethersproject/logger";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import {
   ChainAddresses,
@@ -25,6 +25,8 @@ import { CErc20Delegate } from "@typechain/CErc20Delegate";
 import { CErc20PluginDelegate } from "@typechain/CErc20PluginDelegate";
 import { CErc20PluginRewardsDelegate } from "@typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "@typechain/Comptroller";
+import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "@typechain/CTokenFirstExtension";
 import { EIP20Interface } from "@typechain/EIP20Interface";
 import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
@@ -35,7 +37,9 @@ import { MidasERC4626 } from "@typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "@typechain/MidasFlywheelLensRouter";
 import { Unitroller } from "@typechain/Unitroller";
 import { BigNumber, Contract, Signer, utils } from "ethers";
-import ARTIFACTS, { Artifacts, irmConfig, oracleConfig } from "../Artifacts";
+import { Fragment } from "ethers/lib/utils";
+import ARTIFACTS, { irmConfig, oracleConfig } from "../Artifacts";
+
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -53,6 +57,11 @@ import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
+
+utils.Logger.setLogLevel(LogLevel.OFF);
+
+type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
+type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
 
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
@@ -356,15 +365,23 @@ export class MidasBase {
   };
 
   getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(address, ComptrollerABI, signerOrProvider) as Comptroller;
+    const comptrollerABI: Array<Fragment> = this.chainDeployment.Comptroller.abi;
+
+    if (this.chainDeployment.ComptrollerFirstExtension) {
+      comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
+    }
+
+    return new Contract(address, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
   }
 
   getCTokenInstance(address: string, signerOrProvider = this.provider) {
-    return new Contract(
-      address,
-      this.chainDeployment[DelegateContractName.CErc20Delegate].abi,
-      signerOrProvider
-    ) as CErc20Delegate;
+    const ctokenABI: Array<Fragment> = this.chainDeployment[DelegateContractName.CErc20Delegate].abi;
+
+    if (this.chainDeployment.CTokenFirstExtension) {
+      ctokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
+    }
+
+    return new Contract(address, ctokenABI, signerOrProvider) as CTokenWithExtensions;
   }
 
   getCErc20PluginRewardsInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {

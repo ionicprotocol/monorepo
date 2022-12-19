@@ -1,8 +1,8 @@
+import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
 import { BigNumber, Contract } from "ethers";
 import { task } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-import { Comptroller } from "@typechain/Comptroller";
 import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
 
 const LOG = process.env.LOG ? true : false;
@@ -16,7 +16,9 @@ async function setUpFeeCalculation(hre: HardhatRuntimeEnvironment) {
   return { pools, fpd, mpo };
 }
 
-async function createComptroller(pool: FusePoolDirectory.FusePoolStructOutput): Promise<Comptroller | null> {
+async function createComptroller(
+  pool: FusePoolDirectory.FusePoolStructOutput
+): Promise<ComptrollerWithExtension | null> {
   // @ts-ignore
   const midasSdkModule = await import("../../tests/utils/midasSdk");
   const sdk = await midasSdkModule.getOrCreateMidas();
@@ -50,7 +52,7 @@ export default task("revenue:admin:calculate", "Calculate the fees accrued from 
       let poolFuseFeesTotal = BigNumber.from(0);
 
       for (const market of markets) {
-        const cToken = sdk.createCToken(market, deployer);
+        const cToken = sdk.createCTokenWithExtensions(market, deployer);
         const underlying = await cToken.callStatic.underlying();
         const underlyingPrice = await mpo.callStatic.getUnderlyingPrice(market);
 

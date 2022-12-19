@@ -4,15 +4,16 @@ import { task, types } from "hardhat/config";
 import { AddressesProvider } from "@typechain/AddressesProvider";
 import { CErc20PluginDelegate } from "@typechain/CErc20PluginDelegate";
 import { Comptroller } from "@typechain/Comptroller";
+import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
 import { DiaPriceOracle } from "@typechain/DiaPriceOracle";
 import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
 import { MasterPriceOracle } from "@typechain/MasterPriceOracle";
 import { MidasERC4626 } from "@typechain/MidasERC4626";
+import { MidasFlywheelCore } from "@typechain/MidasFlywheelCore";
 import { Ownable } from "@typechain/Ownable";
 import { OwnableUpgradeable } from "@typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "@typechain/SafeOwnableUpgradeable";
 import { Unitroller } from "@typechain/Unitroller";
-import { MidasFlywheelCore } from "@typechain/MidasFlywheelCore";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
@@ -168,12 +169,12 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           console.error(`unknown pool admin ${admin}`);
         }
 
-        const comptroller = (await ethers.getContractAt(
-          "Comptroller.sol:Comptroller",
+        const comptrollerAsExtension = (await ethers.getContractAt(
+          "ComptrollerFirstExtension",
           pool.comptroller,
           deployer
-        )) as Comptroller;
-        const flywheels = await comptroller.callStatic.getRewardsDistributors();
+        )) as ComptrollerFirstExtension;
+        const flywheels = await comptrollerAsExtension.callStatic.getRewardsDistributors();
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
           {
@@ -196,7 +197,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           }
         }
 
-        const markets = await comptroller.callStatic.getAllMarkets();
+        const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
         for (let j = 0; j < markets.length; j++) {
           const market = markets[j];
           console.log(`market ${market}`);
