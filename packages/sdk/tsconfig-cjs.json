@@ -6,11 +6,6 @@
   "compilerOptions": {
     "module": "CommonJS",
     "outDir": "./dist/cjs",
-    "skipLibCheck": true,
-    "paths": {
-      "@abis/*": ["./abis/*"],
-      "@artifacts/*": ["./artifacts/*"],
-      "@typechain/*": ["./typechain/*"],
-    }
+    "skipLibCheck": true
   }
 }

@@ -2,7 +2,7 @@ import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { FundOperationMode, MarketConfig, NativePricedFuseAsset } from "@midas-capital/types";
 import { BigNumber, constants, ethers, utils } from "ethers";
 
-import CErc20DelegatorArtifact from "@artifacts/CErc20Delegator.json";
+import CErc20DelegatorArtifact from "../../artifacts/CErc20Delegator.json";
 import { COMPTROLLER_ERROR_CODES } from "../MidasSdk/config";
 import { withCreateContracts } from "./CreateContracts";
 import { withFlywheel } from "./Flywheel";

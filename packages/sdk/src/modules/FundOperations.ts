@@ -1,8 +1,8 @@
-import CErc20DelegateABI from "@abis/CErc20Delegate";
-import ComptrollerABI from "@abis/Comptroller";
-import EIP20InterfaceABI from "@abis/EIP20Interface";
-import { CErc20Delegate } from "@typechain/CErc20Delegate";
-import { Comptroller } from "@typechain/Comptroller";
+import CErc20DelegateABI from "../../abis/CErc20Delegate";
+import ComptrollerABI from "../../abis/Comptroller";
+import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { Comptroller } from "../../typechain/Comptroller";
 import axios from "axios";
 import { BigNumber, constants, ContractTransaction, utils } from "ethers";
 import { MidasBaseConstructor } from "..";

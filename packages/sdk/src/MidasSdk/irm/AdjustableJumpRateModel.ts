@@ -1,6 +1,6 @@
 import { utils } from "ethers";
 
-import AdjustableJumpRateModelArtifact from "@artifacts/AdjustableJumpRateModel.json";
+import AdjustableJumpRateModelArtifact from "../../../artifacts/AdjustableJumpRateModel.json";
 
 import JumpRateModel from "./JumpRateModel";
 

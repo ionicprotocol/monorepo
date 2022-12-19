@@ -1,7 +1,7 @@
-import CTokenInterfaceABI from "@abis/CTokenInterface";
-import EIP20InterfaceABI from "@abis/EIP20Interface";
-import MidasERC4626ABI from "@abis/MidasERC4626";
-import UnitrollerABI from "@abis/Unitroller";
+import CTokenInterfaceABI from "../../abis/CTokenInterface";
+import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import MidasERC4626ABI from "../../abis/MidasERC4626";
+import UnitrollerABI from "../../abis/Unitroller";
 
 import { LogLevel } from "@ethersproject/logger";
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
@@ -21,23 +21,22 @@ import {
   SupportedChains,
 } from "@midas-capital/types";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { CErc20Delegate } from "@typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "@typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "@typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "@typechain/Comptroller";
-import { ComptrollerFirstExtension } from "@typechain/ComptrollerFirstExtension";
-import { CTokenFirstExtension } from "@typechain/CTokenFirstExtension";
-import { EIP20Interface } from "@typechain/EIP20Interface";
-import { FuseFeeDistributor } from "@typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "@typechain/FusePoolDirectory";
-import { FusePoolLens } from "@typechain/FusePoolLens";
-import { FusePoolLensSecondary } from "@typechain/FusePoolLensSecondary";
-import { FuseSafeLiquidator } from "@typechain/FuseSafeLiquidator";
-import { MidasERC4626 } from "@typechain/MidasERC4626";
-import { MidasFlywheelLensRouter } from "@typechain/MidasFlywheelLensRouter";
-import { Unitroller } from "@typechain/Unitroller";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
+import { EIP20Interface } from "../../typechain/EIP20Interface";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { FusePoolLens } from "../../typechain/FusePoolLens";
+import { FusePoolLensSecondary } from "../../typechain/FusePoolLensSecondary";
+import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
+import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
+import { Unitroller } from "../../typechain/Unitroller";
 import { BigNumber, Contract, Signer, utils } from "ethers";
-import { Fragment } from "ethers/lib/utils";
 import ARTIFACTS, { irmConfig, oracleConfig } from "../Artifacts";
 
 import { withAsset } from "../modules/Asset";
@@ -365,7 +364,7 @@ export class MidasBase {
   };
 
   getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    const comptrollerABI: Array<Fragment> = this.chainDeployment.Comptroller.abi;
+    const comptrollerABI: Array<object> = this.chainDeployment.Comptroller.abi;
 
     if (this.chainDeployment.ComptrollerFirstExtension) {
       comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
@@ -375,7 +374,7 @@ export class MidasBase {
   }
 
   getCTokenInstance(address: string, signerOrProvider = this.provider) {
-    const ctokenABI: Array<Fragment> = this.chainDeployment[DelegateContractName.CErc20Delegate].abi;
+    const ctokenABI: Array<object> = this.chainDeployment[DelegateContractName.CErc20Delegate].abi;
 
     if (this.chainDeployment.CTokenFirstExtension) {
       ctokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);

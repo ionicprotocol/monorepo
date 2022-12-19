@@ -1,14 +1,13 @@
 import { BigNumber, constants, Contract, ContractFactory } from "ethers";
 
-import ComptrollerABI from "@abis/Comptroller";
-import MidasFlywheelABI from "@abis/MidasFlywheel";
-import { FlywheelStaticRewards__factory } from "@typechain/factories/FlywheelStaticRewards__factory";
-import { MidasFlywheel__factory } from "@typechain/factories/MidasFlywheel__factory";
-import { FlywheelStaticRewards } from "@typechain/FlywheelStaticRewards";
-import { MidasFlywheel } from "@typechain/MidasFlywheel";
-import { MidasFlywheelLensRouter } from "@typechain/MidasFlywheelLensRouter";
-import FlywheelStaticRewardsArtifact from "@artifacts/FlywheelStaticRewards.json";
-import MidasFlywheelArtifact from "@artifacts/MidasFlywheel.json";
+import MidasFlywheelABI from "../../abis/MidasFlywheel";
+import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.json";
+import MidasFlywheelArtifact from "../../artifacts/MidasFlywheel.json";
+import { FlywheelStaticRewards__factory } from "../../typechain/factories/FlywheelStaticRewards__factory";
+import { MidasFlywheel__factory } from "../../typechain/factories/MidasFlywheel__factory";
+import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { withCreateContracts } from "./CreateContracts";
 
 export interface FlywheelClaimableRewards {

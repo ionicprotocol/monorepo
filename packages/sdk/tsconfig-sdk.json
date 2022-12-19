@@ -12,12 +12,7 @@
     "outDir": "./dist/esm",
     "declaration": true,
     "skipLibCheck": true,
-    "useUnknownInCatchVariables": false,
-    "paths": {
-      "@abis/*": ["./abis/*"],
-      "@artifacts/*": ["./artifacts/*"],
-      "@typechain/*": ["./typechain/*"],
-    }
+    "useUnknownInCatchVariables": false
   },
   "include": ["./src"],
   "exclude": ["./typechain"]

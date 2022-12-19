@@ -1,6 +1,6 @@
 import { Artifact, ChainDeployment } from "@midas-capital/types";
 
-import AdjustableJumpRateModel from "@artifacts/AdjustableJumpRateModel.json";
+import AdjustableJumpRateModel from "../artifacts/AdjustableJumpRateModel.json";
 const AdjustableJumpRateModel_PSTAKE_WBNB: Artifact = AdjustableJumpRateModel;
 const AdjustableJumpRateModel_MIXBYTES_XCDOT: Artifact = AdjustableJumpRateModel;
 const AdjustableJumpRateModel_TRANSFERO_BRZ: Artifact = AdjustableJumpRateModel;
@@ -10,30 +10,30 @@ const AdjustableJumpRateModel_MIXBYTES_USDC: Artifact = AdjustableJumpRateModel;
 const AdjustableJumpRateModel_JARVIS_jBRL: Artifact = AdjustableJumpRateModel;
 const AdjustableJumpRateModel_JARVIS_jEUR: Artifact = AdjustableJumpRateModel;
 
-import AnkrBNBInterestRateModel from "@artifacts/AnkrBNBInterestRateModel.json";
-import AnkrCertificateTokenPriceOracle from "@artifacts/AnkrCertificateTokenPriceOracle.json";
+import AnkrBNBInterestRateModel from "../artifacts/AnkrBNBInterestRateModel.json";
+import AnkrCertificateTokenPriceOracle from "../artifacts/AnkrCertificateTokenPriceOracle.json";
 
-import BalancerLpTokenPriceOracle from "@artifacts/BalancerLpTokenPriceOracle.json";
-import ChainlinkPriceOracleV2 from "@artifacts/ChainlinkPriceOracleV2.json";
+import BalancerLpTokenPriceOracle from "../artifacts/BalancerLpTokenPriceOracle.json";
+import ChainlinkPriceOracleV2 from "../artifacts/ChainlinkPriceOracleV2.json";
 
-import CurveLpTokenPriceOracleNoRegistry from "@artifacts/CurveLpTokenPriceOracleNoRegistry.json";
-import DAIInterestRateModelV2 from "@artifacts/DAIInterestRateModelV2.json";
-import DiaPriceOracle from "@artifacts/DiaPriceOracle.json";
+import CurveLpTokenPriceOracleNoRegistry from "../artifacts/CurveLpTokenPriceOracleNoRegistry.json";
+import DAIInterestRateModelV2 from "../artifacts/DAIInterestRateModelV2.json";
+import DiaPriceOracle from "../artifacts/DiaPriceOracle.json";
 
-import FixedNativePriceOracle from "@artifacts/FixedNativePriceOracle.json";
-import GelatoGUniPriceOracle from "@artifacts/GelatoGUniPriceOracle.json";
+import FixedNativePriceOracle from "../artifacts/FixedNativePriceOracle.json";
+import GelatoGUniPriceOracle from "../artifacts/GelatoGUniPriceOracle.json";
 
-import JumpRateModel from "@artifacts/JumpRateModel.json";
+import JumpRateModel from "../artifacts/JumpRateModel.json";
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModel;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModel;
 
-import MasterPriceOracle from "@artifacts/MasterPriceOracle.json";
-import SimplePriceOracle from "@artifacts/SimplePriceOracle.json";
-import StkBNBPriceOracle from "@artifacts/StkBNBPriceOracle.json";
-import UniswapLpTokenPriceOracle from "@artifacts/UniswapLpTokenPriceOracle.json";
-import UniswapTwapPriceOracleV2 from "@artifacts/UniswapTwapPriceOracleV2.json";
-import UniswapTwapPriceOracleV2Root from "@artifacts/UniswapTwapPriceOracleV2Root.json";
-import WhitePaperInterestRateModel from "@artifacts/WhitePaperInterestRateModel.json";
+import MasterPriceOracle from "../artifacts/MasterPriceOracle.json";
+import SimplePriceOracle from "../artifacts/SimplePriceOracle.json";
+import StkBNBPriceOracle from "../artifacts/StkBNBPriceOracle.json";
+import UniswapLpTokenPriceOracle from "../artifacts/UniswapLpTokenPriceOracle.json";
+import UniswapTwapPriceOracleV2 from "../artifacts/UniswapTwapPriceOracleV2.json";
+import UniswapTwapPriceOracleV2Root from "../artifacts/UniswapTwapPriceOracleV2Root.json";
+import WhitePaperInterestRateModel from "../artifacts/WhitePaperInterestRateModel.json";
 
 const ARTIFACTS = {
   AdjustableJumpRateModel_JARVIS_jBRL,

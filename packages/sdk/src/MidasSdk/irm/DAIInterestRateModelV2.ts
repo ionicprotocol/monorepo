@@ -1,8 +1,8 @@
 import { Web3Provider } from "@ethersproject/providers";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import CTokenInterfacesArtifact from "@artifacts/CTokenInterface.json";
-import DAIInterestRateModelV2Artifact from "@artifacts/DAIInterestRateModelV2.json";
+import CTokenInterfacesArtifact from "../../../artifacts/CTokenInterface.json";
+import DAIInterestRateModelV2Artifact from "../../../artifacts/DAIInterestRateModelV2.json";
 import { getContract } from "../utils";
 
 import JumpRateModel from "./JumpRateModel";

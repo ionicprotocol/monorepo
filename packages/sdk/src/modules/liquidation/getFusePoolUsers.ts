@@ -1,7 +1,6 @@
 import { BigNumber, constants, ethers } from "ethers";
 
-import { Comptroller } from "@typechain/Comptroller";
-import { FusePoolLens as FusePoolLensType } from "@typechain/FusePoolLens";
+import { FusePoolLens as FusePoolLensType } from "../../../typechain/FusePoolLens";
 import { MidasBase } from "../../MidasSdk";
 
 import { ErroredPool, FusePoolUserStruct, PublicPoolUserWithData } from "./utils";
