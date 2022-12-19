@@ -38,6 +38,8 @@ export function useAssetChartData(
         );
 
         return convertIRMtoCurve(sdk, interestRateModel, sdk.chainId);
+      } else {
+        return null;
       }
     },
     {

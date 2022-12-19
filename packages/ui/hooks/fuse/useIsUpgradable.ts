@@ -13,6 +13,8 @@ export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number
         const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 
         return isUpgradeable;
+      } else {
+        return null;
       }
     },
     { cacheTime: Infinity, staleTime: Infinity, enabled: !!comptrollerAddress && !!sdk }
