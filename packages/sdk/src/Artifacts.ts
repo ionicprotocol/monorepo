@@ -1,4 +1,4 @@
-import { Artifact, ChainDeployment } from "@midas-capital/types";
+import { Artifact, ChainDeployment, IrmTypes, OracleTypes } from "@midas-capital/types";
 
 import AdjustableJumpRateModel from "../artifacts/AdjustableJumpRateModel.json";
 const AdjustableJumpRateModel_PSTAKE_WBNB: Artifact = AdjustableJumpRateModel;
@@ -35,7 +35,7 @@ import UniswapTwapPriceOracleV2 from "../artifacts/UniswapTwapPriceOracleV2.json
 import UniswapTwapPriceOracleV2Root from "../artifacts/UniswapTwapPriceOracleV2Root.json";
 import WhitePaperInterestRateModel from "../artifacts/WhitePaperInterestRateModel.json";
 
-const ARTIFACTS = {
+const ARTIFACTS: Record<IrmTypes | OracleTypes | string, Artifact> = {
   AdjustableJumpRateModel_JARVIS_jBRL,
   AdjustableJumpRateModel_JARVIS_jEUR,
   AdjustableJumpRateModel_MIXBYTES_USDC,
@@ -68,12 +68,20 @@ const ARTIFACTS = {
 export type Artifacts = typeof ARTIFACTS;
 export default ARTIFACTS;
 
-export const oracleConfig = (deployments: ChainDeployment, artifacts: Artifacts, availableOracles: Array<string>) => {
+export const oracleConfig = (
+  deployments: ChainDeployment,
+  artifacts: Artifacts,
+  availableOracles: Array<keyof Artifacts>
+) => {
   const asMap = new Map(availableOracles.map((o) => [o, { abi: artifacts[o].abi, address: deployments[o].address }]));
   return Object.fromEntries(asMap);
 };
 
-export const irmConfig = (deployments: ChainDeployment, artifacts: Artifacts, availableIrms: Array<string>) => {
+export const irmConfig = (
+  deployments: ChainDeployment,
+  artifacts: Artifacts,
+  availableIrms: Array<keyof Artifacts>
+) => {
   const asMap = new Map(availableIrms.map((o) => [o, { abi: artifacts[o].abi, address: deployments[o].address }]));
   return Object.fromEntries(asMap);
 };

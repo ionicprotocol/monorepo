@@ -16,8 +16,8 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FlywheelStaticRewards } from '@midas-capital/sdk/typechain/FlywheelStaticRewards';
-import { MidasFlywheel } from '@midas-capital/sdk/typechain/MidasFlywheel';
+import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
+import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/typechain/MidasFlywheel';
 import { useMemo, useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
