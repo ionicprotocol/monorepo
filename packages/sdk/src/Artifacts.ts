@@ -30,7 +30,7 @@ const AdjustableJumpRateModel_JARVIS_jEUR: Artifact = AdjustableJumpRateModel;
 const JumpRateModel_MIMO_002_004_4_08: Artifact = JumpRateModel;
 const JumpRateModel_JARVIS_002_004_4_08: Artifact = JumpRateModel;
 
-const ARTIFACTS: Record<IrmTypes | OracleTypes | string, Artifact> = {
+export const ARTIFACTS: Record<IrmTypes | OracleTypes | string, Artifact> = {
   AdjustableJumpRateModel_JARVIS_jBRL,
   AdjustableJumpRateModel_JARVIS_jEUR,
   AdjustableJumpRateModel_MIXBYTES_USDC,
