@@ -114,9 +114,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       console.log(`approved the MSL to pull ${additionalCollateralRequired} of the stable collateral`);
     }
 
-    const redemptionStrategies = [
-      redemptionStrategy.address
-    ];
+    const redemptionStrategies = [redemptionStrategy.address];
 
     const collateralAsset = await collateralCToken.callStatic.underlying();
     const redemptionStrategiesData = [
@@ -134,13 +132,12 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       deployer
     )) as IUniswapV2Factory;
 
-
     const flashSwapPair = await factory.callStatic.getPair(
       stableCollateralAssetAddress,
       usdc
     );
 
-    await midasSafeLiquidator.liquidateAndTakeDebtPosition({
+    let tx = await midasSafeLiquidator.liquidateAndTakeDebtPosition({
       borrower: "0xA4F4406D3dc6482dB1397d0ad260fd223C8F37FC",
       collateralFundingStrategies: [],
       collateralFundingStrategiesData: [],
@@ -158,5 +155,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       uniswapV2RouterForBorrow: chainDeployParams.uniswap.uniswapV2RouterAddress,
       uniswapV2RouterForCollateral: chainDeployParams.uniswap.uniswapV2RouterAddress
     });
+    await tx.wait();
+    console.log(`liquidated with tx  ${tx.hash}`);
   });
 
