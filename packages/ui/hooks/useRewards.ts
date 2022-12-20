@@ -90,6 +90,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
           console.error(exception);
         }
       }
+
       return {};
     },
     {

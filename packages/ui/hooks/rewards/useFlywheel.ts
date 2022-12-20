@@ -9,7 +9,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
   return useQuery(
     ['useFlywheel', currentSdk?.chainId, flywheelAddress],
     async () => {
-      if (!flywheelAddress || !currentSdk) return undefined;
+      if (!flywheelAddress || !currentSdk) return null;
 
       const flywheel = currentSdk.createMidasFlywheel(flywheelAddress);
 
