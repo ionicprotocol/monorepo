@@ -51,6 +51,7 @@ export const ARTIFACTS: Record<IrmTypes | OracleTypes | string, Artifact> = {
   GelatoGUniPriceOracle,
   JumpRateModel_JARVIS_002_004_4_08,
   JumpRateModel_MIMO_002_004_4_08,
+  JumpRateModel,
   MasterPriceOracle,
   SimplePriceOracle,
   StkBNBPriceOracle,
