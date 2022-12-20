@@ -1,16 +1,16 @@
 {
   "exclude": ["liquidator"],
-  "include": ["./src",  "./test"],
+  "include": ["./src",  "./test", "index.ts"],
   "compilerOptions": {
     "allowJs": true,
     "resolveJsonModule": true,
     "rootDirs": ["./src", "./test"],
-    "target": "es5",
-    // "module": "commonjs",
-    // "lib": [
-    //   "es2015",
-    //   "dom"
-    // ],
+    "target": "ES2015",
+    "module": "commonjs",
+    "lib": [
+      "es2017",
+      "dom"
+    ],
     "composite": true,
     /* Generates corresponding '.map' file. */ // "outFile": "./",                       /* Concatenate and emit output to single file. */
     "outDir": "./build",

@@ -52,19 +52,13 @@ export default async function getPotentialLiquidation(
   )
     return null;
 
-  let outputPrice: BigNumber;
-  let outputDecimals: BigNumber;
   let exchangeToTokenAddress: string;
 
   // Check SUPPORTED_OUTPUT_CURRENCIES: replace EXCHANGE_TO_TOKEN_ADDRESS with underlying collateral if underlying collateral is in SUPPORTED_OUTPUT_CURRENCIES
   if (chainLiquidationConfig.SUPPORTED_OUTPUT_CURRENCIES.indexOf(borrower.collateral[0].underlyingToken) >= 0) {
     exchangeToTokenAddress = borrower.collateral[0].underlyingToken;
-    outputPrice = borrower.collateral[0].underlyingPrice;
-    outputDecimals = borrower.collateral[0].underlyingDecimals;
   } else {
     exchangeToTokenAddress = sdk.chainSpecificAddresses.W_TOKEN;
-    outputPrice = utils.parseEther("1");
-    outputDecimals = BigNumber.from(18);
   }
 
   const debtAsset = borrower.debt[0];

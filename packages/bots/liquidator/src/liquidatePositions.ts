@@ -24,7 +24,6 @@ async function runLiquidator(liquidator: Liquidator) {
 export default async function liquidatePositions(chainId: number, provider: JsonRpcProvider) {
   const midasSdk = setUpSdk(chainId, provider);
   const liquidator = new Liquidator(midasSdk);
-
   midasSdk.logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
   setInterval(runLiquidator, midasSdk.chainLiquidationConfig.LIQUIDATION_INTERVAL_SECONDS * 1000, liquidator);
 }

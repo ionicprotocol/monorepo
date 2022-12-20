@@ -1,4 +1,4 @@
-import { BigNumber, constants, ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
 import { FusePoolLens as FusePoolLensType } from "../../../typechain/FusePoolLens";
 import { MidasBase } from "../../MidasSdk";
