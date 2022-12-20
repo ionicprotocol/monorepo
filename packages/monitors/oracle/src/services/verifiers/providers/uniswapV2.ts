@@ -1,5 +1,5 @@
+import UniswapTwapPriceOracleV2RootABI from "@midas-capital/sdk/abis/UniswapTwapPriceOracleV2Root";
 import { Contract } from "ethers";
-
 import { logger } from "../../..";
 import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
 
@@ -18,11 +18,7 @@ export async function verifyUniswapV2PriceFeed(
   const pair = await uniswapV2Factory.callStatic.getPair(underlying, baseToken);
 
   const rootOracleAddress = await underlyingOracle.callStatic.rootOracle();
-  const rootTwapOracle = new Contract(
-    rootOracleAddress,
-    midasSdk.artifacts.UniswapTwapPriceOracleV2Root.abi,
-    midasSdk.provider
-  );
+  const rootTwapOracle = new Contract(rootOracleAddress, UniswapTwapPriceOracleV2RootABI, midasSdk.provider);
 
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
