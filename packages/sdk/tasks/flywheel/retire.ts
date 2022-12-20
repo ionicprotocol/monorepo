@@ -33,7 +33,7 @@ task("flywheel:remove", "remove a rewards distributor from a pool")
       deployer
     )) as ComptrollerFirstExtension;
 
-    const tx = await asComptrollerExtension._removeFlywheel(taskArgs.flyhwheel);
+    const tx = await asComptrollerExtension._removeFlywheel(taskArgs.flywheel);
     await tx.wait();
     console.log("_removeFlywheel: ", tx.hash);
   });

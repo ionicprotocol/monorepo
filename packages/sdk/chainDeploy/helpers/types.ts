@@ -111,6 +111,7 @@ export type CurvePoolConfig = {
 export type CurveV2PoolConfig = {
   lpToken: string;
   pool: string;
+  baseToken: string;
 };
 
 export type ChainDeployFnParams = {

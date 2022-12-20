@@ -29,7 +29,7 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
       waitConfirmations: 1,
     });
 
-    await deployments.deploy("FlywheelStaticRewards", {
+    const rewards = await deployments.deploy("FlywheelStaticRewards", {
       contract: "FlywheelStaticRewards",
       from: deployer.address,
       log: true,
@@ -40,6 +40,11 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
       ],
       waitConfirmations: 1,
     });
+    // @ts-ignore
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
+
+    await sdk.setFlywheelRewards(flywheel.address, rewards.address);
 
     await run("flywheel:add-strategy-for-rewards", { flywheel: flywheel.address, strategy });
     await run("flywheel:add-to-pool", { flywheel: flywheel.address, pool });
