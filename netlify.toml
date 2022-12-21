@@ -36,7 +36,7 @@ FANTOM = "true"
 
 [context.production.environment]
 NEXT_PUBLIC_SHOW_TESTNETS = "false"
-EVMOS = "false"
+EVMOS = "true"
 BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"

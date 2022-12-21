@@ -16,6 +16,9 @@ export const useFusePoolData = (poolId: string, poolChainId: number) => {
     async () => {
       if (usdPrice && sdk?.chainId && poolId) {
         const response = await sdk.fetchFusePoolData(poolId, { from: address });
+        if (response === null) {
+          return null;
+        }
         const assetsWithPrice: MarketData[] = [];
         const { assets } = response;
 
