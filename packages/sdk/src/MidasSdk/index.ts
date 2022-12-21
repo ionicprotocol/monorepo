@@ -265,7 +265,7 @@ export class MidasBase {
       } catch (e) {
         this.logger.warn("Unable to retrieve pool ID from receipt events", e);
       }
-      const existingPools = await contract.callStatic.getAllPools();
+      const [, existingPools] = await contract.callStatic.getActivePools();
       // Compute Unitroller address
       const addressOfSigner = await this.signer.getAddress();
       const poolAddress = getPoolAddress(

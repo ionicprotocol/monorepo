@@ -87,7 +87,7 @@ export default async function getAllFusePoolUsers(
   maxHealth: BigNumber,
   excludedComptrollers: Array<string>
 ): Promise<[PublicPoolUserWithData[], Array<ErroredPool>]> {
-  const allPools = await sdk.contracts.FusePoolDirectory.callStatic.getAllPools();
+  const [, allPools] = await sdk.contracts.FusePoolDirectory.callStatic.getActivePools();
   const fusePoolUsers: PublicPoolUserWithData[] = [];
   const erroredPools: Array<ErroredPool> = [];
   for (const pool of allPools) {

@@ -167,7 +167,7 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
     const signer = await ethers.getNamedSigner(admin);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log(`pool address ${pool.comptroller}`);
