@@ -111,7 +111,6 @@ export type CurvePoolConfig = {
 export type CurveV2PoolConfig = {
   lpToken: string;
   pool: string;
-  baseToken: string;
 };
 
 export type ChainDeployFnParams = {
@@ -207,7 +206,7 @@ export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
 
 export type aXXXcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
-  certificateAssetSymbol: assetSymbols.aBNBc | assetSymbols.aFTMc | assetSymbols.aMATICc;
+  certificateAssetSymbol: assetSymbols.ankrBNB | assetSymbols.aFTMc | assetSymbols.aMATICc;
 };
 
 export type stkBNBOracleDeployParams = ChainDeployFnParams & {

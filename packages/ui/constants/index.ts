@@ -70,10 +70,10 @@ export const MINUTES_PER_YEAR = 24 * 365 * 60;
 export const UP_LIMIT = 0.005;
 export const DOWN_LIMIT = 0;
 
-// for additional APR for aBNBC in Ankr
-export const aBNBcContractAddress = '0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d';
+// for additional APR for ankrBNB in Ankr
+export const ankrBNBContractAddress = '0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827';
 export const aprDays = 7;
-export const aBNBcContractABI = [
+export const ankrBNBContractABI = [
   {
     inputs: [{ internalType: 'uint256', name: 'day', type: 'uint256' }],
     name: 'averagePercentageRate',

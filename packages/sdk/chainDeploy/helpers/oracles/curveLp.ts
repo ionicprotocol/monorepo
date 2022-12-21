@@ -78,7 +78,7 @@ export const deployCurveV2LpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], [], []],
+          args: [[], []],
         },
       },
       owner: deployer,
@@ -98,7 +98,7 @@ export const deployCurveV2LpOracle = async ({
       continue;
     }
 
-    tx = await curveOracle.registerPool(pool.lpToken, pool.pool, pool.baseToken);
+    tx = await curveOracle.registerPool(pool.lpToken, pool.pool);
     console.log("registerPool sent: ", tx.hash);
     receipt = await tx.wait();
     console.log("registerPool mined: ", receipt.transactionHash);
