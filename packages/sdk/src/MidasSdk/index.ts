@@ -296,7 +296,7 @@ export class MidasBase {
 
       return [poolAddress, implementationAddress, priceOracle, poolId];
     } catch (error) {
-      throw Error(`Deployment of new Fuse pool failed:  ${error.message ? error.message : error}`);
+      throw Error(`Deployment of new Fuse pool failed:  ${error instanceof Error ? error.message : error}`);
     }
   }
 

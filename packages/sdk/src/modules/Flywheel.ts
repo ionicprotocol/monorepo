@@ -106,7 +106,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         flywheelCoreInstance.callStatic.getAllStrategies(),
       ]);
       const fwStatic = new Contract(fwStaticAddress, FlywheelStaticRewardsArtifact.abi, this.provider);
-      const rewardsInfos = {};
+      const rewardsInfos: Record<string, any> = {};
       await Promise.all(
         enabledMarkets.map(async (m) => {
           rewardsInfos[m] = await fwStatic.callStatic.rewardsInfo(m);
