@@ -1,4 +1,4 @@
-import {BigNumber, constants} from "ethers";
+import { BigNumber, constants } from "ethers";
 import { task } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
@@ -7,8 +7,8 @@ import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstE
 import { ERC20 } from "../../lib/contracts/typechain/ERC20";
 import { IUniswapV2Factory } from "../../lib/contracts/typechain/IUniswapV2Factory";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { WETH } from "../../lib/contracts/typechain/WETH";
 import { MidasSafeLiquidator } from "../../lib/contracts/typechain/MidasSafeLiquidator";
+import { WETH } from "../../lib/contracts/typechain/WETH";
 
 task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same asset from the same market").setAction(
   async ({}, { deployments, ethers, getChainId }) => {
@@ -19,8 +19,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
     if (!chainDeployConfig[chainId]) {
       throw new Error(`Config invalid for ${chainId}`);
     }
-    const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: any } =
-      chainDeployConfig[chainId];
+    const { config: chainDeployParams }: { config: ChainDeployConfig; deployFunc: any } = chainDeployConfig[chainId];
     console.log("chainDeployParams: ", chainDeployParams);
 
     const msl = await deployments.deploy("MidasSafeLiquidator", {
@@ -115,11 +114,7 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
       midasSafeLiquidator.address
     );
     if (currentStableCollateral < additionalCollateralRequired) {
-      const wNative = (await ethers.getContractAt(
-        "WETH",
-        stableCollateralAsset.address,
-        deployer
-      )) as WETH;
+      const wNative = (await ethers.getContractAt("WETH", stableCollateralAsset.address, deployer)) as WETH;
 
       const currentWNativeBalance = await wNative.callStatic.balanceOf(deployer.address);
 
@@ -127,11 +122,13 @@ task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same
 
       if (currentWNativeBalance.lt(diffNeeded)) {
         const amountToWrap = diffNeeded.sub(currentWNativeBalance);
-        let tx = await wNative.deposit({value: amountToWrap});
+        const tx = await wNative.deposit({ value: amountToWrap });
         await tx.wait();
         console.log(`wrapped ${amountToWrap}`);
       } else {
-        console.log(`no need to top up the current ${currentWNativeBalance} WMATIC balance having ${currentStableCollateral}`);
+        console.log(
+          `no need to top up the current ${currentWNativeBalance} WMATIC balance having ${currentStableCollateral}`
+        );
       }
 
       const tx = await wNative.approve(midasSafeLiquidator.address, diffNeeded);
