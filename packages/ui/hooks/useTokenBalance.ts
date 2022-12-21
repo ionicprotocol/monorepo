@@ -30,7 +30,13 @@ export function useTokenBalance(tokenAddress: string, customAddress?: string) {
 
   return useQuery(
     ['TokenBalance', currentChain?.id, tokenAddress, addressToCheck, currentSdk?.chainId],
-    () => currentSdk && fetchTokenBalance(tokenAddress, currentSdk, addressToCheck),
+    async () => {
+      if (currentSdk) {
+        return await fetchTokenBalance(tokenAddress, currentSdk, addressToCheck);
+      } else {
+        return null;
+      }
+    },
     {
       cacheTime: Infinity,
       staleTime: Infinity,

@@ -13,7 +13,7 @@ export const useIsComptrollerAdmin = (
   const { data } = useQuery(
     ['isComptrollerAdmin', comptrollerAddress, sdk?.chainId],
     async () => {
-      if (!comptrollerAddress || !sdk) return undefined;
+      if (!comptrollerAddress || !sdk) return null;
 
       const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
 

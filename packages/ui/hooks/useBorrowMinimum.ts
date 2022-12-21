@@ -12,11 +12,18 @@ export const useBorrowMinimum = (asset: FuseAsset, poolChainId: number) => {
   const { currentSdk } = useMultiMidas();
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
+
   const response = useQuery(
     [`useBorrowMinimum`, currentSdk?.chainId],
-    async () =>
-      currentSdk &&
-      currentSdk.contracts.FuseFeeDistributor.callStatic.getMinBorrowEth(asset.cToken),
+    async () => {
+      if (currentSdk) {
+        return await currentSdk.contracts.FuseFeeDistributor.callStatic.getMinBorrowEth(
+          asset.cToken
+        );
+      } else {
+        return null;
+      }
+    },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
