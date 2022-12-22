@@ -13440,6 +13440,51 @@
         },
         {
           "inputs": [],
+          "name": "getActivePools",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllPools",
           "outputs": [
             {
@@ -13904,7 +13949,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x909ED97ed24300CCe7af4533D74312b6fE0DA665",
+      "address": "0xF4e5E66064cc92a104DabD18214087c4280C3D22",
       "abi": [
         {
           "anonymous": false,
@@ -14243,6 +14288,51 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getActivePools",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
             }
           ],
           "stateMutability": "view",
@@ -14842,7 +14932,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0xBAA7BE260dbA0DfD53C9C85Ff67585f7C08892a5",
+      "address": "0xa250A585a8CF8Caa687EDf1895F8dE00B6dC6951",
       "abi": [
         {
           "anonymous": false,
@@ -15804,7 +15894,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0xC39Fa556a8d1319555359C90a11Cf5715a5b0019",
+      "address": "0x4059eDB9647f04aAF82CCEdF270922D1AFbD44ad",
       "abi": [
         {
           "anonymous": false,
@@ -19412,19 +19502,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -21737,7 +21814,7 @@
       ]
     },
     "MidasFlywheel_DIFF_Implementation": {
-      "address": "0x110615405B13E081299Df1B361A84Ce1d40E9e8a",
+      "address": "0x1ce7C028127C9062cb160B8155fF199EDb4EA6c2",
       "abi": [
         {
           "anonymous": false,
@@ -21928,19 +22005,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -22938,19 +23002,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -23500,7 +23551,7 @@
       ]
     },
     "MidasFlywheel_Gravity_Implementation": {
-      "address": "0x14B0DB7185C997601d41B5585028Fa4984B9F296",
+      "address": "0xFDEf086e330e3aa1618996564081Af6f4632D5d8",
       "abi": [
         {
           "anonymous": false,
@@ -23691,19 +23742,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -24701,19 +24739,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -25263,7 +25288,7 @@
       ]
     },
     "MidasFlywheel_Wrapped EVMOS_Implementation": {
-      "address": "0xe1c031Aee53ae3f8f7b0447f7704380a74c9F77e",
+      "address": "0x3b62CF2C98df9932016a74E15De9eCa898E6D7a8",
       "abi": [
         {
           "anonymous": false,
@@ -25454,19 +25479,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],

@@ -140,6 +140,7 @@ export const SupplyModal = ({
             hash: resp.hash,
             description: `Wrap ${nativeSymbol}`,
           });
+          await resp.wait();
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',
