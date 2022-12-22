@@ -150,11 +150,16 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
           });
           _steps[0] = {
             ..._steps[0],
-            done: true,
             txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
           await tx.wait();
+          _steps[0] = {
+            ..._steps[0],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',
