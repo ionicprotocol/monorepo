@@ -73,8 +73,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelsByPool(poolAddress: string): Promise<MidasFlywheel[]> {
-      const comptrollerInstance = new Contract(poolAddress, this.artifacts.Comptroller.abi, this.provider);
-      const allRewardDistributors = await comptrollerInstance.callStatic.getRewardsDistributors();
+      const pool = await this.getComptrollerInstance(poolAddress);
+      const allRewardDistributors = await pool.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
         return new Contract(address, this.artifacts.MidasFlywheel.abi, this.provider) as MidasFlywheel;
       });
@@ -113,8 +113,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string) {
-      const pool = await this.getComptrollerInstance(poolAddress, this.signer);
-      const marketsOfPool = await pool.getAllMarkets();
+      const pool = await this.getComptrollerInstance(poolAddress);
+      const marketsOfPool = await pool.callStatic.getAllMarkets();
 
       const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
       const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address));
@@ -142,13 +142,19 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelClaimableRewardsForAsset(poolAddress: string, market: string, account: string) {
-      const pool = this.getComptrollerInstance(poolAddress, this.signer);
+      const pool = this.getComptrollerInstance(poolAddress);
       const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
       const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address));
       const flywheelWithRewards: FlywheelClaimableRewards[] = [];
+
       for (const flywheel of flywheels) {
         const rewards: FlywheelClaimableRewards["rewards"] = [];
-        const rewardOfMarket = await flywheel.callStatic["accrue(address,address)"](market, account);
+        // TODO don't accrue for all markets. Check which markets/strategies are available for that specific flywheel
+        // trying to accrue for a market which is not active in the flywheel will throw an error
+        const rewardOfMarket = await flywheel.callStatic["accrue(address,address)"](market, account).catch((e) => {
+          console.error(`Error while calling accrue for market ${market} and account ${account}: ${e.message}`);
+          return BigNumber.from(0);
+        });
         if (rewardOfMarket.gt(0)) {
           rewards.push({
             market,
@@ -158,7 +164,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
         if (rewards.length > 0) {
           flywheelWithRewards.push({
             flywheel: flywheel.address,
-            rewardToken: await flywheel.rewardToken(),
+            rewardToken: await flywheel.callStatic.rewardToken(),
             rewards,
           });
         }

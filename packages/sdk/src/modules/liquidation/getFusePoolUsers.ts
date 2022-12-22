@@ -1,6 +1,5 @@
-import { BigNumber, constants, ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 
-import { Comptroller } from "../../../lib/contracts/typechain/Comptroller";
 import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
 import { MidasBase } from "../../MidasSdk";
 
@@ -40,7 +39,7 @@ async function getFusePoolUsers(
   maxHealth: BigNumber
 ): Promise<PublicPoolUserWithData> {
   const poolUsers: FusePoolUserStruct[] = [];
-  const comptrollerInstance: Comptroller = fuse.getComptrollerInstance(comptroller);
+  const comptrollerInstance = fuse.getComptrollerInstance(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   for (const user of users) {
     const assets = await fuse.contracts.FusePoolLens.callStatic.getPoolAssetsWithData(comptrollerInstance.address, {
@@ -63,12 +62,20 @@ async function getFusePoolUsers(
 }
 
 async function getPoolsWithShortfall(sdk: MidasBase, comptroller: string) {
-  const comptrollerInstance: Comptroller = sdk.getComptrollerInstance(comptroller);
+  const comptrollerInstance = sdk.getComptrollerInstance(comptroller);
   const users = await comptrollerInstance.callStatic.getAllBorrowers();
   const promises = users.map((user) => {
-    return comptrollerInstance.callStatic.getHypotheticalAccountLiquidity(user, constants.AddressZero, 0, 0);
+    return comptrollerInstance.callStatic.getAccountLiquidity(user);
   });
-  const results = (await Promise.all(promises)).map((r, i) => {
+  const allResults = await Promise.all(promises.map((p) => p.catch((e) => e)));
+
+  const validResults = allResults.filter((r) => !(r instanceof Error));
+  const erroredResults = allResults.filter((r) => r instanceof Error);
+
+  if (erroredResults.length > 0) {
+    sdk.logger.error("Errored results", { erroredResults });
+  }
+  const results = validResults.map((r, i) => {
     return { user: users[i], liquidity: r[1], shortfall: r[2] };
   });
   const minimumTransactionCost = await sdk.provider.getGasPrice().then((g) => g.mul(BigNumber.from(500000)));

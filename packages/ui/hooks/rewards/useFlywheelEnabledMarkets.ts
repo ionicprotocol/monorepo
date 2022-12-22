@@ -11,6 +11,8 @@ export const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
       if (flywheelAddress && currentSdk) {
         return currentSdk.getFlywheelEnabledMarkets(flywheelAddress);
       }
+
+      return null;
     },
     {
       cacheTime: Infinity,

@@ -13,7 +13,7 @@ import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { getABNBcContract } from '@ui/utils/contracts';
+import { getAnkrBNBContract } from '@ui/utils/contracts';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
 interface SupplyApyProps {
@@ -47,19 +47,19 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
     return [];
   }, [asset.cToken, rewards]);
 
-  const [aBNBcApr, setaBNBcApr] = useState('');
+  const [ankrBNBApr, setAnkrBNBApr] = useState('');
 
   useEffect(() => {
     const func = async () => {
       if (sdk) {
-        const contract = getABNBcContract(sdk);
+        const contract = getAnkrBNBContract(sdk);
 
         const apr = await contract.callStatic.averagePercentageRate(aprDays);
-        setaBNBcApr(utils.formatUnits(apr));
+        setAnkrBNBApr(utils.formatUnits(apr));
       }
     };
 
-    if (asset.underlyingSymbol === assetSymbols.aBNBc && sdk) {
+    if (asset.underlyingSymbol === assetSymbols.ankrBNB && sdk) {
       func();
     }
   }, [asset, sdk]);
@@ -86,12 +86,12 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
         })}
 
       {/* // TODO remove hardcoded Ankr Stuff here  */}
-      {asset.underlyingSymbol === assetSymbols.aBNBc && (
+      {asset.underlyingSymbol === assetSymbols.ankrBNB && (
         <SimpleTooltip
-          label={`The autocompounding APY for staking rewards of ${assetSymbols.aBNBc}`}
+          label={`The autocompounding APY for staking rewards of ${assetSymbols.ankrBNB}`}
         >
           <Text color={cCard.txtColor} variant="tnumber" size="sm">
-            + {Number(aBNBcApr).toFixed(2)}%
+            + {Number(ankrBNBApr).toFixed(2)}%
           </Text>
         </SimpleTooltip>
       )}

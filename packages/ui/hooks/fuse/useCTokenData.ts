@@ -37,7 +37,7 @@ export const useCTokenData = (
           supplyCaps,
         };
       } else {
-        return undefined;
+        return null;
       }
     },
     {

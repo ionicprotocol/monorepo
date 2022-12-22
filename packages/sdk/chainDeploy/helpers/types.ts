@@ -206,7 +206,7 @@ export type FuseFlywheelDeployFnParams = ChainDeployFnParams & {
 
 export type aXXXcDeployParams = ChainDeployFnParams & {
   assets: SupportedAsset[];
-  certificateAssetSymbol: assetSymbols.aBNBc | assetSymbols.aFTMc | assetSymbols.aMATICc;
+  certificateAssetSymbol: assetSymbols.ankrBNB | assetSymbols.aFTMc | assetSymbols.aMATICc;
 };
 
 export type stkBNBOracleDeployParams = ChainDeployFnParams & {

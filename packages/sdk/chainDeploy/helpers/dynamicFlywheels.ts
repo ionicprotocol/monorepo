@@ -27,16 +27,7 @@ export const deployFlywheelWithDynamicRewards = async ({
           execute: {
             init: {
               methodName: "initialize",
-              args: [
-                config.rewardToken,
-                "0x0000000000000000000000000000000000000009", // need to initialize to address that does NOT have balance, otherwise this fails (i.e. AddressZero)
-                constants.AddressZero,
-                deployer,
-              ],
-            },
-            onUpgrade: {
-              methodName: "reinitialize",
-              args: [],
+              args: [config.rewardToken, constants.AddressZero, constants.AddressZero, deployer],
             },
           },
           proxyContract: "OpenZeppelinTransparentProxy",
@@ -62,12 +53,16 @@ export const deployFlywheelWithDynamicRewards = async ({
       console.log("FuseFlywheelDynamicRewardsPlugin: ", fdr.address);
 
       const flywheelCore = (await ethers.getContract(`MidasFlywheel_${config.name}`, deployer)) as MidasFlywheel;
-      const tx = await flywheelCore.setFlywheelRewards(fdr.address);
-      await tx.wait();
-      console.log("setFlywheelRewards: ", tx.hash);
+      const currentRewards = await flywheelCore.callStatic.flywheelRewards();
+      if (currentRewards != fdr.address) {
+        const tx = await flywheelCore.setFlywheelRewards(fdr.address);
+        await tx.wait();
+        console.log("setFlywheelRewards: ", tx.hash);
+      } else {
+        console.log(`rewards contract already set`);
+      }
+
       dynamicFlywheels.push(fwc.address);
-    } else {
-      dynamicFlywheels.push(null);
     }
   }
   return dynamicFlywheels;

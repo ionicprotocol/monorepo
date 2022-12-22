@@ -25,7 +25,7 @@ export const useTVL = () => {
   const { sdks, chainIds } = useMultiMidas();
   const { data: prices, isLoading, error } = useUSDPrices(chainIds);
 
-  return useQuery<CrossChainTVL | undefined>(
+  return useQuery<CrossChainTVL | null | undefined>(
     ['useTVL', ...chainIds, prices && Object.values(prices).sort(), isLoading],
     async () => {
       if (!isLoading && error) throw new Error('Could not get USD price');
@@ -49,6 +49,8 @@ export const useTVL = () => {
 
         return sortedChainTVLs;
       }
+
+      return null;
     },
     { enabled: !!prices && !isLoading }
   );
