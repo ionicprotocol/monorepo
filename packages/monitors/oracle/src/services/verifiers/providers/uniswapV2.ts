@@ -1,4 +1,4 @@
-import UniswapTwapPriceOracleV2RootABI from "@midas-capital/sdk/abis/UniswapTwapPriceOracleV2Root";
+import UniswapTwapPriceOracleV2RootABI from "./UniswapTwapPriceOracleV2RootABI";
 import { Contract } from "ethers";
 
 import { logger } from "../../..";
