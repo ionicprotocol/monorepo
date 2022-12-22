@@ -21,7 +21,10 @@ describe("Fuse Index", () => {
     mockContract.connect.returns(mockContract);
     Object.defineProperty(mockContract, "callStatic", {
       value: {
-        getAllPools: stub().resolves({ length: 2 }),
+        getActivePools: stub().resolves([
+          [0, 1],
+          ["0", "1"],
+        ]),
       },
     });
     mockContract.deployPool = stub().resolves({

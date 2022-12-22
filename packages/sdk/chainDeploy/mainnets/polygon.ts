@@ -87,11 +87,6 @@ export const deployConfig: ChainDeployConfig = {
       cycleLength: 1,
       name: "MIMO",
     },
-    {
-      rewardToken: "0xAFC780bb79E308990c7387AB8338160bA8071B67",
-      cycleLength: 1,
-      name: "JRT_MIMO_SEP22",
-    },
   ],
   cgId: polygon.specificParams.cgId,
 };
