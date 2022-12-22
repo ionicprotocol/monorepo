@@ -30736,19 +30736,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -31298,7 +31285,7 @@
       ]
     },
     "MidasFlywheel_LDO_Implementation": {
-      "address": "0xfb9e92F20c44c820CA954bacdAB4b372D21F6B77",
+      "address": "0x2C4597E8C02f3A2E881797F431cA850447D9ea3c",
       "abi": [
         {
           "anonymous": false,
@@ -31489,19 +31476,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
