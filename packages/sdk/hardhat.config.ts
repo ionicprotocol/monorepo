@@ -28,6 +28,7 @@ import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/downgradeMarket";
 import "./tasks/one-time/loopless-booster";
+import "./tasks/one-time/liquidate-take-bad-debt";
 import "./tasks/oracle/add-apeswap-oracle";
 import "./tasks/configureApStrategies";
 

@@ -67,7 +67,15 @@ async function getPoolsWithShortfall(sdk: MidasBase, comptroller: string) {
   const promises = users.map((user) => {
     return comptrollerInstance.callStatic.getAccountLiquidity(user);
   });
-  const results = (await Promise.all(promises)).map((r, i) => {
+  const allResults = await Promise.all(promises.map((p) => p.catch((e) => e)));
+
+  const validResults = allResults.filter((r) => !(r instanceof Error));
+  const erroredResults = allResults.filter((r) => r instanceof Error);
+
+  if (erroredResults.length > 0) {
+    sdk.logger.error("Errored results", { erroredResults });
+  }
+  const results = validResults.map((r, i) => {
     return { user: users[i], liquidity: r[1], shortfall: r[2] };
   });
   const minimumTransactionCost = await sdk.provider.getGasPrice().then((g) => g.mul(BigNumber.from(500000)));

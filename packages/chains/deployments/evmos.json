@@ -19412,19 +19412,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -21737,7 +21724,7 @@
       ]
     },
     "MidasFlywheel_DIFF_Implementation": {
-      "address": "0x110615405B13E081299Df1B361A84Ce1d40E9e8a",
+      "address": "0x1ce7C028127C9062cb160B8155fF199EDb4EA6c2",
       "abi": [
         {
           "anonymous": false,
@@ -21928,19 +21915,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -22938,19 +22912,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -23500,7 +23461,7 @@
       ]
     },
     "MidasFlywheel_Gravity_Implementation": {
-      "address": "0x14B0DB7185C997601d41B5585028Fa4984B9F296",
+      "address": "0xFDEf086e330e3aa1618996564081Af6f4632D5d8",
       "abi": [
         {
           "anonymous": false,
@@ -23691,19 +23652,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -24701,19 +24649,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -25263,7 +25198,7 @@
       ]
     },
     "MidasFlywheel_Wrapped EVMOS_Implementation": {
-      "address": "0xe1c031Aee53ae3f8f7b0447f7704380a74c9F77e",
+      "address": "0x3b62CF2C98df9932016a74E15De9eCa898E6D7a8",
       "abi": [
         {
           "anonymous": false,
@@ -25454,19 +25389,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
