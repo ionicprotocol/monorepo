@@ -203,7 +203,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       const fwRewardsAddress = await fwCoreInstance.callStatic.flywheelRewards();
       const fwRewardsInstance = this.createFlywheelStaticRewards(fwRewardsAddress, this.provider);
       const [marketState, rewardsInfo] = await Promise.all([
-        await fwCoreInstance.callStatic.marketState(marketAddress),
+        fwCoreInstance.callStatic.marketState(marketAddress),
         fwRewardsInstance.callStatic.rewardsInfo(marketAddress),
       ]);
       return {
