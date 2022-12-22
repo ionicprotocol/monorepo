@@ -1,4 +1,4 @@
-import { constants, providers, utils } from "ethers";
+import { BigNumber, constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
@@ -63,14 +63,23 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
 
     const feeAfter = await fuseFeeDistributor.callStatic.defaultInterestFeeRate();
     console.log(`ffd fee updated to ${feeAfter}`);
+  } else {
+    console.log(`not updating the ffd fee`);
   }
 
   const cgPrice = await getCgPrice(chainDeployParams.cgId);
   const minBorrow = utils.parseUnits((MIN_BORROW_USD / cgPrice).toFixed(18));
 
-  tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
-  await tx.wait();
-  console.log("FuseFeeDistributor pool limits set", tx.hash);
+  try {
+    console.log(
+      `setting the pool limits to ${minBorrow} ${ethers.constants.MaxUint256} ${ethers.constants.MaxUint256}`
+    );
+    tx = await fuseFeeDistributor._setPoolLimits(minBorrow, ethers.constants.MaxUint256, ethers.constants.MaxUint256);
+    await tx.wait();
+    console.log("FuseFeeDistributor pool limits set", tx.hash);
+  } catch (e) {
+    console.log("error setting the pool limits", e);
+  }
 
   const oldComptroller = await ethers.getContractOrNull("Comptroller");
   const oldFirstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
@@ -354,15 +363,25 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     console.log("FusePoolLensSecondary already initialized");
   }
 
-  const fflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
+  const mflrReceipt = await deployments.deploy("MidasFlywheelLensRouter", {
     from: deployer,
     args: [],
     log: true,
     waitConfirmations: 1,
   });
-  if (fflrReceipt.transactionHash) await ethers.provider.waitForTransaction(fflrReceipt.transactionHash);
-  console.log("MidasFlywheelLensRouter: ", fflrReceipt.address);
+  if (mflrReceipt.transactionHash) await ethers.provider.waitForTransaction(mflrReceipt.transactionHash);
+  console.log("MidasFlywheelLensRouter: ", mflrReceipt.address);
 
+  const booster = await deployments.deploy("LooplessFlywheelBooster", {
+    from: deployer,
+    log: true,
+    args: [],
+    waitConfirmations: 1,
+  });
+  if (booster.transactionHash) await ethers.provider.waitForTransaction(booster.transactionHash);
+  console.log("LooplessFlywheelBooster: ", booster.address);
+
+  await tx.wait();
   const erc20Delegate = await ethers.getContract("CErc20Delegate", deployer);
   const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", deployer);
   const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", deployer);
@@ -604,16 +623,14 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   // upgrade any of the markets if necessary
   await run("markets:all:upgrade");
 
+  const gasUsed = deployments.getGasUsed();
+
   const gasPrice = await ethers.provider.getGasPrice();
 
   console.log(`gas price ${gasPrice}`);
-  console.log(`gas used ${deployments.getGasUsed()}`);
+  console.log(`gas used ${gasUsed}`);
   console.log(`cg price ${cgPrice}`);
-  console.log(
-    `total $ value gas used for deployments ${
-      cgPrice * gasPrice.mul(deployments.getGasUsed()).div(1e9).div(1e9).toNumber()
-    }`
-  );
+  console.log(`total $ value gas used for deployments ${(gasPrice.toNumber() * gasUsed * cgPrice) / 1e18}`);
 };
 
 func.tags = ["prod"];

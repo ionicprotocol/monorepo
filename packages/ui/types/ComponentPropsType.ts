@@ -243,7 +243,7 @@ export type PoolsPerChainStatus = {
   [chainId: string]: {
     isLoading: boolean;
     error: Error | undefined;
-    data?: PoolData[] | undefined;
+    data?: PoolData[] | null | undefined;
   };
 };
 

@@ -140,6 +140,12 @@ export const WithdrawModal = ({
           hash: tx.hash,
           description: `${asset.underlyingSymbol} Token Withdraw`,
         });
+        _steps[0] = {
+          ..._steps[0],
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
+
         await tx.wait();
         await queryClient.refetchQueries();
 
@@ -191,7 +197,7 @@ export const WithdrawModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            <ModalCloseButton top={4} right={4} />
+            {!isWithdrawing && <ModalCloseButton top={4} right={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}

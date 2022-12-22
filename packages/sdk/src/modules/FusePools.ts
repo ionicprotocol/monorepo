@@ -6,7 +6,7 @@ import {
   SupportedAsset,
   SupportedChains,
 } from "@midas-capital/types";
-import { BigNumberish, CallOverrides, utils } from "ethers";
+import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
 import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
@@ -35,7 +35,7 @@ const ChainSupportedAssets: ChainSupportedAssetsType = {
 
 export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
   return class FusePools extends Base {
-    async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData> {
+    async fetchFusePoolData(poolId: string, overrides: CallOverrides = {}): Promise<FusePoolData | null> {
       const {
         comptroller,
         name: _unfiliteredName,
@@ -43,6 +43,9 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
         blockPosted,
         timestampPosted,
       } = await this.contracts.FusePoolDirectory.callStatic.pools(Number(poolId), overrides);
+      if (comptroller === constants.AddressZero) {
+        return null;
+      }
       const name = filterPoolName(_unfiliteredName);
 
       const assets: NativePricedFuseAsset[] = (
@@ -210,7 +213,7 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
       const whitelistedIds = whitelistedPools.map((pool) => pool?.id);
       const filteredPools = pools.filter((pool) => !whitelistedIds.includes(pool?.id));
 
-      return [...filteredPools, ...whitelistedPools];
+      return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as FusePoolData[];
     }
 
     getAssetInstance = <T extends CErc20Delegate = CErc20Delegate>(

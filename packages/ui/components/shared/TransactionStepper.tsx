@@ -92,7 +92,7 @@ const TransactionStepper = ({
                   <VStack alignItems="flex-start" ml={12} spacing={0}>
                     <Text>{step.desc}</Text>
                     <Flex justifyContent="flex-end" width="100%">
-                      {step.done && step.txHash ? (
+                      {step.txHash ? (
                         <Link href={`${scanUrl}/tx/${step.txHash}`} isExternal rel="noreferrer">
                           <Button variant={'external'} size="sm" rightIcon={<ExternalLinkIcon />}>
                             Review tx details

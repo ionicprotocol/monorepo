@@ -143,15 +143,21 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             WETHAbi,
             currentSdk.signer
           );
-          const resp = await WToken.deposit({ from: address, value: amount });
+          const tx = await WToken.deposit({ from: address, value: amount });
           addRecentTransaction({
-            hash: resp.hash,
+            hash: tx.hash,
             description: `Wrap ${nativeSymbol}`,
           });
           _steps[0] = {
             ..._steps[0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          await tx.wait();
+          _steps[0] = {
+            ..._steps[0],
             done: true,
-            txHash: resp.hash,
+            txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
           successToast({
@@ -166,16 +172,24 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        const hash = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        if (hash) {
+        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+        if (tx) {
           addRecentTransaction({
-            hash,
+            hash: tx.hash,
             description: `Approve ${asset.underlyingSymbol}`,
           });
           _steps[optionToWrap ? 1 : 0] = {
             ..._steps[optionToWrap ? 1 : 0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
+          await tx.wait();
+
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
             done: true,
-            txHash: hash,
+            txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
           successToast({
@@ -208,8 +222,15 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Repay`,
           });
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
           await tx.wait();
           await queryClient.refetchQueries();
+
           _steps[optionToWrap ? 2 : 1] = {
             ..._steps[optionToWrap ? 2 : 1],
             done: true,
@@ -273,7 +294,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             color={cCard.txtColor}
             borderRadius={16}
           >
-            <ModalCloseButton top={4} right={4} />
+            {!isRepaying && <ModalCloseButton top={4} right={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}

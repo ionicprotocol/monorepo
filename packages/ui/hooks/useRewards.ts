@@ -39,19 +39,11 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
             }),
           ]);
 
-          let allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
+          const allFlywheelRewards = flywheelRewardsWithoutAPY.map((fwReward) => {
             const rewardWithAPY = flywheelRewardsWithAPY.find((r) => r.market === fwReward.market);
             if (rewardWithAPY) return rewardWithAPY;
             return fwReward;
           });
-          // TODO remove work around once https://github.com/Midas-Protocol/monorepo/issues/987 is fixed
-          if (
-            poolData.comptroller === '0xeB2D3A9D962d89b4A9a34ce2bF6a2650c938e185' &&
-            chainId === 1284
-          ) {
-            allFlywheelRewards = applyAPYFix(allFlywheelRewards);
-          }
-
           const rewardsOfMarkets: UseRewardsData = {};
           await Promise.all(
             poolData.assets.map(async (asset) => {
@@ -98,6 +90,7 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
           console.error(exception);
         }
       }
+
       return {};
     },
     {
