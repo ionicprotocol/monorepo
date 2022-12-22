@@ -1,8 +1,5 @@
 type CONFIG = {
   allowedAddresses: string[];
-  hidePools137: string[];
-  hidePools56: string[];
-  hidePools97: string[];
   iconServerURL: string | undefined;
   isArbitrumEnabled: boolean;
   isBscEnabled: boolean;
@@ -25,10 +22,6 @@ const config: CONFIG = {
   allowedAddresses: process.env.FEATURE_CREATE_POOL
     ? process.env.FEATURE_CREATE_POOL.toLowerCase().split(',')
     : [],
-
-  hidePools137: process.env.HIDE_POOLS_137 ? process.env.HIDE_POOLS_137.split(',') : [],
-  hidePools56: process.env.HIDE_POOLS_56 ? process.env.HIDE_POOLS_56.split(',') : [],
-  hidePools97: process.env.HIDE_POOLS_97 ? process.env.HIDE_POOLS_97.split(',') : [],
   iconServerURL: process.env.ICON_SERVER,
   isArbitrumEnabled: process.env.ARBITRUM === 'true',
   isBscEnabled: process.env.BSC === 'true',
