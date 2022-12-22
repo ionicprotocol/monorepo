@@ -1,6 +1,7 @@
 import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
+import { ComptrollerFirstExtension } from "../../lib/contracts/typechain";
 import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
 import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
 import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
@@ -168,12 +169,12 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           console.error(`unknown pool admin ${admin}`);
         }
 
-        const comptroller = (await ethers.getContractAt(
-          "Comptroller.sol:Comptroller",
+        const comptrollerAsExtension = (await ethers.getContractAt(
+          "ComptrollerFirstExtension",
           pool.comptroller,
           deployer
-        )) as Comptroller;
-        const flywheels = await comptroller.callStatic.getRewardsDistributors();
+        )) as ComptrollerFirstExtension;
+        const flywheels = await comptrollerAsExtension.callStatic.getRewardsDistributors();
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
           {
@@ -196,7 +197,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           }
         }
 
-        const markets = await comptroller.callStatic.getAllMarkets();
+        const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
         for (let j = 0; j < markets.length; j++) {
           const market = markets[j];
           console.log(`market ${market}`);

@@ -161,6 +161,7 @@ export const SupplyModal = ({
             txHash: tx.hash,
           };
           setConfirmedSteps([..._steps]);
+          await tx.wait();
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',

@@ -23,6 +23,8 @@ export const useIsEditableAdmin = (comptrollerAddress?: string, poolChainId?: nu
         currentChain.id === poolChainId
       ) {
         return true;
+      } else {
+        return null;
       }
     },
     {

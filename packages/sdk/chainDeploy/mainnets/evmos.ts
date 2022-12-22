@@ -125,6 +125,7 @@ const adrastiaAssets: AdrastiaAsset[] = [
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
   const { nativeUsdPriceOracle } = await deployNativeUsdPriceFeed({
     run,
     ethers,
@@ -166,6 +167,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
+
+  //// Simple Price Oracle
+  const simplePO = await deployments.deploy("SimplePriceOracle", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
+  console.log("SimplePriceOracle: ", simplePO.address);
+
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
     ethers,

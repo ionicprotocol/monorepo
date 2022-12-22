@@ -98,7 +98,10 @@ export const assetInPool = async (
   underlyingSymbol: string,
   address?: string
 ): Promise<NativePricedFuseAsset> => {
-  const fetchedAssetsInPool: FusePoolData = await sdk.fetchFusePoolData(poolId, { from: address });
+  const fetchedAssetsInPool = await sdk.fetchFusePoolData(poolId, { from: address });
+  if (!fetchedAssetsInPool) {
+    throw `Pool with id ${poolId} is deprecated or couldn't be fetched`;
+  }
   return fetchedAssetsInPool.assets.filter((a) => a.underlyingSymbol === underlyingSymbol)[0];
 };
 
@@ -112,12 +115,12 @@ export const getPoolIndex = async (poolAddress: string, sdk: MidasSdk) => {
   return null;
 };
 
-export const getPoolByName = async (name: string, sdk: MidasSdk, address?: string): Promise<FusePoolData> => {
+export const getPoolByName = async (name: string, sdk: MidasSdk, address?: string): Promise<FusePoolData | null> => {
   const [, publicPools] = await sdk.contracts.FusePoolLens.callStatic.getPublicPoolsWithData();
   for (let j = 0; j < publicPools.length; j++) {
     if (publicPools[j].name === name) {
       const poolIndex = await getPoolIndex(publicPools[j].comptroller, sdk);
-      return await sdk.fetchFusePoolData(poolIndex.toString(), { from: address });
+      return await sdk.fetchFusePoolData(poolIndex!.toString(), { from: address });
     }
   }
   return null;
@@ -136,9 +139,12 @@ export const getAllPools = async (sdk: MidasSdk): Promise<FusePool[]> => {
   });
 };
 
-export const logPoolData = async (poolAddress, sdk) => {
+export const logPoolData = async (poolAddress: string, sdk: MidasSdk) => {
   const poolIndex = await getPoolIndex(poolAddress, sdk);
-  const fusePoolData = await sdk.fetchFusePoolData(poolIndex.toString());
+  const fusePoolData = await sdk.fetchFusePoolData(poolIndex!.toString());
+  if (!fusePoolData) {
+    throw `Pool with address ${poolAddress} is deprecated or cannot be found`;
+  }
   const poolAssets = fusePoolData.assets.map((a) => a.underlyingSymbol).join(", ");
   console.log(`Operating on pool with address ${poolAddress}, name: ${fusePoolData.name}, assets ${poolAssets}`);
   return fusePoolData;

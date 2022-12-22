@@ -18,6 +18,8 @@ export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAss
           bigNumber: bigNumber,
           number: Number(utils.formatUnits(bigNumber, asset.underlyingDecimals)),
         };
+      } else {
+        return null;
       }
     },
     {

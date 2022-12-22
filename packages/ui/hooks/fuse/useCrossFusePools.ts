@@ -87,6 +87,8 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
             );
 
             return allPools;
+          } else {
+            return null;
           }
         },
         cacheTime: Infinity,

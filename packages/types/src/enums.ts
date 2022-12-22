@@ -187,7 +187,7 @@ export enum assetSymbols {
   BRZw = "BRZw",
   BOMB = "BOMB",
   xBOMB = "xBOMB",
-  aBNBc = "aBNBc",
+  ankrBNB = "ankrBNB",
   stkBNB = "stkBNB",
   SAFEMOON = "SAFEMOON",
   HAY = "HAY",

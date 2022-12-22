@@ -24,7 +24,7 @@ export class AdminService {
     for (const pool of pools) {
       const cTokenAddress = await pool.callStatic.cTokensByUnderlying(this.asset.underlying);
       const poolExtension = this.sdk.createComptroller(pool.address, this.sdk.signer);
-      const cToken = this.sdk.createCToken(cTokenAddress, this.admin);
+      const cToken = this.sdk.createCTokenWithExtensions(cTokenAddress, this.admin);
       await this.pauseMarketActivity(pool, poolExtension, cToken);
     }
   }
@@ -58,7 +58,7 @@ export class AdminService {
     }
   }
   async pauseBorrowActivity(pool: Comptroller, extension: ComptrollerFirstExtension) {
-    const markets = await pool.callStatic.getAllMarkets();
+    const markets = await this.sdk.getComptrollerInstance(pool.address).callStatic.getAllMarkets();
     for (const market of markets) {
       const isPaused: boolean = await pool.callStatic.borrowGuardianPaused(market);
       if (!isPaused) {

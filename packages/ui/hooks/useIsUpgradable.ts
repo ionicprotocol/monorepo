@@ -14,6 +14,8 @@ export const useIsUpgradeable = (comptrollerAddress: string) => {
         const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 
         return isUpgradeable;
+      } else {
+        return null;
       }
     },
     {
