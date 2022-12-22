@@ -1,6 +1,6 @@
 import { ExternalLinkIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { Box, Divider, HStack, Image, Link, Text, VStack } from '@chakra-ui/react';
-import { FlywheelReward, Reward } from '@midas-capital/types';
+import { FlywheelReward, isFlywheelReward, Reward } from '@midas-capital/types';
 import { useEffect, useState } from 'react';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -22,7 +22,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
     'plugin' in reward ? reward.plugin : undefined
   );
   const { data: rewardsInfo } = useRewardsInfoForMarket(
-    'flywheel' in reward ? reward.flywheel : '',
+    isFlywheelReward(reward) ? reward.flywheel : undefined,
     asset.cToken,
     chainId
   );
@@ -99,7 +99,7 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
             </HStack>
             {endDate ? (
               <HStack justifyContent={'space-between'} width={'100%'}>
-                <Text>End Time:</Text>
+                <Text>Ending:</Text>
                 <Text>{`${endDate.toLocaleDateString(undefined, {
                   year: 'numeric',
                   month: 'numeric',
