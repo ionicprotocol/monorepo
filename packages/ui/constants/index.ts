@@ -71,7 +71,7 @@ export const UP_LIMIT = 0.005;
 export const DOWN_LIMIT = 0;
 
 // for additional APR for ankrBNB in Ankr
-export const ankrBNBContractAddress = '0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827';
+export const ankrBNBContractAddress = '0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d';
 export const aprDays = 7;
 export const ankrBNBContractABI = [
   {
