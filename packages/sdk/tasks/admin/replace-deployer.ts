@@ -146,7 +146,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       }
 
       const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-      const pools = await fusePoolDirectory.callStatic.getAllPools();
+      const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
       for (let i = 0; i < pools.length; i++) {
         const pool = pools[i];
         console.log("pool name", pool.name);
@@ -284,7 +284,7 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     const deployer = await ethers.getSigner(newDeployer);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);

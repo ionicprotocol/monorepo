@@ -82,7 +82,7 @@ describe("FusePools", () => {
           timestampPosted: BigNumber.from(2),
         }),
         getPublicPoolsByVerification: stub().resolves([[12]]),
-        getAllPools: stub().resolves(["0"]),
+        getActivePools: stub().resolves([[0], ["0"]]),
       },
     });
 

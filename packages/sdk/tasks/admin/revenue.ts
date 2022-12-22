@@ -12,7 +12,7 @@ async function setUpFeeCalculation(hre: HardhatRuntimeEnvironment) {
   // @ts-ignore
   const fpd = (await hre.ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
   const mpo = await hre.ethers.getContract("MasterPriceOracle", deployer);
-  const pools: FusePoolDirectory.FusePoolStructOutput[] = await fpd.callStatic.getAllPools();
+  const [, pools] = await fpd.callStatic.getActivePools();
   return { pools, fpd, mpo };
 }
 

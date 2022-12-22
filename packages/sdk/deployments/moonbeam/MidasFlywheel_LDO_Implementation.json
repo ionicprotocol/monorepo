@@ -1571,6 +1571,7 @@
         ":adrastia-core/=lib/adrastia-core/contracts/",
         ":adrastia/=lib/adrastia-core/contracts/",
         ":ds-test/=lib/ds-test/src/",
+        ":erc4626-tests/=lib/openzeppelin-contracts/lib/erc4626-tests/",
         ":flywheel-v2/=lib/flywheel-v2/src/",
         ":flywheel/=lib/flywheel-v2/src/",
         ":forge-std/=lib/forge-std/src/",
