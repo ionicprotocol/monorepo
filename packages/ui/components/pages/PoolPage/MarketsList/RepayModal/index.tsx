@@ -65,7 +65,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Repay');
-  const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS]);
+  const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS(asset.underlyingSymbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
 
@@ -263,10 +263,10 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
     optionToWrap
       ? setSteps([
           { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
-          ...REPAY_STEPS,
+          ...REPAY_STEPS(asset.underlyingSymbol),
         ])
-      : setSteps([...REPAY_STEPS]);
-  }, [optionToWrap]);
+      : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
+  }, [optionToWrap, asset.underlyingSymbol]);
 
   return (
     <Modal
@@ -280,9 +280,9 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
           optionToWrap
             ? setSteps([
                 { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
-                ...REPAY_STEPS,
+                ...REPAY_STEPS(asset.underlyingSymbol),
               ])
-            : setSteps([...REPAY_STEPS]);
+            : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
         }
       }}
       isCentered
