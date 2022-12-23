@@ -185,7 +185,7 @@ export const SupplyModal = ({
         );
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
 
           addRecentTransaction({
             hash: tx.hash,

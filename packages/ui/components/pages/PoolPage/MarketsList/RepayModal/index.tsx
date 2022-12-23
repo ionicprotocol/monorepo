@@ -178,7 +178,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
         );
 
         if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
 
           addRecentTransaction({
             hash: tx.hash,
