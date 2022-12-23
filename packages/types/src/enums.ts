@@ -219,23 +219,29 @@ export enum assetSymbols {
   "WOMBATLP-WBNB" = "WOMBATLP-WBNB",
 
   // evmos
+  kinesisUSDC = "kinesisUSDC",
+  kinesisUSDT = "kinesisUSDT",
   saddleOptFraxUSD = "saddleOptFraxUSD",
   saddleOptUSD = "saddleOptUSD",
   WEVMOS = "WEVMOS",
   ATOM = "ATOM",
+  OSMO = "OSMO",
+  JUNO = "JUNO",
+  // USD X
   gUSDC = "gUSDC",
   axlUSDC = "axlUSDC",
   ceUSDC = "ceUSDC",
-  OSMO = "OSMO",
-  JUNO = "JUNO",
-  axlWETH = "axlWETH",
   gUSDT = "gUSDT",
+  axlUSDT = "axlUSDT",
   ceUSDT = "ceUSDT",
   gDAI = "gDAI",
+  // WETH / BTC
   ceWETH = "ceWETH",
+  axlWETH = "axlWETH",
   gWBTC = "gWBTC",
   gWETH = "gWETH",
   axlWBTC = "axlWBTC",
+
   DIFF = "DIFF",
   GRAV = "GRAV",
   "WEVMOS-JUNO" = "WEVMOS-JUNO",
