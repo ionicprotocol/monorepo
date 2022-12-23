@@ -29,23 +29,12 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { gasWEI, gasPrice, estimatedGas };
     }
 
-    async approve(cTokenAddress: string, underlyingTokenAddress: string, amount: BigNumber) {
-      const token = getContract(
-        underlyingTokenAddress,
-        this.artifacts.EIP20Interface.abi,
-        this.signer
-      ) as EIP20Interface;
-      const currentSignerAddress = await this.signer.getAddress();
+    async approve(cTokenAddress: string, underlyingTokenAddress: string) {
+      const token = this.getEIP20TokenInstance(underlyingTokenAddress, this.signer);
+      const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
+      const tx = await token.approve(cTokenAddress, max);
 
-      const hasApprovedEnough = (await token.callStatic.allowance(currentSignerAddress, cTokenAddress)).gte(amount);
-      if (!hasApprovedEnough) {
-        const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
-        const approveTx = await token.approve(cTokenAddress, max);
-
-        return approveTx;
-      } else {
-        return null;
-      }
+      return tx;
     }
 
     async enterMarkets(cTokenAddress: string, comptrollerAddress: string) {
@@ -74,21 +63,6 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
 
       const tx: ContractTransaction = await cToken.mint(amount, { gasLimit, from: address });
       return { tx, errorCode: null };
-    }
-
-    async supply(
-      cTokenAddress: string,
-      underlyingTokenAddress: string,
-      comptrollerAddress: string,
-      enableAsCollateral: boolean,
-      amount: BigNumber
-    ) {
-      await this.approve(cTokenAddress, underlyingTokenAddress, amount);
-      if (enableAsCollateral) {
-        await this.enterMarkets(cTokenAddress, comptrollerAddress);
-      }
-
-      return await this.mint(cTokenAddress, amount);
     }
 
     async repayBorrow(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {

@@ -179,8 +179,14 @@ export const SupplyModal = ({
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        if (tx) {
+        const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+          amount
+        );
+
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+
           addRecentTransaction({
             hash: tx.hash,
             description: `Approve ${asset.underlyingSymbol}`,
