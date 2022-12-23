@@ -16,8 +16,7 @@ import { ContractTransaction } from 'ethers';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
 
-import { Alerts } from './Alerts';
-
+import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/CollateralModal/Alerts';
 import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/CollateralModal/PendingTransaction';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
@@ -130,6 +129,11 @@ export const CollateralModal = ({
         }
 
         addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
+        _steps[0] = {
+          ..._steps[0],
+          txHash: call.hash,
+        };
+        setConfirmedSteps([..._steps]);
         await call.wait();
 
         LogRocket.track('Fuse-ToggleCollateral');
