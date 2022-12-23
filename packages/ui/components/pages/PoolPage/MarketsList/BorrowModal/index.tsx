@@ -82,7 +82,7 @@ export const BorrowModal = ({
   const borrowLimitMarket = useBorrowLimitMarket(asset, assets, poolChainId);
   const [isBorrowing, setIsBorrowing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS]);
+  const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS(asset.underlyingSymbol)]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [isRisky, setIsRisky] = useState<boolean>(false);
@@ -231,7 +231,7 @@ export const BorrowModal = ({
         if (!isBorrowing) {
           setAmount(constants.Zero);
           setIsConfirmed(false);
-          setSteps([...BORROW_STEPS]);
+          setSteps([...BORROW_STEPS(asset.underlyingSymbol)]);
         }
       }}
       isCentered

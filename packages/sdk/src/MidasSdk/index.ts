@@ -265,7 +265,7 @@ export class MidasBase {
       } catch (e) {
         this.logger.warn("Unable to retrieve pool ID from receipt events", e);
       }
-      const existingPools = await contract.callStatic.getAllPools();
+      const [, existingPools] = await contract.callStatic.getActivePools();
       // Compute Unitroller address
       const addressOfSigner = await this.signer.getAddress();
       const poolAddress = getPoolAddress(
@@ -397,7 +397,7 @@ export class MidasBase {
     ) as CErc20PluginDelegate;
   }
 
-  getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+  getEIP20TokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(address, this.artifacts.EIP20Interface.abi, signerOrProvider) as EIP20Interface;
   }
 

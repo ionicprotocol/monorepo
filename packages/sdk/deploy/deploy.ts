@@ -1,4 +1,4 @@
-import { BigNumber, constants, providers, utils } from "ethers";
+import { constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
@@ -390,8 +390,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const newImplementations = [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address];
   const arrayOfFalse = [false, false, false];
   const arrayOfTrue = [true, true, true];
-
-  let receipt: providers.TransactionReceipt;
 
   if (oldErc20Delegate) {
     oldImplementations.push(oldErc20Delegate.address);

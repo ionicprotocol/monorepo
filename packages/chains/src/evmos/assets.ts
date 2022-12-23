@@ -30,6 +30,13 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.FluxPriceOracle,
   },
   {
+    symbol: assetSymbols.axlUSDT,
+    underlying: "0xe01C6D4987Fc8dCE22988DADa92d56dA701d0Fe0",
+    name: "Axelar Bridged USDT",
+    decimals: 6,
+    oracle: OracleTypes.FluxPriceOracle,
+  },
+  {
     symbol: assetSymbols.gUSDC,
     underlying: "0x5FD55A1B9FC24967C4dB09C513C3BA0DFa7FF687",
     name: "Gravity Bridged USDC",
@@ -41,14 +48,14 @@ export const assets: SupportedAsset[] = [
     underlying: "0xe46910336479F254723710D57e7b683F3315b22B",
     name: "Celer Bridged USDC",
     decimals: 6,
-    oracle: OracleTypes.FluxPriceOracle,
+    oracle: OracleTypes.AdrastiaPriceOracle,
   },
   {
     symbol: assetSymbols.axlUSDC,
     underlying: "0x15C3Eb3B621d1Bff62CbA1c9536B7c1AE9149b57",
     name: "Axelar Bridged USD Coin",
     decimals: 6,
-    oracle: OracleTypes.FluxPriceOracle,
+    oracle: OracleTypes.AdrastiaPriceOracle,
   },
   {
     symbol: assetSymbols.axlWETH,
@@ -161,6 +168,20 @@ export const assets: SupportedAsset[] = [
     name: "ceUSDC-ceUSDT",
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols.kinesisUSDC,
+    underlying: "0xfD2fd675176a8Ed1CF643886ee557929FDEcBBfD",
+    name: "Kinesis USDC Pool",
+    decimals: 18,
+    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+  },
+  {
+    symbol: assetSymbols.kinesisUSDT,
+    underlying: "0x78549EF94dB08E8bf2e528F0aE97F186Fc51185E",
+    name: "Kinesis USDT Pool",
+    decimals: 18,
+    oracle: OracleTypes.SaddleLpTokenPriceOracle,
   },
 ];
 

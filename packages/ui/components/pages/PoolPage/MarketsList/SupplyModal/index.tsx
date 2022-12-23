@@ -72,7 +72,7 @@ export const SupplyModal = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
-  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS]);
+  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
@@ -179,8 +179,14 @@ export const SupplyModal = ({
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        if (tx) {
+        const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+          amount
+        );
+
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+
           addRecentTransaction({
             hash: tx.hash,
             description: `Approve ${asset.underlyingSymbol}`,
@@ -302,7 +308,7 @@ export const SupplyModal = ({
     if (!isSupplying) {
       setAmount(constants.Zero);
       setIsConfirmed(false);
-      let _steps = [...SUPPLY_STEPS];
+      let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
 
       if (!enableAsCollateral) {
         _steps.splice(1, 1);
@@ -320,7 +326,7 @@ export const SupplyModal = ({
   };
 
   useEffect(() => {
-    let _steps = [...SUPPLY_STEPS];
+    let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
 
     if (!enableAsCollateral) {
       _steps.splice(1, 1);
@@ -331,7 +337,7 @@ export const SupplyModal = ({
     }
 
     setSteps(_steps);
-  }, [optionToWrap, enableAsCollateral]);
+  }, [optionToWrap, enableAsCollateral, asset.underlyingSymbol]);
 
   return (
     <Modal

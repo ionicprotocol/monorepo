@@ -62,7 +62,7 @@ export const WithdrawModal = ({
   const { cCard } = useColors();
   const [isWithdrawing, setIsWithdrawing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [steps, setSteps] = useState<TxStep[]>([...WITHDRAW_STEPS]);
+  const [steps, setSteps] = useState<TxStep[]>([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
 
@@ -179,7 +179,7 @@ export const WithdrawModal = ({
         if (!isWithdrawing) {
           setAmount(constants.Zero);
           setIsConfirmed(false);
-          setSteps([...WITHDRAW_STEPS]);
+          setSteps([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
         }
       }}
       isCentered

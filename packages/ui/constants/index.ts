@@ -73,7 +73,7 @@ export const UP_LIMIT = 0.005;
 export const DOWN_LIMIT = 0;
 
 // for additional APR for ankrBNB in Ankr
-export const ankrBNBContractAddress = '0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827';
+export const ankrBNBContractAddress = '0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d';
 export const aprDays = 7;
 export const ankrBNBContractABI = [
   {
@@ -109,25 +109,35 @@ export const PERFORMANCE_FEE_TOOLTIP =
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
-export const SUPPLY_STEPS: TxStep[] = [
-  { title: 'Approve', desc: 'Allow Midas to use your tokens', done: false },
-  {
-    title: 'Enable Collateral',
-    desc: 'Allows supplied assets to be used as collateral',
-    done: false,
-  },
-  {
-    title: 'Mint Market Share',
-    desc: 'Mints tokens which represent your share in this market',
-    done: false,
-  },
-];
-export const BORROW_STEPS: TxStep[] = [{ title: 'Borrow', desc: 'Borrow', done: false }];
-export const WITHDRAW_STEPS: TxStep[] = [{ title: 'Withdraw', desc: 'Withdraw', done: false }];
-export const REPAY_STEPS: TxStep[] = [
-  { title: 'Approve', desc: 'Approve', done: false },
-  { title: 'Repay', desc: 'Repay', done: false },
-];
+export const SUPPLY_STEPS = (symbol: string) =>
+  [
+    { title: 'Approve', desc: 'Allow Midas to use your tokens', done: false },
+    {
+      title: 'Enable Collateral',
+      desc: 'Allows supplied assets to be used as collateral',
+      done: false,
+    },
+    {
+      title: 'Mint Market Share',
+      desc: `Mints tokens which represent your share in the ${symbol} market`,
+      done: false,
+    },
+  ] as TxStep[];
+export const BORROW_STEPS = (symbol: string) =>
+  [{ title: 'Borrow', desc: `Borrows ${symbol} from the pool`, done: false }] as TxStep[];
+export const WITHDRAW_STEPS = (symbol: string) =>
+  [
+    {
+      title: 'Withdraw',
+      desc: `Withdraws supplied liquidity of ${symbol} from the pool`,
+      done: false,
+    },
+  ] as TxStep[];
+export const REPAY_STEPS = (symbol: string) =>
+  [
+    { title: 'Approve', desc: 'Allow Midas to use your tokens', done: false },
+    { title: 'Repay', desc: `Repays a borrow position of ${symbol} token`, done: false },
+  ] as TxStep[];
 export const SCORE_LIMIT = 0.6;
 export const SCORE_RANGE_MAX = 10;
 export const MARKET_LTV = 'Market / LTV';

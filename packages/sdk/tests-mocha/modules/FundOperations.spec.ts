@@ -47,143 +47,85 @@ describe("FundOperation", () => {
     });
   });
 
-  describe("supply", async () => {
-    let mockTokenContract: SinonStubbedInstance<Contract>;
-    let mockComptrollerContract: SinonStubbedInstance<Contract>;
+  describe("approve", async () => {
+    it("allow Midas to use tokens", async () => {
+      const mockTokenContract: SinonStubbedInstance<Contract> = createStubInstance(Contract);
+      const maxApproveStub = stub().resolves("txId");
+
+      mockTokenContract.approve = maxApproveStub;
+
+      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract);
+
+      const tx = await fundOperations.approve(mkAddress("0xabc"), mkAddress("0xeee"));
+
+      expect(maxApproveStub).to.be.calledOnce;
+      expect(tx).to.be.eq("txId");
+    });
+  });
+
+  describe("enterMarkets", async () => {
+    it("allows supplied assets to be used as collateral", async () => {
+      const mockComptrollerContract: SinonStubbedInstance<Contract> = createStubInstance(Contract);
+      const enterMarketStub = stub().resolves("txId");
+
+      mockComptrollerContract.enterMarkets = enterMarketStub;
+
+      stub(utilsFns, "getContract").onFirstCall().returns(mockComptrollerContract);
+
+      const tx = await fundOperations.enterMarkets(mkAddress("0xabc"), mkAddress("0xeee"));
+
+      expect(enterMarketStub).to.be.calledOnce;
+      expect(tx).to.be.eq("txId");
+    });
+  });
+
+  describe("mint", async () => {
     let mockcTokenContract: SinonStubbedInstance<Contract>;
-    const enterMarketStub = stub().resolves();
-    const maxApproveStub = stub().resolves();
     let mintResponse = 0;
 
     beforeEach(() => {
-      mockTokenContract = createStubInstance(Contract);
-      mockTokenContract.approve = maxApproveStub;
-
-      Object.defineProperty(mockTokenContract, "callStatic", {
-        value: {
-          allowance: stub().resolves(BigNumber.from(4)),
-        },
-      });
-
-      mockComptrollerContract = createStubInstance(Contract);
-      mockComptrollerContract.enterMarkets = enterMarketStub;
-
       mockcTokenContract = createStubInstance(Contract);
       mockcTokenContract.mint = stub().resolves("txId");
     });
 
-    it("Enabled as collateral and has approved enough", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
-      });
-
+    it("Mint success", async () => {
       Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
           mint: stub().resolves(BigNumber.from(mintResponse)),
         },
       });
 
-      stub(utilsFns, "getContract")
-        .onFirstCall()
-        .returns(mockTokenContract)
-        .onSecondCall()
-        .returns(mockComptrollerContract)
-        .onThirdCall()
-        .returns(mockcTokenContract);
-
-      const { tx, errorCode } = await fundOperations.supply(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        mkAddress("0xdbc"),
-        true,
-        BigNumber.from(3)
-      );
-
-      expect(enterMarketStub).to.be.calledOnce;
-      expect(tx).to.be.eq("txId");
-      expect(errorCode).to.be.null;
-    });
-
-    it("Not Enabled as collateral and has approved enough", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
           mint: stub().resolves(BigNumber.from(mintResponse)),
         },
       });
 
-      Object.defineProperty(mockcTokenContract, "estimateGas", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
-      });
+      stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
+      const { tx, errorCode } = await fundOperations.mint(mkAddress("0xabc"), BigNumber.from(3));
 
-      const { tx, errorCode } = await fundOperations.supply(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        mkAddress("0xdbc"),
-        false,
-        BigNumber.from(3)
-      );
-
-      expect(tx).to.be.eq("txId");
-      expect(errorCode).to.be.null;
-    });
-
-    it("Not has approved enough", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
-      });
-
-      Object.defineProperty(mockcTokenContract, "estimateGas", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
-      });
-
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
-
-      const { tx, errorCode } = await fundOperations.supply(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        mkAddress("0xdbc"),
-        false,
-        BigNumber.from(5)
-      );
-
-      expect(maxApproveStub).to.be.calledOnce;
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
     it("Mint fail", async () => {
       mintResponse = 2;
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          mint: stub().resolves(BigNumber.from(mintResponse)),
-        },
-      });
-
       Object.defineProperty(mockcTokenContract, "estimateGas", {
         value: {
           mint: stub().resolves(BigNumber.from(mintResponse)),
         },
       });
 
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
+      Object.defineProperty(mockcTokenContract, "callStatic", {
+        value: {
+          mint: stub().resolves(BigNumber.from(mintResponse)),
+        },
+      });
 
-      const { tx, errorCode } = await fundOperations.supply(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        mkAddress("0xdbc"),
-        false,
-        BigNumber.from(5)
-      );
+      stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
+
+      const { tx, errorCode } = await fundOperations.mint(mkAddress("0xabc"), BigNumber.from(5));
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);
@@ -209,63 +151,32 @@ describe("FundOperation", () => {
       mockcTokenContract.repayBorrow = stub().resolves("txId");
     });
 
-    it("Repaying max and has approved enough", async () => {
+    it("Repaying max", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
           repayBorrow: stub().resolves(BigNumber.from(0)),
         },
       });
 
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
+      stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.repay(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        true,
-        BigNumber.from(3)
-      );
+      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), true, BigNumber.from(3));
 
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
 
-    it("Not repaying max and has approved enough", async () => {
+    it("Not repaying max", async () => {
       Object.defineProperty(mockcTokenContract, "callStatic", {
         value: {
           repayBorrow: stub().resolves(BigNumber.from(0)),
         },
       });
 
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
+      stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.repay(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        false,
-        BigNumber.from(3)
-      );
+      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), false, BigNumber.from(3));
 
-      expect(tx).to.be.eq("txId");
-      expect(errorCode).to.be.null;
-    });
-
-    it("Not has approved enough", async () => {
-      Object.defineProperty(mockcTokenContract, "callStatic", {
-        value: {
-          repayBorrow: stub().resolves(BigNumber.from(0)),
-        },
-      });
-
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
-
-      const { tx, errorCode } = await fundOperations.repay(
-        mkAddress("0xabc"),
-        mkAddress("0xdbc"),
-        false,
-        BigNumber.from(5)
-      );
-
-      expect(maxApproveStub).to.be.calledOnce;
       expect(tx).to.be.eq("txId");
       expect(errorCode).to.be.null;
     });
@@ -277,14 +188,9 @@ describe("FundOperation", () => {
         },
       });
 
-      stub(utilsFns, "getContract").onFirstCall().returns(mockTokenContract).onSecondCall().returns(mockcTokenContract);
+      stub(utilsFns, "getContract").onFirstCall().returns(mockcTokenContract);
 
-      const { tx, errorCode } = await fundOperations.repay(
-        mkAddress("0xabc"),
-        mkAddress("0xeee"),
-        false,
-        BigNumber.from(5)
-      );
+      const { tx, errorCode } = await fundOperations.repay(mkAddress("0xabc"), false, BigNumber.from(5));
 
       expect(tx).to.be.undefined;
       expect(errorCode).to.be.eq(2);

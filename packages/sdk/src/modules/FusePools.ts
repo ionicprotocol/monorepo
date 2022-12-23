@@ -157,14 +157,14 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
     }
 
     async fetchPoolsManual(overrides: CallOverrides = {}): Promise<(FusePoolData | null)[] | undefined> {
-      const res = await this.contracts.FusePoolDirectory.callStatic.getAllPools(overrides);
+      const [poolIndexes, pools] = await this.contracts.FusePoolDirectory.callStatic.getActivePools(overrides);
 
-      if (!res.length) {
+      if (!pools.length || !poolIndexes.length) {
         return undefined;
       }
 
       const poolData = await Promise.all(
-        res.map((_, poolId) => {
+        poolIndexes.map((poolId) => {
           return this.fetchFusePoolData(poolId.toString(), overrides).catch((error) => {
             this.logger.error(`Pool ID ${poolId} wasn't able to be fetched from FusePoolLens without error.`, error);
             return null;

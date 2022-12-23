@@ -13502,6 +13502,51 @@
         },
         {
           "inputs": [],
+          "name": "getActivePools",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllPools",
           "outputs": [
             {
@@ -13966,7 +14011,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x1dDb4BaD89736e230c27aBb57C29a55B16EFbF03",
+      "address": "0x820488884eF6d686005F03C31017556F3CD5c8cD",
       "abi": [
         {
           "anonymous": false,
@@ -14305,6 +14350,51 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getActivePools",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
             }
           ],
           "stateMutability": "view",
@@ -14904,7 +14994,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x29a33bdC951F3e9C27Fa18ED8f96aCB58605346f",
+      "address": "0xD1D0270Cb3A4DA7B6C60ab4D658dE74b495C969c",
       "abi": [
         {
           "anonymous": false,
@@ -15866,7 +15956,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x03f2bCc0dD178A0a9dfA9101E8A5D802b52269BA",
+      "address": "0x330Bace64d8de48B47d2bAE6F26Ac53046167487",
       "abi": [
         {
           "anonymous": false,
