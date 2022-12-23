@@ -15,7 +15,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
@@ -28,6 +28,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
@@ -59,16 +60,27 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
 
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const [isRepaying, setIsRepaying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Repay');
-  const [steps, setSteps] = useState<string[]>([]);
+  const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS(asset.underlyingSymbol)]);
+  const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
-  const optionToWrap =
-    asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
-    myBalance?.isZero() &&
-    !myNativeBalance?.isZero();
+
+  const optionToWrap = useMemo(() => {
+    return (
+      asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+      myBalance?.isZero() &&
+      !myNativeBalance?.isZero()
+    );
+  }, [
+    asset.underlyingToken,
+    currentSdk.chainSpecificAddresses.W_TOKEN,
+    myBalance,
+    myNativeBalance,
+  ]);
 
   const queryClient = useQueryClient();
 
@@ -116,6 +128,9 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
 
+    setIsConfirmed(true);
+    setConfirmedSteps([...steps]);
+    const _steps = [...steps];
     try {
       setIsRepaying(true);
       setActiveStep(0);
@@ -128,11 +143,23 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             WETHAbi,
             currentSdk.signer
           );
-          const resp = await WToken.deposit({ from: address, value: amount });
+          const tx = await WToken.deposit({ from: address, value: amount });
           addRecentTransaction({
-            hash: resp.hash,
+            hash: tx.hash,
             description: `Wrap ${nativeSymbol}`,
           });
+          _steps[0] = {
+            ..._steps[0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          await tx.wait();
+          _steps[0] = {
+            ..._steps[0],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',
@@ -145,11 +172,44 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        successToast({
-          id: 'approved',
-          description: 'Successfully Approved!',
-        });
+        const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+          amount
+        );
+
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `Approve ${asset.underlyingSymbol}`,
+          });
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
+          await tx.wait();
+
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            id: 'approved',
+            description: 'Successfully Approved!',
+          });
+        } else {
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            desc: 'Already approved!',
+            done: true,
+          };
+          setConfirmedSteps([..._steps]);
+        }
       } catch (error) {
         setFailedStep(optionToWrap ? 2 : 1);
         throw error;
@@ -158,7 +218,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
       try {
         setActiveStep(optionToWrap ? 3 : 2);
         const isRepayingMax = amount.eq(asset.borrowBalance);
-        const resp = await currentSdk.repayBorrow(asset.cToken, isRepayingMax, amount);
+        const resp = await currentSdk.repay(asset.cToken, isRepayingMax, amount);
 
         if (resp.errorCode !== null) {
           RepayError(resp.errorCode);
@@ -168,8 +228,21 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Repay`,
           });
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
           await tx.wait();
           await queryClient.refetchQueries();
+
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
         }
         successToast({
           id: 'repaid',
@@ -181,26 +254,40 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
       }
     } catch (e) {
       handleGenericError(e, errorToast);
-      setIsRepaying(false);
     } finally {
-      setAmount(constants.Zero);
-      onClose();
+      setIsRepaying(false);
     }
   };
 
   useEffect(() => {
-    optionToWrap ? setSteps(['Wrap Native Token', ...REPAY_STEPS]) : setSteps([...REPAY_STEPS]);
-  }, [optionToWrap]);
+    optionToWrap
+      ? setSteps([
+          { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
+          ...REPAY_STEPS(asset.underlyingSymbol),
+        ])
+      : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
+  }, [optionToWrap, asset.underlyingSymbol]);
 
   return (
     <Modal
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={() => {
-        setAmount(constants.Zero);
         onClose();
+        if (!isRepaying) {
+          setAmount(constants.Zero);
+          setIsConfirmed(false);
+          optionToWrap
+            ? setSteps([
+                { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
+                ...REPAY_STEPS(asset.underlyingSymbol),
+              ])
+            : setSteps([...REPAY_STEPS(asset.underlyingSymbol)]);
+        }
       }}
       isCentered
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
@@ -213,8 +300,17 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
             color={cCard.txtColor}
             borderRadius={16}
           >
-            {isRepaying ? (
-              <PendingTransaction activeStep={activeStep} failedStep={failedStep} steps={steps} />
+            {!isRepaying && <ModalCloseButton top={4} right={4} />}
+            {isConfirmed ? (
+              <PendingTransaction
+                activeStep={activeStep}
+                failedStep={failedStep}
+                steps={confirmedSteps}
+                isRepaying={isRepaying}
+                poolChainId={poolChainId}
+                amount={amount}
+                asset={asset}
+              />
             ) : (
               <>
                 <HStack width="100%" p={4} justifyContent="center">
@@ -229,7 +325,6 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
-                  <ModalCloseButton top={4} right={4} />
                 </HStack>
 
                 <Divider />

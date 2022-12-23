@@ -25,10 +25,12 @@ import { WithdrawError } from '@ui/components/pages/PoolPage/MarketsList/Withdra
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
+import { WITHDRAW_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
-import { useErrorToast } from '@ui/hooks/useToast';
+import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
@@ -59,8 +61,13 @@ export const WithdrawModal = ({
   const [amount, setAmount] = useState<BigNumber>(constants.Zero);
   const { cCard } = useColors();
   const [isWithdrawing, setIsWithdrawing] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+  const [steps, setSteps] = useState<TxStep[]>([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
+  const [activeStep, setActiveStep] = useState<number>(0);
+  const [failedStep, setFailedStep] = useState<number>(0);
 
   const queryClient = useQueryClient();
+  const successToast = useSuccessToast();
 
   const { data: amountIsValid, isLoading } = useQuery(
     ['isValidWithdrawAmount', amount, currentSdk.chainId, address],
@@ -104,8 +111,13 @@ export const WithdrawModal = ({
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
 
+    setIsConfirmed(true);
+    const _steps = [...steps];
+
     try {
       setIsWithdrawing(true);
+      setActiveStep(1);
+      setFailedStep(0);
 
       const maxAmount = await fetchMaxAmount(
         FundOperationMode.WITHDRAW,
@@ -128,17 +140,32 @@ export const WithdrawModal = ({
           hash: tx.hash,
           description: `${asset.underlyingSymbol} Token Withdraw`,
         });
+        _steps[0] = {
+          ..._steps[0],
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
+
         await tx.wait();
         await queryClient.refetchQueries();
+
+        _steps[0] = {
+          ..._steps[0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setSteps([..._steps]);
+        successToast({
+          id: 'Borrow',
+          description: 'Successfully borrowed!',
+        });
       }
 
       LogRocket.track('Fuse-Withdraw');
-
-      onClose();
     } catch (e) {
+      setFailedStep(1);
       handleGenericError(e, errorToast);
     } finally {
-      setAmount(constants.Zero);
       setIsWithdrawing(false);
     }
   };
@@ -148,10 +175,16 @@ export const WithdrawModal = ({
       motionPreset="slideInBottom"
       isOpen={isOpen}
       onClose={() => {
-        setAmount(constants.Zero);
         onClose();
+        if (!isWithdrawing) {
+          setAmount(constants.Zero);
+          setIsConfirmed(false);
+          setSteps([...WITHDRAW_STEPS(asset.underlyingSymbol)]);
+        }
       }}
       isCentered
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
@@ -164,8 +197,17 @@ export const WithdrawModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            {isWithdrawing ? (
-              <PendingTransaction />
+            {!isWithdrawing && <ModalCloseButton top={4} right={4} />}
+            {isConfirmed ? (
+              <PendingTransaction
+                activeStep={activeStep}
+                failedStep={failedStep}
+                steps={steps}
+                isWithdrawing={isWithdrawing}
+                poolChainId={poolChainId}
+                amount={amount}
+                asset={asset}
+              />
             ) : (
               <>
                 <HStack width="100%" m={4} justifyContent="center">
@@ -180,7 +222,6 @@ export const WithdrawModal = ({
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
-                  <ModalCloseButton top={4} right={4} />
                 </HStack>
 
                 <Divider />

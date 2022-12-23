@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/FlywheelStaticRewards';
 import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/lib/contracts/typechain/MidasFlywheel';
+import { useRouter } from 'next/router';
 import React, { useMemo, useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
@@ -29,10 +30,26 @@ import SmallWhiteCircle from '@ui/images/small-white-circle.png';
 import { CreateFlywheelModalProps, CreateFlywheelProps } from '@ui/types/ComponentPropsType';
 
 const steps = [
-  'Deploying Flywheel Core',
-  'Deploying Flywheel Rewards',
-  'Adding Rewards to Flywheel',
-  'Adding Flywheel to Pool',
+  {
+    title: 'Deploying Flywheel Core',
+    desc: 'Deploying Flywheel Core',
+    done: false,
+  },
+  {
+    title: 'Deploying Flywheel Rewards',
+    desc: 'Deploying Flywheel Rewards',
+    done: false,
+  },
+  {
+    title: 'Adding Rewards to Flywheel',
+    desc: 'Adding Rewards to Flywheel',
+    done: false,
+  },
+  {
+    title: 'Adding Flywheel to Pool',
+    desc: 'Adding Flywheel to Pool',
+    done: false,
+  },
 ];
 
 const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
@@ -56,6 +73,9 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
     if (!rewardTokenData) return false;
     return rewardTokenData.address.toLowerCase() === rewardToken.toLowerCase();
   }, [rewardToken, rewardTokenData]);
+
+  const router = useRouter();
+  const poolChainId = router.query.chainId as string;
 
   const handleDeploy = async () => {
     if (!currentSdk) return;
@@ -177,7 +197,13 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       </VStack>
 
       <Box py={4} w="100%" h="100%">
-        <TransactionStepper activeStep={activeStep} steps={steps} failedStep={failedStep} />
+        <TransactionStepper
+          activeStep={activeStep}
+          steps={steps}
+          failedStep={failedStep}
+          isLoading={isLoading}
+          poolChainId={Number(poolChainId)}
+        />
       </Box>
       <Box px={4} py={2} width="100%">
         <Button

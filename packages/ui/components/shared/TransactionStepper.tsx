@@ -1,31 +1,60 @@
 // Chakra and UI
-import { CloseIcon as FailIcon, CheckIcon as SuccessIcon } from '@chakra-ui/icons';
-import { Box } from '@chakra-ui/layout';
-import { Accordion, AccordionButton, AccordionItem, Icon, Text } from '@chakra-ui/react';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { Box, VStack } from '@chakra-ui/layout';
+import {
+  Accordion,
+  AccordionButton,
+  AccordionItem,
+  AccordionPanel,
+  Button,
+  Flex,
+  Icon,
+  Link,
+  Text,
+} from '@chakra-ui/react';
 import { Spinner } from '@chakra-ui/spinner';
+import { useMemo } from 'react';
+import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Row } from '@ui/components/shared/Flex';
 import { useColors } from '@ui/hooks/useColors';
+import { TxStep } from '@ui/types/ComponentPropsType';
+import { getScanUrlByChainId } from '@ui/utils/networkData';
 
 const TransactionStepper = ({
   activeStep,
   steps,
   failedStep,
+  isLoading,
+  poolChainId,
 }: {
-  steps: string[];
+  steps: TxStep[];
   activeStep: number;
   failedStep: number;
+  isLoading: boolean;
+  poolChainId: number;
 }) => {
   const { cCard } = useColors();
+  const scanUrl = useMemo(() => getScanUrlByChainId(poolChainId), [poolChainId]);
+
   return (
     <>
       <Row mainAxisAlignment="center" crossAxisAlignment="center">
-        <Accordion allowToggle width="100%" index={activeStep - 1}>
+        <Accordion
+          allowMultiple
+          width="100%"
+          index={Array.from(Array(activeStep).keys())}
+          borderWidth={1}
+          borderColor={cCard.hoverBgColor}
+        >
           {steps.map((step, index) => {
             return (
-              <AccordionItem key={index}>
+              <AccordionItem key={index} border="none">
                 <h2>
-                  <AccordionButton>
+                  <AccordionButton
+                    bgColor={cCard.hoverBgColor}
+                    _hover={{ bgColor: cCard.hoverBgColor }}
+                  >
                     <Box
                       width={30}
                       height={30}
@@ -41,23 +70,38 @@ const TransactionStepper = ({
                     </Box>
 
                     <Box flex="1" textAlign="left" ml={4}>
-                      {step}
+                      <Text variant="mdText" color={cCard.borderColor} fontWeight="bold">
+                        {step.title} {step.done ? '(Done)' : null}
+                      </Text>
                     </Box>
 
                     {failedStep - 1 === index ? (
-                      <Icon as={FailIcon} width={'22px'} height={'22px'} color={'fail'}></Icon>
+                      <Icon as={BsFillXCircleFill} width={25} height={25} color={'fail'} />
                     ) : activeStep - 1 === index ? (
-                      <Spinner
-                        width={30}
-                        height={30}
-                        borderWidth={3}
-                        color={cCard.borderColor}
-                      ></Spinner>
+                      isLoading ? (
+                        <Spinner width={30} height={30} borderWidth={3} color={cCard.borderColor} />
+                      ) : (
+                        <Icon as={BsFillCheckCircleFill} width={25} height={25} color={'success'} />
+                      )
                     ) : activeStep > index ? (
-                      <Icon as={SuccessIcon} width={25} height={25} color={'success'}></Icon>
+                      <Icon as={BsFillCheckCircleFill} width={25} height={25} color={'success'} />
                     ) : null}
                   </AccordionButton>
                 </h2>
+                <AccordionPanel py={2}>
+                  <VStack alignItems="flex-start" ml={12} spacing={0}>
+                    <Text>{step.desc}</Text>
+                    <Flex justifyContent="flex-end" width="100%">
+                      {step.txHash ? (
+                        <Link href={`${scanUrl}/tx/${step.txHash}`} isExternal rel="noreferrer">
+                          <Button variant={'external'} size="sm" rightIcon={<ExternalLinkIcon />}>
+                            Review tx details
+                          </Button>
+                        </Link>
+                      ) : null}
+                    </Flex>
+                  </VStack>
+                </AccordionPanel>
               </AccordionItem>
             );
           })}
