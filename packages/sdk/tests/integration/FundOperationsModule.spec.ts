@@ -39,6 +39,10 @@ describe("FundOperationsModule", function () {
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
+    tx = await sdk.approve(asset?.cToken, asset?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset?.cToken, poolAddress);
+    await tx.wait();
     const res = await sdk.mint(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
@@ -52,6 +56,10 @@ describe("FundOperationsModule", function () {
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
 
+    tx = await sdk.approve(asset?.cToken, asset?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset?.cToken, poolAddress);
+    await tx.wait();
     const res = await sdk.mint(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
@@ -67,10 +75,18 @@ describe("FundOperationsModule", function () {
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
     const asset2 = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "TRIBE");
 
+    tx = await sdk.approve(asset?.cToken, asset?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset?.cToken, poolAddress);
+    await tx.wait();
     const res = await sdk.mint(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
 
+    tx = await sdk.approve(asset2?.cToken, asset2?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset2?.cToken, poolAddress);
+    await tx.wait();
     const res2 = await sdk.mint(asset2.cToken, utils.parseUnits("1", 18));
     tx = res2.tx;
     rec = await tx.wait();
@@ -89,6 +105,10 @@ describe("FundOperationsModule", function () {
     const poolId = (await poolHelpers.getPoolIndex(poolAddress, sdk)).toString();
     const assetsInPool = await sdk.fetchFusePoolData(poolId);
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
+    tx = await sdk.approve(asset?.cToken, asset?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset?.cToken, poolAddress);
+    await tx.wait();
     const res = await sdk.mint(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
@@ -108,10 +128,18 @@ describe("FundOperationsModule", function () {
     const asset = assetsInPool.assets.find((asset) => asset.underlyingToken === sdk.chainSpecificAddresses.W_TOKEN);
     const asset2 = assetsInPool.assets.find((asset) => asset.underlyingSymbol === "TRIBE");
 
+    tx = await sdk.approve(asset?.cToken, asset?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset?.cToken, poolAddress);
+    await tx.wait();
     const res = await sdk.mint(asset.cToken, utils.parseUnits("3", 18));
     tx = res.tx;
     rec = await tx.wait();
 
+    tx = await sdk.approve(asset2?.cToken, asset2?.underlyingToken);
+    await tx.wait();
+    tx = await sdk.enterMarkets(asset2?.cToken, poolAddress);
+    await tx.wait();
     const res2 = await sdk.mint(asset2.cToken, utils.parseUnits("1", 18));
     tx = res2.tx;
     rec = await tx.wait();
