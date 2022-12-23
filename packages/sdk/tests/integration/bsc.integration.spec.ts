@@ -75,7 +75,10 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     const mpo = sdk.createMasterPriceOracle();
     const busdPrice = await mpo.callStatic.price(deployedErc20Two.underlying);
     const btcbUsdPrice = (await mpo.callStatic.price(deployedErc20One.underlying)).div(busdPrice);
-
+    tx = await sdk.setSigner(alice).approve(deployedErc20One.assetAddress, erc20One.underlying);
+    await tx.wait();
+    tx = await sdk.setSigner(alice).enterMarkets(deployedErc20One.assetAddress, poolAddress);
+    await tx.wait();
     const btcbSupply = await sdk
       .setSigner(alice)
       .mint(deployedErc20One.assetAddress, ethers.utils.parseEther(supply1Amount));
@@ -84,6 +87,10 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     );
 
     const supply2Amount = "10000";
+    tx = await sdk.setSigner(bob).approve(deployedErc20Two.assetAddress, erc20Two.underlying);
+    await tx.wait();
+    tx = await sdk.setSigner(bob).enterMarkets(deployedErc20Two.assetAddress, poolAddress);
+    await tx.wait();
     const busdSupply = await sdk
       .setSigner(bob)
       .mint(deployedErc20Two.assetAddress, ethers.utils.parseEther(supply2Amount));
