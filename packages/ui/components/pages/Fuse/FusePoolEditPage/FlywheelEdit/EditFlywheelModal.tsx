@@ -25,7 +25,6 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { SupportedChains } from '@midas-capital/types';
-import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 import { formatUnits } from 'ethers/lib/utils';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -35,6 +34,8 @@ import ClipboardValue from '@ui/components/shared/ClipboardValue';
 import { Center } from '@ui/components/shared/Flex';
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useFlywheelEnabledMarkets } from '@ui/hooks/rewards/useFlywheelEnabledMarkets';
+import { useRewardsInfoForMarket } from '@ui/hooks/rewards/useRewardsInfoForMarket';
 import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -47,46 +48,6 @@ import { toFixedNoRound } from '@ui/utils/formatNumber';
 import { ChainSupportedAssets } from '@ui/utils/networkData';
 import { shortAddress } from '@ui/utils/shortAddress';
 import 'react-datepicker/dist/react-datepicker.css';
-
-const useRewardsInfoForMarket = (flywheelAddress: string, marketAddress?: string) => {
-  const { currentSdk } = useMultiMidas();
-
-  return useQuery(
-    ['useRewardsInfo', flywheelAddress, marketAddress, currentSdk?.chainId],
-    async () => {
-      if (flywheelAddress && marketAddress && currentSdk) {
-        return currentSdk.getFlywheelRewardsInfoForMarket(flywheelAddress, marketAddress);
-      } else {
-        return null;
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!flywheelAddress && !!marketAddress && !!currentSdk,
-    }
-  );
-};
-
-const useFlywheelEnabledMarkets = (flywheelAddress: string) => {
-  const { currentSdk } = useMultiMidas();
-
-  return useQuery(
-    ['useFlywheelEnabledMarkets', flywheelAddress, currentSdk?.chainId],
-    async () => {
-      if (flywheelAddress && currentSdk) {
-        return currentSdk.getFlywheelEnabledMarkets(flywheelAddress);
-      } else {
-        return null;
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!flywheelAddress && !!currentSdk,
-    }
-  );
-};
 
 const EditFlywheelModal = ({
   flywheel,
@@ -129,7 +90,8 @@ const EditFlywheelModal = ({
 
   const { data: rewardsInfo, refetch: refetchRewardsInfo } = useRewardsInfoForMarket(
     flywheel.address,
-    selectedMarket?.cToken
+    selectedMarket?.cToken,
+    pool.chainId
   );
   const { data: enabledMarkets, refetch: refetchEnabledMarkets } = useFlywheelEnabledMarkets(
     flywheel.address
