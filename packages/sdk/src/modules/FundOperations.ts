@@ -65,7 +65,7 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       return { tx, errorCode: null };
     }
 
-    async repayBorrow(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
+    async repay(cTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
       const cToken = getContract(cTokenAddress, this.artifacts.CErc20Delegate.abi, this.signer) as CErc20Delegate;
 
@@ -79,11 +79,6 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
       const tx: ContractTransaction = await cToken.repayBorrow(isRepayingMax ? max : amount);
 
       return { tx, errorCode: null };
-    }
-
-    async repay(cTokenAddress: string, underlyingTokenAddress: string, isRepayingMax: boolean, amount: BigNumber) {
-      await this.approve(cTokenAddress, underlyingTokenAddress, amount);
-      return await this.repayBorrow(cTokenAddress, isRepayingMax, amount);
     }
 
     async borrow(cTokenAddress: string, amount: BigNumber) {

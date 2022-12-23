@@ -172,8 +172,14 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        if (tx) {
+        const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+          amount
+        );
+
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
+
           addRecentTransaction({
             hash: tx.hash,
             description: `Approve ${asset.underlyingSymbol}`,
@@ -212,7 +218,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
       try {
         setActiveStep(optionToWrap ? 3 : 2);
         const isRepayingMax = amount.eq(asset.borrowBalance);
-        const resp = await currentSdk.repayBorrow(asset.cToken, isRepayingMax, amount);
+        const resp = await currentSdk.repay(asset.cToken, isRepayingMax, amount);
 
         if (resp.errorCode !== null) {
           RepayError(resp.errorCode);
