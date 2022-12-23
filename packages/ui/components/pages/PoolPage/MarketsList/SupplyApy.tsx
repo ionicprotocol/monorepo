@@ -98,7 +98,12 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
 
       {rewardsOfThisMarket.length > 0 ? (
         rewardsOfThisMarket.map((reward, index) => (
-          <RewardsInfo key={`reward_${index}`} reward={reward} chainId={poolChainId} />
+          <RewardsInfo
+            key={`reward_${index}`}
+            reward={reward}
+            chainId={poolChainId}
+            asset={asset}
+          />
         ))
       ) : asset.plugin ? (
         <NoRewardInfo poolChainId={poolChainId} pluginAddress={asset.plugin} />
