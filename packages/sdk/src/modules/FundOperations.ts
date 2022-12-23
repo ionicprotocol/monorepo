@@ -30,7 +30,11 @@ export function withFundOperations<TBase extends MidasBaseConstructor>(Base: TBa
     }
 
     async approve(cTokenAddress: string, underlyingTokenAddress: string) {
-      const token = this.getEIP20TokenInstance(underlyingTokenAddress, this.signer);
+      const token = getContract(
+        underlyingTokenAddress,
+        this.artifacts.EIP20Interface.abi,
+        this.signer
+      ) as EIP20Interface;
       const max = BigNumber.from(2).pow(BigNumber.from(256)).sub(constants.One);
       const tx = await token.approve(cTokenAddress, max);
 
