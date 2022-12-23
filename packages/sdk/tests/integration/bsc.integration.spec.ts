@@ -78,13 +78,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
 
     const btcbSupply = await sdk
       .setSigner(alice)
-      .supply(
-        deployedErc20One.assetAddress,
-        erc20One.underlying,
-        poolAddress,
-        true,
-        ethers.utils.parseEther(supply1Amount)
-      );
+      .mint(deployedErc20One.assetAddress, ethers.utils.parseEther(supply1Amount));
     console.log(
       `Added ${supply1Amount} ${erc20One.symbol} collateral from ${alice.address}, ERROR: ${btcbSupply.errorCode}`
     );
@@ -92,13 +86,7 @@ import { liquidateAndVerify, resetPriceOracle, wrapNativeToken } from "../utils/
     const supply2Amount = "10000";
     const busdSupply = await sdk
       .setSigner(bob)
-      .supply(
-        deployedErc20Two.assetAddress,
-        erc20Two.underlying,
-        poolAddress,
-        true,
-        ethers.utils.parseEther(supply2Amount)
-      );
+      .mint(deployedErc20Two.assetAddress, ethers.utils.parseEther(supply2Amount));
     console.log(
       `Added ${supply2Amount} ${erc20Two.symbol} collateral from ${bob.address}, ERROR: ${busdSupply.errorCode}`
     );
