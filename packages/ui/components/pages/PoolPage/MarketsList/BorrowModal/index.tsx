@@ -131,7 +131,7 @@ export const BorrowModal = ({
   } = useBorrowMinimum(asset, poolChainId);
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidBorrowAmount', amount, minBorrowAsset, currentSdk.chainId, address],
+    ['isValidBorrowAmount', amount, minBorrowAsset, currentSdk.chainId, address, asset.cToken],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -153,6 +153,11 @@ export const BorrowModal = ({
 
         return false;
       }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!currentSdk && !!address,
     }
   );
 

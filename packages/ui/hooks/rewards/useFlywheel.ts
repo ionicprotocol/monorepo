@@ -32,6 +32,8 @@ export const useFlywheel = (flywheelAddress?: string) => {
       } as Flywheel;
     },
     {
+      cacheTime: Infinity,
+      staleTime: Infinity,
       initialData: undefined,
       enabled: !!flywheelAddress && !!currentSdk,
     }

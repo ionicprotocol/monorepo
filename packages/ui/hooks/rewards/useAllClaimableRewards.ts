@@ -15,6 +15,6 @@ export const useAllClaimableRewards = () => {
         return null;
       }
     },
-    { enabled: !!address && !!currentSdk }
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!address && !!currentSdk }
   );
 };
