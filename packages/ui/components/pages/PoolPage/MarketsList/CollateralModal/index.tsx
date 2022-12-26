@@ -202,7 +202,7 @@ export const CollateralModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            <ModalCloseButton top={4} right={4} />
+            {!isLoading && <ModalCloseButton top={4} right={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
