@@ -11,7 +11,6 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQueryClient } from '@tanstack/react-query';
 import { ContractTransaction } from 'ethers';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
@@ -81,8 +80,6 @@ export const CollateralModal = ({
 
   const updatedAssets = [...otherAssets, { ...asset, membership: !asset.membership }];
   const updatedBorrowLimitTotal = useBorrowLimitTotal(updatedAssets, poolChainId);
-
-  const queryClient = useQueryClient();
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
@@ -163,7 +160,6 @@ export const CollateralModal = ({
     onClose();
 
     if (!isLoading) {
-      await queryClient.refetchQueries();
       setIsConfirmed(false);
       const _steps = [
         {
