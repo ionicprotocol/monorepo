@@ -70,7 +70,7 @@ export const WithdrawModal = ({
   const successToast = useSuccessToast();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidWithdrawAmount', amount, currentSdk.chainId, address],
+    ['isValidWithdrawAmount', amount, currentSdk.chainId, address, asset.cToken],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -91,6 +91,11 @@ export const WithdrawModal = ({
         handleGenericError(e, errorToast);
         return false;
       }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!currentSdk && !!address,
     }
   );
 

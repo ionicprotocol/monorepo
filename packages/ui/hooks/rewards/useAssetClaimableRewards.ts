@@ -21,7 +21,11 @@ export const useAssetClaimableRewards = ({
 
       return null;
     },
-    { enabled: !!poolAddress && !!address && !!currentSdk }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolAddress && !!address && !!currentSdk,
+    }
   );
 };
 
@@ -64,6 +68,10 @@ export const useAssetsClaimableRewards = ({
 
       return null;
     },
-    { enabled: !!poolAddress && !!address && !!currentSdk }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolAddress && !!address && !!currentSdk,
+    }
   );
 };

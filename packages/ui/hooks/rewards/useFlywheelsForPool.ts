@@ -40,6 +40,8 @@ export const useFlywheelsForPool = (comptrollerAddress?: string, poolChainId?: n
       return flywheels;
     },
     {
+      cacheTime: Infinity,
+      staleTime: Infinity,
       initialData: [],
       enabled: !!comptrollerAddress && !!sdk,
     }

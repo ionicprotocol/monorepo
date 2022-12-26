@@ -85,7 +85,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidRepayAmount', amount, currentSdk.chainId, address],
+    ['isValidRepayAmount', amount, currentSdk.chainId, address, asset.cToken],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -108,6 +108,11 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
         handleGenericError(e, errorToast);
         return false;
       }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!currentSdk && !!address,
     }
   );
 
