@@ -162,8 +162,7 @@ export const CollateralModal = ({
   const onModalClose = async () => {
     onClose();
 
-    if (!isLoading) {
-      await queryClient.refetchQueries();
+    if (!isLoading && isConfirmed) {
       setIsConfirmed(false);
       const _steps = [
         {
@@ -176,6 +175,10 @@ export const CollateralModal = ({
       ];
 
       setSteps(_steps);
+
+      setTimeout(async () => {
+        await queryClient.refetchQueries();
+      }, 100);
     }
   };
 
