@@ -397,7 +397,7 @@ export class MidasBase {
     ) as CErc20PluginDelegate;
   }
 
-  getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
+  getEIP20TokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(address, this.artifacts.EIP20Interface.abi, signerOrProvider) as EIP20Interface;
   }
 

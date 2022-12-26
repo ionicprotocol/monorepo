@@ -15,7 +15,7 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
@@ -33,6 +33,7 @@ import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
@@ -66,21 +67,32 @@ export const SupplyModal = ({
   const { cCard } = useColors();
   const { data: myBalance } = useTokenBalance(asset.underlyingToken);
   const { data: myNativeBalance } = useTokenBalance('NO_ADDRESS_HERE_USE_WETH_FOR_ADDRESS');
+  const [isConfirmed, setIsConfirmed] = useState(false);
   const [isSupplying, setIsSupplying] = useState(false);
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
-  const [steps, setSteps] = useState<string[]>([]);
+  const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
+  const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
-  const optionToWrap =
-    asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
-    myBalance?.isZero() &&
-    !myNativeBalance?.isZero();
+  const optionToWrap = useMemo(() => {
+    return (
+      asset.underlyingToken === currentSdk.chainSpecificAddresses.W_TOKEN &&
+      myBalance?.isZero() &&
+      !myNativeBalance?.isZero()
+    );
+  }, [
+    asset.underlyingToken,
+    currentSdk.chainSpecificAddresses.W_TOKEN,
+    myBalance,
+    myNativeBalance,
+  ]);
+
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidSupplyAmount', amount, currentSdk.chainId, address],
+    ['isValidSupplyAmount', amount, currentSdk.chainId, address, asset.cToken],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -103,6 +115,11 @@ export const SupplyModal = ({
         handleGenericError(e, errorToast);
         return false;
       }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!currentSdk && !!address,
     }
   );
 
@@ -122,7 +139,9 @@ export const SupplyModal = ({
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
-
+    setIsConfirmed(true);
+    setConfirmedSteps([...steps]);
+    const _steps = [...steps];
     try {
       setIsSupplying(true);
       setActiveStep(0);
@@ -135,12 +154,24 @@ export const SupplyModal = ({
             WETHAbi,
             currentSdk.signer
           );
-          const resp = await WToken.deposit({ from: address, value: amount });
+          const tx = await WToken.deposit({ from: address, value: amount });
+
           addRecentTransaction({
-            hash: resp.hash,
+            hash: tx.hash,
             description: `Wrap ${nativeSymbol}`,
           });
-          await resp.wait();
+          _steps[0] = {
+            ..._steps[0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          await tx.wait();
+          _steps[0] = {
+            ..._steps[0],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
           successToast({
             id: 'wrapped',
             description: 'Successfully Wrapped!',
@@ -153,30 +184,84 @@ export const SupplyModal = ({
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        await currentSdk.approve(asset.cToken, asset.underlyingToken, amount);
-        successToast({
-          id: 'approved',
-          description: 'Successfully Approved!',
-        });
+        const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
+        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+          amount
+        );
+
+        if (!hasApprovedEnough) {
+          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `Approve ${asset.underlyingSymbol}`,
+          });
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
+          await tx.wait();
+
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            id: 'approved',
+            description: 'Successfully Approved!',
+          });
+        } else {
+          _steps[optionToWrap ? 1 : 0] = {
+            ..._steps[optionToWrap ? 1 : 0],
+            desc: 'Already approved!',
+            done: true,
+          };
+          setConfirmedSteps([..._steps]);
+        }
       } catch (error) {
         setFailedStep(optionToWrap ? 2 : 1);
         throw error;
       }
+      if (enableAsCollateral) {
+        try {
+          setActiveStep(optionToWrap ? 3 : 2);
+          const tx = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `Entered ${asset.underlyingSymbol} market`,
+          });
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
 
-      try {
-        setActiveStep(optionToWrap ? 3 : 2);
-        await currentSdk.enterMarkets(asset.cToken, comptrollerAddress, enableAsCollateral);
-        successToast({
-          id: 'collateralEnabled',
-          description: 'Collateral enabled!',
-        });
-      } catch (error) {
-        setFailedStep(optionToWrap ? 3 : 2);
-        throw error;
+          await tx.wait();
+
+          _steps[optionToWrap ? 2 : 1] = {
+            ..._steps[optionToWrap ? 2 : 1],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+          successToast({
+            id: 'collateralEnabled',
+            description: 'Collateral enabled!',
+          });
+        } catch (error) {
+          setFailedStep(optionToWrap ? 3 : 2);
+          throw error;
+        }
       }
 
       try {
-        setActiveStep(optionToWrap ? 4 : 3);
+        setActiveStep(
+          optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
+        );
         const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
         if (errorCode !== null) {
           SupplyError(errorCode);
@@ -185,35 +270,88 @@ export const SupplyModal = ({
             hash: tx.hash,
             description: `${asset.underlyingSymbol} Token Supply`,
           });
+          _steps[
+            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+          ] = {
+            ..._steps[
+              optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+            ],
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
+
           await tx.wait();
           await queryClient.refetchQueries();
+
+          _steps[
+            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+          ] = {
+            ..._steps[
+              optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+            ],
+            done: true,
+            txHash: tx.hash,
+          };
+          setConfirmedSteps([..._steps]);
         }
       } catch (error) {
-        setFailedStep(optionToWrap ? 4 : 3);
+        setFailedStep(
+          optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
+        );
         throw error;
       }
     } catch (error) {
-      setIsSupplying(false);
       handleGenericError(error, errorToast);
     } finally {
+      setIsSupplying(false);
+    }
+  };
+
+  const onModalClose = () => {
+    onClose();
+
+    if (!isSupplying) {
       setAmount(constants.Zero);
-      onClose();
+      setIsConfirmed(false);
+      let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
+
+      if (!enableAsCollateral) {
+        _steps.splice(1, 1);
+      }
+
+      if (optionToWrap) {
+        _steps = [
+          { title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false },
+          ..._steps,
+        ];
+      }
+
+      setSteps(_steps);
     }
   };
 
   useEffect(() => {
-    optionToWrap ? setSteps(['Wrap Native Token', ...SUPPLY_STEPS]) : setSteps([...SUPPLY_STEPS]);
-  }, [optionToWrap]);
+    let _steps = [...SUPPLY_STEPS(asset.underlyingSymbol)];
+
+    if (!enableAsCollateral) {
+      _steps.splice(1, 1);
+    }
+
+    if (optionToWrap) {
+      _steps = [{ title: 'Wrap Native Token', desc: 'Wrap Native Token', done: false }, ..._steps];
+    }
+
+    setSteps(_steps);
+  }, [optionToWrap, enableAsCollateral, asset.underlyingSymbol]);
 
   return (
     <Modal
       motionPreset="slideInBottom"
       isOpen={isOpen}
-      onClose={() => {
-        setAmount(constants.Zero);
-        onClose();
-      }}
+      onClose={onModalClose}
       isCentered
+      closeOnOverlayClick={false}
+      closeOnEsc={false}
     >
       <ModalOverlay />
       <ModalContent>
@@ -226,8 +364,17 @@ export const SupplyModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            {isSupplying ? (
-              <PendingTransaction activeStep={activeStep} failedStep={failedStep} steps={steps} />
+            {!isSupplying && <ModalCloseButton top={4} right={4} />}
+            {isConfirmed ? (
+              <PendingTransaction
+                activeStep={activeStep}
+                failedStep={failedStep}
+                steps={confirmedSteps}
+                isSupplying={isSupplying}
+                poolChainId={poolChainId}
+                amount={amount}
+                asset={asset}
+              />
             ) : (
               <>
                 <HStack width="100%" p={4} justifyContent="center">
@@ -242,7 +389,6 @@ export const SupplyModal = ({
                   >
                     {tokenData?.symbol || asset.underlyingSymbol}
                   </EllipsisText>
-                  <ModalCloseButton top={4} right={4} />
                 </HStack>
 
                 <Divider />

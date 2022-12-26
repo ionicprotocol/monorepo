@@ -1,12 +1,9 @@
-import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import { Box, Icon, Text, VStack } from '@chakra-ui/react';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
-import { Address } from 'wagmi';
 
 import { Column } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
-import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -14,67 +11,20 @@ export const PendingTransaction = ({
   activeStep,
   failedStep,
   steps,
-  isRepaying,
+  isLoading,
   poolChainId,
-  amount,
   asset,
 }: {
   activeStep: number;
   failedStep: number;
   steps: TxStep[];
-  isRepaying: boolean;
+  isLoading: boolean;
   poolChainId: number;
-  amount: BigNumber;
   asset: MarketData;
 }) => {
-  const amountNum = utils.formatUnits(amount, asset.underlyingDecimals);
-
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
-
-  const addToken = async () => {
-    const ethereum = window.ethereum;
-
-    if (!ethereum) {
-      errorToast({ title: 'Error', description: 'Wallet could not be found!' });
-
-      return false;
-    }
-    try {
-      const added = await ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: asset.cToken,
-            symbol: asset.underlyingSymbol,
-            decimals: Number(asset.underlyingDecimals),
-            image: asset.logoUrl,
-          },
-        } as {
-          type: 'ERC20';
-          options: {
-            address: Address;
-            decimals: number;
-            symbol: string;
-            image?: string;
-          };
-        },
-      });
-
-      if (added) {
-        successToast({ title: 'Added', description: 'Token is successfully added to wallet' });
-      }
-
-      return added;
-    } catch (error) {
-      return false;
-    }
-  };
-
   return (
     <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
-      {isRepaying ? (
+      {isLoading ? (
         <Loader />
       ) : failedStep === 0 ? (
         <VStack width="100%">
@@ -83,13 +33,8 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text variant="mdText" fontWeight="bold">
-            You repaied {amountNum} {asset.underlyingSymbol}
+            You {asset.membership ? 'enabled' : 'disabled'} {asset.underlyingSymbol} as collateral
           </Text>
-          <Flex width="100%" justifyContent="flex-end">
-            <Button onClick={addToken} variant={'ghost'} size="sm">
-              Add {asset.underlyingSymbol} to wallet
-            </Button>
-          </Flex>
         </VStack>
       ) : (
         <VStack>
@@ -104,11 +49,11 @@ export const PendingTransaction = ({
           activeStep={activeStep}
           steps={steps}
           failedStep={failedStep}
-          isLoading={isRepaying}
+          isLoading={isLoading}
           poolChainId={poolChainId}
         />
       </Box>
-      {isRepaying ? (
+      {isLoading ? (
         <VStack mt={4}>
           <Text textAlign="center" variant="smText">
             Check your wallet to submit the transactions

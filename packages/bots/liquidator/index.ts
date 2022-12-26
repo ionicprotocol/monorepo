@@ -17,5 +17,5 @@ dotenv.config();
 
   logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
   await liquidatePositions(config.chainId, provider);
-  setTimeout(runBot, 2 * 1e9);
+  setTimeout(runBot, 3700000);
 })();

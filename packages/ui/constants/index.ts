@@ -1,5 +1,7 @@
 import { SupportedChainsArray } from '@midas-capital/types';
 
+import { TxStep } from '@ui/types/ComponentPropsType';
+
 export const SUPPORTED_NETWORKS_REGEX = new RegExp(SupportedChainsArray.join('|'));
 export const VALID_ADDRESS_REGEX = /^0x[a-fA-F0-9]{40}$/;
 
@@ -107,10 +109,37 @@ export const PERFORMANCE_FEE_TOOLTIP =
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
-export const SUPPLY_STEPS = ['Approve', 'Enter Market', 'Mint Market Share'];
+export const SUPPLY_STEPS = (symbol: string) =>
+  [
+    { title: 'Approve', desc: 'Allow Midas to use your tokens', done: false },
+    {
+      title: 'Enable Collateral',
+      desc: 'Allows supplied assets to be used as collateral',
+      done: false,
+    },
+    {
+      title: 'Mint Market Share',
+      desc: `Mints tokens which represent your share in the ${symbol} market`,
+      done: false,
+    },
+  ] as TxStep[];
+export const BORROW_STEPS = (symbol: string) =>
+  [{ title: 'Borrow', desc: `Borrows ${symbol} from the pool`, done: false }] as TxStep[];
+export const WITHDRAW_STEPS = (symbol: string) =>
+  [
+    {
+      title: 'Withdraw',
+      desc: `Withdraws supplied liquidity of ${symbol} from the pool`,
+      done: false,
+    },
+  ] as TxStep[];
+export const REPAY_STEPS = (symbol: string) =>
+  [
+    { title: 'Approve', desc: 'Allow Midas to use your tokens', done: false },
+    { title: 'Repay', desc: `Repays a borrow position of ${symbol} token`, done: false },
+  ] as TxStep[];
 export const SCORE_LIMIT = 0.6;
 export const SCORE_RANGE_MAX = 10;
-export const REPAY_STEPS = ['Approve', 'Repay'];
 export const MARKET_LTV = 'Market / LTV';
 export const SUPPLY_APY = 'Supply APY';
 export const BORROW_APY = 'Borrow APY';
