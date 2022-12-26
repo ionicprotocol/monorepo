@@ -1,5 +1,4 @@
 import { Switch, useDisclosure } from '@chakra-ui/react';
-import { useQueryClient } from '@tanstack/react-query';
 import * as React from 'react';
 
 import { CollateralModal } from '@ui/components/pages/PoolPage/MarketsList/CollateralModal';
@@ -22,7 +21,6 @@ export const Collateral = ({
   const { currentChain } = useMultiMidas();
   const isMobile = useIsMobile();
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
-  const queryClient = useQueryClient();
 
   return (
     <Row mainAxisAlignment="center" crossAxisAlignment="center">
@@ -39,12 +37,7 @@ export const Collateral = ({
         asset={asset}
         assets={assets}
         comptrollerAddress={comptrollerAddress}
-        onClose={() => {
-          closeModal();
-          setTimeout(async () => {
-            await queryClient.refetchQueries();
-          }, 100);
-        }}
+        onClose={closeModal}
         poolChainId={poolChainId}
       />
     </Row>
