@@ -92,7 +92,7 @@ export const SupplyModal = ({
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidSupplyAmount', amount, currentSdk.chainId, address],
+    ['isValidSupplyAmount', amount, currentSdk.chainId, address, asset.cToken],
     async () => {
       if (!currentSdk || !address) return null;
 
@@ -115,6 +115,11 @@ export const SupplyModal = ({
         handleGenericError(e, errorToast);
         return false;
       }
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!currentSdk && !!address,
     }
   );
 
