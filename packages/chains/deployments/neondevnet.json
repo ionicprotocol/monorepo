@@ -14210,7 +14210,7 @@
       ]
     },
     "FuseSafeLiquidator": {
-      "address": "0x60Fb098C48159064a71e161dEA951815f1ceB00f",
+      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
       "abi": [
         {
           "anonymous": false,
@@ -15079,7 +15079,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x4516267a7d644c374d39dE7ed67D7677231b91dE",
+      "address": "0x9Be6440fB4fAA9707A8c03F9F7d2E4796930A951",
       "abi": [
         {
           "anonymous": false,
@@ -15808,7 +15808,7 @@
       ]
     },
     "FuseSafeLiquidator_Proxy": {
-      "address": "0x60Fb098C48159064a71e161dEA951815f1ceB00f",
+      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
       "abi": [
         {
           "inputs": [
