@@ -50,9 +50,8 @@ export const CollateralModal = ({
   onClose,
   poolChainId,
 }: CollateralModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
-  if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
@@ -75,12 +74,12 @@ export const CollateralModal = ({
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
 
-  const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
+  const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
 
   const otherAssets = assets.filter((_asset) => _asset.cToken !== asset.cToken);
 
   const updatedAssets = [...otherAssets, { ...asset, membership: !asset.membership }];
-  const updatedBorrowLimitTotal = useBorrowLimitTotal(updatedAssets, poolChainId);
+  const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets, poolChainId);
 
   const queryClient = useQueryClient();
 

@@ -21,6 +21,7 @@ export const Collateral = ({
   const { currentChain } = useMultiMidas();
   const isMobile = useIsMobile();
   const { isOpen: isModalOpen, onOpen: openModal, onClose: closeModal } = useDisclosure();
+  const isDisabled = !currentChain || currentChain.unsupported || currentChain.id !== poolChainId;
 
   return (
     <Row mainAxisAlignment="center" crossAxisAlignment="center">
@@ -30,16 +31,18 @@ export const Collateral = ({
         size={isMobile ? 'sm' : 'md'}
         cursor={'pointer'}
         ml={4}
-        isDisabled={!currentChain || currentChain.unsupported || currentChain.id !== poolChainId}
+        isDisabled={isDisabled}
       />
-      <CollateralModal
-        isOpen={isModalOpen}
-        asset={asset}
-        assets={assets}
-        comptrollerAddress={comptrollerAddress}
-        onClose={closeModal}
-        poolChainId={poolChainId}
-      />
+      {!isDisabled && (
+        <CollateralModal
+          isOpen={isModalOpen}
+          asset={asset}
+          assets={assets}
+          comptrollerAddress={comptrollerAddress}
+          onClose={closeModal}
+          poolChainId={poolChainId}
+        />
+      )}
     </Row>
   );
 };
