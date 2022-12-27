@@ -50,9 +50,8 @@ export const CollateralModal = ({
   onClose,
   poolChainId,
 }: CollateralModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
-  if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
