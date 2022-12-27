@@ -50,9 +50,8 @@ export const CollateralModal = ({
   onClose,
   poolChainId,
 }: CollateralModalProps) => {
-  const { currentSdk, address, currentChain } = useMultiMidas();
+  const { currentSdk, address } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
-  if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
 
   const errorToast = useErrorToast();
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
@@ -75,12 +74,12 @@ export const CollateralModal = ({
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
 
-  const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
+  const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
 
   const otherAssets = assets.filter((_asset) => _asset.cToken !== asset.cToken);
 
   const updatedAssets = [...otherAssets, { ...asset, membership: !asset.membership }];
-  const updatedBorrowLimitTotal = useBorrowLimitTotal(updatedAssets, poolChainId);
+  const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets, poolChainId);
 
   const queryClient = useQueryClient();
 
@@ -162,8 +161,7 @@ export const CollateralModal = ({
   const onModalClose = async () => {
     onClose();
 
-    if (!isLoading) {
-      await queryClient.refetchQueries();
+    if (!isLoading && isConfirmed) {
       setIsConfirmed(false);
       const _steps = [
         {
@@ -176,6 +174,10 @@ export const CollateralModal = ({
       ];
 
       setSteps(_steps);
+
+      setTimeout(async () => {
+        await queryClient.refetchQueries();
+      }, 100);
     }
   };
 
@@ -199,7 +201,7 @@ export const CollateralModal = ({
             color={cCard.txtColor}
             borderRadius={16}
           >
-            <ModalCloseButton top={4} right={4} />
+            {!isLoading && <ModalCloseButton top={4} right={4} />}
             {isConfirmed ? (
               <PendingTransaction
                 activeStep={activeStep}
