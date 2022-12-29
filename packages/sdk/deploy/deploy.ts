@@ -140,15 +140,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     waitConfirmations: 1,
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
-
-  const rewards = await deployments.deploy("RewardsDistributorDelegate", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (rewards.transactionHash) await ethers.provider.waitForTransaction(rewards.transactionHash);
-  console.log("RewardsDistributorDelegate: ", rewards.address);
   ////
 
   ////
