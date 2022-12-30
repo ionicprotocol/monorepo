@@ -13,7 +13,7 @@ export default task("irm:set", "Set new IRM to ctoken")
     const ctokens = _ctokens.split(",");
 
     for (const cTokenAddress of ctokens) {
-      const cToken = new ethers.Contract(cTokenAddress, sdk.chainDeployment.CTokenFirstExtension.abi, deployer);
+      const cToken = sdk.createCTokenWithExtensions(cTokenAddress, deployer);
       const tx = await cToken._setInterestRateModel(_irmAddress);
       await tx.wait();
       console.log(`Set IRM of ${await cToken.callStatic.underlying()} to ${_irmAddress}`);
