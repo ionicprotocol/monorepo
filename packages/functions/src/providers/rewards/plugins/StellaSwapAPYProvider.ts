@@ -53,7 +53,7 @@ class StellaSwapAPYProvider extends AbstractPluginAPYProvider {
       if (symbol === 'STELLA') {
         rewards.push({
           apy,
-          flywheel: '0x34022232C0233Ee05FDe3383FcEC52248Dd84b91',
+          flywheel: '0x601ac0Aa2aFdfC9Bd080A41E7BeF95D0b1aff7f9',
           plugin: pluginAddress,
           token: '0x0E358838ce72d5e61E0018a2ffaC4bEC5F4c88d2',
           updated_at: new Date().toISOString(),
@@ -61,7 +61,7 @@ class StellaSwapAPYProvider extends AbstractPluginAPYProvider {
       } else if (symbol === 'WGLMR') {
         rewards.push({
           apy,
-          flywheel: '0x486e3bacedC6A1770ea7F40ac655174080ad606F',
+          flywheel: '0x22F1B04104f994D27B89cDB1d7f98102cA5F30cB',
           plugin: pluginAddress,
           token: '0xAcc15dC74880C9944775448304B263D191c6077F',
           updated_at: new Date().toISOString(),
