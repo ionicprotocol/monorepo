@@ -12,7 +12,6 @@ import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelSta
 import { JumpRateModel } from "../../lib/contracts/typechain/JumpRateModel";
 import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
 import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
-import { RewardsDistributorDelegate } from "../../lib/contracts/typechain/RewardsDistributorDelegate";
 import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
 import { SignerOrProvider } from "../MidasSdk";
 
@@ -31,14 +30,6 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>("FlywheelStaticRewards");
     createJumpRateModel = this.createContractInstance<JumpRateModel>("JumpRateModel");
     createAnkrBNBInterestRateModel = this.createContractInstance<AnkrBNBInterestRateModel>("AnkrBNBInterestRateModel");
-
-    createRewardsDistributor(distributorAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
-      return new Contract(
-        distributorAddress,
-        this.chainDeployment.RewardsDistributorDelegate.abi,
-        signerOrProvider
-      ) as RewardsDistributorDelegate;
-    }
 
     createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
       const comptrollerABI: Array<Fragment> = this.chainDeployment.Comptroller.abi;

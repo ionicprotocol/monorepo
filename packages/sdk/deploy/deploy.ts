@@ -141,8 +141,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
   ////
-
-  ////
   //// FUSE CORE CONTRACTS
   const fpd = await deployments.deploy("FusePoolDirectory", {
     from: deployer,
