@@ -24,8 +24,10 @@ const forkMainnet: DeployFunction = async (hre): Promise<void> => {
   const { deployer } = await hre.getNamedAccounts();
 
   // in case hardhat_impersonateAccount is failing, make sure to be running `hardhat node` instead of deploy
-  await ethers.provider.send("hardhat_impersonateAccount", [whale]);
-  const signer = hre.ethers.provider.getSigner(whale);
+  await hre.network.provider.send("evm_setAutomine", [true]);
+  await hre.ethers.provider.send("hardhat_impersonateAccount", [deployer]);
+
+  const signer = hre.ethers.provider.getSigner(deployer);
   await signer.sendTransaction({ to: deployer, value: fundingValue });
   await func(hre);
 };
