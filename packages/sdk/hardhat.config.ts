@@ -87,6 +87,7 @@ const config: HardhatUserConfig = {
     // This is the unchangeable default network which is started with `hardhat node`
     hardhat: {
       accounts: { mnemonic },
+
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gas: 25e6,
       gasPrice: 20e10,
@@ -145,7 +146,7 @@ const config: HardhatUserConfig = {
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: OVERRIDE_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth",
     },
     evmos: {
       accounts: { mnemonic },
