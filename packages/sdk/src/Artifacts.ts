@@ -26,8 +26,6 @@ import JumpRateModelArtifact from "../lib/contracts/out/JumpRateModel.sol/JumpRa
 import MasterPriceOracleArtifact from "../lib/contracts/out/MasterPriceOracle.sol/MasterPriceOracle.json";
 import MidasERC4626Artifact from "../lib/contracts/out/MidasERC4626.sol/MidasERC4626.json";
 import MidasFlywheelArtifact from "../lib/contracts/out/MidasFlywheel.sol/MidasFlywheel.json";
-import RewardsDistributorDelegateArtifact from "../lib/contracts/out/RewardsDistributorDelegate.sol/RewardsDistributorDelegate.json";
-import RewardsDistributorDelegatorArtifact from "../lib/contracts/out/RewardsDistributorDelegator.sol/RewardsDistributorDelegator.json";
 import SimplePriceOracleArtifact from "../lib/contracts/out/SimplePriceOracle.sol/SimplePriceOracle.json";
 import StkBNBPriceOracleArtifact from "../lib/contracts/out/StkBNBPriceOracle.sol/StkBNBPriceOracle.json";
 import UniswapLpTokenPriceOracleArtifact from "../lib/contracts/out/UniswapLpTokenPriceOracle.sol/UniswapLpTokenPriceOracle.json";
@@ -68,8 +66,6 @@ const FixedNativePriceOracle: Artifact = FixedNativePriceOracleArtifact;
 const CurveLpTokenPriceOracleNoRegistry: Artifact = CurveLpTokenPriceOracleNoRegistryArtifact;
 const UniswapLpTokenPriceOracle: Artifact = UniswapLpTokenPriceOracleArtifact;
 const UniswapTwapPriceOracleV2Root: Artifact = UniswapTwapPriceOracleV2RootArtifact;
-const RewardsDistributorDelegate: Artifact = RewardsDistributorDelegateArtifact;
-const RewardsDistributorDelegator: Artifact = RewardsDistributorDelegatorArtifact;
 const SimplePriceOracle: Artifact = SimplePriceOracleArtifact;
 const BalancerLpTokenPriceOracle: Artifact = BalancerLpTokenPriceOracleArtifact;
 const AnkrCertificateTokenPriceOracle: Artifact = AnkrCertificateTokenPriceOracleArtifact;
@@ -113,8 +109,6 @@ const ARTIFACTS = {
   CurveLpTokenPriceOracleNoRegistry,
   UniswapLpTokenPriceOracle,
   UniswapTwapPriceOracleV2Root,
-  RewardsDistributorDelegate,
-  RewardsDistributorDelegator,
   SimplePriceOracle,
   BalancerLpTokenPriceOracle,
   AnkrCertificateTokenPriceOracle,
@@ -158,8 +152,6 @@ export {
   JumpRateModel_JARVIS_002_004_4_08,
   AnkrBNBInterestRateModel,
   MasterPriceOracle,
-  RewardsDistributorDelegate,
-  RewardsDistributorDelegator,
   SimplePriceOracle,
   BalancerLpTokenPriceOracle,
   AnkrCertificateTokenPriceOracle,
