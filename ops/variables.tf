@@ -30,19 +30,14 @@ variable "chainstack_polygon_rpc_url" {
   type = string
 }
 
-variable "twap_bot_image" {
-  type    = string
-  default = "ghcr.io/midas-protocol/fuse-twap-bot:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
-}
-
 variable "liquidator_bot_image" {
   type    = string
-  default = "ghcr.io/midas-protocol/fuse-liquidator-bot:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
+  default = "ghcr.io/midas-protocol/liquidator:sha-642fd961b43d37ab3ccdbd6d88163a02c8caabbb"
 }
 
 variable "oracles_monitor_image" {
   type    = string
-  default = "ghcr.io/midas-protocol/oracles-monitor:sha-c6f1b30461d38d6eda523824c63844db5f730df3"
+  default = "ghcr.io/midas-protocol/oracles-monitor:sha-642fd961b43d37ab3ccdbd6d88163a02c8caabbb"
 }
 variable "ecs_notifier_discord_webhook_url" {
   type = string

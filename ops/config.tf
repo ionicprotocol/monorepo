@@ -40,8 +40,7 @@ locals {
   polygon_mainnet_chain_id = "137"
 
   // per-chain liquidation bot configs
-  bsc_excluded_comptrollers     = "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5,0x11355CF65a9B76e5Ac4C289362fD7c22eE93E762,0x47FE09AeED6545aE66f5f2309EC52828164Aa6D5,0xd3E5AAFebBF06A071509cf894f665710dDaa800d"
-  polygon_excluded_comptrollers = "0x7048847d460291E35De52Cfa444873DE0B9b2331"
+  bsc_excluded_comptrollers = "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5"
 
 }
 
