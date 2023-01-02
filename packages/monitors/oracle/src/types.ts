@@ -1,4 +1,4 @@
-import { arbitrum, bsc, moonbeam, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, evmos, moonbeam, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig, SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Contract } from "ethers";
@@ -88,17 +88,24 @@ export type FeedVerifierConfig = BaseConfig & {
 };
 
 export type PriceVerifierConfig = BaseConfig & {
-  maxPriceDeviation: number;
+  defaultMaxPriceDeviation: number;
   runInterval: number;
 };
 
-export type PriceChangeVerifierConfig = PriceVerifierConfig;
+export type PriceChangeVerifierConfig = BaseConfig & {
+  runInterval: number;
+  defaultPriceDeviationThresholds: {
+    "3m": number;
+    "15m": number;
+  };
+};
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
   [polygon.chainId]: polygon,
   [moonbeam.chainId]: moonbeam,
   [arbitrum.chainId]: arbitrum,
+  [evmos.chainId]: evmos,
 };
 
 export type VerificationErrorCache = Array<{ asset: SupportedAsset; error: PriceFeedInvalidity; timestamp: number }>;
@@ -108,3 +115,19 @@ export enum ErrorKind {
   init = "init",
   verification = "verification",
 }
+
+export type FeedVerifierAsset = SupportedAsset & {
+  minPeriod?: BigNumber;
+  deviationThreshold?: BigNumber;
+};
+
+export type PriceVerifierAsset = SupportedAsset & {
+  maxPriceDeviation?: number;
+};
+
+export type PriceChangeVerifierAsset = SupportedAsset & {
+  priceDeviationThresholds?: {
+    "3m": number;
+    "15m": number;
+  };
+};

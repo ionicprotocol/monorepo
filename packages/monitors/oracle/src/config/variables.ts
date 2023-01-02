@@ -30,13 +30,16 @@ const priceVerifierConfig: PriceVerifierConfig = {
   ...baseConfig,
   runInterval:
     parseInt(process.env.FEED_VERIFIER_RUN_INTERVAL ?? (process.env.NODE_ENV === "production" ? "60" : "20")) * 1000, // 1 minute
-  maxPriceDeviation: parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
+  defaultMaxPriceDeviation: parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
 };
 
 const priceChangeVerifierConfig: PriceChangeVerifierConfig = {
   ...baseConfig,
   runInterval: parseInt(process.env.FEED_VERIFIER_RUN_INTERVAL ?? "15") * 1000, // 15 seconds
-  maxPriceDeviation: parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
+  defaultPriceDeviationThresholds: {
+    "3m": parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
+    "15m": parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
+  },
 };
 
 export const configs = {

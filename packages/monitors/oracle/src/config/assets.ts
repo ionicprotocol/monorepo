@@ -34,6 +34,8 @@ const PRICE_VERIFICATION_DISABLED = [
   assetSymbols.XSGD,
 ];
 
+const FEED_VERIFICATION_DISABLED = PRICE_VERIFICATION_DISABLED;
+
 const getFeedVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
   return chainAssets.filter(
@@ -41,7 +43,7 @@ const getFeedVerifierAssets = (): SupportedAsset[] => {
       asset.oracle &&
       FEED_VERIFIER_ORACLES.includes(asset.oracle) &&
       asset.disabled !== true &&
-      !PRICE_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
+      !FEED_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
   );
 };
 

@@ -27,9 +27,9 @@ export async function verifyPriceValue(
   const priceDiffPercent = (priceDiff / assetPriceUSD) * 100;
   logger.info(`Price difference for asset is ${priceDiffPercent}%`);
 
-  if (priceDiffPercent > config.maxPriceDeviation) {
+  if (priceDiffPercent > config.defaultMaxPriceDeviation) {
     return {
-      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.maxPriceDeviation}%`,
+      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.defaultMaxPriceDeviation}%`,
       invalidReason: InvalidReason.DEVIATION_ABOVE_THRESHOLD,
     };
   }
