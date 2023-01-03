@@ -124,8 +124,7 @@ const EditFlywheelModal = ({
 
   const fund = useCallback(async () => {
     if (!currentSdk) return;
-
-    const token = currentSdk.getEIP20TokenInstance(flywheel.rewardToken, currentSdk.signer);
+    const token = currentSdk.getEIP20RewardTokenInstance(flywheel.rewardToken, currentSdk.signer);
 
     setTransactionPending(true);
     try {
