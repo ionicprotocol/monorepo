@@ -514,7 +514,7 @@ export const strategies: ERC4626Strategy[] = [
     adminWithTimelock: PlatformRiskAdminWithTimelock.ADMIN_WITH_TIMELOCK,
   },
   {
-    address: "0x7E9D7D2B5818b8a84B796BEaE8Ab059e24b4810c",
+    address: "0xe32f52f8172E3c75dacB3606e254275ab774d88f",
     strategy: Strategy.Stella,
     name: "DOT.xc-GLMR",
     complexity: StrategyComplexity.HIGH,
