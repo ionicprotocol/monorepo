@@ -35,7 +35,7 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
     const arrayOfFalse = [];
     const arrayOfTrue = [];
 
-    if (sdk.chainDeployment.CErc20PluginRewardsDelegate.address !== "0x32Be4b977BaB44e9146Bb414c18911e652C56568") {
+    if (sdk.chainDeployment.CErc20PluginRewardsDelegate.address !== "0xad0538f54d7a503FE138b9fB62711B2034E0FD94") {
       throw "CErc20PluginRewardsDelegate address is not correct";
     }
 
