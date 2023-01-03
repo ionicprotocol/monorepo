@@ -30,18 +30,10 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
 
     const erc20PluginRewardsDelegate = await ethers.getContract("CErc20PluginRewardsDelegate", signer);
 
-    const oldImplementations = [
-      ethers.constants.AddressZero,
-      ethers.constants.AddressZero,
-      ethers.constants.AddressZero,
-    ];
-    const newImplementations = [
-      sdk.chainDeployment.CErc20Delegate.address,
-      sdk.chainDeployment.CErc20PluginDelegate.address,
-      sdk.chainDeployment.CErc20PluginRewardsDelegate.address,
-    ];
-    const arrayOfFalse = [false, false, false];
-    const arrayOfTrue = [true, true, true];
+    const oldImplementations = [];
+    const newImplementations = [];
+    const arrayOfFalse = [];
+    const arrayOfTrue = [];
 
     if (sdk.chainDeployment.CErc20PluginRewardsDelegate.address !== "0x32Be4b977BaB44e9146Bb414c18911e652C56568") {
       throw "CErc20PluginRewardsDelegate address is not correct";
@@ -65,8 +57,9 @@ task("plugin:deploy", "Deploy ERC4626 Strategy")
 
     const abiCoder = new ethers.utils.AbiCoder();
 
-    const pluginAddress = ethers.constants.AddressZero;
+    const pluginAddress = "0x46eC3122C73CA62A18FFCFd434cDc1C341Fe96dB";
     const stellaMarket = "0x32Be4b977BaB44e9146Bb414c18911e652C56568";
+
     const implementationAddress = erc20PluginRewardsDelegate.address;
     const implementationData = abiCoder.encode(["address"], [pluginAddress]);
 
