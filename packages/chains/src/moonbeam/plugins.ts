@@ -64,9 +64,9 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xF3a5454496E26ac57da879bf3285Fa85DEBF0388", "30"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/stella.png",
   },
-  // StellaLpERC4626_DOT.xc-GLMR_0x32Be4b977BaB44e9146Bb414c18911e652C56568.json
-  "0x7E9D7D2B5818b8a84B796BEaE8Ab059e24b4810c": {
-    market: "0x32Be4b977BaB44e9146Bb414c18911e652C56568",
+  // StellaLpERC4626_DOT.xc-GLMR_0xe2b3FC05C0c90c38BCa6E149D186571D413F5f5A.json
+  "0xe32f52f8172E3c75dacB3606e254275ab774d88f": {
+    market: "0xe2b3FC05C0c90c38BCa6E149D186571D413F5f5A",
     name: "StellaSwap DOT.xc-GLMR Pool",
     strategy: Strategy.Stella,
     apyDocsUrl: "https://app.stellaswap.com/farm",

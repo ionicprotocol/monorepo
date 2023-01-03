@@ -40932,8 +40932,8 @@
         }
       ]
     },
-    "StellaLpERC4626_DOT.xc-GLMR_0x32Be4b977BaB44e9146Bb414c18911e652C56568": {
-      "address": "0x7E9D7D2B5818b8a84B796BEaE8Ab059e24b4810c",
+    "StellaLpERC4626_DOT.xc-GLMR_0xe2b3FC05C0c90c38BCa6E149D186571D413F5f5A": {
+      "address": "0xe32f52f8172E3c75dacB3606e254275ab774d88f",
       "abi": [
         {
           "anonymous": false,
@@ -42245,8 +42245,8 @@
         }
       ]
     },
-    "StellaLpERC4626_DOT.xc-GLMR_0x32Be4b977BaB44e9146Bb414c18911e652C56568_Implementation": {
-      "address": "0x4A792637e7ad93a854c6C8d35208232A33f2C2A2",
+    "StellaLpERC4626_DOT.xc-GLMR_0xe2b3FC05C0c90c38BCa6E149D186571D413F5f5A_Implementation": {
+      "address": "0xC6edFE2a437899A65230DcEc50b9576A12Fe356c",
       "abi": [
         {
           "anonymous": false,
@@ -43418,8 +43418,8 @@
         }
       ]
     },
-    "StellaLpERC4626_DOT.xc-GLMR_0x32Be4b977BaB44e9146Bb414c18911e652C56568_Proxy": {
-      "address": "0x7E9D7D2B5818b8a84B796BEaE8Ab059e24b4810c",
+    "StellaLpERC4626_DOT.xc-GLMR_0xe2b3FC05C0c90c38BCa6E149D186571D413F5f5A_Proxy": {
+      "address": "0xe32f52f8172E3c75dacB3606e254275ab774d88f",
       "abi": [
         {
           "inputs": [
