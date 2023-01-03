@@ -25,7 +25,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
         return [assetAddress, implementationAddress, receipt];
       } catch (error) {
         this.logger.error(`deployAsset raw error:  ${error} using MarketConfig: ${JSON.stringify(config)}`);
-        throw Error("Deployment of asset to Fuse pool failed: " + (error.message ? error.message : error));
+        throw Error("Deployment of asset to Fuse pool failed: " + (error instanceof Error ? error.message : error));
       }
     }
 
