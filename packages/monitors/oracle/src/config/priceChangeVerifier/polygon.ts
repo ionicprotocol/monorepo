@@ -1,7 +1,6 @@
-import { assetFilter, assetSymbols } from "@midas-capital/types";
+import { assetFilter, assetSymbols, SupportedChains } from "@midas-capital/types";
 
 import { chainIdToConfig, PriceChangeVerifierAsset } from "../../types";
-import { baseConfig } from "../variables";
 
 import {
   lsdPriceChangeDefaults,
@@ -10,7 +9,7 @@ import {
   stablePriceChangeDefaults,
 } from "./defaults";
 
-const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
+const chainAssets = chainIdToConfig[SupportedChains.polygon].assets;
 
 // Smaller Cap
 const MIMO = assetFilter(chainAssets, assetSymbols.MIMO);

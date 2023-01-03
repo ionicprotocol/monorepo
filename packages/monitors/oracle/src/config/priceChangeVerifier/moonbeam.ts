@@ -1,11 +1,10 @@
-import { assetFilter, assetSymbols } from "@midas-capital/types";
+import { assetFilter, assetSymbols, SupportedChains } from "@midas-capital/types";
 
 import { chainIdToConfig, PriceChangeVerifierAsset } from "../../types";
-import { baseConfig } from "../variables";
 
 import { lsdPriceChangeDefaults, smallCapPriceChangeDefaults, stablePriceChangeDefaults } from "./defaults";
 
-const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
+const chainAssets = chainIdToConfig[SupportedChains.moonbeam].assets;
 
 // Smaller Cap
 const STELLA = assetFilter(chainAssets, assetSymbols.STELLA);
