@@ -9,6 +9,7 @@ const oracles: OracleTypes[] = [
   OracleTypes.AdrastiaPriceOracle,
   OracleTypes.FluxPriceOracle,
   OracleTypes.NativeUSDPriceOracle,
+  OracleTypes.SaddleLpTokenPriceOracle,
 ];
 
 export default oracles;

@@ -28,6 +28,7 @@ import "./tasks/one-time/dot-dot-bsc-plugins";
 import "./tasks/one-time/jarvis-polygon-mimo-plugin";
 import "./tasks/one-time/downgradeMarket";
 import "./tasks/one-time/loopless-booster";
+import "./tasks/one-time/liquidate-take-bad-debt";
 import "./tasks/oracle/add-apeswap-oracle";
 import "./tasks/configureApStrategies";
 
@@ -146,7 +147,7 @@ const config: HardhatUserConfig = {
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: OVERRIDE_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth",
     },
     evmos: {
       accounts: { mnemonic },

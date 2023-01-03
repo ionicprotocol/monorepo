@@ -14,7 +14,6 @@ import {
   deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { deployMIMOIrm } from "../helpers/irms";
 import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
 import { deployGelatoGUniPriceOracle } from "../helpers/oracles/gelato";
 import {
@@ -86,11 +85,6 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: "0xADAC33f543267c4D59a8c299cF804c303BC3e4aC",
       cycleLength: 1,
       name: "MIMO",
-    },
-    {
-      rewardToken: "0xAFC780bb79E308990c7387AB8338160bA8071B67",
-      cycleLength: 1,
-      name: "JRT_MIMO_SEP22",
     },
   ],
   cgId: polygon.specificParams.cgId,
@@ -635,9 +629,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
   });
   console.log("deployed dynamicFlywheels: ", dynamicFlywheels);
-
-  // custom IRMs
-  await deployMIMOIrm({ run, ethers, getNamedAccounts, deployments, deployConfig });
 
   //// Gelato GUNI Liquidator
   const gelatoGUniLiquidator = await deployments.deploy("GelatoGUniLiquidator", {

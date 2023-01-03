@@ -54,6 +54,8 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
       };
     },
     {
+      cacheTime: Infinity,
+      staleTime: Infinity,
       enabled: !!comptrollerAddress && comptrollerAddress.length > 0 && !!sdk,
     }
   );

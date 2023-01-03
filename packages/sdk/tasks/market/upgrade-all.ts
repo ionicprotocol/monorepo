@@ -127,7 +127,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
 
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);

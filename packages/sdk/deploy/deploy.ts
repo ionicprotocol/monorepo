@@ -1,4 +1,4 @@
-import { BigNumber, constants, providers, utils } from "ethers";
+import { constants, providers, utils } from "ethers";
 import { DeployFunction } from "hardhat-deploy/types";
 
 import { ChainDeployConfig, chainDeployConfig } from "../chainDeploy";
@@ -140,17 +140,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     waitConfirmations: 1,
   });
   console.log("CErc20PluginRewardsDelegate: ", erc20PluginRewardsDel.address);
-
-  const rewards = await deployments.deploy("RewardsDistributorDelegate", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (rewards.transactionHash) await ethers.provider.waitForTransaction(rewards.transactionHash);
-  console.log("RewardsDistributorDelegate: ", rewards.address);
-  ////
-
   ////
   //// FUSE CORE CONTRACTS
   const fpd = await deployments.deploy("FusePoolDirectory", {
@@ -390,8 +379,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const newImplementations = [erc20Delegate.address, erc20PluginDelegate.address, erc20PluginRewardsDelegate.address];
   const arrayOfFalse = [false, false, false];
   const arrayOfTrue = [true, true, true];
-
-  let receipt: providers.TransactionReceipt;
 
   if (oldErc20Delegate) {
     oldImplementations.push(oldErc20Delegate.address);

@@ -56,17 +56,13 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
     constants.AddressZero,
     types.string
   )
-  .setAction(async ({ oldFirstExtension }, { ethers, deployments }) => {
+  .setAction(async ({ oldFirstExtension }, { ethers }) => {
     const deployer = await ethers.getNamedSigner("deployer");
-
-    // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool", { name: pool.name, address: pool.comptroller });
@@ -167,7 +163,7 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
     const signer = await ethers.getNamedSigner(admin);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log(`pool address ${pool.comptroller}`);

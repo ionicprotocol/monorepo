@@ -6,6 +6,7 @@ import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployCurveV2LpOracle,
@@ -282,12 +283,6 @@ const curvePools: CurvePoolConfig[] = [
     ],
   },
   {
-    // BNBx-BNB pool
-    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
-    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
-    underlyings: [underlying(assets, assetSymbols.BNBx), underlying(assets, assetSymbols.BNB)],
-  },
-  {
     // MAI 3EPS pool
     lpToken: underlying(assets, assetSymbols.mai3EPS),
     pool: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
@@ -300,6 +295,11 @@ const curveV2Pools: CurveV2PoolConfig[] = [
     // eps BUSD jCHF
     lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
     pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
+  },
+  {
+    // BNBx-BNB pool
+    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
   },
 ];
 
@@ -414,15 +414,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     assets,
   });
 
-  //// Ankr BNB Certificate oracle
-  // await deployAnkrCertificateTokenPriceOracle({
-  //   run,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   assets,
-  //   certificateAssetSymbol: assetSymbols.aBNBc,
-  // });
+  // Ankr BNB Certificate oracle
+  await deployAnkrCertificateTokenPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+    certificateAssetSymbol: assetSymbols.ankrBNB,
+  });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,

@@ -18,7 +18,7 @@ export class PoolService {
 
   async getPoolsWithAsset(): Promise<Comptroller[]> {
     const poolsWithAsset: Comptroller[] = [];
-    const pools = await this.sdk.contracts.FusePoolDirectory.getAllPools();
+    const [, pools] = await this.sdk.contracts.FusePoolDirectory.getActivePools();
     for (const pool of pools) {
       const comptroller = this.sdk.createComptroller(pool.comptroller, this.sdk.signer);
       const market = await comptroller.callStatic.cTokensByUnderlying(this.asset.underlying);

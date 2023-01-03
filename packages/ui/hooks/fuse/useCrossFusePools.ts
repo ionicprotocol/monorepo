@@ -26,20 +26,11 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
             const _allPools: FusePoolData[] = [];
 
             const pools = await sdk.fetchPoolsManual({ from: address });
-            let visiblePools: FusePoolData[] = [];
-            if (pools && pools.length !== 0) {
-              type configKey = keyof typeof config;
-
-              const hidePools = (config[`hidePools${sdk.chainId}` as configKey] as string[]) || [];
-              pools.map((pool) => {
-                if (pool && !hidePools.includes(pool.id.toString())) {
-                  visiblePools.push({ ...pool, chainId: Number(sdk.chainId) });
-                }
-              });
-              if (!visiblePools?.length) {
-                visiblePools = poolSort(visiblePools);
-              }
-            }
+            const visiblePools: FusePoolData[] = !pools
+              ? []
+              : poolSort(
+                  pools.map((p) => ({ ...p, chainId: Number(sdk.chainId) } as FusePoolData))
+                );
 
             chainPools[sdk.chainId] = visiblePools;
             _allPools.push(...visiblePools);
@@ -87,6 +78,8 @@ export const useCrossFusePools = (chainIds: SupportedChains[]) => {
             );
 
             return allPools;
+          } else {
+            return null;
           }
         },
         cacheTime: Infinity,

@@ -34,7 +34,7 @@ task("market:mint-pause", "Pauses minting on a market")
     const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
-    const comptroller = await market.comptroller();
+    const comptroller = await market.callStatic.comptroller();
     const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
     const poolExtension = (await hre.ethers.getContractAt(
       "ComptrollerFirstExtension",
@@ -42,14 +42,14 @@ task("market:mint-pause", "Pauses minting on a market")
       admin
     )) as ComptrollerFirstExtension;
 
-    const currentPauseGuardian = await pool.pauseGuardian();
+    const currentPauseGuardian = await pool.callStatic.pauseGuardian();
     if (currentPauseGuardian === constants.AddressZero) {
       tx = await poolExtension._setPauseGuardian(admin.address);
       await tx.wait();
       console.log(`Set the pause guardian to ${admin.address}`);
     }
 
-    const isPaused: boolean = await pool.mintGuardianPaused(market.address);
+    const isPaused: boolean = await pool.callStatic.mintGuardianPaused(market.address);
     if (isPaused != taskArgs.paused) {
       tx = await poolExtension._setMintPaused(market.address, taskArgs.paused);
       await tx.wait();
@@ -59,7 +59,7 @@ task("market:mint-pause", "Pauses minting on a market")
       console.log(`No need to set the minting pause to ${taskArgs.paused} as it is already set to that value`);
     }
 
-    const isPausedAfter: boolean = await pool.mintGuardianPaused(market.address);
+    const isPausedAfter: boolean = await pool.callStatic.mintGuardianPaused(market.address);
 
     console.log(`The market at ${market.address} minting pause has been to ${isPausedAfter}`);
 
@@ -76,7 +76,7 @@ task("market:borrow-pause", "Pauses borrowing on a market")
     const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
-    const comptroller = await market.comptroller();
+    const comptroller = await market.callStatic.comptroller();
     const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
     const poolExtension = (await hre.ethers.getContractAt(
       "ComptrollerFirstExtension",
@@ -84,14 +84,14 @@ task("market:borrow-pause", "Pauses borrowing on a market")
       admin
     )) as ComptrollerFirstExtension;
 
-    const currentPauseGuardian = await pool.pauseGuardian();
+    const currentPauseGuardian = await pool.callStatic.pauseGuardian();
     if (currentPauseGuardian === constants.AddressZero) {
       tx = await poolExtension._setPauseGuardian(admin.address);
       await tx.wait();
       console.log(`Set the pause guardian to ${admin.address}`);
     }
 
-    const isPaused: boolean = await pool.borrowGuardianPaused(market.address);
+    const isPaused: boolean = await pool.callStatic.borrowGuardianPaused(market.address);
     if (isPaused != taskArgs.paused) {
       tx = await poolExtension._setBorrowPaused(market.address, taskArgs.paused);
       await tx.wait();
@@ -101,7 +101,7 @@ task("market:borrow-pause", "Pauses borrowing on a market")
       console.log(`No need to set the borrow pause to ${taskArgs.paused} as it is already set to that value`);
     }
 
-    const isPausedAfter: boolean = await pool.borrowGuardianPaused(market.address);
+    const isPausedAfter: boolean = await pool.callStatic.borrowGuardianPaused(market.address);
 
     console.log(`The market at ${market.address} borrowing pause has been to ${isPausedAfter}`);
 
@@ -116,7 +116,7 @@ task("market:set-supply-cap", "Pauses borrowing on a market")
     const admin = await hre.ethers.getNamedSigner(taskArgs.admin);
 
     const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
-    const comptroller = await market.comptroller();
+    const comptroller = await market.callStatic.comptroller();
     const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
     const poolExtension = (await hre.ethers.getContractAt(
       "ComptrollerFirstExtension",

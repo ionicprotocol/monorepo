@@ -10358,7 +10358,7 @@
       ]
     },
     "AnkrCertificateTokenPriceOracle": {
-      "address": "0xF9336B94fb6f6B6f12b96a6777aC683046DBC5Df",
+      "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA",
       "abi": [
         {
           "anonymous": false,
@@ -10707,7 +10707,7 @@
       ]
     },
     "AnkrCertificateTokenPriceOracle_Implementation": {
-      "address": "0x37321eB111aFd414cF543928D5F8324A04BB5C11",
+      "address": "0x9c81E7eF039FC944eDFF1Cf7207aE2eECCC96246",
       "abi": [
         {
           "anonymous": false,
@@ -10912,7 +10912,7 @@
       ]
     },
     "AnkrCertificateTokenPriceOracle_Proxy": {
-      "address": "0xF9336B94fb6f6B6f12b96a6777aC683046DBC5Df",
+      "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA",
       "abi": [
         {
           "inputs": [
@@ -45698,7 +45698,7 @@
       ]
     },
     "CurveV2LpTokenPriceOracleNoRegistry": {
-      "address": "0x97A6E1182A85380BaeF265F9BbADd6296515Dccf",
+      "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336",
       "abi": [
         {
           "anonymous": false,
@@ -45943,16 +45943,6 @@
               "internalType": "address[]",
               "name": "_pools",
               "type": "address[]"
-            },
-            {
-              "internalType": "address",
-              "name": "_usdToken",
-              "type": "address"
-            },
-            {
-              "internalType": "contract MasterPriceOracle",
-              "name": "_masterPriceOracle",
-              "type": "address"
             }
           ],
           "name": "initialize",
@@ -46056,24 +46046,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_usdToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_masterPriceOracle",
-              "type": "address"
-            }
-          ],
-          "name": "reinitialize",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -46130,7 +46102,7 @@
       ]
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Implementation": {
-      "address": "0xbA43Fb7cb5D78c29c150e6389E73CBeB6C63Af4F",
+      "address": "0xAcf6750d85F4C822f96cF550C5c1131AdE2639F4",
       "abi": [
         {
           "anonymous": false,
@@ -46252,16 +46224,6 @@
               "internalType": "address[]",
               "name": "_pools",
               "type": "address[]"
-            },
-            {
-              "internalType": "address",
-              "name": "_usdToken",
-              "type": "address"
-            },
-            {
-              "internalType": "contract MasterPriceOracle",
-              "name": "_masterPriceOracle",
-              "type": "address"
             }
           ],
           "name": "initialize",
@@ -46365,24 +46327,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_usdToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "_masterPriceOracle",
-              "type": "address"
-            }
-          ],
-          "name": "reinitialize",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -46418,7 +46362,7 @@
       ]
     },
     "CurveV2LpTokenPriceOracleNoRegistry_Proxy": {
-      "address": "0x97A6E1182A85380BaeF265F9BbADd6296515Dccf",
+      "address": "0x461fc4600c4e1B2e99886E9564a223E76C87e336",
       "abi": [
         {
           "inputs": [
@@ -61444,6 +61388,51 @@
         },
         {
           "inputs": [],
+          "name": "getActivePools",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllPools",
           "outputs": [
             {
@@ -61908,7 +61897,7 @@
       ]
     },
     "FusePoolDirectory_Implementation": {
-      "address": "0x0960CF99a52c7998F8aDdfDc571A78b0cd5edF12",
+      "address": "0x24F20feb61CF461cFB4C8187bBAea08a8f1a8Bbb",
       "abi": [
         {
           "anonymous": false,
@@ -62247,6 +62236,51 @@
               "internalType": "bool",
               "name": "",
               "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getActivePools",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "components": [
+                {
+                  "internalType": "string",
+                  "name": "name",
+                  "type": "string"
+                },
+                {
+                  "internalType": "address",
+                  "name": "creator",
+                  "type": "address"
+                },
+                {
+                  "internalType": "address",
+                  "name": "comptroller",
+                  "type": "address"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "blockPosted",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "timestampPosted",
+                  "type": "uint256"
+                }
+              ],
+              "internalType": "struct FusePoolDirectory.FusePool[]",
+              "name": "",
+              "type": "tuple[]"
             }
           ],
           "stateMutability": "view",
@@ -62846,7 +62880,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x7EF21F8bFA2356cC6FE43755E46E8e07d4Ee8a47",
+      "address": "0x6f4E0b5405f3751F7327Cf8095004c34FC307F55",
       "abi": [
         {
           "anonymous": false,
@@ -63808,7 +63842,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0xF44B9d0c22496d4D085e3e4678381FaDEd7Df0Bc",
+      "address": "0xB7d84D242af1E4eF5a226B1be53FCC0d10824C02",
       "abi": [
         {
           "anonymous": false,
@@ -67734,7 +67768,7 @@
       ]
     },
     "JumpRateModel": {
-      "address": "0x7b8A724dF0EE566303FCc2699f7c124FcbEcf686",
+      "address": "0x8A163f41414c005c3f551f2179bC9Ad8dcadE1C6",
       "abi": [
         {
           "inputs": [
@@ -69533,19 +69567,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -70095,7 +70116,7 @@
       ]
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0xD790FD25Be54248fD0469012eE05329cE1FA05bD",
+      "address": "0xe06d16502B213746c5A693e104a9E76f1E15Ec1A",
       "abi": [
         {
           "anonymous": false,
@@ -70286,19 +70307,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -71296,19 +71304,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -71858,7 +71853,7 @@
       ]
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0xAdEC9f9c0546856E5B806611724e3F68deE7c3d5",
+      "address": "0x8Cc78652CF7861eB73d9C2d2ADa9037231Ad3916",
       "abi": [
         {
           "anonymous": false,
@@ -72049,19 +72044,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -73059,19 +73041,6 @@
         },
         {
           "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
           "name": "_acceptOwner",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -73621,7 +73590,7 @@
       ]
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0xc3d10Bdcc9f798C46b3F1cE5dDFaF5cc0830C185",
+      "address": "0x89a9b114AEf8Eba7edC7611Ca8BEb61900912f2F",
       "abi": [
         {
           "anonymous": false,
@@ -73812,19 +73781,6 @@
           ],
           "name": "UpdatedFeeSettings",
           "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ONE",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
         },
         {
           "inputs": [],
@@ -74501,760 +74457,6 @@
         {
           "stateMutability": "payable",
           "type": "receive"
-        }
-      ]
-    },
-    "RewardsDistributorDelegate": {
-      "address": "0x5F95cb76405B88EC879182c74636d2De24c59De2",
-      "abi": [
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "contract CToken",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "newSpeed",
-              "type": "uint256"
-            }
-          ],
-          "name": "CompBorrowSpeedUpdated",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "recipient",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "CompGranted",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "contract CToken",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "newSpeed",
-              "type": "uint256"
-            }
-          ],
-          "name": "CompSupplySpeedUpdated",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "contributor",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "newSpeed",
-              "type": "uint256"
-            }
-          ],
-          "name": "ContributorCompSpeedUpdated",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "contract CToken",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "compDelta",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "compBorrowIndex",
-              "type": "uint256"
-            }
-          ],
-          "name": "DistributedBorrowerComp",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": true,
-              "internalType": "contract CToken",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "indexed": true,
-              "internalType": "address",
-              "name": "supplier",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "compDelta",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "compSupplyIndex",
-              "type": "uint256"
-            }
-          ],
-          "name": "DistributedSupplierComp",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "oldAdmin",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "NewAdmin",
-          "type": "event"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "oldPendingAdmin",
-              "type": "address"
-            },
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "newPendingAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "NewPendingAdmin",
-          "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "_acceptAdmin",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "recipient",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "amount",
-              "type": "uint256"
-            }
-          ],
-          "name": "_grantComp",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CToken",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "compSpeed",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setCompBorrowSpeed",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CToken[]",
-              "name": "cTokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "supplySpeeds",
-              "type": "uint256[]"
-            },
-            {
-              "internalType": "uint256[]",
-              "name": "borrowSpeeds",
-              "type": "uint256[]"
-            }
-          ],
-          "name": "_setCompSpeeds",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "contract CToken",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "compSpeed",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setCompSupplySpeed",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "contributor",
-              "type": "address"
-            },
-            {
-              "internalType": "uint256",
-              "name": "compSpeed",
-              "type": "uint256"
-            }
-          ],
-          "name": "_setContributorCompSpeed",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "newPendingAdmin",
-              "type": "address"
-            }
-          ],
-          "name": "_setPendingAdmin",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "admin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "name": "allMarkets",
-          "outputs": [
-            {
-              "internalType": "contract CToken",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "holder",
-              "type": "address"
-            },
-            {
-              "internalType": "contract CToken[]",
-              "name": "cTokens",
-              "type": "address[]"
-            }
-          ],
-          "name": "claimRewards",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address[]",
-              "name": "holders",
-              "type": "address[]"
-            },
-            {
-              "internalType": "contract CToken[]",
-              "name": "cTokens",
-              "type": "address[]"
-            },
-            {
-              "internalType": "bool",
-              "name": "borrowers",
-              "type": "bool"
-            },
-            {
-              "internalType": "bool",
-              "name": "suppliers",
-              "type": "bool"
-            }
-          ],
-          "name": "claimRewards",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "holder",
-              "type": "address"
-            }
-          ],
-          "name": "claimRewards",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compAccrued",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compBorrowSpeeds",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compBorrowState",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "index",
-              "type": "uint224"
-            },
-            {
-              "internalType": "uint32",
-              "name": "block",
-              "type": "uint32"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compBorrowerIndex",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compContributorSpeeds",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "compInitialIndex",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "",
-              "type": "uint224"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compSupplierIndex",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compSupplySpeeds",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "compSupplyState",
-          "outputs": [
-            {
-              "internalType": "uint224",
-              "name": "index",
-              "type": "uint224"
-            },
-            {
-              "internalType": "uint32",
-              "name": "block",
-              "type": "uint32"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "borrower",
-              "type": "address"
-            }
-          ],
-          "name": "flywheelPreBorrowerAction",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "supplier",
-              "type": "address"
-            }
-          ],
-          "name": "flywheelPreSupplierAction",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "cToken",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "src",
-              "type": "address"
-            },
-            {
-              "internalType": "address",
-              "name": "dst",
-              "type": "address"
-            }
-          ],
-          "name": "flywheelPreTransferAction",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getAllMarkets",
-          "outputs": [
-            {
-              "internalType": "contract CToken[]",
-              "name": "",
-              "type": "address[]"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getBlockNumber",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "implementation",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "_rewardToken",
-              "type": "address"
-            }
-          ],
-          "name": "initialize",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "isRewardsDistributor",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "name": "lastContributorBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "pendingAdmin",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "rewardToken",
-          "outputs": [
-            {
-              "internalType": "address",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "address",
-              "name": "contributor",
-              "type": "address"
-            }
-          ],
-          "name": "updateContributorRewards",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
         }
       ]
     },
@@ -76960,7 +76162,7 @@
       ]
     },
     "UniswapV2LiquidatorFunder": {
-      "address": "0xbd9697D987E5e181A4161dDFe9989FbC9F801C01",
+      "address": "0xa20C394ced60DdBd7f39ef3BCe76ae473EE8Daa4",
       "abi": [
         {
           "inputs": [
