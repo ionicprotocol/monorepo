@@ -6,6 +6,7 @@ import { ComptrollerFirstExtension } from "../lib/contracts/typechain/Comptrolle
 import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol/FuseFlywheelDynamicRewardsPlugin";
 import { MidasFlywheel } from "../lib/contracts/typechain/MidasFlywheel";
 import { MidasReplacingFlywheel } from "../lib/contracts/typechain/MidasReplacingFlywheel";
+import { DotDotLpERC4626 } from "../lib/contracts/typechain/DotDotLpERC4626.sol";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
   .addParam("flywheelToReplaceAddress", "address of flywheel to replace", undefined, types.string)
@@ -113,3 +114,86 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       console.log(`added the flywheel to the non-accruing with tx ${tx.hash}`);
     }
   });
+
+task("flywheel:replaced:fix", "fixing the replaced/replacing flywheels and plugins")
+.setAction(async ({}, { ethers, deployments, getChainId }) => {
+  const deployer = await ethers.getNamedSigner("deployer");
+
+  const chainid = await getChainId();
+  if (chainid == 56) {
+    const twoBRLMarket = "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba";
+    const flywheelDDDName = `MidasFlywheel_DDD`;
+    const flywheelEPXName = `MidasFlywheel_EPX`;
+    const dotDotPluginContractName = "DotDotLpERC4626_2brl_0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba";
+    const poolAddress = "0x31d76A64Bc8BbEffb601fac5884372DEF910F044";
+    const toRemoveEPXFlywheel = "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4";
+    const toRemoveDDDFlywheel = "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c";
+
+    let tx;
+
+    // 1 - remove the old flywheels from the pool
+    {
+      const comptrollerAsExtension = (await ethers.getContractAt(
+        "ComptrollerFirstExtension",
+        poolAddress,
+        deployer
+      )) as ComptrollerFirstExtension;
+
+      tx = await comptrollerAsExtension._removeFlywheel(toRemoveEPXFlywheel);
+      await tx.wait();
+      console.log(`remove EPX flywheel with tx ${tx.hash}`);
+
+      tx = await comptrollerAsExtension._removeFlywheel(toRemoveDDDFlywheel);
+      await tx.wait();
+      console.log(`remove DDD flywheel with tx ${tx.hash}`);
+    }
+
+    // 2 - add the 2brl market as strategy for rewards
+    const flywheelDDD = await ethers.getContract(flywheelDDDName, deployer) as MidasReplacingFlywheel;
+    const flywheelEPX = await ethers.getContract(flywheelEPXName, deployer) as MidasReplacingFlywheel;
+
+    tx = await flywheelDDD.addStrategyForRewards(twoBRLMarket);
+    await tx.wait();
+    console.log(`DDD add market`, tx.hash);
+
+    tx = await flywheelEPX.addStrategyForRewards(twoBRLMarket);
+    await tx.wait();
+    console.log(`EPX add market`, tx.hash);
+
+    // 3 - reinitialize the DotDot plugin
+    {
+      const ddPlugin = await deployments.deploy(dotDotPluginContractName, {
+        contract: "DotDotLpERC4626",
+        from: deployer.address,
+        proxy: {
+          proxyContract: "OpenZeppelinTransparentProxy",
+          execute: {
+            init: {
+              methodName: "initialize",
+              args: [],
+            },
+            onUpgrade: {
+              methodName: "reinitialize",
+              args: [flywheelEPX.address, flywheelDDD.address],
+            },
+          },
+          owner: deployer.address,
+        },
+        log: true,
+      });
+      if (ddPlugin.transactionHash) {
+        await ethers.provider.waitForTransaction(ddPlugin.transactionHash);
+      }
+
+      // verify the reinitialize call
+      console.log(dotDotPluginContractName, ddPlugin.address);
+      const dotDotPlugin = await ethers.getContract(dotDotPluginContractName, deployer) as DotDotLpERC4626;
+      const ddEpxFw = await dotDotPlugin.callStatic.epxFlywheel();
+      const ddDDDFw = await dotDotPlugin.callStatic.dddFlywheel();
+
+      if (ddEpxFw != flywheelEPX.address || ddDDDFw != flywheelDDD.address) {
+        throw new Error(`assert addresses`);
+      }
+    }
+  }
+});
