@@ -1,6 +1,6 @@
 import { BigNumber, ethers } from "ethers";
 
-import { FusePoolLens as FusePoolLensType } from "../../../lib/contracts/typechain/FusePoolLens";
+import { FusePoolLens as FusePoolLensType } from "../../../typechain/FusePoolLens";
 import { MidasBase } from "../../MidasSdk";
 
 import { ErroredPool, FusePoolUserStruct, PublicPoolUserWithData } from "./utils";

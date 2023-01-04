@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 
-import { FluxPriceOracle } from "../../../lib/contracts/typechain/FluxPriceOracle";
+import { FluxPriceOracle } from "../../../typechain/FluxPriceOracle";
 import { FluxDeployFnParams } from "../types";
 
 export const deployFluxOracle = async ({
