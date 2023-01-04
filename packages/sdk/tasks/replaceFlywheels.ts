@@ -152,14 +152,19 @@ task("flywheel:replaced:fix", "fixing the replaced/replacing flywheels and plugi
       const flywheelDDD = (await ethers.getContract(flywheelDDDName, deployer)) as MidasReplacingFlywheel;
       const flywheelEPX = (await ethers.getContract(flywheelEPXName, deployer)) as MidasReplacingFlywheel;
 
-      tx = await flywheelDDD.addStrategyForRewards(twoBRLMarket);
+      tx = await flywheelDDD.strategyState(twoBRLMarket);
       await tx.wait();
       console.log(`DDD add market`, tx.hash);
 
-      tx = await flywheelEPX.addStrategyForRewards(twoBRLMarket);
+      tx = await flywheelEPX.strategyState(twoBRLMarket);
       await tx.wait();
       console.log(`EPX add market`, tx.hash);
 
+      const strIndexEpx = await flywheelEPX.callStatic.strategyState(twoBRLMarket);
+      const strIndexDdd = await flywheelDDD.callStatic.strategyState(twoBRLMarket);
+
+      console.log(`epx 2brl index ${strIndexEpx}`);
+      console.log(`ddd 2brl index ${strIndexDdd}`);
       // 3 - reinitialize the DotDot plugin
       {
         const ddPlugin = await deployments.deploy(dotDotPluginContractName, {

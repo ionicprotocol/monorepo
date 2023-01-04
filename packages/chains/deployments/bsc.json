@@ -47105,7 +47105,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -47301,7 +47301,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -47968,7 +47968,18 @@
           "type": "function"
         },
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_epxFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_dddFlywheel",
+              "type": "address"
+            }
+          ],
           "name": "reinitialize",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -48023,6 +48034,25 @@
           ],
           "name": "setRewardDestination",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -48236,7 +48266,7 @@
       ]
     },
     "DotDotLpERC4626_2brl_0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba_Implementation": {
-      "address": "0x55348c1de5288D7A69302d649434A49228d3CeAB",
+      "address": "0xdF07Fa746F82A7d5FC9307218C7a0ABe126431bc",
       "abi": [
         {
           "anonymous": false,
@@ -48288,7 +48318,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -48484,7 +48514,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -49151,7 +49181,18 @@
           "type": "function"
         },
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_epxFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_dddFlywheel",
+              "type": "address"
+            }
+          ],
           "name": "reinitialize",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -49206,6 +49247,25 @@
           ],
           "name": "setRewardDestination",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
