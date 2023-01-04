@@ -2,8 +2,8 @@ import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, po
 import { ChainConfig, CurveSwapPool, JarvisLiquidityPool } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
-import { AddressesProvider } from "../../../lib/contracts/typechain/AddressesProvider";
-import { FuseSafeLiquidator } from "../../../lib/contracts/typechain/FuseSafeLiquidator";
+import { AddressesProvider } from "../../../typechain/AddressesProvider";
+import { FuseSafeLiquidator } from "../../../typechain/FuseSafeLiquidator";
 import { LiquidatorConfigFnParams, LiquidatorDeployFnParams } from "../types";
 
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {

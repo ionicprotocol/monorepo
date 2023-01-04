@@ -1,10 +1,13 @@
-import { BigNumber, CallOverrides, constants, Contract, ContractFactory } from "ethers";
+import { BigNumber, constants, Contract, ContractFactory } from "ethers";
 
-import { FlywheelStaticRewards__factory } from "../../lib/contracts/typechain/factories/FlywheelStaticRewards__factory";
-import { MidasFlywheel__factory } from "../../lib/contracts/typechain/factories/MidasFlywheel__factory";
-import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { MidasFlywheel } from "../../lib/contracts/typechain/MidasFlywheel";
-import { MidasFlywheelLensRouter } from "../../lib/contracts/typechain/MidasFlywheelLensRouter.sol";
+import MidasFlywheelABI from "../../abis/MidasFlywheel";
+import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.json";
+import MidasFlywheelArtifact from "../../artifacts/MidasFlywheel.json";
+import { FlywheelStaticRewards__factory } from "../../typechain/factories/FlywheelStaticRewards__factory";
+import { MidasFlywheel__factory } from "../../typechain/factories/MidasFlywheel__factory";
+import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { MidasFlywheel } from "../../typechain/MidasFlywheel";
+import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 
 import { withCreateContracts } from "./CreateContracts";
 
@@ -76,7 +79,7 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       const pool = await this.getComptrollerInstance(poolAddress);
       const allRewardDistributors = await pool.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
-        return new Contract(address, this.artifacts.MidasFlywheel.abi, this.provider) as MidasFlywheel;
+        return new Contract(address, MidasFlywheelABI, this.provider) as MidasFlywheel;
       });
 
       const filterList = await Promise.all(
@@ -95,15 +98,15 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     async getFlywheelRewardsInfos(flywheelAddress: string) {
       const flywheelCoreInstance = new Contract(
         flywheelAddress,
-        this.artifacts.MidasFlywheel.abi,
+        MidasFlywheelArtifact.abi,
         this.provider
       ) as MidasFlywheel;
       const [fwStaticAddress, enabledMarkets] = await Promise.all([
         flywheelCoreInstance.callStatic.flywheelRewards(),
         flywheelCoreInstance.callStatic.getAllStrategies(),
       ]);
-      const fwStatic = new Contract(fwStaticAddress, this.artifacts.FlywheelStaticRewards.abi, this.provider);
-      const rewardsInfos = {};
+      const fwStatic = new Contract(fwStaticAddress, FlywheelStaticRewardsArtifact.abi, this.provider);
+      const rewardsInfos: Record<string, any> = {};
       await Promise.all(
         enabledMarkets.map(async (m) => {
           rewardsInfos[m] = await fwStatic.callStatic.rewardsInfo(m);
@@ -222,8 +225,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       }
     ) {
       const midasFlywheel = new ContractFactory(
-        this.artifacts.MidasFlywheel.abi,
-        this.artifacts.MidasFlywheel.bytecode,
+        MidasFlywheelArtifact.abi,
+        MidasFlywheelArtifact.bytecode,
         this.signer
       ) as MidasFlywheel__factory;
       const addressOfSigner = await this.signer.getAddress();
@@ -245,8 +248,8 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       }
     ) {
       const fwStaticRewardsFactory = new ContractFactory(
-        this.artifacts.FlywheelStaticRewards.abi,
-        this.artifacts.FlywheelStaticRewards.bytecode,
+        FlywheelStaticRewardsArtifact.abi,
+        FlywheelStaticRewardsArtifact.bytecode,
         this.signer
       ) as FlywheelStaticRewards__factory;
       const addressOfSigner = await this.signer.getAddress();

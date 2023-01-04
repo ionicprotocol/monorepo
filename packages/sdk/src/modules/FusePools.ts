@@ -9,9 +9,9 @@ import {
 import { BigNumberish, CallOverrides, constants, utils } from "ethers";
 
 import { MidasBaseConstructor } from "..";
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { FusePoolLens } from "../../lib/contracts/typechain/FusePoolLens";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { FusePoolLens } from "../../typechain/FusePoolLens";
 import { filterOnlyObjectProperties, filterPoolName, getContract } from "../MidasSdk/utils";
 
 export type LensPoolsWithData = [
