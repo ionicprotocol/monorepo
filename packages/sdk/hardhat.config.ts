@@ -83,7 +83,7 @@ const config: HardhatUserConfig = {
     // This is the unchangeable default network which is started with `hardhat node`
     hardhat: {
       accounts: { mnemonic },
-
+      allowUnlimitedContractSize: true,
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gas: 25e6,
       gasPrice: 20e10,
@@ -95,6 +95,7 @@ const config: HardhatUserConfig = {
         : undefined,
     },
     fork: {
+      allowUnlimitedContractSize: true,
       accounts: { mnemonic },
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gasPrice: 20e9,

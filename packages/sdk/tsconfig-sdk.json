@@ -15,5 +15,5 @@
     "useUnknownInCatchVariables": false
   },
   "include": ["./src"],
-  "exclude": ["./lib/contracts/typechain"]
+  "exclude": ["./typechain"]
 }

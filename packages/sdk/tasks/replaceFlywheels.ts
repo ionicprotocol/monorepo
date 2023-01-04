@@ -1,12 +1,12 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../lib/contracts/typechain/ComptrollerFirstExtension";
-import { DotDotLpERC4626 } from "../lib/contracts/typechain/DotDotLpERC4626.sol";
-import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol/FuseFlywheelDynamicRewardsPlugin";
-import { MidasFlywheel } from "../lib/contracts/typechain/MidasFlywheel";
-import { MidasReplacingFlywheel } from "../lib/contracts/typechain/MidasReplacingFlywheel";
+import { Comptroller } from "../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../typechain/ComptrollerFirstExtension";
+import { DotDotLpERC4626 } from "../typechain/DotDotLpERC4626";
+import { FuseFlywheelDynamicRewardsPlugin } from "../typechain/FuseFlywheelDynamicRewardsPlugin";
+import { MidasFlywheel } from "../typechain/MidasFlywheel";
+import { MidasReplacingFlywheel } from "../typechain/MidasReplacingFlywheel";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
   .addParam("flywheelToReplaceAddress", "address of flywheel to replace", undefined, types.string)

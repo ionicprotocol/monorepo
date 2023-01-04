@@ -1,10 +1,10 @@
 import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
+import { Comptroller } from "../../typechain/Comptroller";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { Unitroller } from "../../typechain/Unitroller";
 
 export default task("comptroller:implementation:whitelist", "Whitelists a new comptroller implementation upgrade")
   .addParam("oldImplementation", "The address of the old comptroller implementation", undefined, types.string)

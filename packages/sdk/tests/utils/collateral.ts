@@ -5,8 +5,9 @@ import { BigNumber, constants, Contract, providers, utils } from "ethers";
 import { ethers } from "hardhat";
 
 import { chainDeployConfig } from "../../chainDeploy";
-import { MasterPriceOracle, SimplePriceOracle } from "../../lib/contracts/typechain";
 import { ERC20Abi, MidasSdk } from "../../src";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { SimplePriceOracle } from "../../typechain/SimplePriceOracle";
 
 import { getOrCreateMidas } from "./midasSdk";
 import { assetInPool, DeployedAsset, getPoolIndex } from "./pool";
