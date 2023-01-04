@@ -22,7 +22,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
     }
     const chainid = await getChainId();
     if (chainid == 56) {
-      const flywheelContractName = `MidasReplacingFlywheel_${flywheelName}`;
+      const flywheelContractName = `MidasFlywheel_${flywheelName}`;
 
       const flywheelToReplace = (await ethers.getContractAt(
         "MidasFlywheel",
@@ -49,8 +49,12 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
           execute: {
             init: {
               methodName: "initialize",
-              args: [rewardToken, constants.AddressZero, booster, deployer.address, flywheelToReplaceAddress],
+              args: [rewardToken, constants.AddressZero, booster, deployer.address],
             },
+            onUpgrade: {
+              methodName: "reinitialize",
+              args: [flywheelToReplaceAddress]
+            }
           },
           proxyContract: "OpenZeppelinTransparentProxy",
           owner: deployer.address,
@@ -68,6 +72,10 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
         deployer
       )) as MidasReplacingFlywheel;
 
+      let tx = await replacingFlywheel.reinitialize(flywheelToReplaceAddress);
+      await tx.wait();
+      console.log(`reinitialize`, tx.hash);
+
       const oldRewardsCycleLen = await oldRewards.callStatic.rewardsCycleLength();
 
       const replacingRewards = await deployments.deploy("ReplacingFlywheelDynamicRewards", {
@@ -80,7 +88,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       }
       console.log("ReplacingFlywheelDynamicRewards: ", replacingRewards.address);
 
-      let tx = await flywheelToReplace.setFlywheelRewards(replacingRewards.address);
+      tx = await flywheelToReplace.setFlywheelRewards(replacingRewards.address);
       await tx.wait();
       console.log(`old flywheel setFlywheelRewards`, tx.hash);
 

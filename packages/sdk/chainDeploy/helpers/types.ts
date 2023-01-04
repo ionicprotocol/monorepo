@@ -54,6 +54,7 @@ export type DynamicFlywheelConfig = {
   name: string;
   rewardToken: string;
   cycleLength: number;
+  flywheelToReplace?: string;
 };
 
 export type PluginConfig = {
