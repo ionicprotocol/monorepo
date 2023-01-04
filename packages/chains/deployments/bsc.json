@@ -71448,6 +71448,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -71939,7 +71952,7 @@
       ]
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0x68386e6410Dc8f8EAeF5A91FC144af7C94388776",
+      "address": "0xB7D1205EA98217A3F7Db04962D8A59D61255E513",
       "abi": [
         {
           "anonymous": false,
@@ -72206,6 +72219,19 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -73237,6 +73263,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -73728,7 +73767,7 @@
       ]
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0x390cA1a8488cc3B99fC4d809307a82c703412338",
+      "address": "0xBaB0eCCf7C8e521aEEcBE7b46e373B0EE3eD2659",
       "abi": [
         {
           "anonymous": false,
@@ -73995,6 +74034,19 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
