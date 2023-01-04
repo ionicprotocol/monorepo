@@ -70987,7 +70987,7 @@
       ]
     },
     "MidasFlywheel_DDD": {
-      "address": "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0",
+      "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5",
       "abi": [
         {
           "anonymous": false,
@@ -71557,6 +71557,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -71686,6 +71699,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -71709,7 +71735,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -71721,7 +71747,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -71754,7 +71780,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -71762,16 +71788,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -71809,12 +71835,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -71826,7 +71852,7 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -71853,7 +71879,7 @@
       ]
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0x8Cc78652CF7861eB73d9C2d2ADa9037231Ad3916",
+      "address": "0x68386e6410Dc8f8EAeF5A91FC144af7C94388776",
       "abi": [
         {
           "anonymous": false,
@@ -72300,6 +72326,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -72429,6 +72468,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -72452,7 +72504,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -72464,7 +72516,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -72497,7 +72549,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -72505,16 +72557,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -72552,12 +72604,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -72569,13 +72621,13 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
     },
     "MidasFlywheel_DDD_Proxy": {
-      "address": "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0",
+      "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5",
       "abi": [
         {
           "inputs": [
@@ -72724,7 +72776,7 @@
       ]
     },
     "MidasFlywheel_EPX": {
-      "address": "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4",
+      "address": "0xF2E46295c684C541d618243558a0af17fb4a6862",
       "abi": [
         {
           "anonymous": false,
@@ -73294,6 +73346,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -73423,6 +73488,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -73446,7 +73524,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -73458,7 +73536,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -73491,7 +73569,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -73499,16 +73577,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -73546,12 +73624,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -73563,7 +73641,7 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -73590,7 +73668,7 @@
       ]
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0x89a9b114AEf8Eba7edC7611Ca8BEb61900912f2F",
+      "address": "0x390cA1a8488cc3B99fC4d809307a82c703412338",
       "abi": [
         {
           "anonymous": false,
@@ -74037,6 +74115,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -74166,6 +74257,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -74189,7 +74293,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -74201,7 +74305,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -74234,7 +74338,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -74242,16 +74346,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -74289,12 +74393,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -74306,13 +74410,13 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
     },
     "MidasFlywheel_EPX_Proxy": {
-      "address": "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4",
+      "address": "0xF2E46295c684C541d618243558a0af17fb4a6862",
       "abi": [
         {
           "inputs": [

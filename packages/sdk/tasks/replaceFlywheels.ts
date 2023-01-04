@@ -102,14 +102,14 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
         deployer
       )) as ComptrollerFirstExtension;
 
-      tx = await comptrollerAsExtension.addNonAccruingFlywheel(flywheelToReplaceAddress);
-      await tx.wait();
-      console.log(`added the flywheel to the non-accruing with tx ${tx.hash}`);
-
       const comptroller = (await ethers.getContractAt("Comptroller", pool, deployer)) as Comptroller;
 
       tx = await comptroller._addRewardsDistributor(replacingFlywheel.address);
       await tx.wait();
       console.log(`added the flywheel ${tx.hash}`);
+
+      tx = await comptrollerAsExtension.addNonAccruingFlywheel(flywheelToReplaceAddress);
+      await tx.wait();
+      console.log(`added the flywheel to the non-accruing with tx ${tx.hash}`);
     }
   });
