@@ -121,10 +121,7 @@ task("flywheel:replaced:fix", "fixing the replaced/replacing flywheels and plugi
     const chainid = await getChainId();
     if (chainid == 56) {
       const twoBRLMarket = "0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba";
-      const flywheels = [
-        "MidasFlywheel_DDD",
-        "MidasFlywheel_EPX"
-      ];
+      const flywheels = ["MidasFlywheel_DDD", "MidasFlywheel_EPX"];
 
       let tx;
 
