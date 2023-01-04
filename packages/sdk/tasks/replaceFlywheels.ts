@@ -1,10 +1,11 @@
-import {task, types} from "hardhat/config";
 import { constants } from "ethers";
+import { task, types } from "hardhat/config";
+
+import { Comptroller } from "../lib/contracts/typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../lib/contracts/typechain/ComptrollerFirstExtension";
+import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol/FuseFlywheelDynamicRewardsPlugin";
 import { MidasFlywheel } from "../lib/contracts/typechain/MidasFlywheel";
 import { MidasReplacingFlywheel } from "../lib/contracts/typechain/MidasReplacingFlywheel";
-import { FuseFlywheelDynamicRewardsPlugin } from "../lib/contracts/typechain/FuseFlywheelDynamicRewardsPlugin.sol/FuseFlywheelDynamicRewardsPlugin";
-import { ComptrollerFirstExtension } from "../lib/contracts/typechain/ComptrollerFirstExtension";
-import { Comptroller } from "../lib/contracts/typechain/Comptroller";
 
 task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
   .addParam("flywheelToReplaceAddress", "address of flywheel to replace", undefined, types.string)
@@ -23,10 +24,18 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
     if (chainid == 56) {
       const flywheelContractName = `MidasReplacingFlywheel_${flywheelName}`;
 
-      const flywheelToReplace = await ethers.getContractAt("MidasFlywheel", flywheelToReplaceAddress, deployer) as MidasFlywheel;
+      const flywheelToReplace = (await ethers.getContractAt(
+        "MidasFlywheel",
+        flywheelToReplaceAddress,
+        deployer
+      )) as MidasFlywheel;
 
       const oldRewardsAddress = await flywheelToReplace.callStatic.flywheelRewards();
-      const oldRewards = await ethers.getContractAt("FuseFlywheelDynamicRewardsPlugin", oldRewardsAddress, deployer) as FuseFlywheelDynamicRewardsPlugin;
+      const oldRewards = (await ethers.getContractAt(
+        "FuseFlywheelDynamicRewardsPlugin",
+        oldRewardsAddress,
+        deployer
+      )) as FuseFlywheelDynamicRewardsPlugin;
 
       const rewardToken = flywheelToReplace.callStatic.rewardToken();
       const booster = flywheelToReplace.callStatic.flywheelBooster();
@@ -53,7 +62,11 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       }
       console.log("MidasReplacingFlywheel: ", replacingFw.address);
 
-      const replacingFlywheel = await ethers.getContractAt("MidasReplacingFlywheel", replacingFw.address, deployer) as MidasReplacingFlywheel;
+      const replacingFlywheel = (await ethers.getContractAt(
+        "MidasReplacingFlywheel",
+        replacingFw.address,
+        deployer
+      )) as MidasReplacingFlywheel;
 
       const oldRewardsCycleLen = await oldRewards.callStatic.rewardsCycleLength();
 
@@ -85,11 +98,7 @@ task("flywheel:replace:dynamic", "Replaces a flywheel with dynamic rewards")
       await tx.wait();
       console.log(`added the flywheel to the non-accruing with tx ${tx.hash}`);
 
-      const comptroller = (await ethers.getContractAt(
-        "Comptroller",
-        pool,
-        deployer
-      )) as Comptroller;
+      const comptroller = (await ethers.getContractAt("Comptroller", pool, deployer)) as Comptroller;
 
       tx = await comptroller._addRewardsDistributor(replacingFlywheel.address);
       await tx.wait();
