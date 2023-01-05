@@ -2,7 +2,7 @@ import { TransactionRequest } from "@ethersproject/providers";
 import { FuseAsset, LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, BigNumberish, utils } from "ethers";
 
-import { FusePoolLens } from "../../../lib/contracts/typechain/FusePoolLens";
+import { FusePoolLens } from "../../../typechain/FusePoolLens";
 import { MidasBase } from "../../MidasSdk";
 
 export const SCALE_FACTOR_ONE_18_WEI = BigNumber.from(10).pow(18);

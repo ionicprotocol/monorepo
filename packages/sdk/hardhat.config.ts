@@ -16,11 +16,9 @@ import "./tasks/pool";
 import "./tasks/swap";
 import "./tasks/admin";
 
-import "./tasks/createPoolsWithAssets";
-import "./tasks/e2e";
 import "./tasks/flywheel";
 import "./tasks/liquidation";
-import "./tasks/replacePlugins";
+import "./tasks/replaceFlywheels";
 import "./tasks/sendTestTokens";
 
 import "./tasks/one-time/liquidate-take-bad-debt";
@@ -82,7 +80,7 @@ const config: HardhatUserConfig = {
     // This is the unchangeable default network which is started with `hardhat node`
     hardhat: {
       accounts: { mnemonic },
-
+      allowUnlimitedContractSize: true,
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gas: 25e6,
       gasPrice: 20e10,
@@ -94,6 +92,7 @@ const config: HardhatUserConfig = {
         : undefined,
     },
     fork: {
+      allowUnlimitedContractSize: true,
       accounts: { mnemonic },
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gasPrice: 20e9,

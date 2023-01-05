@@ -2,7 +2,7 @@ import { bsc } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
@@ -124,11 +124,13 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
       cycleLength: 1,
       name: "DDD",
+      flywheelToReplace: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
     },
     {
       rewardToken: "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71",
       cycleLength: 1,
       name: "EPX",
+      flywheelToReplace: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
     },
     {
       rewardToken: "0xa184088a740c695E156F91f5cC086a06bb78b827",

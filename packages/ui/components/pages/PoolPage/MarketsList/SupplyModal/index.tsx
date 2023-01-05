@@ -184,7 +184,10 @@ export const SupplyModal = ({
 
       try {
         setActiveStep(optionToWrap ? 2 : 1);
-        const token = currentSdk.getEIP20TokenInstance(asset.underlyingToken, currentSdk.signer);
+        const token = currentSdk.getEIP20RewardTokenInstance(
+          asset.underlyingToken,
+          currentSdk.signer
+        );
         const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
           amount
         );

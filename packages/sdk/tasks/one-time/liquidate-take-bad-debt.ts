@@ -2,13 +2,13 @@ import { BigNumber, constants } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { ChainDeployConfig, chainDeployConfig } from "../../chainDeploy";
-import { CErc20 } from "../../lib/contracts/typechain/CErc20";
-import { CTokenFirstExtension } from "../../lib/contracts/typechain/CTokenFirstExtension";
-import { ERC20 } from "../../lib/contracts/typechain/ERC20";
-import { IUniswapV2Factory } from "../../lib/contracts/typechain/IUniswapV2Factory";
-import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { MidasSafeLiquidator } from "../../lib/contracts/typechain/MidasSafeLiquidator";
-import { WETH } from "../../lib/contracts/typechain/WETH";
+import { CErc20 } from "../../typechain/CErc20";
+import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
+import { ERC20 } from "../../typechain/ERC20";
+import { IUniswapV2Factory } from "../../typechain/IUniswapV2Factory";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { MidasSafeLiquidator } from "../../typechain/MidasSafeLiquidator";
+import { WETH } from "../../typechain/WETH";
 
 task("liquidate:take-bad-debt", "liquidate a debt position by borrowing the same asset from the same market")
   .addParam("debtMarket", "Market address for which to borrow", undefined, types.string)

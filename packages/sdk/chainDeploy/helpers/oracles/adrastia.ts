@@ -1,6 +1,6 @@
 import { providers } from "ethers";
 
-import { AdrastiaPriceOracle } from "../../../lib/contracts/typechain/AdrastiaPriceOracle";
+import { AdrastiaPriceOracle } from "../../../typechain/AdrastiaPriceOracle";
 import { AdrastiaDeployFnParams } from "../types";
 
 export const deployAdrastiaOracle = async ({

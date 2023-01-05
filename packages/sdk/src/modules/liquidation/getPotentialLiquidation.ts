@@ -1,8 +1,8 @@
 import { LiquidationStrategy } from "@midas-capital/types";
 import { BigNumber, BytesLike, constants, utils } from "ethers";
 
-import { CErc20Delegate } from "../../../lib/contracts/typechain/CErc20Delegate";
-import { IUniswapV2Factory__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Factory__factory";
+import { CErc20Delegate } from "../../../typechain/CErc20Delegate";
+import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
 import { MidasBase } from "../../MidasSdk";
 
 import { ChainLiquidationConfig } from "./config";
