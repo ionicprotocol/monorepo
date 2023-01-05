@@ -84,7 +84,7 @@ const ClaimableToken = ({
       <Text minW="80px">{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
       {currentChain?.id !== Number(rewardChainId) ? (
         <Button disabled={isClaiming} onClick={handleSwitch} whiteSpace="normal">
-          Switch {chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
+          Switch to
         </Button>
       ) : (
         <Button disabled={isClaiming} onClick={onClaim} isLoading={isClaiming}>
