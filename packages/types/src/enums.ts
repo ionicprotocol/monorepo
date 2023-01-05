@@ -266,6 +266,8 @@ export enum assetSymbols {
   CELR = "CELR",
   LDO = "LDO",
   "LDO-GLMR" = "LDO-GLMR",
+  "wstDOT-DOT.xc" = "wstDOT-DOT.xc",
+  "base4pool" = "base4pool",
 
   // BeamSwap
   "GLMR-USDC" = "GLMR-USDC",
@@ -285,6 +287,8 @@ export enum assetSymbols {
   USDC_wh = "USDC.wh",
   multiUSDT = "multiUSDT",
   multiDAI = "multiDAI",
+  USDT_xc = "USDT.xc",
+  BUSD_wh = "BUSD.wh",
   "3pool" = "3pool",
   "xcDOT-stDOT" = "xcDOT-stDOT",
 

@@ -140,6 +140,15 @@ export const stellaSwapDocs = (token0: string, token1: string, poolName: string,
   <p> 3. Come back here and hit "MAX" to deposit them all in this pool. </p>
   `;
 };
+export const stellaSwapStableDocs = (poolAddress: string, poolName: string, tokenAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head to <a href="https://app.stellaswap.com/exchange/pool/stable/add/${poolAddress}" target="_blank" style="color: #BCAC83;">StellaSwap</a> and supply the desired liquidity pairs.</p>
+  <p><b>NOTE:</b> You might have to convert between tokens and/or have to approve StellaSwap to spend them.</p><br />
+  <p> 2. You will get back <a href="https://moonbeam.moonscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;">StellaSwap ${poolName} LP tokens</a> in your wallet.</p><br />
+  <p> 3. Come back here and hit "MAX" to deposit them all in this pool. </p>
+  `;
+};
 
 export const curveFinancePolygonDocs = (
   poolNumber: number | string,
