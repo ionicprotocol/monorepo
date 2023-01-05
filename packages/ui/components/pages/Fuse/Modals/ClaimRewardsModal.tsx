@@ -11,8 +11,10 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
+import { useChainModal } from '@rainbow-me/rainbowkit';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
+import { useSwitchNetwork } from 'wagmi';
 
 import { Center } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -20,21 +22,28 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
+import { RewardsPerChainProps } from '@ui/types/ComponentPropsType';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
+import { getChainConfig } from '@ui/utils/networkData';
 
 const ClaimableToken = ({
   data,
   onClaim,
   isClaiming,
+  rewardChainId,
 }: {
   data: FlywheelClaimableRewards;
   onClaim: () => void;
   isClaiming: boolean;
+  rewardChainId: string;
 }) => {
   const { currentChain } = useMultiMidas();
   const { rewards, rewardToken } = useMemo(() => data, [data]);
-  const { data: tokenData } = useTokenData(rewardToken, currentChain?.id);
+  const { data: tokenData } = useTokenData(rewardToken, Number(rewardChainId));
+  const { openChainModal } = useChainModal();
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const chainConfig = useMemo(() => getChainConfig(Number(rewardChainId)), [rewardChainId]);
 
   const totalRewardsString = useMemo(
     () =>
@@ -45,12 +54,20 @@ const ClaimableToken = ({
     [rewards, tokenData?.decimals]
   );
 
+  const handleSwitch = async () => {
+    if (chainConfig && switchNetworkAsync) {
+      await switchNetworkAsync(chainConfig.chainId);
+    } else if (openChainModal) {
+      openChainModal();
+    }
+  };
+
   return (
-    <HStack width="80%" justify="space-evenly">
+    <HStack width="90%" justify="space-evenly">
       {currentChain && (
         <TokenIcon
           address={rewardToken}
-          chainId={currentChain.id}
+          chainId={Number(rewardChainId)}
           size="xs"
           withMotion={false}
           withTooltip={false}
@@ -65,9 +82,15 @@ const ClaimableToken = ({
         </Text>
       </SimpleTooltip>
       <Text minW="80px">{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
-      <Button disabled={isClaiming} onClick={onClaim} isLoading={isClaiming}>
-        Claim
-      </Button>
+      {currentChain?.id !== Number(rewardChainId) ? (
+        <Button disabled={isClaiming} onClick={handleSwitch} whiteSpace="normal">
+          Switch {chainConfig ? ` to ${chainConfig.specificParams.metadata.name}` : ' Network'}
+        </Button>
+      ) : (
+        <Button disabled={isClaiming} onClick={onClaim} isLoading={isClaiming}>
+          Claim
+        </Button>
+      )}
     </HStack>
   );
 };
@@ -75,14 +98,14 @@ const ClaimableToken = ({
 const ClaimRewardsModal = ({
   isOpen,
   onClose,
-  claimableRewards,
-  refetchRewards,
+  crossAllClaimableRewards,
+  refetchCrossRewards,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  claimableRewards: FlywheelClaimableRewards[] | undefined;
+  crossAllClaimableRewards: RewardsPerChainProps;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  refetchRewards: any;
+  refetchCrossRewards: any;
 }) => {
   const { currentSdk, address, signer } = useMultiMidas();
   const successToast = useSuccessToast();
@@ -90,8 +113,8 @@ const ClaimRewardsModal = ({
   const [isClaiming, setIsClaiming] = useState<boolean>(false);
 
   const claimRewards = useCallback(
-    (rewards: FlywheelClaimableRewards[]) => async () => {
-      if (!currentSdk || !address || !signer) return;
+    (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
+      if (!currentSdk || !address || !signer || !rewards) return;
 
       try {
         setIsClaiming(true);
@@ -107,7 +130,7 @@ const ClaimRewardsModal = ({
           successToast({
             title: 'Reward claimed!',
           });
-          await refetchRewards();
+          await refetchCrossRewards();
         }
       } catch (e) {
         handleGenericError(e, errorToast);
@@ -115,7 +138,7 @@ const ClaimRewardsModal = ({
         setIsClaiming(false);
       }
     },
-    [address, currentSdk, refetchRewards, signer, errorToast, successToast]
+    [address, currentSdk, refetchCrossRewards, signer, errorToast, successToast]
   );
 
   return (
@@ -128,7 +151,7 @@ const ClaimRewardsModal = ({
         <ModalCloseButton top={4} />
         <Divider />
         <VStack m={4}>
-          {!claimableRewards ? (
+          {!crossAllClaimableRewards || !currentSdk ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed
@@ -136,23 +159,29 @@ const ClaimRewardsModal = ({
             </Center>
           ) : (
             <>
-              {claimableRewards.map((cr: FlywheelClaimableRewards, index: number) => (
-                <ClaimableToken
-                  key={index}
-                  data={cr}
-                  isClaiming={isClaiming}
-                  onClaim={claimRewards([cr])}
-                />
-              ))}
-
+              {Object.entries(crossAllClaimableRewards).map(([key, value]) => {
+                if (value.data && value.data.length > 0) {
+                  return value.data.map((cr: FlywheelClaimableRewards, index: number) => (
+                    <ClaimableToken
+                      key={index}
+                      rewardChainId={key}
+                      data={cr}
+                      isClaiming={isClaiming}
+                      onClaim={claimRewards(key === currentSdk.chainId.toString() ? [cr] : null)}
+                    />
+                  ));
+                }
+              })}
               <Center pt={4}>
-                <Button
+                {/* <Button
                   disabled={isClaiming}
-                  onClick={claimRewards(claimableRewards)}
+                  onClick={claimRewards(
+                    crossAllClaimableRewards[currentSdk.chainId.toString()].data
+                  )}
                   isLoading={isClaiming}
                 >
                   Claim All
-                </Button>
+                </Button> */}
               </Center>
             </>
           )}
