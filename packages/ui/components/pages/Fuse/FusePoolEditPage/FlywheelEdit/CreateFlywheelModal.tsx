@@ -17,7 +17,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 // import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
-import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/typechain/MidasFlywheel';
+// import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/typechain/MidasFlywheel';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -52,7 +52,8 @@ const steps = [
   },
 ];
 
-const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
+// const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) => {
+const CreateFlywheel = ({ onSuccess }: CreateFlywheelProps) => {
   const { currentSdk } = useMultiMidas();
 
   const successToast = useSuccessToast();
@@ -85,12 +86,12 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
       setFailedStep(0);
       if (!rewardTokenData) throw new Error('No Token Data');
       setIsDeploying(true);
-      let fwCore: MidasFlywheel;
+      // let fwCore: MidasFlywheel;
 
       try {
         setActiveStep(1);
 
-        fwCore = await currentSdk.deployFlywheelCore(rewardTokenData.address);
+        // fwCore = await currentSdk.deployFlywheelCore(rewardTokenData.address);
         successToast({
           description: 'Flywheel Core Deployed',
         });
@@ -129,11 +130,11 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
 
       try {
         setActiveStep(4);
-        const tx = await currentSdk.addFlywheelCoreToComptroller(
-          fwCore.address,
-          comptrollerAddress
-        );
-        await tx.wait();
+        // const tx = await currentSdk.addFlywheelCoreToComptroller(
+        //   fwCore.address,
+        //   comptrollerAddress
+        // );
+        // await tx.wait();
         successToast({
           description: 'Flywheel added to Pool',
         });
