@@ -50,7 +50,7 @@ export const deployFlywheelWithDynamicRewards = async ({
       const fdr = await deployments.deploy(`ReplacingFlywheelDynamicRewards_${config.name}`, {
         contract: "ReplacingFlywheelDynamicRewards",
         from: deployer,
-        args: [config.flywheelToReplace, fwc.address, config.cycleLength],
+        args: [flywheelToReplace, fwc.address, config.cycleLength],
         log: true,
         waitConfirmations: 1,
       });
