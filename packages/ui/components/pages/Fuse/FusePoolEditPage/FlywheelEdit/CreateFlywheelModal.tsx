@@ -16,10 +16,10 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
-import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
+// import { FlywheelStaticRewards } from '@midas-capital/sdk/dist/cjs/typechain/FlywheelStaticRewards';
 import { MidasFlywheel } from '@midas-capital/sdk/dist/cjs/typechain/MidasFlywheel';
 import { useRouter } from 'next/router';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 
 import { Center } from '@ui/components/shared/Flex';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
@@ -69,10 +69,10 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
     isLoading,
   } = useTokenData(rewardToken, currentSdk?.chainId);
 
-  const readyToDeploy = useMemo(() => {
-    if (!rewardTokenData) return false;
-    return rewardTokenData.address.toLowerCase() === rewardToken.toLowerCase();
-  }, [rewardToken, rewardTokenData]);
+  // const readyToDeploy = useMemo(() => {
+  //   if (!rewardTokenData) return false;
+  //   return rewardTokenData.address.toLowerCase() === rewardToken.toLowerCase();
+  // }, [rewardToken, rewardTokenData]);
 
   const router = useRouter();
   const poolChainId = router.query.chainId as string;
@@ -100,11 +100,11 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
         throw 'Failed to deploy Flywheel Core';
       }
 
-      let fwStaticRewards: FlywheelStaticRewards;
+      // let fwStaticRewards: FlywheelStaticRewards;
       try {
         setActiveStep(2);
-        fwStaticRewards = await currentSdk.deployFlywheelStaticRewards(fwCore.address);
-        await fwStaticRewards.deployTransaction.wait();
+        // fwStaticRewards = await currentSdk.deployFlywheelStaticRewards(fwCore.address);
+        // await fwStaticRewards.deployTransaction.wait();
         successToast({
           description: 'Flywheel Rewards Deployed',
         });
@@ -116,8 +116,8 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
 
       try {
         setActiveStep(3);
-        const tx = await currentSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
-        await tx.wait();
+        // const tx = await currentSdk.setFlywheelRewards(fwCore.address, fwStaticRewards.address);
+        // await tx.wait();
         successToast({
           description: 'Rewards Added to Flywheel',
         });
@@ -206,12 +206,7 @@ const CreateFlywheel = ({ comptrollerAddress, onSuccess }: CreateFlywheelProps) 
         />
       </Box>
       <Box px={4} py={2} width="100%">
-        <Button
-          width="100%"
-          isLoading={isDeploying}
-          disabled={isDeploying || !readyToDeploy}
-          onClick={handleDeploy}
-        >
+        <Button width="100%" isLoading={isDeploying} disabled={true} onClick={handleDeploy}>
           {isDeploying ? steps[activeStep] : 'Deploy Flywheel'}
         </Button>
       </Box>
