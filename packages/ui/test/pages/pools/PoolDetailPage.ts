@@ -1,6 +1,5 @@
-import { Dappeteer } from '@chainsafe/dappeteer';
+import { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
 import { FundOperationMode } from '@midas-capital/types';
-import { Page } from 'puppeteer';
 
 import { AppPage } from '@ui/test/pages/AppPage';
 
@@ -13,7 +12,7 @@ export class PoolDetailPage extends AppPage {
   private ConfirmFundButton = '#confirmFund:not([disabled])';
   private UpdatedToast = '#toast-updated';
 
-  constructor(page: Page, metamask: Dappeteer, baseUrl: string) {
+  constructor(page: DappeteerPage, metamask: Dappeteer, baseUrl: string) {
     super(page, metamask, baseUrl);
   }
 
