@@ -3,4 +3,3 @@ typechain/
 deployments/localhost
 .env
 lib/contracts/out
-lib/contracts/typechain

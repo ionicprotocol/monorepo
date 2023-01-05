@@ -1,11 +1,10 @@
-import { Dappeteer } from '@chainsafe/dappeteer';
-import { ElementHandle, Page } from 'puppeteer';
+import { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
 
 export abstract class AppPage {
   public Metamask: Dappeteer;
 
   protected BaseUrl: string;
-  protected Page: Page;
+  protected Page: DappeteerPage;
   protected Route = '';
 
   protected WalletConnectSelector = '#MetaMask';
@@ -14,13 +13,13 @@ export abstract class AppPage {
 
   private ci: string = process.env.CI || 'false';
 
-  constructor(page: Page, metamask: Dappeteer, baseUrl = '') {
+  constructor(page: DappeteerPage, metamask: Dappeteer, baseUrl = '') {
     this.Page = page;
     this.BaseUrl = baseUrl;
     this.Metamask = metamask;
   }
 
-  public async navigateTo(): Promise<Page> {
+  public async navigateTo(): Promise<DappeteerPage> {
     await this.bringToFront();
 
     if (this.BaseUrl && this.Route) {
@@ -32,7 +31,7 @@ export abstract class AppPage {
     return this.Page;
   }
 
-  public async bringToFront(): Promise<Page> {
+  public async bringToFront(): Promise<DappeteerPage> {
     await this.Page.bringToFront();
     return this.Page;
   }
@@ -112,43 +111,6 @@ export abstract class AppPage {
     }
   }
 
-  public async getMetamaskTokenBalance(tokenSymbol: string): Promise<number> {
-    await this.Metamask.page.bringToFront();
-    await this.blockingWait(1, true);
-
-    await this.closeMetamaskWhatsNew();
-
-    const assetMenutButton = await this.Metamask.page.waitForSelector(
-      `li[data-testid="home__asset-tab"]`
-    );
-    if (assetMenutButton) {
-      await assetMenutButton.click();
-      await this.blockingWait(1, true);
-
-      const assetListItems = await this.Metamask.page.$$('.asset-list-item__token-button');
-
-      for (let index = 0; index < assetListItems.length; index++) {
-        const assetListItem = assetListItems[index];
-
-        const titleAttributeValue = await this.Metamask.page.evaluate(
-          (item) => item.getAttribute('title'),
-          assetListItem
-        );
-
-        if (
-          titleAttributeValue &&
-          titleAttributeValue.split(' ')[1].toUpperCase() === tokenSymbol.toUpperCase()
-        ) {
-          const balance = titleAttributeValue.split(' ')[0];
-          this.Page.bringToFront();
-          return parseFloat(balance);
-        }
-      }
-    }
-
-    return 0;
-  }
-
   public async closeMetamaskWhatsNew(): Promise<void> {
     await this.blockingWait(1, true);
     const closeWhatsNewButton = await this.Metamask.page.$(
@@ -186,24 +148,6 @@ export abstract class AppPage {
 
     const waitTill = new Date(new Date().getTime() + waitSeconds * 1000);
     while (waitTill > new Date()) {}
-  }
-
-  protected async getSwitchElement(switchId: string): Promise<ElementHandle<Element>> {
-    await this.Page.waitForSelector(switchId);
-    const switchElement = await this.Page.$(switchId);
-
-    if (switchElement) {
-      const buttonElement = (await switchElement.$x('..'))[0] as ElementHandle<Element>;
-      if (!buttonElement) {
-        throw new Error(
-          `Switch with id ${switchId} not found on the page. Check selector is valid.`
-        );
-      }
-
-      return buttonElement;
-    } else {
-      throw new Error(`Switch with id ${switchId} not found on the page. Check selector is valid.`);
-    }
   }
 
   protected async isSwitchChecked(switchId: string): Promise<boolean> {

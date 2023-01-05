@@ -1,6 +1,6 @@
 FROM node:16.13-alpine as base
 
-FROM ghcr.io/foundry-rs/foundry:nightly-ccb9aa595019ea6fa60abe2d78710a56ea2a6efa as foundry
+FROM ghcr.io/foundry-rs/foundry:nightly-6ad60c82a93cd81d63e0a69dc97f2267157b6631 as foundry
 
 
 FROM node as build

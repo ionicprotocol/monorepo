@@ -1,7 +1,7 @@
 import { TransactionReceipt } from "@ethersproject/abstract-provider";
 import { task, types } from "hardhat/config";
 
-import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 
 task("plugin:deploy", "Deploy ERC4626 Strategy")
   .addParam("creator", "Deployer Address", "deployer", types.string)

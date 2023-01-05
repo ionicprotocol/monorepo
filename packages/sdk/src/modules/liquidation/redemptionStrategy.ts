@@ -1,8 +1,8 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
-import { ICurvePool__factory } from "../../../lib/contracts/typechain/factories/ICurvePool__factory";
-import { IUniswapV2Pair__factory } from "../../../lib/contracts/typechain/factories/IUniswapV2Pair__factory";
+import { ICurvePool__factory } from "../../../typechain/factories/ICurvePool__factory";
+import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
 
 export type StrategiesAndDatas = {

@@ -1,10 +1,10 @@
 import { constants } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../lib/contracts/typechain/ComptrollerFirstExtension";
-import { FlywheelStaticRewards } from "../../lib/contracts/typechain/FlywheelStaticRewards";
-import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
+import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
+import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
 
 task("loopless-booster", "deploy and a loopless booster for a flywheel")
   .addParam("flywheelAddress", "Address of the flywheel to set the booster to", undefined, types.string)

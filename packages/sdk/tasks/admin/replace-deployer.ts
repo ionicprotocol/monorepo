@@ -1,19 +1,19 @@
 import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { ComptrollerFirstExtension } from "../../lib/contracts/typechain";
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol/DiaPriceOracle";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
-import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
-import { Ownable } from "../../lib/contracts/typechain/Ownable";
-import { OwnableUpgradeable } from "../../lib/contracts/typechain/OwnableUpgradeable";
-import { SafeOwnableUpgradeable } from "../../lib/contracts/typechain/SafeOwnableUpgradeable";
-import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
+import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { DiaPriceOracle } from "../../typechain/DiaPriceOracle";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
+import { Ownable } from "../../typechain/Ownable";
+import { OwnableUpgradeable } from "../../typechain/OwnableUpgradeable";
+import { SafeOwnableUpgradeable } from "../../typechain/SafeOwnableUpgradeable";
+import { Unitroller } from "../../typechain/Unitroller";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
