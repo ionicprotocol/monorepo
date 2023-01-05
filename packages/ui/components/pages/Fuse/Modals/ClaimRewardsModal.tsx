@@ -98,14 +98,14 @@ const ClaimableToken = ({
 const ClaimRewardsModal = ({
   isOpen,
   onClose,
-  crossAllClaimableRewards,
-  refetchCrossRewards,
+  claimableRewards,
+  refetchRewards,
 }: {
   isOpen: boolean;
   onClose: () => void;
-  crossAllClaimableRewards: RewardsPerChainProps;
+  claimableRewards: RewardsPerChainProps;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  refetchCrossRewards: any;
+  refetchRewards: any;
 }) => {
   const { currentSdk, address, signer } = useMultiMidas();
   const successToast = useSuccessToast();
@@ -130,7 +130,7 @@ const ClaimRewardsModal = ({
           successToast({
             title: 'Reward claimed!',
           });
-          await refetchCrossRewards();
+          await refetchRewards();
         }
       } catch (e) {
         handleGenericError(e, errorToast);
@@ -138,7 +138,7 @@ const ClaimRewardsModal = ({
         setIsClaiming(false);
       }
     },
-    [address, currentSdk, refetchCrossRewards, signer, errorToast, successToast]
+    [address, currentSdk, refetchRewards, signer, errorToast, successToast]
   );
 
   return (
@@ -151,7 +151,7 @@ const ClaimRewardsModal = ({
         <ModalCloseButton top={4} />
         <Divider />
         <VStack m={4}>
-          {!crossAllClaimableRewards || !currentSdk ? (
+          {!claimableRewards || !currentSdk ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed
@@ -159,7 +159,7 @@ const ClaimRewardsModal = ({
             </Center>
           ) : (
             <>
-              {Object.entries(crossAllClaimableRewards).map(([key, value]) => {
+              {Object.entries(claimableRewards).map(([key, value]) => {
                 if (value.data && value.data.length > 0) {
                   return value.data.map((cr: FlywheelClaimableRewards, index: number) => (
                     <ClaimableToken
@@ -172,17 +172,15 @@ const ClaimRewardsModal = ({
                   ));
                 }
               })}
-              <Center pt={4}>
-                {/* <Button
+              {/* <Center pt={4}>
+                <Button
                   disabled={isClaiming}
-                  onClick={claimRewards(
-                    crossAllClaimableRewards[currentSdk.chainId.toString()].data
-                  )}
+                  onClick={claimRewards(claimableRewards[currentSdk.chainId.toString()]?.data)}
                   isLoading={isClaiming}
                 >
                   Claim All
-                </Button> */}
-              </Center>
+                </Button>
+              </Center> */}
             </>
           )}
         </VStack>

@@ -41,8 +41,8 @@ const ClaimAllRewardsButton: React.FC = () => {
       <ClaimRewardsModal
         isOpen={isClaimModalOpen}
         onClose={closeClaimModal}
-        crossAllClaimableRewards={crossAllClaimableRewards}
-        refetchCrossRewards={refetchCrossRewards}
+        claimableRewards={crossAllClaimableRewards}
+        refetchRewards={refetchCrossRewards}
       />
       <GradientButton
         isSelected

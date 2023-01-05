@@ -8,8 +8,15 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { usePoolClaimableRewards } from '@ui/hooks/rewards/usePoolClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
+import { RewardsPerChainProps } from '@ui/types/ComponentPropsType';
 
-const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
+const ClaimPoolRewardsButton = ({
+  poolAddress,
+  poolChainId,
+}: {
+  poolAddress: string;
+  poolChainId: number;
+}) => {
   const {
     isOpen: isClaimModalOpen,
     onOpen: openClaimModal,
@@ -18,9 +25,23 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
   const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
 
-  const { data: claimableRewards, refetch: refetchRewards } = usePoolClaimableRewards({
+  const {
+    data: claimableRewards,
+    isLoading,
+    error,
+    refetch: refetchRewards,
+  } = usePoolClaimableRewards({
     poolAddress,
+    poolChainId,
   });
+
+  const claimableRewardsOfChain: RewardsPerChainProps = {
+    [poolChainId]: {
+      isLoading,
+      error: error as Error,
+      data: claimableRewards,
+    },
+  };
 
   if (!claimableRewards || claimableRewards.length === 0) return null;
 
@@ -41,7 +62,7 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
           {currentChain && (
             <AvatarGroup size="xs" max={30} my={2}>
               {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
-                return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
+                return <TokenIcon key={index} address={rD.rewardToken} chainId={poolChainId} />;
               })}
             </AvatarGroup>
           )}
@@ -52,7 +73,7 @@ const ClaimPoolRewardsButton = ({ poolAddress }: { poolAddress: string }) => {
         <ClaimRewardsModal
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
-          claimableRewards={claimableRewards}
+          claimableRewards={claimableRewardsOfChain}
           refetchRewards={refetchRewards}
         />
       </Box>

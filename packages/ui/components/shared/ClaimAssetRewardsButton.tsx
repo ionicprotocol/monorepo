@@ -7,13 +7,16 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useColors } from '@ui/hooks/useColors';
+import { RewardsPerChainProps } from '@ui/types/ComponentPropsType';
 
 const ClaimAssetRewardsButton = ({
   poolAddress,
   assetAddress,
+  poolChainId,
 }: {
   poolAddress: string;
   assetAddress: string;
+  poolChainId: number;
 }) => {
   const {
     isOpen: isClaimModalOpen,
@@ -23,10 +26,23 @@ const ClaimAssetRewardsButton = ({
   const { cPage } = useColors();
   const { currentChain } = useMultiMidas();
 
-  const { data: claimableRewards, refetch: refetchRewards } = useAssetClaimableRewards({
+  const {
+    data: claimableRewards,
+    isLoading,
+    error,
+    refetch: refetchRewards,
+  } = useAssetClaimableRewards({
     poolAddress,
     assetAddress,
   });
+
+  const claimableRewardsOfChain: RewardsPerChainProps = {
+    [poolChainId]: {
+      isLoading,
+      error: error as Error,
+      data: claimableRewards,
+    },
+  };
 
   if (!claimableRewards || claimableRewards.length === 0) return null;
 
@@ -47,7 +63,7 @@ const ClaimAssetRewardsButton = ({
           {currentChain && (
             <AvatarGroup size="xs" max={30}>
               {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
-                return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
+                return <TokenIcon key={index} address={rD.rewardToken} chainId={poolChainId} />;
               })}
             </AvatarGroup>
           )}
@@ -57,7 +73,7 @@ const ClaimAssetRewardsButton = ({
         <ClaimRewardsModal
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
-          claimableRewards={claimableRewards}
+          claimableRewards={claimableRewardsOfChain}
           refetchRewards={refetchRewards}
         />
       </Box>
