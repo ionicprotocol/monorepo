@@ -527,7 +527,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
   //// deploy ankr bnb interest rate model
-  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
+  const abirm = await deployments.deploy("AnkrCertificateInterestRateModel", {
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
@@ -540,7 +540,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     log: true,
   });
   if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
-  console.log("AnkrBNBInterestRateModel: ", abirm.address);
+  console.log("AnkrCertificateInterestRateModel: ", abirm.address);
 
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
