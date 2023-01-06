@@ -134,8 +134,11 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
           }
 
           if (different) {
-            if (currentExtensions.length > 1) throw new Error(`implement fn to remove extensions for ${pool.comptroller}`);
-            console.log(`replacing extension ${currentExtensions[0]} with ${comptrollerExtensions[0]} for pool ${pool.comptroller}`);
+            if (currentExtensions.length > 1)
+              throw new Error(`implement fn to remove extensions for ${pool.comptroller}`);
+            console.log(
+              `replacing extension ${currentExtensions[0]} with ${comptrollerExtensions[0]} for pool ${pool.comptroller}`
+            );
             const tx = await fuseFeeDistributor._registerComptrollerExtension(
               pool.comptroller,
               comptrollerExtensions[0],
