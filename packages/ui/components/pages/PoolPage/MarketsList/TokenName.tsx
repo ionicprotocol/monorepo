@@ -60,13 +60,14 @@ export const TokenName = ({
             placement="top-start"
             body={
               <VStack>
-                <Text alignSelf="flex-start" size="md">
+                <Heading size="md" textAlign={'left'} alignSelf="flex-start" mb={2}>
                   {tokenData?.symbol ?? asset.underlyingSymbol}
-                </Text>
-                <div
+                </Heading>
+                <Text
                   dangerouslySetInnerHTML={{
                     __html: asset.extraDocs || asset.underlyingSymbol,
                   }}
+                  wordBreak="break-word"
                 />
               </VStack>
             }
