@@ -174,10 +174,9 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelClaimableRewards(account: string) {
-      const [, comptrollers] = await this.contracts.FusePoolLensSecondary.callStatic.getRewardsDistributorsBySupplier(
-        account,
-        { from: account }
-      );
+      const [, comptrollers] = await this.contracts.FusePoolLensSecondary.callStatic.getFlywheelsToClaim(account, {
+        from: account,
+      });
 
       return (await Promise.all(comptrollers.map((comp) => this.getFlywheelClaimableRewardsForPool(comp, account))))
         .reduce((acc, curr) => [...acc, ...curr], []) // Flatten Array
