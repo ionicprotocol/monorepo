@@ -80,8 +80,8 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     certificateAssetSymbol: assetSymbols.aFTMc,
   });
   ////
-  //// deploy ankr bnb interest rate model
-  const afirm = await deployments.deploy("AnkrFTMInterestRateModel", {
+  //// deploy ankr certificate interest rate model
+  const afirm = await deployments.deploy("AnkrCertificateInterestRateModel", {
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
@@ -95,7 +95,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
 
   if (afirm.transactionHash) await ethers.provider.waitForTransaction(afirm.transactionHash);
-  console.log("AnkrBNBInterestRateModel: ", afirm.address);
+  console.log("AnkrCertificateInterestRateModel: ", afirm.address);
 
   // Liquidators
 

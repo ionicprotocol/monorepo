@@ -1,7 +1,7 @@
 import { Artifact, ChainDeployment, IrmTypes, OracleTypes } from "@midas-capital/types";
 
 import AdjustableJumpRateModel from "../artifacts/AdjustableJumpRateModel.json";
-import AnkrBNBInterestRateModel from "../artifacts/AnkrBNBInterestRateModel.json";
+import AnkrCertificateInterestRateModel from "../artifacts/AnkrCertificateInterestRateModel.json";
 import AnkrCertificateTokenPriceOracle from "../artifacts/AnkrCertificateTokenPriceOracle.json";
 import BalancerLpTokenPriceOracle from "../artifacts/BalancerLpTokenPriceOracle.json";
 import ChainlinkPriceOracleV2 from "../artifacts/ChainlinkPriceOracleV2.json";
@@ -40,7 +40,7 @@ export const ARTIFACTS: Record<IrmTypes | OracleTypes | string, Artifact> = {
   AdjustableJumpRateModel_TRANSFERO_BRZ,
   AdjustableJumpRateModel_TRANSFERO_BTCB_ETH_MAI_WBNB,
   AdjustableJumpRateModel,
-  AnkrBNBInterestRateModel,
+  AnkrCertificateInterestRateModel,
   AnkrCertificateTokenPriceOracle,
   BalancerLpTokenPriceOracle,
   ChainlinkPriceOracleV2,
