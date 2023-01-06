@@ -16,11 +16,9 @@ import "./tasks/pool";
 import "./tasks/swap";
 import "./tasks/admin";
 
-import "./tasks/createPoolsWithAssets";
-import "./tasks/e2e";
 import "./tasks/flywheel";
 import "./tasks/liquidation";
-import "./tasks/replacePlugins";
+import "./tasks/replaceFlywheels";
 import "./tasks/sendTestTokens";
 
 import "./tasks/one-time/liquidate-take-bad-debt";
