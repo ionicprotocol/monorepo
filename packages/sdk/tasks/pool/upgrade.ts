@@ -116,33 +116,38 @@ task("pools:all:upgrade", "Upgrades all pools comptroller implementations whose 
         // check the extensions if the latest impl
         const implAfter = await unitroller.callStatic.comptrollerImplementation();
         if (implAfter == latestImpl) {
-          const firstExtension = await ethers.getContractOrNull("ComptrollerFirstExtension");
-          if (firstExtension) {
-            const extensions = await asComptroller.callStatic._listExtensions();
-            console.log(`current extensions ${extensions}`);
-
-            if (!extensions.find((e) => e == firstExtension.address)) {
-              const extensionToReplace = extensions.find((e) => e == oldFirstExtension)
-                ? oldFirstExtension
-                : constants.AddressZero;
-
-              if (firstExtension.address != extensionToReplace) {
-                console.log(`registering ext ${firstExtension.address} replacing ${extensionToReplace}`);
-                const tx = await fuseFeeDistributor._registerComptrollerExtension(
-                  pool.comptroller,
-                  firstExtension.address,
-                  extensionToReplace
-                );
-                await tx.wait();
-                console.log(`registered the first extension for pool ${pool.comptroller} with tx ${tx.hash}`);
-              } else {
-                console.log(`not replacing the same extension`);
+          const comptrollerExtensions = await fuseFeeDistributor.callStatic.getComptrollerExtensions(latestImpl);
+          const currentExtensions = await asComptroller.callStatic._listExtensions();
+          let different = false;
+          for (let j = 0; j < currentExtensions.length; j++) {
+            let found = false;
+            for (let k = 0; k < comptrollerExtensions.length; k++) {
+              if (currentExtensions[j] == comptrollerExtensions[k]) {
+                found = true;
+                break;
               }
-            } else {
-              console.log(`latest first extension already registered`);
             }
+            if (!found) {
+              different = true;
+              break;
+            }
+          }
+
+          if (different) {
+            if (currentExtensions.length > 1)
+              throw new Error(`implement fn to remove extensions for ${pool.comptroller}`);
+            console.log(
+              `replacing extension ${currentExtensions[0]} with ${comptrollerExtensions[0]} for pool ${pool.comptroller}`
+            );
+            const tx = await fuseFeeDistributor._registerComptrollerExtension(
+              pool.comptroller,
+              comptrollerExtensions[0],
+              currentExtensions[0]
+            );
+            await tx.wait();
+            console.log(`replaced the first extension for pool ${pool.comptroller} with tx ${tx.hash}`);
           } else {
-            console.log(`no first extension deployed for the comptroller`);
+            console.log(`no need to replace all extensions`);
           }
         } else {
           console.log(`FAILED TO UPGRADE ${pool.comptroller} FROM ${implBefore} TO ${latestImpl}`);
