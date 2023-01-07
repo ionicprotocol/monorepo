@@ -148,17 +148,17 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || "https://eth.bd.evmos.org:8545",
     },
     moonbeam: {
-      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
       accounts: { mnemonic },
+      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
       chainId: 1284,
     },
     neondevnet: {
-      url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
       accounts: { mnemonic },
+      url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
       chainId: 245022926,
     },
     polygon: {
-      url: OVERRIDE_RPC_URL || `https://polygon-rpc.com/`,
+      url: OVERRIDE_RPC_URL || `https://rpc-mainnet.maticvigil.com/`,
       accounts: { mnemonic },
       chainId: 137,
     },
