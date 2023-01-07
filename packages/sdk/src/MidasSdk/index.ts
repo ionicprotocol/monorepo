@@ -50,7 +50,7 @@ import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
 import { CTOKEN_ERROR_CODES } from "./config";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
-import AnkrBNBInterestRateModel from "./irm/AnkrBnbInterestRateModel";
+import AnkrCertificateInterestRateModel from "./irm/AnkrCertificateInterestRateModel";
 import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
@@ -306,7 +306,7 @@ export class MidasBase {
       JumpRateModel: JumpRateModel,
       DAIInterestRateModelV2: DAIInterestRateModelV2,
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
-      AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
+      AnkrCertificateInterestRateModel: AnkrCertificateInterestRateModel,
       JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
       JumpRateModel_JARVIS_002_004_4_08: JumpRateModel,
       AdjustableJumpRateModel_PSTAKE_WBNB: AdjustableJumpRateModel,
