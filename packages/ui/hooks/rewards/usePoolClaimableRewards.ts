@@ -6,12 +6,19 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 export const usePoolClaimableRewards = ({ poolAddress }: { poolAddress: string }) => {
   const { currentSdk, address } = useMultiMidas();
 
-  return useQuery<FlywheelClaimableRewards[] | undefined>(
+  return useQuery<FlywheelClaimableRewards[] | null | undefined>(
     ['usePoolClaimableRewards', poolAddress, address, currentSdk?.chainId],
     () => {
-      if (currentSdk && address)
+      if (currentSdk && address) {
         return currentSdk.getFlywheelClaimableRewardsForPool(poolAddress, address);
+      }
+
+      return null;
     },
-    { enabled: !!poolAddress && !!address && !!currentSdk }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolAddress && !!address && !!currentSdk,
+    }
   );
 };

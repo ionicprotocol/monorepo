@@ -1,4 +1,4 @@
-import { NativeUSDPriceOracle } from "../../../lib/contracts/typechain/NativeUSDPriceOracle";
+import { NativeUSDPriceOracle } from "../../../typechain/NativeUSDPriceOracle";
 import { NativeUsdDeployFnParams } from "../types";
 
 export const deployNativeUsdPriceFeed = async ({

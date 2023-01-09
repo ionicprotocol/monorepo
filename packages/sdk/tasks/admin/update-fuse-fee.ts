@@ -1,8 +1,8 @@
 import { Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegate } from "../../lib/contracts/typechain/CErc20Delegate";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
+import { CErc20Delegate } from "../../typechain/CErc20Delegate";
+import { Comptroller } from "../../typechain/Comptroller";
 
 export default task("fusefee:update", "Update FuseFee")
   .addParam("signer", "Named account to use for the tx", "deployer", types.string)

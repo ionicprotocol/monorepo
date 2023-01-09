@@ -1,5 +1,12 @@
-import { Dappeteer, launch, LaunchOptions, setupMetamask } from '@chainsafe/dappeteer';
-import puppeteer, { Browser, Page } from 'puppeteer';
+import {
+  Dappeteer,
+  DappeteerBrowser,
+  DappeteerLaunchOptions,
+  DappeteerPage,
+  launch,
+  RECOMMENDED_METAMASK_VERSION,
+  setupMetaMask,
+} from '@chainsafe/dappeteer';
 
 import { BASE_URL } from '@ui/test/constants/index';
 import { App } from '@ui/test/pages/App';
@@ -19,7 +26,9 @@ export class TestHelper {
     return app;
   }
 
-  public static async initDappeteer(network?: Network): Promise<[Dappeteer, Page, Browser]> {
+  public static async initDappeteer(
+    network?: Network
+  ): Promise<[Dappeteer, DappeteerPage, DappeteerBrowser]> {
     const envSeed = process.env.TEST_METAMASK_SEED;
     const envPassword = process.env.TEST_METAMASK_PASSWORD;
 
@@ -35,7 +44,7 @@ export class TestHelper {
   }
 
   private static async getMetamask(
-    browser: Browser,
+    browser: DappeteerBrowser,
     seed: string,
     pass: string,
     network?: Network
@@ -43,9 +52,8 @@ export class TestHelper {
     let metamask: Dappeteer;
 
     try {
-      metamask = await setupMetamask(browser, { seed: seed, password: pass });
+      metamask = await setupMetaMask(browser, { seed: seed, password: pass });
       if (network) {
-        await metamask.addNetwork(network);
         await metamask.switchNetwork(network.networkName);
       }
     } catch (error) {
@@ -55,15 +63,15 @@ export class TestHelper {
     return metamask;
   }
 
-  private static async getBrowser(): Promise<Browser> {
-    let browser: Browser;
-    const options: LaunchOptions = {
-      metamaskVersion: 'v10.15.0',
-      args: ['--no-sandbox'],
+  private static async getBrowser(): Promise<DappeteerBrowser> {
+    let browser: DappeteerBrowser;
+    const options: DappeteerLaunchOptions = {
+      metaMaskVersion: RECOMMENDED_METAMASK_VERSION,
+      browser: 'chrome',
     };
 
     try {
-      browser = await launch(puppeteer, options);
+      browser = await launch(options);
     } catch (error) {
       console.error('Error occurred launching Puppeteer');
       throw error;
@@ -72,17 +80,11 @@ export class TestHelper {
     return browser;
   }
 
-  private static async getPage(browser: Browser): Promise<Page> {
-    let page: Page;
+  private static async getPage(browser: DappeteerBrowser): Promise<DappeteerPage> {
+    let page: DappeteerPage;
 
     try {
       page = await browser.newPage();
-
-      await page.setDefaultTimeout(180000);
-
-      await page.setUserAgent(
-        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36'
-      );
     } catch (error) {
       console.error('Error occurred creating new page');
       throw error;

@@ -81,14 +81,19 @@ export const StatsColumn = ({
   }, [currentChain, updatedAsset, asset, assets, updatedAssets, currentSdk]);
 
   // Calculate Old and new Borrow Limits
-  const borrowLimitTotal = useBorrowLimitTotal(assets, poolChainId);
-  const updatedBorrowLimitTotal = useBorrowLimitTotal(updatedAssets ?? [], poolChainId, {
+  const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
+  const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets ?? [], poolChainId, {
     ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
   });
-  const borrowLimitMarket = useBorrowLimitMarket(asset, assets, poolChainId);
-  const updatedBorrowLimitMarket = useBorrowLimitMarket(asset, updatedAssets ?? [], poolChainId, {
-    ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
-  });
+  const { data: borrowLimitMarket } = useBorrowLimitMarket(asset, assets, poolChainId);
+  const { data: updatedBorrowLimitMarket } = useBorrowLimitMarket(
+    asset,
+    updatedAssets ?? [],
+    poolChainId,
+    {
+      ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
+    }
+  );
 
   return (
     <MidasBox width="100%">

@@ -4,7 +4,7 @@ const baseIrms = [IrmTypes.WhitePaperInterestRateModel, IrmTypes.JumpRateModel];
 
 const irms: IrmTypes[] = [
   ...baseIrms,
-  IrmTypes.AnkrBNBInterestRateModel,
+  IrmTypes.AnkrCertificateInterestRateModel,
   IrmTypes.JumpRateModel_JARVIS_2_004_4_08,
   IrmTypes.AdjustableJumpRateModel_PSTAKE_WBNB,
   IrmTypes.AdjustableJumpRateModel_TRANSFERO_BRZ,

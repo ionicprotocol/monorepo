@@ -14,7 +14,10 @@ export {
   curveFinancePolygonDocs,
   balancerDocs,
   curveFinanceArbitrumDocs,
+  curveFinanceMoonbeamDocs,
   jarvisDocs,
   wrappedAssetDocs,
   lidoFinanceDocs,
+  stellaSwapDocs,
+  stellaSwapStableDocs,
 } from "./docs";

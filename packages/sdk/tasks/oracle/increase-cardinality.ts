@@ -1,6 +1,6 @@
 import { task } from "hardhat/config";
 
-import { IUniswapV3Pool__factory } from "../../lib/contracts/typechain/factories/IUniswapV3Pool__factory";
+import { IUniswapV3Pool__factory } from "../../typechain/factories/IUniswapV3Pool__factory";
 
 task("oracle:increase-cardinality", "Increase cardinality for pool")
   .addParam("address")

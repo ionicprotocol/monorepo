@@ -1,7 +1,15 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { beamSwapDocs, beamSwapStableDocs, defaultDocs, wrappedAssetDocs } from "../common";
-import { curveFinanceMoonbeamDocs, lidoFinanceDocs, stellaSwapDocs } from "../common/docs";
+import {
+  beamSwapDocs,
+  beamSwapStableDocs,
+  curveFinanceMoonbeamDocs,
+  defaultDocs,
+  lidoFinanceDocs,
+  stellaSwapDocs,
+  stellaSwapStableDocs,
+  wrappedAssetDocs,
+} from "../common";
 
 const ATOM = "0x27292cf0016E5dF1d8b37306B2A98588aCbD6fCA";
 const xcDOT = "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080";
@@ -15,6 +23,8 @@ const BNB = "0xc9BAA8cfdDe8E328787E29b4B078abf2DaDc2055";
 const multiDAI = "0x765277EebeCA2e31912C9946eAe1021199B39C61";
 const multiUSDC = "0x818ec0A7Fe18Ff94269904fCED6AE3DaE6d6dC0b";
 const multiUSDT = "0xeFAeeE334F0Fd1712f9a8cc375f427D9Cdd40d73";
+const USDT_xc = "0xFFFFFFfFea09FB06d082fd1275CD48b191cbCD1d";
+const BUSD_wh = "0x692C57641fc054c2Ad6551Ccc6566EbA599de1BA";
 const whUSDC = "0x931715FEE2d06333043d11F658C8CE934aC61D0c";
 const FRAX = "0x322E86852e492a7Ee17f28a78c663da38FB33bfb";
 const WGLMR = "0xAcc15dC74880C9944775448304B263D191c6077F";
@@ -39,6 +49,8 @@ const GLMR_whUSDC = "0x8CCBbcAF58f5422F6efD4034d8E8a3c9120ADf79";
 const GLMR_xcDOT = "0xa927E1e1E044CA1D9fe1854585003477331fE2Af";
 const GLMR_whWETH = "0x8577273FB3B72306F3A59E26ab77116f5D428DAa";
 const GLMR_whWBTC = "0xf8f5E8B9Ee84664695B14862212D8092E16331F6";
+const wstDOT_xcDOT = "0x61BF1b38930e37850D459f3CB926Cd197F5F88c0";
+const base4pool = "0xB326b5189AA42Acaa3C649B120f084Ed8F4dCaA6";
 
 // Curve Finance
 const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
@@ -150,6 +162,22 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiUSDT),
+  },
+  {
+    symbol: assetSymbols.USDT_xc,
+    underlying: USDT_xc,
+    name: "XCM USDT",
+    decimals: 6,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", USDT_xc),
+  },
+  {
+    symbol: assetSymbols.BUSD_wh,
+    underlying: BUSD_wh,
+    name: "Wormhole BUSD",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://moonbeam.moonscan.io", BUSD_wh),
   },
   {
     symbol: assetSymbols.FRAX,
@@ -294,6 +322,22 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: stellaSwapDocs("ETH", LDO, "LDO-GLMR", LDO_GLMR),
+  },
+  {
+    symbol: assetSymbols["wstDOT-DOT.xc"],
+    underlying: wstDOT_xcDOT,
+    name: "Stella Swap wstDOT/xcDOT LP Token",
+    decimals: 18,
+    oracle: OracleTypes.UniswapLpTokenPriceOracle,
+    extraDocs: stellaSwapDocs(wstDOT, xcDOT, "wstDOT-xcDOT", wstDOT_xcDOT),
+  },
+  {
+    symbol: assetSymbols.base4pool,
+    underlying: base4pool,
+    name: "Stella Swap USDC.wh/USDT.xc/BUSD.wh/FRAX LP Token",
+    decimals: 18,
+    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+    extraDocs: stellaSwapStableDocs("0xB1BC9f56103175193519Ae1540A0A4572b1566F6", "base4pool", base4pool),
   },
   {
     symbol: assetSymbols.STELLA,

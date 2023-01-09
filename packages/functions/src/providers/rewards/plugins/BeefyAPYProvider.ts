@@ -6,14 +6,26 @@ interface BeefyAPYResponse {
   [key: string]: number;
 }
 
+interface BeefyVaultResponse {
+  [key: string]: string | number | string[];
+}
+
 class BeefyAPYProvider extends AbstractPluginAPYProvider {
   static apyEndpoint = 'https://api.beefy.finance/apy';
+  static vaultsEndpoint = 'https://api.beefy.finance/vaults';
+
   private beefyAPYs: BeefyAPYResponse | undefined;
+  private beefyVaults: BeefyVaultResponse[] | undefined;
 
   async init() {
     this.beefyAPYs = await (await axios.get(BeefyAPYProvider.apyEndpoint)).data;
     if (!this.beefyAPYs) {
       throw `BeefyAPYProvider: unexpected Beefy APY response`;
+    }
+
+    this.beefyVaults = await (await axios.get(BeefyAPYProvider.vaultsEndpoint)).data;
+    if (!this.beefyVaults) {
+      throw `BeefyAPYProvider: unexpected Beefy Vaults response`;
     }
   }
 
@@ -26,17 +38,22 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     const beefyID = pluginData.apyDocsUrl.split('/').pop();
     if (!beefyID) throw 'BeefyAPYProvider: unable to extract `Beefy ID` from `apyDocsUrl`';
 
-    if (!this.beefyAPYs) {
+    if (!this.beefyAPYs || !this.beefyVaults) {
       throw 'BeefyAPYProvider: Not initialized';
     }
 
-    const apy = this.beefyAPYs![beefyID];
+    let apy = this.beefyAPYs![beefyID];
     if (apy === undefined) {
       await functionsAlert(
         `BeefyAPYProvider: ${beefyID}`,
         `Beefy ID: "${beefyID}" not included in Beefy APY data`
       );
       throw `Beefy ID: "${beefyID}" not included in Beefy APY data`;
+    }
+
+    const vaultInfo = this.beefyVaults.find((vault) => vault.id === beefyID);
+    if (vaultInfo?.status === 'paused') {
+      apy = 0;
     }
 
     if (apy === 0) {

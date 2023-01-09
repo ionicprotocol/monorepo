@@ -7,19 +7,24 @@ export const useCTokensUnderlying = (cTokenAddresses: string[]): CTokensUnderlyi
   const { currentSdk } = useMultiMidas();
 
   const { data: cTokensUnderlying } = useQuery(
-    ['useCTokensUnderlying', cTokenAddresses?.join(','), currentSdk?.chainId],
+    ['useCTokensUnderlying', cTokenAddresses?.sort().join(','), currentSdk?.chainId],
     async () => {
       const _map: CTokensUnderlyingMap = {};
       if (cTokenAddresses && cTokenAddresses.length && currentSdk) {
         await Promise.all(
           cTokenAddresses.map(async (cTokenAddress) => {
-            const cTokenInstance = currentSdk.createCToken(cTokenAddress);
+            const cTokenInstance = currentSdk.createCTokenWithExtensions(cTokenAddress);
             _map[cTokenAddress] = await cTokenInstance.callStatic.underlying();
           })
         );
       }
 
       return _map;
+    },
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: cTokenAddresses.length > 0 && !!currentSdk,
     }
   );
 

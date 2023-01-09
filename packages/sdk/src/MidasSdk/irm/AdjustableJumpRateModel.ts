@@ -1,6 +1,6 @@
 import { utils } from "ethers";
 
-import AdjustableJumpRateModelArtifact from "../../../lib/contracts/out/AdjustableJumpRateModel.sol/AdjustableJumpRateModel.json";
+import AdjustableJumpRateModelArtifact from "../../../artifacts/AdjustableJumpRateModel.json";
 
 import JumpRateModel from "./JumpRateModel";
 

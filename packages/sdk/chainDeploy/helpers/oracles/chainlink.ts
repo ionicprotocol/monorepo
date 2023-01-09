@@ -1,7 +1,7 @@
 import { underlying } from "@midas-capital/types";
 import { providers } from "ethers";
 
-import { AddressesProvider } from "../../../lib/contracts/typechain/AddressesProvider";
+import { AddressesProvider } from "../../../typechain/AddressesProvider";
 import { ChainlinkDeployFnParams, ChainlinkFeedBaseCurrency } from "../types";
 
 export const deployChainlinkOracle = async ({

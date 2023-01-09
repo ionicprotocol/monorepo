@@ -58,6 +58,7 @@ const chainlinkAssets: ChainlinkAsset[] = [
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({
     run,
@@ -78,6 +79,24 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     assets,
     certificateAssetSymbol: assetSymbols.aFTMc,
   });
+  ////
+  //// deploy ankr certificate interest rate model
+  const afirm = await deployments.deploy("AnkrCertificateInterestRateModel", {
+    from: deployer,
+    args: [
+      deployConfig.blocksPerYear,
+      "5000000000000000",
+      "3000000000000000000",
+      "800000000000000000",
+      3,
+      "0xB42bF10ab9Df82f9a47B86dd76EEE4bA848d0Fa2",
+    ],
+    log: true,
+  });
+
+  if (afirm.transactionHash) await ethers.provider.waitForTransaction(afirm.transactionHash);
+  console.log("AnkrCertificateInterestRateModel: ", afirm.address);
+
   // Liquidators
 
   ////

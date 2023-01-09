@@ -9,5 +9,6 @@
     "rootDirs": ["./src", "./tests"],
     "outDir": "./dist/cjs",
     "composite": true
-  }
+  },
+  "exclude": []
 }

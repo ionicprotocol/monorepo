@@ -7,11 +7,11 @@ import {
   deployAdrastiaOracle,
   deployFluxOracle,
   deployNativeUsdPriceFeed,
+  deploySaddleLpOracle,
   deployUniswapLpOracle,
-  deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
-import { AdrastiaAsset, ChainDeployFnParams, FluxAsset } from "../helpers/types";
+import { AdrastiaAsset, ChainDeployFnParams, CurvePoolConfig, FluxAsset } from "../helpers/types";
 
 const assets = evmos.assets;
 const wevmos = underlying(assets, assetSymbols.WEVMOS);
@@ -65,14 +65,6 @@ const fluxAssets: FluxAsset[] = [
     feed: "0x0c6d78894824876be96774d18f56fb21D7ec7874",
   },
   {
-    underlying: underlying(assets, assetSymbols.axlUSDC),
-    feed: "0x3B2AF9149360e9F954C18f280aD0F4Adf1B613b8",
-  },
-  {
-    underlying: underlying(assets, assetSymbols.ceUSDC),
-    feed: "0x3B2AF9149360e9F954C18f280aD0F4Adf1B613b8",
-  },
-  {
     underlying: underlying(assets, assetSymbols.FRAX),
     feed: "0x71712f8142550C0f76719Bc958ba0C28c4D78985",
   },
@@ -84,10 +76,22 @@ const fluxAssets: FluxAsset[] = [
     underlying: underlying(assets, assetSymbols.ceUSDT),
     feed: "0x8FeAE79dB32595d8Ee57D40aA7De0512cBe36625",
   },
+  {
+    underlying: underlying(assets, assetSymbols.axlUSDT),
+    feed: "0x8FeAE79dB32595d8Ee57D40aA7De0512cBe36625",
+  },
 ];
 const adrastiaAssets: AdrastiaAsset[] = [
   {
     underlying: underlying(assets, assetSymbols.gUSDT),
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
+  },
+  {
+    underlying: underlying(assets, assetSymbols.axlUSDC),
+    feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
+  },
+  {
+    underlying: underlying(assets, assetSymbols.ceUSDC),
     feed: "0x2a18276F6ee9663e8bc59C08F076279eB9553685",
   },
   {
@@ -124,7 +128,30 @@ const adrastiaAssets: AdrastiaAsset[] = [
   },
 ];
 
+// https://saddle.exchange/
+const saddlePools: CurvePoolConfig[] = [
+  {
+    lpToken: underlying(assets, assetSymbols.kinesisUSDC),
+    pool: "0x35bF604084FBE407996c394D3558E58c90281000",
+    underlyings: [
+      underlying(assets, assetSymbols.axlUSDC),
+      underlying(assets, assetSymbols.gUSDC),
+      underlying(assets, assetSymbols.ceUSDC),
+    ],
+  },
+  {
+    lpToken: underlying(assets, assetSymbols.kinesisUSDT),
+    pool: "0x89E9703309DA4aC51C739D7d674F91489830310E",
+    underlyings: [
+      underlying(assets, assetSymbols.axlUSDT),
+      underlying(assets, assetSymbols.gUSDT),
+      underlying(assets, assetSymbols.ceUSDT),
+    ],
+  },
+];
+
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
+  const { deployer } = await getNamedAccounts();
   const { nativeUsdPriceOracle } = await deployNativeUsdPriceFeed({
     run,
     ethers,
@@ -166,6 +193,27 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     deployConfig,
   });
+
+  //// Saddle LP Oracle
+  await deploySaddleLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    saddlePools,
+  });
+
+  //// Simple Price Oracle
+  const simplePO = await deployments.deploy("SimplePriceOracle", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
+  console.log("SimplePriceOracle: ", simplePO.address);
+
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
     ethers,

@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { FuseFeeDistributor } from "../../lib/contracts/typechain/FuseFeeDistributor";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 
 export default task("plugin:whitelist", "Whitelists a plugin implementation")
   .addParam("oldImplementation", "The old plugin implementation address", undefined, types.string)
