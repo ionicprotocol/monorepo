@@ -61,7 +61,6 @@ export const deployCurveV2LpOracle = async ({
   ethers,
   getNamedAccounts,
   deployments,
-  deployConfig,
   curveV2Pools,
 }: CurveV2LpFnParams): Promise<void> => {
   const { deployer } = await getNamedAccounts();
@@ -79,7 +78,7 @@ export const deployCurveV2LpOracle = async ({
       execute: {
         init: {
           methodName: "initialize",
-          args: [[], [], deployConfig.stableToken, mpo.address],
+          args: [[], []],
         },
       },
       owner: deployer,

@@ -14,6 +14,8 @@ export const usePerformanceFee = (poolChainId: number, pluginAddress?: string) =
         const performanceFee = await pluginContract.callStatic.performanceFee();
 
         return Number(utils.formatUnits(performanceFee)) * 100;
+      } else {
+        return null;
       }
     },
     {

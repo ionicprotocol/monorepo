@@ -1,18 +1,19 @@
 import { providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
-import { CErc20PluginDelegate } from "../../lib/contracts/typechain/CErc20PluginDelegate";
-import { Comptroller } from "../../lib/contracts/typechain/Comptroller";
-import { DiaPriceOracle } from "../../lib/contracts/typechain/DiaPriceOracle.sol/DiaPriceOracle";
-import { FusePoolDirectory } from "../../lib/contracts/typechain/FusePoolDirectory";
-import { MasterPriceOracle } from "../../lib/contracts/typechain/MasterPriceOracle";
-import { MidasERC4626 } from "../../lib/contracts/typechain/MidasERC4626";
-import { MidasFlywheelCore } from "../../lib/contracts/typechain/MidasFlywheelCore";
-import { Ownable } from "../../lib/contracts/typechain/Ownable";
-import { OwnableUpgradeable } from "../../lib/contracts/typechain/OwnableUpgradeable";
-import { SafeOwnableUpgradeable } from "../../lib/contracts/typechain/SafeOwnableUpgradeable";
-import { Unitroller } from "../../lib/contracts/typechain/Unitroller";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
+import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
+import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
+import { DiaPriceOracle } from "../../typechain/DiaPriceOracle";
+import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
+import { MidasERC4626 } from "../../typechain/MidasERC4626";
+import { MidasFlywheelCore } from "../../typechain/MidasFlywheelCore";
+import { Ownable } from "../../typechain/Ownable";
+import { OwnableUpgradeable } from "../../typechain/OwnableUpgradeable";
+import { SafeOwnableUpgradeable } from "../../typechain/SafeOwnableUpgradeable";
+import { Unitroller } from "../../typechain/Unitroller";
 
 export default task("system:admin:change", "Changes the system admin to a new address")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
@@ -145,7 +146,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
       }
 
       const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-      const pools = await fusePoolDirectory.callStatic.getAllPools();
+      const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
       for (let i = 0; i < pools.length; i++) {
         const pool = pools[i];
         console.log("pool name", pool.name);
@@ -168,12 +169,12 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           console.error(`unknown pool admin ${admin}`);
         }
 
-        const comptroller = (await ethers.getContractAt(
-          "Comptroller.sol:Comptroller",
+        const comptrollerAsExtension = (await ethers.getContractAt(
+          "ComptrollerFirstExtension",
           pool.comptroller,
           deployer
-        )) as Comptroller;
-        const flywheels = await comptroller.callStatic.getRewardsDistributors();
+        )) as ComptrollerFirstExtension;
+        const flywheels = await comptrollerAsExtension.callStatic.getRewardsDistributors();
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
           {
@@ -196,7 +197,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           }
         }
 
-        const markets = await comptroller.callStatic.getAllMarkets();
+        const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
         for (let j = 0; j < markets.length; j++) {
           const market = markets[j];
           console.log(`market ${market}`);
@@ -283,7 +284,7 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
     const deployer = await ethers.getSigner(newDeployer);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", deployer)) as FusePoolDirectory;
-    const pools = await fusePoolDirectory.callStatic.getAllPools();
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log("pool name", pool.name);

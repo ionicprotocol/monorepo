@@ -18,6 +18,8 @@ export const usePluginInfo = (poolChainId: number, pluginAddress?: string) => {
               strategyDocsUrl: '',
               icon: '',
             };
+      } else {
+        return null;
       }
     },
     {

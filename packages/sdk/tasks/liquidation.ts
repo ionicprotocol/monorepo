@@ -1,9 +1,9 @@
 import { BigNumber, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
-import { CErc20Delegate } from "../lib/contracts/typechain/CErc20Delegate";
-import { ERC20 } from "../lib/contracts/typechain/ERC20";
-import { FuseSafeLiquidator } from "../lib/contracts/typechain/FuseSafeLiquidator";
+import { CErc20Delegate } from "../typechain/CErc20Delegate";
+import { ERC20 } from "../typechain/ERC20";
+import { FuseSafeLiquidator } from "../typechain/FuseSafeLiquidator";
 
 export default task("get-liquidations", "Get potential liquidations")
   .addOptionalParam(

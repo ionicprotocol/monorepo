@@ -16,18 +16,12 @@ import "./tasks/pool";
 import "./tasks/swap";
 import "./tasks/admin";
 
-import "./tasks/createPoolsWithAssets";
-import "./tasks/e2e";
 import "./tasks/flywheel";
 import "./tasks/liquidation";
-import "./tasks/replacePlugins";
+import "./tasks/replaceFlywheels";
 import "./tasks/sendTestTokens";
 
-import "./tasks/one-time/arrakis-polygon-plugins";
-import "./tasks/one-time/dot-dot-bsc-plugins";
-import "./tasks/one-time/jarvis-polygon-mimo-plugin";
-import "./tasks/one-time/downgradeMarket";
-import "./tasks/one-time/loopless-booster";
+import "./tasks/one-time/liquidate-take-bad-debt";
 import "./tasks/oracle/add-apeswap-oracle";
 import "./tasks/configureApStrategies";
 
@@ -86,6 +80,7 @@ const config: HardhatUserConfig = {
     // This is the unchangeable default network which is started with `hardhat node`
     hardhat: {
       accounts: { mnemonic },
+      allowUnlimitedContractSize: true,
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gas: 25e6,
       gasPrice: 20e10,
@@ -97,6 +92,7 @@ const config: HardhatUserConfig = {
         : undefined,
     },
     fork: {
+      allowUnlimitedContractSize: true,
       accounts: { mnemonic },
       chainId: FORK_CHAIN_ID ? Number(FORK_CHAIN_ID) : 1337,
       gasPrice: 20e9,
@@ -144,7 +140,7 @@ const config: HardhatUserConfig = {
     mainnet: {
       accounts: { mnemonic },
       chainId: 1,
-      url: OVERRIDE_RPC_URL || "https://eth-mainnet.alchemyapi.io/v2/2Mt-6brbJvTA4w9cpiDtnbTo6qOoySnN",
+      url: OVERRIDE_RPC_URL || "https://rpc.ankr.com/eth",
     },
     evmos: {
       accounts: { mnemonic },
@@ -152,17 +148,17 @@ const config: HardhatUserConfig = {
       url: OVERRIDE_RPC_URL || "https://eth.bd.evmos.org:8545",
     },
     moonbeam: {
-      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
       accounts: { mnemonic },
+      url: OVERRIDE_RPC_URL || `https://rpc.api.moonbeam.network`,
       chainId: 1284,
     },
     neondevnet: {
-      url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
       accounts: { mnemonic },
+      url: OVERRIDE_RPC_URL || `https://proxy.devnet.neonlabs.org/solana`,
       chainId: 245022926,
     },
     polygon: {
-      url: OVERRIDE_RPC_URL || `https://polygon-rpc.com/`,
+      url: OVERRIDE_RPC_URL || `https://rpc-mainnet.maticvigil.com/`,
       accounts: { mnemonic },
       chainId: 137,
     },

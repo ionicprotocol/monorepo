@@ -2,10 +2,11 @@ import { bsc } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
 import { constants, ethers } from "ethers";
 
-import { AddressesProvider } from "../../lib/contracts/typechain/AddressesProvider";
+import { AddressesProvider } from "../../typechain/AddressesProvider";
 import {
   ChainDeployConfig,
   ChainlinkFeedBaseCurrency,
+  deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployCurveV2LpOracle,
@@ -123,11 +124,13 @@ export const deployConfig: ChainDeployConfig = {
       rewardToken: "0x84c97300a190676a19D1E13115629A11f8482Bd1",
       cycleLength: 1,
       name: "DDD",
+      flywheelToReplace: "0x851Cc0037B6923e60dC81Fa79Ac0799cC983492c",
     },
     {
       rewardToken: "0xAf41054C1487b0e5E2B9250C0332eCBCe6CE9d71",
       cycleLength: 1,
       name: "EPX",
+      flywheelToReplace: "0xC6431455AeE17a08D6409BdFB18c4bc73a4069E4",
     },
     {
       rewardToken: "0xa184088a740c695E156F91f5cC086a06bb78b827",
@@ -282,12 +285,6 @@ const curvePools: CurvePoolConfig[] = [
     ],
   },
   {
-    // BNBx-BNB pool
-    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
-    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
-    underlyings: [underlying(assets, assetSymbols.BNBx), underlying(assets, assetSymbols.BNB)],
-  },
-  {
     // MAI 3EPS pool
     lpToken: underlying(assets, assetSymbols.mai3EPS),
     pool: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
@@ -300,6 +297,11 @@ const curveV2Pools: CurveV2PoolConfig[] = [
     // eps BUSD jCHF
     lpToken: underlying(assets, assetSymbols["JCHF-BUSD"]),
     pool: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2",
+  },
+  {
+    // BNBx-BNB pool
+    lpToken: underlying(assets, assetSymbols["epsBNBx-BNB"]),
+    pool: "0xFD4afeAc39DA03a05f61844095A75c4fB7D766DA",
   },
 ];
 
@@ -414,15 +416,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     assets,
   });
 
-  //// Ankr BNB Certificate oracle
-  // await deployAnkrCertificateTokenPriceOracle({
-  //   run,
-  //   ethers,
-  //   getNamedAccounts,
-  //   deployments,
-  //   assets,
-  //   certificateAssetSymbol: assetSymbols.aBNBc,
-  // });
+  // Ankr BNB Certificate oracle
+  await deployAnkrCertificateTokenPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    assets,
+    certificateAssetSymbol: assetSymbols.ankrBNB,
+  });
 
   const simplePO = await deployments.deploy("SimplePriceOracle", {
     from: deployer,
@@ -525,7 +527,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
   //// deploy ankr bnb interest rate model
-  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
+  const abirm = await deployments.deploy("AnkrCertificateInterestRateModel", {
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
@@ -538,7 +540,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     log: true,
   });
   if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
-  console.log("AnkrBNBInterestRateModel: ", abirm.address);
+  console.log("AnkrCertificateInterestRateModel: ", abirm.address);
 
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({

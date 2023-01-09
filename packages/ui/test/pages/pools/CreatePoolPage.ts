@@ -1,5 +1,4 @@
-import { Dappeteer } from '@chainsafe/dappeteer';
-import { Page } from 'puppeteer';
+import { Dappeteer, DappeteerPage } from '@chainsafe/dappeteer';
 
 import { AppPage } from '@ui/test/pages/AppPage';
 
@@ -13,7 +12,7 @@ export class CreatePoolPage extends AppPage {
   private CreatePoolBtnSelector = '#createPool';
   private SuccessToast = '#toast-success';
 
-  constructor(page: Page, metamask: Dappeteer, baseUrl: string) {
+  constructor(page: DappeteerPage, metamask: Dappeteer, baseUrl: string) {
     super(page, metamask, baseUrl);
   }
 
@@ -42,7 +41,10 @@ export class CreatePoolPage extends AppPage {
 
   public async setOracle(oracle: string): Promise<void> {
     await this.blockingWait(1);
-    await this.Page.select(this.OracleSelectSelector, oracle);
+    await this.Page.$eval(
+      this.OracleSelectSelector,
+      (el) => ((el as HTMLSelectElement).value = oracle)
+    );
   }
 
   public async setCloseFactor(closeFactor: string): Promise<void> {
@@ -76,7 +78,6 @@ export class CreatePoolPage extends AppPage {
           }
         } catch {}
       }
-      await this.Page.waitForNavigation();
       const url = this.Page.url();
       expect(url).toContain('http://localhost:3000/56/pool');
     }

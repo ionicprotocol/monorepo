@@ -4,8 +4,8 @@ import { ChainConfig, ChainDeployment, SupportedChains } from "@midas-capital/ty
 import { Signer } from "ethers";
 import { deployments, ethers } from "hardhat";
 
-import { WETH } from "../../lib/contracts/typechain/WETH";
 import { MidasSdk } from "../../src";
+import { WETH } from "../../typechain/WETH";
 
 let midasSdk: MidasSdk;
 
@@ -72,12 +72,6 @@ export const getCommonDeployments = async (chainDeployment: ChainDeployment) => 
   const MasterPriceOracle = await ethers.getContract("MasterPriceOracle");
   const MasterPriceOracleArtifact = await deployments.getArtifact("MasterPriceOracle");
   chainDeployment.MasterPriceOracle = { abi: MasterPriceOracleArtifact.abi, address: MasterPriceOracle.address };
-  const RewardsDistributorDelegate = await ethers.getContract("RewardsDistributorDelegate");
-  const RewardsDistributorDelegateArtifact = await deployments.getArtifact("RewardsDistributorDelegate");
-  chainDeployment.RewardsDistributorDelegate = {
-    abi: RewardsDistributorDelegateArtifact.abi,
-    address: RewardsDistributorDelegate.address,
-  };
   const SimplePriceOracle = await ethers.getContract("SimplePriceOracle");
   const SimplePriceOracleArtifact = await deployments.getArtifact("SimplePriceOracle");
   chainDeployment.SimplePriceOracle = { abi: SimplePriceOracleArtifact.abi, address: SimplePriceOracle.address };
@@ -106,11 +100,11 @@ export const getLocalDeployments = async (): Promise<ChainDeployment> => {
 
 export const getBscForkDeployments = async (): Promise<ChainDeployment> => {
   const chainDeployment: ChainDeployment = {};
-  const AnkrBNBInterestRateModel = await ethers.getContract("AnkrBNBInterestRateModel");
-  const AnkrBNBInterestRateModelArtifact = await deployments.getArtifact("AnkrBNBInterestRateModel");
-  chainDeployment.AnkrBNBInterestRateModel = {
-    abi: AnkrBNBInterestRateModelArtifact.abi,
-    address: AnkrBNBInterestRateModel.address,
+  const AnkrCertificateInterestRateModel = await ethers.getContract("AnkrCertificateInterestRateModel");
+  const AnkrCertificateInterestRateModelArtifact = await deployments.getArtifact("AnkrCertificateInterestRateModel");
+  chainDeployment.AnkrCertificateInterestRateModel = {
+    abi: AnkrCertificateInterestRateModelArtifact.abi,
+    address: AnkrCertificateInterestRateModel.address,
   };
   const WhitePaperInterestRateModel = await ethers.getContract("WhitePaperInterestRateModel");
   const WhitePaperInterestRateModelArtifact = await deployments.getArtifact("WhitePaperInterestRateModel");

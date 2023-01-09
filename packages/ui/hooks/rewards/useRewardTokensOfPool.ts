@@ -19,7 +19,12 @@ export const useRewardTokensOfPool = (poolAddress?: string, chainId?: number) =>
         return null;
       }
     },
-    { enabled: !!poolAddress && !!sdk, placeholderData: [] }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolAddress && !!sdk,
+      placeholderData: [],
+    }
   );
 
   return data || [];

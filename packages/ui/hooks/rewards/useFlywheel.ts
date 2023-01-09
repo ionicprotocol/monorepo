@@ -9,7 +9,7 @@ export const useFlywheel = (flywheelAddress?: string) => {
   return useQuery(
     ['useFlywheel', currentSdk?.chainId, flywheelAddress],
     async () => {
-      if (!flywheelAddress || !currentSdk) return undefined;
+      if (!flywheelAddress || !currentSdk) return null;
 
       const flywheel = currentSdk.createMidasFlywheel(flywheelAddress);
 
@@ -32,6 +32,8 @@ export const useFlywheel = (flywheelAddress?: string) => {
       } as Flywheel;
     },
     {
+      cacheTime: Infinity,
+      staleTime: Infinity,
       initialData: undefined,
       enabled: !!flywheelAddress && !!currentSdk,
     }

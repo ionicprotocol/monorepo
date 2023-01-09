@@ -4,6 +4,7 @@ import { expect } from "chai";
 import { BigNumber, constants, providers, utils } from "ethers";
 import { deployments, ethers } from "hardhat";
 
+import { MidasSdk } from "../src";
 import {
   CErc20,
   CEther,
@@ -12,8 +13,7 @@ import {
   FuseSafeLiquidator,
   MasterPriceOracle,
   SimplePriceOracle,
-} from "../lib/contracts/typechain";
-import { MidasSdk } from "../src";
+} from "../typechain";
 
 import { getPositionRatio, setUpLiquidation, setUpPriceOraclePrices, tradeNativeForAsset } from "./utils";
 import { setupAndLiquidatePool, setupLiquidatablePool } from "./utils/collateral";

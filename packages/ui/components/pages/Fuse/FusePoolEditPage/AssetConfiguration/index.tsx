@@ -25,7 +25,7 @@ const AssetButton = ({
   setSelectedAsset: (value: NativePricedFuseAsset) => void;
   setSelectedIndex: (value: number) => void;
   index: number;
-  isEditableAdmin?: boolean;
+  isEditableAdmin?: boolean | null;
   poolChainId: number;
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);

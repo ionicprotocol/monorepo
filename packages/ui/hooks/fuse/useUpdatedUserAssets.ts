@@ -32,7 +32,7 @@ const useUpdatedUserAssets = <T extends MarketData>({
       currentChain?.id,
       mode,
       index,
-      assets?.map((a) => a.cToken),
+      assets?.map((a) => a.cToken).sort(),
       amount,
       usdPrice,
       currentSdk?.chainId,
@@ -56,7 +56,8 @@ const useUpdatedUserAssets = <T extends MarketData>({
       }
 
       return assetsWithPrice;
-    }
+    },
+    { cacheTime: Infinity, staleTime: Infinity, enabled: !!assets && !!usdPrice && !!currentSdk }
   );
 };
 

@@ -2,6 +2,8 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import dotenv from "dotenv";
 
 import { config, liquidatePositions, logger } from "./src";
+import { Liquidator } from "./src/services";
+import { setUpSdk } from "./src/utils";
 
 dotenv.config();
 
@@ -16,6 +18,10 @@ dotenv.config();
   }
 
   logger.info(`Starting liquidation bot on chain: ${config.chainId}`);
-  await liquidatePositions(config.chainId, provider);
-  setTimeout(runBot, 2 * 1e9);
+
+  const midasSdk = setUpSdk(config.chainId, provider);
+  const liquidator = new Liquidator(midasSdk);
+
+  midasSdk.logger.info(`Config for bot: ${JSON.stringify({ ...midasSdk.chainLiquidationConfig, ...config })}`);
+  liquidatePositions(liquidator);
 })();

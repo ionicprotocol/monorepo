@@ -12,13 +12,20 @@ export const useAssetClaimableRewards = ({
 }) => {
   const { currentSdk, address } = useMultiMidas();
 
-  return useQuery<FlywheelClaimableRewards[] | undefined>(
+  return useQuery<FlywheelClaimableRewards[] | null | undefined>(
     ['useAssetClaimableRewards', poolAddress, assetAddress, address, currentSdk?.chainId],
     () => {
-      if (currentSdk && address)
+      if (currentSdk && address) {
         return currentSdk.getFlywheelClaimableRewardsForAsset(poolAddress, assetAddress, address);
+      }
+
+      return null;
     },
-    { enabled: !!poolAddress && !!address && !!currentSdk }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolAddress && !!address && !!currentSdk,
+    }
   );
 };
 
@@ -31,7 +38,7 @@ export const useAssetsClaimableRewards = ({
 }) => {
   const { currentSdk, address } = useMultiMidas();
 
-  return useQuery<{ [key: string]: FlywheelClaimableRewards[] } | undefined>(
+  return useQuery<{ [key: string]: FlywheelClaimableRewards[] } | null | undefined>(
     ['useAssetsClaimableRewards', poolAddress, assetsAddress, address, currentSdk?.chainId],
     async () => {
       if (currentSdk && address) {
@@ -58,7 +65,13 @@ export const useAssetsClaimableRewards = ({
 
         return res;
       }
+
+      return null;
     },
-    { enabled: !!poolAddress && !!address && !!currentSdk }
+    {
+      cacheTime: Infinity,
+      staleTime: Infinity,
+      enabled: !!poolAddress && !!address && !!currentSdk,
+    }
   );
 };
