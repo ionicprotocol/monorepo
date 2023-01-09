@@ -177,6 +177,9 @@ const ClaimRewardsModal = ({
   const [claimingRewardTokens, setClaimingRewardTokens] = useState<string[]>([]);
   const chainConfig = useChainConfig(Number(currentSdk?.chainId));
   const { cPage } = useColors();
+  const claimableRewardsOfCurrentChain = useMemo(() => {
+    return currentSdk ? claimableRewards[currentSdk.chainId.toString()].data : undefined;
+  }, [claimableRewards, currentSdk]);
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
@@ -239,38 +242,39 @@ const ClaimRewardsModal = ({
                 }
               })}
               <Center pt={4}>
-                <ButtonGroup isAttached width="100%">
-                  <IconButton
-                    aria-label="Claim rewards"
-                    icon={
-                      chainConfig ? (
-                        <Img
-                          width={6}
-                          height={6}
-                          borderRadius="50%"
-                          src={chainConfig.specificParams.metadata.img}
-                          alt=""
-                        />
-                      ) : (
-                        <BsFillGiftFill size={24} />
-                      )
-                    }
-                    disabled={claimingRewardTokens.length > 0}
-                    borderRightColor={cPage.primary.bgColor}
-                    borderRightWidth={1}
-                  />
-                  <Button
-                    width="100%"
-                    disabled={claimingRewardTokens.length > 0}
-                    onClick={claimRewards(claimableRewards[currentSdk.chainId.toString()]?.data)}
-                    isLoading={
-                      claimingRewardTokens.length ===
-                      claimableRewards[currentSdk.chainId.toString()]?.data?.length
-                    }
-                  >
-                    Claim All
-                  </Button>
-                </ButtonGroup>
+                {claimableRewardsOfCurrentChain && claimableRewardsOfCurrentChain.length > 0 && (
+                  <ButtonGroup isAttached width="100%">
+                    <IconButton
+                      aria-label="Claim rewards"
+                      icon={
+                        chainConfig ? (
+                          <Img
+                            width={6}
+                            height={6}
+                            borderRadius="50%"
+                            src={chainConfig.specificParams.metadata.img}
+                            alt=""
+                          />
+                        ) : (
+                          <BsFillGiftFill size={24} />
+                        )
+                      }
+                      disabled={claimingRewardTokens.length > 0}
+                      borderRightColor={cPage.primary.bgColor}
+                      borderRightWidth={1}
+                    />
+                    <Button
+                      width="100%"
+                      disabled={claimingRewardTokens.length > 0}
+                      onClick={claimRewards(claimableRewardsOfCurrentChain)}
+                      isLoading={
+                        claimingRewardTokens.length === claimableRewardsOfCurrentChain.length
+                      }
+                    >
+                      Claim All
+                    </Button>
+                  </ButtonGroup>
+                )}
               </Center>
             </>
           )}
