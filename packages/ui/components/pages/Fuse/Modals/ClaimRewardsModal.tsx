@@ -1,7 +1,11 @@
 import {
+  Box,
   Button,
+  ButtonGroup,
   Divider,
   HStack,
+  IconButton,
+  Img,
   Modal,
   ModalCloseButton,
   ModalContent,
@@ -14,28 +18,30 @@ import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/module
 import { useChainModal } from '@rainbow-me/rainbowkit';
 import { BigNumber, utils } from 'ethers';
 import { useCallback, useMemo, useState } from 'react';
+import { BsFillArrowRightCircleFill, BsFillGiftFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
 import { Center } from '@ui/components/shared/Flex';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useChainConfig } from '@ui/hooks/useChainConfig';
+import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { RewardsPerChainProps } from '@ui/types/ComponentPropsType';
 import { dynamicFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { getChainConfig } from '@ui/utils/networkData';
 
 const ClaimableToken = ({
   data,
   onClaim,
-  isClaiming,
+  claimingRewardTokens,
   rewardChainId,
 }: {
   data: FlywheelClaimableRewards;
   onClaim: () => void;
-  isClaiming: boolean;
+  claimingRewardTokens: string[];
   rewardChainId: string;
 }) => {
   const { currentChain } = useMultiMidas();
@@ -43,7 +49,8 @@ const ClaimableToken = ({
   const { data: tokenData } = useTokenData(rewardToken, Number(rewardChainId));
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
-  const chainConfig = useMemo(() => getChainConfig(Number(rewardChainId)), [rewardChainId]);
+  const chainConfig = useChainConfig(Number(rewardChainId));
+  const { cPage } = useColors();
 
   const totalRewardsString = useMemo(
     () =>
@@ -63,7 +70,7 @@ const ClaimableToken = ({
   };
 
   return (
-    <HStack width="90%" justify="space-evenly">
+    <HStack width="90%" justify="space-between">
       {currentChain && (
         <TokenIcon
           address={rewardToken}
@@ -74,7 +81,7 @@ const ClaimableToken = ({
         />
       )}
       <SimpleTooltip label={totalRewardsString}>
-        <Text minWidth="100px" textAlign="end" fontWeight="bold" fontSize={'16'}>
+        <Text minWidth="140px" textAlign="end" fontWeight="bold" fontSize={'16'}>
           {dynamicFormatter(Number(totalRewardsString), {
             minimumFractionDigits: 4,
             maximumFractionDigits: 8,
@@ -82,15 +89,72 @@ const ClaimableToken = ({
         </Text>
       </SimpleTooltip>
       <Text minW="80px">{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
-      {currentChain?.id !== Number(rewardChainId) ? (
-        <Button disabled={isClaiming} onClick={handleSwitch} whiteSpace="normal">
-          Switch to
-        </Button>
-      ) : (
-        <Button disabled={isClaiming} onClick={onClaim} isLoading={isClaiming}>
-          Claim
-        </Button>
-      )}
+      <Box width="150px">
+        {currentChain?.id !== Number(rewardChainId) ? (
+          <ButtonGroup isAttached width="100%">
+            <IconButton
+              variant="silver"
+              aria-label="Switch network"
+              icon={
+                chainConfig ? (
+                  <Img
+                    width={6}
+                    height={6}
+                    borderRadius="50%"
+                    src={chainConfig.specificParams.metadata.img}
+                    alt=""
+                  />
+                ) : (
+                  <BsFillArrowRightCircleFill size={24} />
+                )
+              }
+              disabled={claimingRewardTokens.length > 0}
+              onClick={handleSwitch}
+              borderRightColor={cPage.primary.bgColor}
+              borderRightWidth={1}
+            />
+            <Button
+              variant="silver"
+              width="100%"
+              disabled={claimingRewardTokens.length > 0}
+              onClick={handleSwitch}
+              whiteSpace="normal"
+            >
+              {chainConfig ? chainConfig.specificParams.metadata.shortName : 'Switch Network'}
+            </Button>
+          </ButtonGroup>
+        ) : (
+          <ButtonGroup isAttached width="100%">
+            <IconButton
+              aria-label="Claim rewards"
+              icon={
+                chainConfig ? (
+                  <Img
+                    width={6}
+                    height={6}
+                    borderRadius="50%"
+                    src={chainConfig.specificParams.metadata.img}
+                    alt=""
+                  />
+                ) : (
+                  <BsFillGiftFill size={24} />
+                )
+              }
+              disabled={claimingRewardTokens.length > 0}
+              borderRightColor={cPage.primary.bgColor}
+              borderRightWidth={1}
+            />
+            <Button
+              width="100%"
+              disabled={claimingRewardTokens.length > 0}
+              onClick={onClaim}
+              isLoading={claimingRewardTokens.includes(rewardToken)}
+            >
+              Claim
+            </Button>
+          </ButtonGroup>
+        )}
+      </Box>
     </HStack>
   );
 };
@@ -110,14 +174,16 @@ const ClaimRewardsModal = ({
   const { currentSdk, address, signer } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
-  const [isClaiming, setIsClaiming] = useState<boolean>(false);
+  const [claimingRewardTokens, setClaimingRewardTokens] = useState<string[]>([]);
+  const chainConfig = useChainConfig(Number(currentSdk?.chainId));
+  const { cPage } = useColors();
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
       if (!currentSdk || !address || !signer || !rewards) return;
 
       try {
-        setIsClaiming(true);
+        setClaimingRewardTokens(rewards.map((reward) => reward.rewardToken));
         const fwLensRouter = currentSdk.contracts.MidasFlywheelLensRouter;
 
         for (const reward of rewards) {
@@ -135,7 +201,7 @@ const ClaimRewardsModal = ({
       } catch (e) {
         handleGenericError(e, errorToast);
       } finally {
-        setIsClaiming(false);
+        setClaimingRewardTokens([]);
       }
     },
     [address, currentSdk, refetchRewards, signer, errorToast, successToast]
@@ -166,21 +232,46 @@ const ClaimRewardsModal = ({
                       key={index}
                       rewardChainId={key}
                       data={cr}
-                      isClaiming={isClaiming}
+                      claimingRewardTokens={claimingRewardTokens}
                       onClaim={claimRewards(key === currentSdk.chainId.toString() ? [cr] : null)}
                     />
                   ));
                 }
               })}
-              {/* <Center pt={4}>
-                <Button
-                  disabled={isClaiming}
-                  onClick={claimRewards(claimableRewards[currentSdk.chainId.toString()]?.data)}
-                  isLoading={isClaiming}
-                >
-                  Claim All
-                </Button>
-              </Center> */}
+              <Center pt={4}>
+                <ButtonGroup isAttached width="100%">
+                  <IconButton
+                    aria-label="Claim rewards"
+                    icon={
+                      chainConfig ? (
+                        <Img
+                          width={6}
+                          height={6}
+                          borderRadius="50%"
+                          src={chainConfig.specificParams.metadata.img}
+                          alt=""
+                        />
+                      ) : (
+                        <BsFillGiftFill size={24} />
+                      )
+                    }
+                    disabled={claimingRewardTokens.length > 0}
+                    borderRightColor={cPage.primary.bgColor}
+                    borderRightWidth={1}
+                  />
+                  <Button
+                    width="100%"
+                    disabled={claimingRewardTokens.length > 0}
+                    onClick={claimRewards(claimableRewards[currentSdk.chainId.toString()]?.data)}
+                    isLoading={
+                      claimingRewardTokens.length ===
+                      claimableRewards[currentSdk.chainId.toString()]?.data?.length
+                    }
+                  >
+                    Claim All
+                  </Button>
+                </ButtonGroup>
+              </Center>
             </>
           )}
         </VStack>
