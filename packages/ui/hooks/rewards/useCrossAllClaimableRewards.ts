@@ -28,7 +28,7 @@ export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
   });
 
   return useQuery(
-    [rewardsQueries, chainIds],
+    [rewardsQueries.map((rewards) => rewards.data), chainIds],
     () => {
       const rewardsPerChain: RewardsPerChainProps = {};
 
