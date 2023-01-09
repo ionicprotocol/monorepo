@@ -1,10 +1,12 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
 import { SupportedChains } from 'types/dist/cjs';
+
+import { UserStat } from './UserStats/UserStat';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar';
@@ -200,20 +202,17 @@ const PoolPage = memo(() => {
             ) : (
               <>
                 <Box p={4} gap={4}>
-                  <Flex flexDirection={['row']} gap={{ base: 4, lg: 8 }} pb={4}>
-                    <HStack>
-                      <Text size="md" width="max-content">
-                        Your Supply Balance :
-                      </Text>
-                      <Skeleton height={'27px'} width={20} />
-                    </HStack>
-                    <HStack>
-                      <Text size="md" width="max-content">
-                        Your Borrow Balance :
-                      </Text>
-                      <Skeleton height={'27px'} width={20} />
-                    </HStack>
-                  </Flex>
+                  <Grid
+                    templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+                    gap={4}
+                    w="100%"
+                    my={4}
+                  >
+                    <UserStat label="Your Supply" />
+                    <UserStat label="Your Borrow" />
+                    <UserStat label="Effective Supply APY" />
+                    <UserStat label="Effective Borrow APY" />
+                  </Grid>
                   <Flex alignItems="center" justifyContent={'space-between'}>
                     <Flex flexDirection={['row']} gap={0}>
                       <Skeleton
