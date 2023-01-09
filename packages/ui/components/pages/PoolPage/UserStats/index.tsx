@@ -209,13 +209,26 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           </PopoverBody>
         </PopoverContent>
       </Popover>
-
-      <Flex>
-        <UserStat
-          label="Effective Borrow APY"
-          value={totalBorrowApy ? totalBorrowApy?.toFixed(2) + '%' : '-'}
-        />
-      </Flex>
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <Flex>
+            <UserStat
+              label="Effective Borrow APY"
+              value={totalBorrowApy ? totalBorrowApy?.toFixed(2) + '%' : '-'}
+            />
+          </Flex>
+        </PopoverTrigger>
+        <PopoverContent p={2} width="fit-content">
+          <PopoverArrow
+            sx={{
+              '--popper-arrow-shadow-color': cPage.primary.borderColor,
+            }}
+          />
+          <PopoverBody>
+            <Text>Total effective APY of all your borrowed assets</Text>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
     </Grid>
   );
 };
