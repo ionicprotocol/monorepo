@@ -189,13 +189,26 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           </PopoverContent>
         )}
       </Popover>
-
-      <Flex>
-        <UserStat
-          label="Effective Supply APY"
-          value={totalSupplyApy ? totalSupplyApy?.toFixed(2) + '%' : '-'}
-        />
-      </Flex>
+      <Popover trigger="hover">
+        <PopoverTrigger>
+          <Flex>
+            <UserStat
+              label="Effective Supply APY"
+              value={totalSupplyApy ? totalSupplyApy?.toFixed(2) + '%' : '-'}
+            />
+          </Flex>
+        </PopoverTrigger>
+        <PopoverContent p={2} width="fit-content">
+          <PopoverArrow
+            sx={{
+              '--popper-arrow-shadow-color': cPage.primary.borderColor,
+            }}
+          />
+          <PopoverBody>
+            <Text>Total effective APY of all your supplied assets</Text>
+          </PopoverBody>
+        </PopoverContent>
+      </Popover>
 
       <Flex>
         <UserStat
