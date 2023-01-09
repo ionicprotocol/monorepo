@@ -34,9 +34,6 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
     const oldErc20PluginRewardsDelegate = taskArgs.oldPluginRewardsDelegate;
     const setLatest = taskArgs.setLatest;
 
-    // @ts-ignoreutils/fuseSdk
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
     const fuseFeeDistributor = (await ethers.getContract("FuseFeeDistributor", signer)) as FuseFeeDistributor;
     const erc20Delegate = await ethers.getContract("CErc20Delegate", signer);
     const erc20PluginDelegate = await ethers.getContract("CErc20PluginDelegate", signer);
@@ -77,6 +74,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
 
     await tx.wait();
     console.log("_editCErc20DelegateWhitelist with tx:", tx.hash);
+    const becomeImplementationData = new ethers.utils.AbiCoder().encode(["address"], [constants.AddressZero]);
 
     if (setLatest) {
       if (oldErc20Delegate) {
@@ -95,7 +93,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           oldErc20PluginDelegate,
           erc20PluginDelegate.address,
           false,
-          constants.AddressZero
+          becomeImplementationData
         );
         await tx.wait();
         console.log("_setLatestCErc20Delegate (plugin):", tx.hash);
@@ -106,7 +104,7 @@ task("market:updatewhitelist", "Updates the markets' implementations whitelist")
           oldErc20PluginRewardsDelegate,
           erc20PluginRewardsDelegate.address,
           false,
-          constants.AddressZero
+          becomeImplementationData
         );
         await tx.wait();
         console.log("_setLatestCErc20Delegate (plugin rewards):", tx.hash);
@@ -148,10 +146,10 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
       const marketsToUpgrade: MarketImpl[] = [];
       for (let j = 0; j < markets.length; j++) {
         const market = markets[j];
-        const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
+        console.log(`market address ${market}`);
 
+        const cTokenInstance = (await ethers.getContractAt("CTokenFirstExtension", market)) as CTokenFirstExtension;
         console.log("market", {
-          cToken: market,
           cTokenName: await cTokenInstance.callStatic.name(),
           cTokenNameSymbol: await cTokenInstance.callStatic.symbol(),
         });
@@ -200,7 +198,7 @@ task("markets:all:upgrade", "Upgrade all upgradeable markets across all pools")
             const implAfter = await cTokenInstance.callStatic.implementation();
             console.log(`implementation after ${implAfter}`);
           } catch (e) {
-            console.error(`failed to upgrade market ${market} of pool ${pool.comptroller}`, e);
+            console.error(`failed to upgrade market ${market.address} of pool ${pool.comptroller}`, e);
           }
         }
       }

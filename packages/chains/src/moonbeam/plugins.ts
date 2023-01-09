@@ -102,7 +102,7 @@ const deployedPlugins: DeployedPlugins = {
     market: "0x94Cb2144e74998265926d928b449A0aF7D35e463",
     name: "Beefy STELLA-WGLMR Vault",
     strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.finance/vault/stellaswap-4pool",
+    apyDocsUrl: "https://app.beefy.finance/vault/stellaswap-stella-wglmr",
     strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/moonbeam/stellaswap",
     underlying: underlying(assets, assetSymbols["STELLA-GLMR"]),
     otherParams: ["0x515989A9Add6Bb3Ab78b59a2AE30E398E740886F", "0"],
