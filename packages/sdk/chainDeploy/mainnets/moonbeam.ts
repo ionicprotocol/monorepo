@@ -7,6 +7,7 @@ import {
   deployChainlinkOracle,
   deployCurveLpOracle,
   deployDiaOracle,
+  deploySaddleLpOracle,
   deployUniswapLpOracle,
   deployUniswapOracle,
 } from "../helpers";
@@ -70,6 +71,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["WBTC.wh-GLMR"]),
       underlying(assets, assetSymbols["WETH.wh-GLMR"]),
       underlying(assets, assetSymbols["DOT.xc-GLMR"]),
+      underlying(assets, assetSymbols["wstDOT-DOT.xc"]),
     ],
     flashSwapFee: 30,
   },
@@ -161,6 +163,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x05Ec3Fb5B7CB3bE9D7150FBA1Fb0749407e5Aa8a",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.BUSD_wh,
+    aggregator: "0x2330fd83662bba3Fc62bc48cC935ca58847A8957",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 const diaAssets: DiaAsset[] = [
@@ -173,6 +180,12 @@ const diaAssets: DiaAsset[] = [
   {
     symbol: assetSymbols.multiUSDT,
     underlying: underlying(assets, assetSymbols.multiUSDT),
+    feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
+    key: "USDT/USD",
+  },
+  {
+    symbol: assetSymbols.USDT_xc,
+    underlying: underlying(assets, assetSymbols.USDT_xc),
     feed: "0x8ae08CB9161A38CE241BB54816b2CbA549C136Ae",
     key: "USDT/USD",
   },
@@ -190,6 +203,20 @@ const curvePools: CurvePoolConfig[] = [
     lpToken: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
     pool: "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685",
     underlyings: [underlying(assets, assetSymbols.stDOT), underlying(assets, assetSymbols.xcDOT)],
+  },
+];
+
+// https://app.stellaswap.com/ for stable-amm pools
+const saddlePools: CurvePoolConfig[] = [
+  {
+    lpToken: underlying(assets, assetSymbols.base4pool),
+    pool: "0xB1BC9f56103175193519Ae1540A0A4572b1566F6",
+    underlyings: [
+      underlying(assets, assetSymbols.USDC_wh),
+      underlying(assets, assetSymbols.USDT_xc),
+      underlying(assets, assetSymbols.BUSD_wh),
+      underlying(assets, assetSymbols.FRAX),
+    ],
   },
 ];
 
@@ -222,6 +249,16 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// Uniswap Lp Oracle
   await deployUniswapLpOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
+
+  // Saddle LP Oracle
+  await deploySaddleLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    saddlePools,
+  });
 
   //// Curve LP Oracle
   await deployCurveLpOracle({

@@ -10357,6 +10357,323 @@
         }
       ]
     },
+    "AnkrCertificateInterestRateModel": {
+      "address": "0xEb9Eb811174d99DCbe936937992a2cE66DEA293c",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_blocksPerYear",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_baseRateMultiplier",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_jumpMultiplierPerYear",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "kink_",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_day",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address",
+              "name": "_acert",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "blocksPerYear",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "baseRateMultiplier",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "kink",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewInterestParams",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ANKR_CERT",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "baseRateMultiplier",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "blocksPerYear",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "day",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAnkrRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getBaseRatePerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "getBorrowRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "getBorrowRatePostKink",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMultiplierPerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserveFactorMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "getSupplyRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "isInterestRateModel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "jumpMultiplierPerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "kink",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "utilizationRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        }
+      ]
+    },
     "AnkrCertificateTokenPriceOracle": {
       "address": "0x1D5Db1b87bb5Ca37d0091c0c884C1F961524E5EA",
       "abi": [
@@ -35942,7 +36259,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xE8DCFa232297C3721266b26eC8134E86d5eCCb96",
+      "address": "0x88d90463b4689aA9a622b711B0FA73c936E04B55",
       "abi": [
         {
           "inputs": [
@@ -35981,6 +36298,62 @@
           ],
           "name": "FunctionNotFound",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -36884,25 +37257,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]"
-            }
-          ],
-          "name": "multicall",
-          "outputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "results",
-              "type": "bytes[]"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -37145,7 +37499,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xEde43BdAcB3c983956D84e296859ADF66c5dc79d",
+      "address": "0x7e894731D898146259798b17F88B4C6612000598",
       "abi": [
         {
           "inputs": [
@@ -37184,6 +37538,62 @@
           ],
           "name": "FunctionNotFound",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -38119,25 +38529,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]"
-            }
-          ],
-          "name": "multicall",
-          "outputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "results",
-              "type": "bytes[]"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -38393,7 +38784,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0x4c7e82243b82043cBa34C5f180b323d6F4C59676",
+      "address": "0x854D310AB51763Ba6cccFb391BdAAF5aB514F824",
       "abi": [
         {
           "inputs": [
@@ -38432,6 +38823,62 @@
           ],
           "name": "FunctionNotFound",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -39389,25 +39836,6 @@
             }
           ],
           "stateMutability": "nonpayable",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]"
-            }
-          ],
-          "name": "multicall",
-          "outputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "results",
-              "type": "bytes[]"
-            }
-          ],
-          "stateMutability": "payable",
           "type": "function"
         },
         {
@@ -41076,7 +41504,7 @@
       ]
     },
     "CTokenFirstExtension": {
-      "address": "0x337C2fa7a0Ea0D00ca5f38A5A363F33ae14E537F",
+      "address": "0x622542c2e1204C8F87432cF0674e5eee736779dE",
       "abi": [
         {
           "anonymous": false,
@@ -41436,19 +41864,6 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "asCTokenInterface",
-          "outputs": [
-            {
-              "internalType": "contract CTokenInterface",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
@@ -41627,6 +42042,25 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "data",
+              "type": "bytes[]"
+            }
+          ],
+          "name": "multicall",
+          "outputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "results",
+              "type": "bytes[]"
+            }
+          ],
+          "stateMutability": "payable",
           "type": "function"
         },
         {
@@ -42042,7 +42476,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0xC634898F59391bfd66eDDC9eB4298A8E9643596c",
+      "address": "0xE7c21D3614a7B3897dC6b63790966FC91361EB97",
       "abi": [
         {
           "inputs": [
@@ -42720,6 +43154,30 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowCapForAssetForCollateral",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "borrowCapGuardian",
           "outputs": [
@@ -42789,6 +43247,30 @@
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowingAgainstCollateralBlacklist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -43610,7 +44092,7 @@
       ]
     },
     "ComptrollerFirstExtension": {
-      "address": "0xCb90646E68Aedc832766eDED7aAB4F1056994362",
+      "address": "0xEF75F50af7aA4579Af754F838f0400dE6C97231D",
       "abi": [
         {
           "anonymous": false,
@@ -44168,6 +44650,30 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowCapForAssetForCollateral",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "borrowCapGuardian",
           "outputs": [
@@ -44208,6 +44714,30 @@
             }
           ],
           "name": "borrowGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowingAgainstCollateralBlacklist",
           "outputs": [
             {
               "internalType": "bool",
@@ -47105,7 +47635,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -47301,7 +47831,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -47968,7 +48498,18 @@
           "type": "function"
         },
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_epxFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_dddFlywheel",
+              "type": "address"
+            }
+          ],
           "name": "reinitialize",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -48023,6 +48564,25 @@
           ],
           "name": "setRewardDestination",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -48236,7 +48796,7 @@
       ]
     },
     "DotDotLpERC4626_2brl_0xf0a2852958aD041a9Fb35c312605482Ca3Ec17ba_Implementation": {
-      "address": "0x55348c1de5288D7A69302d649434A49228d3CeAB",
+      "address": "0xdF07Fa746F82A7d5FC9307218C7a0ABe126431bc",
       "abi": [
         {
           "anonymous": false,
@@ -48288,7 +48848,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -48484,7 +49044,7 @@
             {
               "indexed": true,
               "internalType": "address",
-              "name": "caller",
+              "name": "sender",
               "type": "address"
             },
             {
@@ -49151,7 +49711,18 @@
           "type": "function"
         },
         {
-          "inputs": [],
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_epxFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_dddFlywheel",
+              "type": "address"
+            }
+          ],
           "name": "reinitialize",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -49206,6 +49777,25 @@
           ],
           "name": "setRewardDestination",
           "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "market",
+              "type": "address"
+            }
+          ],
+          "name": "shutdown",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -63842,7 +64432,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0xB7d84D242af1E4eF5a226B1be53FCC0d10824C02",
+      "address": "0x96f0A348D31C6e6d86c5Fca5cf657D6c592AAff6",
       "abi": [
         {
           "anonymous": false,
@@ -63865,6 +64455,35 @@
               "internalType": "contract FusePoolDirectory",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getFlywheelsToClaim",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "contract IComptroller[]",
+              "name": "",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[][]",
+              "name": "",
+              "type": "address[][]"
             }
           ],
           "stateMutability": "view",
@@ -69114,7 +69733,7 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x9CBD5cdC9BA938Be9b92aE1cB5bB2b82C4dd1803",
+      "address": "0xb4c8353412633B779893Bb728435930b7d3610C8",
       "abi": [
         {
           "inputs": [
@@ -69651,6 +70270,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -69820,6 +70452,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -69949,6 +70594,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -69972,7 +70630,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -69984,7 +70642,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -70017,7 +70675,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -70025,16 +70683,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -70072,12 +70730,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -70089,7 +70747,7 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -70116,7 +70774,7 @@
       ]
     },
     "MidasFlywheel_AUTOv2_Implementation": {
-      "address": "0xe06d16502B213746c5A693e104a9E76f1E15Ec1A",
+      "address": "0x85367388Db4Be737c7a79A26b258b392De9cBb3E",
       "abi": [
         {
           "anonymous": false,
@@ -70394,6 +71052,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -70563,6 +71234,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -70692,6 +71376,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -70715,7 +71412,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -70727,7 +71424,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -70760,7 +71457,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -70768,16 +71465,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -70815,12 +71512,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -70832,7 +71529,7 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
@@ -70987,7 +71684,7 @@
       ]
     },
     "MidasFlywheel_DDD": {
-      "address": "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0",
+      "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5",
       "abi": [
         {
           "anonymous": false,
@@ -71388,6 +72085,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -71557,6 +72267,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -71686,6 +72409,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -71709,7 +72445,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -71721,7 +72457,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -71754,7 +72490,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -71762,16 +72498,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -71809,12 +72545,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -71826,7 +72562,7 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -71853,7 +72589,7 @@
       ]
     },
     "MidasFlywheel_DDD_Implementation": {
-      "address": "0x8Cc78652CF7861eB73d9C2d2ADa9037231Ad3916",
+      "address": "0xbe39dAFb317016f9a9fcF1087f7ae7A5cae62310",
       "abi": [
         {
           "anonymous": false,
@@ -72131,6 +72867,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -72300,6 +73049,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -72429,6 +73191,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -72452,7 +73227,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -72464,7 +73239,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -72497,7 +73272,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -72505,16 +73280,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -72552,12 +73327,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -72569,13 +73344,13 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
     },
     "MidasFlywheel_DDD_Proxy": {
-      "address": "0xD146adB6B07c7a31174FFC8B001dCa7AAF8Ff9E0",
+      "address": "0xAbBbAc3F07d33F7dC4dfD5EdB1E7Bf56041abBa5",
       "abi": [
         {
           "inputs": [
@@ -72724,7 +73499,7 @@
       ]
     },
     "MidasFlywheel_EPX": {
-      "address": "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4",
+      "address": "0xF2E46295c684C541d618243558a0af17fb4a6862",
       "abi": [
         {
           "anonymous": false,
@@ -73125,6 +73900,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -73294,6 +74082,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -73423,6 +74224,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -73446,7 +74260,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -73458,7 +74272,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -73491,7 +74305,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -73499,16 +74313,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -73546,12 +74360,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -73563,7 +74377,7 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -73590,7 +74404,7 @@
       ]
     },
     "MidasFlywheel_EPX_Implementation": {
-      "address": "0x89a9b114AEf8Eba7edC7611Ca8BEb61900912f2F",
+      "address": "0xA8fE6E47A28e556634d16bb8c9323F9Fac0f81a6",
       "abi": [
         {
           "anonymous": false,
@@ -73868,6 +74682,19 @@
               "type": "address"
             }
           ],
+          "name": "addInitializedStrategy",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            }
+          ],
           "name": "addMarketForRewards",
           "outputs": [],
           "stateMutability": "nonpayable",
@@ -74037,6 +74864,19 @@
         },
         {
           "inputs": [],
+          "name": "flywheelToReplace",
+          "outputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
           "name": "getAllStrategies",
           "outputs": [
             {
@@ -74166,6 +75006,19 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "contract MidasFlywheelCore",
+              "name": "_flywheelToReplace",
+              "type": "address"
+            }
+          ],
+          "name": "reinitialize",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "renounceOwnership",
           "outputs": [],
@@ -74189,7 +75042,7 @@
           "inputs": [
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -74201,7 +75054,7 @@
               "type": "uint256"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -74234,7 +75087,7 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             }
           ],
@@ -74242,16 +75095,16 @@
           "outputs": [
             {
               "internalType": "uint224",
-              "name": "index",
+              "name": "",
               "type": "uint224"
             },
             {
               "internalType": "uint32",
-              "name": "lastUpdatedTimestamp",
+              "name": "",
               "type": "uint32"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         },
         {
@@ -74289,12 +75142,12 @@
           "inputs": [
             {
               "internalType": "contract ERC20",
-              "name": "",
+              "name": "strategy",
               "type": "address"
             },
             {
               "internalType": "address",
-              "name": "",
+              "name": "user",
               "type": "address"
             }
           ],
@@ -74306,13 +75159,13 @@
               "type": "uint224"
             }
           ],
-          "stateMutability": "view",
+          "stateMutability": "nonpayable",
           "type": "function"
         }
       ]
     },
     "MidasFlywheel_EPX_Proxy": {
-      "address": "0x89293CeaE1822CE4d5510d3Dd8248F6552FB60F4",
+      "address": "0xF2E46295c684C541d618243558a0af17fb4a6862",
       "abi": [
         {
           "inputs": [
@@ -74457,6 +75310,489 @@
         {
           "stateMutability": "payable",
           "type": "receive"
+        }
+      ]
+    },
+    "ReplacingFlywheelDynamicRewards_AUTOv2": {
+      "address": "0xD5b4395736457104624587038961e967CdEAe937",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_replacedFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_flywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_cycleLength",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "FlywheelError",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "name": "NewRewardsCycle",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "flywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "name": "getAccruedRewards",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "replacedFlywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsCycle",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardsCycleLength",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "ReplacingFlywheelDynamicRewards_DDD": {
+      "address": "0x81A22ba0eE44453fF4021f504945A10eD42bFE09",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_replacedFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_flywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_cycleLength",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "FlywheelError",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "name": "NewRewardsCycle",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "flywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "name": "getAccruedRewards",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "replacedFlywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsCycle",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardsCycleLength",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]
+    },
+    "ReplacingFlywheelDynamicRewards_EPX": {
+      "address": "0xc534e0E748d7143736E5E19b77F5dec6623389A0",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_replacedFlywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "_flywheel",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "_cycleLength",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [],
+          "name": "FlywheelError",
+          "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "indexed": true,
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "name": "NewRewardsCycle",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "flywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "strategy",
+              "type": "address"
+            },
+            {
+              "internalType": "uint32",
+              "name": "lastUpdatedTimestamp",
+              "type": "uint32"
+            }
+          ],
+          "name": "getAccruedRewards",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "replacedFlywheel",
+          "outputs": [
+            {
+              "internalType": "contract FlywheelCore",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardToken",
+          "outputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ERC20",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "rewardsCycle",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "start",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint32",
+              "name": "end",
+              "type": "uint32"
+            },
+            {
+              "internalType": "uint192",
+              "name": "reward",
+              "type": "uint192"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "rewardsCycleLength",
+          "outputs": [
+            {
+              "internalType": "uint32",
+              "name": "",
+              "type": "uint32"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
         }
       ]
     },

@@ -2,9 +2,9 @@ import { arbitrum, bsc, chapel, fantom, ganache, moonbeam, neondevnet, polygon }
 import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
-import { CErc20PluginRewardsDelegate } from "../typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "../typechain/Comptroller";
-import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
+import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
+import { Comptroller } from "../../typechain/Comptroller";
+import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 
 const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
@@ -123,7 +123,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
   }
 );
 
-task("plugins:change", "Replaces an old plugin contract with a new one")
+task("plugins:replace", "Replaces an old plugin contract with a new one")
   .addParam("market", "The address of the market", undefined, types.string)
   .addParam("newPlugin", "The address of the new plugin", undefined, types.string)
   .setAction(async ({ market: marketAddress, newPlugin: newPluginAddress }, { ethers }) => {

@@ -3,7 +3,7 @@ export { default as ERC20Abi } from "../abis/EIP20Interface";
 export { default as WETHAbi } from "./MidasSdk/abi/WETH.json";
 
 import { MidasBase } from "./MidasSdk";
-import AnkrBNBInterestRateModel from "./MidasSdk/irm/AnkrBnbInterestRateModel";
+import AnkrCertificateInterestRateModel from "./MidasSdk/irm/AnkrCertificateInterestRateModel";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./MidasSdk/irm/WhitePaperInterestRateModel";
@@ -22,4 +22,4 @@ export type InterestRateModelType =
   | JumpRateModel
   | DAIInterestRateModelV2
   | WhitePaperInterestRateModel
-  | AnkrBNBInterestRateModel;
+  | AnkrCertificateInterestRateModel;

@@ -1,6 +1,5 @@
-import { Dappeteer } from '@chainsafe/dappeteer';
+import { Dappeteer, DappeteerBrowser, DappeteerPage } from '@chainsafe/dappeteer';
 import dotenv from 'dotenv';
-import { Browser, Page } from 'puppeteer';
 
 import { JEST_EXE_TIME } from '@ui/test/constants';
 import { Config } from '@ui/test/helpers/Config';
@@ -9,8 +8,8 @@ import { CreatePoolPage } from '@ui/test/pages/pools/CreatePoolPage';
 
 dotenv.config();
 
-let browser: Browser;
-let page: Page;
+let browser: DappeteerBrowser;
+let page: DappeteerPage;
 let metamask: Dappeteer;
 
 let createPoolPage: CreatePoolPage;

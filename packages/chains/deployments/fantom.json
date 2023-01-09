@@ -1509,6 +1509,323 @@
         }
       ]
     },
+    "AnkrCertificateInterestRateModel": {
+      "address": "0x486e3bacedC6A1770ea7F40ac655174080ad606F",
+      "abi": [
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "_blocksPerYear",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_baseRateMultiplier",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_jumpMultiplierPerYear",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "kink_",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint8",
+              "name": "_day",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address",
+              "name": "_acert",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "blocksPerYear",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "baseRateMultiplier",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "kink",
+              "type": "uint256"
+            }
+          ],
+          "name": "NewInterestParams",
+          "type": "event"
+        },
+        {
+          "inputs": [],
+          "name": "ANKR_CERT",
+          "outputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "baseRateMultiplier",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "blocksPerYear",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "day",
+          "outputs": [
+            {
+              "internalType": "uint8",
+              "name": "",
+              "type": "uint8"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getAnkrRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getBaseRatePerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "getBorrowRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "getBorrowRatePostKink",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "getMultiplierPerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserveFactorMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "getSupplyRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "isInterestRateModel",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "jumpMultiplierPerBlock",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "kink",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "uint256",
+              "name": "cash",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "borrows",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "reserves",
+              "type": "uint256"
+            }
+          ],
+          "name": "utilizationRate",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "pure",
+          "type": "function"
+        }
+      ]
+    },
     "AnkrCertificateTokenPriceOracle": {
       "address": "0x66ceEB3AA6fC5d67f478b56B475fF930bacf7E03",
       "abi": [
@@ -2213,7 +2530,7 @@
       ]
     },
     "CErc20Delegate": {
-      "address": "0xF0264aaE6C46D7e8507B88050e4aE7f70eEd6fE0",
+      "address": "0x7F90F0E96909513c80334bC7e3Fc6E92cca3CDCe",
       "abi": [
         {
           "inputs": [
@@ -2252,6 +2569,62 @@
           ],
           "name": "FunctionNotFound",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -3155,25 +3528,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]"
-            }
-          ],
-          "name": "multicall",
-          "outputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "results",
-              "type": "bytes[]"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -3416,7 +3770,7 @@
       ]
     },
     "CErc20PluginDelegate": {
-      "address": "0xE28124f0B59fAe95496467Ec4CE2188176F07c97",
+      "address": "0x5a6dB8ACA7BF203e5c87a3f239cf7E4d87aaA3f4",
       "abi": [
         {
           "inputs": [
@@ -3455,6 +3809,62 @@
           ],
           "name": "FunctionNotFound",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -4390,25 +4800,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]"
-            }
-          ],
-          "name": "multicall",
-          "outputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "results",
-              "type": "bytes[]"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -4664,7 +5055,7 @@
       ]
     },
     "CErc20PluginRewardsDelegate": {
-      "address": "0xe0502Fad374F1E4260D553c72d14acfd63938D06",
+      "address": "0x4c818340e841969a5EAcDe5DE17F61a64f636f2E",
       "abi": [
         {
           "inputs": [
@@ -4703,6 +5094,62 @@
           ],
           "name": "FunctionNotFound",
           "type": "error"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "cashPrior",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "interestAccumulated",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "borrowIndex",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "totalBorrows",
+              "type": "uint256"
+            }
+          ],
+          "name": "AccrueInterest",
+          "type": "event"
+        },
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "owner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "spender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "Approval",
+          "type": "event"
         },
         {
           "anonymous": false,
@@ -5663,25 +6110,6 @@
           "type": "function"
         },
         {
-          "inputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]"
-            }
-          ],
-          "name": "multicall",
-          "outputs": [
-            {
-              "internalType": "bytes[]",
-              "name": "results",
-              "type": "bytes[]"
-            }
-          ],
-          "stateMutability": "payable",
-          "type": "function"
-        },
-        {
           "inputs": [],
           "name": "name",
           "outputs": [
@@ -5937,7 +6365,7 @@
       ]
     },
     "CTokenFirstExtension": {
-      "address": "0x170bC031feF700fBFA3FFb2cFfe5FFEb247D2b1E",
+      "address": "0xee9762ec89BEB419CcB89F83eDbe6c8395efC8e0",
       "abi": [
         {
           "anonymous": false,
@@ -6297,19 +6725,6 @@
           "type": "function"
         },
         {
-          "inputs": [],
-          "name": "asCTokenInterface",
-          "outputs": [
-            {
-              "internalType": "contract CTokenInterface",
-              "name": "",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
           "inputs": [
             {
               "internalType": "address",
@@ -6488,6 +6903,25 @@
             }
           ],
           "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "data",
+              "type": "bytes[]"
+            }
+          ],
+          "name": "multicall",
+          "outputs": [
+            {
+              "internalType": "bytes[]",
+              "name": "results",
+              "type": "bytes[]"
+            }
+          ],
+          "stateMutability": "payable",
           "type": "function"
         },
         {
@@ -6903,7 +7337,7 @@
       ]
     },
     "Comptroller": {
-      "address": "0x46Ae511521f2AceCa553bBB92fCf43BD57a41816",
+      "address": "0xE9D392817e82a6237449f2a2C9f4d3a53f272dd9",
       "abi": [
         {
           "inputs": [
@@ -7581,6 +8015,30 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowCapForAssetForCollateral",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "borrowCapGuardian",
           "outputs": [
@@ -7650,6 +8108,30 @@
               "internalType": "uint256",
               "name": "",
               "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowingAgainstCollateralBlacklist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
             }
           ],
           "stateMutability": "view",
@@ -8471,7 +8953,7 @@
       ]
     },
     "ComptrollerFirstExtension": {
-      "address": "0x5C3d7BE11076Ebda476b8D7814Df550E044a330A",
+      "address": "0xB7BA7ACf9Fc2923C3d431fc6df8D7734af0155BF",
       "abi": [
         {
           "anonymous": false,
@@ -9029,6 +9511,30 @@
           "type": "function"
         },
         {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowCapForAssetForCollateral",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
           "inputs": [],
           "name": "borrowCapGuardian",
           "outputs": [
@@ -9069,6 +9575,30 @@
             }
           ],
           "name": "borrowGuardianPaused",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "borrowingAgainstCollateralBlacklist",
           "outputs": [
             {
               "internalType": "bool",
@@ -14828,7 +15358,7 @@
       ]
     },
     "FusePoolLensSecondary": {
-      "address": "0x14bfBAf8ee298771775d3d85AEa9A5C3144bC86b",
+      "address": "0x6537110273d79184205395cfd852dcF3DA6861Ed",
       "abi": [
         {
           "anonymous": false,
@@ -14851,6 +15381,35 @@
               "internalType": "contract FusePoolDirectory",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "user",
+              "type": "address"
+            }
+          ],
+          "name": "getFlywheelsToClaim",
+          "outputs": [
+            {
+              "internalType": "uint256[]",
+              "name": "",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "contract IComptroller[]",
+              "name": "",
+              "type": "address[]"
+            },
+            {
+              "internalType": "address[][]",
+              "name": "",
+              "type": "address[][]"
             }
           ],
           "stateMutability": "view",
@@ -17983,7 +18542,7 @@
       ]
     },
     "MidasFlywheelLensRouter": {
-      "address": "0x7D285988Af9a5641F00d03334537bdA19b0f1ae7",
+      "address": "0x34022232C0233Ee05FDe3383FcEC52248Dd84b91",
       "abi": [
         {
           "inputs": [

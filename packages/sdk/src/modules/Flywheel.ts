@@ -1,10 +1,8 @@
-import { BigNumber, constants, Contract, ContractFactory } from "ethers";
+import { BigNumber, Contract } from "ethers";
 
 import MidasFlywheelABI from "../../abis/MidasFlywheel";
 import FlywheelStaticRewardsArtifact from "../../artifacts/FlywheelStaticRewards.json";
 import MidasFlywheelArtifact from "../../artifacts/MidasFlywheel.json";
-import { FlywheelStaticRewards__factory } from "../../typechain/factories/FlywheelStaticRewards__factory";
-import { MidasFlywheel__factory } from "../../typechain/factories/MidasFlywheel__factory";
 import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
@@ -215,51 +213,6 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
       };
     }
     /** WRITE */
-    async deployFlywheelCore(
-      rewardTokenAddress: string,
-      options?: {
-        rewardsAddress?: string;
-        boosterAddress?: string;
-        ownerAddress?: string;
-        authorityAddress?: string;
-      }
-    ) {
-      const midasFlywheel = new ContractFactory(
-        MidasFlywheelArtifact.abi,
-        MidasFlywheelArtifact.bytecode,
-        this.signer
-      ) as MidasFlywheel__factory;
-      const addressOfSigner = await this.signer.getAddress();
-      const flywheelCore = await midasFlywheel.deploy();
-      const initializeTx = await flywheelCore.initialize(
-        rewardTokenAddress,
-        options?.rewardsAddress || constants.AddressZero,
-        options?.boosterAddress || constants.AddressZero,
-        options?.ownerAddress || addressOfSigner
-      );
-      await initializeTx.wait();
-      return flywheelCore;
-    }
-    async deployFlywheelStaticRewards(
-      flywheelCoreAddress: string,
-      options?: {
-        ownerAddress?: string;
-        authorityAddress?: string;
-      }
-    ) {
-      const fwStaticRewardsFactory = new ContractFactory(
-        FlywheelStaticRewardsArtifact.abi,
-        FlywheelStaticRewardsArtifact.bytecode,
-        this.signer
-      ) as FlywheelStaticRewards__factory;
-      const addressOfSigner = await this.signer.getAddress();
-      return (await fwStaticRewardsFactory.deploy(
-        flywheelCoreAddress,
-        options?.ownerAddress || addressOfSigner,
-        options?.authorityAddress || constants.AddressZero
-      )) as FlywheelStaticRewards;
-    }
-
     getFlywheelEnabledMarkets(flywheelAddress: string) {
       return this.createMidasFlywheel(flywheelAddress).callStatic.getAllStrategies();
     }
