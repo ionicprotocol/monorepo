@@ -1,4 +1,5 @@
 import { Text, VStack } from '@chakra-ui/react';
+
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
