@@ -142,9 +142,10 @@ export const StatsColumn = ({
           <Text flexShrink={0} size="sm">
             Borrowed in Market:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" width="100%">
+          <HStack spacing={1} justifyContent="flex-end" alignItems={'center'} width="100%">
             <Text
               variant="tnumber"
+              textAlign="right"
               color={
                 updatedAsset?.borrowBalanceFiat &&
                 updatedBorrowLimitMarket &&
@@ -160,6 +161,7 @@ export const StatsColumn = ({
             <Text>{'→'}</Text>
             {updatedAssets && updatedAsset ? (
               <Text
+                textAlign="left"
                 variant="tnumber"
                 color={
                   updatedAsset?.borrowBalanceFiat &&
@@ -188,6 +190,7 @@ export const StatsColumn = ({
           <HStack spacing={1} justifyContent="flex-end" width="100%">
             <Text
               variant="tnumber"
+              textAlign="right"
               color={
                 updatedTotalBorrows !== undefined &&
                 updatedBorrowLimitTotal &&
@@ -204,6 +207,7 @@ export const StatsColumn = ({
             {updatedAssets && updatedTotalBorrows !== undefined ? (
               <Text
                 variant="tnumber"
+                textAlign="left"
                 color={
                   updatedTotalBorrows !== undefined &&
                   updatedBorrowLimitTotal &&
