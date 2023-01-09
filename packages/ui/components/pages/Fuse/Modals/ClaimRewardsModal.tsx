@@ -178,7 +178,7 @@ const ClaimRewardsModal = ({
   const chainConfig = useChainConfig(Number(currentSdk?.chainId));
   const { cPage } = useColors();
   const claimableRewardsOfCurrentChain = useMemo(() => {
-    return currentSdk ? claimableRewards[currentSdk.chainId.toString()].data : undefined;
+    return currentSdk ? claimableRewards[currentSdk.chainId.toString()]?.data : undefined;
   }, [claimableRewards, currentSdk]);
 
   const claimRewards = useCallback(
