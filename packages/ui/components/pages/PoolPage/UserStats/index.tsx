@@ -192,14 +192,14 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
 
       <Flex>
         <UserStat
-          label="Supply APY"
+          label="Effective Supply APY"
           value={totalSupplyApy ? totalSupplyApy?.toFixed(2) + '%' : '-'}
         />
       </Flex>
 
       <Flex>
         <UserStat
-          label="Borrow APY"
+          label="Effective Borrow APY"
           value={totalBorrowApy ? totalBorrowApy?.toFixed(2) + '%' : '-'}
         />
       </Flex>
