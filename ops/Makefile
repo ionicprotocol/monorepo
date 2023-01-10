@@ -4,7 +4,6 @@
 SHELL := /bin/bash
 PATH := ${PWD}/venv/bin:${PATH}
 PYTHONPATH := ${PWD}:${PYTHONPATH}
-AWS_DEFAULT_REGION = eu-central-1
 
 include .common.env
 

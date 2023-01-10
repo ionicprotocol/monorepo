@@ -22,9 +22,6 @@ variable "chain_id" {
   description = "chain id to use"
 }
 
-variable "rpc_url" {
-  description = "web3 rpc url to use"
-}
 
 variable "container_env_vars" {
   description = "env vars for running container"

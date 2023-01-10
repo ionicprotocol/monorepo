@@ -20,9 +20,9 @@ export const baseConfig: BaseConfig = {
   rpcUrl: process.env.WEB3_HTTP_PROVIDER_URL ?? "",
   supabaseUrl: process.env.SUPABASE_URL ?? "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
   supabasePublicKey: process.env.SUPABASE_KEY ?? "",
+  supabaseOracleCircuitBreakerTableName: process.env.SUPABASE_ORACLE_CIRCUIT_BREAKER_TABLE_NAME ?? "oracle-price-cache",
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? "",
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
-  supabaseOracleCircuitBreakerTableName: process.env.SUPABASE_ORACLE_CIRCUIT_BREAKER_TABLE_NAME ?? "oracle-price-cache",
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
 };
 

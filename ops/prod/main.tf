@@ -4,6 +4,12 @@ terraform {
     key    = "midas-deployment"
     region = "us-east-1"
   }
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
 }
 
 provider "aws" {
@@ -12,13 +18,29 @@ provider "aws" {
 
 module "polygon_mainnet_oracle_price_change_verifier" {
   source              = "../modules/lambda"
-  ecr_repository_name = "oracle-monitor"
+  ecr_repository_name = "oracles-monitor"
   docker_image_tag    = var.oracles_monitor_image_tag
   container_family    = "price-change-verifier"
   environment         = "mainnet"
-  chain_id            = local.polygon_mainnet_chain_id
-  rpc_url             = local.polygon_mainnet_rpc_0
-  container_env_vars  = merge(local.oracle_price_change_verifier_lambda_variables, { ORACLE_MONITOR_SERVICE = "price-change-verifier" })
+  chain_id            = local.bsc_mainnet_chain_id
+  container_env_vars = merge(
+    local.oracle_price_change_verifier_lambda_variables,
+    { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_0 }
+  )
+  schedule_expression = "rate(5 minutes)"
+}
+
+module "bsc_mainnet_oracle_price_change_verifier" {
+  source              = "../modules/lambda"
+  ecr_repository_name = "oracles-monitor"
+  docker_image_tag    = var.oracles_monitor_image_tag
+  container_family    = "price-change-verifier"
+  environment         = "mainnet"
+  chain_id            = local.bsc_mainnet_chain_id
+  container_env_vars = merge(
+    local.oracle_price_change_verifier_lambda_variables,
+    { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_0 }
+  )
   schedule_expression = "rate(5 minutes)"
 }
 

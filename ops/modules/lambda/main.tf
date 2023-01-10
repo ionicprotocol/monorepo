@@ -49,7 +49,7 @@ resource "aws_lambda_function" "executable" {
   timeout       = 100
   memory_size   = 128
   environment {
-    variables = merge(var.container_env_vars, { TARGET_CHAIN_ID = var.chain_id, WEB3_HTTP_PROVIDER_URL = var.rpc_url })
+    variables = merge(var.container_env_vars, { TARGET_CHAIN_ID = var.chain_id })
   }
 }
 
