@@ -13,6 +13,19 @@ export enum Services {
   PriceChangeVerifier = "price-change-verifier",
 }
 
+export enum PriceChangeKind {
+  SHORT = "SHORT",
+  LONG = "LONG",
+}
+
+export type DeviationPeriodConfig = {
+  [key in PriceChangeKind]: number;
+};
+
+export type DeviationThresholdConfig = {
+  [key in PriceChangeKind]: number;
+};
+
 export type ServiceConfig = FeedVerifierConfig | PriceVerifierConfig | PriceChangeVerifierConfig;
 
 export type VerifierConfig = {
@@ -34,7 +47,13 @@ export enum OracleFailure {
   NO_ORACLE_FOUND = "NO_ORACLE_FOUND",
 }
 
-export type Failure = InvalidReason | OracleFailure;
+export enum OraclePriceVerifierFailure {
+  SHORT_PRICE_DEVIATION_ABOVE_THRESHOLD = "SHORT_PRICE_DEVIATION_ABOVE_THRESHOLD",
+  LONG_PRICE_DEVIATION_ABOVE_THRESHOLD = "LONG_PRICE_DEVIATION_ABOVE_THRESHOLD",
+  CACHE_FAILURE = "CACHE_FAILURE",
+}
+
+export type Failure = InvalidReason | OracleFailure | OraclePriceVerifierFailure;
 
 export type PriceFeedInvalidity = {
   invalidReason: Failure;
@@ -74,9 +93,9 @@ export type BaseConfig = {
   rpcUrl: string;
   supabaseUrl: string;
   supabasePublicKey: string;
+  supabaseOracleCircuitBreakerTableName: string;
   adminPrivateKey: string;
   adminAccount: string;
-  supabaseOracleMonitorTableName: string;
   discordWebhookUrl: string;
 };
 
@@ -94,10 +113,7 @@ export type PriceVerifierConfig = BaseConfig & {
 
 export type PriceChangeVerifierConfig = BaseConfig & {
   runInterval: number;
-  defaultPriceDeviationThresholds: {
-    "3m": number;
-    "15m": number;
-  };
+  priceDeviationPeriods: DeviationPeriodConfig;
 };
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
@@ -126,8 +142,20 @@ export type PriceVerifierAsset = SupportedAsset & {
 };
 
 export type PriceChangeVerifierAsset = SupportedAsset & {
-  priceDeviationThresholds?: {
-    "3m": number;
-    "15m": number;
-  };
+  priceDeviationThresholds: DeviationThresholdConfig;
+};
+
+export type OracleVerifierAsset = FeedVerifierAsset | PriceVerifierAsset | PriceChangeVerifierAsset;
+
+// Supabase
+
+export type AssetPriceCache = {
+  asset_address: string;
+  markets_paused: boolean;
+  first_observation_ts: string;
+  second_observation_ts: string;
+  first_observation_value_ether: number;
+  second_observation_value_ether: number;
+  first_observation_deviation: number;
+  second_observation_deviation: number;
 };

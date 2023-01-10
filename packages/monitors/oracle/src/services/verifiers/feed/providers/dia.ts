@@ -1,9 +1,9 @@
 import { SupportedChains } from "@midas-capital/types";
 import { Contract, utils } from "ethers";
 
-import { logger } from "../../../index";
-import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
-import { getDefiLlamaPrice } from "../../../utils";
+import { logger } from "../../../../index";
+import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
+import { getDefiLlamaPrice } from "../../../../utils";
 
 export async function verifyDiaOraclePriceFeed(
   { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,

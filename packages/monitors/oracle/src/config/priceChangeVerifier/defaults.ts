@@ -1,27 +1,34 @@
-export const lsdPriceChangeDefaults = {
+import { DeviationPeriodConfig, DeviationThresholdConfig, PriceChangeKind } from "../../types";
+
+export const defaultPriceDeviationPeriods: DeviationPeriodConfig = {
+  [PriceChangeKind.SHORT]: 3 * 60 * 1000, // 3 minute,
+  [PriceChangeKind.LONG]: 15 * 60 * 1000, // 15 minute,
+};
+
+export const lsdPriceChangeDefaults: { priceDeviationThresholds: DeviationThresholdConfig } = {
   priceDeviationThresholds: {
-    "3m": 10,
-    "15m": 20,
+    [PriceChangeKind.SHORT]: 10,
+    [PriceChangeKind.LONG]: 20,
   },
 };
 
-export const stablePriceChangeDefaults = {
+export const stablePriceChangeDefaults: { priceDeviationThresholds: DeviationThresholdConfig } = {
   priceDeviationThresholds: {
-    "3m": 3,
-    "15m": 8,
+    [PriceChangeKind.SHORT]: 3,
+    [PriceChangeKind.LONG]: 8,
   },
 };
 
-export const smallCapPriceChangeDefaults = {
+export const smallCapPriceChangeDefaults: { priceDeviationThresholds: DeviationThresholdConfig } = {
   priceDeviationThresholds: {
-    "3m": 20,
-    "15m": 40,
+    [PriceChangeKind.SHORT]: 20,
+    [PriceChangeKind.LONG]: 40,
   },
 };
 
-export const midCapPriceChangeDefaults = {
+export const midCapPriceChangeDefaults: { priceDeviationThresholds: DeviationThresholdConfig } = {
   priceDeviationThresholds: {
-    "3m": 15,
-    "15m": 30,
+    [PriceChangeKind.SHORT]: 15,
+    [PriceChangeKind.LONG]: 30,
   },
 };

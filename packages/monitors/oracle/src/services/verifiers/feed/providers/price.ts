@@ -1,9 +1,9 @@
 import { SupportedChains } from "@midas-capital/types";
 import { utils } from "ethers";
 
-import { logger } from "../../..";
-import { InvalidReason, PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../../types";
-import { getDefiLlamaPrice } from "../../../utils";
+import { logger } from "../../../..";
+import { InvalidReason, PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../../../types";
+import { getDefiLlamaPrice } from "../../../../utils";
 
 export async function verifyPriceValue(
   { midasSdk, asset, mpoPrice }: VerifyPriceParams,

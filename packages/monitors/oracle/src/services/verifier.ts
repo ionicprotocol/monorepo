@@ -49,7 +49,7 @@ export class BatchVerifier {
   }
 
   async batchVerify(service: TVerifier, config: ServiceConfig) {
-    logger.warn(`Running batch verify for ${service.name} on ${this.sdk.chainId} on ${this.assets.length}`);
+    logger.warn(`Running batch verify for ${service.name} on ${this.sdk.chainId} on ${this.assets.length} assets`);
     for (const asset of this.assets) {
       const [verifier, error] = await new Verifier(this.sdk, service, asset, config).init();
       if (error !== null) {

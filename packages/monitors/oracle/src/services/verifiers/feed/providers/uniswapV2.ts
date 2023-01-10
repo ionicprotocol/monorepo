@@ -1,8 +1,8 @@
 import UniswapTwapPriceOracleV2RootABI from "@midas-capital/sdk/dist/cjs/artifacts/UniswapTwapPriceOracleV2Root.json";
 import { Contract } from "ethers";
 
-import { logger } from "../../..";
-import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
+import { logger } from "../../../..";
+import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyUniswapV2PriceFeed(
   { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,

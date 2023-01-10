@@ -2,6 +2,7 @@ import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types"
 
 import { chainIdToConfig, Services } from "../types";
 
+import { chainIdToAssets } from "./priceChangeVerifier";
 import { baseConfig } from "./variables";
 
 const FEED_VERIFIER_ORACLES = [
@@ -59,10 +60,7 @@ const getPriceVerifierAssets = (): SupportedAsset[] => {
 };
 
 const getPriceChangeVerifierAssets = (): SupportedAsset[] => {
-  const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
-  return chainAssets.filter(
-    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled !== true
-  );
+  return chainIdToAssets[baseConfig.chainId];
 };
 
 export const assets = {
