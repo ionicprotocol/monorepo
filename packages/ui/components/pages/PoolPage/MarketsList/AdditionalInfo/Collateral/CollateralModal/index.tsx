@@ -16,8 +16,8 @@ import { ContractTransaction } from 'ethers';
 import LogRocket from 'logrocket';
 import { useState } from 'react';
 
-import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/CollateralModal/Alerts';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/CollateralModal/PendingTransaction';
+import { Alerts } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/Alerts';
+import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/PendingTransaction';
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column, Row } from '@ui/components/shared/Flex';

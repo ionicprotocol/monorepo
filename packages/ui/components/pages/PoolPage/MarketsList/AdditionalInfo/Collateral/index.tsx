@@ -1,7 +1,7 @@
 import { Button, HStack, Switch, Text, useDisclosure } from '@chakra-ui/react';
 import * as React from 'react';
 
-import { CollateralModal } from '@ui/components/pages/PoolPage/MarketsList/CollateralModal';
+import { CollateralModal } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/CollateralModal/index';
 import { Row } from '@ui/components/shared/Flex';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';

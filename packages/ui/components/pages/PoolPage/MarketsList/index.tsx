@@ -41,7 +41,7 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
-import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo';
+import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
 import { Liquidity } from '@ui/components/pages/PoolPage/MarketsList/Liquidity';

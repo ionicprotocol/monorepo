@@ -18,12 +18,12 @@ import { BigNumber, constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
 
-import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/StatsColumn';
-import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/AmountInput';
-import { Balance } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/Balance';
-import { EnableCollateral } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/EnableCollateral';
-import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/PendingTransaction';
-import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/SupplyModal/SupplyError';
+import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
+import { AmountInput } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/AmountInput';
+import { Balance } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/Balance';
+import { EnableCollateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/EnableCollateral';
+import { PendingTransaction } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/PendingTransaction';
+import { SupplyError } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/SupplyModal/SupplyError';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
