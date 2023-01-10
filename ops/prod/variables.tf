@@ -40,7 +40,7 @@ variable "oracles_monitor_image" {
   default = "ghcr.io/midas-protocol/oracles-monitor:sha-642fd961b43d37ab3ccdbd6d88163a02c8caabbb"
 }
 
-variable "oracle_monitor_image_tag" {
+variable "oracles_monitor_image_tag" {
   type    = string
   default = "latest"
 }

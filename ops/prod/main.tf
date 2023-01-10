@@ -13,7 +13,7 @@ provider "aws" {
 module "polygon_mainnet_oracle_price_change_verifier" {
   source              = "../modules/lambda"
   ecr_repository_name = "oracle-monitor"
-  docker_image_tag    = var.oracle_monitor_image_tag
+  docker_image_tag    = var.oracles_monitor_image_tag
   container_family    = "price-change-verifier"
   environment         = "mainnet"
   chain_id            = local.polygon_mainnet_chain_id

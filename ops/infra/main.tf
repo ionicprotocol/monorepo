@@ -15,12 +15,12 @@ data "aws_caller_identity" "current" {}
 
 module "ecr" {
   source           = "../modules/ecr"
-  repository_names = ["oracle-monitor", "liquidation"]
+  repository_names = ["oracles-monitor", "liquidation"]
   registry_replication_rules = [
     {
       destinations = [
         {
-          region      = "us-east-1"
+          region      = "eu-central-1"
           registry_id = data.aws_caller_identity.current.account_id
         },
         {
