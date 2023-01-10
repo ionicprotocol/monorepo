@@ -57,7 +57,7 @@ infra-plan:
 infra-deploy:
 	cd infra && \
 	terraform init && \
-	terraform apply
+	terraform apply -auto-approve
 
 
 prod-plan: 
