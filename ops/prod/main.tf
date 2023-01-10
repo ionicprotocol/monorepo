@@ -10,6 +10,18 @@ provider "aws" {
   region = var.region
 }
 
+module "polygon_mainnet_oracle_price_change_verifier" {
+  source              = "../modules/lambda"
+  ecr_repository_name = "oracle-monitor"
+  docker_image_tag    = var.oracle_monitor_image_tag
+  container_family    = "price-change-verifier"
+  environment         = "mainnet"
+  chain_id            = local.polygon_mainnet_chain_id
+  rpc_url             = local.polygon_mainnet_rpc_0
+  container_env_vars  = merge(local.oracle_price_change_verifier_lambda_variables, { ORACLE_MONITOR_SERVICE = "price-change-verifier" })
+  schedule_expression = "rate(5 minutes)"
+}
+
 
 module "polygon_mainnet_oracle_monitor" {
   source                  = "../modules/bot"

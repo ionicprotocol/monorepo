@@ -39,6 +39,11 @@ variable "oracles_monitor_image" {
   type    = string
   default = "ghcr.io/midas-protocol/oracles-monitor:sha-642fd961b43d37ab3ccdbd6d88163a02c8caabbb"
 }
+
+variable "oracle_monitor_image_tag" {
+  type    = string
+  default = "latest"
+}
 variable "ecs_notifier_discord_webhook_url" {
   type = string
 }

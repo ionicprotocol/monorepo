@@ -61,4 +61,13 @@ locals {
     local.shared_variables,
     local.liquidation_secrets,
   )
+  oracle_price_change_verifier_lambda_variables = {
+    ETHEREUM_ADMIN_ACCOUNT     = var.ethereum_admin_account,
+    ETHEREUM_ADMIN_PRIVATE_KEY = var.ethereum_admin_private_key,
+    SUPABASE_URL               = "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
+    SUPABASE_KEY               = var.supabase_key,
+    CHECK_PRICE_INTERVAL       = "21600",
+    MINIMAL_TWAP_DEPTH         = "1000000",
+    DISCORD_WEBHOOK_URL        = var.oracles_discord_webhook_url,
+  }
 }

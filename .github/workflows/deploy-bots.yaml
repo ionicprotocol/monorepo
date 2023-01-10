@@ -261,6 +261,7 @@ jobs:
       LIQUIDATOR_BOT_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.liquidator-tags).tags[0] }}
       ORACLES_MONITOR_IMAGE: ${{ fromJSON(needs.smoke-tests.outputs.oracles-monitor-tags).tags[0] }}
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+      IMAGE_TAG: ${{ github.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@master
