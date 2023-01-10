@@ -31,7 +31,7 @@ const deployedPlugins: DeployedPlugins = {
     flywheel: "0xb13aAD1F212FdE08a5ab51249cf6434574434A4e",
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/curve.png",
   },
-  // StellaLpERC4626_USDC.wh-GLMR_0xeB7b975C105f05bFb02757fB9bb3361D77AAe84Ajson
+  // StellaLpERC4626_USDC.wh-GLMR_0xeB7b975C105f05bFb02757fB9bb3361D77AAe84A.json
   "0x7EbB783fA23b731c76017bB0656530337Ed31577": {
     market: "0xeB7b975C105f05bFb02757fB9bb3361D77AAe84A",
     name: "StellaSwap USDC.wh-GLMR Pool",

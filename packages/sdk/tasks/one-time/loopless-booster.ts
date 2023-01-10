@@ -30,6 +30,10 @@ task("loopless-booster", "deploy and a loopless booster for a flywheel")
           log: true,
           args: [],
         });
+        if (booster.transactionHash) {
+          await ethers.provider.waitForTransaction(booster.transactionHash);
+        }
+        console.log("LooplessFlywheelBooster: ", booster.address);
         const tx = await flywheel.setBooster(booster.address);
         await tx.wait();
         console.log(`set the booster at ${booster.address} to flywheel at ${flywheelAddress} with tx ${tx.hash}`);

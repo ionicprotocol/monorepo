@@ -41,10 +41,9 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
-import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo';
+import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
-import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/Collateral';
 import { Liquidity } from '@ui/components/pages/PoolPage/MarketsList/Liquidity';
 import { SupplyApy } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy';
 import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyBalance';
@@ -93,7 +92,6 @@ export type Market = {
   market: MarketData;
   supplyApy: MarketData;
   supplyBalance: MarketData;
-  collateral: MarketData;
   borrowApy: MarketData;
   borrowBalance: MarketData;
   totalSupply: MarketData;
@@ -230,8 +228,6 @@ export const MarketsList = ({
           ? rowB.original.market.liquidityFiat
           : -1;
         return liquidityA > liquidityB ? 1 : -1;
-      } else if (columnId === COLLATERAL) {
-        return rowA.original.market.membership ? 1 : -1;
       } else {
         return 0;
       }
@@ -245,7 +241,6 @@ export const MarketsList = ({
         market: asset,
         supplyApy: asset,
         supplyBalance: asset,
-        collateral: asset,
         borrowApy: asset,
         borrowBalance: asset,
         totalSupply: asset,
@@ -349,23 +344,6 @@ export const MarketsList = ({
 
         footer: (props) => props.column.id,
         sortingFn: assetSort,
-      },
-      {
-        accessorFn: (row) => row.collateral,
-        id: COLLATERAL,
-        cell: ({ getValue }) => (
-          <Collateral
-            asset={getValue<MarketData>()}
-            assets={assets}
-            comptrollerAddress={comptrollerAddress}
-            poolChainId={poolChainId}
-          />
-        ),
-        header: (context) => <TableHeaderCell context={context}>Collateral</TableHeaderCell>,
-
-        footer: (props) => props.column.id,
-        sortingFn: assetSort,
-        // enableSorting: false,
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -668,11 +646,7 @@ export const MarketsList = ({
                     px={{ base: 1, lg: 2 }}
                   >
                     <HStack
-                      justifyContent={
-                        header.column.id === MARKET_LTV || header.column.id === COLLATERAL
-                          ? 'center'
-                          : 'flex-end'
-                      }
+                      justifyContent={header.column.id === MARKET_LTV ? 'center' : 'flex-end'}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
                     </HStack>
