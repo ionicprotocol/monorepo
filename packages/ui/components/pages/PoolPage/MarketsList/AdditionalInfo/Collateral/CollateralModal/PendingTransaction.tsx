@@ -33,7 +33,7 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text variant="mdText" fontWeight="bold">
-            You {asset.membership ? 'disabled' : 'enabled'} {asset.underlyingSymbol} as collateral
+            You {asset.membership ? 'enabled' : 'disabled'} {asset.underlyingSymbol} as collateral
           </Text>
         </VStack>
       ) : (
