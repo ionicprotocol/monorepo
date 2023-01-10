@@ -24,7 +24,8 @@ import { BsTriangleFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
 import { Market } from '@ui/components/pages/PoolPage/MarketsList';
-import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/FundButton';
+import { Collateral } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/Collateral/index';
+import { FundButton } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/index';
 import CaptionedStat from '@ui/components/shared/CaptionedStat';
 import ClaimAssetRewardsButton from '@ui/components/shared/ClaimAssetRewardsButton';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -156,6 +157,12 @@ export const AdditionalInfo = ({
               assets={assets}
               asset={asset}
               isDisabled={asset.borrowBalanceFiat === 0}
+              poolChainId={poolChainId}
+            />
+            <Collateral
+              comptrollerAddress={comptrollerAddress}
+              assets={assets}
+              asset={asset}
               poolChainId={poolChainId}
             />
           </HStack>
