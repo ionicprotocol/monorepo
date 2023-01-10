@@ -4,6 +4,8 @@ FROM ghcr.io/foundry-rs/foundry:nightly-6ad60c82a93cd81d63e0a69dc97f2267157b6631
 
 FROM node as build
 
+COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
+
 RUN yum update -y 
 RUN yum install -y git
 
@@ -56,7 +58,6 @@ FROM node as runtime
 
 # ----- Copy files required at runtime by the app -----
 COPY --from=build --chown=node:node /tmp/build /home/node
-COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 WORKDIR /home/node/packages/monitors/oracle
 
