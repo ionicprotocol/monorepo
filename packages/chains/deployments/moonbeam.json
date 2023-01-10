@@ -48894,7 +48894,7 @@
       ]
     },
     "ReplacingFlywheelDynamicRewards_ATOM": {
-      "address": "0x4936551b730F37DF30e951F4BFFC563eAb6D4B9A",
+      "address": "0xD50fEDDAa25cE334476F8D3F0dafEea0dEb57021",
       "abi": [
         {
           "inputs": [
@@ -49055,7 +49055,7 @@
       ]
     },
     "ReplacingFlywheelDynamicRewards_CELR": {
-      "address": "0xFAaa8C2648C81740A7b5777a2bd595ABe5a14db1",
+      "address": "0xCcff4D994acD24aE750C05a69f490b3F03cba622",
       "abi": [
         {
           "inputs": [
@@ -49216,7 +49216,7 @@
       ]
     },
     "ReplacingFlywheelDynamicRewards_GLINT": {
-      "address": "0x3592D1E5568f564302357A793EE6F5FA8208AD63",
+      "address": "0x6d930E6305f95FceA7941a40E936Fb0ef6F1Fbb1",
       "abi": [
         {
           "inputs": [
@@ -49377,7 +49377,7 @@
       ]
     },
     "ReplacingFlywheelDynamicRewards_LDO": {
-      "address": "0x3b599E20344A1DFe99c91b82908177C02a936Cca",
+      "address": "0x5dEc81050556BceF6E01240a342BE67e6DBFd6B4",
       "abi": [
         {
           "inputs": [
@@ -49538,7 +49538,7 @@
       ]
     },
     "ReplacingFlywheelDynamicRewards_STELLA": {
-      "address": "0x42aA47e1401dAc0f1fDC11C211e0fF4931726b5c",
+      "address": "0x74e7Acb9662028d6BCCC0a6EB9F6eA3FEd704315",
       "abi": [
         {
           "inputs": [
@@ -49699,7 +49699,7 @@
       ]
     },
     "ReplacingFlywheelDynamicRewards_WGLMR": {
-      "address": "0x384B06002cD91F8BD48A349f02A050e75B3F096F",
+      "address": "0x0BFbC04631FD46c79424bF3d698c734280E0576A",
       "abi": [
         {
           "inputs": [
