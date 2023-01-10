@@ -49,8 +49,19 @@ nosudo:
 # -------------------------------------------------------------------
 # DEPLOY
 # -------------------------------------------------------------------
+infra-plan: 
+	cd infra && \
+	terraform init && \
+	terraform plan
 
-plan:
+infra-deploy:
+	cd infra && \
+	terraform init && \
+	terraform apply
+
+
+prod-plan: 
+	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
@@ -66,7 +77,8 @@ plan:
 	terraform plan
 
 
-deploy:
+prod-deploy:
+	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
@@ -85,13 +97,6 @@ deploy:
 # -------------------------------------------------------------------
 # DEPLOY
 # -------------------------------------------------------------------
-
-
-destroy:
-	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
-	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
-	terraform init && \
-	terraform destroy
 
 
 liquidator-smoke-test:

@@ -12,7 +12,7 @@ provider "aws" {
 
 
 module "polygon_mainnet_oracle_monitor" {
-  source                  = "./modules/bot"
+  source                  = "../modules/bot"
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
@@ -33,7 +33,7 @@ module "polygon_mainnet_oracle_monitor" {
 
 
 module "bsc_mainnet_oracle_monitor" {
-  source                  = "./modules/bot"
+  source                  = "../modules/bot"
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
@@ -53,7 +53,7 @@ module "bsc_mainnet_oracle_monitor" {
 }
 
 module "polygon_mainnet_liquidation_cron" {
-  source                  = "./modules/cron"
+  source                  = "../modules/cron"
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
@@ -75,7 +75,7 @@ module "polygon_mainnet_liquidation_cron" {
 }
 
 module "moonbeam_mainnet_liquidation_cron" {
-  source                  = "./modules/cron"
+  source                  = "../modules/cron"
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
@@ -98,7 +98,7 @@ module "moonbeam_mainnet_liquidation_cron" {
 
 
 module "bsc_mainnet_liquidation_cron" {
-  source                  = "./modules/cron"
+  source                  = "../modules/cron"
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
@@ -125,16 +125,16 @@ module "bsc_mainnet_liquidation_cron" {
 
 
 module "network" {
-  source     = "./modules/networking"
+  source     = "../modules/networking"
   cidr_block = var.cidr_block
 }
 
 
 module "ecs" {
-  source           = "./modules/ecs"
+  source           = "../modules/ecs"
   ecs_cluster_name = "midas-bots"
 }
 
 module "iam" {
-  source = "./modules/iam"
+  source = "../modules/iam"
 }

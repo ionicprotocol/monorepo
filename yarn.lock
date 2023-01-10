@@ -3170,6 +3170,7 @@ __metadata:
     "@midas-capital/sdk": "workspace:*"
     "@midas-capital/types": "workspace:*"
     "@supabase/supabase-js": ^1.35.4
+    "@types/aws-lambda": ^8.10.109
     "@types/chai": ^4.3.1
     "@types/chai-as-promised": ^7
     "@types/chai-subset": ^1
@@ -5894,6 +5895,13 @@ __metadata:
   version: 0.2.1
   resolution: "@types/async-eventemitter@npm:0.2.1"
   checksum: 36ba0a6f52082f76b19b9123a2fa0497f94fe15218fa54040cc45f0edff483ec3be93a38c177cd4dab79f5e32333fbdf3682d4dc94197438e86694b1fddd6896
+  languageName: node
+  linkType: hard
+
+"@types/aws-lambda@npm:^8.10.109":
+  version: 8.10.109
+  resolution: "@types/aws-lambda@npm:8.10.109"
+  checksum: 879dd30806bbcdcc5495192ed139ab6e7e65d2481c4c80237d8293e3a33e9fcbfb662109246164c493de9fd13b32d1780359a0f191238bd62fd4be14c1efe2fe
   languageName: node
   linkType: hard
 

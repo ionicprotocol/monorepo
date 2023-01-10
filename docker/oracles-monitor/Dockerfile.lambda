@@ -7,7 +7,7 @@ FROM node as build
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
 RUN yum update -y 
-RUN yum install -y git
+RUN yum install -y git 
 
 RUN npm install --global yarn
 RUN yarn set version berry
@@ -39,6 +39,7 @@ COPY yarn.lock /tmp/build/
 
 # ----- Install dependencies -----
 # Install dependencies exactly as in the yarn.lock file - no updates.
+# RUN yarn install --inline-builds --mode=skip-build
 RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
@@ -56,10 +57,11 @@ RUN yarn build:deploy:oracles-monitor
 
 FROM node as runtime
 
+ENV NODE_ENV=production
+
 # ----- Copy files required at runtime by the app -----
-COPY --from=build --chown=node:node /tmp/build /home/node
+WORKDIR ${LAMBDA_TASK_ROOT}
+COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-WORKDIR /home/node/packages/monitors/oracle
-
-CMD ["node", "build/index.js"]
+CMD ["packages/monitors/oracle/build/src/handler.handler"]
 
