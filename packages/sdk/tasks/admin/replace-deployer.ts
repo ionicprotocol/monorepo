@@ -15,6 +15,7 @@ import { OwnableUpgradeable } from "../../typechain/OwnableUpgradeable";
 import { SafeOwnableUpgradeable } from "../../typechain/SafeOwnableUpgradeable";
 import { Unitroller } from "../../typechain/Unitroller";
 
+// TODO add ERC20Wrapper from CErc20WrappingDelegate
 export default task("system:admin:change", "Changes the system admin to a new address")
   .addParam("currentDeployer", "The address of the current deployer", undefined, types.string)
   .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
@@ -60,6 +61,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         console.log(`current FFD owner ${currentOwnerFFD}`);
         if (currentOwnerFFD == currentDeployer) {
           const currentPendingOwner = await ffd.callStatic.pendingOwner();
+          console.log(`current pending owner ${currentPendingOwner}`);
           if (currentPendingOwner != newDeployer) {
             tx = await ffd._setPendingOwner(newDeployer);
             await tx.wait();
@@ -74,6 +76,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
         console.log(`current FPD owner ${currentOwnerFPD}`);
         if (currentOwnerFPD == currentDeployer) {
           const currentPendingOwner = await fpd.callStatic.pendingOwner();
+          console.log(`current pending owner ${currentPendingOwner}`);
           if (currentPendingOwner != newDeployer) {
             tx = await fpd._setPendingOwner(newDeployer);
             await tx.wait();
@@ -93,6 +96,7 @@ export default task("system:admin:change", "Changes the system admin to a new ad
           console.log(`current curve oracle owner ${currentOwnerCurveOracle}`);
           if (currentOwnerCurveOracle == currentDeployer) {
             const currentPendingOwner = await curveOracle.callStatic.pendingOwner();
+            console.log(`current pending owner ${currentPendingOwner}`);
             if (currentPendingOwner != newDeployer) {
               tx = await curveOracle._setPendingOwner(newDeployer);
               await tx.wait();
@@ -188,9 +192,13 @@ export default task("system:admin:change", "Changes the system admin to a new ad
             console.log(`current owner ${currentOwner} of the flywheel at ${flywheelCore.address}`);
 
             if (currentOwner == currentDeployer) {
-              tx = await flywheelCore._setPendingOwner(newDeployer);
-              await tx.wait();
-              console.log(`_setPendingOwner tx mined ${tx.hash}`);
+              const currentPendingOwner = await flywheelCore.callStatic.pendingOwner();
+              console.log(`current pending owner ${currentPendingOwner}`);
+              if (currentPendingOwner != newDeployer) {
+                tx = await flywheelCore._setPendingOwner(newDeployer);
+                await tx.wait();
+                console.log(`_setPendingOwner tx mined ${tx.hash}`);
+              }
             } else if (currentOwner != newDeployer) {
               console.error(`unknown flywheel owner ${currentOwner}`);
             }
@@ -231,46 +239,52 @@ export default task("system:admin:change", "Changes the system admin to a new ad
             }
 
             if (currentOwner == currentDeployer) {
-              tx = await midasERC4626.transferOwnership(newDeployer);
-              await tx.wait();
-              console.log(`midasERC4626.transferOwnership tx mined ${tx.hash}`);
+              //tx = await midasERC4626.transferOwnership(newDeployer);
+              const currentPendingOwner = await midasERC4626.callStatic.pendingOwner();
+              console.log(`current pending owner ${currentPendingOwner}`);
+              if (currentPendingOwner != newDeployer) {
+                tx = await midasERC4626._setPendingOwner(newDeployer);
+                await tx.wait();
+                console.log(`midasERC4626._setPendingOwner tx mined ${tx.hash}`);
+              }
             } else if (currentOwner != newDeployer) {
               console.error(`unknown plugin owner ${currentOwner} for ${pluginAddress}`);
             }
           }
         }
       }
-    }
 
-    // transfer all the leftover funds to the new deployer
-    const newDeployerSigner = await ethers.getSigner(newDeployer);
-    const newDeployerBalance = await newDeployerSigner.getBalance();
-    if (newDeployerBalance.isZero()) {
-      const oldDeployerBalance = await deployer.getBalance();
-      const transaction: providers.TransactionRequest = {
-        to: newDeployer,
-        value: oldDeployerBalance,
-        gasLimit: 21000,
-      };
+      // transfer all the leftover funds to the new deployer
+      const newDeployerSigner = await ethers.getSigner(newDeployer);
+      const newDeployerBalance = await newDeployerSigner.getBalance();
+      if (newDeployerBalance.isZero()) {
+        const oldDeployerBalance = await deployer.getBalance();
+        const transaction: providers.TransactionRequest = {
+          to: newDeployer,
+          value: oldDeployerBalance,
+          gasLimit: 21000,
+        };
 
-      transaction.gasLimit = await ethers.provider.estimateGas(transaction);
+        transaction.gasLimit = await ethers.provider.estimateGas(transaction);
 
-      const feeData = await ethers.provider.getFeeData();
-      let feePerGas;
-      const chainId = ethers.provider.network.chainId;
-      if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas && chainId != 137) {
-        transaction.maxFeePerGas = feeData.maxFeePerGas;
-        transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas; //.div(2);
-        feePerGas = transaction.maxFeePerGas.add(transaction.maxPriorityFeePerGas);
-      } else {
-        transaction.gasPrice = feeData.gasPrice;
-        feePerGas = transaction.gasPrice;
+        const feeData = await ethers.provider.getFeeData();
+        let feePerGas;
+        const chainId = ethers.provider.network.chainId;
+        if (feeData.maxFeePerGas && feeData.maxPriorityFeePerGas && chainId != 137 && chainId != 250) {
+          transaction.maxFeePerGas = feeData.maxFeePerGas;
+          transaction.maxPriorityFeePerGas = feeData.maxPriorityFeePerGas; //.div(2);
+          feePerGas = transaction.maxFeePerGas.add(transaction.maxPriorityFeePerGas);
+        } else {
+          transaction.gasPrice = feeData.gasPrice;
+          feePerGas = transaction.gasPrice;
+        }
+        // leave 10% for the old to clean up any other holdings
+        transaction.value = oldDeployerBalance.mul(9).div(10);
+
+        tx = await deployer.sendTransaction(transaction);
+        await tx.wait();
+        console.log(`funding the new deployer tx mined ${tx.hash}`);
       }
-      transaction.value = oldDeployerBalance.sub(feePerGas.mul(transaction.gasLimit));
-
-      tx = await deployer.sendTransaction(transaction);
-      await tx.wait();
-      console.log(`funding the new deployer tx mined ${tx.hash}`);
     }
 
     console.log("now change the mnemonic in order to run the accept owner role task");
@@ -312,10 +326,10 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
       // MidasFlywheelCore - SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
       {
         const comptroller = (await ethers.getContractAt(
-          "Comptroller.sol:Comptroller",
+          "ComptrollerFirstExtension",
           pool.comptroller,
           deployer
-        )) as Comptroller;
+        )) as ComptrollerFirstExtension;
         const flywheels = await comptroller.callStatic.getRewardsDistributors();
         for (let k = 0; k < flywheels.length; k++) {
           const flywheelAddress = flywheels[k];
@@ -333,6 +347,47 @@ task("system:admin:accept", "Accepts the pending admin/owner roles as the new ad
               console.log(`flywheelCore._acceptAdmin tx mined ${tx.hash}`);
             } else {
               console.log(`not the flywheel ${flywheelAddress} pending owner ${flywheelPendingOwner}`);
+            }
+          }
+        }
+
+        const comptrollerAsExtension = (await ethers.getContractAt(
+          "ComptrollerFirstExtension",
+          pool.comptroller,
+          deployer
+        )) as ComptrollerFirstExtension;
+
+        const markets = await comptrollerAsExtension.callStatic.getAllMarkets();
+        for (let j = 0; j < markets.length; j++) {
+          const market = markets[j];
+          console.log(`market ${market}`);
+          const cTokenInstance = (await ethers.getContractAt(
+            "CErc20PluginDelegate",
+            market,
+            deployer
+          )) as CErc20PluginDelegate;
+
+          let pluginAddress;
+          try {
+            pluginAddress = await cTokenInstance.callStatic.plugin();
+          } catch (pluginError) {
+            console.log(`most probably the market has no plugin`);
+          }
+          if (pluginAddress) {
+            // SafeOwnableUpgradeable - _setPendingOwner() / _acceptOwner()
+            const midasERC4626 = (await ethers.getContractAt("MidasERC4626", pluginAddress, deployer)) as MidasERC4626;
+
+            try {
+              const pendingOwner = await midasERC4626.callStatic.pendingOwner();
+              if (pendingOwner == deployer.address) {
+                tx = await midasERC4626._acceptOwner();
+                await tx.wait();
+                console.log(`midasERC4626._acceptOwner tx mined ${tx.hash}`);
+              } else if (pendingOwner != ethers.constants.AddressZero) {
+                console.error(`unknown plugin owner ${pendingOwner} for ${pluginAddress}`);
+              }
+            } catch (pluginError) {
+              console.error(`check if ownable or safeownable - ${midasERC4626.address}`);
             }
           }
         }
