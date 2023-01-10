@@ -22,12 +22,12 @@ module "polygon_mainnet_oracle_price_change_verifier" {
   docker_image_tag    = var.oracles_monitor_image_tag
   container_family    = "price-change-verifier"
   environment         = "mainnet"
-  chain_id            = local.bsc_mainnet_chain_id
+  chain_id            = local.polygon_mainnet_chain_id
   container_env_vars = merge(
     local.oracle_price_change_verifier_lambda_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_0 }
+    { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(5 minutes)"
+  schedule_expression = "rate(3 minutes)"
 }
 
 module "bsc_mainnet_oracle_price_change_verifier" {
@@ -39,9 +39,9 @@ module "bsc_mainnet_oracle_price_change_verifier" {
   chain_id            = local.bsc_mainnet_chain_id
   container_env_vars = merge(
     local.oracle_price_change_verifier_lambda_variables,
-    { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_0 }
+    { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(5 minutes)"
+  schedule_expression = "rate(3 minutes)"
 }
 
 
