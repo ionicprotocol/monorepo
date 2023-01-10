@@ -25,7 +25,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useColors } from '@ui/hooks/useColors';
-import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
+import { useErrorToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -72,7 +72,6 @@ export const CollateralModal = ({
     },
   ]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
-  const successToast = useSuccessToast();
 
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
 
@@ -134,7 +133,7 @@ export const CollateralModal = ({
         };
         setConfirmedSteps([..._steps]);
         await call.wait();
-
+        await queryClient.refetchQueries();
         LogRocket.track('Fuse-ToggleCollateral');
 
         _steps[0] = {
@@ -143,10 +142,6 @@ export const CollateralModal = ({
           txHash: call.hash,
         };
         setConfirmedSteps([..._steps]);
-        successToast({
-          id: 'collateral',
-          description: `Successfully ${asset.membership ? 'enabled!' : 'disabled!'}`,
-        });
       } catch (error) {
         setFailedStep(1);
         throw error;
@@ -174,10 +169,6 @@ export const CollateralModal = ({
       ];
 
       setSteps(_steps);
-
-      setTimeout(async () => {
-        await queryClient.refetchQueries();
-      }, 100);
     }
   };
 
