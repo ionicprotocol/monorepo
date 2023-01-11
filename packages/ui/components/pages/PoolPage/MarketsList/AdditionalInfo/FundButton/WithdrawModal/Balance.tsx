@@ -26,9 +26,7 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
 
   return (
     <HStack width="100%" justifyContent={'flex-end'}>
-      <Text size="md" mr={2}>
-        Available To Withdraw:
-      </Text>
+      <Text mr={2}>Available To Withdraw:</Text>
       <SimpleTooltip label={`${availableToWithdraw} ${asset.underlyingSymbol}`}>
         <Text maxWidth="250px" textOverflow={'ellipsis'} whiteSpace="nowrap" overflow="hidden">
           {availableToWithdraw} {asset.underlyingSymbol}

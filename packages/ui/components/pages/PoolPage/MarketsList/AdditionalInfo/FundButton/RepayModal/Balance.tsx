@@ -40,10 +40,8 @@ export const Balance = ({ asset }: { asset: MarketData }) => {
 
       {optionToWrap && (
         <Row width="100%" mt={1} mainAxisAlignment="flex-end" crossAxisAlignment="center">
-          <Text size="md" mr={2}>
-            Native Token Balance:
-          </Text>
-          <Text size="md">
+          <Text mr={2}>Native Token Balance:</Text>
+          <Text>
             {myNativeBalance ? utils.formatUnits(myNativeBalance, asset.underlyingDecimals) : 0}{' '}
             {nativeSymbol}
           </Text>
