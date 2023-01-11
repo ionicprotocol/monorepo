@@ -73,7 +73,7 @@ export const deployConfig: ChainDeployConfig = {
       underlying(assets, assetSymbols["DOT.xc-GLMR"]),
       underlying(assets, assetSymbols["wstDOT-DOT.xc"]),
     ],
-    flashSwapFee: 30,
+    flashSwapFee: 25, // stella swap fee
   },
   dynamicFlywheels: [
     {
