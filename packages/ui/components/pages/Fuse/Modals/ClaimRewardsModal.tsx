@@ -1,10 +1,8 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   Divider,
   HStack,
-  IconButton,
   Img,
   Modal,
   ModalCloseButton,
@@ -26,7 +24,6 @@ import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useChainConfig } from '@ui/hooks/useChainConfig';
-import { useColors } from '@ui/hooks/useColors';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { RewardsPerChainProps } from '@ui/types/ComponentPropsType';
@@ -50,7 +47,6 @@ const ClaimableToken = ({
   const { openChainModal } = useChainModal();
   const { switchNetworkAsync } = useSwitchNetwork();
   const chainConfig = useChainConfig(Number(rewardChainId));
-  const { cPage } = useColors();
 
   const totalRewardsString = useMemo(
     () =>
@@ -91,68 +87,55 @@ const ClaimableToken = ({
       <Text minW="80px">{tokenData?.extraData?.shortName ?? tokenData?.symbol}</Text>
       <Box width="150px">
         {currentChain?.id !== Number(rewardChainId) ? (
-          <ButtonGroup isAttached width="100%">
-            <IconButton
-              variant="silver"
-              aria-label="Switch network"
-              icon={
-                chainConfig ? (
-                  <Img
-                    width={6}
-                    height={6}
-                    borderRadius="50%"
-                    src={chainConfig.specificParams.metadata.img}
-                    alt=""
-                  />
-                ) : (
-                  <BsFillArrowRightCircleFill size={24} />
-                )
-              }
-              disabled={claimingRewardTokens.length > 0}
-              onClick={handleSwitch}
-              borderRightColor={cPage.primary.bgColor}
-              borderRightWidth={1}
-            />
-            <Button
-              variant="silver"
-              width="100%"
-              disabled={claimingRewardTokens.length > 0}
-              onClick={handleSwitch}
-              whiteSpace="normal"
-            >
-              {chainConfig ? chainConfig.specificParams.metadata.shortName : 'Switch Network'}
-            </Button>
-          </ButtonGroup>
+          <Button
+            variant="silver"
+            disabled={claimingRewardTokens.length > 0}
+            onClick={handleSwitch}
+            whiteSpace="normal"
+          >
+            {chainConfig ? (
+              <>
+                <Img
+                  width={6}
+                  height={6}
+                  borderRadius="50%"
+                  src={chainConfig.specificParams.metadata.img}
+                  alt=""
+                />
+                <Text ml={2} color="raisinBlack">
+                  {chainConfig.specificParams.metadata.shortName}
+                </Text>
+              </>
+            ) : (
+              <>
+                <BsFillArrowRightCircleFill size={24} />
+                <Text ml={2} color="raisinBlack">
+                  Switch Network
+                </Text>
+              </>
+            )}
+          </Button>
         ) : (
-          <ButtonGroup isAttached width="100%">
-            <IconButton
-              aria-label="Claim rewards"
-              icon={
-                chainConfig ? (
-                  <Img
-                    width={6}
-                    height={6}
-                    borderRadius="50%"
-                    src={chainConfig.specificParams.metadata.img}
-                    alt=""
-                  />
-                ) : (
-                  <BsFillGiftFill size={24} />
-                )
-              }
-              disabled={claimingRewardTokens.length > 0}
-              borderRightColor={cPage.primary.bgColor}
-              borderRightWidth={1}
-            />
-            <Button
-              width="100%"
-              disabled={claimingRewardTokens.length > 0}
-              onClick={onClaim}
-              isLoading={claimingRewardTokens.includes(rewardToken)}
-            >
+          <Button
+            disabled={claimingRewardTokens.length > 0}
+            onClick={onClaim}
+            isLoading={claimingRewardTokens.includes(rewardToken)}
+          >
+            {chainConfig ? (
+              <Img
+                width={6}
+                height={6}
+                borderRadius="50%"
+                src={chainConfig.specificParams.metadata.img}
+                alt=""
+              />
+            ) : (
+              <BsFillGiftFill size={24} />
+            )}
+            <Text ml={2} color="raisinBlack">
               Claim
-            </Button>
-          </ButtonGroup>
+            </Text>
+          </Button>
         )}
       </Box>
     </HStack>
@@ -176,7 +159,6 @@ const ClaimRewardsModal = ({
   const errorToast = useErrorToast();
   const [claimingRewardTokens, setClaimingRewardTokens] = useState<string[]>([]);
   const chainConfig = useChainConfig(Number(currentSdk?.chainId));
-  const { cPage } = useColors();
   const claimableRewardsOfCurrentChain = useMemo(() => {
     return currentSdk ? claimableRewards[currentSdk.chainId.toString()]?.data : undefined;
   }, [claimableRewards, currentSdk]);
@@ -243,37 +225,29 @@ const ClaimRewardsModal = ({
               })}
               <Center pt={4}>
                 {claimableRewardsOfCurrentChain && claimableRewardsOfCurrentChain.length > 0 && (
-                  <ButtonGroup isAttached width="100%">
-                    <IconButton
-                      aria-label="Claim rewards"
-                      icon={
-                        chainConfig ? (
-                          <Img
-                            width={6}
-                            height={6}
-                            borderRadius="50%"
-                            src={chainConfig.specificParams.metadata.img}
-                            alt=""
-                          />
-                        ) : (
-                          <BsFillGiftFill size={24} />
-                        )
-                      }
-                      disabled={claimingRewardTokens.length > 0}
-                      borderRightColor={cPage.primary.bgColor}
-                      borderRightWidth={1}
-                    />
-                    <Button
-                      width="100%"
-                      disabled={claimingRewardTokens.length > 0}
-                      onClick={claimRewards(claimableRewardsOfCurrentChain)}
-                      isLoading={
-                        claimingRewardTokens.length === claimableRewardsOfCurrentChain.length
-                      }
-                    >
+                  <Button
+                    width="100%"
+                    disabled={claimingRewardTokens.length > 0}
+                    onClick={claimRewards(claimableRewardsOfCurrentChain)}
+                    isLoading={
+                      claimingRewardTokens.length === claimableRewardsOfCurrentChain.length
+                    }
+                  >
+                    {chainConfig ? (
+                      <Img
+                        width={6}
+                        height={6}
+                        borderRadius="50%"
+                        src={chainConfig.specificParams.metadata.img}
+                        alt=""
+                      />
+                    ) : (
+                      <BsFillGiftFill size={24} />
+                    )}
+                    <Text ml={2} color="raisinBlack">
                       Claim All
-                    </Button>
-                  </ButtonGroup>
+                    </Text>
+                  </Button>
                 )}
               </Center>
             </>
