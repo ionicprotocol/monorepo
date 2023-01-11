@@ -49,7 +49,7 @@ export class BatchVerifier {
   }
 
   async batchVerify(service: TVerifier, config: ServiceConfig) {
-    logger.warn(`Running batch verify for ${service.name} on ${this.sdk.chainId} on ${this.assets.length} assets`);
+    logger.info(`Running batch verify for ${service.name} on ${this.sdk.chainId} on ${this.assets.length} assets`);
     for (const asset of this.assets) {
       const [verifier, error] = await new Verifier(this.sdk, service, asset, config).init();
       if (error !== null) {
@@ -62,7 +62,7 @@ export class BatchVerifier {
         logger.error(`SERVICE ${service.name}: INVALID REASON: ${result.invalidReason} MSG: ${result.message}`);
         await this.alert.sendErrorNotification(result, asset, ErrorKind.verification);
       } else {
-        logger.debug(`SERVICE ${service.name}: Price feed for ${asset.symbol} is valid`);
+        logger.info(`SERVICE ${service.name}: Price feed for ${asset.symbol} is valid`);
       }
     }
     logger.info(`Batch verification for ${service.name} completed`);

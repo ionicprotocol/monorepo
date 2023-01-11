@@ -12,8 +12,8 @@ import { logger, setUpSdk } from ".";
 const SERVICE = Services.PriceChangeVerifier;
 
 export const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
-  logger.info(`Event: ${JSON.stringify(event, null, 2)}`);
-  logger.info(`Context: ${JSON.stringify(context, null, 2)}`);
+  logger.info(`Event: ${JSON.stringify(event)}`);
+  logger.info(`Context: ${JSON.stringify(context)}`);
 
   const provider = new JsonRpcProvider(baseConfig.rpcUrl);
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);

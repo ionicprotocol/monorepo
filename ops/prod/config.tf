@@ -11,6 +11,7 @@ locals {
     SUPABASE_URL               = "https://xdjnvsfkwtkwfuayzmtm.supabase.co",
     SUPABASE_KEY               = var.supabase_key,
     DISCORD_WEBHOOK_URL        = var.oracles_discord_webhook_url,
+    NODE_ENV                   = "production",
   }
 
   shared_env_vars = [

@@ -27,7 +27,7 @@ module "polygon_mainnet_oracle_price_change_verifier" {
     local.oracle_price_change_verifier_lambda_variables,
     { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(3 minutes)"
+  schedule_expression = "rate(2 minutes)"
 }
 
 module "bsc_mainnet_oracle_price_change_verifier" {
@@ -41,7 +41,7 @@ module "bsc_mainnet_oracle_price_change_verifier" {
     local.oracle_price_change_verifier_lambda_variables,
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(3 minutes)"
+  schedule_expression = "rate(2 minutes)"
 }
 
 

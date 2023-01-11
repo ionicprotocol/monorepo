@@ -56,7 +56,7 @@ export class PriceChangeVerifier extends AbstractOracleVerifier {
     const { asset, mpoPrice, config } = this;
     const updatable = await observationUpdatable(kind, assetPriceCache, config);
     if (updatable) {
-      logger.debug(`${kind} observation for ${asset.symbol} (${asset.underlying}) needs updated`);
+      logger.debug(`${kind} observation for ${asset.symbol} (${asset.underlying}) needs updating`);
 
       const delta = calculateDelta(kind, assetPriceCache, mpoPrice);
       await updateCache(kind, assetPriceCache, delta, mpoPrice);
