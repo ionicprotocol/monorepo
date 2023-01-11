@@ -205,7 +205,7 @@ const ClaimRewardsModal = ({
         </ModalHeader>
         <ModalCloseButton top={4} />
         <Divider />
-        <VStack m={4} height="400px" overflowY="auto">
+        <VStack m={4} maxHeight="450px" overflowY="auto">
           {Object.values(claimableRewards).length === 0 || !currentSdk ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
