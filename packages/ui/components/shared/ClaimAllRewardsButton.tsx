@@ -25,17 +25,19 @@ const ClaimAllRewardsButton: React.FC = () => {
     [chainId: string]: FlywheelClaimableRewards[];
   }>({});
 
-  const { data: crossAllClaimableRewards, isLoading } = useCrossAllClaimableRewards([
-    ...enabledChains,
-  ]);
+  const {
+    data: crossAllClaimableRewards,
+    isLoading,
+    refetch,
+  } = useCrossAllClaimableRewards([...enabledChains]);
 
   useEffect(() => {
     if (crossAllClaimableRewards) {
       const _allClaimableRewards: { [chainId: string]: FlywheelClaimableRewards[] } = {};
 
       Object.entries(crossAllClaimableRewards).map(([key, value]) => {
-        if (value.data && value.data.length > 0) {
-          _allClaimableRewards[key] = value.data;
+        if (value && value.length > 0) {
+          _allClaimableRewards[key] = value;
         }
       });
 
@@ -61,9 +63,7 @@ const ClaimAllRewardsButton: React.FC = () => {
           isSelected
           onClick={() => {
             openClaimModal();
-            if (crossAllClaimableRewards) {
-              crossAllClaimableRewards[currentChain.id.toString()].refetch();
-            }
+            refetch();
           }}
           width="fit-content"
           justifySelf="center"

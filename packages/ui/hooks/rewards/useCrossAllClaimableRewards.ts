@@ -1,46 +1,35 @@
+import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { SupportedChains } from '@midas-capital/types';
-import { useQueries, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
-import { Err, RewardsPerChainProps } from '@ui/types/ComponentPropsType';
 
 export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
   const { address, getSdk } = useMultiMidas();
 
-  const rewardsQueries = useQueries({
-    queries: chainIds.map((chainId) => {
-      return {
-        queryKey: ['useCrossAllClaimableRewards', chainId, address],
-        queryFn: async () => {
-          const sdk = getSdk(Number(chainId));
-
-          if (chainId && sdk && address) {
-            return sdk.getFlywheelClaimableRewards(address);
-          } else {
-            return null;
-          }
-        },
-        cacheTime: Infinity,
-        staleTime: Infinity,
-        enabled: !!chainId && !!address,
-      };
-    }),
-  });
-
   return useQuery(
-    [rewardsQueries.map((rewards) => rewards.data), chainIds],
-    () => {
-      const rewardsPerChain: RewardsPerChainProps = {};
+    ['useCrossAllClaimableRewards', address, chainIds],
+    async () => {
+      const result = await Promise.all(
+        chainIds.map(async (chainId) => {
+          try {
+            const sdk = getSdk(Number(chainId));
 
-      rewardsQueries.map((rewards, index) => {
-        const chainId = chainIds[index];
-        rewardsPerChain[chainId.toString()] = {
-          isLoading: rewards.isLoading,
-          error: rewards.error as Err | undefined,
-          data: rewards.data,
-          refetch: rewards.refetch,
-        };
-      });
+            if (sdk && address) {
+              return { [chainId.toString()]: await sdk.getFlywheelClaimableRewards(address) };
+            } else {
+              return { [chainId.toString()]: null };
+            }
+          } catch (e) {
+            console.warn('unable to fetch rewards for chainid: ', chainId);
+
+            return { [chainId.toString()]: null };
+          }
+        })
+      );
+
+      const rewardsPerChain: { [chainId: string]: FlywheelClaimableRewards[] | null } =
+        Object.assign({}, ...result);
 
       return rewardsPerChain;
     },
