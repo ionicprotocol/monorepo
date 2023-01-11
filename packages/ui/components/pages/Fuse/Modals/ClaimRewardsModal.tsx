@@ -9,7 +9,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalOverlay,
-  Spinner,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -144,16 +143,14 @@ const ClaimableToken = ({
 };
 
 const ClaimRewardsModal = ({
-  isLoading,
   isOpen,
   onClose,
   claimableRewards,
   refetchRewards,
 }: {
-  isLoading: boolean;
   isOpen: boolean;
   onClose: () => void;
-  claimableRewards?: { [chainId: string]: FlywheelClaimableRewards[] };
+  claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
   refetchRewards?: () => Promise<
     QueryObserverResult<FlywheelClaimableRewards[] | null | undefined, unknown>
   >;
@@ -208,12 +205,8 @@ const ClaimRewardsModal = ({
         </ModalHeader>
         <ModalCloseButton top={4} />
         <Divider />
-        <VStack m={4} maxHeight="400px" overflowY="auto">
-          {isLoading ? (
-            <Center height="300px">
-              <Spinner />
-            </Center>
-          ) : !claimableRewards || !currentSdk ? (
+        <VStack m={4} height="400px" overflowY="auto">
+          {Object.values(claimableRewards).length === 0 || !currentSdk ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed

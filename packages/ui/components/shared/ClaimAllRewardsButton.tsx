@@ -30,24 +30,27 @@ const ClaimAllRewardsButton: React.FC = () => {
   ]);
 
   useEffect(() => {
-    const _allClaimableRewards: { [chainId: string]: FlywheelClaimableRewards[] } = {};
-
     if (crossAllClaimableRewards) {
+      const _allClaimableRewards: { [chainId: string]: FlywheelClaimableRewards[] } = {};
+
       Object.entries(crossAllClaimableRewards).map(([key, value]) => {
         if (value.data && value.data.length > 0) {
           _allClaimableRewards[key] = value.data;
         }
       });
+
+      setAllClaimableRewards(_allClaimableRewards);
     }
 
-    setAllClaimableRewards(_allClaimableRewards);
-  }, [crossAllClaimableRewards]);
+    if (!isLoading && !crossAllClaimableRewards) {
+      setAllClaimableRewards({});
+    }
+  }, [crossAllClaimableRewards, isLoading]);
 
   return (
     <>
       {currentChain && (
         <ClaimRewardsModal
-          isLoading={isLoading}
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           claimableRewards={allClaimableRewards}
