@@ -55,16 +55,19 @@ export const AmountInput = ({
     setIsLoading(true);
 
     try {
-      let maxBN;
+      let maxBN = (await fetchMaxAmount(
+        FundOperationMode.REPAY,
+        currentSdk,
+        address,
+        asset
+      )) as BigNumber;
+
       if (optionToWrap) {
-        maxBN = await currentSdk.signer.getBalance();
-      } else {
-        maxBN = (await fetchMaxAmount(
-          FundOperationMode.REPAY,
-          currentSdk,
-          address,
-          asset
-        )) as BigNumber;
+        const balance = await currentSdk.signer.getBalance();
+
+        if (balance.lt(maxBN)) {
+          maxBN = balance;
+        }
       }
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
