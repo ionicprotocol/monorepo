@@ -125,7 +125,11 @@ export const AdditionalInfo = ({
           </Box>
         ) : (
           <HStack>
-            <ClaimAssetRewardsButton poolAddress={comptrollerAddress} assetAddress={asset.cToken} />
+            <ClaimAssetRewardsButton
+              poolAddress={comptrollerAddress}
+              assetAddress={asset.cToken}
+              poolChainId={poolChainId}
+            />
             <FundButton
               mode={FundOperationMode.SUPPLY}
               comptrollerAddress={comptrollerAddress}

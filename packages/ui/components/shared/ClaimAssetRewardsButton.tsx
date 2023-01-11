@@ -11,9 +11,11 @@ import { useColors } from '@ui/hooks/useColors';
 const ClaimAssetRewardsButton = ({
   poolAddress,
   assetAddress,
+  poolChainId,
 }: {
   poolAddress: string;
   assetAddress: string;
+  poolChainId: number;
 }) => {
   const {
     isOpen: isClaimModalOpen,
@@ -28,37 +30,44 @@ const ClaimAssetRewardsButton = ({
     assetAddress,
   });
 
-  if (!claimableRewards || claimableRewards.length === 0) return null;
+  const claimableRewardsOfChain: { [chainId: string]: FlywheelClaimableRewards[] } =
+    claimableRewards && claimableRewards.length > 0
+      ? {
+          [poolChainId]: claimableRewards,
+        }
+      : {};
 
   return (
     <>
-      <GradientButton
-        isSelected
-        onClick={() => {
-          openClaimModal();
-        }}
-        width="fit-content"
-        justifySelf="center"
-      >
-        <HStack spacing={1}>
-          <Text fontWeight="bold" ml={1} color={cPage.secondary.txtColor} width="max-content">
-            Claim Rewards
-          </Text>
-          {currentChain && (
-            <AvatarGroup size="xs" max={30}>
-              {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
-                return <TokenIcon key={index} address={rD.rewardToken} chainId={currentChain.id} />;
-              })}
-            </AvatarGroup>
-          )}
-        </HStack>
-      </GradientButton>
+      {claimableRewards && claimableRewards.length > 0 && (
+        <GradientButton
+          isSelected
+          onClick={() => {
+            openClaimModal();
+            refetchRewards();
+          }}
+          width="fit-content"
+          justifySelf="center"
+        >
+          <HStack spacing={1}>
+            <Text fontWeight="bold" ml={1} color={cPage.secondary.txtColor} width="max-content">
+              Claim Rewards
+            </Text>
+            {currentChain && (
+              <AvatarGroup size="xs" max={30}>
+                {claimableRewards.map((rD: FlywheelClaimableRewards, index: number) => {
+                  return <TokenIcon key={index} address={rD.rewardToken} chainId={poolChainId} />;
+                })}
+              </AvatarGroup>
+            )}
+          </HStack>
+        </GradientButton>
+      )}
       <Box position="absolute">
         <ClaimRewardsModal
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
-          claimableRewards={claimableRewards}
-          refetchRewards={refetchRewards}
+          claimableRewards={claimableRewardsOfChain}
         />
       </Box>
     </>

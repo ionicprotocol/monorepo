@@ -11,6 +11,7 @@ export const PoolName = ({ pool }: { pool: PoolData }) => {
   const rewardTokens = useRewardTokensOfPool(pool.comptroller, pool.chainId);
   const { data: claimableRewards } = usePoolClaimableRewards({
     poolAddress: pool.comptroller,
+    poolChainId: pool.chainId,
   });
 
   return (

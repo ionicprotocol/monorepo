@@ -140,7 +140,7 @@ export const AdditionalInfo = ({ row }: { row: Row<PoolRowData> }) => {
                 </AvatarGroup>
               </VStack>
             )}
-            <ClaimPoolRewardsButton poolAddress={pool.comptroller} />
+            <ClaimPoolRewardsButton poolAddress={pool.comptroller} poolChainId={pool.chainId} />
           </Grid>
         </VStack>
         <VStack>
