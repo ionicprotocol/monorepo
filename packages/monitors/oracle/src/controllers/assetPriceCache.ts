@@ -11,7 +11,6 @@ export const insertAssetPriceCacheData = async (
 ) => {
   logger.info(`Inserting asset price cache data: ${JSON.stringify(asset)}`);
   const supabase = getSupabaseClient();
-  // for (const asset of assets) {
   try {
     const { error } = await supabase.from(baseConfig.supabaseOracleCircuitBreakerTableName).insert(asset);
     if (error) {
@@ -22,13 +21,11 @@ export const insertAssetPriceCacheData = async (
   } catch (err) {
     logger.error(err);
   }
-  // }
 };
 
 export const updateAssetPriceCacheData = async (asset: AssetPriceCache) => {
   logger.info(`Updating asset price cache data: ${JSON.stringify(asset)}`);
   const supabase = getSupabaseClient();
-  // for (const asset of assets) {
   try {
     const { error } = await supabase
       .from(baseConfig.supabaseOracleCircuitBreakerTableName)
@@ -42,7 +39,6 @@ export const updateAssetPriceCacheData = async (asset: AssetPriceCache) => {
   } catch (err) {
     logger.error(err);
   }
-  // }
 };
 
 export const getAssetPriceCacheData = async (asset_address: string): Promise<[AssetPriceCache | null, any]> => {
