@@ -3,9 +3,8 @@ import { assetSymbols } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
-import { NoRewardInfo } from './NoRewardInfo';
-
-import { RewardsInfo } from '@ui/components/pages/PoolPage/MarketsList/RewardsInfo';
+import { NoRewardInfo } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy/NoRewardInfo';
+import { RewardsInfo } from '@ui/components/pages/PoolPage/MarketsList/SupplyApy/RewardsInfo';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { aprDays } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
