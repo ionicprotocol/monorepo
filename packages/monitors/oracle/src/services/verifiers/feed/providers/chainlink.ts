@@ -1,7 +1,7 @@
 import { Contract } from "ethers";
 
-import { logger } from "../../../index";
-import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../types";
+import { logger } from "../../../../index";
+import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyChainLinkOraclePriceFeed(
   { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,

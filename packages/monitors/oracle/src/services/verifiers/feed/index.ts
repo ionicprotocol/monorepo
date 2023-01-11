@@ -1,16 +1,16 @@
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
-import { logger } from "../..";
+import { logger } from "../../..";
 import {
   FeedVerifierConfig,
   OracleFailure,
   PriceFeedValidity,
   VerifierInitValidity,
   VerifyFeedParams,
-} from "../../types";
+} from "../../../types";
+import { AbstractOracleVerifier } from "../base";
 
-import { AbstractOracleVerifier } from "./base";
 import { verifyProviderFeed } from "./providers";
 
 export class FeedVerifier extends AbstractOracleVerifier {

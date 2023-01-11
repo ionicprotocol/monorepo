@@ -1,9 +1,9 @@
 import { SupportedChains } from "@midas-capital/types";
 import { utils } from "ethers";
 
-import { logger } from "../../..";
-import { InvalidReason, PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../../types";
-import { getDefiLlamaPrice } from "../../../utils";
+import { logger } from "../../../..";
+import { InvalidReason, PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../../../types";
+import { getDefiLlamaPrice } from "../../../../utils";
 
 export async function verifyPriceValue(
   { midasSdk, asset, mpoPrice }: VerifyPriceParams,
@@ -27,9 +27,9 @@ export async function verifyPriceValue(
   const priceDiffPercent = (priceDiff / assetPriceUSD) * 100;
   logger.info(`Price difference for asset is ${priceDiffPercent}%`);
 
-  if (priceDiffPercent > config.maxPriceDeviation) {
+  if (priceDiffPercent > config.defaultMaxPriceDeviation) {
     return {
-      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.maxPriceDeviation}%`,
+      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.defaultMaxPriceDeviation}%`,
       invalidReason: InvalidReason.DEVIATION_ABOVE_THRESHOLD,
     };
   }

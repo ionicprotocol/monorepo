@@ -34,7 +34,7 @@ describe("Price verifier", () => {
   });
   describe("config", () => {
     it("Expect service config to be correctly set", async () => {
-      expect(config.maxPriceDeviation).to.be.equal(15);
+      expect(config.defaultMaxPriceDeviation).to.be.equal(15);
       expect(process.env.SERVICE_TO_RUN).to.be.equal("price-verifier");
     });
   });

@@ -4,7 +4,6 @@
 SHELL := /bin/bash
 PATH := ${PWD}/venv/bin:${PATH}
 PYTHONPATH := ${PWD}:${PYTHONPATH}
-AWS_DEFAULT_REGION = eu-central-1
 
 include .common.env
 
@@ -49,8 +48,19 @@ nosudo:
 # -------------------------------------------------------------------
 # DEPLOY
 # -------------------------------------------------------------------
+infra-plan: 
+	cd infra && \
+	terraform init && \
+	terraform plan
 
-plan:
+infra-deploy:
+	cd infra && \
+	terraform init && \
+	terraform apply -auto-approve
+
+
+prod-plan: 
+	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
@@ -58,6 +68,7 @@ plan:
 	export TF_VAR_chainstack_polygon_rpc_url=${CHAINSTACK_POLYGON_RPC_URL} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	export TF_VAR_oracles_monitor_image=${ORACLES_MONITOR_IMAGE} && \
+	export TF_VAR_oracles_monitor_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_ecs_notifier_discord_webhook_url=${ECS_NOTIFIER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
@@ -66,7 +77,8 @@ plan:
 	terraform plan
 
 
-deploy:
+prod-deploy:
+	cd prod && \
 	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
 	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
@@ -74,6 +86,7 @@ deploy:
 	export TF_VAR_chainstack_polygon_rpc_url=${CHAINSTACK_POLYGON_RPC_URL} && \
 	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
 	export TF_VAR_oracles_monitor_image=${ORACLES_MONITOR_IMAGE} && \
+	export TF_VAR_oracles_monitor_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_ecs_notifier_discord_webhook_url=${ECS_NOTIFIER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \
@@ -85,13 +98,6 @@ deploy:
 # -------------------------------------------------------------------
 # DEPLOY
 # -------------------------------------------------------------------
-
-
-destroy:
-	export TF_VAR_ethereum_admin_account=${ETHEREUM_ADMIN_ACCOUNT} && \
-	export TF_VAR_ethereum_admin_private_key=${ETHEREUM_ADMIN_PRIVATE_KEY} && \
-	terraform init && \
-	terraform destroy
 
 
 liquidator-smoke-test:

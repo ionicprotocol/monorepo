@@ -1,16 +1,15 @@
 import { BigNumber } from "ethers";
 
-import { logger } from "../..";
+import { logger } from "../../..";
 import {
   OracleFailure,
   PriceFeedValidity,
   PriceVerifierConfig,
   VerifierInitValidity,
   VerifyPriceParams,
-} from "../../types";
-
-import { AbstractOracleVerifier } from "./base";
-import { verifyPriceValue } from "./providers";
+} from "../../../types";
+import { AbstractOracleVerifier } from "../base";
+import { verifyPriceValue } from "../feed/providers";
 
 export class PriceVerifier extends AbstractOracleVerifier {
   mpoPrice: BigNumber;

@@ -1,6 +1,6 @@
 import { OracleTypes } from "@midas-capital/types";
 
-import { FeedVerifierConfig, PriceFeedInvalidity, VerifyFeedParams } from "../../../types";
+import { FeedVerifierConfig, PriceFeedInvalidity, VerifyFeedParams } from "../../../../types";
 
 import { verifyChainLinkOraclePriceFeed } from "./chainlink";
 import { verifyDiaOraclePriceFeed } from "./dia";
