@@ -1,6 +1,7 @@
 import { BoxProps, FlexProps } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { NativePricedFuseAsset } from '@midas-capital/types';
+import { QueryObserverResult } from '@tanstack/react-query';
 import { BigNumber } from 'ethers';
 import { ReactNode } from 'react';
 
@@ -253,6 +254,9 @@ export type RewardsPerChainProps = {
     isLoading: boolean;
     error: Error | undefined;
     data?: FlywheelClaimableRewards[] | null | undefined;
+    refetch: () => Promise<
+      QueryObserverResult<FlywheelClaimableRewards[] | null | undefined, unknown>
+    >;
   };
 };
 

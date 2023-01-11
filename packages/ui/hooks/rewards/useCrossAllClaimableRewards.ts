@@ -38,6 +38,7 @@ export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
           isLoading: rewards.isLoading,
           error: rewards.error as Err | undefined,
           data: rewards.data,
+          refetch: rewards.refetch,
         };
       });
 
