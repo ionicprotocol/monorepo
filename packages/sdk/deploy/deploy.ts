@@ -431,6 +431,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   });
   console.log("FixedNativePriceOracle: ", fixedNativePO.address);
 
+  const simplePO = await deployments.deploy("SimplePriceOracle", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
+  console.log("SimplePriceOracle: ", simplePO.address);
+
   const masterPO = await deployments.deploy("MasterPriceOracle", {
     from: deployer,
     log: true,

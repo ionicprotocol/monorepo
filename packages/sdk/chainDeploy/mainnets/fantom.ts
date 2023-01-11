@@ -89,7 +89,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
       "3000000000000000000",
       "800000000000000000",
       3,
-      "AnkrFTMInterestRateModel",
+      "0xB42bF10ab9Df82f9a47B86dd76EEE4bA848d0Fa2",
     ],
     log: true,
   });

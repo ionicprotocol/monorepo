@@ -57,7 +57,7 @@ export enum OracleTypes {
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
   AdrastiaPriceOracle = "AdrastiaPriceOracle",
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
-  SaddleLpTokenPriceOracle = "SaddleLpTokenPriceOracle",
+  SaddleLpPriceOracle = "SaddleLpPriceOracle",
 }
 
 export enum IrmTypes {
