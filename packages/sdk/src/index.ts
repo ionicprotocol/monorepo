@@ -8,8 +8,6 @@ import AnkrFTMInterestRateModel from "./MidasSdk/irm/AnkrFTMInterestRateModel";
 import DAIInterestRateModelV2 from "./MidasSdk/irm/DAIInterestRateModelV2";
 import JumpRateModel from "./MidasSdk/irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./MidasSdk/irm/WhitePaperInterestRateModel";
-export { oracleConfig } from "./Artifacts";
-export type { Artifacts } from "./Artifacts";
 
 export { filterOnlyObjectProperties } from "./MidasSdk/utils";
 
