@@ -14,9 +14,8 @@ import {
 } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { useChainModal } from '@rainbow-me/rainbowkit';
-import { QueryObserverResult } from '@tanstack/react-query';
 import { BigNumber, utils } from 'ethers';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { BsFillArrowRightCircleFill, BsFillGiftFill } from 'react-icons/bs';
 import { useSwitchNetwork } from 'wagmi';
 
@@ -146,19 +145,23 @@ const ClaimRewardsModal = ({
   isOpen,
   onClose,
   claimableRewards,
-  refetchRewards,
 }: {
   isOpen: boolean;
   onClose: () => void;
   claimableRewards: { [chainId: string]: FlywheelClaimableRewards[] };
-  refetchRewards?: () => Promise<
-    QueryObserverResult<FlywheelClaimableRewards[] | null | undefined, unknown>
-  >;
 }) => {
   const { currentSdk, address, signer } = useMultiMidas();
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
   const [claimingRewardTokens, setClaimingRewardTokens] = useState<string[]>([]);
+  const [viewedRewards, setViewedRewards] = useState<{
+    [chainId: string]: FlywheelClaimableRewards[];
+  }>({});
+
+  useEffect(() => {
+    setViewedRewards({ ...claimableRewards });
+  }, [claimableRewards]);
+
   // const chainConfig = useChainConfig(Number(currentSdk?.chainId));
   // const claimableRewardsOfCurrentChain = useMemo(() => {
   //   return currentSdk ? claimableRewards[currentSdk.chainId.toString()]?.data : undefined;
@@ -182,10 +185,12 @@ const ClaimRewardsModal = ({
           successToast({
             title: 'Reward claimed!',
           });
-        }
 
-        if (refetchRewards) {
-          await refetchRewards();
+          const remains = claimableRewards[currentSdk.chainId.toString()].filter(
+            (_reward) => reward.rewardToken !== _reward.rewardToken
+          );
+
+          setViewedRewards({ ...claimableRewards, [currentSdk.chainId.toString()]: remains });
         }
       } catch (e) {
         handleGenericError(e, errorToast);
@@ -193,7 +198,7 @@ const ClaimRewardsModal = ({
         setClaimingRewardTokens([]);
       }
     },
-    [address, currentSdk, refetchRewards, signer, errorToast, successToast]
+    [address, currentSdk, signer, errorToast, successToast, claimableRewards]
   );
 
   return (
@@ -206,7 +211,7 @@ const ClaimRewardsModal = ({
         <ModalCloseButton top={4} />
         <Divider />
         <VStack m={4} maxHeight="450px" overflowY="auto">
-          {Object.values(claimableRewards).length === 0 || !currentSdk ? (
+          {Object.values(viewedRewards).length === 0 || !currentSdk ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed
@@ -214,7 +219,7 @@ const ClaimRewardsModal = ({
             </Center>
           ) : (
             <>
-              {Object.entries(claimableRewards).map(([key, value]) => {
+              {Object.entries(viewedRewards).map(([key, value]) => {
                 return value.map((cr: FlywheelClaimableRewards, index: number) => (
                   <ClaimableToken
                     key={index}

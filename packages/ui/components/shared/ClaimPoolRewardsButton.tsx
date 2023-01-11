@@ -43,6 +43,7 @@ const ClaimPoolRewardsButton = ({
           isSelected
           onClick={() => {
             openClaimModal();
+            refetchRewards();
           }}
           width="fit-content"
           justifySelf="center"
@@ -72,7 +73,6 @@ const ClaimPoolRewardsButton = ({
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           claimableRewards={claimableRewardsOfChain}
-          refetchRewards={refetchRewards}
         />
       </Box>
     </>

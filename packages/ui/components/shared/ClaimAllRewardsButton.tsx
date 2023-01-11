@@ -54,11 +54,6 @@ const ClaimAllRewardsButton: React.FC = () => {
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           claimableRewards={allClaimableRewards}
-          refetchRewards={
-            crossAllClaimableRewards
-              ? crossAllClaimableRewards[currentChain.id.toString()].refetch
-              : undefined
-          }
         />
       )}
       {currentChain && Object.values(allClaimableRewards).length > 0 && (
@@ -66,6 +61,9 @@ const ClaimAllRewardsButton: React.FC = () => {
           isSelected
           onClick={() => {
             openClaimModal();
+            if (crossAllClaimableRewards) {
+              crossAllClaimableRewards[currentChain.id.toString()].refetch();
+            }
           }}
           width="fit-content"
           justifySelf="center"

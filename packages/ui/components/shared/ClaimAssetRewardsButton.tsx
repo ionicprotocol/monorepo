@@ -44,6 +44,7 @@ const ClaimAssetRewardsButton = ({
           isSelected
           onClick={() => {
             openClaimModal();
+            refetchRewards();
           }}
           width="fit-content"
           justifySelf="center"
@@ -67,7 +68,6 @@ const ClaimAssetRewardsButton = ({
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           claimableRewards={claimableRewardsOfChain}
-          refetchRewards={refetchRewards}
         />
       </Box>
     </>
