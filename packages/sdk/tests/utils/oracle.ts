@@ -6,7 +6,7 @@ export const setUpOracleWithToken = async (_token, _address, ethers, getNamedAcc
   const { deployer } = await getNamedAccounts();
   const signer = await ethers.getSigner(deployer);
   const sdk = await getOrCreateMidas();
-  const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, signer);
+  const mpo = sdk.createMasterPriceOracle(signer);
 
   if (_address) {
     return [_address, mpo];

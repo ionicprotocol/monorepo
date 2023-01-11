@@ -21,7 +21,7 @@ export default task("market:create", "Create Market")
     const assets = await assetModule.getAssetsConf(
       comptroller,
       sdk.contracts.FuseFeeDistributor.address,
-      sdk.irms.JumpRateModel.address,
+      sdk.chainDeployment.JumpRateModel.address,
       hre.ethers
     );
 

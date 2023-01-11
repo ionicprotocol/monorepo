@@ -7,8 +7,6 @@ import CTokenInterfaceArtifact from "../../../artifacts/CTokenInterface.json";
 import { getContract } from "../utils";
 
 export default class AnkrCertificateInterestRateModel implements InterestRateModel {
-  static RUNTIME_BYTECODE_HASH = utils.keccak256(AnkrCertificateInterestRateModelArtifact.deployedBytecode.object);
-
   initialized: boolean | undefined;
   baseRatePerBlock: BigNumber | undefined;
   multiplierPerBlock: BigNumber | undefined;

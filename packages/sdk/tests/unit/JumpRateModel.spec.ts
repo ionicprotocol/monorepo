@@ -25,7 +25,7 @@ describe("JumpRateModel", function () {
     const assetsA = await assetHelpers.getAssetsConf(
       poolAddress,
       sdk.contracts.FuseFeeDistributor.address,
-      sdk.irms.JumpRateModel.address,
+      sdk.chainDeployment.JumpRateModel.address,
       ethers
     );
 
@@ -38,7 +38,7 @@ describe("JumpRateModel", function () {
 
   it("Class and Contract rate calculations are in sync", async function () {
     const irmClass = await sdk.getInterestRateModel(cTokenA.address);
-    const irmContract = sdk.createJumpRateModel(sdk.irms.JumpRateModel.address);
+    const irmContract = sdk.createJumpRateModel(sdk.chainDeployment.JumpRateModel.address);
 
     const borrows = ethers.utils.parseEther("1");
     const cash = borrows.mul(1);

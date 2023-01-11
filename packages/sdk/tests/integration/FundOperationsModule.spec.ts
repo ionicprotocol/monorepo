@@ -27,7 +27,7 @@ describe("FundOperationsModule", function () {
     const assets = await assetHelpers.getAssetsConf(
       poolAddress,
       sdk.contracts.FuseFeeDistributor.address,
-      sdk.irms.JumpRateModel.address,
+      sdk.chainDeployment.JumpRateModel.address,
       ethers
     );
     await poolHelpers.deployAssets(assets, deployer);
