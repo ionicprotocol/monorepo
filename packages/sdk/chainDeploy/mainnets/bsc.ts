@@ -541,7 +541,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     log: true,
   });
   if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
-  console.log("AnkrCertificateInterestRateModel: ", abirm.address);
+  console.log("AnkrBNBInterestRateModel: ", abirm.address);
 
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
