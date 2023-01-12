@@ -273,6 +273,7 @@ export const MarketsList = ({
         cell: ({ getValue }) => (
           <TokenName
             asset={getValue<MarketData>()}
+            assets={assets}
             poolAddress={comptrollerAddress}
             poolChainId={poolChainId}
           />
@@ -361,7 +362,7 @@ export const MarketsList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress, totalApy]);
+  }, [rewards, comptrollerAddress, totalApy, assets, poolChainId]);
 
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({

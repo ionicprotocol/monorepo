@@ -1,5 +1,6 @@
 import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Row } from '@ui/components/shared/Flex';
 import { GradientButton } from '@ui/components/shared/GradientButton';
@@ -8,15 +9,18 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useBorrowCapForAssetForCollateral } from '@ui/hooks/useBorrowCapForAssetForCollateral';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 export const TokenName = ({
   asset,
+  assets,
   poolAddress,
   poolChainId,
 }: {
   asset: MarketData;
+  assets: MarketData[];
   poolAddress: string;
   poolChainId: number;
 }) => {
@@ -25,6 +29,30 @@ export const TokenName = ({
     poolAddress,
     assetAddress: asset.cToken,
   });
+  const collateralAssets = useMemo(() => assets.filter((_asset) => _asset.membership), [assets]);
+
+  const { data: borrowCapForAssetForCollateral } = useBorrowCapForAssetForCollateral(
+    poolAddress,
+    assets,
+    collateralAssets,
+    poolChainId
+  );
+
+  const [restricted, setRestricted] = useState<
+    { asset: string; collateralAsset: string; borrowCap: number }[]
+  >([]);
+
+  useEffect(() => {
+    if (borrowCapForAssetForCollateral && borrowCapForAssetForCollateral.length > 0) {
+      const _restricted = borrowCapForAssetForCollateral.filter(
+        (obj) => obj.asset === asset.cToken
+      );
+
+      setRestricted(_restricted);
+    } else {
+      setRestricted([]);
+    }
+  }, [borrowCapForAssetForCollateral, asset.cToken]);
 
   return (
     <Row className="marketName" mainAxisAlignment="flex-start" crossAxisAlignment="center">
@@ -141,11 +169,20 @@ export const TokenName = ({
               </SimpleTooltip>
             )
           ) : (
-            <SimpleTooltip label="This asset can be borrowed">
-              <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
-                Borrowable
-              </Badge>
-            </SimpleTooltip>
+            <>
+              <SimpleTooltip label="This asset can be borrowed">
+                <Badge variant="outline" colorScheme="orange" textTransform="capitalize">
+                  Borrowable
+                </Badge>
+              </SimpleTooltip>
+              {restricted.length > 0 && (
+                <SimpleTooltip label="Borrow of this asset is restricted">
+                  <Badge variant="outline" colorScheme="red" textTransform="capitalize">
+                    Restricted
+                  </Badge>
+                </SimpleTooltip>
+              )}
+            </>
           )}
         </VStack>
       </VStack>
