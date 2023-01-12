@@ -15,6 +15,8 @@ import { Services } from "../src/types";
   const midasSdk = setUpSdk(chainId, signer);
 
   const assetsOverride = assets[Services.FeedVerifier].slice(0, 1);
+  const priceChangeVerifierAssetsOverride = assets[Services.PriceChangeVerifier].slice(0, 1);
   runVerifier(midasSdk, Services.FeedVerifier, assetsOverride);
   runVerifier(midasSdk, Services.PriceVerifier, assetsOverride);
+  runVerifier(midasSdk, Services.PriceChangeVerifier, priceChangeVerifierAssetsOverride);
 })();

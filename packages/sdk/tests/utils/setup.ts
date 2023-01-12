@@ -20,11 +20,7 @@ export const resetPriceOracle = async (erc20One, erc20Two) => {
   if (chainId !== 31337 && chainId !== 1337) {
     const { deployer } = await ethers.getNamedSigners();
     const sdk = new MidasSdk(ethers.provider, bsc);
-    const mpo = (await ethers.getContractAt(
-      "MasterPriceOracle",
-      sdk.oracles.MasterPriceOracle.address,
-      deployer
-    )) as MasterPriceOracle;
+    const mpo = sdk.createMasterPriceOracle(deployer);
     const tx = await mpo.add(
       [erc20One.underlying, erc20Two.underlying],
       [sdk.chainDeployment.ChainlinkPriceOracleV2.address, sdk.chainDeployment.ChainlinkPriceOracleV2.address]
@@ -50,8 +46,8 @@ const setupLocalOraclePrices = async () => {
 const setUpBscOraclePrices = async (assets?: Array<string>) => {
   const { deployer } = await ethers.getNamedSigners();
   const sdk = await getOrCreateMidas();
-  const spo = await ethers.getContractAt("SimplePriceOracle", sdk.oracles.SimplePriceOracle.address, deployer);
-  const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, deployer);
+  const spo = await ethers.getContractAt("SimplePriceOracle", sdk.chainDeployment.SimplePriceOracle.address, deployer);
+  const mpo = sdk.createMasterPriceOracle(deployer);
   const assetAddresses = assets ? assets : [constants.AddressZero];
   const oracleAddresses = Array(assetAddresses.length).fill(spo.address);
   let tx = await mpo.add(assetAddresses, oracleAddresses);
@@ -83,15 +79,12 @@ export const setUpLiquidation = async (poolName: string) => {
 
   const simplePriceOracle: SimplePriceOracle = (await ethers.getContractAt(
     "SimplePriceOracle",
-    sdk.oracles.SimplePriceOracle.address,
+    sdk.chainDeployment.SimplePriceOracle.address,
     deployer
   )) as SimplePriceOracle;
 
-  const oracle: MasterPriceOracle = (await ethers.getContractAt(
-    "MasterPriceOracle",
-    sdk.oracles.MasterPriceOracle.address,
-    deployer
-  )) as MasterPriceOracle;
+  const oracle: MasterPriceOracle = sdk.createMasterPriceOracle(deployer);
+
   const fuseFeeDistributor: FuseFeeDistributor = (await ethers.getContractAt(
     "FuseFeeDistributor",
     sdk.contracts.FuseFeeDistributor.address,
@@ -106,7 +99,12 @@ export const setUpLiquidation = async (poolName: string) => {
 
   const [poolAddress] = await createPool({ poolName, signer: deployer });
 
-  const assets = await getAssetsConf(poolAddress, fuseFeeDistributor.address, sdk.irms.JumpRateModel.address, ethers);
+  const assets = await getAssetsConf(
+    poolAddress,
+    fuseFeeDistributor.address,
+    sdk.chainDeployment.JumpRateModel.address,
+    ethers
+  );
   let tx;
   for (const asset of assets) {
     const assetPrice = await oracle.callStatic.price(asset.underlying);

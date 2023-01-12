@@ -9,8 +9,6 @@ import {
   DeployedPlugins,
   FundingStrategyContract,
   InterestRateModel,
-  IrmConfig,
-  OracleConfig,
   RedemptionStrategyContract,
   SupportedAsset,
   SupportedChains,
@@ -37,7 +35,6 @@ import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
 import { MidasERC4626 } from "../../typechain/MidasERC4626";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 import { Unitroller } from "../../typechain/Unitroller";
-import ARTIFACTS, { irmConfig, oracleConfig } from "../Artifacts";
 import { withAsset } from "../modules/Asset";
 import { withConvertMantissa } from "../modules/ConvertMantissa";
 import { withCreateContracts } from "../modules/CreateContracts";
@@ -50,8 +47,8 @@ import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
 import { CTOKEN_ERROR_CODES } from "./config";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
-import AnkrCertificateInterestRateModel from "./irm/AnkrCertificateInterestRateModel";
-import DAIInterestRateModelV2 from "./irm/DAIInterestRateModelV2";
+import AnkrBNBInterestRateModel from "./irm/AnkrBNBInterestRateModel";
+import AnkrFTMInterestRateModel from "./irm/AnkrFTMInterestRateModel";
 import JumpRateModel from "./irm/JumpRateModel";
 import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
@@ -100,13 +97,10 @@ export class MidasBase {
   public _contracts: StaticContracts | undefined;
   public chainConfig: ChainConfig;
   public availableOracles: Array<string>;
-  public availableIrms: Array<string>;
   public chainId: SupportedChains;
   public chainDeployment: ChainDeployment;
-  public oracles: OracleConfig;
   public chainSpecificAddresses: ChainAddresses;
   public chainSpecificParams: ChainParams;
-  public irms: IrmConfig;
   public deployedPlugins: DeployedPlugins;
   public marketToPlugin: Record<string, string>;
   public liquidationConfig: ChainLiquidationConfig;
@@ -209,23 +203,13 @@ export class MidasBase {
     }, {});
     this.redemptionStrategies = chainConfig.redemptionStrategies;
     this.fundingStrategies = chainConfig.fundingStrategies;
-
-    this.availableIrms = chainConfig.irms.filter((o) => {
-      if (ARTIFACTS[o] === undefined || this.chainDeployment[o] === undefined) {
-        this.logger.warn(`Irm ${o} not deployed to chain ${this.chainId}`);
-        return false;
-      }
-      return true;
-    });
     this.availableOracles = chainConfig.oracles.filter((o) => {
-      if (ARTIFACTS[o] === undefined || this.chainDeployment[o] === undefined) {
+      if (this.chainDeployment[o] === undefined) {
         this.logger.warn(`Oracle ${o} not deployed to chain ${this.chainId}`);
         return false;
       }
       return true;
     });
-    this.oracles = oracleConfig(this.chainDeployment, ARTIFACTS, this.availableOracles);
-    this.irms = irmConfig(this.chainDeployment, ARTIFACTS, this.availableIrms);
   }
 
   async deployPool(
@@ -304,13 +288,10 @@ export class MidasBase {
     // Get interest rate model type from runtime bytecode hash and init class
     const interestRateModels: { [key: string]: any } = {
       JumpRateModel: JumpRateModel,
-      DAIInterestRateModelV2: DAIInterestRateModelV2,
       WhitePaperInterestRateModel: WhitePaperInterestRateModel,
-      AnkrCertificateInterestRateModel: AnkrCertificateInterestRateModel,
-      JumpRateModel_MIMO_002_004_4_08: JumpRateModel,
-      JumpRateModel_JARVIS_002_004_4_08: JumpRateModel,
-      AdjustableJumpRateModel_PSTAKE_WBNB: AdjustableJumpRateModel,
-      AdjustableJumpRateModel_MIXBYTES_XCDOT: AdjustableJumpRateModel,
+      AnkrBNBInterestRateModel: AnkrBNBInterestRateModel,
+      AnkrFTMInterestRateModel: AnkrFTMInterestRateModel,
+      AdjustableJumpRateModel: AdjustableJumpRateModel,
     };
     const runtimeBytecodeHash = utils.keccak256(await this.provider.getCode(interestRateModelAddress));
 
@@ -350,17 +331,6 @@ export class MidasBase {
 
     return oracle;
   }
-
-  identifyInterestRateModelName = (irmAddress: string): string | null => {
-    let irmName: string | null = null;
-    for (const [name, irm] of Object.entries(this.irms)) {
-      if (irm.address === irmAddress) {
-        irmName = name;
-        return irmName;
-      }
-    }
-    return irmName;
-  };
 
   getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     const comptrollerABI: Array<object> = this.chainDeployment.Comptroller.abi;

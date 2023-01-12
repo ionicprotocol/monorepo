@@ -1,1 +1,1 @@
-export { default as updateOracleMonitorData } from "./updateOracleMonitor";
+export { updateAssetPriceCacheData, getAssetPriceCacheData } from "./assetPriceCache";

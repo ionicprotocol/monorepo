@@ -57,15 +57,14 @@ export enum OracleTypes {
   WombatLpTokenPriceOracle = "WombatLpTokenPriceOracle",
   AdrastiaPriceOracle = "AdrastiaPriceOracle",
   NativeUSDPriceOracle = "NativeUSDPriceOracle",
-  SaddleLpTokenPriceOracle = "SaddleLpTokenPriceOracle",
+  SaddleLpPriceOracle = "SaddleLpPriceOracle",
 }
 
 export enum IrmTypes {
   JumpRateModel = "JumpRateModel",
   WhitePaperInterestRateModel = "WhitePaperInterestRateModel",
-  AnkrCertificateInterestRateModel = "AnkrCertificateInterestRateModel",
-  JumpRateModel_MIMO_2_004_4_08 = "JumpRateModel_MIMO_2_004_4_08",
-  JumpRateModel_JARVIS_2_004_4_08 = "JumpRateModel_JARVIS_2_004_4_08",
+  AnkrFTMInterestRateModel = "AnkrFTMInterestRateModel",
+  AnkrBNBInterestRateModel = "AnkrBNBInterestRateModel",
   AdjustableJumpRateModel_PSTAKE_WBNB = "AdjustableJumpRateModel_PSTAKE_WBNB",
   AdjustableJumpRateModel_MIXBYTES_XCDOT = "AdjustableJumpRateModel_MIXBYTES_XCDOT",
   AdjustableJumpRateModel_TRANSFERO_BRZ = "AdjustableJumpRateModel_TRANSFERO_BRZ",
