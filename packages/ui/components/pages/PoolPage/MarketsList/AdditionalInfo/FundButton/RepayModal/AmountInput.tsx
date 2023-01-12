@@ -55,22 +55,21 @@ export const AmountInput = ({
     setIsLoading(true);
 
     try {
-      let maxBN = (await fetchMaxAmount(
-        FundOperationMode.REPAY,
-        currentSdk,
-        address,
-        asset
-      )) as BigNumber;
+      let maxBN = undefined;
 
       if (optionToWrap) {
+        const debt = asset.borrowBalance;
         const balance = await currentSdk.signer.getBalance();
-
-        if (balance.lt(maxBN)) {
-          maxBN = balance;
-        }
+        maxBN = balance.gt(debt) ? debt : balance;
+      } else {
+        maxBN = (await fetchMaxAmount(
+          FundOperationMode.REPAY,
+          currentSdk,
+          address,
+          asset
+        )) as BigNumber;
       }
-
-      if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
+      if (!maxBN || maxBN.lt(constants.Zero) || maxBN.isZero()) {
         updateAmount('');
       } else {
         const str = utils.formatUnits(maxBN, asset.underlyingDecimals);
