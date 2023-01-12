@@ -15436,7 +15436,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xA0e50C20413C282855F7A7f86771a77aFb566BFD",
+      "address": "0xcE49eeAa20E08eFfFf403C6d8E7A595a5ce301c6",
       "abi": [
         {
           "inputs": [
@@ -21996,7 +21996,7 @@
       ]
     },
     "DiaPriceOracle": {
-      "address": "0xE622c2967E2885ED04436075889C88696328aBE8",
+      "address": "0xD7225110D8F419b0E8Ad0A536977965E62fB5769",
       "abi": [
         {
           "inputs": [
@@ -28431,7 +28431,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x2bDE58731012fC1C309540409a59496582c21029",
+      "address": "0xF624744e38152f988eE67d4D2138449bAf482754",
       "abi": [
         {
           "anonymous": false,
@@ -28454,6 +28454,45 @@
               "internalType": "contract FusePoolDirectory",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ICToken",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getBorrowAndSupplyCapsForAsset",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "collateral",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "borrowCapsPerCollateral",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "collateralBlacklisted",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalBorrowCap",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalSupplyCap",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -30529,6 +30568,34 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "stellaswapV2Call",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "newOwner",
               "type": "address"
             }
@@ -30590,7 +30657,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x9508227b01791d8644B11Fa8d8b4ba277E54D801",
+      "address": "0x8a27e76a81c8B1248c27C2c02F57C07EB3bFe092",
       "abi": [
         {
           "anonymous": false,
@@ -31268,6 +31335,34 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "stellaswapV2Call",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },
@@ -50723,6 +50818,148 @@
         {
           "stateMutability": "payable",
           "type": "receive"
+        }
+      ]
+    },
+    "SimplePriceOracle": {
+      "address": "0xB21c27c0424fecF8149A5516E0bC5e852d0c0198",
+      "abi": [
+        {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "previousPriceMantissa",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "requestedPriceMantissa",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "newPriceMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "PricePosted",
+          "type": "event"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "assetPrices",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            }
+          ],
+          "name": "getUnderlyingPrice",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [],
+          "name": "isPriceOracle",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "underlying",
+              "type": "address"
+            }
+          ],
+          "name": "price",
+          "outputs": [
+            {
+              "internalType": "uint256",
+              "name": "",
+              "type": "uint256"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "asset",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "_price",
+              "type": "uint256"
+            }
+          ],
+          "name": "setDirectPrice",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract CTokenInterface",
+              "name": "cToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "underlyingPriceMantissa",
+              "type": "uint256"
+            }
+          ],
+          "name": "setUnderlyingPrice",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
         }
       ]
     },

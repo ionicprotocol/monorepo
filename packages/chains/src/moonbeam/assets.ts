@@ -336,7 +336,7 @@ export const assets: SupportedAsset[] = [
     underlying: base4pool,
     name: "Stella Swap USDC.wh/USDT.xc/BUSD.wh/FRAX LP Token",
     decimals: 18,
-    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+    oracle: OracleTypes.SaddleLpPriceOracle,
     extraDocs: stellaSwapStableDocs("0xB1BC9f56103175193519Ae1540A0A4572b1566F6", "base4pool", base4pool),
   },
   {
