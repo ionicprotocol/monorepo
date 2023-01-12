@@ -4,8 +4,6 @@ locals {
   bsc_mainnet_rpc_0    = var.chainstack_bsc_rpc_url
   bsc_mainnet_rpc_1    = "https://bsc-dataseed4.binance.org"
   bsc_mainnet_chain_id = "56"
-
-  bsc_excluded_comptrollers = "0xfeB4f9080Ad40ce33Fd47Ff6Da6e4822fE26C7d5"
 }
 
 
@@ -63,8 +61,7 @@ module "bsc_mainnet_liquidation_cron" {
     local.bsc_mainnet_rpc_1
   ]
   runtime_env_vars = concat(local.liquidation_variables, [
-    { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id },
-    { name = "EXCLUDED_COMPTROLLERS", value = local.bsc_excluded_comptrollers },
+    { name = "TARGET_CHAIN_ID", value = local.bsc_mainnet_chain_id }
   ])
   ecs_cluster_arn     = module.ecs.ecs_cluster_arn
   schedule_expression = "rate(2 minutes)"

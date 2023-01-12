@@ -46383,7 +46383,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0x152BF2bC5392A5924Cd4282BC8C4860DfbBA220D",
+      "address": "0x7ef2A6a6aF8ee090da3a24ea947b3717c4D16D94",
       "abi": [
         {
           "inputs": [
@@ -50514,7 +50514,7 @@
       ]
     },
     "DiaPriceOracle": {
-      "address": "0xE7480162d7694bB39586AF44D123a098Fe0095a8",
+      "address": "0xdD8d4e09Acb39C2B4DE9A84384389B79850f3271",
       "abi": [
         {
           "inputs": [
@@ -56641,7 +56641,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0xd94ca960132557385e9ad993C69cC22A3344C2E7",
+      "address": "0xD7225110D8F419b0E8Ad0A536977965E62fB5769",
       "abi": [
         {
           "anonymous": false,
@@ -56664,6 +56664,45 @@
               "internalType": "contract FusePoolDirectory",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ICToken",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getBorrowAndSupplyCapsForAsset",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "collateral",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "borrowCapsPerCollateral",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "collateralBlacklisted",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalBorrowCap",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalSupplyCap",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -58739,6 +58778,34 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "stellaswapV2Call",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "newOwner",
               "type": "address"
             }
@@ -58800,7 +58867,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x777fe816941Ff033D220A3B218324C3799f6b1B4",
+      "address": "0xcE49eeAa20E08eFfFf403C6d8E7A595a5ce301c6",
       "abi": [
         {
           "anonymous": false,
@@ -59478,6 +59545,34 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "stellaswapV2Call",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },

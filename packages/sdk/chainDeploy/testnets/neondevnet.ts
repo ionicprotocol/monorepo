@@ -30,14 +30,6 @@ export const deployConfig: ChainDeployConfig = {
 
 export const deploy = async ({ ethers, getNamedAccounts, deployments }): Promise<void> => {
   const { deployer } = await getNamedAccounts();
-  //// ORACLES
-  const simplePO = await deployments.deploy("SimplePriceOracle", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  console.log("SimplePriceOracle: ", simplePO.address);
 
   const pyth = await deployments.deploy("Pyth", {
     from: deployer,
