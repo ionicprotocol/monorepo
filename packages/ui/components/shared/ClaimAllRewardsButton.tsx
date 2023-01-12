@@ -2,7 +2,7 @@ import { AvatarGroup, HStack, Text, useDisclosure } from '@chakra-ui/react';
 import { FlywheelClaimableRewards } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import React, { useEffect, useState } from 'react';
 
-import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal';
+import ClaimRewardsModal from '@ui/components/pages/Fuse/Modals/ClaimRewardsModal/index';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
@@ -56,6 +56,7 @@ const ClaimAllRewardsButton: React.FC = () => {
           isOpen={isClaimModalOpen}
           onClose={closeClaimModal}
           claimableRewards={allClaimableRewards}
+          refetch={refetch}
         />
       )}
       {currentChain && Object.values(allClaimableRewards).length > 0 && (
