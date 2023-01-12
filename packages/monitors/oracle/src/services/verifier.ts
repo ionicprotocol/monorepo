@@ -1,7 +1,7 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { SupportedAsset } from "@midas-capital/types";
 
-import { logger } from "..";
+import { logger } from "../logger";
 import { ErrorKind, PriceFeedValidity, ServiceConfig, TVerifier, VerifierInitValidity } from "../types";
 
 import { AdminService } from "./admin";
