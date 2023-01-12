@@ -43,12 +43,7 @@ export const fetchMaxAmount = async (
   if (mode === FundOperationMode.REPAY) {
     const balance = await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
     const debt = asset.borrowBalance;
-
-    if (balance.gt(debt)) {
-      return debt;
-    } else {
-      return balance;
-    }
+    return balance.gt(debt) ? debt : balance;
   }
 
   if (mode === FundOperationMode.BORROW) {
