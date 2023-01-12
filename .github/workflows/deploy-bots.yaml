@@ -126,7 +126,7 @@ jobs:
     outputs:
       json: ${{ steps.meta.outputs.json }}
 
-  build-and-push-oracles-monitor-ecr:
+  build-and-push-oracles-monitor-image:
     needs: [terraform-infra]
     runs-on: ubuntu-latest
     env:
@@ -174,7 +174,7 @@ jobs:
 
   smoke-tests:
     runs-on: ubuntu-latest
-    needs: [build-and-push-liquidator-image, build-and-push-oracles-monitor-ecr, lint-bots]
+    needs: [build-and-push-liquidator-image, build-and-push-oracles-monitor-image, lint-bots]
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
