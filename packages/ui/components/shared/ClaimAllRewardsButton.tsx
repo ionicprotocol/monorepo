@@ -78,7 +78,7 @@ const ClaimAllRewardsButton: React.FC = () => {
                 color={cPage.secondary.txtColor}
                 width="max-content"
               >
-                Claim All Rewards
+                All Rewards
               </Text>
             )}
             <AvatarGroup size="xs" max={30}>
