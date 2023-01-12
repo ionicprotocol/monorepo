@@ -178,10 +178,10 @@ const ClaimRewardsModal = ({
     [rewardToken: string]: SupportedAsset | undefined;
   }>({});
 
-  // const chainConfig = useChainConfig(Number(currentSdk?.chainId));
-  // const claimableRewardsOfCurrentChain = useMemo(() => {
-  //   return currentSdk ? claimableRewards[currentSdk.chainId.toString()]?.data : undefined;
-  // }, [claimableRewards, currentSdk]);
+  const chainConfig = useChainConfig(Number(currentSdk?.chainId));
+  const claimableRewardsOfCurrentChain = useMemo(() => {
+    return currentSdk ? claimableRewards[currentSdk.chainId.toString()] : undefined;
+  }, [claimableRewards, currentSdk]);
 
   const claimRewards = useCallback(
     (rewards: FlywheelClaimableRewards[] | null | undefined) => async () => {
@@ -212,10 +212,10 @@ const ClaimRewardsModal = ({
         setClaimingRewardTokens(rewards.map((reward) => reward.rewardToken));
         const fwLensRouter = currentSdk.contracts.MidasFlywheelLensRouter;
 
+        setFailedStep(0);
+
         for (const [index, reward] of rewards.entries()) {
           setActiveStep(index + 1);
-          setFailedStep(index);
-
           const markets = reward.rewards.map((reward) => reward.market);
 
           try {
@@ -310,7 +310,7 @@ const ClaimRewardsModal = ({
                   />
                 ));
               })}
-              {/* <Center pt={4}>
+              <Center pt={4}>
                 {claimableRewardsOfCurrentChain && claimableRewardsOfCurrentChain.length > 0 && (
                   <Button
                     width="100%"
@@ -336,7 +336,7 @@ const ClaimRewardsModal = ({
                     </Text>
                   </Button>
                 )}
-              </Center> */}
+              </Center>
             </>
           )}
         </VStack>
