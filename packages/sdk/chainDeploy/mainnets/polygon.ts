@@ -555,15 +555,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     certificateAssetSymbol: assetSymbols.aMATICc,
   });
 
-  const simplePO = await deployments.deploy("SimplePriceOracle", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
-  console.log("SimplePriceOracle: ", simplePO.address);
-
   //// Liquidator Redemption Strategies
 
   // Quoter

@@ -1,4 +1,3 @@
-import UniswapTwapPriceOracleV2RootABI from "@midas-capital/sdk/dist/cjs/artifacts/UniswapTwapPriceOracleV2Root.json";
 import { Contract } from "ethers";
 
 import { logger } from "../../../..";
@@ -19,7 +18,11 @@ export async function verifyUniswapV2PriceFeed(
   const pair = await uniswapV2Factory.callStatic.getPair(underlying, baseToken);
 
   const rootOracleAddress = await underlyingOracle.callStatic.rootOracle();
-  const rootTwapOracle = new Contract(rootOracleAddress, UniswapTwapPriceOracleV2RootABI.abi, midasSdk.provider);
+  const rootTwapOracle = new Contract(
+    rootOracleAddress,
+    midasSdk.chainDeployment.UniswapTwapPriceOracleV2Root.abi,
+    midasSdk.provider
+  );
 
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],

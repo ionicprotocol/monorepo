@@ -177,7 +177,7 @@ export const assets: SupportedAsset[] = [
     underlying: saddleFraxBP,
     name: "Saddle Frax/USDC",
     decimals: 18,
-    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+    oracle: OracleTypes.SaddleLpPriceOracle,
     extraDocs: saddleFinanceDocs("FRAX-USDC-BP", saddleFraxBP),
   },
   {
@@ -185,7 +185,7 @@ export const assets: SupportedAsset[] = [
     underlying: saddleFraxUsdsBP,
     name: "Saddle Frax/USDC",
     decimals: 18,
-    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+    oracle: OracleTypes.SaddleLpPriceOracle,
     extraDocs: saddleFinanceDocs("FRAXBP-USDs", saddleFraxUsdsBP),
     disabled: true,
   },

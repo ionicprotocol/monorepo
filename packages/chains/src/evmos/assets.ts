@@ -174,14 +174,14 @@ export const assets: SupportedAsset[] = [
     underlying: "0xfD2fd675176a8Ed1CF643886ee557929FDEcBBfD",
     name: "Kinesis USDC Pool",
     decimals: 18,
-    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+    oracle: OracleTypes.SaddleLpPriceOracle,
   },
   {
     symbol: assetSymbols.kinesisUSDT,
     underlying: "0x78549EF94dB08E8bf2e528F0aE97F186Fc51185E",
     name: "Kinesis USDT Pool",
     decimals: 18,
-    oracle: OracleTypes.SaddleLpTokenPriceOracle,
+    oracle: OracleTypes.SaddleLpPriceOracle,
   },
 ];
 
