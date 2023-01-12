@@ -1,11 +1,11 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
 import { SupportedAsset } from '@midas-capital/types';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
-import { Address } from 'wagmi';
 
 import { Column } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
+import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TxStep } from '@ui/types/ComponentPropsType';
 
@@ -24,48 +24,6 @@ export const PendingTransaction = ({
   poolChainId: number;
   assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined };
 }) => {
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
-
-  const addToken = async (asset: SupportedAsset) => {
-    const ethereum = window.ethereum;
-
-    if (!ethereum) {
-      errorToast({ title: 'Error', description: 'Wallet could not be found!' });
-
-      return false;
-    }
-    try {
-      const added = await ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: asset.underlying,
-            symbol: asset.symbol,
-            decimals: Number(asset.decimals),
-          },
-        } as {
-          type: 'ERC20';
-          options: {
-            address: Address;
-            decimals: number;
-            symbol: string;
-            image?: string;
-          };
-        },
-      });
-
-      if (added) {
-        successToast({ title: 'Added', description: 'Token is successfully added to wallet' });
-      }
-
-      return added;
-    } catch (error) {
-      return false;
-    }
-  };
-
   return (
     <Column expand mainAxisAlignment="center" crossAxisAlignment="center" pt={2}>
       {isClaiming ? (
@@ -85,13 +43,7 @@ export const PendingTransaction = ({
           <VStack width="100%">
             {Object.values(assetPerRewardToken).map((asset) => {
               if (asset) {
-                return (
-                  <Flex key={asset.underlying} width="100%" justifyContent="flex-end">
-                    <Button onClick={() => addToken(asset)} variant={'ghost'} size="sm">
-                      Add {asset.symbol} to wallet
-                    </Button>
-                  </Flex>
-                );
+                return <AddTokenToWalletButton key={asset.underlying} asset={asset} />;
               }
             })}
           </VStack>
@@ -125,5 +77,26 @@ export const PendingTransaction = ({
         </VStack>
       ) : null}
     </Column>
+  );
+};
+
+const AddTokenToWalletButton = ({ asset }: { asset: SupportedAsset }) => {
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
+
+  const addToken = useAddTokenToWallet({
+    underlyingAddress: asset.underlying,
+    underlyingSymbol: asset.symbol,
+    underlyingDecimals: asset.decimals,
+    successToast,
+    errorToast,
+  });
+
+  return (
+    <Flex key={asset.underlying} width="100%" justifyContent="flex-end">
+      <Button onClick={addToken} variant={'ghost'} size="sm">
+        Add {asset.symbol} to wallet
+      </Button>
+    </Flex>
   );
 };
