@@ -35,7 +35,7 @@ import { smallUsdFormatter } from '@ui/utils/bigUtils';
 
 const MotionFlex = motion<FlexProps>(Flex);
 
-const FuseStatsBar = () => {
+const MidasHero = () => {
   const { data: tvlData, isLoading } = useTVL();
   const router = useRouter();
   const { setGlobalLoading } = useMultiMidas();
@@ -157,7 +157,7 @@ const FuseStatsBar = () => {
               <Spinner />
             ) : (
               <>
-                <Text size="3xl" fontWeight="bold" lineHeight={['60px']}>
+                <Text size="3xl" fontWeight="bold" lineHeight={['60px']} color="raisinBlack">
                   {smallUsdFormatter(totalTVL)}
                 </Text>
               </>
@@ -189,4 +189,4 @@ const FuseStatsBar = () => {
   );
 };
 
-export default FuseStatsBar;
+export default MidasHero;
