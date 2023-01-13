@@ -330,7 +330,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => (
-          <TotalSupply asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <TotalSupply
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
 

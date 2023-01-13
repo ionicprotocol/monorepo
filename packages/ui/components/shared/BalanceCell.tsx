@@ -1,4 +1,4 @@
-import { HStack, Text, VStack } from '@chakra-ui/react';
+import { HStack, Progress, Text, VStack } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
@@ -8,6 +8,7 @@ import { longFormat, midFormat, smallFormatter } from '@ui/utils/bigUtils';
 interface BalanceCellProps {
   primary: {
     value: number;
+    max?: number;
   };
   secondary?: {
     value: BigNumber;
@@ -18,6 +19,12 @@ interface BalanceCellProps {
 
 export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
   const { cCard } = useColors();
+  const ratio =
+    primary.max !== undefined
+      ? primary.max === 0
+        ? 5
+        : (primary.value * 100) / primary.max
+      : undefined;
 
   return (
     <VStack alignItems="flex-end" spacing={1}>
@@ -57,6 +64,16 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
           </HStack>
         </SimpleTooltip>
       )}
+
+      {ratio !== undefined ? (
+        <Progress
+          width="100%"
+          height={2}
+          borderRadius="2px"
+          value={ratio}
+          colorScheme={ratio <= 75 ? 'green' : ratio <= 90 ? 'yellow' : 'red'}
+        />
+      ) : null}
     </VStack>
   );
 };
