@@ -1,7 +1,7 @@
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
-import { logger } from "../../..";
+import { logger } from "../../../logger";
 import {
   FeedVerifierConfig,
   OracleFailure,

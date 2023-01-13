@@ -24,27 +24,23 @@ export const baseConfig: BaseConfig = {
   adminPrivateKey: process.env.ETHEREUM_ADMIN_PRIVATE_KEY ?? "",
   adminAccount: process.env.ETHEREUM_ADMIN_ACCOUNT ?? "",
   discordWebhookUrl: process.env.DISCORD_WEBHOOK_URL ?? "",
+  service: process.env.SERVICE ? (process.env.SERVICE as Services) : Services.FeedVerifier,
 };
 
 const feedVerifierConfig: FeedVerifierConfig = {
   ...baseConfig,
   defaultDeviationThreshold: utils.parseEther(process.env.DEFAULT_DEVIATION_THRESHOLD ?? "0.05"),
   maxObservationDelay: parseInt(process.env.MAX_OBSERVATION_DELAY ?? "10000"),
-  runInterval:
-    parseInt(process.env.FEED_VERIFIER_RUN_INTERVAL ?? (process.env.NODE_ENV === "production" ? "3600" : "20")) * 1000, // 1 hours
   defaultMinPeriod: BigNumber.from(process.env.DEFAULT_MIN_PERIOD ?? "1800"),
 };
 
 const priceVerifierConfig: PriceVerifierConfig = {
   ...baseConfig,
-  runInterval:
-    parseInt(process.env.PRICE_VERIFIER_RUN_INTERVAL ?? (process.env.NODE_ENV === "production" ? "60" : "20")) * 1000, // 1 minute
   defaultMaxPriceDeviation: parseInt(process.env.MAX_PRICE_DEVIATION ?? "15"),
 };
 
 const priceChangeVerifierConfig: PriceChangeVerifierConfig = {
   ...baseConfig,
-  runInterval: parseInt(process.env.PRICE_CHANGE_VERIFIER_RUN_INTERVAL ?? "15") * 100, // 15 seconds
   priceDeviationPeriods: {
     [PriceChangeKind.SHORT]: defaultPriceDeviationPeriods[PriceChangeKind.SHORT],
     [PriceChangeKind.LONG]: defaultPriceDeviationPeriods[PriceChangeKind.SHORT],
