@@ -17,7 +17,7 @@ export const useSupplyCap = (
   const sdk = useSdk(poolChainId);
 
   return useQuery(
-    ['useSupplyCap', sdk?.chainId, comptrollerAddress, underlyingPrice, usdPrice],
+    ['useSupplyCap', sdk?.chainId, cToken, comptrollerAddress, underlyingPrice, usdPrice],
     async () => {
       if (sdk && usdPrice) {
         try {
