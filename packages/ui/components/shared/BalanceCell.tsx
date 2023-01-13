@@ -30,33 +30,35 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
         <VStack alignItems="flex-start">
           {primary.supplyCaps && <Text mb={4}>This asset has a restricted supply amount.</Text>}
           <HStack>
-            <Text variant="tnumber">${longFormat(primary.value)}</Text>
+            <Text variant="tnumber" fontWeight="bold">
+              ${longFormat(primary.value)}
+            </Text>
             {primary.supplyCaps && (
               <>
-                <Text variant="tnumber" opacity={0.6}>
+                <Text size="xs" variant="tnumber">
                   /
                 </Text>
-                <Text variant="tnumber" opacity={0.6}>
+                <Text size="xs" variant="tnumber">
                   ${midFormat(primary.supplyCaps.usdCap)}
                 </Text>
               </>
             )}
           </HStack>
           {secondary && (
-            <HStack>
-              <Text variant="tnumber">
+            <HStack spacing={1}>
+              <Text size="xs" variant="tnumber">
                 {`${longFormat(
                   parseFloat(utils.formatUnits(secondary.value, secondary.decimals))
                 )} ${secondary.symbol}`}
               </Text>
               {primary.supplyCaps && (
                 <>
-                  <Text variant="tnumber" opacity={0.6}>
+                  <Text size="xs" variant="tnumber">
                     /
                   </Text>
-                  <Text variant="tnumber" opacity={0.6}>{`${midFormat(
-                    primary.supplyCaps.nativeCap
-                  )} ${secondary.symbol}`}</Text>
+                  <Text size="xs" variant="tnumber">{`${midFormat(primary.supplyCaps.nativeCap)} ${
+                    secondary.symbol
+                  }`}</Text>
                 </>
               )}
             </HStack>
@@ -93,7 +95,7 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
             <HStack spacing={0.5}>
               <Text
                 color={cCard.txtColor}
-                size="sm"
+                size="xs"
                 fontWeight={'medium'}
                 variant="tnumber"
                 opacity={0.6}
@@ -102,7 +104,7 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
               </Text>
               <Text
                 color={cCard.txtColor}
-                size="sm"
+                size="xs"
                 fontWeight={'medium'}
                 variant="tnumber"
                 opacity={0.6}
@@ -113,21 +115,25 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
           )}
         </HStack>
         {secondary && (
-          <HStack spacing={0.5}>
-            <Text variant="tnumber" size="xs">
-              {midFormat(Number(utils.formatUnits(secondary.value, secondary.decimals)))}
-            </Text>
-            <Text
-              variant="tnumber"
-              size="xs"
-              textOverflow="ellipsis"
-              align="right"
-              whiteSpace="nowrap"
-              maxWidth={'55px'}
-              overflow="hidden"
-            >
-              {secondary.symbol}
-            </Text>
+          <HStack spacing={1}>
+            <HStack spacing={0.5}>
+              <Text variant="tnumber" size="xs" opacity={0.6}>
+                {midFormat(Number(utils.formatUnits(secondary.value, secondary.decimals)))}
+              </Text>
+              <Text
+                variant="tnumber"
+                size="xs"
+                textOverflow="ellipsis"
+                align="right"
+                whiteSpace="nowrap"
+                maxWidth={'55px'}
+                overflow="hidden"
+                opacity={0.6}
+              >
+                {secondary.symbol}
+              </Text>
+            </HStack>
+
             {primary.supplyCaps && (
               <Text
                 color={cCard.txtColor}
