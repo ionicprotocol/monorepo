@@ -57,7 +57,7 @@ module "polygon_mainnet_liquidation_cron" {
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
-  docker_image            = var.liquidator_bot_image
+  docker_image            = "ghcr.io/midas-protocol/liquidator:${var.bots_image_tag}"
   region                  = var.region
   environment             = "mainnet"
   container_family        = "liquidation-cron"

@@ -84,9 +84,7 @@ prod-deploy:
 	export TF_VAR_pokt_api_key=${POKT_API_KEY} && \
 	export TF_VAR_chainstack_bsc_rpc_url=${CHAINSTACK_BSC_RPC_URL} && \
 	export TF_VAR_chainstack_polygon_rpc_url=${CHAINSTACK_POLYGON_RPC_URL} && \
-	export TF_VAR_liquidator_bot_image=${LIQUIDATOR_BOT_IMAGE} && \
-	export TF_VAR_oracles_monitor_image=${ORACLES_MONITOR_IMAGE} && \
-	export TF_VAR_oracles_monitor_image_tag=${IMAGE_TAG} && \
+	export TF_VAR_bots_image_tag=${IMAGE_TAG} && \
 	export TF_VAR_ecs_notifier_discord_webhook_url=${ECS_NOTIFIER_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_oracles_discord_webhook_url=${ORACLES_DISCORD_WEBHOOK_URL} && \
 	export TF_VAR_liquidation_discord_webhook_url=${LIQUIDATION_DISCORD_WEBHOOK_URL} && \

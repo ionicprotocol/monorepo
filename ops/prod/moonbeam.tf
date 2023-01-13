@@ -9,7 +9,7 @@ locals {
 module "moonbeam_mainnet_oracle_price_change_verifier" {
   source              = "../modules/lambda"
   ecr_repository_name = "oracles-monitor"
-  docker_image_tag    = var.oracles_monitor_image_tag
+  docker_image_tag    = var.bots_image_tag
   container_family    = "price-change-verifier"
   environment         = "mainnet"
   chain_id            = local.moonbeam_mainnet_chain_id
@@ -24,7 +24,7 @@ module "moonbeam_mainnet_oracle_price_change_verifier" {
 module "monbeam_mainnet_oracle_feed_verifier" {
   source              = "../modules/lambda"
   ecr_repository_name = "oracles-monitor"
-  docker_image_tag    = var.oracles_monitor_image_tag
+  docker_image_tag    = var.bots_image_tag
   container_family    = "feed-verifier"
   environment         = "mainnet"
   chain_id            = local.monbeam_mainnet_chain_id
@@ -38,7 +38,7 @@ module "monbeam_mainnet_oracle_feed_verifier" {
 module "monbeam_mainnet_oracle_price_verifier" {
   source              = "../modules/lambda"
   ecr_repository_name = "oracles-monitor"
-  docker_image_tag    = var.oracles_monitor_image_tag
+  docker_image_tag    = var.bots_image_tag
   container_family    = "price-verifier"
   environment         = "mainnet"
   chain_id            = local.monbeam_mainnet_chain_id
@@ -54,7 +54,7 @@ module "moonbeam_mainnet_liquidation_cron" {
   service_security_groups = module.network.ecs_task_sg
   execution_role_arn      = module.iam.execution_role_arn
   cluster_id              = module.ecs.ecs_cluster_id
-  docker_image            = var.liquidator_bot_image
+  docker_image            = "ghcr.io/midas-protocol/liquidator:${var.bots_image_tag}"
   region                  = var.region
   environment             = "mainnet"
   container_family        = "liquidation-cron"
