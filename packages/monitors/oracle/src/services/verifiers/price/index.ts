@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { logger } from "../../..";
+import { logger } from "../../../logger";
 import {
   OracleFailure,
   PriceFeedValidity,

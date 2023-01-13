@@ -57,4 +57,12 @@ locals {
     local.shared_env_vars_lambda,
     { ORACLE_MONITOR_SERVICE = "price-change-verifier" },
   )
+  oracle_price_verifier_lambda_variables = merge(
+    local.shared_env_vars_lambda,
+    { ORACLE_MONITOR_SERVICE = "price-verifier" },
+  )
+  oracle_feed_verifier_lambda_variables = merge(
+    local.shared_env_vars_lambda,
+    { ORACLE_MONITOR_SERVICE = "feed-verifier" },
+  )
 }

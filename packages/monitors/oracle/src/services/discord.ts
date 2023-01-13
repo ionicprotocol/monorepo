@@ -1,8 +1,8 @@
 import { SupportedAsset, SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
-import { logger } from "..";
 import { baseConfig } from "../config/variables";
+import { logger } from "../logger";
 import {
   ErrorKind,
   InitErrorCache,
