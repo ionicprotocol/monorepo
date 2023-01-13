@@ -22,20 +22,61 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
   const ratio =
     primary.max !== undefined
       ? primary.max === 0
-        ? 5
+        ? 0
         : (primary.value * 100) / primary.max
       : undefined;
 
   return (
     <VStack alignItems="flex-end" spacing={1}>
-      <SimpleTooltip label={`$ ${longFormat(primary.value)}`}>
-        <HStack spacing={0.5}>
-          <Text color={cCard.txtColor} size="sm" fontWeight={'medium'} variant="tnumber">
-            $
-          </Text>
-          <Text color={cCard.txtColor} size="sm" fontWeight={'medium'} variant="tnumber">
-            {smallFormatter.format(primary.value)}
-          </Text>
+      <SimpleTooltip
+        label={`$${longFormat(primary.value)} ${
+          primary.max !== undefined
+            ? `/ $${primary.max !== 0 ? midFormat(primary.max) : 'Unlimited'}`
+            : ''
+        }`}
+      >
+        <HStack spacing={2}>
+          <HStack spacing={0.5}>
+            <Text color={cCard.txtColor} size="sm" fontWeight={'medium'} variant="tnumber">
+              {'$'}
+            </Text>
+            <Text color={cCard.txtColor} size="sm" fontWeight={'medium'} variant="tnumber">
+              {smallFormatter.format(primary.value)}
+            </Text>
+          </HStack>
+          {primary.max !== undefined && (
+            <Text
+              color={cCard.txtColor}
+              size="sm"
+              fontWeight={'medium'}
+              variant="tnumber"
+              opacity={0.6}
+            >
+              {'/'}
+            </Text>
+          )}
+          {primary.max !== undefined && (
+            <HStack spacing={0.5}>
+              <Text
+                color={cCard.txtColor}
+                size="sm"
+                fontWeight={'medium'}
+                variant="tnumber"
+                opacity={0.6}
+              >
+                {'$'}
+              </Text>
+              <Text
+                color={cCard.txtColor}
+                size="sm"
+                fontWeight={'medium'}
+                variant="tnumber"
+                opacity={0.6}
+              >
+                {primary.max !== 0 ? midFormat(primary.max) : 'Unlimited'}
+              </Text>
+            </HStack>
+          )}
         </HStack>
       </SimpleTooltip>
 
