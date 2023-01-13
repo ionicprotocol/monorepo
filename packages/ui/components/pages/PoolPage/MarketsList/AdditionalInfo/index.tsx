@@ -104,7 +104,12 @@ export const AdditionalInfo = ({
   };
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
-  const max = useSupplyCap(comptrollerAddress, asset.cToken, asset.underlyingPrice, poolChainId);
+  const { data: supplyCaps } = useSupplyCap(
+    comptrollerAddress,
+    asset.cToken,
+    asset.underlyingPrice,
+    poolChainId
+  );
 
   return (
     <Box width={{ base: windowWidth.width * 0.9, md: 'auto' }} minWidth="400px">
@@ -728,10 +733,10 @@ export const AdditionalInfo = ({
               >
                 <CaptionedStat
                   stat={midUsdFormatter(asset.totalSupplyFiat)}
-                  secondStat={max ? midUsdFormatter(max) : undefined}
+                  secondStat={supplyCaps ? midUsdFormatter(supplyCaps.usdCap) : undefined}
                   caption={'Asset Supplied'}
                   crossAxisAlignment="center"
-                  tooltip={ASSET_SUPPLIED_TOOLTIP}
+                  tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
                 />
                 <CaptionedStat
                   stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}

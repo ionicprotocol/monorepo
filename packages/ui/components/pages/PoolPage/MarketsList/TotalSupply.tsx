@@ -13,13 +13,18 @@ export const TotalSupply = ({
   poolChainId: number;
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
-  const max = useSupplyCap(comptrollerAddress, asset.cToken, asset.underlyingPrice, poolChainId);
+  const { data: supplyCaps } = useSupplyCap(
+    comptrollerAddress,
+    asset.cToken,
+    asset.underlyingPrice,
+    poolChainId
+  );
 
   return (
     <BalanceCell
       primary={{
         value: asset.totalSupplyFiat,
-        max,
+        supplyCaps,
       }}
       secondary={{
         value: asset.totalSupply,
