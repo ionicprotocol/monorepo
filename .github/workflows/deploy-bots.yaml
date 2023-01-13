@@ -193,9 +193,17 @@ jobs:
         working-directory: ./ops
         run: make liquidator-smoke-test
 
-      - name: run smoke tests for oracles monitor
+      - name: run smoke tests for feed verifier
         working-directory: ./ops
-        run: make oracles-monitor-smoke-test
+        run: make feed-verifier-smoke-test
+
+      - name: run smoke tests for price verifier
+        working-directory: ./ops
+        run: make price-verifier-smoke-test
+
+      - name: run smoke tests for price change verifier
+        working-directory: ./ops
+        run: make price-change-verifier-smoke-test
 
   terraform-deploy-bots:
     if: startsWith(github.ref, 'refs/tags/v') || github.ref == 'refs/heads/main'

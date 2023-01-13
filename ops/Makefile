@@ -108,7 +108,7 @@ liquidator-smoke-test:
 				${LIQUIDATOR_BOT_IMAGE} build/test/run.js
 
 
-oracles-monitor-smoke-test:
+feed-verifier-smoke-test:
 	@docker run -t --entrypoint node \
 				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
 				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
@@ -116,4 +116,27 @@ oracles-monitor-smoke-test:
 				-e NODE_ENV="development" \
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
-				${ORACLES_MONITOR_IMAGE} build/tests/run.js
+				-e SERVICE=feed-verifier
+				${ORACLES_MONITOR_IMAGE} packages/monitors/oracle/build/tests/run.js
+
+price-verifier-smoke-test:
+	@docker run -t --entrypoint node \
+				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
+				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
+				-e SUPABASE_KEY=${SUPABASE_KEY} \
+				-e NODE_ENV="development" \
+				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
+				-e TARGET_CHAIN_ID=56 \
+				-e SERVICE=price-verifier
+				${ORACLES_MONITOR_IMAGE} packages/monitors/oracle/build/tests/run.js
+
+price-change-verifier-smoke-test:
+	@docker run -t --entrypoint node \
+				-e ETHEREUM_ADMIN_ACCOUNT=${ETHEREUM_ADMIN_ACCOUNT} \
+				-e ETHEREUM_ADMIN_PRIVATE_KEY=${ETHEREUM_ADMIN_PRIVATE_KEY} \
+				-e SUPABASE_KEY=${SUPABASE_KEY} \
+				-e NODE_ENV="development" \
+				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
+				-e TARGET_CHAIN_ID=56 \
+				-e SERVICE=price-change-verifier
+				${ORACLES_MONITOR_IMAGE} packages/monitors/oracle/build/tests/run.js
