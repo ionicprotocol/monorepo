@@ -1,6 +1,6 @@
-import { logger } from "..";
 import { getSupabaseClient } from "../config";
 import { baseConfig } from "../config/variables";
+import { logger } from "../logger";
 import { AssetPriceCache } from "../types";
 
 export const insertAssetPriceCacheData = async (

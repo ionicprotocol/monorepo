@@ -1,7 +1,7 @@
 import { SupportedChains } from "@midas-capital/types";
 import { utils } from "ethers";
 
-import { logger } from "../../../..";
+import { logger } from "../../../../logger";
 import { InvalidReason, PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../../../types";
 import { getDefiLlamaPrice } from "../../../../utils";
 
