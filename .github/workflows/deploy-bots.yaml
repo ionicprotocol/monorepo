@@ -182,8 +182,6 @@ jobs:
     env:
       ETHEREUM_ADMIN_ACCOUNT: '${{ secrets.ETHEREUM_ADMIN_ACCOUNT }}'
       ETHEREUM_ADMIN_PRIVATE_KEY: '${{ secrets.ETHEREUM_ADMIN_PRIVATE_KEY }}'
-      LIQUIDATOR_BOT_IMAGE: 'ghcr.io/midas-protocol/liquidator:${IMAGE_TAG}'
-      ORACLES_MONITOR_IMAGE: 'ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG}'
       SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
     steps:
       - name: Checkout repository

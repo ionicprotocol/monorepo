@@ -105,7 +105,7 @@ liquidator-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=56 \
-				${LIQUIDATOR_BOT_IMAGE} build/test/run.js
+				ghcr.io/midas-protocol/liquidator:${IMAGE_TAG} build/test/run.js
 
 
 feed-verifier-smoke-test:
@@ -117,7 +117,7 @@ feed-verifier-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
 				-e SERVICE=feed-verifier
-				${ORACLES_MONITOR_IMAGE} packages/monitors/oracle/build/tests/run.js
+				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/tests/run.js
 
 price-verifier-smoke-test:
 	@docker run -t --entrypoint node \
@@ -128,7 +128,7 @@ price-verifier-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
 				-e SERVICE=price-verifier
-				${ORACLES_MONITOR_IMAGE} packages/monitors/oracle/build/tests/run.js
+				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/tests/run.js
 
 price-change-verifier-smoke-test:
 	@docker run -t --entrypoint node \
@@ -139,4 +139,4 @@ price-change-verifier-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
 				-e SERVICE=price-change-verifier
-				${ORACLES_MONITOR_IMAGE} packages/monitors/oracle/build/tests/run.js
+				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/tests/run.js
