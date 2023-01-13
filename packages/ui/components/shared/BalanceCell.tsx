@@ -8,7 +8,7 @@ import { longFormat, midFormat, smallFormatter } from '@ui/utils/bigUtils';
 interface BalanceCellProps {
   primary: {
     value: number;
-    supplyCaps: { usdCap: number; nativeCap: number } | null | undefined;
+    supplyCaps?: { usdCap: number; nativeCap: number } | null;
   };
   secondary?: {
     value: BigNumber;
@@ -65,6 +65,8 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
         </VStack>
       }
       maxWidth="400px"
+      placement="top-end"
+      hideArrow={true}
     >
       <VStack alignItems="flex-end" spacing={1}>
         <HStack spacing={2}>
