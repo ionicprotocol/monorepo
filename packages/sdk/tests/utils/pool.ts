@@ -34,7 +34,7 @@ export async function createPool({
     signer = bob;
   }
   if (!priceOracleAddress) {
-    const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, signer);
+    const mpo = sdk.createMasterPriceOracle(signer);
     priceOracleAddress = mpo.address;
   }
   if (enforceWhitelist && whitelist.length === 0) {

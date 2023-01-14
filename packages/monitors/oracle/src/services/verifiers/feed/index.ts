@@ -1,7 +1,7 @@
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
-import { logger } from "../../..";
+import { logger } from "../../../logger";
 import {
   FeedVerifierConfig,
   OracleFailure,
@@ -27,8 +27,8 @@ export class FeedVerifier extends AbstractOracleVerifier {
 
     try {
       const oracleAddress = await this.mpo.callStatic.oracles(this.asset.underlying);
-      const { oracles, provider } = this.sdk;
-      this.underlyingOracle = new Contract(oracleAddress, oracles[this.oracleType].abi, provider);
+      const { chainDeployment, provider } = this.sdk;
+      this.underlyingOracle = new Contract(oracleAddress, chainDeployment[this.oracleType].abi, provider);
       return [this, null];
     } catch (e) {
       const msg = `No oracle found for asset ${this.asset.symbol} (${this.asset.underlying})`;
