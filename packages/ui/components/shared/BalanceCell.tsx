@@ -170,7 +170,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
         {ratio ? (
           <Progress
             width="100%"
-            height={2}
+            height={1}
             borderRadius="2px"
             value={ratio}
             colorScheme={ratio <= 75 ? 'green' : ratio <= 90 ? 'yellow' : 'red'}
