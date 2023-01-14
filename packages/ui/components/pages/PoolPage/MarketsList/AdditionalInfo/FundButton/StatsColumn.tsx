@@ -142,7 +142,7 @@ export const StatsColumn = ({
           <Text flexShrink={0} size="sm">
             Borrowed in Market:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" width="100%">
+          <HStack justifyContent="flex-end" width="100%">
             <Text
               variant="tnumber"
               color={
@@ -152,6 +152,8 @@ export const StatsColumn = ({
                   ? 'fail'
                   : undefined
               }
+              textAlign="right"
+              width="min-content"
             >
               {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
                 borrowLimitMarket || 0
@@ -168,15 +170,21 @@ export const StatsColumn = ({
                     ? 'fail'
                     : undefined
                 }
+                textAlign="right"
+                width="min-content"
               >
                 {`${smallUsdFormatter(
                   Math.max(updatedAsset.borrowBalanceFiat, 0)
                 )} of ${smallUsdFormatter(updatedBorrowLimitMarket || 0)}`}
               </Text>
             ) : (
-              <Skeleton display="inline">{`${smallUsdFormatter(
-                asset.borrowBalanceFiat
-              )} of ${smallUsdFormatter(borrowLimitMarket || 0)}`}</Skeleton>
+              <Skeleton display="inline">
+                <Text textAlign="right" width="min-content">
+                  {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
+                    borrowLimitMarket || 0
+                  )}`}
+                </Text>
+              </Skeleton>
             )}
           </HStack>
         </HStack>
@@ -185,7 +193,7 @@ export const StatsColumn = ({
           <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" width="100%">
+          <HStack justifyContent="flex-end" width="100%">
             <Text
               variant="tnumber"
               color={
@@ -197,6 +205,8 @@ export const StatsColumn = ({
                     : 'warn'
                   : undefined
               }
+              textAlign="right"
+              width="min-content"
             >
               {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}
             </Text>
@@ -213,15 +223,21 @@ export const StatsColumn = ({
                       : 'warn'
                     : undefined
                 }
+                textAlign="right"
+                width="min-content"
               >
                 {`${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
                   updatedBorrowLimitTotal || 0
                 )}`}
               </Text>
             ) : (
-              <Skeleton display="inline">{`${smallUsdFormatter(
-                totalBorrows
-              )} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}</Skeleton>
+              <Skeleton display="inline">
+                <Text textAlign="right" width="min-content">
+                  {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(
+                    borrowLimitTotal || 0
+                  )}`}
+                </Text>
+              </Skeleton>
             )}
           </HStack>
         </HStack>

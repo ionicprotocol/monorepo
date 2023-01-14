@@ -1,8 +1,8 @@
 import { BigNumber, utils } from "ethers";
 
-import { logger } from "../../..";
 import { getAssetPriceCacheData } from "../../../controllers";
 import { insertAssetPriceCacheData } from "../../../controllers/assetPriceCache";
+import { logger } from "../../../logger";
 import {
   AssetPriceCache,
   OracleFailure,

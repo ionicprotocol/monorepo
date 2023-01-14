@@ -97,22 +97,20 @@ export type BaseConfig = {
   adminPrivateKey: string;
   adminAccount: string;
   discordWebhookUrl: string;
+  service: Services;
 };
 
 export type FeedVerifierConfig = BaseConfig & {
   defaultDeviationThreshold: BigNumber;
   maxObservationDelay: number;
-  runInterval: number;
   defaultMinPeriod: BigNumber;
 };
 
 export type PriceVerifierConfig = BaseConfig & {
   defaultMaxPriceDeviation: number;
-  runInterval: number;
 };
 
 export type PriceChangeVerifierConfig = BaseConfig & {
-  runInterval: number;
   priceDeviationPeriods: DeviationPeriodConfig;
 };
 

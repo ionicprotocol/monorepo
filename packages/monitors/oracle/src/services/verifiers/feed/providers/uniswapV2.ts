@@ -1,6 +1,6 @@
 import { Contract } from "ethers";
 
-import { logger } from "../../../..";
+import { logger } from "../../../../logger";
 import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyUniswapV2PriceFeed(
