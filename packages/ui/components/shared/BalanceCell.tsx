@@ -8,38 +8,38 @@ import { longFormat, midFormat, smallFormatter } from '@ui/utils/bigUtils';
 interface BalanceCellProps {
   primary: {
     value: number;
-    supplyCaps?: { usdCap: number; nativeCap: number } | null;
   };
   secondary?: {
     value: BigNumber;
     decimals: number;
     symbol: string;
   };
+  supplyCaps?: { usdCap: number; nativeCap: number } | null;
 }
 
-export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
+export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps) => {
   const { cCard } = useColors();
   const ratio =
-    primary.supplyCaps && primary.supplyCaps.usdCap
-      ? parseInt(((primary.value * 100) / primary.supplyCaps.usdCap).toString())
+    supplyCaps && supplyCaps.usdCap
+      ? parseInt(((primary.value * 100) / supplyCaps.usdCap).toString())
       : undefined;
 
   return (
     <PopoverTooltip
       body={
         <VStack alignItems="flex-start">
-          {primary.supplyCaps && <Text mb={4}>This asset has a restricted supply amount.</Text>}
+          {supplyCaps && <Text mb={4}>This asset has a restricted supply amount.</Text>}
           <HStack>
             <Text variant="tnumber" fontWeight="bold">
               ${longFormat(primary.value)}
             </Text>
-            {primary.supplyCaps && (
+            {supplyCaps && (
               <>
                 <Text size="xs" variant="tnumber">
                   /
                 </Text>
                 <Text size="xs" variant="tnumber">
-                  ${midFormat(primary.supplyCaps.usdCap)}
+                  ${midFormat(supplyCaps.usdCap)}
                 </Text>
               </>
             )}
@@ -51,12 +51,12 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
                   parseFloat(utils.formatUnits(secondary.value, secondary.decimals))
                 )} ${secondary.symbol}`}
               </Text>
-              {primary.supplyCaps && (
+              {supplyCaps && (
                 <>
                   <Text size="xs" variant="tnumber">
                     /
                   </Text>
-                  <Text size="xs" variant="tnumber">{`${midFormat(primary.supplyCaps.nativeCap)} ${
+                  <Text size="xs" variant="tnumber">{`${midFormat(supplyCaps.nativeCap)} ${
                     secondary.symbol
                   }`}</Text>
                 </>
@@ -80,7 +80,7 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
               {smallFormatter.format(primary.value)}
             </Text>
           </HStack>
-          {primary.supplyCaps && (
+          {supplyCaps && (
             <Text
               color={cCard.txtColor}
               size="sm"
@@ -91,7 +91,7 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
               {'/'}
             </Text>
           )}
-          {primary.supplyCaps && (
+          {supplyCaps && (
             <HStack spacing={0.5}>
               <Text
                 color={cCard.txtColor}
@@ -109,7 +109,7 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
                 variant="tnumber"
                 opacity={0.6}
               >
-                {midFormat(primary.supplyCaps.usdCap)}
+                {midFormat(supplyCaps.usdCap)}
               </Text>
             </HStack>
           )}
@@ -134,7 +134,7 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
               </Text>
             </HStack>
 
-            {primary.supplyCaps && (
+            {supplyCaps && (
               <Text
                 color={cCard.txtColor}
                 size="sm"
@@ -145,10 +145,10 @@ export const BalanceCell = ({ primary, secondary }: BalanceCellProps) => {
                 {'/'}
               </Text>
             )}
-            {primary.supplyCaps && (
+            {supplyCaps && (
               <HStack spacing={0.5}>
                 <Text variant="tnumber" size="xs" opacity={0.6}>
-                  {midFormat(primary.supplyCaps.nativeCap)}
+                  {midFormat(supplyCaps.nativeCap)}
                 </Text>
                 <Text
                   variant="tnumber"

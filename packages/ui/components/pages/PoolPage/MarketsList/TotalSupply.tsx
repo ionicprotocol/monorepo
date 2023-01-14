@@ -24,13 +24,13 @@ export const TotalSupply = ({
     <BalanceCell
       primary={{
         value: asset.totalSupplyFiat,
-        supplyCaps,
       }}
       secondary={{
         value: asset.totalSupply,
         symbol: tokenData?.symbol || '',
         decimals: asset.underlyingDecimals.toNumber(),
       }}
+      supplyCaps={supplyCaps}
     />
   );
 };
