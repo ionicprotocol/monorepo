@@ -1,3 +1,4 @@
+import { chainIdToConfig } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { Contract } from "ethers";
@@ -6,7 +7,7 @@ import { restore } from "sinon";
 import { configs } from "../../src/config";
 import { FeedVerifier } from "../../src/services/verifiers";
 import { AbstractOracleVerifier } from "../../src/services/verifiers/base";
-import { chainIdToConfig, Services } from "../../src/types";
+import { Services } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 

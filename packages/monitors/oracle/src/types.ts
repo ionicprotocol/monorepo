@@ -1,6 +1,5 @@
-import { arbitrum, bsc, evmos, moonbeam, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
-import { ChainConfig, SupportedAsset } from "@midas-capital/types";
+import { SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Contract } from "ethers";
 
 import { FeedVerifier, PriceChangeVerifier, PriceVerifier } from "./services";
@@ -112,14 +111,6 @@ export type PriceVerifierConfig = BaseConfig & {
 
 export type PriceChangeVerifierConfig = BaseConfig & {
   priceDeviationPeriods: DeviationPeriodConfig;
-};
-
-export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
-  [bsc.chainId]: bsc,
-  [polygon.chainId]: polygon,
-  [moonbeam.chainId]: moonbeam,
-  [arbitrum.chainId]: arbitrum,
-  [evmos.chainId]: evmos,
 };
 
 export type VerificationErrorCache = Array<{ asset: SupportedAsset; error: PriceFeedInvalidity; timestamp: number }>;

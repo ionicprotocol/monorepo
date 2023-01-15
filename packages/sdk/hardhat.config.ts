@@ -15,6 +15,7 @@ import "./tasks/plugin";
 import "./tasks/pool";
 import "./tasks/swap";
 import "./tasks/admin";
+import "./tasks/validate";
 
 import "./tasks/flywheel";
 import "./tasks/liquidation";
