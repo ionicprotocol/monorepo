@@ -451,7 +451,8 @@ export const MarketsList = ({
     <Box>
       {/* Supply & Borrow Balance */}
       <Flex
-        m={4}
+        mx={4}
+        mt={4}
         gap={4}
         flexDirection="row"
         flexWrap="wrap"
@@ -461,7 +462,7 @@ export const MarketsList = ({
       </Flex>
       {/* Borrow Limit */}
       {assets.some((asset) => asset.membership) && (
-        <Flex mx={4}>
+        <Flex mx={4} mt={4}>
           <CollateralRatioBar
             assets={assets}
             borrowFiat={borrowBalanceFiat}
