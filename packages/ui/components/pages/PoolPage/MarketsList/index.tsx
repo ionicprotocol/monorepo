@@ -461,15 +461,13 @@ export const MarketsList = ({
         <UserStats poolData={poolData} />
       </Flex>
       {/* Borrow Limit */}
-      {assets.some((asset) => asset.membership) && (
-        <Flex mx={4} mt={4}>
-          <CollateralRatioBar
-            assets={assets}
-            borrowFiat={borrowBalanceFiat}
-            poolChainId={poolChainId}
-          />
-        </Flex>
-      )}
+      <Flex mx={4} mt={4}>
+        <CollateralRatioBar
+          assets={assets}
+          borrowFiat={borrowBalanceFiat}
+          poolChainId={poolChainId}
+        />
+      </Flex>
       {/* Table Filter and Search */}
       <Flex
         justifyContent={['center', 'center', 'space-between']}
