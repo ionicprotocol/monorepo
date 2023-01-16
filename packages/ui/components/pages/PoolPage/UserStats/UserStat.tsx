@@ -57,7 +57,7 @@ export const UserStat = ({
     <HStack>
       <StatNumber fontWeight="bold">{value ? value : <Skeleton mt="2">Num</Skeleton>}</StatNumber>
       {secondValue && (
-        <StatNumber fontWeight="bold" opacity={0.6}>
+        <StatNumber fontWeight="bold" opacity={0.4}>
           {secondValue}
         </StatNumber>
       )}
