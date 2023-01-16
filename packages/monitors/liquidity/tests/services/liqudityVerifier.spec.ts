@@ -1,4 +1,4 @@
-import { bsc } from "@midas-capital/chains";
+import { bsc, chainIdToConfig } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { assetFilter, assetSymbols, SupportedChains, underlying } from "@midas-capital/types";
 import { restore } from "sinon";
@@ -6,7 +6,7 @@ import { restore } from "sinon";
 import { configs } from "../../src/config";
 import { AMMLiquidityVerifier } from "../../src/services/monitor";
 import { AbstractLiquidityVerifier } from "../../src/services/monitor/base";
-import { chainIdToConfig, Services } from "../../src/types";
+import { Services } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 

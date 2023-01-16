@@ -1,4 +1,4 @@
-import * as ChainConfigs from '@midas-capital/chains';
+import { chainIdToConfig } from '@midas-capital/chains';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { SupportedChains } from 'types/dist/cjs';
@@ -16,10 +16,7 @@ async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string
 
   await Promise.all(
     chainIds.map(async (id) => {
-      const config = Object.values(ChainConfigs).find(
-        (config) => config.chainId.toString() === id.toString()
-      );
-
+      const config = chainIdToConfig[id];
       if (config) {
         const _cgId = config.specificParams.cgId;
         try {
@@ -37,7 +34,7 @@ async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string
         }
 
         if (!prices[id.toString()]) {
-          if (config.chainId === ChainConfigs.neondevnet.chainId) {
+          if (config.chainId === chainIdToConfig[SupportedChains.neon_devnet].chainId) {
             prices[id.toString()] = {
               value: 0.05,
               symbol: config.specificParams.metadata.nativeCurrency.symbol,

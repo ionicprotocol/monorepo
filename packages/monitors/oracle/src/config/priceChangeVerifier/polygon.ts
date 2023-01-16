@@ -1,6 +1,7 @@
+import { chainIdToConfig } from "@midas-capital/chains";
 import { assetFilter, assetSymbols, SupportedChains } from "@midas-capital/types";
 
-import { chainIdToConfig, PriceChangeVerifierAsset } from "../../types";
+import { PriceChangeVerifierAsset } from "../../types";
 
 import {
   lsdPriceChangeDefaults,

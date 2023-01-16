@@ -1,4 +1,5 @@
 import { JsonRpcProvider } from '@ethersproject/providers';
+import { chainIdToConfig } from '@midas-capital/chains';
 import { MidasSdk } from '@midas-capital/sdk';
 import Security from '@midas-capital/security';
 import { SupportedChains } from '@midas-capital/types';
@@ -17,7 +18,6 @@ import {
 import { Chain, useAccount, useDisconnect, useNetwork, useSigner } from 'wagmi';
 
 import { useEnabledChains } from '@ui/hooks/useChainConfig';
-import { chainIdToConfig } from '@ui/types/ChainMetaData';
 
 export interface MultiMidasContextData {
   sdks: MidasSdk[];
