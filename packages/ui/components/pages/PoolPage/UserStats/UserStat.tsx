@@ -2,8 +2,8 @@ import {
   Stat as ChakraStat,
   StatLabel as ChakraStatLabel,
   StatNumber as ChakraStatNumber,
-  HStack,
   Skeleton,
+  Stack,
   StatLabelProps,
   StatNumberProps,
   StatProps,
@@ -21,6 +21,18 @@ const StatNumber = (props: StatNumberProps) => {
   return (
     <ChakraStatNumber
       fontSize={['2xl', '2xl', '3xl', '3xl']}
+      fontWeight="bold"
+      color={cPage.primary.txtColor}
+      {...props}
+    />
+  );
+};
+
+const SecondStatNumber = (props: StatNumberProps) => {
+  const { cPage } = useColors();
+  return (
+    <ChakraStatNumber
+      fontSize={['xl', 'xl', '2xl', '2xl']}
       fontWeight="bold"
       color={cPage.primary.txtColor}
       {...props}
@@ -54,13 +66,14 @@ export const UserStat = ({
 }) => (
   <Stat borderRadius={12}>
     <StatLabel>{label}</StatLabel>
-    <HStack>
+    <Stack
+      direction={{ base: 'column', lg: 'row' }}
+      justifyItems="center"
+      gap={0}
+      alignItems={{ base: 'flex-start', lg: 'center' }}
+    >
       <StatNumber fontWeight="bold">{value ? value : <Skeleton mt="2">Num</Skeleton>}</StatNumber>
-      {secondValue && (
-        <StatNumber fontWeight="bold" opacity={0.4}>
-          {secondValue}
-        </StatNumber>
-      )}
-    </HStack>
+      {secondValue && <SecondStatNumber opacity={0.4}>{secondValue}</SecondStatNumber>}
+    </Stack>
   </Stat>
 );
