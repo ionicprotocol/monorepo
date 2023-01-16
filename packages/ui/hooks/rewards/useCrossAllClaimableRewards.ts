@@ -18,10 +18,10 @@ export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
             if (sdk && address) {
               return { [chainId.toString()]: await sdk.getFlywheelClaimableRewards(address) };
             } else {
-              return { [chainId.toString()]: null };
+              throw new Error('sdk or address not available');
             }
           } catch (e) {
-            console.warn('unable to fetch rewards for chainid: ', chainId);
+            console.warn('unable to fetch rewards for chainId: ', chainId, e);
 
             return { [chainId.toString()]: null };
           }
