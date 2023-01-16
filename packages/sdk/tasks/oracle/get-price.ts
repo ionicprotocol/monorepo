@@ -9,7 +9,7 @@ task("oracle:get-price", "Get price of token")
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const mpo = await ethers.getContractAt("MasterPriceOracle", sdk.oracles.MasterPriceOracle.address, deployer);
+    const mpo = sdk.createMasterPriceOracle(deployer);
 
     console.log("oracle: ", mpo.address);
     if (_address) {

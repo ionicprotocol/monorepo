@@ -1,5 +1,11 @@
 {
   "rules": {
+    "import/no-unresolved": [
+      "error",
+      {
+        "ignore": ["aws-lambda"]
+      }
+    ],
     "import/order": [
       "error",
       {

@@ -10041,7 +10041,7 @@
       ]
     },
     "AnkrBNBInterestRateModel": {
-      "address": "0x82652E008343a96bC86ceAa52b2267067288B975",
+      "address": "0xeAA782fA732FEf5A5B127EA70d1b656216717353",
       "abi": [
         {
           "inputs": [
@@ -10072,7 +10072,12 @@
             },
             {
               "internalType": "address",
-              "name": "_abnbr",
+              "name": "_rate_provider",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "_abond",
               "type": "address"
             }
           ],
@@ -10106,7 +10111,7 @@
         },
         {
           "inputs": [],
-          "name": "ANKR_BNB_R",
+          "name": "ANKR_BOND",
           "outputs": [
             {
               "internalType": "address",
@@ -10119,311 +10124,7 @@
         },
         {
           "inputs": [],
-          "name": "baseRateMultiplier",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "blocksPerYear",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "day",
-          "outputs": [
-            {
-              "internalType": "uint8",
-              "name": "",
-              "type": "uint8"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getAnkrRate",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getBaseRatePerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "cash",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrows",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "reserves",
-              "type": "uint256"
-            }
-          ],
-          "name": "getBorrowRate",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "cash",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrows",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "reserves",
-              "type": "uint256"
-            }
-          ],
-          "name": "getBorrowRatePostKink",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "getMultiplierPerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "cash",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrows",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "reserves",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "reserveFactorMantissa",
-              "type": "uint256"
-            }
-          ],
-          "name": "getSupplyRate",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "isInterestRateModel",
-          "outputs": [
-            {
-              "internalType": "bool",
-              "name": "",
-              "type": "bool"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "jumpMultiplierPerBlock",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [],
-          "name": "kink",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        },
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "cash",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "borrows",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "reserves",
-              "type": "uint256"
-            }
-          ],
-          "name": "utilizationRate",
-          "outputs": [
-            {
-              "internalType": "uint256",
-              "name": "",
-              "type": "uint256"
-            }
-          ],
-          "stateMutability": "pure",
-          "type": "function"
-        }
-      ]
-    },
-    "AnkrCertificateInterestRateModel": {
-      "address": "0xEb9Eb811174d99DCbe936937992a2cE66DEA293c",
-      "abi": [
-        {
-          "inputs": [
-            {
-              "internalType": "uint256",
-              "name": "_blocksPerYear",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_baseRateMultiplier",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "_jumpMultiplierPerYear",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint256",
-              "name": "kink_",
-              "type": "uint256"
-            },
-            {
-              "internalType": "uint8",
-              "name": "_day",
-              "type": "uint8"
-            },
-            {
-              "internalType": "address",
-              "name": "_acert",
-              "type": "address"
-            }
-          ],
-          "stateMutability": "nonpayable",
-          "type": "constructor"
-        },
-        {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "blocksPerYear",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "baseRateMultiplier",
-              "type": "uint256"
-            },
-            {
-              "indexed": false,
-              "internalType": "uint256",
-              "name": "kink",
-              "type": "uint256"
-            }
-          ],
-          "name": "NewInterestParams",
-          "type": "event"
-        },
-        {
-          "inputs": [],
-          "name": "ANKR_CERT",
+          "name": "ANKR_RATE_PROVIDER",
           "outputs": [
             {
               "internalType": "address",
@@ -42262,7 +41963,7 @@
       ]
     },
     "ChainlinkPriceOracleV2": {
-      "address": "0xc7AA1d1DD369F535b81F23F43e39800814486042",
+      "address": "0x939321650F2a112d51B29d0445cd828749ac46f4",
       "abi": [
         {
           "inputs": [
@@ -47206,7 +46907,7 @@
       ]
     },
     "DiaPriceOracle": {
-      "address": "0x46FB169FD5900821Fc3B775504AfAcEfd642fa63",
+      "address": "0x863D4F7FA3618fb1D4A94F28B5b74a30c337b9C7",
       "abi": [
         {
           "inputs": [
@@ -63470,7 +63171,7 @@
       ]
     },
     "FusePoolLens": {
-      "address": "0x6f4E0b5405f3751F7327Cf8095004c34FC307F55",
+      "address": "0x7Ac4e3a34Cb7f5260eA365Bef301dDcc691E7712",
       "abi": [
         {
           "anonymous": false,
@@ -63493,6 +63194,45 @@
               "internalType": "contract FusePoolDirectory",
               "name": "",
               "type": "address"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "contract ICToken",
+              "name": "asset",
+              "type": "address"
+            }
+          ],
+          "name": "getBorrowAndSupplyCapsForAsset",
+          "outputs": [
+            {
+              "internalType": "address[]",
+              "name": "collateral",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "borrowCapsPerCollateral",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "bool[]",
+              "name": "collateralBlacklisted",
+              "type": "bool[]"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalBorrowCap",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "totalSupplyCap",
+              "type": "uint256"
             }
           ],
           "stateMutability": "view",
@@ -67346,6 +67086,34 @@
           "inputs": [
             {
               "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "stellaswapV2Call",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
               "name": "newOwner",
               "type": "address"
             }
@@ -67407,7 +67175,7 @@
       ]
     },
     "FuseSafeLiquidator_Implementation": {
-      "address": "0x948620764B0cf8CCAb120A0152a91F66FFA51108",
+      "address": "0xF9C40b861D7c7a98f13d075baDc540814cf0CAD9",
       "abi": [
         {
           "anonymous": false,
@@ -68085,6 +67853,34 @@
               "type": "uint256"
             }
           ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "sender",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount0",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount1",
+              "type": "uint256"
+            },
+            {
+              "internalType": "bytes",
+              "name": "data",
+              "type": "bytes"
+            }
+          ],
+          "name": "stellaswapV2Call",
+          "outputs": [],
           "stateMutability": "nonpayable",
           "type": "function"
         },

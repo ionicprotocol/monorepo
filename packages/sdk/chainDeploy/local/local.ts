@@ -84,16 +84,6 @@ export const deploy = async ({ ethers, getNamedAccounts, deployments, run }: Cha
   // rewards
   deployConfig.dynamicFlywheels[0].rewardToken = touchToken.address;
 
-  ////
-  //// ORACLES
-  const simplePO = await deployments.deploy("SimplePriceOracle", {
-    from: bob,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  console.log("SimplePriceOracle: ", simplePO.address);
-
   const masterPriceOracle = (await ethers.getContract("MasterPriceOracle", deployer)) as MasterPriceOracle;
 
   const fixedNativePriceOracle = (await ethers.getContract(

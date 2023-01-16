@@ -1,4 +1,4 @@
-import { arbitrum, bsc, moonbeam, polygon } from "@midas-capital/chains";
+import { arbitrum, bsc, evmos, moonbeam, polygon } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig, SupportedAsset } from "@midas-capital/types";
 import { BigNumber, Contract } from "ethers";
@@ -12,6 +12,19 @@ export enum Services {
   PriceVerifier = "price-verifier",
   PriceChangeVerifier = "price-change-verifier",
 }
+
+export enum PriceChangeKind {
+  SHORT = "SHORT",
+  LONG = "LONG",
+}
+
+export type DeviationPeriodConfig = {
+  [key in PriceChangeKind]: number;
+};
+
+export type DeviationThresholdConfig = {
+  [key in PriceChangeKind]: number;
+};
 
 export type ServiceConfig = FeedVerifierConfig | PriceVerifierConfig | PriceChangeVerifierConfig;
 
@@ -34,7 +47,13 @@ export enum OracleFailure {
   NO_ORACLE_FOUND = "NO_ORACLE_FOUND",
 }
 
-export type Failure = InvalidReason | OracleFailure;
+export enum OraclePriceVerifierFailure {
+  SHORT_PRICE_DEVIATION_ABOVE_THRESHOLD = "SHORT_PRICE_DEVIATION_ABOVE_THRESHOLD",
+  LONG_PRICE_DEVIATION_ABOVE_THRESHOLD = "LONG_PRICE_DEVIATION_ABOVE_THRESHOLD",
+  CACHE_FAILURE = "CACHE_FAILURE",
+}
+
+export type Failure = InvalidReason | OracleFailure | OraclePriceVerifierFailure;
 
 export type PriceFeedInvalidity = {
   invalidReason: Failure;
@@ -74,31 +93,33 @@ export type BaseConfig = {
   rpcUrl: string;
   supabaseUrl: string;
   supabasePublicKey: string;
+  supabaseOracleCircuitBreakerTableName: string;
   adminPrivateKey: string;
   adminAccount: string;
-  supabaseOracleMonitorTableName: string;
   discordWebhookUrl: string;
+  service: Services;
 };
 
 export type FeedVerifierConfig = BaseConfig & {
   defaultDeviationThreshold: BigNumber;
   maxObservationDelay: number;
-  runInterval: number;
   defaultMinPeriod: BigNumber;
 };
 
 export type PriceVerifierConfig = BaseConfig & {
-  maxPriceDeviation: number;
-  runInterval: number;
+  defaultMaxPriceDeviation: number;
 };
 
-export type PriceChangeVerifierConfig = PriceVerifierConfig;
+export type PriceChangeVerifierConfig = BaseConfig & {
+  priceDeviationPeriods: DeviationPeriodConfig;
+};
 
 export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
   [bsc.chainId]: bsc,
   [polygon.chainId]: polygon,
   [moonbeam.chainId]: moonbeam,
   [arbitrum.chainId]: arbitrum,
+  [evmos.chainId]: evmos,
 };
 
 export type VerificationErrorCache = Array<{ asset: SupportedAsset; error: PriceFeedInvalidity; timestamp: number }>;
@@ -108,3 +129,31 @@ export enum ErrorKind {
   init = "init",
   verification = "verification",
 }
+
+export type FeedVerifierAsset = SupportedAsset & {
+  minPeriod?: BigNumber;
+  deviationThreshold?: BigNumber;
+};
+
+export type PriceVerifierAsset = SupportedAsset & {
+  maxPriceDeviation?: number;
+};
+
+export type PriceChangeVerifierAsset = SupportedAsset & {
+  priceDeviationThresholds: DeviationThresholdConfig;
+};
+
+export type OracleVerifierAsset = FeedVerifierAsset | PriceVerifierAsset | PriceChangeVerifierAsset;
+
+// Supabase
+
+export type AssetPriceCache = {
+  asset_address: string;
+  markets_paused: boolean;
+  first_observation_ts: string;
+  second_observation_ts: string;
+  first_observation_value_ether: number;
+  second_observation_value_ether: number;
+  first_observation_deviation: number;
+  second_observation_deviation: number;
+};

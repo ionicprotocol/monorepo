@@ -1,14 +1,16 @@
-FROM node:16.13-alpine as base
+FROM public.ecr.aws/lambda/nodejs:16 as node
 
 FROM ghcr.io/foundry-rs/foundry:nightly-6ad60c82a93cd81d63e0a69dc97f2267157b6631 as foundry
-
 
 FROM node as build
 
 COPY --from=foundry /usr/local/bin/forge /usr/local/bin/forge
 
-RUN apt update
-RUN apt install git
+RUN yum update -y 
+RUN yum install -y git 
+
+RUN npm install --global yarn
+RUN yarn set version berry
 
 ENV HOME=/tmp/build \
     PATH=/tmp/build/node_modules/.bin:./node_modules/.bin:${PATH}
@@ -33,12 +35,12 @@ COPY packages/sdk/package.json /tmp/build/packages/sdk/
 COPY packages/types/package.json /tmp/build/packages/types/
 COPY packages/chains/package.json /tmp/build/packages/chains/
 COPY packages/monitors/oracle/package.json /tmp/build/packages/monitors/oracle/
-
-RUN touch /tmp/build/yarn.lock
+COPY yarn.lock /tmp/build/
 
 # ----- Install dependencies -----
 # Install dependencies exactly as in the yarn.lock file - no updates.
-RUN yarn install
+RUN yarn install --inline-builds --mode=skip-build
+# RUN yarn install
 
 # ----- Copy source and all other files that affect lint, test, build -----
 COPY packages/sdk /tmp/build/packages/sdk
@@ -46,7 +48,7 @@ COPY packages/types /tmp/build/packages/types
 COPY packages/chains /tmp/build/packages/chains
 COPY packages/monitors/oracle /tmp/build/packages/monitors/oracle
 
-# ----- build -----
+# # ----- build -----
 RUN yarn build:deploy:oracles-monitor
 
 # ----------------------------------------
@@ -55,10 +57,11 @@ RUN yarn build:deploy:oracles-monitor
 
 FROM node as runtime
 
+ENV NODE_ENV=production
+
 # ----- Copy files required at runtime by the app -----
-COPY --from=build --chown=node:node /tmp/build /home/node
+WORKDIR ${LAMBDA_TASK_ROOT}
+COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-WORKDIR /home/node/packages/monitors/oracle
-
-CMD ["node", "build/index.js"]
+CMD ["packages/monitors/oracle/build/src/index.handler"]
 

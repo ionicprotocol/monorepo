@@ -2,6 +2,7 @@ import { constants, Contract } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { Comptroller } from "../../typechain/Comptroller";
+import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
 import { Unitroller } from "../../typechain/Unitroller";
@@ -162,9 +163,6 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
   .addParam("enable", "If autoimplementations should be on or off", true, types.boolean)
   .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async ({ enable, admin }, { ethers }) => {
-    // @ts-ignore
-    const midasSdkModule = await import("../../tests/utils/midasSdk");
-    const sdk = await midasSdkModule.getOrCreateMidas();
     const signer = await ethers.getNamedSigner(admin);
 
     const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
@@ -172,9 +170,9 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
     for (let i = 0; i < pools.length; i++) {
       const pool = pools[i];
       console.log(`pool address ${pool.comptroller}`);
-      const comptroller = (await new Contract(
+      const comptroller = (await ethers.getContractAt(
+        "Comptroller.sol:Comptroller",
         pool.comptroller,
-        sdk.chainDeployment.Comptroller.abi,
         signer
       )) as Comptroller;
       const admin = await comptroller.callStatic.admin();
@@ -191,6 +189,37 @@ task("pools:all:autoimpl", "Toggle the autoimplementations flag of all managed p
         }
       } else {
         console.log(`autoimplementations for the pool is ${autoImplOn}`);
+      }
+    }
+  });
+
+task("pools:all:pause-guardian", "Sets the pause guardian for all pools that have a different address for it")
+  .addParam("replacingGuardian", "Address of the replacing pause guardian", undefined, types.string)
+  .addOptionalParam("admin", "Named account that is an admin of the pool", "deployer", types.string)
+  .setAction(async ({ replacingGuardian, admin }, { ethers }) => {
+    const signer = await ethers.getNamedSigner(admin);
+
+    const fusePoolDirectory = (await ethers.getContract("FusePoolDirectory", signer)) as FusePoolDirectory;
+    const [, pools] = await fusePoolDirectory.callStatic.getActivePools();
+    for (let i = 0; i < pools.length; i++) {
+      const pool = pools[i];
+      console.log(`pool address ${pool.comptroller}`);
+      const comptroller = (await ethers.getContractAt(
+        "ComptrollerFirstExtension",
+        pool.comptroller,
+        signer
+      )) as ComptrollerFirstExtension;
+      const pauseGuardian = await comptroller.callStatic.pauseGuardian();
+      console.log(`pool name ${pool.name} pause guardian ${pauseGuardian}`);
+      if (pauseGuardian != constants.AddressZero && pauseGuardian != replacingGuardian) {
+        const error = await comptroller.callStatic._setPauseGuardian(replacingGuardian);
+        if (error.isZero()) {
+          const tx = await comptroller._setPauseGuardian(replacingGuardian);
+          await tx.wait();
+          console.log(`set replacing guardian with tx ${tx.hash}`);
+        } else {
+          console.error(`will fail to set the pause guardian due to error ${error}`);
+        }
       }
     }
   });

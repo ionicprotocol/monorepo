@@ -1,3 +1,3 @@
-export { FeedVerifier } from "./feedVerifier";
-export { PriceVerifier } from "./priceVerifier";
-export { PriceChangeVerifier } from "./priceChangeVerifier";
+export { FeedVerifier } from "./feed";
+export { PriceVerifier } from "./price";
+export { PriceChangeVerifier } from "./priceChange";

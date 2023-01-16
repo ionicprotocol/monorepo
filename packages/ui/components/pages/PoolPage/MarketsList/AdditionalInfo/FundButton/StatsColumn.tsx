@@ -142,10 +142,9 @@ export const StatsColumn = ({
           <Text flexShrink={0} size="sm">
             Borrowed in Market:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" alignItems={'center'} width="100%">
+          <HStack justifyContent="flex-end" width="100%">
             <Text
               variant="tnumber"
-              textAlign="right"
               color={
                 updatedAsset?.borrowBalanceFiat &&
                 updatedBorrowLimitMarket &&
@@ -153,6 +152,8 @@ export const StatsColumn = ({
                   ? 'fail'
                   : undefined
               }
+              textAlign="right"
+              width="min-content"
             >
               {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
                 borrowLimitMarket || 0
@@ -161,7 +162,6 @@ export const StatsColumn = ({
             <Text>{'→'}</Text>
             {updatedAssets && updatedAsset ? (
               <Text
-                textAlign="left"
                 variant="tnumber"
                 color={
                   updatedAsset?.borrowBalanceFiat &&
@@ -170,15 +170,21 @@ export const StatsColumn = ({
                     ? 'fail'
                     : undefined
                 }
+                textAlign="right"
+                width="min-content"
               >
                 {`${smallUsdFormatter(
                   Math.max(updatedAsset.borrowBalanceFiat, 0)
                 )} of ${smallUsdFormatter(updatedBorrowLimitMarket || 0)}`}
               </Text>
             ) : (
-              <Skeleton display="inline">{`${smallUsdFormatter(
-                asset.borrowBalanceFiat
-              )} of ${smallUsdFormatter(borrowLimitMarket || 0)}`}</Skeleton>
+              <Skeleton display="inline">
+                <Text textAlign="right" width="min-content">
+                  {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
+                    borrowLimitMarket || 0
+                  )}`}
+                </Text>
+              </Skeleton>
             )}
           </HStack>
         </HStack>
@@ -187,10 +193,9 @@ export const StatsColumn = ({
           <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
-          <HStack spacing={1} justifyContent="flex-end" width="100%">
+          <HStack justifyContent="flex-end" width="100%">
             <Text
               variant="tnumber"
-              textAlign="right"
               color={
                 updatedTotalBorrows !== undefined &&
                 updatedBorrowLimitTotal &&
@@ -200,6 +205,8 @@ export const StatsColumn = ({
                     : 'warn'
                   : undefined
               }
+              textAlign="right"
+              width="min-content"
             >
               {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}
             </Text>
@@ -207,7 +214,6 @@ export const StatsColumn = ({
             {updatedAssets && updatedTotalBorrows !== undefined ? (
               <Text
                 variant="tnumber"
-                textAlign="left"
                 color={
                   updatedTotalBorrows !== undefined &&
                   updatedBorrowLimitTotal &&
@@ -217,15 +223,21 @@ export const StatsColumn = ({
                       : 'warn'
                     : undefined
                 }
+                textAlign="right"
+                width="min-content"
               >
                 {`${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
                   updatedBorrowLimitTotal || 0
                 )}`}
               </Text>
             ) : (
-              <Skeleton display="inline">{`${smallUsdFormatter(
-                totalBorrows
-              )} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}</Skeleton>
+              <Skeleton display="inline">
+                <Text textAlign="right" width="min-content">
+                  {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(
+                    borrowLimitTotal || 0
+                  )}`}
+                </Text>
+              </Skeleton>
             )}
           </HStack>
         </HStack>

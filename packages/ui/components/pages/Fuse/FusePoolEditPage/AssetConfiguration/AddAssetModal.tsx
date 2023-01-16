@@ -150,7 +150,7 @@ const AddAsset = ({
               spacing={2}
               justify="flex-start"
               width="100%"
-              height="200px"
+              maxHeight="200px"
               overflowY="auto"
               css={{
                 '&::-webkit-scrollbar': {
@@ -203,7 +203,7 @@ const AddAsset = ({
                   direction="column"
                   width="100%"
                   alignItems="center"
-                  height="400px"
+                  maxHeight="400px"
                   overflow="auto"
                   css={{
                     '&::-webkit-scrollbar': {
