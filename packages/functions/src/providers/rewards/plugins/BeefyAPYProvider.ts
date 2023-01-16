@@ -8,6 +8,7 @@ interface BeefyAPYResponse {
 
 interface BeefyVaultResponse {
   [key: string]: string | number | string[];
+  status: string;
 }
 
 class BeefyAPYProvider extends AbstractPluginAPYProvider {
@@ -43,6 +44,7 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     }
 
     let apy = this.beefyAPYs![beefyID];
+    let status = '';
     if (apy === undefined) {
       await functionsAlert(
         `BeefyAPYProvider: ${beefyID}`,
@@ -52,9 +54,15 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     }
 
     const vaultInfo = this.beefyVaults.find((vault) => vault.id === beefyID);
-    if (vaultInfo?.status === 'paused') {
-      apy = 0;
+
+    if(vaultInfo && vaultInfo.status) {
+      status = vaultInfo.status;
+
+      if (vaultInfo.status === 'paused') {
+        apy = 0;
+      }
     }
+    
 
     if (apy === 0) {
       console.warn(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
@@ -62,7 +70,7 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
       // await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
     }
 
-    return [{ apy, updated_at: new Date().toISOString(), plugin: pluginAddress }];
+    return [{ apy, status, updated_at: new Date().toISOString(), plugin: pluginAddress }];
   }
 }
 
