@@ -1,13 +1,13 @@
+import { NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import { constants, utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowCapForAssetForCollateral = (
   comptrollerAddress: string,
-  assets: MarketData[],
-  collateralAssets: MarketData[],
+  assets: NativePricedFuseAsset[],
+  collateralAssets: NativePricedFuseAsset[],
   poolChainId: number
 ) => {
   const sdk = useSdk(poolChainId);

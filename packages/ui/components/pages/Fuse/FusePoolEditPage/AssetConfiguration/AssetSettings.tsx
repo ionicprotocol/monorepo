@@ -41,6 +41,7 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
+  BORROW_CAPS,
   DEFAULT_DECIMALS,
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
@@ -52,6 +53,7 @@ import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useBorrowCapForAssetForCollateral } from '@ui/hooks/useBorrowCapForAssetForCollateral';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
@@ -103,6 +105,7 @@ export async function testForCTokenErrorAndSend(
 interface AssetSettingsProps {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
+  assets: NativePricedFuseAsset[];
   tokenData: TokenData;
   poolChainId: number;
 }
@@ -110,6 +113,7 @@ interface AssetSettingsProps {
 export const AssetSettings = ({
   comptrollerAddress,
   selectedAsset,
+  assets,
   poolChainId,
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
@@ -125,8 +129,15 @@ export const AssetSettings = ({
   const { cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isEditSupplyCaps, setIsEditSupplyCaps] = useState<boolean>(false);
+  const [isEditBorrowCaps, setIsEditBorrowCaps] = useState<boolean>(false);
+  const [borrowCaps, setBorrowCaps] = useState<{
+    asset: string;
+    collateralAsset: string;
+    borrowCap: number;
+  }>();
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
+
   const {
     control,
     handleSubmit,
@@ -141,6 +152,8 @@ export const AssetSettings = ({
       adminFee: ADMIN_FEE.DEFAULT,
       interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
       supplyCaps: SUPPLY_CAPS.DEFAULT,
+      collateralAsset: assets[0].cToken,
+      borrowCaps: BORROW_CAPS.DEFAULT,
     },
   });
 
@@ -152,10 +165,31 @@ export const AssetSettings = ({
     sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
   const watchSupplyCaps = Number(watch('supplyCaps', SUPPLY_CAPS.DEFAULT));
+  const watchBorrowCaps = Number(watch('borrowCaps', BORROW_CAPS.DEFAULT));
+  const watchCollateralAsset = assets[0];
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
   const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
+  const { data: borrowCapsPerCollateral } = useBorrowCapForAssetForCollateral(
+    comptrollerAddress,
+    [selectedAsset],
+    assets,
+    poolChainId
+  );
+
+  useEffect(() => {
+    if (borrowCapsPerCollateral && borrowCapsPerCollateral.length > 0) {
+      const _borrowCaps = borrowCapsPerCollateral.find(
+        (_borrowCaps) => _borrowCaps.collateralAsset === watchCollateralAsset.cToken
+      );
+
+      setBorrowCaps(_borrowCaps);
+    } else {
+      setBorrowCaps(undefined);
+    }
+  }, [borrowCapsPerCollateral, watchCollateralAsset]);
+
   useEffect(() => {
     if (cTokenData) {
       setValue(
@@ -166,8 +200,9 @@ export const AssetSettings = ({
       setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
       setValue('interestRateModel', cTokenData.interestRateModelAddress);
       setValue('supplyCaps', parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS)));
+      setValue('borrowCaps', borrowCaps ? borrowCaps.borrowCap : 0);
     }
-  }, [cTokenData, setValue]);
+  }, [cTokenData, setValue, borrowCaps]);
 
   const updateSupplyCaps = async ({ supplyCaps }: { supplyCaps: number }) => {
     if (!cTokenAddress || !currentSdk) return;
@@ -188,6 +223,29 @@ export const AssetSettings = ({
       handleGenericError(e, errorToast);
     } finally {
       setIsEditSupplyCaps(false);
+      setIsUpdating(false);
+    }
+  };
+
+  const updateBorrowCaps = async ({ borrowCaps }: { borrowCaps: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
+    setIsUpdating(true);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    try {
+      const tx = await comptroller._setMarketBorrowCaps(
+        [cTokenAddress],
+        [utils.parseUnits(borrowCaps.toString(), selectedAsset.underlyingDecimals)]
+      );
+      await tx.wait();
+      LogRocket.track('Fuse-UpdateBorrowCaps');
+
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated borrow caps!' });
+    } catch (e) {
+      handleGenericError(e, errorToast);
+    } finally {
+      setIsEditBorrowCaps(false);
       setIsUpdating(false);
     }
   };
@@ -347,6 +405,17 @@ export const AssetSettings = ({
     setIsEditSupplyCaps(false);
   };
 
+  const setBorrowCapsDefault = () => {
+    if (cTokenData) {
+      setValue(
+        'borrowCaps',
+        parseInt(utils.formatUnits(cTokenData.supplyCaps, selectedAsset.underlyingDecimals))
+      );
+    }
+
+    setIsEditSupplyCaps(false);
+  };
+
   const setReserveFactorDefault = () => {
     if (cTokenData) {
       setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
@@ -476,6 +545,162 @@ export const AssetSettings = ({
                 <Button
                   disabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditSupplyCaps(true)}
+                >
+                  Edit
+                </Button>
+              </ButtonGroup>
+            )}
+          </Flex>
+          <Divider />
+          <Flex
+            as="form"
+            w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
+            direction="column"
+            onSubmit={handleSubmit(updateBorrowCaps)}
+          >
+            <FormControl isInvalid={!!errors.borrowCaps}>
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="borrowCaps" margin={0}>
+                  <HStack>
+                    <Text size="md" width="max-content">
+                      Borrow Caps
+                    </Text>
+                    <SimpleTooltip label={'It shows the market borrow caps.'}>
+                      <InfoOutlineIcon ml={1} />
+                    </SimpleTooltip>
+                  </HStack>
+                </FormLabel>
+                <Spacer />
+                <Flex direction={{ base: 'column' }} gap={2}>
+                  <FormControl isInvalid={!!errors.interestRateModel}>
+                    <Flex
+                      w="100%"
+                      wrap="wrap"
+                      direction={{ base: 'column', sm: 'row' }}
+                      alignItems="center"
+                      gap={2}
+                    >
+                      <FormLabel htmlFor="interestRateModel" margin={0}>
+                        <HStack>
+                          <Text size="md">Collateral Asset</Text>
+                        </HStack>
+                      </FormLabel>
+                      <Column
+                        maxW="270px"
+                        mainAxisAlignment="flex-start"
+                        crossAxisAlignment="center"
+                      >
+                        <Select
+                          id="collateralAsset"
+                          {...register('collateralAsset', {
+                            required: 'collateralAsset is required',
+                          })}
+                          ml="auto"
+                          cursor="pointer"
+                          mt={{ base: 2, sm: 0 }}
+                          isDisabled={!isEditableAdmin}
+                        >
+                          {assets
+                            .filter((asset) => asset.cToken !== selectedAsset.cToken)
+                            .map((asset) => {
+                              return (
+                                <option
+                                  key={asset.cToken}
+                                  value={asset.cToken}
+                                  style={{ color: cSelect.txtColor }}
+                                >
+                                  {asset.underlyingSymbol}
+                                </option>
+                              );
+                            })}
+                        </Select>
+                        <FormErrorMessage marginBottom="-10px">
+                          {errors.collateralAsset && errors.collateralAsset.message}
+                        </FormErrorMessage>
+                      </Column>
+                    </Flex>
+                  </FormControl>
+                  <Controller
+                    control={control}
+                    name="borrowCaps"
+                    rules={{
+                      required: 'Borrow caps is required',
+                      min: {
+                        value: BORROW_CAPS.MIN,
+                        message: `Borrow caps must be at least ${BORROW_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
+                      },
+                    }}
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <InputGroup justifyContent="right">
+                        <NumberInput
+                          width={100}
+                          clampValueOnBlur={false}
+                          value={value === 0 && !isEditBorrowCaps ? 'Unlimited' : value}
+                          onChange={onChange}
+                          min={BORROW_CAPS.MIN}
+                          allowMouseWheel
+                          isDisabled={!isEditableAdmin}
+                          isReadOnly={!isEditBorrowCaps}
+                        >
+                          <NumberInputField
+                            paddingLeft={2}
+                            paddingRight={2}
+                            borderRightRadius={0}
+                            ref={ref}
+                            name={name}
+                            textAlign="center"
+                          />
+                        </NumberInput>
+                        <InputRightAddon px={2}>
+                          {selectedAsset.underlyingSymbol}{' '}
+                          {usdPrice &&
+                            value !== 0 &&
+                            `(${smallUsdFormatter(
+                              value *
+                                Number(
+                                  utils.formatUnits(selectedAsset.underlyingPrice, DEFAULT_DECIMALS)
+                                ) *
+                                usdPrice
+                            )})`}
+                        </InputRightAddon>
+                      </InputGroup>
+                    )}
+                  />
+                  <FormErrorMessage maxWidth="200px" marginBottom="-10px">
+                    {errors.borrowCaps && errors.borrowCaps.message}
+                  </FormErrorMessage>
+                </Flex>
+              </Flex>
+            </FormControl>
+            {isEditBorrowCaps ? (
+              <ButtonGroup gap={0} mt={2} alignSelf="end">
+                <Button
+                  type="submit"
+                  disabled={
+                    isUpdating ||
+                    !cTokenData ||
+                    watchBorrowCaps ===
+                      parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS))
+                  }
+                >
+                  Save
+                </Button>
+                <Button variant="silver" disabled={isUpdating} onClick={setBorrowCapsDefault}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            ) : (
+              <ButtonGroup gap={0} mt={2} alignSelf="end">
+                <Button
+                  disabled={isUpdating || !isEditableAdmin}
+                  onClick={() => setIsEditBorrowCaps(true)}
                 >
                   Edit
                 </Button>

@@ -121,6 +121,7 @@ const AssetConfiguration = ({
       <EditAssetSettings
         comptrollerAddress={comptrollerAddress}
         selectedAsset={selectedAsset}
+        assets={assets}
         poolChainId={poolChainId}
       />
     </Column>
