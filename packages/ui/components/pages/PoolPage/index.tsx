@@ -9,7 +9,6 @@ import { SupportedChains } from 'types/dist/cjs';
 import { UserStat } from './UserStats/UserStat';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
-import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar';
 import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
@@ -176,15 +175,6 @@ const PoolPage = memo(() => {
           )}
 
           <PoolStats poolData={data} />
-
-          {data && data.assets.some((asset) => asset.membership) && (
-            <CollateralRatioBar
-              assets={data.assets}
-              borrowFiat={data.totalBorrowBalanceFiat}
-              poolChainId={data.chainId}
-              mb={4}
-            />
-          )}
 
           <MidasBox overflowX="auto" width="100%" mb="4">
             {data &&

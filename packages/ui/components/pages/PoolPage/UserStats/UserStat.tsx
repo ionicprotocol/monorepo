@@ -2,6 +2,7 @@ import {
   Stat as ChakraStat,
   StatLabel as ChakraStatLabel,
   StatNumber as ChakraStatNumber,
+  HStack,
   Skeleton,
   StatLabelProps,
   StatNumberProps,
@@ -42,9 +43,24 @@ const Stat = (props: StatProps) => {
   );
 };
 
-export const UserStat = ({ value, label }: { value?: string; label: string }) => (
+export const UserStat = ({
+  value,
+  secondValue,
+  label,
+}: {
+  value?: string;
+  secondValue?: string;
+  label: string;
+}) => (
   <Stat borderRadius={12}>
     <StatLabel>{label}</StatLabel>
-    <StatNumber fontWeight="bold">{value ? value : <Skeleton mt="2">Num</Skeleton>}</StatNumber>
+    <HStack>
+      <StatNumber fontWeight="bold">{value ? value : <Skeleton mt="2">Num</Skeleton>}</StatNumber>
+      {secondValue && (
+        <StatNumber fontWeight="bold" opacity={0.6}>
+          {secondValue}
+        </StatNumber>
+      )}
+    </HStack>
   </Stat>
 );

@@ -52,7 +52,7 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
 
   const totalSupplyApy = useMemo(() => {
     if (totalSupplyApyPerAsset) {
-      if (poolData.totalSupplyBalanceNative === 0) return 0;
+      if (poolData.totalSupplyBalanceNative === 0) return { totalApy: 0, estimatedUsd: 0 };
 
       let _totalApy = 0;
       poolData.assets.map((asset) => {
@@ -61,15 +61,25 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           poolData.totalSupplyBalanceNative;
       });
 
-      return _totalApy * 100;
+      const _estimatedUsd = poolData.totalSupplyBalanceFiat * _totalApy;
+
+      return {
+        totalApy: _totalApy * 100,
+        estimatedUsd: _estimatedUsd,
+      };
     }
 
     return undefined;
-  }, [poolData.assets, poolData.totalSupplyBalanceNative, totalSupplyApyPerAsset]);
+  }, [
+    poolData.assets,
+    poolData.totalSupplyBalanceNative,
+    poolData.totalSupplyBalanceFiat,
+    totalSupplyApyPerAsset,
+  ]);
 
   const totalBorrowApy = useMemo(() => {
     if (borrowApyPerAsset) {
-      if (poolData.totalBorrowBalanceNative === 0) return 0;
+      if (poolData.totalBorrowBalanceNative === 0) return { totalApy: 0, estimatedUsd: 0 };
 
       let _totalApy = 0;
       poolData.assets.map((asset) => {
@@ -78,21 +88,26 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           poolData.totalBorrowBalanceNative;
       });
 
-      return _totalApy * 100;
+      const _estimatedUsd = poolData.totalBorrowBalanceFiat * _totalApy;
+
+      return {
+        totalApy: _totalApy * 100,
+        estimatedUsd: _estimatedUsd,
+      };
     }
 
     return undefined;
-  }, [poolData.assets, poolData.totalBorrowBalanceNative, borrowApyPerAsset]);
+  }, [
+    poolData.assets,
+    poolData.totalBorrowBalanceNative,
+    poolData.totalBorrowBalanceFiat,
+    borrowApyPerAsset,
+  ]);
 
   const { cPage } = useColors();
 
   return (
-    <Grid
-      templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
-      gap={4}
-      w="100%"
-      my={4}
-    >
+    <Grid templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} gap={4} w="100%">
       <Popover trigger="hover">
         <PopoverTrigger>
           <Flex>
@@ -194,7 +209,10 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           <Flex>
             <UserStat
               label="Effective Supply APY"
-              value={totalSupplyApy ? totalSupplyApy?.toFixed(2) + '%' : '-'}
+              value={totalSupplyApy ? totalSupplyApy.totalApy.toFixed(2) + '%' : '-'}
+              secondValue={
+                totalSupplyApy ? '~ ' + smallUsdFormatter(totalSupplyApy.estimatedUsd) : ''
+              }
             />
           </Flex>
         </PopoverTrigger>
@@ -214,7 +232,10 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
           <Flex>
             <UserStat
               label="Effective Borrow APY"
-              value={totalBorrowApy ? totalBorrowApy?.toFixed(2) + '%' : '-'}
+              value={totalBorrowApy ? totalBorrowApy.totalApy.toFixed(2) + '%' : '-'}
+              secondValue={
+                totalBorrowApy ? '~ ' + smallUsdFormatter(totalBorrowApy.estimatedUsd) : ''
+              }
             />
           </Flex>
         </PopoverTrigger>

@@ -41,6 +41,8 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
+import { CollateralRatioBar } from '../CollateralRatioBar';
+
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
@@ -449,8 +451,7 @@ export const MarketsList = ({
     <Box>
       {/* Supply & Borrow Balance */}
       <Flex
-        px="4"
-        mt={4}
+        m={4}
         gap={4}
         flexDirection="row"
         flexWrap="wrap"
@@ -458,7 +459,16 @@ export const MarketsList = ({
       >
         <UserStats poolData={poolData} />
       </Flex>
-
+      {/* Borrow Limit */}
+      {assets.some((asset) => asset.membership) && (
+        <Flex mx={4}>
+          <CollateralRatioBar
+            assets={assets}
+            borrowFiat={borrowBalanceFiat}
+            poolChainId={poolChainId}
+          />
+        </Flex>
+      )}
       {/* Table Filter and Search */}
       <Flex
         justifyContent={['center', 'center', 'space-between']}
