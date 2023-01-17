@@ -80,14 +80,17 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
           <VStack width={'100%'} alignItems={'flex-start'}>
             {reward.status === 'paused' ? (
               <Text>Strategy is currently paused by strategy provider.</Text>
+            ) : reward.status === 'unknown' ? (
+              <Text>
+                Information about the rewards of this plugin are currently not available to us. We
+                are are trying to resolve this as soon as possible
+              </Text>
             ) : reward.apy !== undefined ? (
               <HStack justifyContent={'space-between'} width={'100%'}>
                 <div>Current APY:</div>
                 <div>{`${(reward.apy * 100).toFixed(2) + '%'}`}</div>)
               </HStack>
-            ) : (
-              <Text>More information about this soon.</Text>
-            )}
+            ) : null}
 
             <HStack justifyContent={'space-between'} width={'100%'}>
               <Text>Updated:</Text>
