@@ -30,37 +30,39 @@ export const useBorrowCapForAssetForCollateral = (
       const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
 
       await Promise.all(
-        assets.map((asset) => {
-          collateralAssets.map(async (collateralAsset) => {
-            if (asset.cToken !== collateralAsset.cToken) {
-              const isInBlackList =
-                await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
-                  asset.cToken,
-                  collateralAsset.cToken
-                );
+        assets.map(async (asset) => {
+          await Promise.all(
+            collateralAssets.map(async (collateralAsset) => {
+              if (asset.cToken !== collateralAsset.cToken) {
+                const isInBlackList =
+                  await comptroller.callStatic.borrowingAgainstCollateralBlacklist(
+                    asset.cToken,
+                    collateralAsset.cToken
+                  );
 
-              if (isInBlackList) {
-                borrowCapsPerCollateral.push({
-                  asset: asset.cToken,
-                  collateralAsset: collateralAsset.cToken,
-                  borrowCap: -1,
-                });
-              } else {
-                const borrowCap = await comptroller.callStatic.borrowCapForAssetForCollateral(
-                  asset.cToken,
-                  collateralAsset.cToken
-                );
-
-                if (borrowCap.gt(constants.Zero)) {
+                if (isInBlackList) {
                   borrowCapsPerCollateral.push({
                     asset: asset.cToken,
                     collateralAsset: collateralAsset.cToken,
-                    borrowCap: Number(utils.formatUnits(borrowCap, asset.underlyingDecimals)),
+                    borrowCap: -1,
                   });
+                } else {
+                  const borrowCap = await comptroller.callStatic.borrowCapForAssetForCollateral(
+                    asset.cToken,
+                    collateralAsset.cToken
+                  );
+
+                  if (borrowCap.gt(constants.Zero)) {
+                    borrowCapsPerCollateral.push({
+                      asset: asset.cToken,
+                      collateralAsset: collateralAsset.cToken,
+                      borrowCap: Number(utils.formatUnits(borrowCap, asset.underlyingDecimals)),
+                    });
+                  }
                 }
               }
-            }
-          });
+            })
+          );
         })
       );
 

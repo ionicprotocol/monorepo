@@ -33,6 +33,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
+import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -130,7 +131,7 @@ export const AssetSettings = ({
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isEditSupplyCaps, setIsEditSupplyCaps] = useState<boolean>(false);
   const [isEditBorrowCaps, setIsEditBorrowCaps] = useState<boolean>(false);
-  const [borrowCaps, setBorrowCaps] = useState<{
+  const [borrowCapsState, setBorrowCapsState] = useState<{
     asset: string;
     collateralAsset: string;
     borrowCap: number;
@@ -166,7 +167,7 @@ export const AssetSettings = ({
   );
   const watchSupplyCaps = Number(watch('supplyCaps', SUPPLY_CAPS.DEFAULT));
   const watchBorrowCaps = Number(watch('borrowCaps', BORROW_CAPS.DEFAULT));
-  const watchCollateralAsset = assets[0];
+  const watchCollateralAsset = watch('collateralAsset', assets[0].cToken);
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
@@ -181,12 +182,12 @@ export const AssetSettings = ({
   useEffect(() => {
     if (borrowCapsPerCollateral && borrowCapsPerCollateral.length > 0) {
       const _borrowCaps = borrowCapsPerCollateral.find(
-        (_borrowCaps) => _borrowCaps.collateralAsset === watchCollateralAsset.cToken
+        (_borrowCaps) => _borrowCaps.collateralAsset === watchCollateralAsset
       );
 
-      setBorrowCaps(_borrowCaps);
+      setBorrowCapsState(_borrowCaps);
     } else {
-      setBorrowCaps(undefined);
+      setBorrowCapsState(undefined);
     }
   }, [borrowCapsPerCollateral, watchCollateralAsset]);
 
@@ -200,9 +201,12 @@ export const AssetSettings = ({
       setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
       setValue('interestRateModel', cTokenData.interestRateModelAddress);
       setValue('supplyCaps', parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS)));
-      setValue('borrowCaps', borrowCaps ? borrowCaps.borrowCap : 0);
     }
-  }, [cTokenData, setValue, borrowCaps]);
+  }, [cTokenData, setValue]);
+
+  useEffect(() => {
+    setValue('borrowCaps', borrowCapsState ? borrowCapsState.borrowCap : 0);
+  }, [borrowCapsState, setValue]);
 
   const updateSupplyCaps = async ({ supplyCaps }: { supplyCaps: number }) => {
     if (!cTokenAddress || !currentSdk) return;
@@ -221,22 +225,54 @@ export const AssetSettings = ({
       successToast({ description: 'Successfully updated max supply amount!' });
     } catch (e) {
       handleGenericError(e, errorToast);
+      setSupplyCapsDefault();
     } finally {
       setIsEditSupplyCaps(false);
       setIsUpdating(false);
     }
   };
 
-  const updateBorrowCaps = async ({ borrowCaps }: { borrowCaps: number }) => {
-    if (!cTokenAddress || !currentSdk) return;
+  const updateBorrowCaps = async ({
+    collateralAsset,
+    borrowCaps,
+  }: {
+    collateralAsset: string;
+    borrowCaps: string | number;
+  }) => {
+    if (!currentSdk) return;
+
     setIsUpdating(true);
     const comptroller = currentSdk.createComptroller(comptrollerAddress);
     try {
-      const tx = await comptroller._setMarketBorrowCaps(
-        [cTokenAddress],
-        [utils.parseUnits(borrowCaps.toString(), selectedAsset.underlyingDecimals)]
-      );
-      await tx.wait();
+      if (Number(borrowCaps) === -1) {
+        const tx = await comptroller._blacklistBorrowingAgainstCollateral(
+          selectedAsset.cToken,
+          collateralAsset,
+          true
+        );
+
+        await tx.wait();
+      } else {
+        // if it was blacklisted already, then remove from blacklisted first
+        if (borrowCapsState?.borrowCap === -1) {
+          const txBlacklisted = await comptroller._blacklistBorrowingAgainstCollateral(
+            selectedAsset.cToken,
+            collateralAsset,
+            false
+          );
+
+          await txBlacklisted.wait();
+        }
+
+        const txBorrowCap = await comptroller._setBorrowCapForAssetForCollateral(
+          selectedAsset.cToken,
+          collateralAsset,
+          utils.parseUnits(borrowCaps.toString(), selectedAsset.underlyingDecimals)
+        );
+
+        await txBorrowCap.wait();
+      }
+
       LogRocket.track('Fuse-UpdateBorrowCaps');
 
       await queryClient.refetchQueries();
@@ -244,6 +280,7 @@ export const AssetSettings = ({
       successToast({ description: 'Successfully updated borrow caps!' });
     } catch (e) {
       handleGenericError(e, errorToast);
+      setBorrowCapsDefault();
     } finally {
       setIsEditBorrowCaps(false);
       setIsUpdating(false);
@@ -406,14 +443,9 @@ export const AssetSettings = ({
   };
 
   const setBorrowCapsDefault = () => {
-    if (cTokenData) {
-      setValue(
-        'borrowCaps',
-        parseInt(utils.formatUnits(cTokenData.supplyCaps, selectedAsset.underlyingDecimals))
-      );
-    }
+    setValue('borrowCaps', borrowCapsState ? borrowCapsState.borrowCap : 0);
 
-    setIsEditSupplyCaps(false);
+    setIsEditBorrowCaps(false);
   };
 
   const setReserveFactorDefault = () => {
@@ -560,152 +592,140 @@ export const AssetSettings = ({
             direction="column"
             onSubmit={handleSubmit(updateBorrowCaps)}
           >
-            <FormControl isInvalid={!!errors.borrowCaps}>
-              <Flex
-                w="100%"
-                wrap="wrap"
-                direction={{ base: 'column', sm: 'row' }}
-                alignItems="center"
-              >
-                <FormLabel htmlFor="borrowCaps" margin={0}>
-                  <HStack>
-                    <Text size="md" width="max-content">
-                      Borrow Caps
-                    </Text>
-                    <SimpleTooltip label={'It shows the market borrow caps.'}>
-                      <InfoOutlineIcon ml={1} />
-                    </SimpleTooltip>
-                  </HStack>
-                </FormLabel>
-                <Spacer />
-                <Flex direction={{ base: 'column' }} gap={2}>
-                  <FormControl isInvalid={!!errors.interestRateModel}>
-                    <Flex
-                      w="100%"
-                      wrap="wrap"
-                      direction={{ base: 'column', sm: 'row' }}
-                      alignItems="center"
-                      gap={2}
+            <Flex
+              w="100%"
+              wrap="wrap"
+              direction={{ base: 'column', sm: 'row' }}
+              alignItems="center"
+            >
+              <FormLabel htmlFor="borrowCaps" margin={0}>
+                <HStack>
+                  <Text size="md" width="max-content">
+                    Borrow Caps
+                  </Text>
+                  <SimpleTooltip label={'It shows the market borrow caps.'}>
+                    <InfoOutlineIcon ml={1} />
+                  </SimpleTooltip>
+                </HStack>
+              </FormLabel>
+              <Spacer />
+              <Flex direction={{ base: 'row' }} gap={2}>
+                <FormControl isInvalid={!!errors.interestRateModel}>
+                  <Column maxW="270px" mainAxisAlignment="flex-start" crossAxisAlignment="center">
+                    <Select
+                      id="collateralAsset"
+                      {...register('collateralAsset', {
+                        required: 'collateralAsset is required',
+                      })}
+                      ml="auto"
+                      cursor="pointer"
+                      mt={{ base: 2, sm: 0 }}
+                      isDisabled={!isEditableAdmin}
                     >
-                      <FormLabel htmlFor="interestRateModel" margin={0}>
-                        <HStack>
-                          <Text size="md">Collateral Asset</Text>
-                        </HStack>
-                      </FormLabel>
-                      <Column
-                        maxW="270px"
-                        mainAxisAlignment="flex-start"
-                        crossAxisAlignment="center"
+                      {assets.map((asset) => {
+                        return (
+                          <option
+                            key={asset.cToken}
+                            value={asset.cToken}
+                            style={{ color: cSelect.txtColor }}
+                          >
+                            {asset.underlyingSymbol}
+                          </option>
+                        );
+                      })}
+                    </Select>
+                    <FormErrorMessage marginBottom="-10px">
+                      {errors.collateralAsset && errors.collateralAsset.message}
+                    </FormErrorMessage>
+                  </Column>
+                </FormControl>
+                <Controller
+                  control={control}
+                  name="borrowCaps"
+                  rules={{
+                    required: 'Borrow caps is required',
+                    min: {
+                      value: BORROW_CAPS.MIN,
+                      message: `Borrow caps must be at least ${BORROW_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
+                    },
+                  }}
+                  render={({ field: { name, value, ref, onChange } }) => (
+                    <InputGroup justifyContent="right">
+                      <NumberInput
+                        width={110}
+                        clampValueOnBlur={false}
+                        value={
+                          selectedAsset.cToken === watchCollateralAsset ||
+                          (value === -1 && !isEditBorrowCaps)
+                            ? 'Blacklisted'
+                            : value === 0 && !isEditBorrowCaps
+                            ? 'Unlimited'
+                            : value
+                        }
+                        onChange={onChange}
+                        min={BORROW_CAPS.MIN}
+                        allowMouseWheel
+                        isDisabled={!isEditableAdmin}
+                        isReadOnly={!isEditBorrowCaps}
                       >
-                        <Select
-                          id="collateralAsset"
-                          {...register('collateralAsset', {
-                            required: 'collateralAsset is required',
-                          })}
-                          ml="auto"
-                          cursor="pointer"
-                          mt={{ base: 2, sm: 0 }}
-                          isDisabled={!isEditableAdmin}
-                        >
-                          {assets
-                            .filter((asset) => asset.cToken !== selectedAsset.cToken)
-                            .map((asset) => {
-                              return (
-                                <option
-                                  key={asset.cToken}
-                                  value={asset.cToken}
-                                  style={{ color: cSelect.txtColor }}
-                                >
-                                  {asset.underlyingSymbol}
-                                </option>
-                              );
-                            })}
-                        </Select>
-                        <FormErrorMessage marginBottom="-10px">
-                          {errors.collateralAsset && errors.collateralAsset.message}
-                        </FormErrorMessage>
-                      </Column>
-                    </Flex>
-                  </FormControl>
-                  <Controller
-                    control={control}
-                    name="borrowCaps"
-                    rules={{
-                      required: 'Borrow caps is required',
-                      min: {
-                        value: BORROW_CAPS.MIN,
-                        message: `Borrow caps must be at least ${BORROW_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
-                      },
-                    }}
-                    render={({ field: { name, value, ref, onChange } }) => (
-                      <InputGroup justifyContent="right">
-                        <NumberInput
-                          width={100}
-                          clampValueOnBlur={false}
-                          value={value === 0 && !isEditBorrowCaps ? 'Unlimited' : value}
-                          onChange={onChange}
-                          min={BORROW_CAPS.MIN}
-                          allowMouseWheel
-                          isDisabled={!isEditableAdmin}
-                          isReadOnly={!isEditBorrowCaps}
-                        >
-                          <NumberInputField
-                            paddingLeft={2}
-                            paddingRight={2}
-                            borderRightRadius={0}
-                            ref={ref}
-                            name={name}
-                            textAlign="center"
-                          />
-                        </NumberInput>
-                        <InputRightAddon px={2}>
-                          {selectedAsset.underlyingSymbol}{' '}
-                          {usdPrice &&
-                            value !== 0 &&
-                            `(${smallUsdFormatter(
+                        <NumberInputField
+                          paddingLeft={2}
+                          paddingRight={2}
+                          borderRightRadius={0}
+                          ref={ref}
+                          name={name}
+                          textAlign="center"
+                        />
+                      </NumberInput>
+                      <InputRightAddon px={2}>
+                        {selectedAsset.underlyingSymbol}{' '}
+                        {usdPrice && value > 0
+                          ? `(${smallUsdFormatter(
                               value *
                                 Number(
                                   utils.formatUnits(selectedAsset.underlyingPrice, DEFAULT_DECIMALS)
                                 ) *
                                 usdPrice
-                            )})`}
-                        </InputRightAddon>
-                      </InputGroup>
-                    )}
-                  />
-                  <FormErrorMessage maxWidth="200px" marginBottom="-10px">
-                    {errors.borrowCaps && errors.borrowCaps.message}
-                  </FormErrorMessage>
-                </Flex>
+                            )})`
+                          : ''}
+                      </InputRightAddon>
+                    </InputGroup>
+                  )}
+                />
+                <FormErrorMessage maxWidth="200px" marginBottom="-10px">
+                  {errors.borrowCaps && errors.borrowCaps.message}
+                </FormErrorMessage>
               </Flex>
-            </FormControl>
-            {isEditBorrowCaps ? (
-              <ButtonGroup gap={0} mt={2} alignSelf="end">
-                <Button
-                  type="submit"
+            </Flex>
+            <ButtonGroup
+              gap={0}
+              mt={2}
+              alignSelf="end"
+              isDisabled={selectedAsset.cToken === watchCollateralAsset}
+            >
+              {isEditBorrowCaps ? (
+                <>
+                  <Button
+                    type="submit"
+                    disabled={isUpdating || watchBorrowCaps === borrowCapsState?.borrowCap}
+                  >
+                    Save
+                  </Button>
+                  <Button variant="silver" disabled={isUpdating} onClick={setBorrowCapsDefault}>
+                    Cancel
+                  </Button>
+                </>
+              ) : (
+                <CButton
                   disabled={
-                    isUpdating ||
-                    !cTokenData ||
-                    watchBorrowCaps ===
-                      parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS))
+                    isUpdating || !isEditableAdmin || selectedAsset.cToken === watchCollateralAsset
                   }
-                >
-                  Save
-                </Button>
-                <Button variant="silver" disabled={isUpdating} onClick={setBorrowCapsDefault}>
-                  Cancel
-                </Button>
-              </ButtonGroup>
-            ) : (
-              <ButtonGroup gap={0} mt={2} alignSelf="end">
-                <Button
-                  disabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditBorrowCaps(true)}
                 >
                   Edit
-                </Button>
-              </ButtonGroup>
-            )}
+                </CButton>
+              )}
+            </ButtonGroup>
           </Flex>
           <Divider />
           <Flex
