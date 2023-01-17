@@ -1,4 +1,4 @@
-import { HStack, Progress, Text, VStack } from '@chakra-ui/react';
+import { Divider, HStack, Progress, Text, VStack } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -28,42 +28,33 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
     <PopoverTooltip
       body={
         <VStack alignItems="flex-start">
-          {supplyCaps && <Text mb={4}>This asset has a restricted supply amount.</Text>}
           <HStack>
-            <Text variant="tnumber" fontWeight="bold">
-              ${longFormat(primary.value)}
-            </Text>
+            <Text variant="tnumber">$ {smallFormatter.format(primary.value)}</Text>
             {supplyCaps && (
-              <>
-                <Text size="xs" variant="tnumber">
-                  /
-                </Text>
-                <Text size="xs" variant="tnumber">
-                  ${midFormat(supplyCaps.usdCap)}
-                </Text>
-              </>
+              <Text variant="tnumber">/ $ {smallFormatter.format(supplyCaps.usdCap)}</Text>
             )}
           </HStack>
           {secondary && (
-            <HStack spacing={1}>
-              <Text size="xs" variant="tnumber">
-                {`${longFormat(
+            <HStack>
+              <Text variant="tnumber">
+                {`${smallFormatter.format(
                   parseFloat(utils.formatUnits(secondary.value, secondary.decimals))
                 )} ${secondary.symbol}`}
               </Text>
               {supplyCaps && (
-                <>
-                  <Text size="xs" variant="tnumber">
-                    /
-                  </Text>
-                  <Text size="xs" variant="tnumber">{`${midFormat(supplyCaps.nativeCap)} ${
-                    secondary.symbol
-                  }`}</Text>
-                </>
+                <Text variant="tnumber">{`/ ${smallFormatter.format(supplyCaps.nativeCap)} ${
+                  secondary.symbol
+                }`}</Text>
               )}
             </HStack>
           )}
-          {ratio && <Text variant="tnumber">{ratio}% supplied</Text>}
+          <Divider />
+          {supplyCaps && (
+            <Text mb={4}>
+              This asset has a restricted supply amount for security reasons.
+              {ratio && ` As of now, ${ratio}% are already supplied to this market.`}
+            </Text>
+          )}
         </VStack>
       }
       maxWidth="400px"
