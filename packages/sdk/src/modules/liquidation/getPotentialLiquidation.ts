@@ -34,6 +34,11 @@ export default async function getPotentialLiquidation(
   // Get debt and collateral
   borrower = { ...borrower };
 
+  if (!borrower.assets) {
+    sdk.logger.error(`Borrower has no collateral ${borrower.account}`);
+    return null;
+  }
+
   for (let asset of borrower.assets!) {
     asset = { ...asset };
     asset.borrowBalanceWei = asset.borrowBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
