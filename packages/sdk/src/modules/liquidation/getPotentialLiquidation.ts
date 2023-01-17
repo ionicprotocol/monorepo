@@ -34,17 +34,17 @@ export default async function getPotentialLiquidation(
   // Get debt and collateral
   borrower = { ...borrower };
 
-  if (!borrower.assets) {
-    sdk.logger.error(`Borrower has no collateral ${borrower.account}`);
-    return null;
-  }
-
   for (let asset of borrower.assets!) {
     asset = { ...asset };
     asset.borrowBalanceWei = asset.borrowBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
     asset.supplyBalanceWei = asset.supplyBalance.mul(asset.underlyingPrice).div(SCALE_FACTOR_ONE_18_WEI);
     if (asset.borrowBalance.gt(0)) borrower.debt.push(asset);
     if (asset.membership && asset.supplyBalance.gt(0)) borrower.collateral.push(asset);
+  }
+
+  if (!borrower.collateral!.length) {
+    sdk.logger.error(`Borrower has no collateral ${borrower.account}`);
+    return null;
   }
 
   // Sort debt and collateral from highest to lowest ETH value
