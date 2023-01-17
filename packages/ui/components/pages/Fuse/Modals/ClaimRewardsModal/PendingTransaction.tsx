@@ -1,5 +1,5 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
-import { BigNumber, utils } from 'ethers';
+import { SupportedAsset } from '@midas-capital/types';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
 
 import { Column } from '@ui/components/shared/Flex';
@@ -8,42 +8,25 @@ import TransactionStepper from '@ui/components/shared/TransactionStepper';
 import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TxStep } from '@ui/types/ComponentPropsType';
-import { MarketData } from '@ui/types/TokensDataMap';
 
 export const PendingTransaction = ({
   activeStep,
   failedStep,
   steps,
-  isSupplying,
+  isClaiming,
   poolChainId,
-  amount,
-  asset,
+  assetPerRewardToken,
 }: {
   activeStep: number;
   failedStep: number;
   steps: TxStep[];
-  isSupplying: boolean;
+  isClaiming: boolean;
   poolChainId: number;
-  amount: BigNumber;
-  asset: MarketData;
+  assetPerRewardToken: { [rewardToken: string]: SupportedAsset | undefined };
 }) => {
-  const amountNum = utils.formatUnits(amount, asset.underlyingDecimals);
-
-  const successToast = useSuccessToast();
-  const errorToast = useErrorToast();
-
-  const addToken = useAddTokenToWallet({
-    underlyingAddress: asset.underlyingToken,
-    underlyingSymbol: asset.underlyingSymbol,
-    underlyingDecimals: Number(asset.underlyingDecimals),
-    logoUrl: asset.logoUrl,
-    successToast,
-    errorToast,
-  });
-
   return (
-    <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>
-      {isSupplying ? (
+    <Column expand mainAxisAlignment="center" crossAxisAlignment="center" pt={2}>
+      {isClaiming ? (
         <Loader />
       ) : failedStep === 0 ? (
         <VStack width="100%">
@@ -52,13 +35,18 @@ export const PendingTransaction = ({
             All Done!
           </Text>
           <Text variant="mdText" fontWeight="bold">
-            You supplied {amountNum} {asset.underlyingSymbol}
+            You claimed{' '}
+            {Object.values(assetPerRewardToken)
+              .map((asset) => asset?.symbol)
+              .join(',')}
           </Text>
-          <Flex width="100%" justifyContent="flex-end">
-            <Button onClick={addToken} variant={'ghost'} size="sm">
-              Add {asset.underlyingSymbol} to wallet
-            </Button>
-          </Flex>
+          <VStack width="100%">
+            {Object.values(assetPerRewardToken).map((asset) => {
+              if (asset) {
+                return <AddTokenToWalletButton key={asset.underlying} asset={asset} />;
+              }
+            })}
+          </VStack>
         </VStack>
       ) : (
         <VStack>
@@ -73,11 +61,12 @@ export const PendingTransaction = ({
           activeStep={activeStep}
           steps={steps}
           failedStep={failedStep}
-          isLoading={isSupplying}
+          isLoading={isClaiming}
           poolChainId={poolChainId}
         />
       </Box>
-      {isSupplying ? (
+
+      {isClaiming ? (
         <VStack mt={4}>
           <Text textAlign="center" variant="smText">
             Check your wallet to submit the transactions
@@ -88,5 +77,26 @@ export const PendingTransaction = ({
         </VStack>
       ) : null}
     </Column>
+  );
+};
+
+const AddTokenToWalletButton = ({ asset }: { asset: SupportedAsset }) => {
+  const successToast = useSuccessToast();
+  const errorToast = useErrorToast();
+
+  const addToken = useAddTokenToWallet({
+    underlyingAddress: asset.underlying,
+    underlyingSymbol: asset.symbol,
+    underlyingDecimals: asset.decimals,
+    successToast,
+    errorToast,
+  });
+
+  return (
+    <Flex key={asset.underlying} width="100%" justifyContent="flex-end">
+      <Button onClick={addToken} variant={'ghost'} size="sm">
+        Add {asset.symbol} to wallet
+      </Button>
+    </Flex>
   );
 };

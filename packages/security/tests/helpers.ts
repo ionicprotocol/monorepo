@@ -1,7 +1,7 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
+import { chainIdToConfig } from "@midas-capital/chains";
 import { SupportedChains } from "@midas-capital/types";
 
-import { chainIdToConfig } from "../src/enums";
 /**
  * Creates an eth-address compatible string with given prefix
  *

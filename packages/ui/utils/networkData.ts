@@ -1,6 +1,7 @@
 import {
   arbitrum,
   bsc,
+  chainIdToConfig,
   chapel,
   evmos,
   fantom,
@@ -19,7 +20,7 @@ import { BigNumber } from 'ethers';
 
 import { config } from '@ui/config/index';
 import { MINUTES_PER_YEAR } from '@ui/constants/index';
-import { chainIdToConfig, supportedChainIdToConfig } from '@ui/types/ChainMetaData';
+import { supportedChainIdToConfig } from '@ui/types/ChainMetaData';
 
 export const isSupportedChainId = (chainId: number) => {
   return getSupportedChainIds().includes(chainId);
