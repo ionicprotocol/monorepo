@@ -1,16 +1,10 @@
 import { MidasSdk } from "@midas-capital/sdk";
-import { arbitrum, bsc, moonbeam, polygon } from "@midas-capital/chains";
-import { ChainConfig, SupportedAsset } from "@midas-capital/types";
-import { AMMLiquidityVerifier } from "../services";
-import { TAssetConfig } from "./asset";
-import { LiquidityPoolKind, LiquidityMonitorChains } from "./pool";
+import { SupportedAsset } from "@midas-capital/types";
 
-export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
-  [bsc.chainId]: bsc,
-  [polygon.chainId]: polygon,
-  [moonbeam.chainId]: moonbeam,
-  [arbitrum.chainId]: arbitrum,
-};
+import { AMMLiquidityVerifier } from "../services";
+
+import { TAssetConfig } from "./asset";
+import { LiquidityMonitorChains, LiquidityPoolKind } from "./pool";
 
 export type TVerifier = typeof AMMLiquidityVerifier;
 

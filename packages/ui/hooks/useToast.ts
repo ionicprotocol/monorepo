@@ -11,6 +11,10 @@ const useSuccessToast = (options?: UseToastOptions) => {
       duration: 5000,
       isClosable: true,
       position: 'bottom-right',
+      containerStyle: {
+        maxHeight: '400px',
+        overflowY: 'auto',
+      },
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -27,6 +31,10 @@ const useErrorToast = (options?: UseToastOptions) => {
       duration: 10000,
       isClosable: true,
       position: 'bottom-right',
+      containerStyle: {
+        maxHeight: '400px',
+        overflowY: 'auto',
+      },
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -43,6 +51,10 @@ const useWarningToast = (options?: UseToastOptions) => {
       duration: 10000,
       isClosable: true,
       position: 'bottom-right',
+      containerStyle: {
+        maxHeight: '400px',
+        overflowY: 'auto',
+      },
       ..._options,
     } as UseToastOptions;
   }, [options]);
@@ -59,6 +71,10 @@ const useInfoToast = (options?: UseToastOptions) => {
       duration: 5000,
       isClosable: true,
       position: 'bottom-right',
+      containerStyle: {
+        maxHeight: '400px',
+        overflowY: 'auto',
+      },
       ..._options,
     } as UseToastOptions;
   }, [options]);

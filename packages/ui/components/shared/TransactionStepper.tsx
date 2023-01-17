@@ -71,7 +71,7 @@ const TransactionStepper = ({
 
                     <Box flex="1" textAlign="left" ml={4}>
                       <Text variant="mdText" color={cCard.borderColor} fontWeight="bold">
-                        {step.title} {step.done ? '(Done)' : null}
+                        {step.title}
                       </Text>
                     </Box>
 
