@@ -7,8 +7,8 @@ interface BeefyAPYResponse {
 }
 
 interface BeefyVaultResponse {
-  [key: string]: string | number | string[];
-  status: 'active' | 'eol' | 'paused' | 'unknown';
+  [key: string]: string | number | string[] | undefined;
+  status?: 'active' | 'eol' | 'paused' | 'unknown';
 }
 
 class BeefyAPYProvider extends AbstractPluginAPYProvider {
