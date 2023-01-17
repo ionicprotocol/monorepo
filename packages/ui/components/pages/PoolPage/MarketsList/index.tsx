@@ -318,7 +318,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => (
-          <TotalSupply asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <TotalSupply
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
 
@@ -731,7 +735,7 @@ export const MarketsList = ({
       <Flex className="pagination" gap={4} justifyContent="flex-end" alignItems="center" p={4}>
         <HStack>
           <Hide below="lg">
-            <Text size="md">Markets Per Page</Text>
+            <Text>Markets Per Page</Text>
           </Hide>
           <Select
             value={pagination.pageSize}
@@ -748,7 +752,7 @@ export const MarketsList = ({
           </Select>
         </HStack>
         <HStack gap={2}>
-          <Text size="md">
+          <Text>
             {table.getFilteredRowModel().rows.length === 0
               ? 0
               : pagination.pageIndex * pagination.pageSize + 1}{' '}
