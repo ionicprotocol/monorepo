@@ -49,7 +49,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
             </HStack>
           )}
 
-          {supplyCaps && (
+          {supplyCaps ? (
             <>
               <Divider />
               <Text mb={4}>
@@ -57,7 +57,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
                 {ratio && ` As of now, ${ratio}% are already supplied to this market.`}
               </Text>
             </>
-          )}
+          ) : null}
         </VStack>
       }
       maxWidth="400px"
