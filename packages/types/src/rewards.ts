@@ -1,6 +1,6 @@
 export interface AbstractReward {
   apy?: number;
-  status?: "active" | "eol" | "paused" | "unknown";
+  status: "active" | "eol" | "paused" | "unknown";
   updated_at: string;
 }
 
