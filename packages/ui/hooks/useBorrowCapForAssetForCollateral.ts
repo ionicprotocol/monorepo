@@ -23,8 +23,8 @@ export const useBorrowCapForAssetForCollateral = (
       if (!sdk || collateralAssets.length === 0) return null;
 
       const borrowCapsPerCollateral: {
-        asset: string;
-        collateralAsset: string;
+        asset: NativePricedFuseAsset;
+        collateralAsset: NativePricedFuseAsset;
         borrowCap: number;
       }[] = [];
       const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
@@ -42,8 +42,8 @@ export const useBorrowCapForAssetForCollateral = (
 
                 if (isInBlackList) {
                   borrowCapsPerCollateral.push({
-                    asset: asset.cToken,
-                    collateralAsset: collateralAsset.cToken,
+                    asset,
+                    collateralAsset,
                     borrowCap: -1,
                   });
                 } else {
@@ -54,8 +54,8 @@ export const useBorrowCapForAssetForCollateral = (
 
                   if (borrowCap.gt(constants.Zero)) {
                     borrowCapsPerCollateral.push({
-                      asset: asset.cToken,
-                      collateralAsset: collateralAsset.cToken,
+                      asset,
+                      collateralAsset,
                       borrowCap: Number(utils.formatUnits(borrowCap, asset.underlyingDecimals)),
                     });
                   }

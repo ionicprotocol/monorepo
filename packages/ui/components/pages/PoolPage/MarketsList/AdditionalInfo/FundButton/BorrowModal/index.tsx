@@ -50,6 +50,7 @@ interface BorrowModalProps {
   onClose: () => void;
   poolChainId: number;
   borrowBalanceFiat?: number;
+  comptrollerAddress: string;
 }
 
 export const BorrowModal = ({
@@ -59,6 +60,7 @@ export const BorrowModal = ({
   onClose,
   poolChainId,
   borrowBalanceFiat,
+  comptrollerAddress,
 }: BorrowModalProps) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
@@ -338,7 +340,12 @@ export const BorrowModal = ({
                     </Box>
                   )}
 
-                  <Alerts poolChainId={poolChainId} asset={asset} />
+                  <Alerts
+                    poolChainId={poolChainId}
+                    asset={asset}
+                    assets={assets}
+                    comptrollerAddress={comptrollerAddress}
+                  />
                   <Button
                     id="confirmFund"
                     width="100%"

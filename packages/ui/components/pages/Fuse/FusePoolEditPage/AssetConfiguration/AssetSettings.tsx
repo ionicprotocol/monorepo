@@ -132,8 +132,8 @@ export const AssetSettings = ({
   const [isEditSupplyCaps, setIsEditSupplyCaps] = useState<boolean>(false);
   const [isEditBorrowCaps, setIsEditBorrowCaps] = useState<boolean>(false);
   const [borrowCapsState, setBorrowCapsState] = useState<{
-    asset: string;
-    collateralAsset: string;
+    asset: NativePricedFuseAsset;
+    collateralAsset: NativePricedFuseAsset;
     borrowCap: number;
   }>();
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
@@ -182,7 +182,7 @@ export const AssetSettings = ({
   useEffect(() => {
     if (borrowCapsPerCollateral && borrowCapsPerCollateral.length > 0) {
       const _borrowCaps = borrowCapsPerCollateral.find(
-        (_borrowCaps) => _borrowCaps.collateralAsset === watchCollateralAsset
+        (_borrowCaps) => _borrowCaps.collateralAsset.cToken === watchCollateralAsset
       );
 
       setBorrowCapsState(_borrowCaps);

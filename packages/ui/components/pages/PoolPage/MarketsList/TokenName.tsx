@@ -1,4 +1,5 @@
 import { Badge, Box, Center, Heading, HStack, Text, VStack } from '@chakra-ui/react';
+import { NativePricedFuseAsset } from '@midas-capital/types';
 import { utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -39,13 +40,13 @@ export const TokenName = ({
   );
 
   const [restricted, setRestricted] = useState<
-    { asset: string; collateralAsset: string; borrowCap: number }[]
+    { asset: NativePricedFuseAsset; collateralAsset: NativePricedFuseAsset; borrowCap: number }[]
   >([]);
 
   useEffect(() => {
     if (borrowCapForAssetForCollateral && borrowCapForAssetForCollateral.length > 0) {
       const _restricted = borrowCapForAssetForCollateral.filter(
-        (obj) => obj.asset === asset.cToken
+        (obj) => obj.asset.cToken === asset.cToken
       );
 
       setRestricted(_restricted);
