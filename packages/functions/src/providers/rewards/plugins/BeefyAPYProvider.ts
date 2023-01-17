@@ -44,7 +44,7 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     }
 
     let apy = this.beefyAPYs![beefyID];
-    let status = '';
+    let status: 'active' | 'eol' | 'paused' | 'unknown' | undefined = undefined;
     if (apy === undefined) {
       status = 'unknown';
 
@@ -55,23 +55,20 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     } else {
       const vaultInfo = this.beefyVaults.find((vault) => vault.id === beefyID);
 
-      if(vaultInfo && vaultInfo.status) {
+      if (vaultInfo && vaultInfo.status) {
         status = vaultInfo.status;
-  
+
         if (vaultInfo.status === 'paused') {
           apy = 0;
         }
       }
-      
-  
+
       if (apy === 0) {
         console.warn(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
         // Disabled as spamming discord, as beefy is not fixing this.
         // await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
       }
     }
-
-    
 
     return [{ apy, status, updated_at: new Date().toISOString(), plugin: pluginAddress }];
   }
