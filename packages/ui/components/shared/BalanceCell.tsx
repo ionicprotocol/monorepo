@@ -3,7 +3,7 @@ import { BigNumber, utils } from 'ethers';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { useColors } from '@ui/hooks/useColors';
-import { longFormat, midFormat, smallFormatter } from '@ui/utils/bigUtils';
+import { midFormat, smallFormatter } from '@ui/utils/bigUtils';
 
 interface BalanceCellProps {
   primary: {

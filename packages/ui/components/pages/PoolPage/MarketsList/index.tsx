@@ -453,25 +453,30 @@ export const MarketsList = ({
 
   return (
     <Box>
-      {/* Supply & Borrow Balance */}
-      <Flex
-        mx={4}
-        mt={4}
-        gap={4}
-        flexDirection="row"
-        flexWrap="wrap"
-        justifyContent={['center', 'center', 'flex-start']}
-      >
-        <UserStats poolData={poolData} />
-      </Flex>
-      {/* Borrow Limit */}
-      <Flex mx={4} mt={4}>
-        <CollateralRatioBar
-          assets={assets}
-          borrowFiat={borrowBalanceFiat}
-          poolChainId={poolChainId}
-        />
-      </Flex>
+      {address ? (
+        <>
+          {/* Supply & Borrow Balance */}
+          <Flex
+            mx={4}
+            mt={4}
+            gap={4}
+            flexDirection="row"
+            flexWrap="wrap"
+            justifyContent={['center', 'center', 'flex-start']}
+          >
+            <UserStats poolData={poolData} />
+          </Flex>
+          {/* Borrow Limit */}
+          <Flex mx={4} mt={4}>
+            <CollateralRatioBar
+              assets={assets}
+              borrowFiat={borrowBalanceFiat}
+              poolChainId={poolChainId}
+            />
+          </Flex>
+        </>
+      ) : null}
+
       {/* Table Filter and Search */}
       <Flex
         justifyContent={['center', 'center', 'space-between']}

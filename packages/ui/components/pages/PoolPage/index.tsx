@@ -30,7 +30,7 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const PoolPage = memo(() => {
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiMidas();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;
@@ -192,18 +192,23 @@ const PoolPage = memo(() => {
             ) : (
               <>
                 <Box p={4} gap={4}>
-                  <Grid
-                    templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
-                    gap={4}
-                    w="100%"
-                    mb={4}
-                  >
-                    <UserStat label="Your Supply" />
-                    <UserStat label="Your Borrow" />
-                    <UserStat label="Effective Supply APY" />
-                    <UserStat label="Effective Borrow APY" />
-                  </Grid>
-                  <Skeleton height={'60px'} width="100%" borderRadius={'xl'} mb={4} />
+                  {address ? (
+                    <>
+                      <Grid
+                        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+                        gap={4}
+                        w="100%"
+                        mb={4}
+                      >
+                        <UserStat label="Your Supply" />
+                        <UserStat label="Your Borrow" />
+                        <UserStat label="Effective Supply APY" />
+                        <UserStat label="Effective Borrow APY" />
+                      </Grid>
+                      <Skeleton height={'60px'} width="100%" borderRadius={'xl'} mb={4} />
+                    </>
+                  ) : null}
+
                   <Flex alignItems="center" justifyContent={'space-between'}>
                     <Flex flexDirection={['row']} gap={0}>
                       <Skeleton
