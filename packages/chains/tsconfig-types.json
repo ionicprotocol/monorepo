@@ -9,7 +9,7 @@
     "resolveJsonModule": true,
     "noImplicitAny": false,
     "forceConsistentCasingInFileNames": false,
-    "outDir": "./dist/esm",
+    "outDir": "./dist/types",
     "declaration": true,
     "skipLibCheck": true,
     "useUnknownInCatchVariables": false
