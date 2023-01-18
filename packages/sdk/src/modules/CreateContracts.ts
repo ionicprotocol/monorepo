@@ -66,7 +66,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
 
     createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.signer) {
       return new Contract(
-        this.chainDeployment.MasterPriceOracle.address!,
+        this.chainDeployment.MasterPriceOracle.address,
         this.chainDeployment.MasterPriceOracle.abi,
         signerOrProvider
       ) as MasterPriceOracle;
