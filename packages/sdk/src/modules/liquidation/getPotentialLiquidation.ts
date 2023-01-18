@@ -42,6 +42,11 @@ export default async function getPotentialLiquidation(
     if (asset.membership && asset.supplyBalance.gt(0)) borrower.collateral.push(asset);
   }
 
+  if (!borrower.collateral!.length) {
+    sdk.logger.error(`Borrower has no collateral ${borrower.account}`);
+    return null;
+  }
+
   // Sort debt and collateral from highest to lowest ETH value
   borrower.debt.sort((a, b) => (b.borrowBalanceWei.gt(a.borrowBalanceWei) ? 1 : -1));
   borrower.collateral.sort((a, b) => (b.supplyBalanceWei.gt(a.supplyBalanceWei) ? 1 : -1));

@@ -1,10 +1,9 @@
 import { bsc } from "@midas-capital/chains";
 import { expect } from "chai";
-import { constants, providers, Wallet } from "ethers";
+import { constants, providers } from "ethers";
 import { ethers, getChainId, run } from "hardhat";
 
 import { MidasSdk } from "../../src";
-import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 import { FuseSafeLiquidator } from "../../typechain/FuseSafeLiquidator";
 import { MasterPriceOracle } from "../../typechain/MasterPriceOracle";
