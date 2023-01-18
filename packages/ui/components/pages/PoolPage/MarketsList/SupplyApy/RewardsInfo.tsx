@@ -82,8 +82,8 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
               <Text>Strategy is currently paused by strategy provider.</Text>
             ) : reward.status === 'unknown' ? (
               <Text>
-                Information about the rewards of this plugin are currently not available to us. We
-                are are trying to resolve this as soon as possible
+                Information about the rewards of this plugin are currently not available to us.
+                Please visit the plugins vault strategy directly for the most recent information.
               </Text>
             ) : reward.apy !== undefined ? (
               <HStack justifyContent={'space-between'} width={'100%'}>
