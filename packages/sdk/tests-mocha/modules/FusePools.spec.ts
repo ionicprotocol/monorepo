@@ -14,7 +14,7 @@ describe("FusePools", () => {
   let fusePools: any;
 
   let mockFusePoolLensContract: SinonStubbedInstance<Contract>;
-  let mockFusePoolDirectoryContract: SinonStubbedInstance<Contract>
+  let mockFusePoolDirectoryContract: SinonStubbedInstance<Contract>;
   let mockGetAssetContract: SinonStubbedInstance<Contract>;
   const CErc20PluginDelegateAddress = mkAddress("0xCErc20PluginDelegate");
   const PluginAddress = mkAddress("0xPlugin");
