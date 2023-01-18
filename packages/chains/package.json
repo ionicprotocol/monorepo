@@ -14,8 +14,8 @@
     "/dist/"
   ],
   "scripts": {
-    "prebuild": "node ./scripts/prune.js ./deployments/*.json",
-    "build": "tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
+    "prune": "node ./scripts/prune.js ./deployments/*.json",
+    "build": "yarn run prune && tsc -p tsconfig-sdk.json && tsc -p tsconfig-cjs.json",
     "build:esm": "tsc -p tsconfig-sdk.json",
     "build:cjs": "tsc -p tsconfig-cjs.json",
     "clean": "rm -rf dist",

@@ -1,5 +1,5 @@
 const fs = require('fs');
-
+console.log('./scripts/prune.js - pruning JSON files to reduce bundle size')
 const filePaths = process.argv.slice(2)
 filePaths.forEach(fp=>{
     const file = fs.readFileSync(fp);
