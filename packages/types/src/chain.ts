@@ -97,7 +97,7 @@ export type ChainConfig = {
 
 export type ChainDeployment = {
   [contractName: string]: {
-    abi: any;
+    abi?: any;
     address: string;
   };
 };
