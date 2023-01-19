@@ -1,8 +1,8 @@
 import { JsonRpcProvider, Web3Provider } from "@ethersproject/providers";
 import Filter from "bad-words";
-import { Contract, ContractFactory, Signer, utils } from "ethers";
+import { Contract, Signer, utils } from "ethers";
 
-import ComptrollerArtifact from "../../artifacts/Comptroller.json";
+import ComptrollerABI from "../../abis/Comptroller";
 import UnitrollerArtifact from "../../artifacts/Unitroller.json";
 import { Comptroller } from "../../typechain/Comptroller";
 import { Unitroller } from "../../typechain/Unitroller";
@@ -16,10 +16,6 @@ filter.addWords(...["R1", "R2", "R3", "R4", "R5", "R6", "R7"]);
 
 export const filterPoolName = (name: string) => {
   return filter.clean(name);
-};
-
-export const getComptrollerFactory = (signer?: Signer): ContractFactory => {
-  return new ContractFactory(ComptrollerArtifact.abi, ComptrollerArtifact.bytecode.object, signer);
 };
 
 export const getSaltsHash = (from: string, poolName: string, blockNumber: number): string => {
@@ -51,7 +47,7 @@ export const getPoolUnitroller = (poolAddress: string, signer?: Signer): Unitrol
 };
 
 export const getPoolComptroller = (poolAddress: string, signer?: Signer): Comptroller => {
-  return new Contract(poolAddress, ComptrollerArtifact.abi, signer) as Comptroller;
+  return new Contract(poolAddress, ComptrollerABI, signer) as Comptroller;
 };
 
 export const getContract = (address: string, abi: any, providerOrSigner: Web3Provider | JsonRpcProvider | Signer) => {

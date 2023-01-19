@@ -4,7 +4,7 @@ import { task, types } from "hardhat/config";
 export default task("market:upgrade", "Upgrades a market's implementation")
   .addParam("comptroller", "address of comptroller", undefined, types.string) // TODO I would rather use id or comptroller address directly.
   .addParam("underlying", "Underlying asset symbol or address", undefined, types.string)
-  .addOptionalParam("implementationAddress", "The address of the new implementation", "", types.string)
+  .addParam("implementationAddress", "The address of the new implementation", "", types.string)
   .addOptionalParam("pluginAddress", "The address of plugin which is supposed to used", "", types.string)
   .addOptionalParam("signer", "Named account that is an admin of the pool", "deployer", types.string)
   .setAction(async (taskArgs, { ethers }) => {

@@ -1,6 +1,7 @@
+import { chainIdToConfig } from "@midas-capital/chains";
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-import { chainIdToConfig, Services } from "../types";
+import { Services } from "../types";
 
 import { chainIdToAssets } from "./priceChangeVerifier";
 import { baseConfig } from "./variables";

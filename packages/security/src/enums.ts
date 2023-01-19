@@ -1,5 +1,4 @@
-import { arbitrum, bsc, chapel, evmos, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
-import { ChainConfig, Strategy } from "@midas-capital/types";
+import { Strategy } from "@midas-capital/types";
 
 import { ChainLinkFeedHeartbeat } from "./oracle/scorers/chainlink/types";
 
@@ -13,18 +12,6 @@ export const heartbeatToSeconds: Record<ChainLinkFeedHeartbeat, number> = {
   "20m": 60 * 20,
   "6h": 6 * 60 * 60,
   "24h": 24 * 60 * 60,
-};
-
-export const chainIdToConfig: { [chainId: number]: ChainConfig } = {
-  [bsc.chainId]: bsc,
-  [arbitrum.chainId]: arbitrum,
-  [polygon.chainId]: polygon,
-  [moonbeam.chainId]: moonbeam,
-  [neondevnet.chainId]: neondevnet,
-  [chapel.chainId]: chapel,
-  [ganache.chainId]: ganache,
-  [fantom.chainId]: fantom,
-  [evmos.chainId]: evmos,
 };
 
 /* Strategy Risk Enums */
