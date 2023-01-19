@@ -15,7 +15,7 @@ export const useIsComptrollerAdmin = (
     async () => {
       if (!comptrollerAddress || !sdk) return null;
 
-      const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
+      const comptroller = sdk.createComptroller(comptrollerAddress);
 
       return await comptroller.callStatic.admin();
     },

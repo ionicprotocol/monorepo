@@ -3,7 +3,7 @@ import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { CErc20Delegate } from "../../../typechain/CErc20Delegate";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
-import { MidasBase } from "../../MidasSdk";
+import MidasSdk from "../../MidasSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";
@@ -25,7 +25,7 @@ async function getLiquidationPenalty(collateralCToken: CErc20Delegate, liquidati
 }
 
 export default async function getPotentialLiquidation(
-  sdk: MidasBase,
+  sdk: MidasSdk,
   borrower: FusePoolUserWithAssets,
   closeFactor: BigNumber,
   liquidationIncentive: BigNumber,
@@ -82,7 +82,10 @@ export default async function getPotentialLiquidation(
 
   // USDC: 6 decimals
   let repayAmount = debtAsset.borrowBalance.mul(closeFactor).div(SCALE_FACTOR_ONE_18_WEI);
-  const penalty = await getLiquidationPenalty(sdk.getCTokenInstance(collateralAsset.cToken), liquidationIncentive);
+  const penalty = await getLiquidationPenalty(
+    sdk.createCTokenWithExtensions(collateralAsset.cToken),
+    liquidationIncentive
+  );
 
   // Scale to 18 decimals
   let liquidationValue = repayAmount.mul(debtAssetUnderlyingPrice).div(BigNumber.from(10).pow(debtAssetDecimals));
