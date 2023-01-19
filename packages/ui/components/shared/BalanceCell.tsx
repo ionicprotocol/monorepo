@@ -48,13 +48,16 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
               )}
             </HStack>
           )}
-          <Divider />
-          {supplyCaps && (
-            <Text mb={4}>
-              This asset has a restricted supply amount for security reasons.
-              {ratio && ` As of now, ${ratio}% are already supplied to this market.`}
-            </Text>
-          )}
+
+          {supplyCaps ? (
+            <>
+              <Divider />
+              <Text mb={4}>
+                This asset has a restricted supply amount for security reasons.
+                {ratio && ` As of now, ${ratio}% are already supplied to this market.`}
+              </Text>
+            </>
+          ) : null}
         </VStack>
       }
       maxWidth="400px"
