@@ -1,6 +1,6 @@
 import { BigNumber } from "ethers";
 
-import { MidasBase } from "../../MidasSdk";
+import { MidasSdk } from "../../MidasSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import {
@@ -15,14 +15,14 @@ import {
 import { getPotentialLiquidation } from "./index";
 
 async function getLiquidatableUsers(
-  fuse: MidasBase,
+  sdk: MidasSdk,
   poolUsers: FusePoolUserStruct[],
   pool: PublicPoolUserWithData,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<Array<EncodedLiquidationTx>> {
   const users: Array<EncodedLiquidationTx> = [];
   for (const user of poolUsers) {
-    const userAssets = await fuse.contracts.FusePoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
+    const userAssets = await sdk.contracts.sdkPoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
     const userWithAssets: FusePoolUserWithAssets = {
       ...user,
       debt: [],
@@ -31,7 +31,7 @@ async function getLiquidatableUsers(
     };
 
     const encodedLiquidationTX = await getPotentialLiquidation(
-      fuse,
+      sdk,
       userWithAssets,
       pool.closeFactor,
       pool.liquidationIncentive,
@@ -43,7 +43,7 @@ async function getLiquidatableUsers(
 }
 
 export default async function gatherLiquidations(
-  fuse: MidasBase,
+  sdk: MidasSdk,
   pools: Array<PublicPoolUserWithData>,
   chainLiquidationConfig: ChainLiquidationConfig
 ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
@@ -59,7 +59,7 @@ export default async function gatherLiquidations(
       return 0;
     });
     try {
-      const liquidatableUsers = await getLiquidatableUsers(fuse, poolUsers, pool, chainLiquidationConfig);
+      const liquidatableUsers = await getLiquidatableUsers(sdk, poolUsers, pool, chainLiquidationConfig);
       if (liquidatableUsers.length > 0) {
         liquidations.push({
           comptroller: pool.comptroller,

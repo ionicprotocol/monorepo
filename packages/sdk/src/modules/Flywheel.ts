@@ -7,7 +7,7 @@ import { FlywheelStaticRewards } from "../../typechain/FlywheelStaticRewards";
 import { MidasFlywheel } from "../../typechain/MidasFlywheel";
 import { MidasFlywheelLensRouter } from "../../typechain/MidasFlywheelLensRouter";
 
-import { withCreateContracts } from "./CreateContracts";
+import { CreateContractsModule } from "./CreateContracts";
 
 export interface FlywheelClaimableRewards {
   flywheel: string;
@@ -30,9 +30,7 @@ export type FlywheelMarketRewardsInfo = {
   }[];
 };
 
-type FuseBaseConstructorWithCreateContracts = ReturnType<typeof withCreateContracts>;
-
-export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContracts>(Base: TBase) {
+export function withFlywheel<TBase extends CreateContractsModule = CreateContractsModule>(Base: TBase) {
   return class Flywheel extends Base {
     /** READ */
     async getFlywheelMarketRewardsByPools(pools: string[]) {

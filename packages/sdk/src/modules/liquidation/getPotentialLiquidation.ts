@@ -3,7 +3,7 @@ import { BigNumber, BytesLike, constants, utils } from "ethers";
 
 import { CErc20Delegate } from "../../../typechain/CErc20Delegate";
 import { IUniswapV2Factory__factory } from "../../../typechain/factories/IUniswapV2Factory__factory";
-import MidasSdk from "../../MidasSdk";
+import { MidasSdk } from "../../MidasSdk";
 
 import { ChainLiquidationConfig } from "./config";
 import encodeLiquidateTx from "./encodeLiquidateTx";

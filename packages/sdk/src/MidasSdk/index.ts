@@ -5,7 +5,6 @@ import {
   ChainConfig,
   ChainDeployment,
   ChainParams,
-  DelegateContractName,
   DeployedPlugins,
   FundingStrategyContract,
   InterestRateModel,
@@ -18,11 +17,15 @@ import { BigNumber, Contract, Signer, utils } from "ethers";
 
 import CTokenInterfaceABI from "../../abis/CTokenInterface";
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import FuseFeeDistributorABI from "../../abis/FuseFeeDistributor";
+import FusePoolDirectoryABI from "../../abis/FusePoolDirectory";
+import FusePoolLensABI from "../../abis/FusePoolLens";
+import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
+import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
 import MidasERC4626ABI from "../../abis/MidasERC4626";
+import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
 import UnitrollerABI from "../../abis/Unitroller";
 import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
 import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
@@ -45,12 +48,6 @@ import { withFusePools } from "../modules/FusePools";
 import { ChainLiquidationConfig } from "../modules/liquidation/config";
 import { withSafeLiquidator } from "../modules/liquidation/SafeLiquidator";
 
-import FuseFeeDistributorABI from "../../abis/FuseFeeDistributor";
-import FusePoolDirectoryABI from "../../abis/FusePoolDirectory";
-import FusePoolLensABI from "../../abis/FusePoolLens";
-import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
-import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
-import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
 import { CTOKEN_ERROR_CODES } from "./config";
 import AdjustableJumpRateModel from "./irm/AdjustableJumpRateModel";
 import AnkrBNBInterestRateModel from "./irm/AnkrBNBInterestRateModel";
