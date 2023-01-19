@@ -11,7 +11,10 @@ export const useOracle = (comptrollerAddress?: string, poolChainId?: number) => 
       if (comptrollerAddress && sdk) {
         const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
 
-        const oracle = await comptroller.oracle();
+        const mpoAddress = await comptroller.oracle();
+
+        const mpo = sdk.createMasterPriceOracle(sdk.provider);
+        const oracle = await mpo.oracles(mpoAddress);
 
         return oracle;
       } else {
