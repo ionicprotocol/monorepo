@@ -642,7 +642,7 @@ const PoolsRowList = ({
                 aria-label="toPrevious"
                 icon={<ChevronLeftIcon fontSize={30} />}
                 onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
+                isDisabled={!table.getCanPreviousPage()}
                 isRound
               />
               <CIconButton
@@ -650,7 +650,7 @@ const PoolsRowList = ({
                 aria-label="toNext"
                 icon={<ChevronRightIcon fontSize={30} />}
                 onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
+                isDisabled={!table.getCanNextPage()}
                 isRound
               />
             </HStack>

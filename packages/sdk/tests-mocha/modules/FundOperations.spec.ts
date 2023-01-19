@@ -3,7 +3,6 @@ import axios from "axios";
 import { BigNumber, Contract, providers, Signer } from "ethers";
 import { createStubInstance, SinonStub, SinonStubbedInstance, stub } from "sinon";
 
-import { MidasBaseConstructor } from "../../src";
 import { MidasBase } from "../../src/MidasSdk/index";
 import * as utilsFns from "../../src/MidasSdk/utils";
 import * as FundOperationsModule from "../../src/modules/FundOperations";
