@@ -215,19 +215,5 @@ export function withFusePools<TBase extends MidasBaseConstructor>(Base: TBase) {
 
       return [...filteredPools, ...whitelistedPools].filter((p) => !!p) as FusePoolData[];
     }
-
-    getAssetInstance = <T extends CErc20Delegate = CErc20Delegate>(
-      address: string,
-      implementation: "CErc20Delegate" | "CErc20PluginDelegate" | "CErc20PluginRewardsDelegate" = "CErc20Delegate"
-    ): T => {
-      switch (implementation) {
-        case "CErc20PluginDelegate":
-          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
-        case "CErc20PluginRewardsDelegate":
-          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
-        default:
-          return getContract(address, this.chainDeployment[implementation].abi, this.provider) as T;
-      }
-    };
   };
 }
