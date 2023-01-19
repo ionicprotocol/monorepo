@@ -1,8 +1,8 @@
 import { ChakraProvider } from '@chakra-ui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import { appWithTranslation } from 'next-i18next';
 import { AppProps } from 'next/app';
+import { appWithTranslation } from 'next-i18next';
 import { createClient, WagmiConfig } from 'wagmi';
 
 import Layout from '@ui/components/shared/Layout';
