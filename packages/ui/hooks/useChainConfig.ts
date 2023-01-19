@@ -14,11 +14,13 @@ export function useCgId(chainId?: number) {
   }, [chainId]);
 }
 
-export function useChainConfig(chainId: number) {
+export function useChainConfig(chainId?: number) {
   return useMemo(() => {
-    const chainConfig = getChainConfig(chainId);
+    if (chainId) {
+      const chainConfig = getChainConfig(chainId);
 
-    return chainConfig;
+      return chainConfig;
+    }
   }, [chainId]);
 }
 

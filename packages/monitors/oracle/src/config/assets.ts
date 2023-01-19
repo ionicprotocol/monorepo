@@ -1,7 +1,9 @@
+import { chainIdToConfig } from "@midas-capital/chains";
 import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types";
 
-import { chainIdToConfig, Services } from "../types";
+import { Services } from "../types";
 
+import { chainIdToAssets } from "./priceChangeVerifier";
 import { baseConfig } from "./variables";
 
 const FEED_VERIFIER_ORACLES = [
@@ -34,6 +36,8 @@ const PRICE_VERIFICATION_DISABLED = [
   assetSymbols.XSGD,
 ];
 
+const FEED_VERIFICATION_DISABLED = PRICE_VERIFICATION_DISABLED;
+
 const getFeedVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
   return chainAssets.filter(
@@ -41,7 +45,7 @@ const getFeedVerifierAssets = (): SupportedAsset[] => {
       asset.oracle &&
       FEED_VERIFIER_ORACLES.includes(asset.oracle) &&
       asset.disabled !== true &&
-      !PRICE_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
+      !FEED_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
   );
 };
 
@@ -57,10 +61,7 @@ const getPriceVerifierAssets = (): SupportedAsset[] => {
 };
 
 const getPriceChangeVerifierAssets = (): SupportedAsset[] => {
-  const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
-  return chainAssets.filter(
-    (asset) => asset.oracle && FEED_VERIFIER_ORACLES.includes(asset.oracle) && asset.disabled !== true
-  );
+  return chainIdToAssets[baseConfig.chainId];
 };
 
 export const assets = {

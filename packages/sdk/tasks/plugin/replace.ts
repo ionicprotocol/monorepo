@@ -1,21 +1,10 @@
-import { arbitrum, bsc, chapel, fantom, ganache, moonbeam, neondevnet, polygon } from "@midas-capital/chains";
-import { ChainConfig, DeployedPlugins } from "@midas-capital/types";
+import { chainIdToConfig } from "@midas-capital/chains";
+import { DeployedPlugins } from "@midas-capital/types";
 import { task, types } from "hardhat/config";
 
 import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
 import { Comptroller } from "../../typechain/Comptroller";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
-
-const chainIdToConfig: { [chainId: number]: ChainConfig } = {
-  [bsc.chainId]: bsc,
-  [polygon.chainId]: polygon,
-  [moonbeam.chainId]: moonbeam,
-  [arbitrum.chainId]: arbitrum,
-  [neondevnet.chainId]: neondevnet,
-  [chapel.chainId]: chapel,
-  [fantom.chainId]: fantom,
-  [ganache.chainId]: ganache,
-};
 
 task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config list").setAction(
   async ({}, { ethers, getChainId, deployments }) => {
@@ -24,7 +13,7 @@ task("plugins:deploy:upgradable", "Deploys the upgradable plugins from a config 
     console.log({ deployer: deployer.address });
     const ffd = (await ethers.getContract("FuseFeeDistributor", deployer)) as FuseFeeDistributor;
 
-    const chainid = await getChainId();
+    const chainid = parseInt(await getChainId());
     const pluginConfigs: DeployedPlugins = chainIdToConfig[chainid].deployedPlugins;
 
     const oldImplementations = [];

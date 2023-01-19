@@ -14,9 +14,9 @@ import { FuseFeeDistributor } from "../typechain/FuseFeeDistributor";
 
 const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments, getChainId }): Promise<void> => {
   console.log("RPC URL: ", ethers.provider.connection.url);
-  const chainId = await getChainId();
+  const chainId = parseInt(await getChainId());
   console.log("chainId: ", chainId);
-  const MIN_BORROW_USD = chainId === "97" ? 0 : 100;
+  const MIN_BORROW_USD = chainId === 97 ? 0 : 100;
   const { deployer } = await getNamedAccounts();
   console.log("deployer: ", deployer);
   const balance = await ethers.provider.getBalance(deployer);
@@ -430,6 +430,15 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     log: true,
   });
   console.log("FixedNativePriceOracle: ", fixedNativePO.address);
+
+  const simplePO = await deployments.deploy("SimplePriceOracle", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
+  console.log("SimplePriceOracle: ", simplePO.address);
 
   const masterPO = await deployments.deploy("MasterPriceOracle", {
     from: deployer,

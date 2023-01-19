@@ -361,7 +361,7 @@ export const MarketsList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress, totalApy]);
+  }, [rewards, comptrollerAddress, totalApy, poolChainId]);
 
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -797,7 +797,7 @@ export const MarketsList = ({
               aria-label="toPrevious"
               icon={<ChevronLeftIcon fontSize={30} />}
               onClick={() => table.previousPage()}
-              disabled={!table.getCanPreviousPage()}
+              isDisabled={!table.getCanPreviousPage()}
               isRound
             />
             <CIconButton
@@ -805,7 +805,7 @@ export const MarketsList = ({
               aria-label="toNext"
               icon={<ChevronRightIcon fontSize={30} />}
               onClick={() => table.nextPage()}
-              disabled={!table.getCanNextPage()}
+              isDisabled={!table.getCanNextPage()}
               isRound
             />
           </HStack>

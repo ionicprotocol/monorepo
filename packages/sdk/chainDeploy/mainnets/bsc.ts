@@ -426,15 +426,6 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     certificateAssetSymbol: assetSymbols.ankrBNB,
   });
 
-  const simplePO = await deployments.deploy("SimplePriceOracle", {
-    from: deployer,
-    args: [],
-    log: true,
-    waitConfirmations: 1,
-  });
-  if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);
-  console.log("SimplePriceOracle: ", simplePO.address);
-
   //// Liquidator Redemption Strategies
   const uniswapLpTokenLiquidator = await deployments.deploy("UniswapLpTokenLiquidator", {
     from: deployer,
@@ -527,7 +518,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   console.log("WombatLpTokenLiquidator: ", wombatLpTokenLiquidator.address);
 
   //// deploy ankr bnb interest rate model
-  const abirm = await deployments.deploy("AnkrCertificateInterestRateModel", {
+  const abirm = await deployments.deploy("AnkrBNBInterestRateModel", {
     from: deployer,
     args: [
       deployConfig.blocksPerYear,
@@ -535,12 +526,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
       "3000000000000000000",
       "850000000000000000",
       3,
-      "0xBb1Aa6e59E5163D8722a122cd66EBA614b59df0d",
+      "0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa",
+      "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",
     ],
     log: true,
   });
   if (abirm.transactionHash) await ethers.provider.waitForTransaction(abirm.transactionHash);
-  console.log("AnkrCertificateInterestRateModel: ", abirm.address);
+  console.log("AnkrBNBInterestRateModel: ", abirm.address);
 
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({

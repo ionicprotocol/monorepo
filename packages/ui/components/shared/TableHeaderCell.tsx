@@ -19,12 +19,14 @@ export const TableHeaderCell = ({
         {children}
       </Text>
       {context.column.getCanSort() && (
-        <Box hidden={!context.column.getIsSorted()}>
-          {context.column.getIsSorted() === 'desc' ? (
-            <Text size="sm">↓</Text>
-          ) : (
-            <Text size="sm">↑</Text>
-          )}
+        <Box width={1}>
+          <Box hidden={!context.column.getIsSorted()}>
+            {context.column.getIsSorted() === 'desc' ? (
+              <Text size="sm">↓</Text>
+            ) : (
+              <Text size="sm">↑</Text>
+            )}
+          </Box>
         </Box>
       )}
     </HStack>

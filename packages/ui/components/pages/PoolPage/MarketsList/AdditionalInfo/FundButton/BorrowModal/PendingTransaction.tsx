@@ -1,11 +1,11 @@
 import { Box, Button, Flex, Icon, Text, VStack } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
 import { BsFillCheckCircleFill, BsFillXCircleFill } from 'react-icons/bs';
-import { Address } from 'wagmi';
 
 import { Column } from '@ui/components/shared/Flex';
 import Loader from '@ui/components/shared/Loader';
 import TransactionStepper from '@ui/components/shared/TransactionStepper';
+import { useAddTokenToWallet } from '@ui/hooks/useAddTokenToWallet';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -32,45 +32,14 @@ export const PendingTransaction = ({
   const successToast = useSuccessToast();
   const errorToast = useErrorToast();
 
-  const addToken = async () => {
-    const ethereum = window.ethereum;
-
-    if (!ethereum) {
-      errorToast({ title: 'Error', description: 'Wallet could not be found!' });
-
-      return false;
-    }
-    try {
-      const added = await ethereum.request({
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: asset.cToken,
-            symbol: asset.underlyingSymbol,
-            decimals: Number(asset.underlyingDecimals),
-            image: asset.logoUrl,
-          },
-        } as {
-          type: 'ERC20';
-          options: {
-            address: Address;
-            decimals: number;
-            symbol: string;
-            image?: string;
-          };
-        },
-      });
-
-      if (added) {
-        successToast({ title: 'Added', description: 'Token is successfully added to wallet' });
-      }
-
-      return added;
-    } catch (error) {
-      return false;
-    }
-  };
+  const addToken = useAddTokenToWallet({
+    underlyingAddress: asset.underlyingToken,
+    underlyingSymbol: asset.underlyingSymbol,
+    underlyingDecimals: Number(asset.underlyingDecimals),
+    logoUrl: asset.logoUrl,
+    successToast,
+    errorToast,
+  });
 
   return (
     <Column expand mainAxisAlignment="center" crossAxisAlignment="center" p={4} pt={12}>

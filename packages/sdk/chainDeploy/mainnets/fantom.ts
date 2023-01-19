@@ -81,7 +81,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   ////
   //// deploy ankr certificate interest rate model
-  const afirm = await deployments.deploy("AnkrCertificateInterestRateModel", {
+  const afirm = await deployments.deploy("AnkrFTMInterestRateModel", {
     from: deployer,
     args: [
       deployConfig.blocksPerYear,

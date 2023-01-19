@@ -114,11 +114,11 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string) {
-      const pool = await this.getComptrollerInstance(poolAddress);
+      const pool = this.getComptrollerInstance(poolAddress);
       const marketsOfPool = await pool.callStatic.getAllMarkets();
 
       const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
-      const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address));
+      const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address, this.provider));
       const flywheelWithRewards: FlywheelClaimableRewards[] = [];
       for (const flywheel of flywheels) {
         const rewards: FlywheelClaimableRewards["rewards"] = [];
@@ -174,10 +174,9 @@ export function withFlywheel<TBase extends FuseBaseConstructorWithCreateContract
     }
 
     async getFlywheelClaimableRewards(account: string) {
-      const [, comptrollers] = await this.contracts.FusePoolLensSecondary.callStatic.getRewardsDistributorsBySupplier(
-        account,
-        { from: account }
-      );
+      const [, comptrollers] = await this.contracts.FusePoolLensSecondary.callStatic.getFlywheelsToClaim(account, {
+        from: account,
+      });
 
       return (await Promise.all(comptrollers.map((comp) => this.getFlywheelClaimableRewardsForPool(comp, account))))
         .reduce((acc, curr) => [...acc, ...curr], []) // Flatten Array

@@ -1,4 +1,4 @@
-import { chainIdToConfig } from '@ui/types/ChainMetaData';
+import { chainIdToConfig } from '@midas-capital/chains';
 
 export function providerURLForChain(chainId: number) {
   const network = chainIdToConfig[chainId].specificParams.metadata;

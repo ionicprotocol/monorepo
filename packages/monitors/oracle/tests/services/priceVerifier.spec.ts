@@ -1,3 +1,4 @@
+import { chainIdToConfig } from "@midas-capital/chains";
 import { MidasSdk } from "@midas-capital/sdk";
 import { assetSymbols, SupportedChains } from "@midas-capital/types";
 import { BigNumber } from "ethers";
@@ -6,7 +7,7 @@ import { restore } from "sinon";
 import { configs } from "../../src/config";
 import { PriceVerifier } from "../../src/services/verifiers";
 import { AbstractOracleVerifier } from "../../src/services/verifiers/base";
-import { chainIdToConfig, Services } from "../../src/types";
+import { Services } from "../../src/types";
 import { expect } from "../globalTestHook";
 import { getSigner } from "../helpers";
 
@@ -34,7 +35,7 @@ describe("Price verifier", () => {
   });
   describe("config", () => {
     it("Expect service config to be correctly set", async () => {
-      expect(config.maxPriceDeviation).to.be.equal(15);
+      expect(config.defaultMaxPriceDeviation).to.be.equal(15);
       expect(process.env.SERVICE_TO_RUN).to.be.equal("price-verifier");
     });
   });

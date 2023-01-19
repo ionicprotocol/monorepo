@@ -23,7 +23,7 @@ docker build -t liquidator -f docker/liquidator/Dockerfile
 
 ## Run
 
-Export the relevant environmnet variables:
+Export the relevant environment variables:
 
 ```
 export ETHEREUM_ADMIN_ACCOUNT="0x321..."
