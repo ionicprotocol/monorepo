@@ -7,7 +7,8 @@ interface BeefyAPYResponse {
 }
 
 interface BeefyVaultResponse {
-  [key: string]: string | number | string[];
+  [key: string]: string | number | string[] | undefined;
+  status?: 'active' | 'eol' | 'paused' | 'unknown';
 }
 
 class BeefyAPYProvider extends AbstractPluginAPYProvider {
@@ -43,26 +44,33 @@ class BeefyAPYProvider extends AbstractPluginAPYProvider {
     }
 
     let apy = this.beefyAPYs![beefyID];
+    let status: 'active' | 'eol' | 'paused' | 'unknown' | undefined = undefined;
     if (apy === undefined) {
+      status = 'unknown';
+
       await functionsAlert(
         `BeefyAPYProvider: ${beefyID}`,
         `Beefy ID: "${beefyID}" not included in Beefy APY data`
       );
-      throw `Beefy ID: "${beefyID}" not included in Beefy APY data`;
+    } else {
+      const vaultInfo = this.beefyVaults.find((vault) => vault.id === beefyID);
+
+      if (vaultInfo && vaultInfo.status) {
+        status = vaultInfo.status;
+
+        if (vaultInfo.status === 'paused') {
+          apy = 0;
+        }
+      }
+
+      if (apy === 0) {
+        console.warn(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
+        // Disabled as spamming discord, as beefy is not fixing this.
+        // await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
+      }
     }
 
-    const vaultInfo = this.beefyVaults.find((vault) => vault.id === beefyID);
-    if (vaultInfo?.status === 'paused') {
-      apy = 0;
-    }
-
-    if (apy === 0) {
-      console.warn(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
-      // Disabled as spamming discord, as beefy is not fixing this.
-      // await functionsAlert(`BeefyAPYProvider: ${pluginAddress}`, 'External APY of Plugin is 0');
-    }
-
-    return [{ apy, updated_at: new Date().toISOString(), plugin: pluginAddress }];
+    return [{ apy, status, updated_at: new Date().toISOString(), plugin: pluginAddress }];
   }
 }
 

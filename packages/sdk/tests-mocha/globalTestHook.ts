@@ -11,7 +11,6 @@ chaiPlugin = chaiPlugin.use(sinonChai);
 export const expect = chaiPlugin.expect;
 
 export const mochaHooks = {
-  beforeEach() {},
   afterEach() {
     restore();
     reset();
