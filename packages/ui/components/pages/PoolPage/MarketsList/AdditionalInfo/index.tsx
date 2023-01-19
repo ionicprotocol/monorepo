@@ -104,7 +104,7 @@ export const AdditionalInfo = ({
   };
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
-  const { data: oracle } = useOracle(comptrollerAddress, poolChainId);
+  const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
   const { data: irm } = useIRM(asset.cToken, poolChainId);
 
   return (

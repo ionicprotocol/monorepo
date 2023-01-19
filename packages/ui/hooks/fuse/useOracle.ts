@@ -2,19 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useOracle = (comptrollerAddress?: string, poolChainId?: number) => {
+export const useOracle = (underlyingAddress?: string, poolChainId?: number) => {
   const sdk = useSdk(poolChainId);
 
   return useQuery(
-    ['useOracle', comptrollerAddress, sdk?.chainId],
+    ['useOracle', underlyingAddress, sdk?.chainId],
     async () => {
-      if (comptrollerAddress && sdk) {
-        const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
-
-        const mpoAddress = await comptroller.oracle();
-
+      if (underlyingAddress && sdk) {
         const mpo = sdk.createMasterPriceOracle(sdk.provider);
-        const oracle = await mpo.oracles(mpoAddress);
+        const oracle = await mpo.callStatic.oracles(underlyingAddress);
 
         return oracle;
       } else {
@@ -24,7 +20,7 @@ export const useOracle = (comptrollerAddress?: string, poolChainId?: number) => 
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!comptrollerAddress && !!sdk,
+      enabled: !!underlyingAddress && !!sdk,
     }
   );
 };
