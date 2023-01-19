@@ -40,6 +40,8 @@ import {
   SCORE_RANGE_MAX,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useIRM } from '@ui/hooks/fuse/useIRM';
+import { useOracle } from '@ui/hooks/fuse/useOracle';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
@@ -102,6 +104,8 @@ export const AdditionalInfo = ({
   };
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
+  const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
+  const { data: irm } = useIRM(asset.cToken, poolChainId);
 
   return (
     <Box width={{ base: windowWidth.width * 0.9, md: 'auto' }} minWidth="400px">
@@ -699,6 +703,13 @@ export const AdditionalInfo = ({
               <Flex justifyContent="space-between" alignItems="center" height="100%">
                 <Text>Market Details</Text>
                 <HStack>
+                  {oracle && (
+                    <Link href={`${scanUrl}/address/${oracle}`} isExternal rel="noreferrer">
+                      <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                        Oracle Contract
+                      </Button>
+                    </Link>
+                  )}
                   <Link
                     href={`${scanUrl}/address/${asset.underlyingToken}`}
                     isExternal
@@ -779,8 +790,15 @@ export const AdditionalInfo = ({
               borderColor={cCard.headingBgColor}
               height={14}
             >
-              <Flex alignItems="center" height="100%">
+              <Flex justifyContent="space-between" alignItems="center" height="100%">
                 <Text py={0.5}>Utilization Rate</Text>
+                {irm && !asset.isBorrowPaused && (
+                  <Link href={`${scanUrl}/address/${irm}`} isExternal rel="noreferrer">
+                    <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
+                      IRM Contract
+                    </Button>
+                  </Link>
+                )}
               </Flex>
             </Box>
             <Box
