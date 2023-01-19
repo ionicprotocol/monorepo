@@ -390,11 +390,6 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.USDT),
     ],
   },
-  {
-    lpToken: underlying(assets, assetSymbols.WMATIC_STMATIC_CURVE),
-    pool: "0xFb6FE7802bA9290ef8b00CA16Af4Bc26eb663a28",
-    underlyings: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.stMATIC)],
-  },
 ];
 
 const gelatoAssets: GelatoGUniAsset[] = [

@@ -351,7 +351,6 @@ export enum assetSymbols {
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
   WMATIC_STMATIC_BLP = "WMATIC_STMATIC BLP",
   WMATIC_MATICX_BLP = "WMATIC_MATICX BLP",
-  WMATIC_STMATIC_CURVE = "WMATIC_STMATIC CURVE",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",
