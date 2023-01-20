@@ -14,7 +14,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { STRATEGY_HELP } from '@midas-capital/security';
-import { FundOperationMode, Strategy } from '@midas-capital/types';
+import { assetSymbols, FundOperationMode, Strategy } from '@midas-capital/types';
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { Row } from '@tanstack/react-table';
 import { utils } from 'ethers';
@@ -106,6 +106,19 @@ export const AdditionalInfo = ({
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
   const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
   const { data: irm } = useIRM(asset.cToken, poolChainId);
+
+  const isEnableIRM = useMemo(() => {
+    if (
+      !asset.totalBorrow.isZero() &&
+      (asset.underlyingSymbol === assetSymbols.JEUR ||
+        asset.underlyingSymbol === assetSymbols.JCHF ||
+        asset.underlyingSymbol === assetSymbols.JGBP)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [asset]);
 
   return (
     <Box width={{ base: windowWidth.width * 0.9, md: 'auto' }} minWidth="400px">
@@ -792,7 +805,7 @@ export const AdditionalInfo = ({
             >
               <Flex justifyContent="space-between" alignItems="center" height="100%">
                 <Text py={0.5}>Utilization Rate</Text>
-                {irm && !asset.isBorrowPaused && (
+                {irm && (!asset.isBorrowPaused || isEnableIRM) && (
                   <Link href={`${scanUrl}/address/${irm}`} isExternal rel="noreferrer">
                     <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
                       IRM Contract
@@ -808,7 +821,7 @@ export const AdditionalInfo = ({
               borderColor={cCard.headingBgColor}
               pb={4}
             >
-              {asset.isBorrowPaused ? (
+              {asset.isBorrowPaused && !isEnableIRM ? (
                 <Center height="100%">
                   <Text size="md">This asset is not borrowable.</Text>
                 </Center>
