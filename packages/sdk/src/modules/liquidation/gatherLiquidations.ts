@@ -22,7 +22,7 @@ async function getLiquidatableUsers(
 ): Promise<Array<EncodedLiquidationTx>> {
   const users: Array<EncodedLiquidationTx> = [];
   for (const user of poolUsers) {
-    const userAssets = await sdk.contracts.sdkPoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
+    const userAssets = await sdk.contracts.FusePoolLens.callStatic.getPoolAssetsByUser(pool.comptroller, user.account);
     const userWithAssets: FusePoolUserWithAssets = {
       ...user,
       debt: [],
