@@ -4,6 +4,7 @@ import { BytesLike, Contract, ethers } from "ethers";
 import { ICurvePool__factory } from "../../../typechain/factories/ICurvePool__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
+import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 
 export type StrategiesAndDatas = {
   strategies: string[];
@@ -84,7 +85,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
   const [redemptionStrategy, outputToken] = fuse.redemptionStrategies[inputToken];
   const redemptionStrategyContract = new Contract(
     fuse.chainDeployment[redemptionStrategy].address,
-    fuse.chainDeployment[redemptionStrategy].abi,
+    IRedemptionStrategyABI,
     fuse.provider
   );
 
