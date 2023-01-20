@@ -58,9 +58,6 @@ import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } fr
 
 utils.Logger.setLogLevel(LogLevel.OFF);
 
-type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
-type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
-
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
 export type SignerOrProvider = SupportedSigners | SupportedProvider;
