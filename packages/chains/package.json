@@ -14,7 +14,7 @@
     "/dist/"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts --format esm,cjs --dts",
+    "build": "echo '> Bundling `@midas-capital/chains`...' && tsup ./src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'src/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
