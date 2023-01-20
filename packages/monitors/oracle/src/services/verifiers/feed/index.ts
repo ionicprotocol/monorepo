@@ -1,3 +1,7 @@
+import ChainlinkPriceOracleV2ABI from "@midas-capital/sdk/abis/ChainlinkPriceOracleV2";
+import DiaPriceOracleABI from "@midas-capital/sdk/abis/DiaPriceOracle";
+import FluxPriceOracleABI from "@midas-capital/sdk/abis/FluxPriceOracle";
+import UniswapTwapPriceOracleV2ABI from "@midas-capital/sdk/abis/UniswapTwapPriceOracleV2";
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
@@ -12,10 +16,6 @@ import {
 import { AbstractOracleVerifier } from "../base";
 
 import { verifyProviderFeed } from "./providers";
-import ChainlinkPriceOracleV2ABI from "@midas-capital/sdk/abis/ChainlinkPriceOracleV2";
-import DiaPriceOracleABI from "@midas-capital/sdk/abis/DiaPriceOracle";
-import FluxPriceOracleABI from "@midas-capital/sdk/abis/FluxPriceOracle";
-import UniswapTwapPriceOracleV2ABI from "@midas-capital/sdk/abis/UniswapTwapPriceOracleV2";
 
 export class FeedVerifier extends AbstractOracleVerifier {
   underlyingOracle: Contract;
@@ -31,7 +31,7 @@ export class FeedVerifier extends AbstractOracleVerifier {
 
     try {
       const oracleAddress = await this.mpo.callStatic.oracles(this.asset.underlying);
-      const { chainDeployment, provider } = this.sdk;
+      const { provider } = this.sdk;
       switch (this.oracleType) {
         case OracleTypes.ChainlinkPriceOracleV2:
           this.underlyingOracle = new Contract(oracleAddress, ChainlinkPriceOracleV2ABI, provider);

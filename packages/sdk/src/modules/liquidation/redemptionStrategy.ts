@@ -1,10 +1,10 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
+import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 import { ICurvePool__factory } from "../../../typechain/factories/ICurvePool__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
-import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 
 export type StrategiesAndDatas = {
   strategies: string[];

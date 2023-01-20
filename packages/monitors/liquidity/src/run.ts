@@ -1,11 +1,11 @@
 import { MidasSdk } from "@midas-capital/sdk";
 
 import { configs, verifiers } from "./config";
+import { MONITORED_CHAIN_ASSETS } from "./config/pools";
 import { BatchVerifier } from "./services/verifier";
 import { LiquidityPoolKind, MonitoredAssetsConfig, Services } from "./types";
 
 import { logger } from ".";
-import { MONITORED_CHAIN_ASSETS } from "./config/pools";
 
 export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverride?: MonitoredAssetsConfig) {
   const assetsToVerify = assetsOverride ? assetsOverride : MONITORED_CHAIN_ASSETS[sdk.chainId];
