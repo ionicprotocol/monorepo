@@ -1,10 +1,10 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { AvatarGroup, Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { SupportedChains } from '@midas-capital/types';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
-import { SupportedChains } from 'types/dist/cjs';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar';
