@@ -9,13 +9,12 @@
   "description": "",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
     "/dist/"
   ],
   "scripts": {
-    "build": "tsup ./src/index.ts --format esm,cjs",
-    "types": "tsc  -p tsconfig-types.json --emitDeclarationOnly --declaration",
+    "build": "tsup ./src/index.ts --format esm,cjs --dts",
     "clean": "rm -rf dist",
     "prettier:ts": "prettier --write 'src/**/*.ts'",
     "lint": "eslint . -c .eslintrc.json --ext ts,json",
