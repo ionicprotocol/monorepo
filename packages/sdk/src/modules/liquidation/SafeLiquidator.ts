@@ -31,7 +31,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
           ...this.chainLiquidationConfig,
           ...configOverrides,
         };
-      const [liquidateablePools, erroredLiquidations] = await gatherLiquidations(
+      const [liquidatablePools, erroredLiquidations] = await gatherLiquidations(
         this as unknown as MidasSdk,
         fusePoolWithUsers,
         this.chainLiquidationConfig
@@ -41,7 +41,7 @@ export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TB
       const errored = [...erroredPools, ...erroredLiquidations].filter(
         (value, idx, array) => array.findIndex((v2) => v2.comptroller === value.comptroller) === idx
       );
-      return [liquidateablePools, errored];
+      return [liquidatablePools, errored];
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool
