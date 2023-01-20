@@ -1,5 +1,5 @@
 import { chainIdToConfig } from "@midas-capital/chains";
-import { SupportedAsset, underlying } from "@midas-capital/types";
+import { SupportedAsset } from "@midas-capital/types";
 import { BigNumber } from "ethers";
 
 import { MidasBaseConstructor } from "..";
@@ -18,6 +18,9 @@ export function withFusePoolLens<TBase extends MidasBaseConstructor>(Base: TBase
         .map((data) => data.totalSupply)
         .reduce((prev, cur) => prev.add(cur), BigNumber.from(0));
     }
+    /**
+     * @returns a set of the currently live assets on our platform on the current chain
+     */
     async getLiveAssets(): Promise<Set<SupportedAsset>> {
       const pools: FusePoolDirectory.FusePoolStruct[] = await this.contracts.FusePoolDirectory.callStatic.getAllPools();
 
