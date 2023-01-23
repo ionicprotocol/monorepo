@@ -1,10 +1,10 @@
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
+
 import ChainlinkPriceOracleV2ABI from "../../../../../../sdk/abis/ChainlinkPriceOracleV2";
 import DiaPriceOracleABI from "../../../../../../sdk/abis/DiaPriceOracle";
 import FluxPriceOracleABI from "../../../../../../sdk/abis/FluxPriceOracle";
 import UniswapTwapPriceOracleV2ABI from "../../../../../../sdk/abis/UniswapTwapPriceOracleV2";
-
 import { logger } from "../../../logger";
 import {
   FeedVerifierConfig,
@@ -14,7 +14,6 @@ import {
   VerifyFeedParams,
 } from "../../../types";
 import { AbstractOracleVerifier } from "../base";
-
 import { verifyProviderFeed } from "./providers";
 
 export class FeedVerifier extends AbstractOracleVerifier {
