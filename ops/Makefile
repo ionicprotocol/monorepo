@@ -115,7 +115,7 @@ feed-verifier-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
 				-e SERVICE=feed-verifier \
-				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/tests/run.js
+				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
 
 price-verifier-smoke-test:
 	@docker run -t --entrypoint node \
@@ -126,7 +126,7 @@ price-verifier-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
 				-e SERVICE=price-verifier \
-				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/tests/run.js
+				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
 
 price-change-verifier-smoke-test:
 	@docker run -t --entrypoint node \
@@ -137,4 +137,4 @@ price-change-verifier-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e TARGET_CHAIN_ID=56 \
 				-e SERVICE=price-change-verifier \
-				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/tests/run.js
+				ghcr.io/midas-protocol/oracles-monitor:${IMAGE_TAG} packages/monitors/oracle/build/monitors/oracle/tests/run.js
