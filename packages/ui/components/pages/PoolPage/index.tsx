@@ -1,10 +1,10 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { SupportedChains } from '@midas-capital/types';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
-import { SupportedChains } from 'types/dist/cjs';
 
 import { UserStat } from './UserStats/UserStat';
 

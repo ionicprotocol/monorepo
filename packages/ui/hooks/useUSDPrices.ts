@@ -1,7 +1,7 @@
 import { chainIdToConfig } from '@midas-capital/chains';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
-import { SupportedChains } from 'types/dist/cjs';
+import { SupportedChains } from '@midas-capital/types';
 
 import { COINGECKO_API, DEFI_LLAMA_API } from '../constants';
 

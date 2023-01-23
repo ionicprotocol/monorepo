@@ -802,7 +802,7 @@ export const AdditionalInfo = ({
             >
               <Flex justifyContent="space-between" alignItems="center" height="100%">
                 <Text py={0.5}>Utilization Rate</Text>
-                {irm && !asset.isBorrowPaused && (
+                {irm && (!asset.isBorrowPaused || !asset.totalBorrow.isZero()) && (
                   <Link href={`${scanUrl}/address/${irm}`} isExternal rel="noreferrer">
                     <Button variant={'external'} size="xs" rightIcon={<ExternalLinkIcon />}>
                       IRM Contract
@@ -818,7 +818,7 @@ export const AdditionalInfo = ({
               borderColor={cCard.headingBgColor}
               pb={4}
             >
-              {asset.isBorrowPaused ? (
+              {asset.isBorrowPaused && asset.totalBorrow.isZero() ? (
                 <Center height="100%">
                   <Text size="md">This asset is not borrowable.</Text>
                 </Center>

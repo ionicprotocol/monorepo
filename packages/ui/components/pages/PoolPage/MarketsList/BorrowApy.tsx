@@ -14,9 +14,9 @@ export const BorrowApy = ({
 
   return (
     <VStack alignItems={'flex-end'}>
-      {asset.isBorrowPaused ||
-      !borrowApyPerAsset ||
-      borrowApyPerAsset[asset.cToken] === undefined ? (
+      {borrowApyPerAsset === null ||
+      borrowApyPerAsset === undefined ||
+      (asset.isBorrowPaused && asset.totalBorrow.isZero()) ? (
         <Text color={borrowApyColor} fontWeight="medium" size="sm" variant="tnumber">
           -
         </Text>
