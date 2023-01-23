@@ -14,6 +14,7 @@ import {
   VerifyFeedParams,
 } from "../../../types";
 import { AbstractOracleVerifier } from "../base";
+
 import { verifyProviderFeed } from "./providers";
 
 export class FeedVerifier extends AbstractOracleVerifier {
