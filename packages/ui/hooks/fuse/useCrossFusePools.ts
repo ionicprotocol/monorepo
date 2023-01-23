@@ -2,7 +2,6 @@ import { FusePoolData, SupportedChains } from '@midas-capital/types';
 import { useQueries } from '@tanstack/react-query';
 import { useMemo } from 'react';
 
-import { config } from '@ui/config/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useUSDPrices } from '@ui/hooks/useUSDPrices';
 import { FusePoolsPerChain } from '@ui/types/ChainMetaData';
