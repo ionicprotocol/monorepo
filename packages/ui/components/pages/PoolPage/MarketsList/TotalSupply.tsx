@@ -1,9 +1,24 @@
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
+import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
-export const TotalSupply = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
+export const TotalSupply = ({
+  asset,
+  comptrollerAddress,
+  poolChainId,
+}: {
+  asset: MarketData;
+  comptrollerAddress: string;
+  poolChainId: number;
+}) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
+  const { data: supplyCaps } = useSupplyCap(
+    comptrollerAddress,
+    asset.cToken,
+    asset.underlyingPrice,
+    poolChainId
+  );
 
   return (
     <BalanceCell
@@ -15,6 +30,7 @@ export const TotalSupply = ({ asset, poolChainId }: { asset: MarketData; poolCha
         symbol: tokenData?.symbol || '',
         decimals: asset.underlyingDecimals.toNumber(),
       }}
+      supplyCaps={supplyCaps}
     />
   );
 };
