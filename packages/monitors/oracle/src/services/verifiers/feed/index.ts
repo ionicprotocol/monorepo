@@ -1,9 +1,9 @@
-import ChainlinkPriceOracleV2ABI from "@midas-capital/sdk/abis/ChainlinkPriceOracleV2";
-import DiaPriceOracleABI from "@midas-capital/sdk/abis/DiaPriceOracle";
-import FluxPriceOracleABI from "@midas-capital/sdk/abis/FluxPriceOracle";
-import UniswapTwapPriceOracleV2ABI from "@midas-capital/sdk/abis/UniswapTwapPriceOracleV2";
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
+import ChainlinkPriceOracleV2ABI from "../../../../../../sdk/abis/ChainlinkPriceOracleV2";
+import DiaPriceOracleABI from "../../../../../../sdk/abis/DiaPriceOracle";
+import FluxPriceOracleABI from "../../../../../../sdk/abis/FluxPriceOracle";
+import UniswapTwapPriceOracleV2ABI from "../../../../../../sdk/abis/UniswapTwapPriceOracleV2";
 
 import { logger } from "../../../logger";
 import {
