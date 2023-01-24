@@ -9,7 +9,7 @@ export const useCTokenData = (
 ) => {
   const sdk = useSdk(poolChainId);
 
-  const { data } = useQuery(
+  return useQuery(
     ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
     async () => {
       if (comptrollerAddress && cTokenAddress && sdk) {
@@ -46,6 +46,4 @@ export const useCTokenData = (
       enabled: !!cTokenAddress && !!comptrollerAddress && !!sdk,
     }
   );
-
-  return data;
 };
