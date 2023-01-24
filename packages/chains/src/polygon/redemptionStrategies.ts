@@ -1,6 +1,6 @@
 import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
 
-import { assets, USDC } from "./assets";
+import { assets, USDC, WMATIC } from "./assets";
 
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
   [underlying(assets, assetSymbols.JAUD)]: [
@@ -152,6 +152,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     underlying(assets, assetSymbols.USDC),
   ],
   [underlying(assets, assetSymbols["MAI-USDC"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, USDC],
+  [underlying(assets, assetSymbols["WMATIC-MATICx"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WMATIC],
 };
 
 export default redemptionStrategies;
