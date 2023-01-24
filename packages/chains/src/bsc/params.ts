@@ -12,7 +12,10 @@ const specificParams: ChainParams = {
     shortName: "BNB",
     img: "https://d1912tcoux65lj.cloudfront.net/network/bsc.jpg",
     blockExplorerUrls: { default: { name: "BnbScan", url: "https://bscscan.com" } },
-    rpcUrls: { default: { http: ["https://bsc-dataseed.binance.org/"] } },
+    rpcUrls: {
+      default: { http: ["https://bsc-dataseed.binance.org/"] },
+      public: { http: ["https://bsc-dataseed.binance.org/"] },
+    },
     nativeCurrency: {
       symbol: "BNB",
       name: "BNB",

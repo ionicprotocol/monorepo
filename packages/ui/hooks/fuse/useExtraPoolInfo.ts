@@ -14,7 +14,7 @@ export const useExtraPoolInfo = (comptrollerAddress?: string, poolChainId?: numb
         return null;
       }
 
-      const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
+      const comptroller = sdk.createComptroller(comptrollerAddress);
 
       const [
         { 0: admin, 1: upgradeable },
