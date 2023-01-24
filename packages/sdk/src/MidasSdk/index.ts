@@ -5,7 +5,6 @@ import {
   ChainConfig,
   ChainDeployment,
   ChainParams,
-  DelegateContractName,
   DeployedPlugins,
   FundingStrategyContract,
   InterestRateModel,
@@ -18,14 +17,14 @@ import { BigNumber, Contract, Signer, utils } from "ethers";
 
 import CTokenInterfaceABI from "../../abis/CTokenInterface";
 import EIP20InterfaceABI from "../../abis/EIP20Interface";
+import FuseFeeDistributorABI from "../../abis/FuseFeeDistributor";
+import FusePoolDirectoryABI from "../../abis/FusePoolDirectory";
+import FusePoolLensABI from "../../abis/FusePoolLens";
+import FusePoolLensSecondaryABI from "../../abis/FusePoolLensSecondary";
+import FuseSafeLiquidatorABI from "../../abis/FuseSafeLiquidator";
 import MidasERC4626ABI from "../../abis/MidasERC4626";
+import MidasFlywheelLensRouterABI from "../../abis/MidasFlywheelLensRouter";
 import UnitrollerABI from "../../abis/Unitroller";
-import { CErc20Delegate } from "../../typechain/CErc20Delegate";
-import { CErc20PluginDelegate } from "../../typechain/CErc20PluginDelegate";
-import { CErc20PluginRewardsDelegate } from "../../typechain/CErc20PluginRewardsDelegate";
-import { Comptroller } from "../../typechain/Comptroller";
-import { ComptrollerFirstExtension } from "../../typechain/ComptrollerFirstExtension";
-import { CTokenFirstExtension } from "../../typechain/CTokenFirstExtension";
 import { EIP20Interface } from "../../typechain/EIP20Interface";
 import { FuseFeeDistributor } from "../../typechain/FuseFeeDistributor";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
@@ -54,9 +53,6 @@ import WhitePaperInterestRateModel from "./irm/WhitePaperInterestRateModel";
 import { getContract, getPoolAddress, getPoolComptroller, getPoolUnitroller } from "./utils";
 
 utils.Logger.setLogLevel(LogLevel.OFF);
-
-type ComptrollerWithExtensions = Comptroller & ComptrollerFirstExtension;
-type CTokenWithExtensions = CErc20Delegate & CTokenFirstExtension;
 
 export type SupportedProvider = JsonRpcProvider | Web3Provider;
 export type SupportedSigners = Signer | SignerWithAddress;
@@ -129,32 +125,32 @@ export class MidasBase {
     return {
       FusePoolDirectory: new Contract(
         this.chainDeployment.FusePoolDirectory.address,
-        this.chainDeployment.FusePoolDirectory.abi,
+        FusePoolDirectoryABI,
         this.provider
       ) as FusePoolDirectory,
       FusePoolLens: new Contract(
         this.chainDeployment.FusePoolLens.address,
-        this.chainDeployment.FusePoolLens.abi,
+        FusePoolLensABI,
         this.provider
       ) as FusePoolLens,
       FusePoolLensSecondary: new Contract(
         this.chainDeployment.FusePoolLensSecondary.address,
-        this.chainDeployment.FusePoolLensSecondary.abi,
+        FusePoolLensSecondaryABI,
         this.provider
       ) as FusePoolLensSecondary,
       FuseSafeLiquidator: new Contract(
         this.chainDeployment.FuseSafeLiquidator.address,
-        this.chainDeployment.FuseSafeLiquidator.abi,
+        FuseSafeLiquidatorABI,
         this.provider
       ) as FuseSafeLiquidator,
       FuseFeeDistributor: new Contract(
         this.chainDeployment.FuseFeeDistributor.address,
-        this.chainDeployment.FuseFeeDistributor.abi,
+        FuseFeeDistributorABI,
         this.provider
       ) as FuseFeeDistributor,
       MidasFlywheelLensRouter: new Contract(
         this.chainDeployment.MidasFlywheelLensRouter.address,
-        this.chainDeployment.MidasFlywheelLensRouter.abi,
+        MidasFlywheelLensRouterABI,
         this.provider
       ) as MidasFlywheelLensRouter,
       ...this._contracts,
@@ -332,42 +328,6 @@ export class MidasBase {
     return oracle;
   }
 
-  getComptrollerInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    const comptrollerABI: Array<object> = this.chainDeployment.Comptroller.abi;
-
-    if (this.chainDeployment.ComptrollerFirstExtension) {
-      comptrollerABI.push(...this.chainDeployment.ComptrollerFirstExtension.abi);
-    }
-
-    return new Contract(address, comptrollerABI, signerOrProvider) as ComptrollerWithExtensions;
-  }
-
-  getCTokenInstance(address: string, signerOrProvider = this.provider) {
-    const ctokenABI: Array<object> = this.chainDeployment[DelegateContractName.CErc20Delegate].abi;
-
-    if (this.chainDeployment.CTokenFirstExtension) {
-      ctokenABI.push(...this.chainDeployment.CTokenFirstExtension.abi);
-    }
-
-    return new Contract(address, ctokenABI, signerOrProvider) as CTokenWithExtensions;
-  }
-
-  getCErc20PluginRewardsInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(
-      address,
-      this.chainDeployment[DelegateContractName.CErc20PluginRewardsDelegate].abi,
-      signerOrProvider
-    ) as CErc20PluginRewardsDelegate;
-  }
-
-  getCErc20PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(
-      address,
-      this.chainDeployment[DelegateContractName.CErc20PluginDelegate].abi,
-      signerOrProvider
-    ) as CErc20PluginDelegate;
-  }
-
   getEIP20RewardTokenInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
     return new Contract(address, EIP20InterfaceABI, signerOrProvider) as EIP20Interface;
   }
@@ -377,11 +337,7 @@ export class MidasBase {
   }
 
   getFusePoolDirectoryInstance(signerOrProvider: SignerOrProvider = this.provider) {
-    return new Contract(
-      this.chainDeployment.FusePoolDirectory.address,
-      this.chainDeployment.FusePoolDirectory.abi,
-      signerOrProvider
-    );
+    return new Contract(this.chainDeployment.FusePoolDirectory.address, FusePoolDirectoryABI, signerOrProvider);
   }
 
   getMidasErc4626PluginInstance(address: string, signerOrProvider: SignerOrProvider = this.provider) {
@@ -394,4 +350,5 @@ const MidasBaseWithModules = withFusePoolLens(
     withSafeLiquidator(withFusePools(withAsset(withFlywheel(withCreateContracts(withConvertMantissa(MidasBase))))))
   )
 );
-export default class MidasSdk extends MidasBaseWithModules {}
+export class MidasSdk extends MidasBaseWithModules {}
+export default MidasSdk;

@@ -64,7 +64,7 @@ export function withAsset<TBase extends FuseBaseConstructorWithModules>(Base: TB
       const adminFeeBN = utils.parseUnits((config.adminFee / 100).toString());
       const collateralFactorBN = utils.parseUnits((config.collateralFactor / 100).toString());
 
-      const comptroller = this.getComptrollerInstance(config.comptroller, this.signer);
+      const comptroller = this.createComptroller(config.comptroller, this.signer);
 
       // Use Default CErc20Delegate
       const implementationAddress = this.chainDeployment.CErc20Delegate.address;

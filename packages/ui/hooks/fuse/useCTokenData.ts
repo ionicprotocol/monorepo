@@ -13,8 +13,8 @@ export const useCTokenData = (
     ['CTokenData', cTokenAddress, comptrollerAddress, sdk?.chainId],
     async () => {
       if (comptrollerAddress && cTokenAddress && sdk) {
-        const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
-        const cToken = sdk.getCTokenInstance(cTokenAddress);
+        const comptroller = sdk.createComptroller(comptrollerAddress);
+        const cToken = sdk.createCTokenWithExtensions(cTokenAddress);
         const [
           adminFeeMantissa,
           reserveFactorMantissa,

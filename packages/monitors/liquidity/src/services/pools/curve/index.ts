@@ -1,6 +1,7 @@
 import { MidasSdk } from "@midas-capital/sdk";
 
 import { CurvePoolConfig, InvalidReason, LiquidityDepthConfig, LiquidityValidity } from "../../../types";
+
 import { fetchCurvePoolTvl } from "./fetcher";
 
 export async function verifyCurveLiquidityDepth(
