@@ -60,3 +60,15 @@ export const poolSortByAddress = (pools: PoolData[]) => {
     return a.comptroller.localeCompare(b.comptroller);
   });
 };
+
+export const sortTopUserSuppliedAssets = (assets: MarketData[]) => {
+  return [...assets].sort((a, b) => {
+    return b.supplyBalanceFiat - a.supplyBalanceFiat;
+  });
+};
+
+export const sortTopUserBorrowedAssets = (assets: MarketData[]) => {
+  return [...assets].sort((a, b) => {
+    return b.borrowBalanceFiat - a.borrowBalanceFiat;
+  });
+};

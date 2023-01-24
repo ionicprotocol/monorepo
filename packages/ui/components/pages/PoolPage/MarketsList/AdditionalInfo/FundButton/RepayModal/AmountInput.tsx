@@ -1,7 +1,7 @@
 import { Box, Button, Input } from '@chakra-ui/react';
+import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, constants, utils } from 'ethers';
 import { useState } from 'react';
-import { FundOperationMode } from 'types/dist/cjs';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';

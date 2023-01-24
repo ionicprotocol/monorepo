@@ -171,7 +171,7 @@ export const AssetSettings = ({
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
-  const cTokenData = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
+  const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
   const { data: borrowCapsPerCollateral } = useBorrowCapForAssetForCollateral(
     comptrollerAddress,
     [selectedAsset],

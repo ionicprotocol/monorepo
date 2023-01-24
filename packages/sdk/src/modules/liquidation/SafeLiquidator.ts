@@ -1,7 +1,8 @@
 import { TransactionResponse } from "@ethersproject/providers";
 import { BigNumber, utils } from "ethers";
 
-import { MidasBaseConstructor } from "../..";
+import { MidasSdk } from "../..";
+import { CreateContractsModule } from "../CreateContracts";
 
 import { ChainLiquidationConfig, getChainLiquidationConfig } from "./config";
 import liquidateUnhealthyBorrows from "./liquidateUnhealthyBorrows";
@@ -9,7 +10,7 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "./utils";
 
 import { gatherLiquidations, getAllFusePoolUsers } from "./index";
 
-export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBase) {
+export function withSafeLiquidator<TBase extends CreateContractsModule>(Base: TBase) {
   return class SafeLiquidator extends Base {
     public chainLiquidationConfig: ChainLiquidationConfig = getChainLiquidationConfig(this);
 
@@ -19,14 +20,19 @@ export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBa
       configOverrides?: ChainLiquidationConfig
     ): Promise<[Array<LiquidatablePool>, Array<ErroredPool>]> {
       // Get potential liquidations from public pools
-      const [fusePoolWithUsers, erroredPools] = await getAllFusePoolUsers(this, maxHealthFactor, excludedComptrollers);
+      const [fusePoolWithUsers, erroredPools] = await getAllFusePoolUsers(
+        this as unknown as MidasSdk,
+        maxHealthFactor,
+        excludedComptrollers
+      );
+
       if (configOverrides)
         this.chainLiquidationConfig = {
           ...this.chainLiquidationConfig,
           ...configOverrides,
         };
-      const [liquidateablePools, erroredLiquidations] = await gatherLiquidations(
-        this,
+      const [liquidatablePools, erroredLiquidations] = await gatherLiquidations(
+        this as unknown as MidasSdk,
         fusePoolWithUsers,
         this.chainLiquidationConfig
       );
@@ -35,7 +41,7 @@ export function withSafeLiquidator<TBase extends MidasBaseConstructor>(Base: TBa
       const errored = [...erroredPools, ...erroredLiquidations].filter(
         (value, idx, array) => array.findIndex((v2) => v2.comptroller === value.comptroller) === idx
       );
-      return [liquidateablePools, errored];
+      return [liquidatablePools, errored];
     }
     async liquidatePositions(
       liquidatablePool: LiquidatablePool

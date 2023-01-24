@@ -63,5 +63,5 @@ ENV NODE_ENV=production
 WORKDIR ${LAMBDA_TASK_ROOT}
 COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 
-CMD ["packages/monitors/oracle/build/src/index.handler"]
+CMD ["packages/monitors/oracle/build/monitors/oracle/src/index.handler"]
 

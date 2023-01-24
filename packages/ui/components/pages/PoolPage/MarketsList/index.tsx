@@ -41,6 +41,8 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
+import { CollateralRatioBar } from '../CollateralRatioBar';
+
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
@@ -50,6 +52,7 @@ import { SupplyBalance } from '@ui/components/pages/PoolPage/MarketsList/SupplyB
 import { TokenName } from '@ui/components/pages/PoolPage/MarketsList/TokenName';
 import { TotalBorrow } from '@ui/components/pages/PoolPage/MarketsList/TotalBorrow';
 import { TotalSupply } from '@ui/components/pages/PoolPage/MarketsList/TotalSupply';
+import { UserStats } from '@ui/components/pages/PoolPage/UserStats';
 import { CButton, CIconButton } from '@ui/components/shared/Button';
 import { GradientButton } from '@ui/components/shared/GradientButton';
 import { GradientText } from '@ui/components/shared/GradientText';
@@ -61,7 +64,6 @@ import {
   BORROW_BALANCE,
   BORROWABLE,
   COLLATERAL,
-  DOWN_LIMIT,
   HIDDEN,
   LIQUIDITY,
   MARKET_LTV,
@@ -75,18 +77,17 @@ import {
   SUPPLY_BALANCE,
   TOTAL_BORROW,
   TOTAL_SUPPLY,
-  UP_LIMIT,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
+import { useAssets } from '@ui/hooks/useAssets';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
+import { useBorrowApyPerAsset, useTotalSupplyApyPerAsset } from '@ui/hooks/useTotalApy';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
-import { smallUsdFormatter } from '@ui/utils/bigUtils';
-import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 import { sortAssets } from '@ui/utils/sorts';
 
 export type Market = {
@@ -129,6 +130,8 @@ export const MarketsList = ({
     assetsAddress: assets.map((asset) => asset.cToken),
   });
 
+  const { data: assetInfos } = useAssets(poolChainId);
+
   const [collateralCounts, protectedCounts, borrowableCounts, pausedCounts] = useMemo(() => {
     return [
       assets.filter((asset) => asset.membership).length,
@@ -138,28 +141,13 @@ export const MarketsList = ({
     ];
   }, [assets]);
 
-  const totalApy = useMemo(() => {
-    if (!sdk) return undefined;
-
-    const result: { [market: string]: number } = {};
-    for (const asset of assets) {
-      let marketTotalAPY =
-        sdk.ratePerBlockToAPY(
-          asset.supplyRatePerBlock,
-          getBlockTimePerMinuteByChainId(poolChainId)
-        ) / 100;
-
-      if (rewards[asset.cToken]) {
-        marketTotalAPY += rewards[asset.cToken].reduce(
-          (acc, cur) => (cur.apy ? acc + cur.apy : acc),
-          0
-        );
-      }
-      result[asset.cToken] = marketTotalAPY;
-    }
-
-    return result;
-  }, [rewards, assets, poolChainId, sdk]);
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyApyPerAsset(
+    assets,
+    poolChainId,
+    rewards,
+    assetInfos
+  );
+  const { data: borrowApyPerAsset } = useBorrowApyPerAsset(assets, poolChainId);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -205,22 +193,22 @@ export const MarketsList = ({
           rowA.original.market.underlyingSymbol
         );
       } else if (columnId === SUPPLY_APY) {
-        const rowASupplyAPY = totalApy ? totalApy[rowA.original.market.cToken] : 0;
-        const rowBSupplyAPY = totalApy ? totalApy[rowB.original.market.cToken] : 0;
+        const rowASupplyAPY = totalSupplyApyPerAsset
+          ? totalSupplyApyPerAsset[rowA.original.market.cToken]
+          : 0;
+        const rowBSupplyAPY = totalSupplyApyPerAsset
+          ? totalSupplyApyPerAsset[rowB.original.market.cToken]
+          : 0;
         return rowASupplyAPY > rowBSupplyAPY ? 1 : -1;
       } else if (columnId === BORROW_APY) {
-        const rowABorrowAPY = !rowA.original.market.isBorrowPaused
-          ? sdk.ratePerBlockToAPY(
-              rowA.original.market.borrowRatePerBlock,
-              getBlockTimePerMinuteByChainId(poolChainId)
-            )
-          : -1;
-        const rowBBorrowAPY = !rowB.original.market.isBorrowPaused
-          ? sdk.ratePerBlockToAPY(
-              rowB.original.market.borrowRatePerBlock,
-              getBlockTimePerMinuteByChainId(poolChainId)
-            )
-          : -1;
+        const rowABorrowAPY =
+          !rowA.original.market.isBorrowPaused && borrowApyPerAsset
+            ? borrowApyPerAsset[rowA.original.market.cToken]
+            : -1;
+        const rowBBorrowAPY =
+          !rowB.original.market.isBorrowPaused && borrowApyPerAsset
+            ? borrowApyPerAsset[rowB.original.market.cToken]
+            : -1;
         return rowABorrowAPY > rowBBorrowAPY ? 1 : -1;
       } else if (columnId === SUPPLY_BALANCE) {
         return rowA.original.market.supplyBalanceFiat > rowB.original.market.supplyBalanceFiat
@@ -246,7 +234,7 @@ export const MarketsList = ({
         return 0;
       }
     },
-    [totalApy, poolChainId, sdk]
+    [totalSupplyApyPerAsset, borrowApyPerAsset, sdk]
   );
 
   const data: Market[] = useMemo(() => {
@@ -293,13 +281,13 @@ export const MarketsList = ({
 
         footer: (props) => props.column.id,
         sortingFn: assetSort,
-        enableSorting: !!totalApy,
+        enableSorting: !!totalSupplyApyPerAsset,
       },
       {
         accessorFn: (row) => row.borrowApy,
         id: BORROW_APY,
         cell: ({ getValue }) => (
-          <BorrowApy asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <BorrowApy asset={getValue<MarketData>()} borrowApyPerAsset={borrowApyPerAsset} />
         ),
         header: (context) => <TableHeaderCell context={context}>Borrow APY</TableHeaderCell>,
         footer: (props) => props.column.id,
@@ -331,7 +319,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.totalSupply,
         id: TOTAL_SUPPLY,
         cell: ({ getValue }) => (
-          <TotalSupply asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <TotalSupply
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Supply</TableHeaderCell>,
 
@@ -362,7 +354,7 @@ export const MarketsList = ({
       },
     ];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rewards, comptrollerAddress, totalApy, assets, poolChainId]);
+  }, [rewards, comptrollerAddress, totalSupplyApyPerAsset, assets, borrowApyPerAsset, poolChainId]);
 
   const [sorting, setSorting] = useState<SortingState>(initSorting);
   const [pagination, onPagination] = useState<PaginationState>({
@@ -462,44 +454,29 @@ export const MarketsList = ({
 
   return (
     <Box>
-      {/* Supply & Borrow Balance */}
-      <Flex
-        px="4"
-        mt={4}
-        gap={4}
-        flexDirection="row"
-        flexWrap="wrap"
-        justifyContent={['center', 'center', 'flex-start']}
-      >
-        <HStack>
-          <Text size="md" width="max-content">
-            Your Supply Balance :
-          </Text>
-          <SimpleTooltip
-            label={supplyBalanceFiat.toString()}
-            isDisabled={supplyBalanceFiat === DOWN_LIMIT || supplyBalanceFiat > UP_LIMIT}
+      {address ? (
+        <>
+          {/* Supply & Borrow Balance */}
+          <Flex
+            mx={4}
+            mt={4}
+            gap={4}
+            flexDirection="row"
+            flexWrap="wrap"
+            justifyContent={['center', 'center', 'flex-start']}
           >
-            <Text size="lg" fontWeight="bold">
-              {smallUsdFormatter(supplyBalanceFiat)}
-              {supplyBalanceFiat > DOWN_LIMIT && supplyBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
-        <HStack>
-          <Text size="md" width="max-content">
-            Your Borrow Balance :
-          </Text>
-          <SimpleTooltip
-            label={borrowBalanceFiat.toString()}
-            isDisabled={borrowBalanceFiat === DOWN_LIMIT || borrowBalanceFiat > UP_LIMIT}
-          >
-            <Text size="lg" fontWeight="bold">
-              {smallUsdFormatter(borrowBalanceFiat)}
-              {borrowBalanceFiat > DOWN_LIMIT && borrowBalanceFiat < UP_LIMIT && '+'}
-            </Text>
-          </SimpleTooltip>
-        </HStack>
-      </Flex>
+            <UserStats poolData={poolData} />
+          </Flex>
+          {/* Borrow Limit */}
+          <Flex mx={4} mt={4}>
+            <CollateralRatioBar
+              assets={assets}
+              borrowFiat={borrowBalanceFiat}
+              poolChainId={poolChainId}
+            />
+          </Flex>
+        </>
+      ) : null}
 
       {/* Table Filter and Search */}
       <Flex
@@ -764,7 +741,7 @@ export const MarketsList = ({
       <Flex className="pagination" gap={4} justifyContent="flex-end" alignItems="center" p={4}>
         <HStack>
           <Hide below="lg">
-            <Text size="md">Markets Per Page</Text>
+            <Text>Markets Per Page</Text>
           </Hide>
           <Select
             value={pagination.pageSize}
@@ -781,7 +758,7 @@ export const MarketsList = ({
           </Select>
         </HStack>
         <HStack gap={2}>
-          <Text size="md">
+          <Text>
             {table.getFilteredRowModel().rows.length === 0
               ? 0
               : pagination.pageIndex * pagination.pageSize + 1}{' '}

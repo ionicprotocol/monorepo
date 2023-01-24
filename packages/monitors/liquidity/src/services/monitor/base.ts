@@ -1,6 +1,6 @@
 import { MidasSdk } from "@midas-capital/sdk";
 
-import { TAssetConfig, LiquidityValidity, ServiceConfig, VerifierInitValidity, LiquidityPoolKind } from "../../types";
+import { LiquidityPoolKind, LiquidityValidity, ServiceConfig, TAssetConfig, VerifierInitValidity } from "../../types";
 
 export abstract class AbstractLiquidityVerifier {
   asset: TAssetConfig;

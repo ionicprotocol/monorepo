@@ -2,6 +2,7 @@ import { JsonRpcProvider } from "@ethersproject/providers";
 import { ERC20Abi, MidasSdk } from "@midas-capital/sdk";
 import { ChainConfig } from "@midas-capital/types";
 import { Contract } from "ethers";
+
 import { Reserve, UniswapV2AssetConfig } from "../../../types";
 export class V2Fetcher {
   public chainConfig: ChainConfig;

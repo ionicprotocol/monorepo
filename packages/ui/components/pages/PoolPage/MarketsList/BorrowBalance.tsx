@@ -18,7 +18,7 @@ export const BorrowBalance = ({
 
   return (
     <>
-      {!address ? (
+      {!address || (asset.borrowBalance.isZero() && asset.isBorrowPaused) ? (
         <VStack alignItems="flex-end">
           <SimpleTooltip label="Connect your wallet">
             <Text size="md" fontWeight="medium" textAlign="center">

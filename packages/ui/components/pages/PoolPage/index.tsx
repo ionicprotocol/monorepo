@@ -1,13 +1,14 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
-import { AvatarGroup, Box, Flex, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { SupportedChains } from '@midas-capital/types';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
-import { SupportedChains } from 'types/dist/cjs';
+
+import { UserStat } from './UserStats/UserStat';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
-import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar';
 import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
@@ -29,7 +30,7 @@ import { useRewards } from '@ui/hooks/useRewards';
 import { useIsMobile } from '@ui/hooks/useScreenSize';
 
 const PoolPage = memo(() => {
-  const { setGlobalLoading } = useMultiMidas();
+  const { setGlobalLoading, address } = useMultiMidas();
 
   const router = useRouter();
   const poolId = router.query.poolId as string;
@@ -175,15 +176,6 @@ const PoolPage = memo(() => {
 
           <PoolStats poolData={data} />
 
-          {data && data.assets.some((asset) => asset.membership) && (
-            <CollateralRatioBar
-              assets={data.assets}
-              borrowFiat={data.totalBorrowBalanceFiat}
-              poolChainId={data.chainId}
-              mb={4}
-            />
-          )}
-
           <MidasBox overflowX="auto" width="100%" mb="4">
             {data &&
             initSorting &&
@@ -200,20 +192,23 @@ const PoolPage = memo(() => {
             ) : (
               <>
                 <Box p={4} gap={4}>
-                  <Flex flexDirection={['row']} gap={{ base: 4, lg: 8 }} pb={4}>
-                    <HStack>
-                      <Text size="md" width="max-content">
-                        Your Supply Balance :
-                      </Text>
-                      <Skeleton height={'27px'} width={20} />
-                    </HStack>
-                    <HStack>
-                      <Text size="md" width="max-content">
-                        Your Borrow Balance :
-                      </Text>
-                      <Skeleton height={'27px'} width={20} />
-                    </HStack>
-                  </Flex>
+                  {address ? (
+                    <>
+                      <Grid
+                        templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }}
+                        gap={4}
+                        w="100%"
+                        mb={4}
+                      >
+                        <UserStat label="Your Supply" />
+                        <UserStat label="Your Borrow" />
+                        <UserStat label="Effective Supply APY" />
+                        <UserStat label="Effective Borrow APY" />
+                      </Grid>
+                      <Skeleton height={'60px'} width="100%" borderRadius={'xl'} mb={4} />
+                    </>
+                  ) : null}
+
                   <Flex alignItems="center" justifyContent={'space-between'}>
                     <Flex flexDirection={['row']} gap={0}>
                       <Skeleton
