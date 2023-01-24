@@ -13,7 +13,10 @@ const specificParams: ChainParams = {
     shortName: "Fantom",
     img: "https://d1912tcoux65lj.cloudfront.net/network/fantom.png",
     blockExplorerUrls: { default: { name: "ftmscan", url: "https://ftmscan.com" } },
-    rpcUrls: { default: { http: ["https://rpcapi.fantom.network"] } },
+    rpcUrls: {
+      default: { http: ["https://rpcapi.fantom.network"] },
+      public: { http: ["https://rpcapi.fantom.network"] },
+    },
     nativeCurrency: {
       symbol: "FTM",
       name: "FTM",

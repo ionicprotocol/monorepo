@@ -12,7 +12,10 @@ const specificParams: ChainParams = {
     name: "Evmos Mainnet",
     shortName: "EVMOS",
     img: "https://d1912tcoux65lj.cloudfront.net/network/evmos.png",
-    rpcUrls: { default: { http: ["https://eth.bd.evmos.org:8545"] } },
+    rpcUrls: {
+      default: { http: ["https://eth.bd.evmos.org:8545"] },
+      public: { http: ["https://eth.bd.evmos.org:8545"] },
+    },
     blockExplorerUrls: { default: { name: "Evmos", url: "https://escan.live" } },
     nativeCurrency: {
       symbol: "EVMOS",
