@@ -22,6 +22,8 @@ export enum RedemptionStrategyContract {
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   CurveSwapLiquidator = "CurveSwapLiquidator",
+  SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
+  BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
 }
 
 export enum FundingStrategyContract {

@@ -14,6 +14,8 @@ export type LiquidationDefaults = {
   LIQUIDATION_INTERVAL_SECONDS: number;
   jarvisPools: Array<JarvisLiquidityPool>;
   curveSwapPools: Array<CurveSwapPool>;
+  saddlePools: Array<SaddlePool>;
+  balancerPools: Array<BalancerPool>;
 };
 
 export type RedemptionStrategy = {
@@ -35,3 +37,6 @@ export type CurveSwapPool = {
   poolAddress: string;
   coins: string[];
 };
+
+export type SaddlePool = CurveSwapPool;
+export type BalancerPool = CurveSwapPool;

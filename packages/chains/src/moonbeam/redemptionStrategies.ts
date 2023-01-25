@@ -35,16 +35,14 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.UniswapLpTokenLiquidator,
     underlying(assets, assetSymbols.WGLMR),
   ],
-  // TODO: these liquidation strategy is not implemented yet
-
-  // [underlying(assets, assetSymbols["wstDOT-DOT.xc"])]: [
-  //   RedemptionStrategyContract.SaddleLpTokenLiquidator,
-  //   underlying(assets, assetSymbols.wstDOT),
-  // ],
-  // [underlying(assets, assetSymbols.base4pool)]: [
-  //   RedemptionStrategyContract.SaddleLpTokenLiquidator,
-  //   underlying(assets, assetSymbols.USDC_wh),
-  // ],
+  [underlying(assets, assetSymbols["wstDOT-DOT.xc"])]: [
+    RedemptionStrategyContract.SaddleLpTokenLiquidator,
+    underlying(assets, assetSymbols.wstDOT),
+  ],
+  [underlying(assets, assetSymbols.base4pool)]: [
+    RedemptionStrategyContract.SaddleLpTokenLiquidator,
+    underlying(assets, assetSymbols.USDC_wh),
+  ],
 };
 
 export default redemptionStrategies;

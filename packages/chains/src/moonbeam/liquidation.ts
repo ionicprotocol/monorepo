@@ -16,12 +16,21 @@ const liquidationDefaults: LiquidationDefaults = {
   curveSwapPools: [
     {
       poolAddress: "0x0fFc46cD9716a96d8D89E1965774A70Dcb851E50",
+      coins: [underlying(assets, assetSymbols.xcDOT), underlying(assets, assetSymbols.stDOT)],
+    },
+  ],
+  saddlePools: [
+    {
+      poolAddress: "0xB1BC9f56103175193519Ae1540A0A4572b1566F6",
       coins: [
-        "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080", // xcDOT
-        "0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108", // stDOT
+        underlying(assets, assetSymbols.USDC_wh),
+        underlying(assets, assetSymbols.USDT_xc),
+        underlying(assets, assetSymbols.BUSD_wh),
+        underlying(assets, assetSymbols.FRAX),
       ],
     },
   ],
+  balancerPools: [],
 };
 
 export default liquidationDefaults;

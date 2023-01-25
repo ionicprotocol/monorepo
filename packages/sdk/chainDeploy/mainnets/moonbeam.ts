@@ -312,6 +312,15 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   });
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
 
+  //// Saddle Lp token liquidator
+  const saddleLpTokenLiquidator = await deployments.deploy("SaddleLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  console.log("SaddleLpTokenLiquidator: ", saddleLpTokenLiquidator.address);
+
   ////
 
   // Plugins & Rewards

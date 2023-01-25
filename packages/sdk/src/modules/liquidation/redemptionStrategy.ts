@@ -120,6 +120,23 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         ),
         outputToken: actualOutputToken,
       };
+    case RedemptionStrategyContract.SaddleLpTokenLiquidator:
+      const saddleLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
+      const saddlePool = fuse.chainConfig.liquidationDefaults.saddlePools.find((p) =>
+        p.coins.find((c) => c == outputToken && (p.poolAddress == inputToken || p.coins.find((c) => c == inputToken)))
+      );
+      if (saddlePool == null) {
+        throw new Error(
+          `wrong config for the curve swap redemption strategy for ${inputToken} - no such pool with output token ${outputToken}`
+        );
+      }
+
+      const j = saddlePool.coins.indexOf(outputToken);
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(["uint8", "address"], [j, saddleLpOracleAddress]),
+        outputToken: outputToken,
+      };
 
     case RedemptionStrategyContract.XBombLiquidatorFunder: {
       const xbomb = inputToken;
@@ -207,6 +224,10 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       );
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
+    }
+    case RedemptionStrategyContract.BalancerLpTokenLiquidator: {
+      // TODO: add support for multiple pools
+      return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
     default: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
