@@ -38,7 +38,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
     createFlywheelStaticRewards = this.createContractInstance<FlywheelStaticRewards>(FlywheelStaticRewardsABI);
     createJumpRateModel = this.createContractInstance<JumpRateModel>(JumpRateModelABI);
 
-    createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
+    createComptroller(comptrollerAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       if (this.chainDeployment.ComptrollerFirstExtension) {
         return new Contract(
           comptrollerAddress,
@@ -62,7 +62,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       return new Contract(address, CErc20DelegateABI, signerOrProvider) as CTokenWithExtensions;
     }
 
-    createCErc20PluginRewardsDelegate(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.signer) {
+    createCErc20PluginRewardsDelegate(cTokenAddress: string, signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         cTokenAddress,
         CErc20PluginRewardsDelegateABI,
@@ -70,7 +70,7 @@ export function withCreateContracts<TBase extends MidasBaseConstructor>(Base: TB
       ) as CErc20PluginRewardsDelegate;
     }
 
-    createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.signer) {
+    createMasterPriceOracle(signerOrProvider: SignerOrProvider = this.provider) {
       return new Contract(
         this.chainDeployment.MasterPriceOracle.address,
         MasterPriceOracleABI,
