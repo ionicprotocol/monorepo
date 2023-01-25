@@ -9,6 +9,7 @@ export function useColors() {
       txtColor: useColorModeValue(COLOR_PALETTE.raisinBlack, COLOR_PALETTE.whiteBg),
       borderColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),
       dividerColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru30),
+      hoverColor: useColorModeValue(COLOR_PALETTE.silverMetallic30, COLOR_PALETTE.ecru20),
     },
     secondary: {
       bgColor: useColorModeValue(COLOR_PALETTE.ecru, COLOR_PALETTE.ecru),

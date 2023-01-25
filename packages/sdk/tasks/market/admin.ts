@@ -18,7 +18,7 @@ export default task("market:unsupport", "Unsupport a market")
 
     const sdk = await midasSdkModule.getOrCreateMidas();
 
-    const comptroller = await sdk.getComptrollerInstance(taskArgs.comptroller, signer);
+    const comptroller = await sdk.createComptroller(taskArgs.comptroller, signer);
     const tx = await comptroller._unsupportMarket(taskArgs.ctoken);
     const receipt: TransactionReceipt = await tx.wait();
     console.log("Unsupported market with status:", receipt.status);

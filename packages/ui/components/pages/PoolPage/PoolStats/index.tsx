@@ -150,7 +150,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         <PopoverTrigger>
           <Flex>
             <PoolStat
-              label="Liquidity"
+              label="Total Liquidity"
               value={poolData ? midUsdFormatter(poolData?.totalAvailableLiquidityFiat) : undefined}
             />
           </Flex>
@@ -199,7 +199,7 @@ export const PoolStats = ({ poolData }: { poolData: PoolData | null | undefined 
         <PopoverTrigger>
           <Flex>
             <PoolStat
-              label="Utilization"
+              label="Pool Utilization"
               value={poolData ? poolData.utilization.toFixed(2) + '%' : undefined}
             />
           </Flex>

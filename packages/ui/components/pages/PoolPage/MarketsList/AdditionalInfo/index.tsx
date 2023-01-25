@@ -32,6 +32,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ADMIN_FEE_TOOLTIP,
+  ASSET_SUPPLIED_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
   MIDAS_SECURITY_DOCS_URL,
   PERFORMANCE_FEE_TOOLTIP,
@@ -47,6 +48,7 @@ import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
 import { useWindowSize } from '@ui/hooks/useScreenSize';
+import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter } from '@ui/utils/bigUtils';
 import { deployedPlugins, getChainConfig, getScanUrlByChainId } from '@ui/utils/networkData';
@@ -104,6 +106,12 @@ export const AdditionalInfo = ({
   };
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
+  const { data: supplyCaps } = useSupplyCap(
+    comptrollerAddress,
+    asset.cToken,
+    asset.underlyingPrice,
+    poolChainId
+  );
   const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
   const { data: irm } = useIRM(asset.cToken, poolChainId);
 
@@ -736,8 +744,10 @@ export const AdditionalInfo = ({
               >
                 <CaptionedStat
                   stat={midUsdFormatter(asset.totalSupplyFiat)}
+                  secondStat={supplyCaps ? midUsdFormatter(supplyCaps.usdCap) : undefined}
                   caption={'Asset Supplied'}
                   crossAxisAlignment="center"
+                  tooltip={supplyCaps ? ASSET_SUPPLIED_TOOLTIP : undefined}
                 />
                 <CaptionedStat
                   stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}

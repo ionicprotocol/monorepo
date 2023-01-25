@@ -20,8 +20,11 @@ export const PopoverTooltip = ({
   header,
   body,
   footer,
+  placement,
   width,
   height,
+  maxWidth,
+  hideArrow,
   ...popoverProps
 }: {
   header?: PopoverHeaderProps['children'];
@@ -30,25 +33,29 @@ export const PopoverTooltip = ({
   placement?: string;
   width?: string;
   height?: string;
+  maxWidth?: string;
+  hideArrow?: boolean;
 } & PopoverProps) => {
   const { cPage } = useColors();
 
   return (
     <Box width={width} height={height}>
-      <Popover placement="top" trigger="hover" {...popoverProps}>
+      <Popover placement={placement ? placement : 'top'} trigger="hover" {...popoverProps}>
         <PopoverTrigger>{children}</PopoverTrigger>
         <PopoverContent
           onClick={(e) => e.stopPropagation()}
           style={{ cursor: 'default' }}
           width="auto"
-          maxWidth="300px"
+          maxWidth={maxWidth ? maxWidth : '300px'}
           textAlign="start"
         >
-          <PopoverArrow
-            sx={{
-              '--popper-arrow-shadow-color': cPage.primary.borderColor,
-            }}
-          />
+          {!hideArrow && (
+            <PopoverArrow
+              sx={{
+                '--popper-arrow-shadow-color': cPage.primary.borderColor,
+              }}
+            />
+          )}
           {header && <PopoverHeader>{header}</PopoverHeader>}
           {body && <PopoverBody>{body}</PopoverBody>}
           {footer && <PopoverFooter>{footer}</PopoverFooter>}
