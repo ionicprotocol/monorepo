@@ -153,7 +153,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   ],
   [underlying(assets, assetSymbols["MAI-USDC"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, USDC],
   [underlying(assets, assetSymbols["WMATIC-MATICx"])]: [RedemptionStrategyContract.UniswapLpTokenLiquidator, WMATIC],
-  [underlying(assets, assetSymbols.MIMO_PAR_80_20)]: [RedemptionStrategyContract.BalancerLpTokenLiquidator, "1"],
+  [underlying(assets, assetSymbols.MIMO_PAR_80_20)]: [RedemptionStrategyContract.BalancerLpTokenLiquidator, assetSymbols.PAR],
 };
 
 export default redemptionStrategies;

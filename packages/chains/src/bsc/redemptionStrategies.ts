@@ -2,6 +2,7 @@ import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-cap
 
 import assets, { WBNB } from "./assets";
 
+// [input token address]: [conversion strategy, output token address]
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
   [underlying(assets, assetSymbols["3EPS"])]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
