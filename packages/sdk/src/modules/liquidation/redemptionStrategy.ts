@@ -1,9 +1,9 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
-import CurveLpTokenPriceOracleNoRegistryAbi from "../../../abis/CurveLpTokenLiquidatorNoRegistry";
+import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
 import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
-import SaddleLpPriceOracleAbi from "../../../abis/SaddleLpPriceOracle";
+import SaddleLpPriceOracleABI from "../../../abis/SaddleLpPriceOracle";
 import { IBalancerPool__factory } from "../../../typechain/factories/IBalancerPool__factory";
 import { IBalancerVault__factory } from "../../../typechain/factories/IBalancerVault__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
@@ -96,7 +96,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
       const curveLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
-      const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryAbi, fuse.provider);
+      const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryABI, fuse.provider);
 
       let tokens = await curveLpOracle.callStatic.getUnderlyingTokens(inputToken);
       let preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
@@ -120,7 +120,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       };
     case RedemptionStrategyContract.SaddleLpTokenLiquidator:
       const saddleLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
-      const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleAbi, fuse.provider);
+      const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleABI, fuse.provider);
 
       tokens = await saddleLpOracle.callStatic.getUnderlyingTokens(inputToken);
       preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
