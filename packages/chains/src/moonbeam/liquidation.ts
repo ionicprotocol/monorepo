@@ -19,18 +19,6 @@ const liquidationDefaults: LiquidationDefaults = {
       coins: [underlying(assets, assetSymbols.xcDOT), underlying(assets, assetSymbols.stDOT)],
     },
   ],
-  saddlePools: [
-    {
-      poolAddress: "0xB1BC9f56103175193519Ae1540A0A4572b1566F6",
-      coins: [
-        underlying(assets, assetSymbols.USDC_wh),
-        underlying(assets, assetSymbols.USDT_xc),
-        underlying(assets, assetSymbols.BUSD_wh),
-        underlying(assets, assetSymbols.FRAX),
-      ],
-    },
-  ],
-  balancerPools: [],
 };
 
 export default liquidationDefaults;
