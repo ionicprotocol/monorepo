@@ -88,7 +88,7 @@ const UtilizationChart = ({
         />
         {currentUtilization && (
           <ReferenceLine
-            x={currentUtilization}
+            x={Number(currentUtilization)}
             stroke={cCard.txtColor}
             strokeOpacity={0.7}
             fill={cCard.txtColor}
