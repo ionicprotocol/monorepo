@@ -1,8 +1,8 @@
 import { RedemptionStrategyContract } from "@midas-capital/types";
 import { BytesLike, Contract, ethers } from "ethers";
 
-import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
+import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 import { ICurvePool__factory } from "../../../typechain/factories/ICurvePool__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
@@ -93,11 +93,7 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
       const curveLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
-      const curveLpOracle = new Contract(
-        curveLpOracleAddress,
-        CurveLpTokenPriceOracleNoRegistryABI,
-        fuse.provider
-      );
+      const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryABI, fuse.provider);
 
       const tokens = await getCurvePoolUnderlyingTokens(fuse, await curveLpOracle.callStatic.poolOf(inputToken));
 
