@@ -282,22 +282,13 @@ const ClaimRewardsModal = ({
         {claimingRewardTokens.length === 0 && <ModalCloseButton top={4} right={4} />}
         <Divider />
         <VStack m={4} maxHeight="450px" overflowY="auto">
-          {Object.values(claimableRewards).length === 0 || !currentSdk ? (
+          {Object.values(claimableRewards).length === 0 ? (
             <Center>
               <Text fontSize={20} fontWeight="bold">
                 No rewards available to be claimed
               </Text>
             </Center>
-          ) : isConfirmed ? (
-            <PendingTransaction
-              activeStep={activeStep}
-              failedStep={failedStep}
-              steps={steps}
-              isClaiming={claimingRewardTokens.length > 0}
-              poolChainId={Number(currentSdk.chainId)}
-              assetPerRewardToken={assetPerRewardToken}
-            />
-          ) : (
+          ) : !isConfirmed ? (
             <>
               {Object.entries(claimableRewards).map(([key, value]) => {
                 return value.map((cr: FlywheelClaimableRewards, index: number) => (
@@ -306,7 +297,9 @@ const ClaimRewardsModal = ({
                     rewardChainId={key}
                     data={cr}
                     claimingRewardTokens={claimingRewardTokens}
-                    onClaim={claimRewards(key === currentSdk.chainId.toString() ? [cr] : null)}
+                    onClaim={claimRewards(
+                      currentSdk && key === currentSdk.chainId.toString() ? [cr] : null
+                    )}
                   />
                 ));
               })}
@@ -338,7 +331,16 @@ const ClaimRewardsModal = ({
                 )}
               </Center>
             </>
-          )}
+          ) : currentSdk ? (
+            <PendingTransaction
+              activeStep={activeStep}
+              failedStep={failedStep}
+              steps={steps}
+              isClaiming={claimingRewardTokens.length > 0}
+              poolChainId={Number(currentSdk.chainId)}
+              assetPerRewardToken={assetPerRewardToken}
+            />
+          ) : null}
         </VStack>
       </ModalContent>
     </Modal>
