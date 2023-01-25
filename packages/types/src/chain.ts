@@ -34,7 +34,7 @@ export interface ChainMetadata {
       [key: string]: number;
     };
   };
-  rpcUrls: { [key: string]: RpcUrls; default: RpcUrls };
+  rpcUrls: { [key: string]: RpcUrls; default: RpcUrls; public: RpcUrls };
   blockExplorerUrls: {
     [key: string]: BlockExplorer;
     default: BlockExplorer;
@@ -97,7 +97,7 @@ export type ChainConfig = {
 
 export type ChainDeployment = {
   [contractName: string]: {
-    abi: any;
+    abi?: any;
     address: string;
   };
 };

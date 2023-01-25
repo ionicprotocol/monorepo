@@ -1,6 +1,10 @@
 import { OracleTypes } from "@midas-capital/types";
 import { Contract } from "ethers";
 
+import ChainlinkPriceOracleV2ABI from "../../../../../../sdk/abis/ChainlinkPriceOracleV2";
+import DiaPriceOracleABI from "../../../../../../sdk/abis/DiaPriceOracle";
+import FluxPriceOracleABI from "../../../../../../sdk/abis/FluxPriceOracle";
+import UniswapTwapPriceOracleV2ABI from "../../../../../../sdk/abis/UniswapTwapPriceOracleV2";
 import { logger } from "../../../logger";
 import {
   FeedVerifierConfig,
@@ -27,8 +31,24 @@ export class FeedVerifier extends AbstractOracleVerifier {
 
     try {
       const oracleAddress = await this.mpo.callStatic.oracles(this.asset.underlying);
-      const { chainDeployment, provider } = this.sdk;
-      this.underlyingOracle = new Contract(oracleAddress, chainDeployment[this.oracleType].abi, provider);
+      const { provider } = this.sdk;
+      switch (this.oracleType) {
+        case OracleTypes.ChainlinkPriceOracleV2:
+          this.underlyingOracle = new Contract(oracleAddress, ChainlinkPriceOracleV2ABI, provider);
+          break;
+        case OracleTypes.DiaPriceOracle:
+          this.underlyingOracle = new Contract(oracleAddress, DiaPriceOracleABI, provider);
+          break;
+        case OracleTypes.FluxPriceOracle:
+          this.underlyingOracle = new Contract(oracleAddress, FluxPriceOracleABI, provider);
+          break;
+        case OracleTypes.UniswapTwapPriceOracleV2:
+          this.underlyingOracle = new Contract(oracleAddress, UniswapTwapPriceOracleV2ABI, provider);
+          break;
+        default:
+          throw new Error(`Oracle type ${this.oracleType} not supported`);
+      }
+
       return [this, null];
     } catch (e) {
       const msg = `No oracle found for asset ${this.asset.symbol} (${this.asset.underlying})`;

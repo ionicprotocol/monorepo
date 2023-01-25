@@ -9,7 +9,7 @@ export const useIsUpgradeable = (comptrollerAddress: string, poolChainId: number
     ['useIsUpgradeable', comptrollerAddress, sdk?.chainId],
     async () => {
       if (sdk) {
-        const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
+        const comptroller = sdk.createComptroller(comptrollerAddress);
         const isUpgradeable: boolean = await comptroller.callStatic.adminHasRights();
 
         return isUpgradeable;

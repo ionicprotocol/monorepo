@@ -11,7 +11,10 @@ const specificParams: ChainParams = {
     name: "BSC Testnet (Chapel)",
     shortName: "BSC Testnet",
     img: "https://d1912tcoux65lj.cloudfront.net/network/chapel.jpg",
-    rpcUrls: { default: { http: ["https://data-seed-prebsc-1-s1.binance.org:8545/"] } },
+    rpcUrls: {
+      default: { http: ["https://data-seed-prebsc-1-s1.binance.org:8545/"] },
+      public: { http: ["https://data-seed-prebsc-1-s1.binance.org:8545/"] },
+    },
     blockExplorerUrls: { default: { name: "BscScan(Testnet)", url: "https://testnet.bscscan.com" } },
     nativeCurrency: {
       symbol: "BNB",

@@ -11,7 +11,7 @@ const specificParams: ChainParams = {
     name: "Ganache",
     shortName: "Ganache",
     img: "https://d1912tcoux65lj.cloudfront.net/network/hardhat.png",
-    rpcUrls: { default: { http: ["http://localhost:8545"] } },
+    rpcUrls: { default: { http: ["http://localhost:8545"] }, public: { http: ["http://localhost:8545"] } },
     blockExplorerUrls: { default: { name: "Etherscan", url: "http://localhost:3000" } },
     nativeCurrency: {
       symbol: "ETH",

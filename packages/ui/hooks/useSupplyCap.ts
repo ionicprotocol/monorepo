@@ -21,7 +21,7 @@ export const useSupplyCap = (
     async () => {
       if (sdk && usdPrice) {
         try {
-          const comptroller = sdk.getComptrollerInstance(comptrollerAddress);
+          const comptroller = sdk.createComptroller(comptrollerAddress);
           const supplyCaps = await comptroller.callStatic.supplyCaps(cToken);
 
           if (supplyCaps.eq(constants.Zero)) {
