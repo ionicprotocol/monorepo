@@ -106,7 +106,7 @@ const PoolConfiguration = ({
   const changeWhitelistStatus = async (enforce: boolean) => {
     if (!currentSdk) return;
 
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
     try {
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
@@ -130,7 +130,7 @@ const PoolConfiguration = ({
   const addToWhitelist = async (newUser: string, onChange: (v: string[]) => void) => {
     if (!currentSdk) return;
 
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
     const newList = data ? [...data.whitelist, newUser] : [newUser];
 
@@ -164,7 +164,7 @@ const PoolConfiguration = ({
   const removeFromWhitelist = async (removeUser: string, onChange: (v: string[]) => void) => {
     if (!currentSdk) return;
 
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
     let whitelist = data?.whitelist;
     if (!whitelist) {
@@ -245,7 +245,7 @@ const PoolConfiguration = ({
     // 50% -> 0.5 * 1e18
     const bigCloseFactor: BigNumber = utils.parseUnits((closeFactor / 100).toString());
 
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
     try {
       const response = await comptroller.callStatic._setCloseFactor(bigCloseFactor);
@@ -283,7 +283,7 @@ const PoolConfiguration = ({
       (liquidationIncentive / 100 + 1).toString()
     );
 
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
     try {
       const response = await comptroller.callStatic._setLiquidationIncentive(
