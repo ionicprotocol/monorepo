@@ -33,6 +33,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 
 import RemoveAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/RemoveAssetButton';
+import { CButton } from '@ui/components/shared/Button';
 import { ConfigRow } from '@ui/components/shared/ConfigRow';
 import { Column, Row } from '@ui/components/shared/Flex';
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
@@ -623,12 +624,12 @@ export const AssetSettings = ({
               </ButtonGroup>
             ) : (
               <ButtonGroup gap={0} mt={2} alignSelf="end">
-                <Button
+                <CButton
                   disabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditTotalBorrowCaps(true)}
                 >
                   Edit
-                </Button>
+                </CButton>
               </ButtonGroup>
             )}
           </Flex>
