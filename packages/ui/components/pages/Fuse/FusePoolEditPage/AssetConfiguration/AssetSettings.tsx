@@ -161,6 +161,7 @@ export const AssetSettings = ({
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
+
   useEffect(() => {
     if (cTokenData) {
       setValue(
@@ -501,7 +502,7 @@ export const AssetSettings = ({
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <Button
                   type="submit"
-                  disabled={
+                  isDisabled={
                     isUpdating ||
                     !cTokenData ||
                     watchSupplyCaps ===
@@ -510,18 +511,18 @@ export const AssetSettings = ({
                 >
                   Save
                 </Button>
-                <Button variant="silver" disabled={isUpdating} onClick={setSupplyCapsDefault}>
+                <Button variant="silver" isDisabled={isUpdating} onClick={setSupplyCapsDefault}>
                   Cancel
                 </Button>
               </ButtonGroup>
             ) : (
               <ButtonGroup gap={0} mt={2} alignSelf="end">
-                <Button
-                  disabled={isUpdating || !isEditableAdmin}
+                <CButton
+                  isDisabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditSupplyCaps(true)}
                 >
                   Edit
-                </Button>
+                </CButton>
               </ButtonGroup>
             )}
           </Flex>
@@ -609,7 +610,7 @@ export const AssetSettings = ({
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <Button
                   type="submit"
-                  disabled={
+                  isDisabled={
                     isUpdating ||
                     !cTokenData ||
                     watchTotalBorrowCaps ===
@@ -618,14 +619,18 @@ export const AssetSettings = ({
                 >
                   Save
                 </Button>
-                <Button variant="silver" disabled={isUpdating} onClick={setTotalBorrowCapsDefault}>
+                <Button
+                  variant="silver"
+                  isDisabled={isUpdating}
+                  onClick={setTotalBorrowCapsDefault}
+                >
                   Cancel
                 </Button>
               </ButtonGroup>
             ) : (
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <CButton
-                  disabled={isUpdating || !isEditableAdmin}
+                  isDisabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditTotalBorrowCaps(true)}
                 >
                   Edit
@@ -730,12 +735,12 @@ export const AssetSettings = ({
               watchCollateralFactor !==
                 parseInt(utils.formatUnits(cTokenData.collateralFactorMantissa, 16)) && (
                 <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" disabled={isUpdating}>
+                  <Button type="submit" isDisabled={isUpdating}>
                     Save
                   </Button>
                   <Button
                     variant="silver"
-                    disabled={isUpdating}
+                    isDisabled={isUpdating}
                     onClick={setCollateralFactorDefault}
                   >
                     Cancel
@@ -814,10 +819,14 @@ export const AssetSettings = ({
               watchReserveFactor !==
                 parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)) && (
                 <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" disabled={isUpdating}>
+                  <Button type="submit" isDisabled={isUpdating}>
                     Save
                   </Button>
-                  <Button variant="silver" disabled={isUpdating} onClick={setReserveFactorDefault}>
+                  <Button
+                    variant="silver"
+                    isDisabled={isUpdating}
+                    onClick={setReserveFactorDefault}
+                  >
                     Cancel
                   </Button>
                 </ButtonGroup>
@@ -889,10 +898,10 @@ export const AssetSettings = ({
             {cTokenData &&
               watchAdminFee !== parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)) && (
                 <ButtonGroup gap={0} mt={2} alignSelf="end">
-                  <Button type="submit" disabled={isUpdating}>
+                  <Button type="submit" isDisabled={isUpdating}>
                     Save
                   </Button>
-                  <Button variant="silver" disabled={isUpdating} onClick={setAdminFeeDefault}>
+                  <Button variant="silver" isDisabled={isUpdating} onClick={setAdminFeeDefault}>
                     Cancel
                   </Button>
                 </ButtonGroup>
@@ -998,12 +1007,12 @@ export const AssetSettings = ({
                 cTokenData.interestRateModelAddress.toLowerCase() !==
                   watchInterestRateModel.toLowerCase() && (
                   <ButtonGroup gap={0} mt={2} alignSelf="end">
-                    <Button type="submit" disabled={isUpdating}>
+                    <Button type="submit" isDisabled={isUpdating}>
                       Save
                     </Button>
                     <Button
                       variant="silver"
-                      disabled={isUpdating}
+                      isDisabled={isUpdating}
                       onClick={setInterestRateModelDefault}
                     >
                       Cancel
