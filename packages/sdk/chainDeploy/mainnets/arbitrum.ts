@@ -209,6 +209,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
 
+  //// Saddle Lp token liquidator
+  const saddleLpTokenLiquidator = await deployments.deploy("SaddleLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (saddleLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(saddleLpTokenLiquidator.transactionHash);
+  console.log("SaddleLpTokenLiquidator: ", saddleLpTokenLiquidator.address);
+
   // CurveSwapLiquidator
   const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
     from: deployer,
