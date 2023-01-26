@@ -6,6 +6,7 @@ export const aFTMc = "0xCfC785741Dc0e98ad4c9F6394Bb9d43Cd1eF5179";
 const BNB = "0xD67de0e0a0Fd7b15dC8348Bb9BE742F3c5850454";
 export const multiBTC = "0x321162Cd933E2Be498Cd2267a90534A804051b11";
 const multiETH = "0x74b23882a30290451A17c44f4F05243b6b58C76d";
+const MIMO = "0x1D1764F04DE29da6b90ffBef372D1A45596C4855";
 export const USDC = "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75";
 export const DAI = "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E";
 export const PAR = "0x13082681E8CE9bd0aF505912d306403592490Fc7";
@@ -62,6 +63,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://ftmscan.com", MAI),
+  },
+  {
+    symbol: assetSymbols.MIMO,
+    underlying: MIMO,
+    name: "MIMO Parallel Governance Token",
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: defaultDocs("https://ftmscan.com", MIMO),
   },
   {
     symbol: assetSymbols.DAI,
