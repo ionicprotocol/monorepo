@@ -1,6 +1,6 @@
 import { assetSymbols, RedemptionStrategyContract, underlying } from "@midas-capital/types";
 
-import { assets, PAR, USDC, WMATIC } from "./assets";
+import { assets, USDC, WMATIC } from "./assets";
 
 const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, string] } = {
   [underlying(assets, assetSymbols.JAUD)]: [
