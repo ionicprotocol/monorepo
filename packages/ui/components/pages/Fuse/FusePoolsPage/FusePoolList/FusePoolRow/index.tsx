@@ -550,9 +550,10 @@ const PoolsRowList = ({
                           <Td
                             key={cell.id}
                             border="none"
-                            px={{ base: 1, lg: 2 }}
+                            px={{ base: cell.column.id === 'Pool Name' ? 0 : 2 }}
                             py={0}
                             height={16}
+                            minW={10}
                           >
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}
                           </Td>
