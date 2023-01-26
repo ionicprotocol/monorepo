@@ -136,11 +136,9 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
-          // TODO: double check
-          ["address", "address"],
-          [actualOutputToken, saddleLpOracleAddress]
+          ["address", "address", "address"],
+          [actualOutputToken, saddleLpOracleAddress, fuse.chainSpecificAddresses.W_TOKEN]
         ),
-        // TODO: double check
         outputToken: actualOutputToken,
       };
 
