@@ -18,11 +18,11 @@ const GOHM = "0x8D9bA570D6cb60C7e3e0F31343Efe75AB8E65FB1";
 const MAGIC = "0x539bdE0d7Dbd336b79148AA742883198BBF60342";
 const GMX = "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a";
 const USDs = "0xD74f5255D557944cf7Dd0E45FF521520002D5748";
-// const USX = "0x641441c631e2F909700d2f41FD87F0aA6A6b4EDb";
-// const alUSD = "0xCB8FA9a76b8e203D8C3797bF438d8FB81Ea3326A";
 
 // no price feed
 // const MAI = "0x3F56e0c36d275367b8C502090EDF38289b3dEa0d";
+// const USX = "0x641441c631e2F909700d2f41FD87F0aA6A6b4EDb";
+// const alUSD = "0xCB8FA9a76b8e203D8C3797bF438d8FB81Ea3326A";
 
 const SUSHI = "0xd4d42F0b6DEF4CE0383636770eF773390d85c61A";
 const USDT = "0xFd086bC7CD5C481DCC9C85ebE478A1C0b69FCbb9";
@@ -133,6 +133,7 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.UniswapV3PriceOracle,
     extraDocs: defaultDocs("https://arbiscan.io", USDs),
   },
+  // Awaiting price feeds
   // {
   //   symbol: assetSymbols.USX,
   //   underlying: USX,

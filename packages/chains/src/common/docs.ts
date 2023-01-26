@@ -183,7 +183,6 @@ export const balancerDocs = (chain: string, poolAddress: string, poolName: strin
   `;
 };
 
-// 0x851553fd9bcd28befe450d3cfbb3f86f13832a1d000200000000000000000211
 export const beethovenXDocs = (poolAddress: string, poolName: string, tokenAddress: string) => {
   return `
   <p><b>How to acquire this token</b><p/><br />
