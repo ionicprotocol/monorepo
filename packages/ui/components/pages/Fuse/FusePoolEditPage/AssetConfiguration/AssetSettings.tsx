@@ -473,12 +473,12 @@ export const AssetSettings = ({
               </ButtonGroup>
             ) : (
               <ButtonGroup gap={0} mt={2} alignSelf="end">
-                <Button
+                <CButton
                   disabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditSupplyCaps(true)}
                 >
                   Edit
-                </Button>
+                </CButton>
               </ButtonGroup>
             )}
           </Flex>
