@@ -171,10 +171,13 @@ export const AssetSettings = ({
       setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
       setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
       setValue('interestRateModel', cTokenData.interestRateModelAddress);
-      setValue('supplyCaps', parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS)));
+      setValue(
+        'supplyCaps',
+        parseFloat(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS))
+      );
       setValue(
         'totalBorrowCaps',
-        parseInt(utils.formatUnits(cTokenData.borrowCaps, DEFAULT_DECIMALS))
+        parseFloat(utils.formatUnits(cTokenData.borrowCaps, DEFAULT_DECIMALS))
       );
     }
   }, [cTokenData, setValue]);
