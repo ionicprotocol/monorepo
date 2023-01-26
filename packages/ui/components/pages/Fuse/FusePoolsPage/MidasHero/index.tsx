@@ -83,7 +83,7 @@ const MidasHero = () => {
           width={'100%'}
           flexWrap="wrap"
         >
-          <HStack spacing={[8, 8, 6]} px={4}>
+          <HStack spacing={{ base: 2, md: 4, xl: 6 }} px={4}>
             <Link href={MIDAS_DOCS_URL} isExternal>
               <SimpleTooltip label="Documentation">
                 <motion.div whileHover={{ scale: 1.2 }}>
