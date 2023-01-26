@@ -22,6 +22,8 @@ export enum RedemptionStrategyContract {
   UniswapV2LiquidatorFunder = "UniswapV2LiquidatorFunder",
   GelatoGUniLiquidator = "GelatoGUniLiquidator",
   CurveSwapLiquidator = "CurveSwapLiquidator",
+  SaddleLpTokenLiquidator = "SaddleLpTokenLiquidator",
+  BalancerLpTokenLiquidator = "BalancerLpTokenLiquidator",
 }
 
 export enum FundingStrategyContract {
@@ -352,7 +354,6 @@ export enum assetSymbols {
   MIMO_PAR_75_25 = "MIMO75-PAR25 BLP",
   WMATIC_STMATIC_BLP = "WMATIC_STMATIC BLP",
   WMATIC_MATICX_BLP = "WMATIC_MATICX BLP",
-  WMATIC_STMATIC_CURVE = "WMATIC_STMATIC CURVE",
 
   // Arrakis Vaults [arrakis_pair_fee_tier]
   arrakis_USDC_WETH_005 = "Arrakis Vault V1 USDC-WETH (0.05)",

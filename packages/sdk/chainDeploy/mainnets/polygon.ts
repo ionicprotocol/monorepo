@@ -390,11 +390,6 @@ const curvePools: CurvePoolConfig[] = [
       underlying(assets, assetSymbols.USDT),
     ],
   },
-  {
-    lpToken: underlying(assets, assetSymbols.WMATIC_STMATIC_CURVE),
-    pool: "0xFb6FE7802bA9290ef8b00CA16Af4Bc26eb663a28",
-    underlyings: [underlying(assets, assetSymbols.WMATIC), underlying(assets, assetSymbols.stMATIC)],
-  },
 ];
 
 const gelatoAssets: GelatoGUniAsset[] = [
@@ -577,6 +572,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     await ethers.provider.waitForTransaction(uniswapLpTokenLiquidator.transactionHash);
   }
   console.log("UniswapLpTokenLiquidator: ", uniswapLpTokenLiquidator.address);
+
+  //// Balancer Lp token liquidator
+  const balancerLpTokenLiquidator = await deployments.deploy("BalancerLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerLpTokenLiquidator.transactionHash);
+  console.log("BalancerLpTokenLiquidator: ", balancerLpTokenLiquidator.address);
 
   //// CurveLPLiquidator
   const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {

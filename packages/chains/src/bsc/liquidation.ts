@@ -25,7 +25,7 @@ const liquidationDefaults: LiquidationDefaults = {
   ],
   curveSwapPools: [
     {
-      poolAddress: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322",
+      poolAddress: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322", // mai3EPS pool
       coins: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)],
     },
     {

@@ -16,10 +16,7 @@ const liquidationDefaults: LiquidationDefaults = {
   curveSwapPools: [
     {
       poolAddress: "0x0fFc46cD9716a96d8D89E1965774A70Dcb851E50",
-      coins: [
-        "0xFfFFfFff1FcaCBd218EDc0EbA20Fc2308C778080", // xcDOT
-        "0xFA36Fe1dA08C89eC72Ea1F0143a35bFd5DAea108", // stDOT
-      ],
+      coins: [underlying(assets, assetSymbols.xcDOT), underlying(assets, assetSymbols.stDOT)],
     },
   ],
 };

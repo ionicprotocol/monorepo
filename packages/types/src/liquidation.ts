@@ -35,3 +35,9 @@ export type CurveSwapPool = {
   poolAddress: string;
   coins: string[];
 };
+
+export type BalancerPool = {
+  poolAddress: string;
+};
+
+export type SaddlePool = CurveSwapPool;

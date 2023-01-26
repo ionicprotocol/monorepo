@@ -7,6 +7,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     underlying(assets, assetSymbols.BUSD),
   ],
+  [underlying(assets, assetSymbols.mai3EPS)]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.BUSD),
+  ],
   [underlying(assets, assetSymbols["2brl"])]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     underlying(assets, assetSymbols.jBRL),
@@ -26,6 +30,10 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols["JCHF-BUSD"])]: [
     RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
     underlying(assets, assetSymbols.BUSD),
+  ],
+  [underlying(assets, assetSymbols["epsBNBx-BNB"])]: [
+    RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry,
+    underlying(assets, assetSymbols.WBNB),
   ],
   [underlying(assets, assetSymbols.MAI)]: [
     RedemptionStrategyContract.CurveSwapLiquidator,

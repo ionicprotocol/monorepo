@@ -3,7 +3,9 @@ import { BytesLike, Contract, ethers } from "ethers";
 
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
 import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
-import { ICurvePool__factory } from "../../../typechain/factories/ICurvePool__factory";
+import SaddleLpPriceOracleABI from "../../../abis/SaddleLpPriceOracle";
+import { IBalancerPool__factory } from "../../../typechain/factories/IBalancerPool__factory";
+import { IBalancerVault__factory } from "../../../typechain/factories/IBalancerVault__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
 
@@ -90,15 +92,14 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
     fuse.provider
   );
 
+  // let outputTokenIndex;
   switch (redemptionStrategy) {
     case RedemptionStrategyContract.CurveLpTokenLiquidatorNoRegistry:
       const curveLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
       const curveLpOracle = new Contract(curveLpOracleAddress, CurveLpTokenPriceOracleNoRegistryABI, fuse.provider);
 
-      const tokens = await getCurvePoolUnderlyingTokens(fuse, await curveLpOracle.callStatic.poolOf(inputToken));
-
-      const preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
-      const outputTokenIndex = tokens.indexOf(preferredOutputToken);
+      let tokens = await curveLpOracle.callStatic.getUnderlyingTokens(inputToken);
+      let preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
 
       // the native asset is not a real erc20 token contract, converting to wrapped
       let actualOutputToken = preferredOutputToken;
@@ -112,9 +113,34 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
       return {
         strategyAddress: redemptionStrategyContract.address,
         strategyData: new ethers.utils.AbiCoder().encode(
-          ["uint256", "address", "address", "address"],
-          [outputTokenIndex, preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
+          ["address", "address", "address", "address"],
+          [actualOutputToken, preferredOutputToken, fuse.chainSpecificAddresses.W_TOKEN, curveLpOracleAddress]
         ),
+        outputToken: actualOutputToken,
+      };
+    case RedemptionStrategyContract.SaddleLpTokenLiquidator:
+      const saddleLpOracleAddress = fuse.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
+      const saddleLpOracle = new Contract(saddleLpOracleAddress, SaddleLpPriceOracleABI, fuse.provider);
+
+      tokens = await saddleLpOracle.callStatic.getUnderlyingTokens(inputToken);
+      preferredOutputToken = pickPreferredToken(fuse, tokens, outputToken);
+
+      // the native asset is not a real erc20 token contract, converting to wrapped
+      actualOutputToken = preferredOutputToken;
+      if (
+        preferredOutputToken == ethers.constants.AddressZero ||
+        preferredOutputToken == "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      ) {
+        actualOutputToken = fuse.chainSpecificAddresses.W_TOKEN;
+      }
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(
+          // TODO: double check
+          ["address", "address"],
+          [actualOutputToken, saddleLpOracleAddress]
+        ),
+        // TODO: double check
         outputToken: actualOutputToken,
       };
 
@@ -205,24 +231,26 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
     }
+    case RedemptionStrategyContract.BalancerLpTokenLiquidator: {
+      // TODO: do we need this at all? Or can we just use the output token directly?
+      // Because we're already doing these checks contract-wise
+
+      const balancerlpToken = IBalancerPool__factory.connect(inputToken, fuse.provider);
+      const vaultAddress = await balancerlpToken.callStatic.getVault();
+      const poolId = await balancerlpToken.callStatic.getPoolId();
+      const vault = IBalancerVault__factory.connect(vaultAddress, fuse.provider);
+      const [poolTokens] = await vault.callStatic.getPoolTokens(poolId);
+      const actualOutputToken = poolTokens.find((t) => t == outputToken);
+      if (actualOutputToken == null) {
+        throw new Error(`Output token ${outputToken} does not match any of the pool tokens! ${poolTokens}`);
+      }
+      const strategyData = new ethers.utils.AbiCoder().encode(["address"], [actualOutputToken]);
+
+      // TODO: add support for multiple pools
+      return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
+    }
     default: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
     }
   }
-};
-
-const getCurvePoolUnderlyingTokens = async (fuse: MidasBase, poolAddress: string): Promise<string[]> => {
-  const tokens: string[] = [];
-
-  while (true) {
-    try {
-      const curvePool = new Contract(poolAddress, ICurvePool__factory.abi, fuse.provider);
-      const underlying = await curvePool.callStatic.coins(tokens.length);
-      tokens.push(underlying);
-    } catch (ignored) {
-      break;
-    }
-  }
-
-  return tokens;
 };
