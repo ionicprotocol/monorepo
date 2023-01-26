@@ -15,13 +15,18 @@ interface BalanceCellProps {
     symbol: string;
   };
   supplyCaps?: { usdCap: number; nativeCap: number } | null;
+  borrowCaps?: { usdCap: number; nativeCap: number } | null;
 }
 
-export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps) => {
+export const BalanceCell = ({ primary, secondary, supplyCaps, borrowCaps }: BalanceCellProps) => {
   const { cCard } = useColors();
-  const ratio =
+  const supplyRatio =
     supplyCaps && supplyCaps.usdCap
       ? parseInt(((primary.value * 100) / supplyCaps.usdCap).toString())
+      : undefined;
+  const borrowRatio =
+    borrowCaps && borrowCaps.usdCap
+      ? parseInt(((primary.value * 100) / borrowCaps.usdCap).toString())
       : undefined;
 
   return (
@@ -32,6 +37,9 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
             <Text variant="tnumber">$ {smallFormatter.format(primary.value)}</Text>
             {supplyCaps && (
               <Text variant="tnumber">/ $ {smallFormatter.format(supplyCaps.usdCap)}</Text>
+            )}
+            {borrowCaps && (
+              <Text variant="tnumber">/ $ {smallFormatter.format(borrowCaps.usdCap)}</Text>
             )}
           </HStack>
           {secondary && (
@@ -46,6 +54,11 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
                   secondary.symbol
                 }`}</Text>
               )}
+              {borrowCaps && (
+                <Text variant="tnumber">{`/ ${smallFormatter.format(borrowCaps.nativeCap)} ${
+                  secondary.symbol
+                }`}</Text>
+              )}
             </HStack>
           )}
 
@@ -54,7 +67,17 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
               <Divider />
               <Text mb={4}>
                 This asset has a restricted supply amount for security reasons.
-                {ratio && ` As of now, ${ratio}% are already supplied to this market.`}
+                {supplyRatio && ` As of now, ${supplyRatio}% are already supplied to this market.`}
+              </Text>
+            </>
+          ) : null}
+
+          {borrowCaps ? (
+            <>
+              <Divider />
+              <Text mb={4}>
+                This asset has a restricted borrow amount for security reasons.
+                {borrowRatio && ` As of now, ${borrowRatio}% are already borrowed to this market.`}
               </Text>
             </>
           ) : null}
@@ -74,7 +97,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
               {smallFormatter.format(primary.value)}
             </Text>
           </HStack>
-          {supplyCaps && (
+          {(supplyCaps || borrowCaps) && (
             <Text
               color={cCard.txtColor}
               size="sm"
@@ -107,6 +130,28 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
               </Text>
             </HStack>
           )}
+          {borrowCaps && (
+            <HStack spacing={0.5}>
+              <Text
+                color={cCard.txtColor}
+                size="xs"
+                fontWeight={'medium'}
+                variant="tnumber"
+                opacity={0.6}
+              >
+                {'$'}
+              </Text>
+              <Text
+                color={cCard.txtColor}
+                size="xs"
+                fontWeight={'medium'}
+                variant="tnumber"
+                opacity={0.6}
+              >
+                {midFormat(borrowCaps.usdCap)}
+              </Text>
+            </HStack>
+          )}
         </HStack>
         {secondary && (
           <HStack spacing={1}>
@@ -128,7 +173,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
               </Text>
             </HStack>
 
-            {supplyCaps && (
+            {(supplyCaps || borrowCaps) && (
               <Text
                 color={cCard.txtColor}
                 size="sm"
@@ -158,16 +203,45 @@ export const BalanceCell = ({ primary, secondary, supplyCaps }: BalanceCellProps
                 </Text>
               </HStack>
             )}
+            {borrowCaps && (
+              <HStack spacing={0.5}>
+                <Text variant="tnumber" size="xs" opacity={0.6}>
+                  {midFormat(borrowCaps.nativeCap)}
+                </Text>
+                <Text
+                  variant="tnumber"
+                  size="xs"
+                  textOverflow="ellipsis"
+                  align="right"
+                  whiteSpace="nowrap"
+                  maxWidth={'55px'}
+                  overflow="hidden"
+                  opacity={0.6}
+                >
+                  {secondary.symbol}
+                </Text>
+              </HStack>
+            )}
           </HStack>
         )}
 
-        {ratio ? (
+        {supplyRatio ? (
           <Progress
             width="100%"
             height={1}
             borderRadius="2px"
-            value={ratio}
-            colorScheme={ratio <= 75 ? 'green' : ratio <= 90 ? 'yellow' : 'red'}
+            value={supplyRatio}
+            colorScheme={supplyRatio <= 75 ? 'green' : supplyRatio <= 90 ? 'yellow' : 'red'}
+          />
+        ) : null}
+
+        {borrowRatio ? (
+          <Progress
+            width="100%"
+            height={1}
+            borderRadius="2px"
+            value={borrowRatio}
+            colorScheme={borrowRatio <= 75 ? 'green' : borrowRatio <= 90 ? 'yellow' : 'red'}
           />
         ) : null}
       </VStack>

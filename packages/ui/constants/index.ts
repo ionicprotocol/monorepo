@@ -108,6 +108,8 @@ export const PERFORMANCE_FEE_TOOLTIP =
   'The fee taken by Midas Capital, as a percentage of the rewards earned by this strategy';
 export const ASSET_SUPPLIED_TOOLTIP =
   'Total Supply of this asset is limited for the overall safety of this pool';
+export const ASSET_BORROWED_TOOLTIP =
+  'Total Borrow of this asset is limited for the overall safety of this pool';
 export const MIDAS_LOCALSTORAGE_KEYS = 'midas_localstorage_keys';
 export const SHRINK_ASSETS = 10;
 export const MIDAS_T_AND_C_ACCEPTED = 'MidasTandCAccepted';
