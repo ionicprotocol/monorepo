@@ -319,7 +319,7 @@ export const AssetSettings = ({
       await tx.wait();
       await queryClient.refetchQueries();
 
-      LogRocket.track('Fuse-UpdateCollateralFactor');
+      LogRocket.track('Midas-setBorrowingStatus');
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
