@@ -6,6 +6,7 @@ import {
   ChainDeployConfig,
   deployAnkrCertificateTokenPriceOracle,
   deployChainlinkOracle,
+  deployCurveLpOracle,
   deployCurveV2LpOracle,
   deployDiaOracle,
 } from "../helpers";
@@ -15,6 +16,7 @@ import {
   ChainDeployFnParams,
   ChainlinkAsset,
   ChainlinkFeedBaseCurrency,
+  CurvePoolConfig,
   CurveV2PoolConfig,
   DiaAsset,
 } from "../helpers/types";
@@ -108,6 +110,20 @@ const curveV2Pools: CurveV2PoolConfig[] = [
     lpToken: underlying(assets, assetSymbols.PAR_USDC_CURVE),
     pool: "0xC0B78F2e96De56d08C7608697680e935FE47295B",
   },
+  {
+    lpToken: underlying(assets, assetSymbols.triCrypto),
+    pool: "0x3a1659Ddcf2339Be3aeA159cA010979FB49155FF",
+  },
+];
+
+// https://curve.fi/#/fantom
+const curvePools: CurvePoolConfig[] = [
+  {
+    // 2Pool
+    lpToken: underlying(assets, assetSymbols["2pool"]),
+    pool: "0x27E611FD27b276ACbd5Ffd632E5eAEBEC9761E40",
+    underlyings: [underlying(assets, assetSymbols.DAI), underlying(assets, assetSymbols.USDC)],
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -134,6 +150,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     diaNativeFeed: { feed: constants.AddressZero, key: "FTM/USD" },
   });
 
+  //// Curve LP Oracle
+  await deployCurveLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curvePools,
+  });
+
+  //// Curve V2 LP Oracle
   await deployCurveV2LpOracle({
     run,
     ethers,

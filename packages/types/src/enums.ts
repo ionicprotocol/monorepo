@@ -387,6 +387,8 @@ export enum assetSymbols {
   multiETH = "multiETH",
   aFTMc = "aFTMc",
   PAR_USDC_CURVE = "PAR_USDC CURVE",
+  fUSDT = "fUSDT",
+  triCrypto = "triCrypto",
 }
 
 export default assetSymbols;
