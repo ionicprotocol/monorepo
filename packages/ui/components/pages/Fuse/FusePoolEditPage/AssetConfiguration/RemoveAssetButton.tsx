@@ -38,7 +38,7 @@ const RemoveAssetButton = ({
     if (!currentSdk) return;
 
     setIsRemoving(true);
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     const response = await comptroller.callStatic._unsupportMarket(asset.cToken);
 
     if (!response.eq(0)) {

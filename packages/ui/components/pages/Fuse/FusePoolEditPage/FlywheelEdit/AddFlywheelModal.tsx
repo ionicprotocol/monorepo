@@ -46,7 +46,7 @@ const AddFlywheel = ({ comptrollerAddress, onSuccess }: AddFlywheelProps) => {
 
     try {
       setIsAdding(true);
-      const comptroller = currentSdk.createComptroller(comptrollerAddress);
+      const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
       const tx = await comptroller.functions._addRewardsDistributor(flywheel?.address, {
         from: address,
       });
