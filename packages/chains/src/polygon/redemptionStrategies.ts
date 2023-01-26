@@ -156,7 +156,7 @@ const redemptionStrategies: { [token: string]: [RedemptionStrategyContract, stri
   [underlying(assets, assetSymbols.MIMO_PAR_80_20)]: [RedemptionStrategyContract.BalancerLpTokenLiquidator, USDC],
   [underlying(assets, assetSymbols.PAR)]: [
     RedemptionStrategyContract.CurveSwapLiquidator,
-    underlying(assets, assetSymbols["JEUR-PAR"]),
+    underlying(assets, assetSymbols.JEUR),
   ],
 };
 
