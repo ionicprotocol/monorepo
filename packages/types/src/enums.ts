@@ -349,6 +349,7 @@ export enum assetSymbols {
 
   // Balancer
   MIMO_PAR_80_20 = "MIMO80-PAR20 BLP",
+  MIMO_PAR_75_25 = "MIMO75-PAR25 BLP",
   WMATIC_STMATIC_BLP = "WMATIC_STMATIC BLP",
   WMATIC_MATICX_BLP = "WMATIC_MATICX BLP",
   WMATIC_STMATIC_CURVE = "WMATIC_STMATIC CURVE",
@@ -376,12 +377,15 @@ export enum assetSymbols {
   GMX = "GMX",
   saddleFraxBP = "saddleFraxBP",
   saddleFraxUsdsBP = "saddleFraxUsdsBP",
+  saddleFraxUsdtBP = "saddleFraxUsdtBP",
+  USDs = "USDs",
 
   // Fantom
   WFTM = "WFTM",
   multiBTC = "multiBTC",
   multiETH = "multiETH",
   aFTMc = "aFTMc",
+  PAR_USDC_CURVE = "PAR_USDC CURVE",
 }
 
 export default assetSymbols;
