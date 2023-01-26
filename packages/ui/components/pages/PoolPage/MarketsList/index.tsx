@@ -333,7 +333,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.totalBorrow,
         id: TOTAL_BORROW,
         cell: ({ getValue }) => (
-          <TotalBorrow asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <TotalBorrow
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
 
