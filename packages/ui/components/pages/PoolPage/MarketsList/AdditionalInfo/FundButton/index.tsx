@@ -71,6 +71,7 @@ export const FundButton = ({
           onClose={closeModal}
           poolChainId={poolChainId}
           borrowBalanceFiat={borrowBalanceFiat}
+          comptrollerAddress={comptrollerAddress}
         />
       )}
       {mode === FundOperationMode.REPAY && (
