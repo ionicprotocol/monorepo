@@ -132,6 +132,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapV3PriceOracle,
     extraDocs: defaultDocs("https://arbiscan.io", USDs),
+    disabled: true,
   },
   // Awaiting price feeds
   // {
@@ -215,6 +216,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.SaddleLpPriceOracle,
     extraDocs: saddleFinanceDocs("FRAXBP-USDs", saddleFraxUsdsBP),
+    disabled: true,
   },
   {
     symbol: assetSymbols["saddleFraxUsdtBP"],
