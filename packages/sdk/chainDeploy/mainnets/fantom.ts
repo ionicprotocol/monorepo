@@ -76,11 +76,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
-  {
-    symbol: assetSymbols.PAR,
-    aggregator: "0x3E68e68ea2c3698400465e3104843597690ae0f7",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
 ];
 
 const diaAssets: DiaAsset[] = [

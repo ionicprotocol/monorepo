@@ -104,7 +104,7 @@ export const assets: SupportedAsset[] = [
     underlying: PAR,
     name: "PAR Stablecoin",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://ftmscan.com", USDC),
   },
   {
