@@ -49,6 +49,11 @@ export const SUPPLY_CAPS = {
   DEFAULT: 0,
 };
 
+export const TOTAL_BORROW_CAPS = {
+  MIN: 0,
+  DEFAULT: 0,
+};
+
 export const POOLS_PER_PAGE = 6;
 
 // TODO: We should replace this with NATIVE_DECIMALS from the @midas-capital/chains package

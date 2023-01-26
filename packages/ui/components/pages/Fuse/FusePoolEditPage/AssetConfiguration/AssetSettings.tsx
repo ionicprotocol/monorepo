@@ -46,6 +46,7 @@ import {
   LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
   SUPPLY_CAPS,
+  TOTAL_BORROW_CAPS,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
@@ -125,6 +126,7 @@ export const AssetSettings = ({
   const { cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isEditSupplyCaps, setIsEditSupplyCaps] = useState<boolean>(false);
+  const [isEditTotalBorrowCaps, setIsEditTotalBorrowCaps] = useState<boolean>(false);
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const {
@@ -141,6 +143,7 @@ export const AssetSettings = ({
       adminFee: ADMIN_FEE.DEFAULT,
       interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
       supplyCaps: SUPPLY_CAPS.DEFAULT,
+      totalBorrowCaps: TOTAL_BORROW_CAPS.DEFAULT,
     },
   });
 
@@ -152,6 +155,7 @@ export const AssetSettings = ({
     sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
   const watchSupplyCaps = Number(watch('supplyCaps', SUPPLY_CAPS.DEFAULT));
+  const watchTotalBorrowCaps = Number(watch('totalBorrowCaps', TOTAL_BORROW_CAPS.DEFAULT));
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
@@ -166,6 +170,10 @@ export const AssetSettings = ({
       setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
       setValue('interestRateModel', cTokenData.interestRateModelAddress);
       setValue('supplyCaps', parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS)));
+      setValue(
+        'totalBorrowCaps',
+        parseInt(utils.formatUnits(cTokenData.borrowCaps, DEFAULT_DECIMALS))
+      );
     }
   }, [cTokenData, setValue]);
 
@@ -188,6 +196,29 @@ export const AssetSettings = ({
       handleGenericError(e, errorToast);
     } finally {
       setIsEditSupplyCaps(false);
+      setIsUpdating(false);
+    }
+  };
+
+  const updateTotalBorrowCaps = async ({ totalBorrowCaps }: { totalBorrowCaps: number }) => {
+    if (!cTokenAddress || !currentSdk) return;
+    setIsUpdating(true);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
+    try {
+      const tx = await comptroller._setMarketBorrowCaps(
+        [cTokenAddress],
+        [utils.parseUnits(totalBorrowCaps.toString(), selectedAsset.underlyingDecimals)]
+      );
+      await tx.wait();
+      LogRocket.track('Fuse-UpdateTotalBorrowCaps');
+
+      await queryClient.refetchQueries();
+
+      successToast({ description: 'Successfully updated max total borrow amount!' });
+    } catch (e) {
+      handleGenericError(e, errorToast);
+    } finally {
+      setIsEditTotalBorrowCaps(false);
       setIsUpdating(false);
     }
   };
@@ -347,6 +378,17 @@ export const AssetSettings = ({
     setIsEditSupplyCaps(false);
   };
 
+  const setTotalBorrowCapsDefault = () => {
+    if (cTokenData) {
+      setValue(
+        'totalBorrowCaps',
+        parseInt(utils.formatUnits(cTokenData.borrowCaps, selectedAsset.underlyingDecimals))
+      );
+    }
+
+    setIsEditTotalBorrowCaps(false);
+  };
+
   const setReserveFactorDefault = () => {
     if (cTokenData) {
       setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
@@ -476,6 +518,114 @@ export const AssetSettings = ({
                 <Button
                   disabled={isUpdating || !isEditableAdmin}
                   onClick={() => setIsEditSupplyCaps(true)}
+                >
+                  Edit
+                </Button>
+              </ButtonGroup>
+            )}
+          </Flex>
+          <Divider />
+          <Flex
+            as="form"
+            w="100%"
+            px={{ base: 4, md: 8 }}
+            py={4}
+            direction="column"
+            onSubmit={handleSubmit(updateTotalBorrowCaps)}
+          >
+            <FormControl isInvalid={!!errors.totalBorrowCaps}>
+              <Flex
+                w="100%"
+                wrap="wrap"
+                direction={{ base: 'column', sm: 'row' }}
+                alignItems="center"
+              >
+                <FormLabel htmlFor="totalBorrowCaps" margin={0}>
+                  <HStack>
+                    <Text size="md" width="max-content">
+                      Total Borrow Caps
+                    </Text>
+                    <SimpleTooltip label={'It shows the market borrow caps.'}>
+                      <InfoOutlineIcon ml={1} />
+                    </SimpleTooltip>
+                  </HStack>
+                </FormLabel>
+                <Spacer />
+                <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
+                  <Controller
+                    control={control}
+                    name="totalBorrowCaps"
+                    rules={{
+                      required: 'Borrow caps is required',
+                      min: {
+                        value: TOTAL_BORROW_CAPS.MIN,
+                        message: `Borrow caps must be at least ${TOTAL_BORROW_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
+                      },
+                    }}
+                    render={({ field: { name, value, ref, onChange } }) => (
+                      <InputGroup>
+                        <NumberInput
+                          width={100}
+                          clampValueOnBlur={false}
+                          value={value === 0 && !isEditTotalBorrowCaps ? 'Unlimited' : value}
+                          onChange={onChange}
+                          min={TOTAL_BORROW_CAPS.MIN}
+                          allowMouseWheel
+                          isDisabled={!isEditableAdmin}
+                          isReadOnly={!isEditTotalBorrowCaps}
+                        >
+                          <NumberInputField
+                            paddingLeft={2}
+                            paddingRight={2}
+                            borderRightRadius={0}
+                            ref={ref}
+                            name={name}
+                            textAlign="center"
+                          />
+                        </NumberInput>
+                        <InputRightAddon px={2}>
+                          {selectedAsset.underlyingSymbol}{' '}
+                          {usdPrice &&
+                            value !== 0 &&
+                            `(${smallUsdFormatter(
+                              value *
+                                Number(
+                                  utils.formatUnits(selectedAsset.underlyingPrice, DEFAULT_DECIMALS)
+                                ) *
+                                usdPrice
+                            )})`}
+                        </InputRightAddon>
+                      </InputGroup>
+                    )}
+                  />
+                  <FormErrorMessage maxWidth="200px" marginBottom="-10px">
+                    {errors.totalBorrowCaps && errors.totalBorrowCaps.message}
+                  </FormErrorMessage>
+                </Column>
+              </Flex>
+            </FormControl>
+            {isEditTotalBorrowCaps ? (
+              <ButtonGroup gap={0} mt={2} alignSelf="end">
+                <Button
+                  type="submit"
+                  disabled={
+                    isUpdating ||
+                    !cTokenData ||
+                    watchTotalBorrowCaps ===
+                      parseInt(utils.formatUnits(cTokenData.borrowCaps, DEFAULT_DECIMALS))
+                  }
+                >
+                  Save
+                </Button>
+                <Button variant="silver" disabled={isUpdating} onClick={setTotalBorrowCapsDefault}>
+                  Cancel
+                </Button>
+              </ButtonGroup>
+            ) : (
+              <ButtonGroup gap={0} mt={2} alignSelf="end">
+                <Button
+                  disabled={isUpdating || !isEditableAdmin}
+                  onClick={() => setIsEditTotalBorrowCaps(true)}
                 >
                   Edit
                 </Button>
