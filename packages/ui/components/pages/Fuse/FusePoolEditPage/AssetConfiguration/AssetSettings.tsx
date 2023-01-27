@@ -107,12 +107,16 @@ interface AssetSettingsProps {
   selectedAsset: NativePricedFuseAsset;
   tokenData: TokenData;
   poolChainId: number;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  assets: NativePricedFuseAsset[];
 }
 
 export const AssetSettings = ({
   comptrollerAddress,
   selectedAsset,
   poolChainId,
+  setSelectedAsset,
+  assets,
 }: AssetSettingsProps) => {
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { currentSdk, currentChain } = useMultiMidas();
@@ -1036,6 +1040,8 @@ export const AssetSettings = ({
               comptrollerAddress={comptrollerAddress}
               asset={selectedAsset}
               poolChainId={poolChainId}
+              setSelectedAsset={setSelectedAsset}
+              assets={assets}
             />
           </ConfigRow>
         </>
