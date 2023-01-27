@@ -158,28 +158,6 @@ const deployedPlugins: DeployedPlugins = {
     otherParams: ["0xebe0c8d842AA5A57D7BEf8e524dEabA676F91cD1", "50"],
     icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
   },
-  // BeefyERC4626_WMATIC_STMATIC CURVE_0xc2ae9a4588c73FE15CDc5C83C7d513c1f2d43fa4.json
-  "0xa36dd65F8136ee16C739CdED196589628720699a": {
-    market: "0xc2ae9a4588c73FE15CDc5C83C7d513c1f2d43fa4",
-    name: "Beefy Curve.fi stMATIC-WMATIC Vault",
-    strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.finance/vault/curve-matic-stmatic",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/liquid-staking-pool",
-    underlying: underlying(assets, assetSymbols.WMATIC_STMATIC_CURVE),
-    otherParams: ["0xE0570ddFca69E5E90d83Ea04bb33824D3BbE6a85", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
-  },
-  // BeefyERC4626_WMATIC_STMATIC CURVE_0x23F43c1002EEB2b146F286105a9a2FC75Bf770A4.json
-  "0xeAA782fA732FEf5A5B127EA70d1b656216717353": {
-    market: "0x23F43c1002EEB2b146F286105a9a2FC75Bf770A4",
-    name: "Beefy Curve.fi stMATIC-WMATIC Vault",
-    strategy: Strategy.Beefy,
-    apyDocsUrl: "https://app.beefy.finance/vault/curve-matic-stmatic",
-    strategyDocsUrl: "https://docs.midascapital.xyz/guides/assets-and-strategies-addresses/polygon/jarvis-jfiat-pool",
-    underlying: underlying(assets, assetSymbols.WMATIC_STMATIC_CURVE),
-    otherParams: ["0xE0570ddFca69E5E90d83Ea04bb33824D3BbE6a85", "0"],
-    icon: "https://d1912tcoux65lj.cloudfront.net/plugin/beefy.png",
-  },
 };
 
 export default deployedPlugins;

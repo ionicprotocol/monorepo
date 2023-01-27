@@ -202,32 +202,24 @@ export const configureAddressesProviderStrategies = async ({
     }
   }
 
-  // configure the curve swap pools in the AddressesProvider
-  {
-    const configPools: CurveSwapPool[] = chainConfig.liquidationDefaults.curveSwapPools;
-    const curveSwapPools = await ap.callStatic.getCurveSwapPools();
-    for (const key in configPools) {
-      const configPool = configPools[key];
-      const onChainPool = curveSwapPools.find((csp) => csp.poolAddress == configPool.poolAddress);
-      if (!onChainPool || configPool.coins.find((c) => onChainPool.coins.indexOf(c) < 0)) {
-        const tx = await ap.setCurveSwapPool(configPool.poolAddress, configPool.coins);
-        await tx.wait();
-        console.log(`curve swap pool configured ${tx.hash}`);
-      } else {
-        console.log(`no need to update curve swap pool config for ${configPool.poolAddress}`);
-      }
-    }
-    for (const key in curveSwapPools) {
-      const onChainPool = curveSwapPools[key];
-      const configPool = configPools.find((cp) => cp.poolAddress == onChainPool.poolAddress);
-      if (!configPool) {
-        const tx = await ap.setCurveSwapPool(onChainPool.poolAddress, []);
-        await tx.wait();
-        console.log("curve swap pool removed: ", tx.hash);
-      }
-    }
+  // configure the curve oracles addresses in the AddressesProvider
+  const clpov1 = await ethers.getContractOrNull("CurveLpTokenPriceOracleNoRegistry");
+  const clpov1Address = await ap.callStatic.getAddress("CurveLpTokenPriceOracleNoRegistry");
+  if (clpov1 && clpov1Address !== clpov1.address) {
+    const tx = await ap.setAddress("CurveLpTokenPriceOracleNoRegistry", clpov1.address);
+    await tx.wait();
+    console.log("setAddress CurveLpTokenPriceOracleNoRegistry: ", tx.hash);
   }
 
+  const clpov2 = await ethers.getContractOrNull("CurveV2LpTokenPriceOracleNoRegistry");
+  const clpov2Address = await ap.callStatic.getAddress("CurveV2LpTokenPriceOracleNoRegistry");
+  if (clpov2 && clpov2Address !== clpov2.address) {
+    const tx = await ap.setAddress("CurveV2LpTokenPriceOracleNoRegistry", clpov2.address);
+    await tx.wait();
+    console.log("setAddress CurveV2LpTokenPriceOracleNoRegistry: ", tx.hash);
+  }
+
+  // configure the redemption and funding strategies addresses
   const csl = await ethers.getContractOrNull("CurveSwapLiquidator");
   const cslAddress = await ap.callStatic.getAddress("CurveSwapLiquidator");
   if (csl && cslAddress !== csl.address) {
