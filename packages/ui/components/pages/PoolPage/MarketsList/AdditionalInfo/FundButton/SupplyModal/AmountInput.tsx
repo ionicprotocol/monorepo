@@ -24,6 +24,7 @@ export const AmountInput = ({
   optionToWrap?: boolean;
   poolChainId: number;
   setAmount: (amount: BigNumber) => void;
+  comptrollerAddress: string;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');

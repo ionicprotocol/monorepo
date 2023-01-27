@@ -410,6 +410,7 @@ export const SupplyModal = ({
                       optionToWrap={optionToWrap}
                       poolChainId={poolChainId}
                       setAmount={setAmount}
+                      comptrollerAddress={comptrollerAddress}
                     />
 
                     <Balance asset={asset} />

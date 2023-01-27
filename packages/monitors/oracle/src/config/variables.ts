@@ -30,7 +30,7 @@ export const baseConfig: BaseConfig = {
 const feedVerifierConfig: FeedVerifierConfig = {
   ...baseConfig,
   defaultDeviationThreshold: utils.parseEther(process.env.DEFAULT_DEVIATION_THRESHOLD ?? "0.05"),
-  maxObservationDelay: parseInt(process.env.MAX_OBSERVATION_DELAY ?? "10000"),
+  maxObservationDelay: parseInt(process.env.MAX_OBSERVATION_DELAY ?? "86400"),
   defaultMinPeriod: BigNumber.from(process.env.DEFAULT_MIN_PERIOD ?? "1800"),
 };
 

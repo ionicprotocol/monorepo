@@ -10,10 +10,14 @@ const EditAssetSettings = ({
   comptrollerAddress,
   selectedAsset,
   poolChainId,
+  setSelectedAsset,
+  assets,
 }: {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
   poolChainId: number;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  assets: NativePricedFuseAsset[];
 }) => {
   const { data: tokenData, isLoading } = useTokenData(selectedAsset.underlyingToken, poolChainId);
   if (isLoading) {
@@ -31,6 +35,8 @@ const EditAssetSettings = ({
         selectedAsset={selectedAsset}
         tokenData={tokenData}
         poolChainId={poolChainId}
+        setSelectedAsset={setSelectedAsset}
+        assets={assets}
       />
     );
   }

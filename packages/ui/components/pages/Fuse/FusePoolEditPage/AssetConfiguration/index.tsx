@@ -1,6 +1,6 @@
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
@@ -15,16 +15,12 @@ const AssetButton = ({
   asset,
   selectedAsset,
   setSelectedAsset,
-  setSelectedIndex,
-  index,
   isEditableAdmin,
   poolChainId,
 }: {
   asset: NativePricedFuseAsset;
   selectedAsset: NativePricedFuseAsset;
   setSelectedAsset: (value: NativePricedFuseAsset) => void;
-  setSelectedIndex: (value: number) => void;
-  index: number;
   isEditableAdmin?: boolean | null;
   poolChainId: number;
 }) => {
@@ -37,7 +33,6 @@ const AssetButton = ({
         isSelected={asset.cToken === selectedAsset.cToken}
         onClick={() => {
           setSelectedAsset(asset);
-          setSelectedIndex(index);
         }}
         px={2}
         isDisabled={!isEditableAdmin}
@@ -63,13 +58,7 @@ const AssetConfiguration = ({
   poolChainId: number;
 }) => {
   const [selectedAsset, setSelectedAsset] = useState(assets[0]);
-  const [selectedIndex, setSelectedIndex] = useState(0);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
-
-  useEffect(() => {
-    setSelectedAsset(assets[selectedIndex]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [assets]);
 
   return (
     <Column
@@ -94,35 +83,39 @@ const AssetConfiguration = ({
 
       <Divider />
 
-      <ConfigRow>
-        <Text size="md" mr={4}>
-          Assets:
-        </Text>
-        <Flex wrap="wrap">
-          {assets.map((asset, index) => {
-            return (
-              <AssetButton
-                key={index}
-                asset={asset}
-                selectedAsset={selectedAsset}
-                setSelectedAsset={setSelectedAsset}
-                setSelectedIndex={setSelectedIndex}
-                index={index}
-                isEditableAdmin={isEditableAdmin}
-                poolChainId={poolChainId}
-              />
-            );
-          })}
-        </Flex>
-      </ConfigRow>
+      {selectedAsset ? (
+        <>
+          <ConfigRow>
+            <Text size="md" mr={4}>
+              Assets:
+            </Text>
+            <Flex wrap="wrap">
+              {assets.map((asset, index) => {
+                return (
+                  <AssetButton
+                    key={index}
+                    asset={asset}
+                    selectedAsset={selectedAsset}
+                    setSelectedAsset={setSelectedAsset}
+                    isEditableAdmin={isEditableAdmin}
+                    poolChainId={poolChainId}
+                  />
+                );
+              })}
+            </Flex>
+          </ConfigRow>
 
-      <Divider />
+          <Divider />
 
-      <EditAssetSettings
-        comptrollerAddress={comptrollerAddress}
-        selectedAsset={selectedAsset}
-        poolChainId={poolChainId}
-      />
+          <EditAssetSettings
+            comptrollerAddress={comptrollerAddress}
+            selectedAsset={selectedAsset}
+            poolChainId={poolChainId}
+            setSelectedAsset={setSelectedAsset}
+            assets={assets}
+          />
+        </>
+      ) : null}
     </Column>
   );
 };
