@@ -108,8 +108,7 @@ export const RepayModal = ({
               FundOperationMode.REPAY,
               currentSdk,
               address,
-              asset,
-              comptrollerAddress
+              asset
             )) as BigNumber);
 
         return amount.lte(max);
@@ -359,7 +358,6 @@ export const RepayModal = ({
                       optionToWrap={optionToWrap}
                       poolChainId={poolChainId}
                       setAmount={setAmount}
-                      comptrollerAddress={comptrollerAddress}
                     />
 
                     <Balance asset={asset} />

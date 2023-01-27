@@ -19,7 +19,6 @@ export const AmountInput = ({
   optionToWrap,
   poolChainId,
   setAmount,
-  comptrollerAddress,
 }: {
   asset: MarketData;
   optionToWrap?: boolean;
@@ -65,8 +64,7 @@ export const AmountInput = ({
           FundOperationMode.SUPPLY,
           currentSdk,
           address,
-          asset,
-          comptrollerAddress
+          asset
         )) as BigNumber;
       }
 

@@ -45,7 +45,7 @@ export const fetchMaxAmount = async (
   midasSdk: MidasSdk,
   address: string,
   asset: NativePricedFuseAsset,
-  comptrollerAddress: string
+  comptrollerAddress?: string
 ): Promise<BigNumber> => {
   if (mode === FundOperationMode.SUPPLY) {
     return await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
@@ -67,10 +67,14 @@ export const fetchMaxAmount = async (
       throw new Error('Could not fetch your max borrow amount! Code: ');
     }
 
-    const comptroller = midasSdk.createComptroller(comptrollerAddress);
-    const borrowCaps = await comptroller.callStatic.borrowCaps(asset.cToken);
+    if (comptrollerAddress) {
+      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      const borrowCaps = await comptroller.callStatic.borrowCaps(asset.cToken);
 
-    return borrowCaps.gt(constants.Zero) && borrowCaps.lte(maxBorrow) ? borrowCaps : maxBorrow;
+      return borrowCaps.gt(constants.Zero) && borrowCaps.lte(maxBorrow) ? borrowCaps : maxBorrow;
+    } else {
+      return maxBorrow;
+    }
   }
 
   if (mode === FundOperationMode.WITHDRAW) {

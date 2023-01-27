@@ -18,12 +18,10 @@ export const AmountInput = ({
   asset,
   poolChainId,
   setAmount,
-  comptrollerAddress,
 }: {
   asset: MarketData;
   poolChainId: number;
   setAmount: (amount: BigNumber) => void;
-  comptrollerAddress: string;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
@@ -59,8 +57,7 @@ export const AmountInput = ({
         FundOperationMode.WITHDRAW,
         currentSdk,
         address,
-        asset,
-        comptrollerAddress
+        asset
       )) as BigNumber;
 
       if (maxBN.lt(constants.Zero) || maxBN.isZero()) {
