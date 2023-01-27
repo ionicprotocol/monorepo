@@ -6,7 +6,7 @@ import { FeedVerifierAsset } from "../../types";
 import { defaultDeviationThreshold, defaultMaxObservationDelay } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
-  (asset) => asset.disabled !== undefined && !asset.disabled
+  (asset) => asset.disabled === undefined || asset.disabled == false
 );
 
 const MAI = assetFilter(chainAssets, assetSymbols.MAI);

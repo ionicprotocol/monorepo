@@ -1,49 +1,33 @@
-import { SupportedChains } from "@midas-capital/types";
-import { Contract, utils } from "ethers";
+import { Contract } from "ethers";
 
-import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
-import { getDefiLlamaPrice } from "../../../../utils";
+import { InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
-export async function verifyFluxOraclePriceFeed(
-  { midasSdk, underlyingOracle, asset }: VerifyFeedParams,
-  config: FeedVerifierConfig
-): Promise<PriceFeedValidity> {
-  const { feed, key } = await underlyingOracle.callStatic.priceFeeds(asset.underlying);
-  const diaFeed = new Contract(
+export async function verifyFluxOraclePriceFeed({
+  midasSdk,
+  underlyingOracle,
+  asset,
+}: VerifyFeedParams): Promise<PriceFeedValidity> {
+  const feed = await underlyingOracle.callStatic.priceFeeds(asset.underlying);
+  const fluxFeed = new Contract(
     feed,
-    ["function getValue(string memory key) external view returns (uint128, uint128)"],
+    [
+      "function latestRoundData() external view returns returns (uint80, int256, uint256, uint256, uint80)",
+      "function getRoundData(uint80) external view returns (uint80,int256,uint256,uint256,uint80)",
+    ],
     midasSdk.provider
   );
-  const [price, timestamp] = await diaFeed.callStatic.getValue(key);
-  const updatedAtts = timestamp.toNumber();
+  const [roundId, value, , updatedAt] = await fluxFeed.callStatic.latestRoundData();
+  const [, previousValue] = await fluxFeed.callStatic.getRoundData(roundId.sub(1));
+
+  const deviation = Math.abs((value.toNumber() - previousValue.toNumber()) / previousValue.toNumber()) * 100;
+  const updatedAtts = updatedAt.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
 
-  if (timeSinceLastUpdate < config.defaultMaxObservationDelay) {
-    return true;
-  } else {
-    const chainName = SupportedChains[midasSdk.chainId];
-
-    const assetId = `${chainName}:${asset.underlying}`;
-    const tokenPriceUSD = await getDefiLlamaPrice(assetId);
-    if (tokenPriceUSD === null) {
-      return {
-        message: `Failed to fetch price for ${chainName}:${asset.underlying}`,
-        invalidReason: InvalidReason.DEFI_LLAMA_API_ERROR,
-      };
-    }
-
-    // DIA price feeds have 8 decimals
-    // Assume also price feeds are USD-based
-    const assetPriceUSD = parseFloat(utils.formatUnits(price, 8));
-    const priceDiff = Math.abs(assetPriceUSD - tokenPriceUSD);
-    const priceDiffPercent = priceDiff / assetPriceUSD;
-
-    if (priceDiffPercent > 0.01) {
-      return {
-        invalidReason: InvalidReason.LAST_OBSERVATION_TOO_OLD,
-        message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay} & deviation is > 1%`,
-      };
-    }
-    return true;
+  if (timeSinceLastUpdate > asset.maxObservationDelay && deviation > asset.deviationThreshold) {
+    return {
+      invalidReason: InvalidReason.LAST_OBSERVATION_TOO_OLD,
+      message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${asset.maxObservationDelay}`,
+    };
   }
+  return true;
 }

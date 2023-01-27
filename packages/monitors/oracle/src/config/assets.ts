@@ -3,14 +3,9 @@ import { assetSymbols, OracleTypes, SupportedAsset } from "@midas-capital/types"
 
 import { Services } from "../types";
 
-import { chainIdToAssets } from "./priceChangeVerifier";
+import { chainIdToAssets as feedVerifierAssets } from "./feedVerifier";
+import { chainIdToAssets as priceChangeVerifierAssets } from "./priceChangeVerifier";
 import { baseConfig } from "./variables";
-
-const FEED_VERIFIER_ORACLES = [
-  OracleTypes.ChainlinkPriceOracleV2,
-  OracleTypes.UniswapTwapPriceOracleV2,
-  OracleTypes.DiaPriceOracle,
-];
 
 // DIA Feed verification also runs price verification
 const PRICE_VERIFIER_ORACLES = [OracleTypes.ChainlinkPriceOracleV2, OracleTypes.UniswapTwapPriceOracleV2];
@@ -36,19 +31,6 @@ const PRICE_VERIFICATION_DISABLED = [
   assetSymbols.XSGD,
 ];
 
-const FEED_VERIFICATION_DISABLED = PRICE_VERIFICATION_DISABLED;
-
-const getFeedVerifierAssets = (): SupportedAsset[] => {
-  const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
-  return chainAssets.filter(
-    (asset) =>
-      asset.oracle &&
-      FEED_VERIFIER_ORACLES.includes(asset.oracle) &&
-      asset.disabled !== true &&
-      !FEED_VERIFICATION_DISABLED.includes(asset.symbol as assetSymbols)
-  );
-};
-
 const getPriceVerifierAssets = (): SupportedAsset[] => {
   const chainAssets = chainIdToConfig[baseConfig.chainId].assets;
   return chainAssets.filter(
@@ -60,8 +42,11 @@ const getPriceVerifierAssets = (): SupportedAsset[] => {
   );
 };
 
+const getFeedVerifierAssets = (): SupportedAsset[] => {
+  return feedVerifierAssets[baseConfig.chainId];
+};
 const getPriceChangeVerifierAssets = (): SupportedAsset[] => {
-  return chainIdToAssets[baseConfig.chainId];
+  return priceChangeVerifierAssets[baseConfig.chainId];
 };
 
 export const assets = {

@@ -6,7 +6,7 @@ import { FeedVerifierAsset } from "../../types";
 import { defaultDeviationThreshold, defaultMaxObservationDelay } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.moonbeam].assets.filter(
-  (asset) => asset.disabled !== undefined && !asset.disabled
+  (asset) => asset.disabled === undefined || asset.disabled == false
 );
 
 const multiDAI = assetFilter(chainAssets, assetSymbols.multiDAI);

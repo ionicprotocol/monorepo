@@ -22,8 +22,8 @@ export async function runVerifier(sdk: MidasSdk, service: Services, assetsOverri
   const signer = new Wallet(baseConfig.adminPrivateKey, provider);
   const midasSdk = setUpSdk(chainId, signer);
 
-  const assetsOverride = assets[Services.FeedVerifier].slice(0, 1);
-  const priceChangeVerifierAssetsOverride = assets[Services.PriceChangeVerifier].slice(0, 1);
+  const assetsOverride = assets[Services.FeedVerifier];
+  const priceChangeVerifierAssetsOverride = assets[Services.PriceChangeVerifier];
 
   switch (baseConfig.service) {
     case Services.FeedVerifier:

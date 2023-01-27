@@ -1,5 +1,4 @@
 import doetenv from "dotenv";
-import { BigNumber, utils } from "ethers";
 
 import {
   BaseConfig,

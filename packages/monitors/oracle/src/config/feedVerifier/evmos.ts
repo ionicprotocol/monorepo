@@ -1,12 +1,12 @@
 import { chainIdToConfig } from "@midas-capital/chains";
-import { assetFilter, assetSymbols, OracleTypes, SupportedChains } from "@midas-capital/types";
+import { OracleTypes, SupportedChains } from "@midas-capital/types";
 
 import { FeedVerifierAsset } from "../../types";
 
-import { defaultDeviationThreshold, defaultMaxObservationDelay } from "./defaults";
+import { defaultMaxObservationDelay } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
-  (asset) => asset.disabled !== undefined && !asset.disabled
+  (asset) => asset.disabled === undefined || asset.disabled == false
 );
 
 const fluxSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.FluxPriceOracle);

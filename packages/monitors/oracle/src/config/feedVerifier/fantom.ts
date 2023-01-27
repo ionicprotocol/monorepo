@@ -6,7 +6,7 @@ import { FeedVerifierAsset } from "../../types";
 import { defaultDeviationThreshold, defaultMaxObservationDelay } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.fantom].assets.filter(
-  (asset) => asset.disabled !== undefined && !asset.disabled
+  (asset) => asset.disabled === undefined || asset.disabled == false
 );
 
 const chainLinkSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2);

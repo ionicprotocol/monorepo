@@ -15,11 +15,11 @@ export async function verifyProviderFeed(
 ): Promise<PriceFeedInvalidity | true> {
   switch (oracle) {
     case OracleTypes.ChainlinkPriceOracleV2:
-      return await verifyChainLinkOraclePriceFeed(args, config);
+      return await verifyChainLinkOraclePriceFeed(args);
     case OracleTypes.DiaPriceOracle:
-      return await verifyDiaOraclePriceFeed(args, config);
+      return await verifyDiaOraclePriceFeed(args);
     case OracleTypes.FluxPriceOracle:
-      return await verifyFluxOraclePriceFeed(args, config);
+      return await verifyFluxOraclePriceFeed(args);
     case OracleTypes.UniswapTwapPriceOracleV2:
       return await verifyUniswapV2PriceFeed(args, config);
     default:

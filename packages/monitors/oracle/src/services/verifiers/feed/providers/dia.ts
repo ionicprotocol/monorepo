@@ -2,13 +2,14 @@ import { SupportedChains } from "@midas-capital/types";
 import { Contract, utils } from "ethers";
 
 import { logger } from "../../../../logger";
-import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
+import { InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 import { getDefiLlamaPrice } from "../../../../utils";
 
-export async function verifyDiaOraclePriceFeed(
-  { midasSdk, underlyingOracle, asset }: VerifyFeedParams,
-  config: FeedVerifierConfig
-): Promise<PriceFeedValidity> {
+export async function verifyDiaOraclePriceFeed({
+  midasSdk,
+  underlyingOracle,
+  asset,
+}: VerifyFeedParams): Promise<PriceFeedValidity> {
   logger.debug(`Verifying Dia oracle for ${asset.underlying}`);
   const { feed, key } = await underlyingOracle.callStatic.priceFeeds(asset.underlying);
   const diaFeed = new Contract(
@@ -40,7 +41,7 @@ export async function verifyDiaOraclePriceFeed(
   if (timeSinceLastUpdate > asset.maxObservationDelay && deviation > asset.deviationThreshold) {
     return {
       invalidReason: InvalidReason.LAST_OBSERVATION_TOO_OLD,
-      message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay} & deviation is > 1%`,
+      message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${asset.maxObservationDelay} & deviation is > 1%`,
     };
   }
   return true;
