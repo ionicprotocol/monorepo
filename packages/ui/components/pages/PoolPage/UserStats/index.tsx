@@ -16,9 +16,10 @@ import { useMemo } from 'react';
 import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssets } from '@ui/hooks/useAssets';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
 import { useRewards } from '@ui/hooks/useRewards';
-import { useBorrowApyPerAsset, useTotalSupplyApyPerAsset } from '@ui/hooks/useTotalApy';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { PoolData } from '@ui/types/TokensDataMap';
 import { midUsdFormatter, smallUsdFormatter, tokenFormatter } from '@ui/utils/bigUtils';
 import { sortTopUserBorrowedAssets, sortTopUserSuppliedAssets } from '@ui/utils/sorts';
@@ -41,14 +42,14 @@ export const UserStats = ({ poolData }: { poolData: PoolData }) => {
     chainId: poolData.chainId,
   });
 
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyApyPerAsset(
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     poolData.assets,
     poolData.chainId,
     allRewards,
     assetInfos
   );
 
-  const { data: borrowApyPerAsset } = useBorrowApyPerAsset(poolData.assets, poolData.chainId);
+  const { data: borrowApyPerAsset } = useBorrowAPYs(poolData.assets, poolData.chainId);
 
   const totalSupplyApy = useMemo(() => {
     if (totalSupplyApyPerAsset) {

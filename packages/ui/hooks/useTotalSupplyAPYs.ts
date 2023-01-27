@@ -7,7 +7,7 @@ import { UseRewardsData } from './useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 
-export const useTotalSupplyApyPerAsset = (
+export const useTotalSupplyAPYs = (
   assets: MarketData[],
   chainId?: number,
   allRewards?: UseRewardsData,
@@ -17,7 +17,7 @@ export const useTotalSupplyApyPerAsset = (
 
   return useQuery(
     [
-      'useTotalSupplyApyPerAsset',
+      'useTotalSupplyAPYs',
       assets.sort((a, b) => a.cToken.localeCompare(b.cToken)).toString(),
       sdk?.chainId,
       allRewards?.toString(),
@@ -47,34 +47,6 @@ export const useTotalSupplyApyPerAsset = (
         }
 
         result[asset.cToken] = marketTotalAPY;
-      }
-
-      return result;
-    },
-    { cacheTime: Infinity, staleTime: Infinity, enabled: !!sdk && !!assets && !!chainId }
-  );
-};
-
-export const useBorrowApyPerAsset = (assets: MarketData[], chainId?: number) => {
-  const sdk = useSdk(chainId);
-
-  return useQuery(
-    [
-      'useBorrowApyPerAsset',
-      assets.sort((a, b) => a.cToken.localeCompare(b.cToken)).toString(),
-      sdk?.chainId,
-    ],
-    async () => {
-      if (!sdk || !assets || !chainId) return null;
-
-      const result: { [market: string]: number } = {};
-
-      for (const asset of assets) {
-        const marketBorrowApy =
-          sdk.ratePerBlockToAPY(asset.borrowRatePerBlock, getBlockTimePerMinuteByChainId(chainId)) /
-          100;
-
-        result[asset.cToken] = marketBorrowApy;
       }
 
       return result;
