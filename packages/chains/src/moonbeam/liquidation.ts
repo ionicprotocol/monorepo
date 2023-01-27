@@ -13,12 +13,6 @@ const liquidationDefaults: LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber.from(0),
   LIQUIDATION_INTERVAL_SECONDS: 60,
   jarvisPools: [],
-  curveSwapPools: [
-    {
-      poolAddress: "0x0fFc46cD9716a96d8D89E1965774A70Dcb851E50",
-      coins: [underlying(assets, assetSymbols.xcDOT), underlying(assets, assetSymbols.stDOT)],
-    },
-  ],
 };
 
 export default liquidationDefaults;
