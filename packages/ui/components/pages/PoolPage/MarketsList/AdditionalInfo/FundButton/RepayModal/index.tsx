@@ -43,9 +43,17 @@ interface RepayModalProps {
   assets: MarketData[];
   onClose: () => void;
   poolChainId: number;
+  comptrollerAddress: string;
 }
 
-export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: RepayModalProps) => {
+export const RepayModal = ({
+  isOpen,
+  asset,
+  assets,
+  onClose,
+  poolChainId,
+  comptrollerAddress,
+}: RepayModalProps) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   if (!currentChain || !currentSdk) throw new Error("SDK doesn't exist");
@@ -361,6 +369,7 @@ export const RepayModal = ({ isOpen, asset, assets, onClose, poolChainId }: Repa
                     assets={assets}
                     asset={asset}
                     poolChainId={poolChainId}
+                    comptrollerAddress={comptrollerAddress}
                   />
 
                   <Button

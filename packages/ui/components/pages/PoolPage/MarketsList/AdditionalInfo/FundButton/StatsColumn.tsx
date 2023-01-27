@@ -21,6 +21,7 @@ interface StatsColumnProps {
   amount: BigNumber;
   enableAsCollateral?: boolean;
   poolChainId: number;
+  comptrollerAddress: string;
 }
 export const StatsColumn = ({
   mode,
@@ -29,6 +30,7 @@ export const StatsColumn = ({
   amount,
   enableAsCollateral = false,
   poolChainId,
+  comptrollerAddress,
 }: StatsColumnProps) => {
   const index = useMemo(() => assets.findIndex((a) => a.cToken === asset.cToken), [assets, asset]);
   // Get the new representation of a user's NativePricedFuseAssets after proposing a supply amount.
@@ -85,11 +87,17 @@ export const StatsColumn = ({
   const { data: updatedBorrowLimitTotal } = useBorrowLimitTotal(updatedAssets ?? [], poolChainId, {
     ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
   });
-  const { data: borrowLimitMarket } = useBorrowLimitMarket(asset, assets, poolChainId);
+  const { data: borrowLimitMarket } = useBorrowLimitMarket(
+    asset,
+    assets,
+    poolChainId,
+    comptrollerAddress
+  );
   const { data: updatedBorrowLimitMarket } = useBorrowLimitMarket(
     asset,
     updatedAssets ?? [],
     poolChainId,
+    comptrollerAddress,
     {
       ignoreIsEnabledCheckFor: enableAsCollateral ? asset.cToken : undefined,
     }

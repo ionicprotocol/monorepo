@@ -41,6 +41,7 @@ interface WithdrawModalProps {
   assets: MarketData[];
   onClose: () => void;
   poolChainId: number;
+  comptrollerAddress: string;
 }
 
 export const WithdrawModal = ({
@@ -49,6 +50,7 @@ export const WithdrawModal = ({
   assets,
   onClose,
   poolChainId,
+  comptrollerAddress,
 }: WithdrawModalProps) => {
   const { currentSdk, address, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
@@ -250,6 +252,7 @@ export const WithdrawModal = ({
                     assets={assets}
                     asset={asset}
                     poolChainId={poolChainId}
+                    comptrollerAddress={comptrollerAddress}
                   />
                   <Button
                     id="confirmFund"

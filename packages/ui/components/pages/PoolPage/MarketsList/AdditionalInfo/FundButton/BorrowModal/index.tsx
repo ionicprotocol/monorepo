@@ -86,7 +86,12 @@ export const BorrowModal = ({
 
   const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
-  const { data: borrowLimitMarket } = useBorrowLimitMarket(asset, assets, poolChainId);
+  const { data: borrowLimitMarket } = useBorrowLimitMarket(
+    asset,
+    assets,
+    poolChainId,
+    comptrollerAddress
+  );
   const [isBorrowing, setIsBorrowing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS(asset.underlyingSymbol)]);
@@ -356,6 +361,7 @@ export const BorrowModal = ({
                     assets={assets}
                     asset={asset}
                     poolChainId={poolChainId}
+                    comptrollerAddress={comptrollerAddress}
                   />
                   {amountIsValid && isRisky && (
                     <Box pt={4}>

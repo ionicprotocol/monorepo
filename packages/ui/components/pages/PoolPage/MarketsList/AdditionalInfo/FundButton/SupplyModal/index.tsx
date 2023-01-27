@@ -422,6 +422,7 @@ export const SupplyModal = ({
                     asset={asset}
                     enableAsCollateral={enableAsCollateral}
                     poolChainId={poolChainId}
+                    comptrollerAddress={comptrollerAddress}
                   />
                   {!asset.membership && (
                     <EnableCollateral
