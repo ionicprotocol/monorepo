@@ -94,7 +94,7 @@ export const CollateralModal = ({
 
       try {
         setActiveStep(1);
-        const comptroller = currentSdk.createComptroller(comptrollerAddress);
+        const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
         let call: ContractTransaction;
 
