@@ -1,4 +1,4 @@
-import { Divider, HStack, Skeleton, Text } from '@chakra-ui/react';
+import { Divider, HStack, Skeleton, Text, VStack } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { BigNumber, utils } from 'ethers';
 import { useMemo } from 'react';
@@ -146,7 +146,7 @@ export const StatsColumn = ({
 
         <Divider />
 
-        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
           <Text flexShrink={0} size="sm">
             Borrowed in Market:
           </Text>
@@ -161,7 +161,6 @@ export const StatsColumn = ({
                   : undefined
               }
               textAlign="right"
-              width="min-content"
             >
               {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
                 borrowLimitMarket || 0
@@ -179,7 +178,6 @@ export const StatsColumn = ({
                     : undefined
                 }
                 textAlign="right"
-                width="min-content"
               >
                 {`${smallUsdFormatter(
                   Math.max(updatedAsset.borrowBalanceFiat, 0)
@@ -187,7 +185,7 @@ export const StatsColumn = ({
               </Text>
             ) : (
               <Skeleton display="inline">
-                <Text textAlign="right" width="min-content">
+                <Text textAlign="right">
                   {`${smallUsdFormatter(asset.borrowBalanceFiat)} of ${smallUsdFormatter(
                     borrowLimitMarket || 0
                   )}`}
@@ -195,9 +193,9 @@ export const StatsColumn = ({
               </Skeleton>
             )}
           </HStack>
-        </HStack>
+        </VStack>
 
-        <HStack width="100%" alignItems={'flex-start'} spacing={0}>
+        <VStack width="100%" alignItems={'flex-start'} spacing={0}>
           <Text flexShrink={0} size="sm">
             Borrowed in Total:
           </Text>
@@ -214,7 +212,6 @@ export const StatsColumn = ({
                   : undefined
               }
               textAlign="right"
-              width="min-content"
             >
               {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(borrowLimitTotal || 0)}`}
             </Text>
@@ -232,7 +229,6 @@ export const StatsColumn = ({
                     : undefined
                 }
                 textAlign="right"
-                width="min-content"
               >
                 {`${smallUsdFormatter(Math.max(updatedTotalBorrows, 0))} of ${smallUsdFormatter(
                   updatedBorrowLimitTotal || 0
@@ -240,7 +236,7 @@ export const StatsColumn = ({
               </Text>
             ) : (
               <Skeleton display="inline">
-                <Text textAlign="right" width="min-content">
+                <Text textAlign="right" variant="tnumber">
                   {`${smallUsdFormatter(totalBorrows)} of ${smallUsdFormatter(
                     borrowLimitTotal || 0
                   )}`}
@@ -248,7 +244,7 @@ export const StatsColumn = ({
               </Skeleton>
             )}
           </HStack>
-        </HStack>
+        </VStack>
 
         <Divider />
         <HStack width="100%" alignItems={'flex-start'} spacing={0}>
