@@ -30,7 +30,7 @@ export const deployUniswapV3Oracle = async ({
     if (
       existingOracleAssetConfig.poolAddress != assetConfig.poolAddress ||
       existingOracleAssetConfig.twapWindow != assetConfig.twapWindowSeconds ||
-      assetConfig.baseCurrency == existingOracleAssetConfig.baseCurrency
+      existingOracleAssetConfig.baseCurrency != assetConfig.baseCurrency
     ) {
       assetsToAdd.push(assetConfig);
     }
