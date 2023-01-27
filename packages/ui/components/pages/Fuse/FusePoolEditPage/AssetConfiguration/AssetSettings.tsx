@@ -42,12 +42,12 @@ import { SliderWithLabel } from '@ui/components/shared/SliderWithLabel';
 import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
+  BORROW_CAP,
   DEFAULT_DECIMALS,
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
   SUPPLY_CAP,
-  BORROW_CAP,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';

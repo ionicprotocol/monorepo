@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 
+import { Cap } from './useBorrowCap';
+
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
-import { Cap } from './useBorrowCap';
 
 export const useSupplyCap = (
   comptrollerAddress: string,

@@ -1,11 +1,12 @@
 import { Divider, HStack, Progress, Text, VStack } from '@chakra-ui/react';
 import { BigNumber, utils } from 'ethers';
+import { useMemo } from 'react';
+
+import { Cap } from '../../hooks/useBorrowCap';
 
 import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { useColors } from '@ui/hooks/useColors';
 import { midFormat, smallFormatter } from '@ui/utils/bigUtils';
-import { useMemo } from 'react';
-import { Cap } from '../../hooks/useBorrowCap';
 
 interface BalanceCellProps {
   primary: {
