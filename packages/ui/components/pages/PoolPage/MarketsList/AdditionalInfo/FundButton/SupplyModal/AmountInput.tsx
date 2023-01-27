@@ -19,11 +19,13 @@ export const AmountInput = ({
   optionToWrap,
   poolChainId,
   setAmount,
+  comptrollerAddress,
 }: {
   asset: MarketData;
   optionToWrap?: boolean;
   poolChainId: number;
   setAmount: (amount: BigNumber) => void;
+  comptrollerAddress: string;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
@@ -63,7 +65,8 @@ export const AmountInput = ({
           FundOperationMode.SUPPLY,
           currentSdk,
           address,
-          asset
+          asset,
+          comptrollerAddress
         )) as BigNumber;
       }
 

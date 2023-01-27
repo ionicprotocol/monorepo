@@ -1,18 +1,28 @@
 import { MidasSdk } from '@midas-capital/sdk';
 import { FundOperationMode, NativePricedFuseAsset } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
-import { BigNumber, utils } from 'ethers';
+import { BigNumber, constants, utils } from 'ethers';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { fetchTokenBalance } from '@ui/hooks/useTokenBalance';
 
-export function useMaxAmount(mode: FundOperationMode, asset: NativePricedFuseAsset) {
+export function useMaxAmount(
+  mode: FundOperationMode,
+  asset: NativePricedFuseAsset,
+  comptrollerAddress: string
+) {
   const { currentSdk, address } = useMultiMidas();
   return useQuery(
     ['useMaxAmount', mode, address, asset.cToken, currentSdk?.chainId],
     async () => {
       if (currentSdk && address) {
-        const bigNumber = await fetchMaxAmount(mode, currentSdk, address, asset);
+        const bigNumber = await fetchMaxAmount(
+          mode,
+          currentSdk,
+          address,
+          asset,
+          comptrollerAddress
+        );
 
         return {
           bigNumber: bigNumber,
@@ -34,7 +44,8 @@ export const fetchMaxAmount = async (
   mode: FundOperationMode,
   midasSdk: MidasSdk,
   address: string,
-  asset: NativePricedFuseAsset
+  asset: NativePricedFuseAsset,
+  comptrollerAddress: string
 ): Promise<BigNumber> => {
   if (mode === FundOperationMode.SUPPLY) {
     return await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
@@ -55,7 +66,11 @@ export const fetchMaxAmount = async (
     if (!maxBorrow) {
       throw new Error('Could not fetch your max borrow amount! Code: ');
     }
-    return maxBorrow;
+
+    const comptroller = midasSdk.createComptroller(comptrollerAddress);
+    const borrowCaps = await comptroller.callStatic.borrowCaps(asset.cToken);
+
+    return borrowCaps.gt(constants.Zero) && borrowCaps.lte(maxBorrow) ? borrowCaps : maxBorrow;
   }
 
   if (mode === FundOperationMode.WITHDRAW) {

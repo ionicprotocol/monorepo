@@ -84,7 +84,11 @@ export const BorrowModal = ({
   const [btnStr, setBtnStr] = useState<string>('Borrow');
   const { cCard } = useColors();
 
-  const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
+  const { data: maxBorrowInAsset } = useMaxAmount(
+    FundOperationMode.BORROW,
+    asset,
+    comptrollerAddress
+  );
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
   const { data: borrowLimitMarket } = useBorrowLimitMarket(
     asset,
@@ -162,7 +166,8 @@ export const BorrowModal = ({
           FundOperationMode.BORROW,
           currentSdk,
           address,
-          asset
+          asset,
+          comptrollerAddress
         )) as BigNumber;
 
         return amount.lte(max) && amount.gte(minBorrowAsset);

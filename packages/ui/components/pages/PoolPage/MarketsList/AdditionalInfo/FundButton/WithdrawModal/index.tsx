@@ -85,7 +85,8 @@ export const WithdrawModal = ({
           FundOperationMode.WITHDRAW,
           currentSdk,
           address,
-          asset
+          asset,
+          comptrollerAddress
         )) as BigNumber;
 
         return amount.lte(max);
@@ -130,7 +131,8 @@ export const WithdrawModal = ({
         FundOperationMode.WITHDRAW,
         currentSdk,
         address,
-        asset
+        asset,
+        comptrollerAddress
       );
       let resp;
       if (maxAmount.eq(amount)) {
@@ -241,7 +243,12 @@ export const WithdrawModal = ({
                   width="100%"
                 >
                   <Column gap={1} width="100%">
-                    <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
+                    <AmountInput
+                      asset={asset}
+                      poolChainId={poolChainId}
+                      setAmount={setAmount}
+                      comptrollerAddress={comptrollerAddress}
+                    />
 
                     <Balance asset={asset} />
                   </Column>

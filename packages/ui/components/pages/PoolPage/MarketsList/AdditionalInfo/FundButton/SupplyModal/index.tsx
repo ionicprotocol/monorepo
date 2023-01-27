@@ -107,7 +107,8 @@ export const SupplyModal = ({
               FundOperationMode.SUPPLY,
               currentSdk,
               address,
-              asset
+              asset,
+              comptrollerAddress
             )) as BigNumber);
 
         return amount.lte(max);
@@ -410,6 +411,7 @@ export const SupplyModal = ({
                       optionToWrap={optionToWrap}
                       poolChainId={poolChainId}
                       setAmount={setAmount}
+                      comptrollerAddress={comptrollerAddress}
                     />
 
                     <Balance asset={asset} />
