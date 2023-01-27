@@ -23,32 +23,6 @@ const liquidationDefaults: LiquidationDefaults = {
       collateralToken: underlying(assets, assetSymbols.BUSD),
     },
   ],
-  curveSwapPools: [
-    {
-      poolAddress: "0x68354c6E8Bbd020F9dE81EAf57ea5424ba9ef322", // mai3EPS pool
-      coins: [underlying(assets, assetSymbols.MAI), underlying(assets, assetSymbols.val3EPS)],
-    },
-    {
-      poolAddress: "0x19EC9e3F7B21dd27598E7ad5aAe7dC0Db00A806d", // val3EPS LP token
-      coins: [
-        underlying(assets, assetSymbols.BUSD),
-        underlying(assets, assetSymbols.USDC),
-        underlying(assets, assetSymbols.USDT),
-      ],
-    },
-    {
-      poolAddress: "0x43719DfFf12B04C71F7A589cdc7F54a01da07D7a", // 3brl pool
-      coins: [
-        underlying(assets, assetSymbols.jBRL),
-        underlying(assets, assetSymbols.BRZ),
-        underlying(assets, assetSymbols.BRZw),
-      ],
-    },
-    {
-      poolAddress: "0xBcA6E25937B0F7E0FD8130076b6B218F595E32e2", // curve v2 pool
-      coins: [underlying(assets, assetSymbols.JCHF), underlying(assets, assetSymbols.BUSD)],
-    },
-  ],
 };
 
 export default liquidationDefaults;

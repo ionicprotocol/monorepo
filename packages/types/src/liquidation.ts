@@ -13,7 +13,6 @@ export type LiquidationDefaults = {
   MINIMUM_PROFIT_NATIVE: BigNumber;
   LIQUIDATION_INTERVAL_SECONDS: number;
   jarvisPools: Array<JarvisLiquidityPool>;
-  curveSwapPools: Array<CurveSwapPool>;
 };
 
 export type RedemptionStrategy = {
