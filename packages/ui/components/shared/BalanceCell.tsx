@@ -227,7 +227,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps, borrowCaps }: Bala
           </HStack>
         )}
 
-        {supplyRatio ? (
+        {supplyRatio !== undefined ? (
           <Progress
             width="100%"
             height={1}
@@ -237,7 +237,7 @@ export const BalanceCell = ({ primary, secondary, supplyCaps, borrowCaps }: Bala
           />
         ) : null}
 
-        {borrowRatio ? (
+        {borrowRatio !== undefined ? (
           <Progress
             width="100%"
             height={1}
