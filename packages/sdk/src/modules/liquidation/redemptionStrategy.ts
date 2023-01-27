@@ -4,8 +4,6 @@ import { BytesLike, Contract, ethers } from "ethers";
 import CurveLpTokenPriceOracleNoRegistryABI from "../../../abis/CurveLpTokenPriceOracleNoRegistry";
 import IRedemptionStrategyABI from "../../../abis/IRedemptionStrategy";
 import SaddleLpPriceOracleABI from "../../../abis/SaddleLpPriceOracle";
-import { IBalancerPool__factory } from "../../../typechain/factories/IBalancerPool__factory";
-import { IBalancerVault__factory } from "../../../typechain/factories/IBalancerVault__factory";
 import { IUniswapV2Pair__factory } from "../../../typechain/factories/IUniswapV2Pair__factory";
 import { MidasBase } from "../../MidasSdk";
 
