@@ -9,30 +9,9 @@ const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
   (asset) => asset.disabled !== undefined && !asset.disabled
 );
 
-const axlUSDC = assetFilter(chainAssets, assetSymbols.axlUSDC);
-const ceUSDC = assetFilter(chainAssets, assetSymbols.ceUSDC);
-const gWETH = assetFilter(chainAssets, assetSymbols.gWETH);
+const fluxSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.FluxPriceOracle);
 
-const chainLinkSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2);
-
-// Dia Assets
-const diaAssets: FeedVerifierAsset[] = [
-  {
-    ...MAI,
-    deviationThreshold: defaultDeviationThreshold,
-    maxObservationDelay: defaultMaxObservationDelay,
-  },
-];
-
-const uniswapV2Assets: FeedVerifierAsset[] = [
-  {
-    ...HAY,
-    deviationThreshold: 0.01,
-    maxObservationDelay: defaultMaxObservationDelay,
-  },
-];
-
-const chainLinkAssets: FeedVerifierAsset[] = chainLinkSupportedAssets.map((asset) => {
+const fluxAssets: FeedVerifierAsset[] = fluxSupportedAssets.map((asset) => {
   return {
     ...asset,
     deviationThreshold: 0.05,
@@ -40,29 +19,6 @@ const chainLinkAssets: FeedVerifierAsset[] = chainLinkSupportedAssets.map((asset
   };
 });
 
-const assets: FeedVerifierAsset[] = [
-  // Dia Assets
-  ...diaAssets,
-  ...uniswapV2Assets,
-  ...chainLinkAssets,
-];
-
-export default assets;
-
-const assets: PriceChangeVerifierAsset[] = [
-  // Bridged Assets
-  {
-    ...axlUSDC,
-    ...stablePriceChangeDefaults,
-  },
-  {
-    ...ceUSDC,
-    ...stablePriceChangeDefaults,
-  },
-  {
-    ...gWETH,
-    ...stablePriceChangeDefaults,
-  },
-];
+const assets: FeedVerifierAsset[] = [...fluxAssets];
 
 export default assets;
