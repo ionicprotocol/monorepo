@@ -77,7 +77,9 @@ export const BalanceCell = ({ primary, secondary, supplyCaps, borrowCaps }: Bala
               <Divider />
               <Text mb={4}>
                 This asset has a restricted borrow amount for security reasons.
-                {borrowRatio && ` As of now, ${borrowRatio}% are already borrowed to this market.`}
+                {borrowRatio
+                  ? ` As of now, ${borrowRatio}% are already borrowed to this market.`
+                  : ''}
               </Text>
             </>
           ) : null}
