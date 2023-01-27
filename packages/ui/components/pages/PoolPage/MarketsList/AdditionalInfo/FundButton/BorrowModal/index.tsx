@@ -103,11 +103,6 @@ export const BorrowModal = ({
     poolChainId
   );
 
-  const borrowRatio =
-    borrowCaps && borrowCaps.usdCap
-      ? parseInt(((asset.totalBorrowFiat * 100) / borrowCaps.usdCap).toString())
-      : undefined;
-
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
       setUserEnteredAmount('');
@@ -309,7 +304,7 @@ export const BorrowModal = ({
                   width="100%"
                   gap={4}
                 >
-                  {!borrowCaps || !borrowRatio || borrowRatio < 100 ? (
+                  {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
                     <>
                       {maxBorrowInAsset &&
                       maxBorrowInAsset.number !== 0 &&
