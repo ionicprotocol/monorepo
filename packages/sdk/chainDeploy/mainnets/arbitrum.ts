@@ -19,6 +19,7 @@ export const deployConfig: ChainDeployConfig = {
   wtoken: underlying(assets, assetSymbols.WETH),
   nativeTokenName: "Wrapped ETH",
   nativeTokenSymbol: "ETH",
+  stableToken: underlying(assets, assetSymbols.USDC),
   nativeTokenUsdChainlinkFeed: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
   blocksPerYear: arbitrum.specificParams.blocksPerYear.toNumber(), // 12 second blocks, 5 blocks per minute// 12 second blocks, 5 blocks per minute
   uniswap: {
