@@ -1,4 +1,4 @@
-import { Contract } from "ethers";
+import { BigNumber, Contract, utils } from "ethers";
 
 import { logger } from "../../../../logger";
 import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
@@ -27,8 +27,8 @@ export async function verifyUniswapV2PriceFeed(
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
     [baseToken],
-    [config.defaultMinPeriod],
-    [config.defaultDeviationThreshold]
+    [BigNumber.from(config.defaultMaxObservationDelay)],
+    [utils.parseEther(config.defaultDeviationThreshold.toString())]
   );
   if (workable[0]) {
     logger.warn(`Pair is in workable = ${workable[0]} state, this is likely not a good sign`);
