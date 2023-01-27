@@ -144,16 +144,6 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
         ),
         outputToken: actualOutputToken,
       };
-
-    case RedemptionStrategyContract.XBombLiquidatorFunder: {
-      const xbomb = inputToken;
-      const bomb = outputToken;
-      return {
-        strategyAddress: redemptionStrategyContract.address,
-        strategyData: new ethers.utils.AbiCoder().encode(["address", "address", "address"], [inputToken, xbomb, bomb]),
-        outputToken,
-      };
-    }
     case RedemptionStrategyContract.UniswapLpTokenLiquidator:
     case RedemptionStrategyContract.GelatoGUniLiquidator: {
       const lpToken = IUniswapV2Pair__factory.connect(inputToken, fuse.provider);
@@ -226,6 +216,15 @@ const getStrategyAndData = async (fuse: MidasBase, inputToken: string): Promise<
 
       // TODO: add support for multiple pools
       return { strategyAddress: redemptionStrategyContract.address, strategyData, outputToken };
+    }
+    case RedemptionStrategyContract.XBombLiquidatorFunder: {
+      const xbomb = inputToken;
+      const bomb = outputToken;
+      return {
+        strategyAddress: redemptionStrategyContract.address,
+        strategyData: new ethers.utils.AbiCoder().encode(["address", "address", "address"], [inputToken, xbomb, bomb]),
+        outputToken,
+      };
     }
     default: {
       return { strategyAddress: redemptionStrategyContract.address, strategyData: [], outputToken };
