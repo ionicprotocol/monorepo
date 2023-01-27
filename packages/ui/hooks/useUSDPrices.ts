@@ -55,7 +55,7 @@ async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string
 
 export function useUSDPrices(chainIds: SupportedChains[]) {
   return useQuery(
-    ['useUSDPrice', ...chainIds.sort()],
+    ['useUSDPrices', ...chainIds.sort()],
     async () => {
       return getUSDPriceOf(chainIds);
     },
