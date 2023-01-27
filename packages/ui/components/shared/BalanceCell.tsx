@@ -25,7 +25,7 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
   const capRatio = useMemo(
     () =>
       cap && cap.usdCap ? parseInt(((primary.value * 100) / cap.usdCap).toString()) : undefined,
-    [cap]
+    [cap, primary]
   );
   return (
     <PopoverTooltip
