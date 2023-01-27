@@ -44,12 +44,12 @@ export const ADMIN_FEE = {
   MAX: 30,
 };
 
-export const SUPPLY_CAPS = {
+export const SUPPLY_CAP = {
   MIN: 0,
   DEFAULT: 0,
 };
 
-export const TOTAL_BORROW_CAPS = {
+export const BORROW_CAP = {
   MIN: 0,
   DEFAULT: 0,
 };

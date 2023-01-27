@@ -46,8 +46,8 @@ import {
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
   RESERVE_FACTOR,
-  SUPPLY_CAPS,
-  TOTAL_BORROW_CAPS,
+  SUPPLY_CAP,
+  BORROW_CAP,
 } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
@@ -126,8 +126,8 @@ export const AssetSettings = ({
   const queryClient = useQueryClient();
   const { cSelect } = useColors();
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
-  const [isEditSupplyCaps, setIsEditSupplyCaps] = useState<boolean>(false);
-  const [isEditTotalBorrowCaps, setIsEditTotalBorrowCaps] = useState<boolean>(false);
+  const [isEditSupplyCap, setIsEditSupplyCap] = useState<boolean>(false);
+  const [isEditBorrowCap, setIsEditBorrowCaps] = useState<boolean>(false);
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
   const {
@@ -143,8 +143,8 @@ export const AssetSettings = ({
       reserveFactor: RESERVE_FACTOR.DEFAULT,
       adminFee: ADMIN_FEE.DEFAULT,
       interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
-      supplyCaps: SUPPLY_CAPS.DEFAULT,
-      totalBorrowCaps: TOTAL_BORROW_CAPS.DEFAULT,
+      supplyCap: SUPPLY_CAP.DEFAULT,
+      borrowCap: BORROW_CAP.DEFAULT,
     },
   });
 
@@ -155,8 +155,8 @@ export const AssetSettings = ({
     'interestRateModel',
     sdk ? sdk.chainDeployment.JumpRateModel.address : ''
   );
-  const watchSupplyCaps = Number(watch('supplyCaps', SUPPLY_CAPS.DEFAULT));
-  const watchTotalBorrowCaps = Number(watch('totalBorrowCaps', TOTAL_BORROW_CAPS.DEFAULT));
+  const watchSupplyCap = Number(watch('supplyCap', SUPPLY_CAP.DEFAULT));
+  const watchBorrowCap = Number(watch('borrowCap', BORROW_CAP.DEFAULT));
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
@@ -171,25 +171,19 @@ export const AssetSettings = ({
       setValue('reserveFactor', parseInt(utils.formatUnits(cTokenData.reserveFactorMantissa, 16)));
       setValue('adminFee', parseInt(utils.formatUnits(cTokenData.adminFeeMantissa, 16)));
       setValue('interestRateModel', cTokenData.interestRateModelAddress);
-      setValue(
-        'supplyCaps',
-        parseFloat(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS))
-      );
-      setValue(
-        'totalBorrowCaps',
-        parseFloat(utils.formatUnits(cTokenData.borrowCaps, DEFAULT_DECIMALS))
-      );
+      setValue('supplyCap', parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS)));
+      setValue('borrowCap', parseFloat(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS)));
     }
   }, [cTokenData, setValue]);
 
-  const updateSupplyCaps = async ({ supplyCaps }: { supplyCaps: number }) => {
+  const updateSupplyCaps = async ({ supplyCap }: { supplyCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       const tx = await comptroller._setMarketSupplyCaps(
         [cTokenAddress],
-        [utils.parseUnits(supplyCaps.toString(), selectedAsset.underlyingDecimals)]
+        [utils.parseUnits(supplyCap.toString(), selectedAsset.underlyingDecimals)]
       );
       await tx.wait();
       LogRocket.track('Fuse-UpdateSupplyCaps');
@@ -200,19 +194,19 @@ export const AssetSettings = ({
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
-      setIsEditSupplyCaps(false);
+      setIsEditSupplyCap(false);
       setIsUpdating(false);
     }
   };
 
-  const updateTotalBorrowCaps = async ({ totalBorrowCaps }: { totalBorrowCaps: number }) => {
+  const updateTotalBorrowCaps = async ({ borrowCap }: { borrowCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
     setIsUpdating(true);
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       const tx = await comptroller._setMarketBorrowCaps(
         [cTokenAddress],
-        [utils.parseUnits(totalBorrowCaps.toString(), selectedAsset.underlyingDecimals)]
+        [utils.parseUnits(borrowCap.toString(), selectedAsset.underlyingDecimals)]
       );
       await tx.wait();
       LogRocket.track('Fuse-UpdateTotalBorrowCaps');
@@ -223,7 +217,7 @@ export const AssetSettings = ({
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {
-      setIsEditTotalBorrowCaps(false);
+      setIsEditBorrowCaps(false);
       setIsUpdating(false);
     }
   };
@@ -375,23 +369,23 @@ export const AssetSettings = ({
   const setSupplyCapsDefault = () => {
     if (cTokenData) {
       setValue(
-        'supplyCaps',
-        parseInt(utils.formatUnits(cTokenData.supplyCaps, selectedAsset.underlyingDecimals))
+        'supplyCap',
+        parseInt(utils.formatUnits(cTokenData.supplyCap, selectedAsset.underlyingDecimals))
       );
     }
 
-    setIsEditSupplyCaps(false);
+    setIsEditSupplyCap(false);
   };
 
   const setTotalBorrowCapsDefault = () => {
     if (cTokenData) {
       setValue(
-        'totalBorrowCaps',
-        parseInt(utils.formatUnits(cTokenData.borrowCaps, selectedAsset.underlyingDecimals))
+        'borrowCap',
+        parseInt(utils.formatUnits(cTokenData.borrowCap, selectedAsset.underlyingDecimals))
       );
     }
 
-    setIsEditTotalBorrowCaps(false);
+    setIsEditBorrowCaps(false);
   };
 
   const setReserveFactorDefault = () => {
@@ -430,17 +424,17 @@ export const AssetSettings = ({
             direction="column"
             onSubmit={handleSubmit(updateSupplyCaps)}
           >
-            <FormControl isInvalid={!!errors.supplyCaps}>
+            <FormControl isInvalid={!!errors.supplyCap}>
               <Flex
                 w="100%"
                 wrap="wrap"
                 direction={{ base: 'column', sm: 'row' }}
                 alignItems="center"
               >
-                <FormLabel htmlFor="supplyCaps" margin={0}>
+                <FormLabel htmlFor="supplyCap" margin={0}>
                   <HStack>
                     <Text size="md" width="max-content">
-                      Supply Caps
+                      Supply Cap
                     </Text>
                     <SimpleTooltip label={'It shows the market supply caps.'}>
                       <InfoOutlineIcon ml={1} />
@@ -451,12 +445,12 @@ export const AssetSettings = ({
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                   <Controller
                     control={control}
-                    name="supplyCaps"
+                    name="supplyCap"
                     rules={{
                       required: 'Supply caps is required',
                       min: {
-                        value: SUPPLY_CAPS.MIN,
-                        message: `Supply caps must be at least ${SUPPLY_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
+                        value: SUPPLY_CAP.MIN,
+                        message: `Supply caps must be at least ${SUPPLY_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
                       },
                     }}
                     render={({ field: { name, value, ref, onChange } }) => (
@@ -464,12 +458,12 @@ export const AssetSettings = ({
                         <NumberInput
                           width={100}
                           clampValueOnBlur={false}
-                          value={value === 0 && !isEditSupplyCaps ? 'Unlimited' : value}
+                          value={value === 0 && !isEditSupplyCap ? 'Unlimited' : value}
                           onChange={onChange}
-                          min={SUPPLY_CAPS.MIN}
+                          min={SUPPLY_CAP.MIN}
                           allowMouseWheel
                           isDisabled={!isEditableAdmin}
-                          isReadOnly={!isEditSupplyCaps}
+                          isReadOnly={!isEditSupplyCap}
                         >
                           <NumberInputField
                             paddingLeft={2}
@@ -496,20 +490,20 @@ export const AssetSettings = ({
                     )}
                   />
                   <FormErrorMessage maxWidth="200px" marginBottom="-10px">
-                    {errors.supplyCaps && errors.supplyCaps.message}
+                    {errors.supplyCap && errors.supplyCap.message}
                   </FormErrorMessage>
                 </Column>
               </Flex>
             </FormControl>
-            {isEditSupplyCaps ? (
+            {isEditSupplyCap ? (
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <Button
                   type="submit"
                   isDisabled={
                     isUpdating ||
                     !cTokenData ||
-                    watchSupplyCaps ===
-                      parseInt(utils.formatUnits(cTokenData.supplyCaps, DEFAULT_DECIMALS))
+                    watchSupplyCap ===
+                      parseInt(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
                   }
                 >
                   Save
@@ -522,7 +516,7 @@ export const AssetSettings = ({
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <CButton
                   isDisabled={isUpdating || !isEditableAdmin}
-                  onClick={() => setIsEditSupplyCaps(true)}
+                  onClick={() => setIsEditSupplyCap(true)}
                 >
                   Edit
                 </CButton>
@@ -538,17 +532,17 @@ export const AssetSettings = ({
             direction="column"
             onSubmit={handleSubmit(updateTotalBorrowCaps)}
           >
-            <FormControl isInvalid={!!errors.totalBorrowCaps}>
+            <FormControl isInvalid={!!errors.borrowCap}>
               <Flex
                 w="100%"
                 wrap="wrap"
                 direction={{ base: 'column', sm: 'row' }}
                 alignItems="center"
               >
-                <FormLabel htmlFor="totalBorrowCaps" margin={0}>
+                <FormLabel htmlFor="borrowCap" margin={0}>
                   <HStack>
                     <Text size="md" width="max-content">
-                      Total Borrow Caps
+                      Borrow Cap
                     </Text>
                     <SimpleTooltip label={'It shows the market borrow caps.'}>
                       <InfoOutlineIcon ml={1} />
@@ -559,12 +553,12 @@ export const AssetSettings = ({
                 <Column mainAxisAlignment="flex-start" crossAxisAlignment="flex-start">
                   <Controller
                     control={control}
-                    name="totalBorrowCaps"
+                    name="borrowCap"
                     rules={{
-                      required: 'Borrow caps is required',
+                      required: 'Borrow cap is required',
                       min: {
-                        value: TOTAL_BORROW_CAPS.MIN,
-                        message: `Borrow caps must be at least ${TOTAL_BORROW_CAPS.MIN} ${selectedAsset.underlyingSymbol}`,
+                        value: BORROW_CAP.MIN,
+                        message: `Borrow cap must be at least ${BORROW_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
                       },
                     }}
                     render={({ field: { name, value, ref, onChange } }) => (
@@ -572,12 +566,12 @@ export const AssetSettings = ({
                         <NumberInput
                           width={100}
                           clampValueOnBlur={false}
-                          value={value === 0 && !isEditTotalBorrowCaps ? 'Unlimited' : value}
+                          value={value === 0 && !isEditBorrowCap ? 'Unlimited' : value}
                           onChange={onChange}
-                          min={TOTAL_BORROW_CAPS.MIN}
+                          min={BORROW_CAP.MIN}
                           allowMouseWheel
                           isDisabled={!isEditableAdmin}
-                          isReadOnly={!isEditTotalBorrowCaps}
+                          isReadOnly={!isEditBorrowCap}
                         >
                           <NumberInputField
                             paddingLeft={2}
@@ -604,20 +598,20 @@ export const AssetSettings = ({
                     )}
                   />
                   <FormErrorMessage maxWidth="200px" marginBottom="-10px">
-                    {errors.totalBorrowCaps && errors.totalBorrowCaps.message}
+                    {errors.borrowCap && errors.borrowCap.message}
                   </FormErrorMessage>
                 </Column>
               </Flex>
             </FormControl>
-            {isEditTotalBorrowCaps ? (
+            {isEditBorrowCap ? (
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <Button
                   type="submit"
                   isDisabled={
                     isUpdating ||
                     !cTokenData ||
-                    watchTotalBorrowCaps ===
-                      parseInt(utils.formatUnits(cTokenData.borrowCaps, DEFAULT_DECIMALS))
+                    watchBorrowCap ===
+                      parseInt(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
                   }
                 >
                   Save
@@ -634,7 +628,7 @@ export const AssetSettings = ({
               <ButtonGroup gap={0} mt={2} alignSelf="end">
                 <CButton
                   isDisabled={isUpdating || !isEditableAdmin}
-                  onClick={() => setIsEditTotalBorrowCaps(true)}
+                  onClick={() => setIsEditBorrowCaps(true)}
                 >
                   Edit
                 </CButton>
