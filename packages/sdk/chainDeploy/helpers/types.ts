@@ -7,6 +7,11 @@ export enum ChainlinkFeedBaseCurrency {
   USD,
 }
 
+export enum UniswapV3BaseCurrency {
+  NATIVE,
+  USD,
+}
+
 export type TokenPair = {
   token: string;
   baseToken: string;
@@ -24,6 +29,7 @@ export type UniswapV3OracleConfig = {
   assetAddress: string;
   poolAddress: string;
   twapWindowSeconds: BigNumber;
+  baseCurrency: UniswapV3BaseCurrency;
 };
 
 export type ChainDeployConfig = {
