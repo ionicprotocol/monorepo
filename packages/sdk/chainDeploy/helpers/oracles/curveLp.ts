@@ -25,7 +25,7 @@ export const deployCurveLpOracle = async ({
         },
         onUpgrade: {
           methodName: "reinitialize",
-          args:[ curvePools.map((c) => c.lpToken) ]
+          args: [curvePools.map((c) => c.lpToken)],
         },
       },
       owner: deployer,
@@ -86,7 +86,7 @@ export const deployCurveV2LpOracle = async ({
         },
         onUpgrade: {
           methodName: "reinitialize",
-          args:[ curveV2Pools.map((c) => c.lpToken) ]
+          args: [curveV2Pools.map((c) => c.lpToken)],
         },
       },
       owner: deployer,
