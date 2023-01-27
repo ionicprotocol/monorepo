@@ -1,14 +1,22 @@
 import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@midas-capital/types";
 
-import { ankrCertificateDocs, defaultDocs, wrappedAssetDocs } from "../common";
+import { ankrCertificateDocs, beethovenXDocs, curveFinanceFantomDocs, defaultDocs, wrappedAssetDocs } from "../common";
 
 export const aFTMc = "0xCfC785741Dc0e98ad4c9F6394Bb9d43Cd1eF5179";
 const BNB = "0xD67de0e0a0Fd7b15dC8348Bb9BE742F3c5850454";
 export const multiBTC = "0x321162Cd933E2Be498Cd2267a90534A804051b11";
 const multiETH = "0x74b23882a30290451A17c44f4F05243b6b58C76d";
+const MIMO = "0x1D1764F04DE29da6b90ffBef372D1A45596C4855";
 export const USDC = "0x04068DA6C83AFCFA0e13ba15A6696662335D5B75";
+export const fUSDT = "0x049d68029688eAbF473097a2fC38ef61633A3C7A";
+export const DAI = "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E";
+export const PAR = "0x13082681E8CE9bd0aF505912d306403592490Fc7";
 export const WFTM = "0x21be370D5312f44cB42ce377BC9b8a0cEF1A4C83";
 const MAI = "0xfB98B335551a418cD0737375a2ea0ded62Ea213b";
+const PAR_USDC_CURVE = "0x43363B5b640284da0BB8e2c545e43C1583277022";
+const MIMO_PAR_75_25 = "0x851553FD9BCd28Befe450d3cfbB3f86F13832a1d";
+const TRI_CRYPTO = "0x58e57cA18B7A47112b877E31929798Cd3D703b0f";
+const TWO_POOL = "0x27E611FD27b276ACbd5Ffd632E5eAEBEC9761E40";
 
 export const assets: SupportedAsset[] = [
   {
@@ -60,12 +68,80 @@ export const assets: SupportedAsset[] = [
     extraDocs: defaultDocs("https://ftmscan.com", MAI),
   },
   {
+    symbol: assetSymbols.MIMO,
+    underlying: MIMO,
+    name: "MIMO Parallel Governance Token",
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: defaultDocs("https://ftmscan.com", MIMO),
+  },
+  {
+    symbol: assetSymbols.DAI,
+    underlying: DAI,
+    name: "Dai Stablecoin",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://ftmscan.com", DAI),
+  },
+  {
     symbol: assetSymbols.USDC,
     underlying: USDC,
     name: "USD Coin",
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://ftmscan.com", USDC),
+  },
+  {
+    symbol: assetSymbols.fUSDT,
+    underlying: fUSDT,
+    name: "Frapped USDT",
+    decimals: 6,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: defaultDocs("https://ftmscan.com", fUSDT),
+  },
+  {
+    symbol: assetSymbols.PAR,
+    underlying: PAR,
+    name: "PAR Stablecoin",
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
+    extraDocs: defaultDocs("https://ftmscan.com", USDC),
+  },
+  {
+    symbol: assetSymbols.PAR_USDC_CURVE,
+    underlying: PAR_USDC_CURVE,
+    name: "PAR/USDC Curve LP Token",
+    decimals: 18,
+    oracle: OracleTypes.CurveV2LpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinanceFantomDocs("https://ftmscan.com", "factory-crypto-7"),
+  },
+  {
+    symbol: assetSymbols.triCrypto,
+    underlying: TRI_CRYPTO,
+    name: "ETH/WBTC/USDT Curve LP Token",
+    decimals: 18,
+    oracle: OracleTypes.CurveV2LpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinanceFantomDocs("https://ftmscan.com", "tricrypto"),
+  },
+  {
+    symbol: assetSymbols["2pool"],
+    underlying: TWO_POOL,
+    name: "DAI/USDC Curve LP Token",
+    decimals: 18,
+    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
+    extraDocs: curveFinanceFantomDocs("https://ftmscan.com", "tricrypto"),
+  },
+  {
+    symbol: assetSymbols.MIMO_PAR_75_25,
+    underlying: MIMO_PAR_75_25,
+    name: "75MIMO-25PAR",
+    decimals: 18,
+    oracle: OracleTypes.BalancerLpTokenPriceOracle,
+    extraDocs: beethovenXDocs(
+      "0x851553fd9bcd28befe450d3cfbb3f86f13832a1d000200000000000000000211",
+      "PAR25 - MIMO75",
+      MIMO_PAR_75_25
+    ),
   },
 ];
 

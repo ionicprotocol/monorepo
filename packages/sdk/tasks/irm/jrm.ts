@@ -73,7 +73,7 @@ task("irm:edit:adjustable-jrm-params", "Edit adjustable JRM parameters")
     // @ts-ignore
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas();
-    const irm = new ethers.Contract(_irm, sdk.artifacts.AdjustableJumpRateModel.abi, deployer);
+    const irm = await ethers.getContractAt("AdjustableJumpRateModel", _irm, deployer);
 
     let promises: Array<Promise<any>>;
     let blocksPerYear;
