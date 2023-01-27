@@ -82,7 +82,7 @@ export interface VerifyPriceParams {
 export interface VerifyFeedParams {
   midasSdk: MidasSdk;
   underlyingOracle: Contract;
-  underlying: string;
+  asset: FeedVerifierAsset;
 }
 
 export type BaseConfig = {

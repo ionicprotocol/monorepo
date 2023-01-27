@@ -5,12 +5,13 @@ import { FeedVerifierAsset } from "../../types";
 
 import { defaultDeviationThreshold, defaultMaxObservationDelay } from "./defaults";
 
-const chainAssets = chainIdToConfig[SupportedChains.polygon].assets.filter(
+const chainAssets = chainIdToConfig[SupportedChains.fantom].assets.filter(
   (asset) => asset.disabled !== undefined && !asset.disabled
 );
 
 const chainLinkSupportedAssets = chainAssets.filter((asset) => asset.oracle === OracleTypes.ChainlinkPriceOracleV2);
 const MIMO = assetFilter(chainAssets, assetSymbols.MIMO);
+const PAR = assetFilter(chainAssets, assetSymbols.PAR);
 
 // Dia Assets
 const diaAssets: FeedVerifierAsset[] = [
@@ -19,12 +20,17 @@ const diaAssets: FeedVerifierAsset[] = [
     deviationThreshold: defaultDeviationThreshold,
     maxObservationDelay: defaultMaxObservationDelay,
   },
+  {
+    ...PAR,
+    deviationThreshold: defaultDeviationThreshold,
+    maxObservationDelay: defaultMaxObservationDelay,
+  },
 ];
 
 const chainLinkAssets: FeedVerifierAsset[] = chainLinkSupportedAssets.map((asset) => {
   return {
     ...asset,
-    deviationThreshold: 0.05,
+    deviationThreshold: defaultDeviationThreshold,
     maxObservationDelay: defaultMaxObservationDelay,
   };
 });

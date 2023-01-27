@@ -49,7 +49,7 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: underlying(assets, assetSymbols.WGLMR),
         pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
         minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
+        deviationThreshold: "50000000000000000", // 1%
       },
       {
         token: underlying(assets, assetSymbols.LDO),
@@ -145,6 +145,11 @@ const chainlinkAssets: ChainlinkAsset[] = [
   },
   {
     symbol: assetSymbols.USDC_wh,
+    aggregator: "0xA122591F60115D63421f66F752EF9f6e0bc73abC",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.multiUSDC,
     aggregator: "0xA122591F60115D63421f66F752EF9f6e0bc73abC",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },

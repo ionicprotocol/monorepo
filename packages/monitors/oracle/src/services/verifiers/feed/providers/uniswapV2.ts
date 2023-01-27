@@ -4,10 +4,10 @@ import { logger } from "../../../../logger";
 import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyUniswapV2PriceFeed(
-  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
+  { midasSdk, underlyingOracle, asset }: VerifyFeedParams,
   config: FeedVerifierConfig
 ): Promise<PriceFeedValidity> {
-  logger.debug(`Verifying Uniswap Twap oracle for ${underlying}`);
+  logger.debug(`Verifying Uniswap Twap oracle for ${asset.underlying}`);
 
   const baseToken = await underlyingOracle.callStatic.baseToken();
   const uniswapV2Factory = new Contract(
@@ -15,7 +15,7 @@ export async function verifyUniswapV2PriceFeed(
     ["function getPair(address tokenA, address tokenB) external view returns (address pair)"],
     midasSdk.provider
   );
-  const pair = await uniswapV2Factory.callStatic.getPair(underlying, baseToken);
+  const pair = await uniswapV2Factory.callStatic.getPair(asset.underlying, baseToken);
 
   const rootOracleAddress = await underlyingOracle.callStatic.rootOracle();
   const rootTwapOracle = new Contract(
@@ -28,7 +28,7 @@ export async function verifyUniswapV2PriceFeed(
     [pair],
     [baseToken],
     [BigNumber.from(config.defaultMaxObservationDelay)],
-    [utils.parseEther(config.defaultDeviationThreshold.toString())]
+    [utils.parseEther(asset.deviationThreshold.toString())]
   );
   if (workable[0]) {
     logger.warn(`Pair is in workable = ${workable[0]} state, this is likely not a good sign`);
