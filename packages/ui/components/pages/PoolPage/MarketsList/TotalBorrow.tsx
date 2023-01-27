@@ -16,7 +16,7 @@ export const TotalBorrow = ({
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
-  const { data: borrowCaps } = useBorrowCap(
+  const { data: borrowCap } = useBorrowCap(
     comptrollerAddress,
     asset.cToken,
     asset.underlyingPrice,
@@ -41,7 +41,7 @@ export const TotalBorrow = ({
             symbol: tokenData?.symbol || '',
             decimals: asset.underlyingDecimals.toNumber(),
           }}
-          borrowCaps={borrowCaps}
+          cap={borrowCap}
         />
       )}
     </>
