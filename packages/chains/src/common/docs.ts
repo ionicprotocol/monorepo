@@ -183,12 +183,32 @@ export const balancerDocs = (chain: string, poolAddress: string, poolName: strin
   `;
 };
 
+export const beethovenXDocs = (poolAddress: string, poolName: string, tokenAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://beets.fi/pool/${poolAddress}" target="_blank" style="color: #BCAC83;"> Balancer ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
+  <p>You will get back the <a href="https://polygonscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Balancer ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
 export const curveFinanceArbitrumDocs = (poolName: string, tokenAddress: string) => {
   return `
   <p><b>How to acquire this token</b><p/><br />
   <p> 1. Head over to the <a href="https://arbitrum.curve.fi/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
   <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
   <p>You will get back the <a href="https://arbiscan.io/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
+  <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
+  `;
+};
+
+export const curveFinanceFantomDocs = (poolName: string, tokenAddress: string) => {
+  return `
+  <p><b>How to acquire this token</b><p/><br />
+  <p> 1. Head over to the <a href="https://curve.fi/#/fantom/pools/${poolName}/deposit" target="_blank" style="color: #BCAC83;"> Curve ${poolName} Pool</a>.</p><br />
+  <p> 2. You can then supply any of the underlying assets, and upon adding liquidity.</p>
+  <p>You will get back the <a href="https://ftmscan.com/token/${tokenAddress}" target="_blank" style="color: #BCAC83;"> Curve ${poolName} LP tokens</a>.</p><br />
   <p> 3. Come back back here and hit "MAX" to deposit them all in this pool.</p>
   `;
 };

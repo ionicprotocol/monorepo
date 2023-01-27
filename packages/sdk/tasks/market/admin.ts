@@ -71,7 +71,7 @@ task("market:mint-pause", "Pauses minting on a market")
   });
 
 task("markets:borrow-pause", "Pauses borrowing on a market")
-  .addParam("market", "The address of the CToke?n", undefined, types.string)
+  .addParam("markets", "The address of the CToke?n", undefined, types.string)
   .addParam("admin", "Named account from which to pause the minting on the market", "deployer", types.string)
   .addOptionalParam("paused", "If the market should be paused or not", true, types.boolean)
   .setAction(async (taskArgs, hre) => {
@@ -82,7 +82,7 @@ task("markets:borrow-pause", "Pauses borrowing on a market")
 
     for (const marketAddress of markets) {
       console.log(`Operating on market: ${marketAddress}`);
-      const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", taskArgs.market, admin)) as CToken;
+      const market: CToken = (await hre.ethers.getContractAt("CToken.sol:CToken", marketAddress, admin)) as CToken;
       const comptroller = await market.callStatic.comptroller();
       const pool = (await hre.ethers.getContractAt("Comptroller.sol:Comptroller", comptroller, admin)) as Comptroller;
       const poolExtension = (await hre.ethers.getContractAt(
