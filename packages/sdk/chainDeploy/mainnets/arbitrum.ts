@@ -11,7 +11,13 @@ import {
   deployUniswapOracle,
   deployUniswapV3Oracle,
 } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency, CurvePoolConfig } from "../helpers/types";
+import {
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  ChainlinkFeedBaseCurrency,
+  CurvePoolConfig,
+  UniswapV3BaseCurrency,
+} from "../helpers/types";
 
 const assets = arbitrum.assets;
 
@@ -45,12 +51,14 @@ export const deployConfig: ChainDeployConfig = {
         assetAddress: underlying(assets, assetSymbols.GMX),
         poolAddress: "0x80A9ae39310abf666A87C743d6ebBD0E8C42158E",
         twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+        baseCurrency: UniswapV3BaseCurrency.NATIVE,
       },
-      // {
-      //   assetAddress: underlying(assets, assetSymbols.USDs),
-      //   poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
-      //   twapWindowSeconds: ethers.BigNumber.from(30 * 60),
-      // },
+      {
+        assetAddress: underlying(assets, assetSymbols.USDs),
+        poolAddress: "0x50450351517117Cb58189edBa6bbaD6284D45902",
+        twapWindowSeconds: ethers.BigNumber.from(30 * 60),
+        baseCurrency: UniswapV3BaseCurrency.USD,
+      },
     ],
   },
   dynamicFlywheels: [],
@@ -141,11 +149,11 @@ const saddlePools: CurvePoolConfig[] = [
     pool: "0x401AFbc31ad2A3Bc0eD8960d63eFcDEA749b4849",
     underlyings: [underlying(assets, assetSymbols.USDC), underlying(assets, assetSymbols.FRAX)],
   },
-  // {
-  //   lpToken: underlying(assets, assetSymbols.saddleFraxUsdsBP),
-  //   pool: "0xa5bD85ed9fA27ba23BfB702989e7218E44fd4706",
-  //   underlyings: [underlying(assets, assetSymbols.USDs), underlying(assets, assetSymbols.saddleFraxBP)],
-  // },
+  {
+    lpToken: underlying(assets, assetSymbols.saddleFraxUsdsBP),
+    pool: "0xa5bD85ed9fA27ba23BfB702989e7218E44fd4706",
+    underlyings: [underlying(assets, assetSymbols.USDs), underlying(assets, assetSymbols.saddleFraxBP)],
+  },
   {
     lpToken: underlying(assets, assetSymbols.saddleFraxUsdtBP),
     pool: "0xf8504e92428d65E56e495684A38f679C1B1DC30b",
