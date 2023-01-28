@@ -369,7 +369,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.AnkrCertificateTokenPriceOracle,
     extraDocs: ankrCertificateDocs("aMATICc", "MATIC"),
-    disabled: true,
   },
 
   // QuickSwap LPs

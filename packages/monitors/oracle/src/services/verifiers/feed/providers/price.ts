@@ -2,13 +2,10 @@ import { SupportedChains } from "@midas-capital/types";
 import { utils } from "ethers";
 
 import { logger } from "../../../../logger";
-import { InvalidReason, PriceFeedValidity, PriceVerifierConfig, VerifyPriceParams } from "../../../../types";
+import { InvalidReason, PriceFeedValidity, VerifyPriceParams } from "../../../../types";
 import { getDefiLlamaPrice } from "../../../../utils";
 
-export async function verifyPriceValue(
-  { midasSdk, asset, mpoPrice }: VerifyPriceParams,
-  config: PriceVerifierConfig
-): Promise<PriceFeedValidity> {
+export async function verifyPriceValue({ midasSdk, asset, mpoPrice }: VerifyPriceParams): Promise<PriceFeedValidity> {
   const chainName = SupportedChains[midasSdk.chainId];
 
   const wrappedNativeId = `${chainName}:${midasSdk.chainSpecificAddresses.W_TOKEN}`;
@@ -27,9 +24,9 @@ export async function verifyPriceValue(
   const priceDiffPercent = (priceDiff / assetPriceUSD) * 100;
   logger.info(`Price difference for asset is ${priceDiffPercent}%`);
 
-  if (priceDiffPercent > config.defaultMaxPriceDeviation) {
+  if (priceDiffPercent > asset.maxPriceDeviation) {
     return {
-      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${config.defaultMaxPriceDeviation}%`,
+      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${asset.maxPriceDeviation}%`,
       invalidReason: InvalidReason.DEVIATION_ABOVE_THRESHOLD,
     };
   }

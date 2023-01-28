@@ -12,7 +12,6 @@ export async function verifyUniswapV2PriceFeed(
   const baseToken = await underlyingOracle.callStatic.baseToken();
   const uniswapV2Factory = new Contract(
     midasSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-    // ["function getPair(address tokenA, address tokenB) external view returns (address pair)"],
     ["function getPair(address tokenA, address tokenB) view returns (address)"],
     midasSdk.provider
   );

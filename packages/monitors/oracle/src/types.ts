@@ -75,7 +75,7 @@ export type SupportedAssetPriceFeed = {
 
 export interface VerifyPriceParams {
   midasSdk: MidasSdk;
-  asset: SupportedAsset;
+  asset: PriceVerifierAsset;
   mpoPrice: BigNumber;
 }
 
@@ -127,7 +127,7 @@ export type FeedVerifierAsset = SupportedAsset & {
 };
 
 export type PriceVerifierAsset = SupportedAsset & {
-  maxPriceDeviation?: number;
+  maxPriceDeviation: number;
 };
 
 export type PriceChangeVerifierAsset = SupportedAsset & {
