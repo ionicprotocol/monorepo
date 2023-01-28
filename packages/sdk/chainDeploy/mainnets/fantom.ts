@@ -142,7 +142,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     diaAssets,
     deployConfig,
-    diaNativeFeed: { feed: constants.AddressZero, key: "FTM/USD" },
+    diaNativeFeed: { feed: constants.AddressZero, key: "" },
   });
 
   //// Curve LP Oracle

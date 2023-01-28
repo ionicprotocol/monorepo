@@ -26,7 +26,7 @@ export async function verifyPriceValue({ midasSdk, asset, mpoPrice }: VerifyPric
 
   if (priceDiffPercent > asset.maxPriceDeviation) {
     return {
-      message: `Price difference for asset is ${priceDiffPercent}%, larger than max allowed ${asset.maxPriceDeviation}%`,
+      message: `Price difference for asset ${asset.symbol} (${asset.underlying}) is ${priceDiffPercent}%, larger than max allowed ${asset.maxPriceDeviation}%`,
       invalidReason: InvalidReason.DEVIATION_ABOVE_THRESHOLD,
     };
   }

@@ -559,7 +559,7 @@ export const assets: SupportedAsset[] = [
     underlying: PAR,
     name: "PAR Stablecoin (PoS)",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.DiaPriceOracle,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/PAR"),
   },
   {

@@ -17,17 +17,17 @@ locals {
   )
   oracle_price_change_verifier_lambda_variables = merge(
     local.shared_env_vars_lambda,
-    { ORACLE_MONITOR_SERVICE = "price-change-verifier" },
+    { SERVICE = "price-change-verifier" },
     { DISCORD_WEBHOOK_URL = var.oracles_discord_webhook_url }
   )
   oracle_price_verifier_lambda_variables = merge(
     local.shared_env_vars_lambda,
-    { ORACLE_MONITOR_SERVICE = "price-verifier" },
+    { SERVICE = "price-verifier" },
     { DISCORD_WEBHOOK_URL = var.oracles_discord_webhook_url }
   )
   oracle_feed_verifier_lambda_variables = merge(
     local.shared_env_vars_lambda,
-    { ORACLE_MONITOR_SERVICE = "feed-verifier" },
+    { SERVICE = "feed-verifier" },
     { DISCORD_WEBHOOK_URL = var.oracles_discord_webhook_url }
   )
 }

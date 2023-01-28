@@ -28,15 +28,15 @@ const assets: PriceVerifierAsset[] = [
   },
   {
     ...assetFilter(chainAssets, assetSymbols.USDC_wh),
-    maxPriceDeviation: priceDeviations.STABLE,
+    maxPriceDeviation: 1,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.USDT_xc),
-    maxPriceDeviation: priceDeviations.STABLE,
+    maxPriceDeviation: 1,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.multiDAI),
-    maxPriceDeviation: priceDeviations.STABLE,
+    maxPriceDeviation: 1,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.multiUSDC),

@@ -56,11 +56,10 @@ RUN yarn build:deploy:liquidator
 # ----------------------------------------
 
 FROM node as runtime
+
 ENV NODE_ENV=production
 
 # ----- Copy files required at runtime by the app -----
-COPY --from=build --chown=node:node /tmp/build /home/node
-
 WORKDIR ${LAMBDA_TASK_ROOT}
 COPY --from=build /tmp/build ${LAMBDA_TASK_ROOT}
 

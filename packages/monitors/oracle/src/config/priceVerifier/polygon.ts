@@ -16,7 +16,7 @@ const assets: PriceVerifierAsset[] = [
   },
   {
     ...assetFilter(chainAssets, assetSymbols.MAI),
-    maxPriceDeviation: priceDeviations.STABLE,
+    maxPriceDeviation: 1,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.MATICx),
@@ -28,11 +28,11 @@ const assets: PriceVerifierAsset[] = [
   },
   {
     ...assetFilter(chainAssets, assetSymbols.aMATICc),
-    maxPriceDeviation: 1,
+    maxPriceDeviation: priceDeviations.LSD,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.PAR),
-    maxPriceDeviation: priceDeviations.STABLE,
+    maxPriceDeviation: 3,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.JEUR),

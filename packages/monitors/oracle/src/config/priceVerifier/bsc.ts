@@ -12,7 +12,7 @@ const chainAssets = chainIdToConfig[SupportedChains.bsc].assets.filter(
 const assets: PriceVerifierAsset[] = [
   {
     ...assetFilter(chainAssets, assetSymbols.HAY),
-    maxPriceDeviation: priceDeviations.STABLE,
+    maxPriceDeviation: 2,
   },
   {
     ...assetFilter(chainAssets, assetSymbols.stkBNB),
@@ -26,14 +26,14 @@ const assets: PriceVerifierAsset[] = [
     ...assetFilter(chainAssets, assetSymbols.ankrBNB),
     maxPriceDeviation: priceDeviations.LSD,
   },
-  {
-    ...assetFilter(chainAssets, assetSymbols.BRZ),
-    maxPriceDeviation: priceDeviations.STABLE,
-  },
-  {
-    ...assetFilter(chainAssets, assetSymbols.jBRL),
-    maxPriceDeviation: priceDeviations.STABLE,
-  },
+  // {
+  //   ...assetFilter(chainAssets, assetSymbols.BRZ),
+  //   maxPriceDeviation: priceDeviations.STABLE,
+  // },
+  // {
+  //   ...assetFilter(chainAssets, assetSymbols.jBRL),
+  //   maxPriceDeviation: priceDeviations.STABLE,
+  // },
   {
     ...assetFilter(chainAssets, assetSymbols.JCHF),
     maxPriceDeviation: priceDeviations.STABLE,
