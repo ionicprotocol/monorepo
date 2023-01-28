@@ -3,7 +3,8 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@midas-capi
 import { SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
-import { config, logger } from "..";
+import config from "../config";
+import { logger } from "../logger";
 
 export class DiscordService {
   lastSentMessages: {

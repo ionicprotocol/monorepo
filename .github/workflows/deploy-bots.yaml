@@ -128,7 +128,7 @@ jobs:
       - name: Build, tag, and push docker image to Amazon ECR Public
         run: |
           docker build -f docker/liquidator/Dockerfile -t $REGISTRY/$REPOSITORY:$IMAGE_TAG -t ghcr.io/midas-protocol/liquidator:$IMAGE_TAG .
-          # docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
           docker push ghcr.io/midas-protocol/liquidator:$IMAGE_TAG
 
   build-and-push-oracles-monitor-image:
