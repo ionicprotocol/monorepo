@@ -1,5 +1,5 @@
 import { chainIdToConfig } from "@midas-capital/chains";
-import { CurveSwapPool, JarvisLiquidityPool } from "@midas-capital/types";
+import { JarvisLiquidityPool } from "@midas-capital/types";
 import { BigNumber, constants } from "ethers";
 
 import { AddressesProvider } from "../../../typechain/AddressesProvider";
@@ -106,9 +106,7 @@ export const configureAddressesProviderStrategies = async ({
   // configure the redemption strategies in the AddressesProvider
   for (const assetAddress in chainConfig.redemptionStrategies) {
     const [redemptionStrategyType, outputToken]: string[] = chainConfig.redemptionStrategies[assetAddress];
-    const [onChainStrategyAddress, onChainContractType, onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(
-      assetAddress
-    );
+    const [onChainStrategyAddress, , onChainOutputToken] = await ap.callStatic.getRedemptionStrategy(assetAddress);
     const redemptionStrategy = await ethers.getContract(redemptionStrategyType);
     if (onChainStrategyAddress != redemptionStrategy.address || onChainOutputToken != outputToken) {
       redemptionStrategiesToUpdate.push([
@@ -141,9 +139,7 @@ export const configureAddressesProviderStrategies = async ({
     const [fundingStrategyType, inputToken] = chainConfig.fundingStrategies[assetAddress];
     const fundingStrategy = await ethers.getContract(fundingStrategyType);
 
-    const [onChainStrategyAddress, onChainContractType, onChainInputToken] = await ap.callStatic.getFundingStrategy(
-      assetAddress
-    );
+    const [onChainStrategyAddress, , onChainInputToken] = await ap.callStatic.getFundingStrategy(assetAddress);
     if (onChainStrategyAddress != fundingStrategy.address || onChainInputToken != inputToken) {
       fundingStrategiesToUpdate.push([assetAddress, fundingStrategyType, fundingStrategy.address, inputToken]);
     }
