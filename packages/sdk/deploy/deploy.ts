@@ -178,7 +178,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
         oldComptrollerImplementations[i],
         newComptrollerImplementations[i]
       );
-      if(!whitelisted) {
+      if (!whitelisted) {
         anyNotWhitelisted = true;
         break;
       }
@@ -194,7 +194,6 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
       console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
     }
   }
-
 
   /// LATEST IMPLEMENTATIONS
   // Comptroller
