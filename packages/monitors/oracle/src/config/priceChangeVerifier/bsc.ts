@@ -3,7 +3,7 @@ import { assetFilter, assetSymbols, SupportedChains } from "@midas-capital/types
 
 import { PriceChangeVerifierAsset } from "../../types";
 
-import { lsdPriceChangeDefaults, midCapPriceChangeDefaults, stablePriceChangeDefaults } from "./defaults";
+import { lsdPriceChangeDefaults, stablePriceChangeDefaults } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.bsc].assets;
 
