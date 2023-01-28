@@ -162,8 +162,8 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const fusePoolDirectory = await ethers.getContract("FusePoolDirectory", deployer);
 
   const comptroller = await ethers.getContract("Comptroller", deployer);
-  const oldComptrollerImplementations = [];
-  const newComptrollerImplementations = [];
+  const oldComptrollerImplementations = [constants.AddressZero];
+  const newComptrollerImplementations = [comptroller.address];
   const comptrollerArrayOfTrue = [true];
   if (oldComptroller && oldComptroller.address != comptroller.address) {
     oldComptrollerImplementations.push(oldComptroller.address);
