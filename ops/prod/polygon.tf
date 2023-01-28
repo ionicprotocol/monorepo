@@ -34,7 +34,7 @@ module "polygon_mainnet_oracle_feed_verifier" {
     local.oracle_feed_verifier_lambda_variables,
     { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(1 hour)"
+  schedule_expression = "rate(3 hour)"
 }
 
 module "polygon_mainnet_oracle_price_verifier" {
@@ -48,7 +48,7 @@ module "polygon_mainnet_oracle_price_verifier" {
     local.oracle_price_verifier_lambda_variables,
     { WEB3_HTTP_PROVIDER_URL = local.polygon_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(5 minutes)"
+  schedule_expression = "rate(20 minutes)"
 }
 
 
