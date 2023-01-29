@@ -30,3 +30,13 @@ variable "schedule_expression" {
   description = "how to schedule the cron job"
   default     = "cron(* * * * ? *)"
 }
+
+variable "memory_size" {
+  description = "memory size for lambda"
+  default     = 128
+}
+
+variable "timeout" {
+  description = "timeout for lambda"
+  default     = 100
+}

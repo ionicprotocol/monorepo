@@ -32,7 +32,7 @@ module "bsc_mainnet_oracle_feed_verifier" {
     local.oracle_feed_verifier_lambda_variables,
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_1 }
   )
-  schedule_expression = "rate(3 hour)"
+  schedule_expression = "rate(3 hours)"
 }
 
 # module "bsc_mainnet_oracle_price_verifier" {
@@ -61,6 +61,8 @@ module "bsc_mainnet_liquidation" {
     { WEB3_HTTP_PROVIDER_URL = local.bsc_mainnet_rpc_1 }
   )
   schedule_expression = "rate(2 minutes)"
+  timeout             = 250
+  memory_size         = 128
 }
 
 

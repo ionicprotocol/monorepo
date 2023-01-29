@@ -18,6 +18,8 @@ module "fantom_mainnet_liquidation" {
     { WEB3_HTTP_PROVIDER_URL = local.fantom_mainnet_rpc_1 }
   )
   schedule_expression = "rate(2 minutes)"
+  timeout             = 250
+  memory_size         = 128
 }
 
 
