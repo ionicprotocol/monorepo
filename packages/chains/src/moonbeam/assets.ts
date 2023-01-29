@@ -2,7 +2,6 @@ import { assetSymbols, OracleTypes, SupportedAsset, SupportedChains } from "@mid
 
 import {
   beamSwapDocs,
-  beamSwapStableDocs,
   curveFinanceMoonbeamDocs,
   defaultDocs,
   lidoFinanceDocs,
@@ -54,7 +53,6 @@ const base4pool = "0xB326b5189AA42Acaa3C649B120f084Ed8F4dCaA6";
 
 // Curve Finance
 const xcDOT_stDOT = "0xc6e37086D09ec2048F151D11CdB9F9BbbdB7d685";
-const threePool = "0xace58a26b8Db90498eF0330fDC9C2655db0C45E2";
 
 export const assets: SupportedAsset[] = [
   {
@@ -64,6 +62,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", ATOM),
+    disabled: true,
   },
   {
     symbol: assetSymbols.multiWBTC,
@@ -72,6 +71,7 @@ export const assets: SupportedAsset[] = [
     decimals: 8,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiWBTC),
+    disabled: true,
   },
   {
     symbol: assetSymbols.WBTC_wh,
@@ -114,6 +114,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", ETH),
+    disabled: true,
   },
   {
     symbol: assetSymbols.WETH_wh,
@@ -130,13 +131,14 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", BNB),
+    disabled: true,
   },
   {
     symbol: assetSymbols.multiDAI,
     underlying: multiDAI,
     name: "Multichain DAI Stablecoin",
-    decimals: 6,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiDAI),
   },
   {
@@ -202,6 +204,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", GLINT),
+    disabled: true,
   },
   {
     symbol: assetSymbols.FTM,
@@ -210,6 +213,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", FTM),
+    disabled: true,
   },
   {
     symbol: assetSymbols["WGLMR-xcDOT"],
@@ -218,6 +222,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: beamSwapDocs(WGLMR, xcDOT, "WGLMR-xcDOT", WGLMR_xcDOT),
+    disabled: true,
   },
   {
     symbol: assetSymbols["GLMR-USDC"],
@@ -226,6 +231,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: beamSwapDocs(WGLMR, multiUSDC, "GLMR-USDC", GLMR_USDC),
+    disabled: true,
   },
   {
     symbol: assetSymbols["GLMR-GLINT"],
@@ -234,6 +240,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: beamSwapDocs(WGLMR, GLINT, "GLMR-GLINT", GLMR_GLINT),
+    disabled: true,
   },
   {
     symbol: assetSymbols["USDC-ETH"],
@@ -242,6 +249,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: beamSwapDocs(multiUSDC, ETH, "USDC-ETH", USDC_ETH),
+    disabled: true,
   },
   {
     symbol: assetSymbols["xcDOT-stDOT"],
@@ -250,14 +258,6 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinanceMoonbeamDocs(14, "xcDOT-stDOT", xcDOT_stDOT, true),
-  },
-  {
-    symbol: assetSymbols["3pool"],
-    underlying: threePool,
-    name: "Curve.fi (nomad) DAI/USDT/USDC LP Token",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: beamSwapStableDocs("nomad3pool", threePool),
   },
   {
     symbol: assetSymbols["STELLA-GLMR"],
@@ -306,6 +306,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: stellaSwapDocs("ETH", CELR, "CELR-GLMR", CELR_GLMR),
+    disabled: true,
   },
   {
     symbol: assetSymbols["ATOM-GLMR"],
@@ -314,6 +315,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: stellaSwapDocs("ETH", ATOM, "ATOM-GLMR", GLMR_ATOM),
+    disabled: true,
   },
   {
     symbol: assetSymbols["LDO-GLMR"],
@@ -322,6 +324,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: stellaSwapDocs("ETH", LDO, "LDO-GLMR", LDO_GLMR),
+    disabled: true,
   },
   {
     symbol: assetSymbols["wstDOT-DOT.xc"],
@@ -354,6 +357,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", CELR),
+    disabled: true,
   },
   {
     symbol: assetSymbols.LDO,
@@ -362,6 +366,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", LDO),
+    disabled: true,
   },
 ];
 

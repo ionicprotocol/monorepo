@@ -22,7 +22,7 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const balance = await ethers.provider.getBalance(deployer);
   console.log("balance: ", balance.toString());
   const price = await ethers.provider.getGasPrice();
-  console.log("price: ", ethers.utils.formatUnits(price, "gwei"));
+  console.log("gas price: ", ethers.utils.formatUnits(price, "gwei"));
 
   if (!chainDeployConfig[chainId]) {
     throw new Error(`Config invalid for ${chainId}`);
@@ -165,23 +165,40 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
   const oldComptrollerImplementations = [constants.AddressZero];
   const newComptrollerImplementations = [comptroller.address];
   const comptrollerArrayOfTrue = [true];
-  if (oldComptroller) {
+  if (oldComptroller && oldComptroller.address != comptroller.address) {
     oldComptrollerImplementations.push(oldComptroller.address);
     newComptrollerImplementations.push(comptroller.address);
     comptrollerArrayOfTrue.push(true);
   }
-  tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
-    oldComptrollerImplementations,
-    newComptrollerImplementations,
-    comptrollerArrayOfTrue
-  );
-  await tx.wait();
-  console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
+
+  if (oldComptrollerImplementations.length) {
+    let anyNotWhitelisted = false;
+    for (let i = 0; i < oldComptrollerImplementations.length; i++) {
+      const whitelisted = await fuseFeeDistributor.callStatic.comptrollerImplementationWhitelist(
+        oldComptrollerImplementations[i],
+        newComptrollerImplementations[i]
+      );
+      if (!whitelisted) {
+        anyNotWhitelisted = true;
+        break;
+      }
+    }
+
+    if (anyNotWhitelisted) {
+      tx = await fuseFeeDistributor._editComptrollerImplementationWhitelist(
+        oldComptrollerImplementations,
+        newComptrollerImplementations,
+        comptrollerArrayOfTrue
+      );
+      await tx.wait();
+      console.log("FuseFeeDistributor comptroller whitelist set", tx.hash);
+    }
+  }
 
   /// LATEST IMPLEMENTATIONS
   // Comptroller
   if (oldComptroller) {
-    const latestComptrollerImplementation = await fuseFeeDistributor.latestComptrollerImplementation(
+    const latestComptrollerImplementation = await fuseFeeDistributor.callStatic.latestComptrollerImplementation(
       oldComptroller.address
     );
     if (
@@ -435,6 +452,16 @@ const func: DeployFunction = async ({ run, ethers, getNamedAccounts, deployments
     from: deployer,
     args: [],
     log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [],
+        },
+      },
+      proxyContract: "OpenZeppelinTransparentProxy",
+      owner: deployer,
+    },
     waitConfirmations: 1,
   });
   if (simplePO.transactionHash) await ethers.provider.waitForTransaction(simplePO.transactionHash);

@@ -92,13 +92,6 @@ export const deployConfig: ChainDeployConfig = {
         minPeriod: 1800,
         deviationThreshold: "10000000000000000",
       },
-      {
-        token: underlying(assets, assetSymbols.HAY),
-        pair: "0xb84348b32E5C83856c6e31C227639cd678163719", // WBNB-HAY
-        baseToken: underlying(assets, assetSymbols.WBNB),
-        minPeriod: 1800,
-        deviationThreshold: "10000000000000000",
-      },
     ],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WBNB-BUSD"]), // WBNB-BUSD PCS LP

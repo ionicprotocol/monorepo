@@ -3203,6 +3203,7 @@ __metadata:
     "@midas-capital/chains": "workspace:*"
     "@midas-capital/sdk": "workspace:*"
     "@midas-capital/types": "workspace:*"
+    "@types/aws-lambda": ^8.10.110
     "@types/eslint": ^8.4.3
     "@types/node": ^18.0.0
     "@types/rimraf": ^3
@@ -6033,6 +6034,13 @@ __metadata:
   version: 8.10.109
   resolution: "@types/aws-lambda@npm:8.10.109"
   checksum: 879dd30806bbcdcc5495192ed139ab6e7e65d2481c4c80237d8293e3a33e9fcbfb662109246164c493de9fd13b32d1780359a0f191238bd62fd4be14c1efe2fe
+  languageName: node
+  linkType: hard
+
+"@types/aws-lambda@npm:^8.10.110":
+  version: 8.10.110
+  resolution: "@types/aws-lambda@npm:8.10.110"
+  checksum: 57be33940035f68c93ecb2c43d82b6f47a9f91f7f2114870d5fbab30c4b93084f12c4353da4aaffdfb0b612f2e7f13ee3ac53e0cc7b9f8e536b04bda0a593615
   languageName: node
   linkType: hard
 
