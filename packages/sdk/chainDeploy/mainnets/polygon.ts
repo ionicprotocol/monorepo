@@ -238,11 +238,6 @@ const chainlinkAssets: ChainlinkAsset[] = [
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
   {
-    symbol: assetSymbols.PAR,
-    aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
-    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
-  },
-  {
     symbol: assetSymbols.EURT,
     aggregator: "0x73366Fe0AA0Ded304479862808e02506FE556a98",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
@@ -449,6 +444,12 @@ const diaAssets: DiaAsset[] = [
     underlying: underlying(assets, assetSymbols.MIMO),
     feed: "0xd3709072C338689F94a4072a26Bb993559D9a026",
     key: "MIMO/USD",
+  },
+  {
+    symbol: assetSymbols.PAR,
+    underlying: underlying(assets, assetSymbols.PAR),
+    feed: "0xd3709072C338689F94a4072a26Bb993559D9a026",
+    key: "PAR/USD",
   },
 ];
 

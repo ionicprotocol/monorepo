@@ -7,6 +7,7 @@ export const assets: SupportedAsset[] = [
     name: "Cosmos Hub",
     decimals: 6,
     oracle: OracleTypes.FluxPriceOracle,
+    disabled: true,
   },
   {
     symbol: assetSymbols.WEVMOS,

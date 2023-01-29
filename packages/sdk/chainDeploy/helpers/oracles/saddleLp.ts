@@ -13,7 +13,7 @@ export const deploySaddleLpOracle = async ({
   let receipt: providers.TransactionReceipt;
 
   //// SaddleLpPriceOracle
-  const cpo = await deployments.deploy("SaddleLpPriceOracle", {
+  const spo = await deployments.deploy("SaddleLpPriceOracle", {
     from: deployer,
     args: [],
     log: true,
@@ -28,27 +28,27 @@ export const deploySaddleLpOracle = async ({
       proxyContract: "OpenZeppelinTransparentProxy",
     },
   });
-  if (cpo.transactionHash) await ethers.provider.waitForTransaction(cpo.transactionHash);
-  console.log("SaddleLpPriceOracle: ", cpo.address);
+  if (spo.transactionHash) await ethers.provider.waitForTransaction(spo.transactionHash);
+  console.log("SaddleLpPriceOracle: ", spo.address);
 
-  const curveOracle = await ethers.getContract("SaddleLpPriceOracle", deployer);
+  const saddleLpOracle = await ethers.getContract("SaddleLpPriceOracle", deployer);
 
   for (const pool of saddlePools) {
-    const registered = await curveOracle.poolOf(pool.lpToken);
+    const registered = await saddleLpOracle.poolOf(pool.lpToken);
 
     if (registered !== constants.AddressZero) {
       console.log("Pool already registered", pool);
       continue;
     }
 
-    tx = await curveOracle.registerPool(pool.lpToken, pool.pool, pool.underlyings);
+    tx = await saddleLpOracle.registerPool(pool.lpToken, pool.pool, pool.underlyings);
     console.log("registerPool sent: ", tx.hash);
     receipt = await tx.wait();
     console.log("registerPool mined: ", receipt.transactionHash);
   }
 
   const underlyings = saddlePools.map((c) => c.lpToken);
-  const oracles = Array(saddlePools.length).fill(curveOracle.address);
+  const oracles = Array(saddlePools.length).fill(saddleLpOracle.address);
 
   const mpo = await ethers.getContract("MasterPriceOracle", deployer);
   tx = await mpo.add(underlyings, oracles);

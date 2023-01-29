@@ -7,6 +7,7 @@ import FluxPriceOracleABI from "../../../../../../sdk/abis/FluxPriceOracle";
 import UniswapTwapPriceOracleV2ABI from "../../../../../../sdk/abis/UniswapTwapPriceOracleV2";
 import { logger } from "../../../logger";
 import {
+  FeedVerifierAsset,
   FeedVerifierConfig,
   OracleFailure,
   PriceFeedValidity,
@@ -20,6 +21,7 @@ import { verifyProviderFeed } from "./providers";
 export class FeedVerifier extends AbstractOracleVerifier {
   underlyingOracle: Contract;
   config: FeedVerifierConfig;
+  asset: FeedVerifierAsset;
 
   async initUnderlyingOracle(): Promise<[FeedVerifier, VerifierInitValidity]> {
     if (!this.asset.oracle) {
@@ -65,7 +67,7 @@ export class FeedVerifier extends AbstractOracleVerifier {
     const feedArgs: VerifyFeedParams = {
       midasSdk: sdk,
       underlyingOracle: underlyingOracle,
-      underlying: asset.underlying,
+      asset,
     };
     return await this.verifyFeedValidity(this.oracleType, feedArgs);
   }

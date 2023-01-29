@@ -3,12 +3,9 @@ import { assetFilter, assetSymbols, SupportedChains } from "@midas-capital/types
 
 import { PriceChangeVerifierAsset } from "../../types";
 
-import { lsdPriceChangeDefaults, midCapPriceChangeDefaults, stablePriceChangeDefaults } from "./defaults";
+import { lsdPriceChangeDefaults, stablePriceChangeDefaults } from "./defaults";
 
 const chainAssets = chainIdToConfig[SupportedChains.bsc].assets;
-
-// Smaller Cap
-const CAKE = assetFilter(chainAssets, assetSymbols.CAKE);
 
 // LSD
 const stkBNB = assetFilter(chainAssets, assetSymbols.stkBNB);
@@ -20,11 +17,6 @@ const MAI = assetFilter(chainAssets, assetSymbols.MAI);
 const HAY = assetFilter(chainAssets, assetSymbols.HAY);
 
 const assets: PriceChangeVerifierAsset[] = [
-  // Small Cap
-  {
-    ...CAKE,
-    ...midCapPriceChangeDefaults,
-  },
   // LSD
   {
     ...stkBNB,

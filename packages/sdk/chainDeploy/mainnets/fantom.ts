@@ -142,7 +142,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployments,
     diaAssets,
     deployConfig,
-    diaNativeFeed: { feed: constants.AddressZero, key: "FTM/USD" },
+    diaNativeFeed: { feed: constants.AddressZero, key: "" },
   });
 
   //// Curve LP Oracle
@@ -214,6 +214,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   if (curveLpTokenLiquidatorNoRegistry.transactionHash)
     await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
   console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
+
+  // curve swap underlying tokens
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
 
   //// Balancer Lp token liquidator
   const balancerLpTokenLiquidator = await deployments.deploy("BalancerLpTokenLiquidator", {

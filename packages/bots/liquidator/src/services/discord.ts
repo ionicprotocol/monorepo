@@ -3,7 +3,8 @@ import { EncodedLiquidationTx, ErroredPool, LiquidatablePool } from "@midas-capi
 import { SupportedChains } from "@midas-capital/types";
 import { MessageBuilder, Webhook } from "discord-webhook-node";
 
-import { config, logger } from "..";
+import config from "../config";
+import { logger } from "../logger";
 
 export class DiscordService {
   lastSentMessages: {
@@ -55,7 +56,7 @@ export class DiscordService {
           .addField("Value", currentLiquidations[0].value.toString(), true)
           .addField("Args", JSON.stringify(currentLiquidations[0].args), false)
           // Max limit of embed size
-          .setDescription(`${msg.slice(0, 4000)}... (truncated, check AWS Logs) @everyone`)
+          .setDescription(`${msg.slice(0, 2000)}... (truncated, check AWS Logs) @everyone`)
           .setTimestamp()
           .setColor(this.errorColor);
         await this.send(embed);
