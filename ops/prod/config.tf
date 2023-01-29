@@ -38,20 +38,9 @@ locals {
 
 
 locals {
-  shared_variables = concat(
-    local.shared_env_vars,
-    local.shared_secret_env_vars,
-  )
-
-  oracles_variables = concat(
-    local.shared_variables,
-    local.oracle_monitor_env_vars,
-    local.oracle_monitor_secrets,
-  )
-
-  liquidation_variables = concat(
-    local.shared_variables,
-    local.liquidation_secrets,
+  liquidation_variables = merge(
+    local.shared_env_vars_lambda,
+    { DISCORD_WEBHOOK_URL = var.liquidation_discord_webhook_url },
   )
   oracle_price_change_verifier_lambda_variables = merge(
     local.shared_env_vars_lambda,

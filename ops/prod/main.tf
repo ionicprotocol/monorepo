@@ -15,17 +15,3 @@ terraform {
 provider "aws" {
   region = var.region
 }
-
-module "network" {
-  source     = "../modules/networking"
-  cidr_block = var.cidr_block
-}
-
-module "ecs" {
-  source           = "../modules/ecs"
-  ecs_cluster_name = "midas-bots"
-}
-
-module "iam" {
-  source = "../modules/iam"
-}
