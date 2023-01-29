@@ -4,6 +4,7 @@ import { logger } from "../../../logger";
 import {
   OracleFailure,
   PriceFeedValidity,
+  PriceVerifierAsset,
   PriceVerifierConfig,
   VerifierInitValidity,
   VerifyPriceParams,
@@ -14,6 +15,7 @@ import { verifyPriceValue } from "../feed/providers";
 export class PriceVerifier extends AbstractOracleVerifier {
   mpoPrice: BigNumber;
   config: PriceVerifierConfig;
+  asset: PriceVerifierAsset;
 
   async initMpoPrice(): Promise<[PriceVerifier, VerifierInitValidity]> {
     try {
@@ -43,7 +45,7 @@ export class PriceVerifier extends AbstractOracleVerifier {
   }
 
   private async verifyFeedPrice(args: VerifyPriceParams) {
-    const priceValidity = await verifyPriceValue(args, this.config);
+    const priceValidity = await verifyPriceValue(args);
     if (priceValidity !== true) {
       logger.error(priceValidity.message);
     }

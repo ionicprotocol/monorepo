@@ -1,8 +1,8 @@
 import { MidasSdk } from "@midas-capital/sdk";
 import { LiquidatablePool } from "@midas-capital/sdk/dist/cjs/src/modules/liquidation/utils";
 
-import { config, logger } from "..";
-import { EXCLUDED_ERROR_CODES } from "../config";
+import config, { EXCLUDED_ERROR_CODES } from "../config";
+import { logger } from "../logger";
 
 import { DiscordService } from "./discord";
 

@@ -1,6 +1,7 @@
 import { JsonRpcProvider } from "@ethersproject/providers";
 
-import { config, logger } from "../src";
+import config from "../src/config";
+import { logger } from "../src/logger";
 import { Liquidator } from "../src/services";
 import { setUpSdk } from "../src/utils";
 

@@ -1,34 +1,36 @@
-import { Contract } from "ethers";
+import { BigNumber, Contract, utils } from "ethers";
 
 import { logger } from "../../../../logger";
 import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
 export async function verifyUniswapV2PriceFeed(
-  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
+  { midasSdk, underlyingOracle, asset }: VerifyFeedParams,
   config: FeedVerifierConfig
 ): Promise<PriceFeedValidity> {
-  logger.debug(`Verifying Uniswap Twap oracle for ${underlying}`);
+  logger.debug(`Verifying Uniswap Twap oracle for ${asset.underlying}`);
 
   const baseToken = await underlyingOracle.callStatic.baseToken();
   const uniswapV2Factory = new Contract(
     midasSdk.chainSpecificAddresses.UNISWAP_V2_FACTORY,
-    ["function getPair(address tokenA, address tokenB) external view returns (address pair)"],
+    ["function getPair(address tokenA, address tokenB) view returns (address)"],
     midasSdk.provider
   );
-  const pair = await uniswapV2Factory.callStatic.getPair(underlying, baseToken);
+  const pair = await uniswapV2Factory.getPair(asset.underlying, baseToken);
 
   const rootOracleAddress = await underlyingOracle.callStatic.rootOracle();
   const rootTwapOracle = new Contract(
     rootOracleAddress,
-    midasSdk.chainDeployment.UniswapTwapPriceOracleV2Root.abi,
+    [
+      "function workable(address[] calldata pairs, address[] calldata baseTokens, uint256[] calldata minPeriods, uint256[] calldata deviationThresholds) external view returns (bool[] memory) ",
+    ],
     midasSdk.provider
   );
 
   const workable = await rootTwapOracle.callStatic.workable(
     [pair],
     [baseToken],
-    [config.defaultMinPeriod],
-    [config.defaultDeviationThreshold]
+    [BigNumber.from(config.defaultMaxObservationDelay)],
+    [utils.parseEther(asset.deviationThreshold.toString())]
   );
   if (workable[0]) {
     logger.warn(`Pair is in workable = ${workable[0]} state, this is likely not a good sign`);

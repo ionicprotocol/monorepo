@@ -75,14 +75,14 @@ export type SupportedAssetPriceFeed = {
 
 export interface VerifyPriceParams {
   midasSdk: MidasSdk;
-  asset: SupportedAsset;
+  asset: PriceVerifierAsset;
   mpoPrice: BigNumber;
 }
 
 export interface VerifyFeedParams {
   midasSdk: MidasSdk;
   underlyingOracle: Contract;
-  underlying: string;
+  asset: FeedVerifierAsset;
 }
 
 export type BaseConfig = {
@@ -100,9 +100,9 @@ export type BaseConfig = {
 };
 
 export type FeedVerifierConfig = BaseConfig & {
-  defaultDeviationThreshold: BigNumber;
-  maxObservationDelay: number;
-  defaultMinPeriod: BigNumber;
+  defaultDeviationThreshold: number;
+  defaultMaxObservationDelay: number;
+  defaultMinPeriod: number;
 };
 
 export type PriceVerifierConfig = BaseConfig & {
@@ -122,12 +122,12 @@ export enum ErrorKind {
 }
 
 export type FeedVerifierAsset = SupportedAsset & {
-  minPeriod?: BigNumber;
-  deviationThreshold?: BigNumber;
+  maxObservationDelay: number;
+  deviationThreshold: number;
 };
 
 export type PriceVerifierAsset = SupportedAsset & {
-  maxPriceDeviation?: number;
+  maxPriceDeviation: number;
 };
 
 export type PriceChangeVerifierAsset = SupportedAsset & {

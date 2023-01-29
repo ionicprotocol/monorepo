@@ -21,11 +21,6 @@ module "network" {
   cidr_block = var.cidr_block
 }
 
-module "ecs" {
-  source           = "../modules/ecs"
-  ecs_cluster_name = "midas-bots"
-}
-
 module "iam" {
   source = "../modules/iam"
 }

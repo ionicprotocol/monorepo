@@ -137,10 +137,9 @@ export const assets: SupportedAsset[] = [
     symbol: assetSymbols.multiDAI,
     underlying: multiDAI,
     name: "Multichain DAI Stablecoin",
-    decimals: 6,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    decimals: 18,
+    oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiDAI),
-    disabled: true,
   },
   {
     symbol: assetSymbols.multiUSDC,
@@ -149,7 +148,6 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiUSDC),
-    disabled: true,
   },
   {
     symbol: assetSymbols.USDC_wh,
@@ -166,7 +164,6 @@ export const assets: SupportedAsset[] = [
     decimals: 6,
     oracle: OracleTypes.DiaPriceOracle,
     extraDocs: defaultDocs("https://moonbeam.moonscan.io", multiUSDT),
-    disabled: true,
   },
   {
     symbol: assetSymbols.USDT_xc,
