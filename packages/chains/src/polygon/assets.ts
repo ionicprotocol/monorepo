@@ -52,7 +52,6 @@ const WMATIC_STMATIC_BLP = "0x8159462d255C1D24915CB51ec361F700174cD994";
 const WMATIC_MATICX_BLP = "0xb20fC01D21A50d2C734C4a1262B4404d41fA7BF0";
 
 // Curve
-const WMATIC_STMATIC_CURVE = "0xe7CEA2F6d7b120174BF3A9Bc98efaF1fF72C997d";
 const am3CRV = "0xE7a24EF0C5e95Ffb0f6684b813A78F2a3AD7D171";
 
 // QuickSwap
@@ -75,8 +74,8 @@ const MAI_USDC = "0x160532D2536175d65C03B97b0630A9802c274daD";
 const AGEUR = "0xE0B52e49357Fd4DAf2c15e02058DCE6BC0057db4";
 const JEUR = "0x4e3Decbb3645551B8A19f0eA1678079FCB33fB4c";
 const EURE = "0x18ec0A6E18E5bc3784fDd3a3634b31245ab704F6";
-const PAR = "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128";
 const EURT = "0x7BDF330f423Ea880FF95fC41A280fD5eCFD3D09f";
+const PAR = "0xE2Aa7db6dA1dAE97C5f5C6914d285fBfCC32A128";
 const JJPY = "0x8343091F2499FD4b6174A46D067A920a3b851FF9";
 const JPYC = "0x431D5dfF03120AFA4bDf332c61A6e1766eF37BDB";
 const JCAD = "0x8ca194A3b22077359b5732DE53373D4afC11DeE3";
@@ -117,6 +116,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", AAVE),
+    disabled: true,
   },
   {
     symbol: assetSymbols.ALCX,
@@ -125,6 +125,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", ALCX),
+    disabled: true,
   },
   {
     symbol: assetSymbols.BAL,
@@ -133,6 +134,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", BAL),
+    disabled: true,
   },
   {
     symbol: assetSymbols.oBNB,
@@ -141,6 +143,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", oBNB),
+    disabled: true,
   },
   {
     symbol: assetSymbols.BUSD,
@@ -149,6 +152,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", BUSD),
+    disabled: true,
   },
   {
     symbol: assetSymbols.CRV,
@@ -157,6 +161,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", CRV),
+    disabled: true,
   },
   {
     symbol: assetSymbols.CVX,
@@ -165,6 +170,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", CVX),
+    disabled: true,
   },
 
   {
@@ -198,6 +204,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", FTM),
+    disabled: true,
   },
   {
     symbol: assetSymbols.FXS,
@@ -206,6 +213,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", FXS),
+    disabled: true,
   },
   {
     symbol: assetSymbols.GHST,
@@ -214,6 +222,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", GHST),
+    disabled: true,
   },
   {
     symbol: assetSymbols.GRT,
@@ -222,6 +231,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", GRT),
+    disabled: true,
   },
   {
     symbol: assetSymbols.LINK,
@@ -230,6 +240,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", LINK),
+    disabled: true,
   },
   {
     symbol: assetSymbols.MAI,
@@ -246,6 +257,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", MKR),
+    disabled: true,
   },
   {
     symbol: assetSymbols.RAI,
@@ -254,6 +266,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", RAI),
+    disabled: true,
   },
   {
     symbol: assetSymbols.SNX,
@@ -262,6 +275,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", SNX),
+    disabled: true,
   },
   {
     symbol: assetSymbols.SOL,
@@ -270,6 +284,7 @@ export const assets: SupportedAsset[] = [
     decimals: 9,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", SOL),
+    disabled: true,
   },
   {
     symbol: assetSymbols.SUSHI,
@@ -278,6 +293,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/SUSHI"),
+    disabled: true,
   },
   {
     symbol: assetSymbols.YFI,
@@ -286,6 +302,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://polygonscan.com", YFI),
+    disabled: true,
   },
   {
     symbol: assetSymbols.USDC,
@@ -362,6 +379,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, USDC, "WMATIC-USDC", WMATIC_USDC),
+    disabled: true,
   },
   {
     symbol: assetSymbols["WMATIC-USDT"],
@@ -370,6 +388,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, USDT, "WMATIC-USDT", WMATIC_USDT),
+    disabled: true,
   },
   {
     symbol: assetSymbols["WMATIC-ETH"],
@@ -378,6 +397,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WMATIC, WETH, "WMATIC-ETH", WMATIC_ETH),
+    disabled: true,
   },
   {
     symbol: assetSymbols["WMATIC-MATICx"],
@@ -394,6 +414,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapLpTokenPriceOracle,
     extraDocs: quickSwapDocs(WETH, WBTC, "WETH-WBTC", WETH_WBTC),
+    disabled: true,
   },
   {
     symbol: assetSymbols["MAI-USDC"],
@@ -476,15 +497,6 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
     extraDocs: curveFinancePolygonDocs("aave", "am3CRV", am3CRV, false),
   },
-  {
-    symbol: assetSymbols.WMATIC_STMATIC_CURVE,
-    underlying: WMATIC_STMATIC_CURVE,
-    name: "Curve.fi WMATIC-STMATIC",
-    decimals: 18,
-    oracle: OracleTypes.CurveLpTokenPriceOracleNoRegistry,
-    extraDocs: curveFinancePolygonDocs(13, "WMATIC-STMATIC", WMATIC_STMATIC_CURVE, "factory-crypto"),
-  },
-
   // Balancer
   {
     symbol: assetSymbols.MIMO_PAR_80_20,
@@ -547,7 +559,7 @@ export const assets: SupportedAsset[] = [
     underlying: PAR,
     name: "PAR Stablecoin (PoS)",
     decimals: 18,
-    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    oracle: OracleTypes.DiaPriceOracle,
     extraDocs: oneInchDocs("https://app.1inch.io/#/137/unified/swap/MATIC/PAR"),
   },
   {
@@ -586,6 +598,7 @@ export const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: jarvisDocs("v2"),
+    disabled: true,
   },
   {
     symbol: assetSymbols.CADC,
@@ -593,6 +606,7 @@ export const assets: SupportedAsset[] = [
     name: "CAD Coin (PoS)",
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
+    disabled: true,
   },
   {
     symbol: assetSymbols.JSGD,

@@ -24,8 +24,6 @@ const aMATICc = assetFilter(chainAssets, assetSymbols.aMATICc);
 // Stables
 const MAI = assetFilter(chainAssets, assetSymbols.MAI);
 const PAR = assetFilter(chainAssets, assetSymbols.PAR);
-const agEUR = assetFilter(chainAssets, assetSymbols.AGEUR);
-const EURT = assetFilter(chainAssets, assetSymbols.EURT);
 
 const assets: PriceChangeVerifierAsset[] = [
   // Small Cap
@@ -57,14 +55,6 @@ const assets: PriceChangeVerifierAsset[] = [
   },
   {
     ...PAR,
-    ...stablePriceChangeDefaults,
-  },
-  {
-    ...agEUR,
-    ...stablePriceChangeDefaults,
-  },
-  {
-    ...EURT,
     ...stablePriceChangeDefaults,
   },
 ];

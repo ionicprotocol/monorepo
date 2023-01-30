@@ -507,7 +507,7 @@ export const AssetSettings = ({
                     isUpdating ||
                     !cTokenData ||
                     watchSupplyCap ===
-                      parseInt(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
+                      parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
                   }
                 >
                   Save

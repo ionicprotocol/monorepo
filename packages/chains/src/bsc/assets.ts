@@ -124,6 +124,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", BETH),
+    disabled: true,
   },
   {
     symbol: assetSymbols.CAKE,
@@ -141,6 +142,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", AUTO),
+    disabled: true,
   },
   {
     symbol: assetSymbols.BIFI,
@@ -149,6 +151,7 @@ const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     decimals: 18,
     extraDocs: defaultDocs("https://bscscan.com", BIFI),
+    disabled: true,
   },
   {
     symbol: assetSymbols.ALPACA,
@@ -157,6 +160,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", ALPACA),
+    disabled: true,
   },
   // stables
   {
@@ -182,6 +186,7 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", TUSD),
+    disabled: true,
   },
   {
     symbol: assetSymbols.MAI,
@@ -198,7 +203,6 @@ const assets: SupportedAsset[] = [
     decimals: 18,
     oracle: OracleTypes.UniswapTwapPriceOracleV2,
     extraDocs: defaultDocs("https://bscscan.com", HAY),
-    disabled: true,
   },
   // Ellipsis
   {
