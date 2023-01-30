@@ -27,7 +27,6 @@ import {
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractFunction, ContractTransaction, utils } from 'ethers';
-import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -92,8 +91,6 @@ export async function testForCTokenErrorAndSend(
     } else {
       err = new Error(failMessage + ' CToken Code: ' + CTokenErrorCodes[response]);
     }
-
-    LogRocket.captureException(err);
 
     throw err;
   }
@@ -187,7 +184,6 @@ export const AssetSettings = ({
         [utils.parseUnits(supplyCaps.toString(), selectedAsset.underlyingDecimals)]
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateSupplyCaps');
 
       await queryClient.refetchQueries();
 
@@ -216,13 +212,11 @@ export const AssetSettings = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setCollateralFactor(cTokenAddress, bigCollateralFactor);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateCollateralFactor');
 
       await queryClient.refetchQueries();
 
@@ -250,7 +244,6 @@ export const AssetSettings = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateReserveFactor');
 
       await queryClient.refetchQueries();
 
@@ -278,7 +271,6 @@ export const AssetSettings = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateAdminFee');
 
       await queryClient.refetchQueries();
 
@@ -303,7 +295,6 @@ export const AssetSettings = ({
         ''
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateInterestRateModel');
 
       await queryClient.refetchQueries();
 
@@ -326,8 +317,6 @@ export const AssetSettings = ({
       addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
       await tx.wait();
       await queryClient.refetchQueries();
-
-      LogRocket.track('Midas-setBorrowingStatus');
     } catch (e) {
       handleGenericError(e, errorToast);
     } finally {

@@ -15,7 +15,6 @@ import {
 } from '@chakra-ui/react';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -118,8 +117,6 @@ export const CreatePoolConfiguration = () => {
         title: 'Your pool has been deployed!',
         description: 'You may now add assets to it.',
       });
-
-      LogRocket.track('Fuse-CreatePool');
 
       await router.push(`/${currentChain.id}/pool/${poolId}`);
     } catch (e) {

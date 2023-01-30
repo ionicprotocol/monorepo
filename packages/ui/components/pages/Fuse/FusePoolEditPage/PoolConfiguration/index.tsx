@@ -21,7 +21,6 @@ import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/typ
 import { useChainModal, useConnectModal } from '@rainbow-me/rainbowkit';
 import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, ContractTransaction, utils } from 'ethers';
-import LogRocket from 'logrocket';
 import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -112,12 +111,10 @@ const PoolConfiguration = ({
       const response = await comptroller.callStatic._setWhitelistEnforcement(enforce);
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
-        LogRocket.captureException(err);
         throw err;
       }
       const tx = await comptroller._setWhitelistEnforcement(enforce);
       await tx.wait();
-      LogRocket.track('Fuse-ChangeWhitelistStatus');
 
       await queryClient.refetchQueries();
 
@@ -143,13 +140,11 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setWhitelistStatuses(newList, Array(newList.length).fill(true));
       await tx.wait();
-      LogRocket.track('Fuse-AddToWhitelist');
 
       await queryClient.refetchQueries();
 
@@ -181,7 +176,6 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
@@ -190,7 +184,6 @@ const PoolConfiguration = ({
         whitelist?.map((user) => user !== removeUser)
       );
       await tx.wait();
-      LogRocket.track('Fuse-RemoveFromWhitelist');
 
       await queryClient.refetchQueries();
 
@@ -212,12 +205,10 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
       const tx: ContractTransaction = await unitroller._toggleAdminRights(false);
       await tx.wait();
-      LogRocket.track('Fuse-RenounceOwnership');
 
       await queryClient.refetchQueries();
 
@@ -253,13 +244,11 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setCloseFactor(bigCloseFactor);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateCloseFactor');
 
       await queryClient.refetchQueries();
 
@@ -293,13 +282,11 @@ const PoolConfiguration = ({
       if (!response.eq(0)) {
         const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
 
-        LogRocket.captureException(err);
         throw err;
       }
 
       const tx = await comptroller._setLiquidationIncentive(bigLiquidationIncentive);
       await tx.wait();
-      LogRocket.track('Fuse-UpdateLiquidationIncentive');
 
       await queryClient.refetchQueries();
 

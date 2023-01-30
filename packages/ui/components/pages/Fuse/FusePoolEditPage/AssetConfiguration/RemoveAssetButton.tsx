@@ -1,7 +1,6 @@
 import { Box, Button, useDisclosure } from '@chakra-ui/react';
 import { ComptrollerErrorCodes, NativePricedFuseAsset } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
-import LogRocket from 'logrocket';
 import { useState } from 'react';
 
 import ConfirmDeleteAlert from '@ui/components/shared/ConfirmDeleteAlert';
@@ -47,15 +46,12 @@ const RemoveAssetButton = ({
 
     if (!response.eq(0)) {
       const err = new Error(' Code: ' + ComptrollerErrorCodes[response.toNumber()]);
-
-      LogRocket.captureException(err);
       throw err;
     }
 
     try {
       const tx = await comptroller._unsupportMarket(asset.cToken);
       await tx.wait();
-      LogRocket.track('Fuse-RemoveAsset');
 
       await queryClient.refetchQueries();
       setSelectedAsset(assets[0]);

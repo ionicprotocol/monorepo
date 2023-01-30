@@ -1,4 +1,3 @@
-import { FlywheelMarketRewardsInfo } from '@midas-capital/sdk/dist/cjs/src/modules/Flywheel';
 import { FlywheelReward, Reward } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -33,7 +32,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
               return [];
             }),
             sdk.getFlywheelMarketRewardsByPool(poolData.comptroller).catch((exception) => {
-              // TODO LogRocket, this should never happen.
               console.error('Unable to get onchain Flywheel Rewards without APY', exception);
               return [];
             }),
@@ -86,7 +84,6 @@ export function useRewards({ poolId, chainId }: UseRewardsProps) {
           );
           return rewardsOfMarkets;
         } catch (exception) {
-          // TODO show error toast and send to logrocket
           console.error(exception);
         }
       }

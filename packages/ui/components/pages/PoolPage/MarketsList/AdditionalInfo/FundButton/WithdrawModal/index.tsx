@@ -14,7 +14,6 @@ import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
-import LogRocket from 'logrocket';
 import { useEffect, useState } from 'react';
 
 import { StatsColumn } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/FundButton/StatsColumn';
@@ -165,8 +164,6 @@ export const WithdrawModal = ({
           description: 'Successfully borrowed!',
         });
       }
-
-      LogRocket.track('Fuse-Withdraw');
     } catch (e) {
       setFailedStep(1);
       handleGenericError(e, errorToast);

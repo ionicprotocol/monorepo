@@ -14,7 +14,6 @@ import {
 import { MarketConfig } from '@midas-capital/types';
 import { useQueryClient } from '@tanstack/react-query';
 import { constants } from 'ethers';
-import LogRocket from 'logrocket';
 import dynamic from 'next/dynamic';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -150,8 +149,6 @@ export const AddAssetSettings = ({
 
     try {
       await currentSdk.deployAsset(marketConfig);
-
-      LogRocket.track('Fuse-DeployAsset');
 
       await queryClient.refetchQueries();
       // Wait 2 seconds for refetch and then close modal.

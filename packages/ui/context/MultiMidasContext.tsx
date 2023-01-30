@@ -4,7 +4,6 @@ import { MidasSdk } from '@midas-capital/sdk';
 import Security from '@midas-capital/security';
 import { SupportedChains } from '@midas-capital/types';
 import { FetchSignerResult, Signer } from '@wagmi/core';
-import LogRocket from 'logrocket';
 import {
   createContext,
   Dispatch,
@@ -119,15 +118,6 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
       });
     }
   }, [signer, sdks]);
-
-  useEffect(() => {
-    if (window.location.hostname === 'app.midascapital.xyz') {
-      console.info('LogRocket initialized');
-      LogRocket.init('ylr02p/midas-ui');
-    } else {
-      console.info('LogRocket not initialized');
-    }
-  }, []);
 
   useEffect(() => {
     setAddress(wagmiAddress);
