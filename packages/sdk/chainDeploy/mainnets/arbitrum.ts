@@ -35,15 +35,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2RouterAddress: "0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506",
     uniswapV2FactoryAddress: "0xc35DADB65012eC5796536bD9864eD8773aBc74C4",
     uniswapV3FactoryAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: underlying(assets, assetSymbols.GOHM),
-        pair: "0xaa5bD49f2162ffdC15634c87A77AC67bD51C6a6D", // WETH-GOHM
-        baseToken: underlying(assets, assetSymbols.WETH),
-        minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
-      },
-    ],
+    uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [],
     flashSwapFee: 25,
     uniswapV3OracleTokens: [
@@ -175,7 +167,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   //// ORACLES
   //// Uniswap Oracle
-  await deployUniswapOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
+  // await deployUniswapOracle({ run, ethers, getNamedAccounts, deployments, deployConfig });
 
   //// ChainLinkV2 Oracle
   await deployChainlinkOracle({

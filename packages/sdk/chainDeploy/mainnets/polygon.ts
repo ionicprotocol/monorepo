@@ -11,7 +11,6 @@ import {
   deployCurveLpOracle,
   deployDiaOracle,
   deployUniswapLpOracle,
-  deployUniswapOracle,
 } from "../helpers";
 import { deployFlywheelWithDynamicRewards } from "../helpers/dynamicFlywheels";
 import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
@@ -61,15 +60,7 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2RouterAddress: "0xa5E0829CaCEd8fFDD4De3c43696c57F7D7A678ff",
     uniswapV2FactoryAddress: "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32",
     uniswapV3FactoryAddress: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
-    uniswapOracleInitialDeployTokens: [
-      {
-        token: underlying(assets, assetSymbols.JRT),
-        pair: "0x17F54d87B54B0F4BDc2Eb1E24C99f72a49c417CF", // USDC-JRT
-        baseToken: underlying(assets, assetSymbols.USDC),
-        minPeriod: 1800,
-        deviationThreshold: "10000000000000000",
-      },
-    ],
+    uniswapOracleInitialDeployTokens: [],
     uniswapOracleLpTokens: [
       underlying(assets, assetSymbols["WMATIC-USDC"]),
       underlying(assets, assetSymbols["WMATIC-ETH"]),
@@ -483,13 +474,13 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
   ////
 
   //// Uniswap Oracle
-  await deployUniswapOracle({
-    run,
-    ethers,
-    getNamedAccounts,
-    deployments,
-    deployConfig,
-  });
+  // await deployUniswapOracle({
+  //   run,
+  //   ethers,
+  //   getNamedAccounts,
+  //   deployments,
+  //   deployConfig,
+  // });
 
   //// Uniswap LP Oracle
   await deployUniswapLpOracle({

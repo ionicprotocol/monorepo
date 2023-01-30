@@ -20,13 +20,15 @@ export const useCTokenData = (
           reserveFactorMantissa,
           interestRateModelAddress,
           { collateralFactorMantissa },
-          supplyCaps,
+          supplyCap,
+          borrowCap,
         ] = await Promise.all([
           cToken.callStatic.adminFeeMantissa(),
           cToken.callStatic.reserveFactorMantissa(),
           cToken.callStatic.interestRateModel(),
           comptroller.callStatic.markets(cTokenAddress),
           comptroller.callStatic.supplyCaps(cTokenAddress),
+          comptroller.callStatic.borrowCaps(cTokenAddress),
         ]);
 
         return {
@@ -34,7 +36,8 @@ export const useCTokenData = (
           adminFeeMantissa,
           collateralFactorMantissa,
           interestRateModelAddress,
-          supplyCaps,
+          supplyCap,
+          borrowCap,
         };
       } else {
         return null;

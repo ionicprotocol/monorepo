@@ -62573,7 +62573,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2": {
-      "address": "0x4A1eab0473FE8465d5913A83a25aa062d8e564EF",
+      "address": "0x7A9Bd621067aC42327d93Ea9C3219E23BF4dB35A",
       "abi": [
         {
           "anonymous": false,
@@ -62709,7 +62709,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Factory": {
-      "address": "0x376bF93039664590Ee2E4A30794D15969d5eDC8C",
+      "address": "0xe8AbB29778D3f707CcbA10f43160B1bA3e471587",
       "abi": [
         {
           "inputs": [
@@ -62822,7 +62822,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Resolver": {
-      "address": "0x1dDb4BaD89736e230c27aBb57C29a55B16EFbF03",
+      "address": "0x1cCb35F33096a116D498f2745aef1303B5450363",
       "abi": [
         {
           "inputs": [
@@ -63083,7 +63083,7 @@
       ]
     },
     "UniswapTwapPriceOracleV2Root": {
-      "address": "0x7645f0A9F814286857E937cB1b3fa9659B03385b",
+      "address": "0x58d7840319ab12fFE1f4A43741F6ad30288DD3Ad",
       "abi": [
         {
           "inputs": [

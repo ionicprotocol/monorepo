@@ -32,6 +32,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import {
   ADMIN_FEE_TOOLTIP,
+  ASSET_BORROWED_TOOLTIP,
   ASSET_SUPPLIED_TOOLTIP,
   LOAN_TO_VALUE_TOOLTIP,
   MIDAS_SECURITY_DOCS_URL,
@@ -44,6 +45,7 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIRM } from '@ui/hooks/fuse/useIRM';
 import { useOracle } from '@ui/hooks/fuse/useOracle';
 import { useStrategyRating } from '@ui/hooks/fuse/useStrategyRating';
+import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useChartData } from '@ui/hooks/useChartData';
 import { useColors } from '@ui/hooks/useColors';
 import { usePerformanceFee } from '@ui/hooks/usePerformanceFee';
@@ -107,6 +109,12 @@ export const AdditionalInfo = ({
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
   const { data: supplyCaps } = useSupplyCap(
+    comptrollerAddress,
+    asset.cToken,
+    asset.underlyingPrice,
+    poolChainId
+  );
+  const { data: borrowCaps } = useBorrowCap(
     comptrollerAddress,
     asset.cToken,
     asset.underlyingPrice,
@@ -751,8 +759,14 @@ export const AdditionalInfo = ({
                 />
                 <CaptionedStat
                   stat={asset.isBorrowPaused ? '-' : midUsdFormatter(asset.totalBorrowFiat)}
+                  secondStat={
+                    !asset.isBorrowPaused && borrowCaps
+                      ? midUsdFormatter(borrowCaps.usdCap)
+                      : undefined
+                  }
                   caption={'Asset Borrowed'}
                   crossAxisAlignment="center"
+                  tooltip={borrowCaps ? ASSET_BORROWED_TOOLTIP : undefined}
                 />
                 <CaptionedStat
                   stat={asset.isBorrowPaused ? '-' : asset.utilization.toFixed(0) + '%'}
