@@ -329,9 +329,9 @@ export const RepayModal = ({
               />
             ) : (
               <>
-                <HStack width="100%" p={4} justifyContent="center">
+                <HStack width="100%" my={4} justifyContent="center">
                   <Text variant="title">Repay</Text>
-                  <Box height="36px" width="36px" mx={3}>
+                  <Box height="36px" width="36px" mx={2}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
                   <EllipsisText

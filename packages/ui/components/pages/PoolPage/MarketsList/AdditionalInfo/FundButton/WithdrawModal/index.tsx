@@ -217,9 +217,9 @@ export const WithdrawModal = ({
               />
             ) : (
               <>
-                <HStack width="100%" m={4} justifyContent="center">
+                <HStack width="100%" my={4} justifyContent="center">
                   <Text variant="title">Withdraw</Text>
-                  <Box height="36px" width="36px" mx={3}>
+                  <Box height="36px" width="36px" mx={2}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
                   <EllipsisText
@@ -255,7 +255,7 @@ export const WithdrawModal = ({
                     comptrollerAddress={comptrollerAddress}
                   />
                   <Button
-                    id="confirmFund"
+                    id="confirmWithdraw"
                     width="100%"
                     onClick={onConfirm}
                     isDisabled={!amountIsValid}
