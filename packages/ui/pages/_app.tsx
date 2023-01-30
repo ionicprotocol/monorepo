@@ -29,6 +29,14 @@ function MidasDapp({ Component, pageProps }: AppProps) {
             <MultiMidasProvider>
               <Layout>
                 <Component {...pageProps} />
+                <button
+                  type="button"
+                  onClick={() => {
+                    throw new Error('Sentry Frontend Error');
+                  }}
+                >
+                  Throw error
+                </button>
               </Layout>
             </MultiMidasProvider>
             {config.isDevelopment && <ReactQueryDevtools initialIsOpen={false} />}

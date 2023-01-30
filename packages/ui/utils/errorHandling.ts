@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { CreateToastFnReturn } from '@chakra-ui/react';
+import * as Sentry from '@sentry/nextjs';
 
 export const handleGenericError = (e: any, errorToast?: CreateToastFnReturn) => {
   console.error(e);
@@ -11,6 +12,8 @@ export const handleGenericError = (e: any, errorToast?: CreateToastFnReturn) => 
   } else {
     message = (e as { message: string }).message || JSON.stringify(e);
   }
+
+  Sentry.captureException(e);
 
   if (errorToast) {
     if (e.code === 'ACTION_REJECTED') {
