@@ -38,13 +38,6 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0x68A384D826D3678f78BB9FB1533c7E9577dACc0E",
     uniswapOracleInitialDeployTokens: [
       {
-        token: underlying(assets, assetSymbols.CELR),
-        baseToken: underlying(assets, assetSymbols.WGLMR),
-        pair: underlying(assets, assetSymbols["CELR-GLMR"]), // CELR/WGLMR
-        minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
-      },
-      {
         token: underlying(assets, assetSymbols.STELLA),
         baseToken: underlying(assets, assetSymbols.WGLMR),
         pair: underlying(assets, assetSymbols["STELLA-GLMR"]), // STELLA/WGLMR
@@ -56,7 +49,7 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: underlying(assets, assetSymbols.WGLMR),
         pair: underlying(assets, assetSymbols["LDO-GLMR"]),
         minPeriod: 1800,
-        deviationThreshold: "10000000000000000", // 1%
+        deviationThreshold: "50000000000000000", // 1%
       },
     ],
     uniswapOracleLpTokens: [
