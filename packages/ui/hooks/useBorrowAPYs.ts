@@ -21,6 +21,6 @@ export const useBorrowAPYs = (assets: MarketData[], chainId?: number) => {
     }
 
     return result;
-  }, [assets]);
+  }, [assets, chainId, sdk]);
   return { data };
 };

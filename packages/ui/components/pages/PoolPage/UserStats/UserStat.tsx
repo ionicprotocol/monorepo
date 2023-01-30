@@ -1,12 +1,12 @@
 import {
+  Stat as ChakraStat,
+  StatLabel as ChakraStatLabel,
+  StatNumber as ChakraStatNumber,
   Hide,
   HStack,
   Skeleton,
-  Stat as ChakraStat,
   StatHelpText,
-  StatLabel as ChakraStatLabel,
   StatLabelProps,
-  StatNumber as ChakraStatNumber,
   StatNumberProps,
   StatProps,
 } from '@chakra-ui/react';
