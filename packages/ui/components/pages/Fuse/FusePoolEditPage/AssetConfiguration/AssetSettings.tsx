@@ -440,7 +440,9 @@ export const AssetSettings = ({
                     <Text size="md" width="max-content">
                       Supply Cap
                     </Text>
-                    <SimpleTooltip label={'It shows the market supply caps.'}>
+                    <SimpleTooltip
+                      label={'Total token amount which is allowed to be supplied to this market'}
+                    >
                       <InfoOutlineIcon ml={1} />
                     </SimpleTooltip>
                   </HStack>
@@ -548,7 +550,9 @@ export const AssetSettings = ({
                     <Text size="md" width="max-content">
                       Borrow Cap
                     </Text>
-                    <SimpleTooltip label={'It shows the market borrow caps.'}>
+                    <SimpleTooltip
+                      label={'Total token amount which is allowed to be borrowed from this market'}
+                    >
                       <InfoOutlineIcon ml={1} />
                     </SimpleTooltip>
                   </HStack>
