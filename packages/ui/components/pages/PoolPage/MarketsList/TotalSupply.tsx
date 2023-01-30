@@ -30,7 +30,7 @@ export const TotalSupply = ({
         symbol: tokenData?.symbol || '',
         decimals: asset.underlyingDecimals.toNumber(),
       }}
-      supplyCaps={supplyCaps}
+      cap={supplyCaps}
     />
   );
 };

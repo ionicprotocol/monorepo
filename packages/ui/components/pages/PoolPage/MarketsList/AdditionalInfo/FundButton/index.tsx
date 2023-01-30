@@ -59,6 +59,7 @@ export const FundButton = ({
           isOpen={isModalOpen}
           asset={asset}
           assets={assets}
+          comptrollerAddress={comptrollerAddress}
           onClose={closeModal}
           poolChainId={poolChainId}
         />
@@ -71,6 +72,7 @@ export const FundButton = ({
           onClose={closeModal}
           poolChainId={poolChainId}
           borrowBalanceFiat={borrowBalanceFiat}
+          comptrollerAddress={comptrollerAddress}
         />
       )}
       {mode === FundOperationMode.REPAY && (
@@ -78,6 +80,7 @@ export const FundButton = ({
           isOpen={isModalOpen}
           asset={asset}
           assets={assets}
+          comptrollerAddress={comptrollerAddress}
           onClose={closeModal}
           poolChainId={poolChainId}
         />
