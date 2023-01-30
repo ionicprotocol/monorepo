@@ -1,10 +1,12 @@
 import {
-  Stat as ChakraStat,
-  StatLabel as ChakraStatLabel,
-  StatNumber as ChakraStatNumber,
+  Hide,
+  HStack,
   Skeleton,
+  Stat as ChakraStat,
   StatHelpText,
+  StatLabel as ChakraStatLabel,
   StatLabelProps,
+  StatNumber as ChakraStatNumber,
   StatNumberProps,
   StatProps,
 } from '@chakra-ui/react';
@@ -49,12 +51,23 @@ export const UserStat = ({
   value?: string;
   secondValue?: string;
   label: string;
-}) => (
-  <Stat borderRadius={12} px={6} py={2}>
-    <StatLabel>{label}</StatLabel>
+}) => {
+  return (
+    <Stat borderRadius={12} px={6} py={2}>
+      <StatLabel>{label}</StatLabel>
 
-    <StatNumber fontWeight="bold">{value ? value : <Skeleton mt="2">Num</Skeleton>}</StatNumber>
-    {secondValue && <StatHelpText opacity={0.4} m={0}>{`${secondValue} / year`}</StatHelpText>}
-    {/* {secondValue && <SecondStatNumber opacity={0.4}>{}</SecondStatNumber>} */}
-  </Stat>
-);
+      <Skeleton isLoaded={value ? true : false}>
+        <HStack alignItems={'center'}>
+          <StatNumber fontWeight="bold">{value || '0.00%'}</StatNumber>
+          {secondValue && (
+            <Hide below="lg">
+              <StatHelpText opacity={0.4} m={0}>{`${secondValue} / year`}</StatHelpText>
+            </Hide>
+          )}
+        </HStack>
+      </Skeleton>
+
+      {/* // {secondValue && <SecondStatNumber opacity={0.4}>{}</SecondStatNumber>} */}
+    </Stat>
+  );
+};
