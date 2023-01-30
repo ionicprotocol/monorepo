@@ -3,6 +3,7 @@ import { chainIdToConfig } from '@midas-capital/chains';
 import { MidasSdk } from '@midas-capital/sdk';
 import Security from '@midas-capital/security';
 import { SupportedChains } from '@midas-capital/types';
+import * as Sentry from '@sentry/browser';
 import { FetchSignerResult, Signer } from '@wagmi/core';
 import {
   createContext,
@@ -120,6 +121,10 @@ export const MultiMidasProvider = ({ children }: MultiMidasProviderProps = { chi
   }, [signer, sdks]);
 
   useEffect(() => {
+    if (wagmiAddress) {
+      Sentry.setUser({ id: wagmiAddress });
+    }
+
     setAddress(wagmiAddress);
   }, [wagmiAddress]);
 
