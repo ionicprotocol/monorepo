@@ -92,6 +92,8 @@ const JSEK = "0x197E5d6CcfF265AC3E303a34Db360ee1429f5d1A";
 const JKRW = "0xa22f6bc96f13bcC84dF36109c973d3c0505a067E";
 const JPHP = "0x486880FB16408b47f928F472f57beC55AC6089d1";
 const NZDS = "0xeaFE31Cd9e8E01C8f0073A2C974f728Fb80e9DcE";
+const BRZ = "0x491a4eB4f1FC3BfF8E1d2FC856a6A46663aD556f";
+const jBRL = "0xf2f77FE7b8e66571E0fca7104c4d670BF1C8d722";
 const XSGD = "0x769434dcA303597C8fc4997Bf3DAB233e961Eda2";
 
 // arrakis vault
@@ -713,6 +715,23 @@ export const assets: SupportedAsset[] = [
     oracle: OracleTypes.ChainlinkPriceOracleV2,
     extraDocs: `<p><b>How to acquire this token</b><p/><br />
     <p>Learn more on how to acquire NZDS at <a href="https://www.straitsx.com/sg/xsgd" target="_blank" style="color: #BCAC83; cursor="pointer">Stratis X</a></p>`,
+  },
+  {
+    symbol: assetSymbols.BRZ,
+    underlying: BRZ,
+    name: "BRZ Token",
+    decimals: 4,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: `<p><b>How to acquire this token</b><p/><br />
+    <p>You can acquire BRZ tokens at <a href="https://www.brztoken.io" target="_blank" style="color: #BCAC83; cursor="pointer">https://www.brztoken.io</> or other centralised exchanges</p>`,
+  },
+  {
+    symbol: assetSymbols.jBRL,
+    underlying: jBRL,
+    name: "Jarvis JBRL Token",
+    decimals: 18,
+    oracle: OracleTypes.ChainlinkPriceOracleV2,
+    extraDocs: jarvisDocs("v2"),
   },
   // Arrakis Vaults
   {
