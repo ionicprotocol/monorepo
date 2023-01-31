@@ -38,7 +38,7 @@ BSC = "true"
 MOONBEAM = "true"
 POLYGON = "true"
 ARBITRUM = "false"
-FANTOM = "false"
+FANTOM = "true"
 
 [functions]
 directory = "./packages/functions/dist/functions/src/functions"
