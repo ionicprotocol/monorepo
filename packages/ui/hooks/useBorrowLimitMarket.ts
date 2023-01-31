@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
+import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useCgId } from '@ui/hooks/useChainConfig';
 import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { MarketData } from '@ui/types/TokensDataMap';
@@ -10,10 +11,16 @@ export const useBorrowLimitMarket = (
   asset: MarketData,
   assets: MarketData[],
   poolChainId: number,
+  comptrollerAddress: string,
   options?: { ignoreIsEnabledCheckFor?: string }
 ) => {
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: borrowCaps } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
 
   return useQuery(
     [
@@ -23,6 +30,7 @@ export const useBorrowLimitMarket = (
       assets.sort((a, b) => a.cToken.localeCompare(b.cToken)),
       options?.ignoreIsEnabledCheckFor,
       usdPrice,
+      borrowCaps,
     ],
     async () => {
       if (!usdPrice) return null;
@@ -43,7 +51,7 @@ export const useBorrowLimitMarket = (
         }
       }
 
-      return _maxBorrow;
+      return borrowCaps && borrowCaps.usdCap < _maxBorrow ? borrowCaps.usdCap : _maxBorrow;
     },
     { cacheTime: Infinity, staleTime: Infinity, enabled: !!usdPrice }
   );

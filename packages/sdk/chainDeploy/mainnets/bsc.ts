@@ -51,13 +51,6 @@ export const deployConfig: ChainDeployConfig = {
     uniswapV2FactoryAddress: "0xcA143Ce32Fe78f1f7019d7d551a6402fC5350c73",
     uniswapOracleInitialDeployTokens: [
       {
-        token: underlying(assets, assetSymbols.BOMB),
-        baseToken: underlying(assets, assetSymbols.BTCB),
-        pair: underlying(assets, assetSymbols["BTCB-BOMB"]),
-        minPeriod: 1800,
-        deviationThreshold: "50000000000000000", // 5%
-      },
-      {
         token: underlying(assets, assetSymbols.DDD),
         pair: "0xc19956eCA8A3333671490EF6D6d4329Df049dddD", // WBNB-DDD
         baseToken: wbnb,
@@ -84,13 +77,6 @@ export const deployConfig: ChainDeployConfig = {
         baseToken: underlying(assets, assetSymbols.BUSD),
         minPeriod: 1800,
         deviationThreshold: "50000000000000000",
-      },
-      {
-        token: underlying(assets, assetSymbols.HAY),
-        pair: "0xb84348b32E5C83856c6e31C227639cd678163719", // WBNB-HAY
-        baseToken: underlying(assets, assetSymbols.WBNB),
-        minPeriod: 1800,
-        deviationThreshold: "10000000000000000",
       },
       {
         token: underlying(assets, assetSymbols.HAY),
@@ -524,7 +510,7 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
       deployConfig.blocksPerYear,
       "5000000000000000",
       "3000000000000000000",
-      "850000000000000000",
+      "800000000000000000",
       3,
       "0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eBa",
       "0x52F24a5e03aee338Da5fd9Df68D2b6FAe1178827",

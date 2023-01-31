@@ -22,7 +22,7 @@ export const BorrowApy = ({
         </Text>
       ) : (
         <Text color={borrowApyColor} fontWeight="medium" size="sm" variant="tnumber">
-          {(borrowApyPerAsset[asset.cToken] * 100).toFixed(3)}%
+          {(borrowApyPerAsset[asset.cToken] * 100).toFixed(2)}%
         </Text>
       )}
     </VStack>

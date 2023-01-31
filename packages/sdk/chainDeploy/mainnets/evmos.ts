@@ -204,6 +204,17 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     saddlePools,
   });
 
+  //// Saddle Lp token liquidator
+  const saddleLpTokenLiquidator = await deployments.deploy("SaddleLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (saddleLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(saddleLpTokenLiquidator.transactionHash);
+  console.log("SaddleLpTokenLiquidator: ", saddleLpTokenLiquidator.address);
+
   // Plugins & Rewards
   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({
     ethers,

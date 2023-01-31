@@ -1,9 +1,25 @@
 import { fantom } from "@midas-capital/chains";
 import { assetSymbols, underlying } from "@midas-capital/types";
-import { ethers } from "ethers";
+import { constants, ethers } from "ethers";
 
-import { ChainDeployConfig, deployAnkrCertificateTokenPriceOracle, deployChainlinkOracle } from "../helpers";
-import { ChainDeployFnParams, ChainlinkAsset, ChainlinkFeedBaseCurrency } from "../helpers/types";
+import {
+  ChainDeployConfig,
+  deployAnkrCertificateTokenPriceOracle,
+  deployChainlinkOracle,
+  deployCurveLpOracle,
+  deployCurveV2LpOracle,
+  deployDiaOracle,
+} from "../helpers";
+import { deployBalancerLpPriceOracle } from "../helpers/oracles/balancerLp";
+import {
+  BalancerLpAsset,
+  ChainDeployFnParams,
+  ChainlinkAsset,
+  ChainlinkFeedBaseCurrency,
+  CurvePoolConfig,
+  CurveV2PoolConfig,
+  DiaAsset,
+} from "../helpers/types";
 
 const assets = fantom.assets;
 
@@ -55,6 +71,54 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x827863222c9C603960dE6FF2c0dD58D457Dcc363",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.DAI,
+    aggregator: "0x91d5DEFAFfE2854C7D02F50c80FA1fdc8A721e52",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+];
+
+const diaAssets: DiaAsset[] = [
+  {
+    symbol: assetSymbols.MIMO,
+    underlying: underlying(assets, assetSymbols.MIMO),
+    feed: "0xdb547398BA8CBB81E91bC290A70c3588e0d039F7",
+    key: "MIMO/USD",
+  },
+  {
+    symbol: assetSymbols.PAR,
+    underlying: underlying(assets, assetSymbols.PAR),
+    feed: "0xdb547398BA8CBB81E91bC290A70c3588e0d039F7",
+    key: "PAR/USD",
+  },
+];
+
+const balancerLpAssets: BalancerLpAsset[] = [
+  {
+    lpTokenAddress: underlying(assets, assetSymbols.MIMO_PAR_75_25),
+  },
+];
+
+// https://curve.fi/#/fantom
+const curveV2Pools: CurveV2PoolConfig[] = [
+  {
+    lpToken: underlying(assets, assetSymbols.PAR_USDC_CURVE),
+    pool: "0xC0B78F2e96De56d08C7608697680e935FE47295B",
+  },
+  {
+    lpToken: underlying(assets, assetSymbols.triCrypto),
+    pool: "0x3a1659Ddcf2339Be3aeA159cA010979FB49155FF",
+  },
+];
+
+// https://curve.fi/#/fantom
+const curvePools: CurvePoolConfig[] = [
+  {
+    // 2Pool
+    lpToken: underlying(assets, assetSymbols["2pool"]),
+    pool: "0x27E611FD27b276ACbd5Ffd632E5eAEBEC9761E40",
+    underlyings: [underlying(assets, assetSymbols.DAI), underlying(assets, assetSymbols.USDC)],
+  },
 ];
 
 export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: ChainDeployFnParams): Promise<void> => {
@@ -68,6 +132,47 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
     deployConfig,
     assets: assets,
     chainlinkAssets,
+  });
+
+  //// Dia Price Oracle
+  await deployDiaOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    diaAssets,
+    deployConfig,
+    diaNativeFeed: { feed: constants.AddressZero, key: "" },
+  });
+
+  //// Curve LP Oracle
+  await deployCurveLpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curvePools,
+  });
+
+  //// Curve V2 LP Oracle
+  await deployCurveV2LpOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    curveV2Pools,
+  });
+
+  /// Balancer LP Price Oracle
+  await deployBalancerLpPriceOracle({
+    run,
+    ethers,
+    getNamedAccounts,
+    deployments,
+    deployConfig,
+    balancerLpAssets,
   });
 
   //// AnkrFTMc Oracle
@@ -99,7 +204,38 @@ export const deploy = async ({ run, ethers, getNamedAccounts, deployments }: Cha
 
   // Liquidators
 
-  ////
+  //// CurveLPLiquidator
+  const curveLpTokenLiquidatorNoRegistry = await deployments.deploy("CurveLpTokenLiquidatorNoRegistry", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveLpTokenLiquidatorNoRegistry.transactionHash)
+    await ethers.provider.waitForTransaction(curveLpTokenLiquidatorNoRegistry.transactionHash);
+  console.log("CurveLpTokenLiquidatorNoRegistry: ", curveLpTokenLiquidatorNoRegistry.address);
+
+  // curve swap underlying tokens
+  const curveSwapLiquidator = await deployments.deploy("CurveSwapLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (curveSwapLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(curveSwapLiquidator.transactionHash);
+  console.log("CurveSwapLiquidator: ", curveSwapLiquidator.address);
+
+  //// Balancer Lp token liquidator
+  const balancerLpTokenLiquidator = await deployments.deploy("BalancerLpTokenLiquidator", {
+    from: deployer,
+    args: [],
+    log: true,
+    waitConfirmations: 1,
+  });
+  if (balancerLpTokenLiquidator.transactionHash)
+    await ethers.provider.waitForTransaction(balancerLpTokenLiquidator.transactionHash);
+  console.log("BalancerLpTokenLiquidator: ", balancerLpTokenLiquidator.address);
 
   // Plugins & Rewards
   //   const dynamicFlywheels = await deployFlywheelWithDynamicRewards({

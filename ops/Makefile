@@ -103,7 +103,7 @@ liquidator-smoke-test:
 				-e WEB3_HTTP_PROVIDER_URL="https://rpc.ankr.com/bsc" \
 				-e NODE_ENV="development" \
 				-e TARGET_CHAIN_ID=56 \
-				ghcr.io/midas-protocol/liquidator:${IMAGE_TAG} build/test/run.js
+				ghcr.io/midas-protocol/liquidator:${IMAGE_TAG} packages/bots/liquidator/build/test/run.js
 
 
 feed-verifier-smoke-test:

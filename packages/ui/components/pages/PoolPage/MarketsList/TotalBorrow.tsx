@@ -1,11 +1,26 @@
 import { Text, VStack } from '@chakra-ui/react';
 
 import { BalanceCell } from '@ui/components/shared/BalanceCell';
+import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
-export const TotalBorrow = ({ asset, poolChainId }: { asset: MarketData; poolChainId: number }) => {
+export const TotalBorrow = ({
+  asset,
+  comptrollerAddress,
+  poolChainId,
+}: {
+  asset: MarketData;
+  comptrollerAddress: string;
+  poolChainId: number;
+}) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
+
+  const { data: borrowCap } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
 
   return (
     <>
@@ -25,6 +40,7 @@ export const TotalBorrow = ({ asset, poolChainId }: { asset: MarketData; poolCha
             symbol: tokenData?.symbol || '',
             decimals: asset.underlyingDecimals.toNumber(),
           }}
+          cap={borrowCap}
         />
       )}
     </>
