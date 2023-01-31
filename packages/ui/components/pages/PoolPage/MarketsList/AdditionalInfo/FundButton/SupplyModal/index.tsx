@@ -380,9 +380,9 @@ export const SupplyModal = ({
               />
             ) : (
               <>
-                <HStack width="100%" p={4} justifyContent="center">
+                <HStack width="100%" my={4} justifyContent="center">
                   <Text variant="title">Supply</Text>
-                  <Box height="36px" width="36px" mx={3}>
+                  <Box height="36px" width="36px" mx={2}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
                   <EllipsisText
@@ -410,6 +410,7 @@ export const SupplyModal = ({
                       optionToWrap={optionToWrap}
                       poolChainId={poolChainId}
                       setAmount={setAmount}
+                      comptrollerAddress={comptrollerAddress}
                     />
 
                     <Balance asset={asset} />
@@ -422,6 +423,7 @@ export const SupplyModal = ({
                     asset={asset}
                     enableAsCollateral={enableAsCollateral}
                     poolChainId={poolChainId}
+                    comptrollerAddress={comptrollerAddress}
                   />
                   {!asset.membership && (
                     <EnableCollateral
