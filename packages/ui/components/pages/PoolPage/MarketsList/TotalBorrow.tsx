@@ -16,12 +16,11 @@ export const TotalBorrow = ({
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
 
-  const { data: borrowCap } = useBorrowCap(
-    comptrollerAddress,
-    asset.cToken,
-    asset.underlyingPrice,
-    poolChainId
-  );
+  const { data: borrowCap } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
 
   return (
     <>

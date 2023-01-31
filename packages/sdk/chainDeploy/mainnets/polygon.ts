@@ -323,6 +323,16 @@ const chainlinkAssets: ChainlinkAsset[] = [
     aggregator: "0x218231089Bebb2A31970c3b77E96eCfb3BA006D1",
     feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
   },
+  {
+    symbol: assetSymbols.jBRL,
+    aggregator: "0xB90DA3ff54C3ED09115abf6FbA0Ff4645586af2c",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
+  {
+    symbol: assetSymbols.BRZ,
+    aggregator: "0xB90DA3ff54C3ED09115abf6FbA0Ff4645586af2c",
+    feedBaseCurrency: ChainlinkFeedBaseCurrency.USD,
+  },
 ];
 
 // https://polygon.curve.fi/

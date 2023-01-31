@@ -53,7 +53,7 @@ export const SupplyApy = ({ asset, rewards, poolChainId }: SupplyApyProps) => {
       if (sdk) {
         const contract = getAnkrBNBContract(sdk);
 
-        const apr = await contract.callStatic.averagePercentageRate(aprDays);
+        const apr = await contract.callStatic.averagePercentageRate(asset.underlyingToken, aprDays);
         setAnkrBNBApr(utils.formatUnits(apr));
       }
     };
