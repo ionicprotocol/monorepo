@@ -88,8 +88,18 @@ export const WithdrawModal = ({
         )) as BigNumber;
 
         return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, errorToast);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          comptroller: comptrollerAddress,
+          token: asset.cToken,
+        };
+        const sentryInfo = {
+          contextName: 'Fetching max withdraw amount',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
+
         return false;
       }
     },
@@ -166,9 +176,20 @@ export const WithdrawModal = ({
           description: 'Successfully borrowed!',
         });
       }
-    } catch (e) {
+    } catch (error) {
       setFailedStep(1);
-      handleGenericError(e, errorToast);
+
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Withdrawing',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsWithdrawing(false);
     }
@@ -238,7 +259,12 @@ export const WithdrawModal = ({
                   width="100%"
                 >
                   <Column gap={1} width="100%">
-                    <AmountInput asset={asset} poolChainId={poolChainId} setAmount={setAmount} />
+                    <AmountInput
+                      asset={asset}
+                      poolChainId={poolChainId}
+                      setAmount={setAmount}
+                      comptrollerAddress={comptrollerAddress}
+                    />
 
                     <Balance asset={asset} />
                   </Column>

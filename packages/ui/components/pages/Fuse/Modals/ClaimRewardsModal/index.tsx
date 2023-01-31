@@ -207,53 +207,57 @@ const ClaimRewardsModal = ({
       setSteps(_steps);
       setAssetPerRewardToken(_assetPerRewardToken);
 
-      try {
-        setIsConfirmed(true);
-        setClaimingRewardTokens(rewards.map((reward) => reward.rewardToken));
-        const fwLensRouter = currentSdk.contracts.MidasFlywheelLensRouter;
+      setIsConfirmed(true);
+      setClaimingRewardTokens(rewards.map((reward) => reward.rewardToken));
+      const fwLensRouter = currentSdk.contracts.MidasFlywheelLensRouter;
 
-        setFailedStep(0);
+      setFailedStep(0);
 
-        for (const [index, reward] of rewards.entries()) {
-          setActiveStep(index + 1);
-          const markets = reward.rewards.map((reward) => reward.market);
+      for (const [index, reward] of rewards.entries()) {
+        setActiveStep(index + 1);
+        const markets = reward.rewards.map((reward) => reward.market);
 
-          try {
-            const tx = await fwLensRouter
-              .connect(signer)
-              .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
+        try {
+          const tx = await fwLensRouter
+            .connect(signer)
+            .getUnclaimedRewardsByMarkets(address, markets, [reward.flywheel], [true]);
 
-            addRecentTransaction({
-              hash: tx.hash,
-              description: `${_assetPerRewardToken[reward.rewardToken]?.symbol} Reward Claim`,
-            });
+          addRecentTransaction({
+            hash: tx.hash,
+            description: `${_assetPerRewardToken[reward.rewardToken]?.symbol} Reward Claim`,
+          });
 
-            _steps[index] = {
-              ..._steps[index],
-              txHash: tx.hash,
-            };
-            setSteps([..._steps]);
+          _steps[index] = {
+            ..._steps[index],
+            txHash: tx.hash,
+          };
+          setSteps([..._steps]);
 
-            await tx.wait();
+          await tx.wait();
 
-            _steps[index] = {
-              ..._steps[index],
-              done: true,
-              txHash: tx.hash,
-            };
-            setSteps([..._steps]);
-          } catch (err) {
-            setFailedStep(index + 1);
-            throw err;
-          }
+          _steps[index] = {
+            ..._steps[index],
+            done: true,
+            txHash: tx.hash,
+          };
+          setSteps([..._steps]);
+        } catch (error) {
+          const sentryProperties = {
+            chainId: currentSdk.chainId,
+            flywheel: reward.flywheel,
+            markets: markets.toString(),
+          };
+          const sentryInfo = {
+            contextName: 'Claiming rewards',
+            properties: sentryProperties,
+          };
+          handleGenericError({ error, toast: errorToast, sentryInfo });
+          setFailedStep(index + 1);
         }
-
-        await refetch();
-      } catch (e) {
-        handleGenericError(e, errorToast);
-      } finally {
-        setClaimingRewardTokens([]);
       }
+      await refetch();
+
+      setClaimingRewardTokens([]);
     },
     [address, currentSdk, signer, errorToast, refetch, addRecentTransaction]
   );

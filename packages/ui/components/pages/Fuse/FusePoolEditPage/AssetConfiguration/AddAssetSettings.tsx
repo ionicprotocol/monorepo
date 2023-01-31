@@ -161,8 +161,18 @@ export const AddAssetSettings = ({
       });
 
       if (onSuccess) onSuccess();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        underlying: tokenData.address,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        symbol: tokenData.symbol,
+      };
+      const sentryInfo = {
+        contextName: 'Adding asset',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsDeploying(false);
     }

@@ -119,8 +119,15 @@ export const CreatePoolConfiguration = () => {
       });
 
       await router.push(`/${currentChain.id}/pool/${poolId}`);
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+      };
+      const sentryInfo = {
+        contextName: 'Creating pool',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
       setIsCreating(false);
     }
   };

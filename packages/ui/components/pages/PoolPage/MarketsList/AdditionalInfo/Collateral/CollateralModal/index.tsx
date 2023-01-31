@@ -88,67 +88,70 @@ export const CollateralModal = ({
     const _steps = [...steps];
     try {
       setIsLoading(true);
-      setActiveStep(0);
       setFailedStep(0);
+      setActiveStep(1);
 
-      try {
-        setActiveStep(1);
-        const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
+      const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
 
-        let call: ContractTransaction;
+      let call: ContractTransaction;
 
-        if (asset.membership) {
-          const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
+      if (asset.membership) {
+        const exitCode = await comptroller.callStatic.exitMarket(asset.cToken);
 
-          if (!exitCode.eq(0)) {
-            throw { message: errorCodeToMessage(exitCode.toNumber()) };
-          }
-          call = await comptroller.exitMarket(asset.cToken);
-        } else {
-          call = await comptroller.enterMarkets([asset.cToken]);
+        if (!exitCode.eq(0)) {
+          throw { message: errorCodeToMessage(exitCode.toNumber()) };
         }
-
-        if (!call) {
-          if (asset.membership) {
-            errorToast({
-              title: 'Error! Code: ' + call,
-              description:
-                'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
-            });
-          } else {
-            errorToast({
-              title: 'Error! Code: ' + call,
-              description: 'You cannot enable this asset as collateral at this time.',
-            });
-          }
-
-          return;
-        }
-
-        addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
-        _steps[0] = {
-          ..._steps[0],
-          txHash: call.hash,
-        };
-        setConfirmedSteps([..._steps]);
-        await call.wait();
-        await queryClient.refetchQueries();
-
-        _steps[0] = {
-          ..._steps[0],
-          done: true,
-          txHash: call.hash,
-        };
-        setConfirmedSteps([..._steps]);
-      } catch (error) {
-        setFailedStep(1);
-        throw error;
+        call = await comptroller.exitMarket(asset.cToken);
+      } else {
+        call = await comptroller.enterMarkets([asset.cToken]);
       }
+
+      if (!call) {
+        if (asset.membership) {
+          errorToast({
+            title: 'Error! Code: ' + call,
+            description:
+              'You cannot disable this asset as collateral as you would not have enough collateral posted to keep your borrow. Try adding more collateral of another type or paying back some of your debt.',
+          });
+        } else {
+          errorToast({
+            title: 'Error! Code: ' + call,
+            description: 'You cannot enable this asset as collateral at this time.',
+          });
+        }
+
+        return;
+      }
+
+      addRecentTransaction({ hash: call.hash, description: 'Toggle collateral' });
+      _steps[0] = {
+        ..._steps[0],
+        txHash: call.hash,
+      };
+      setConfirmedSteps([..._steps]);
+      await call.wait();
+      await queryClient.refetchQueries();
+
+      _steps[0] = {
+        ..._steps[0],
+        done: true,
+        txHash: call.hash,
+      };
+      setConfirmedSteps([..._steps]);
     } catch (error) {
-      handleGenericError(error, errorToast);
-    } finally {
-      setIsLoading(false);
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: asset.cToken,
+      };
+      const sentryInfo = {
+        contextName: 'Toggle collateral',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+      setFailedStep(1);
     }
+
+    setIsLoading(false);
   };
 
   const onModalClose = async () => {

@@ -112,8 +112,17 @@ export const RepayModal = ({
             )) as BigNumber);
 
         return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, errorToast);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          comptroller: comptrollerAddress,
+          token: asset.cToken,
+        };
+        const sentryInfo = {
+          contextName: 'Fetching max repay amount',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
         return false;
       }
     },
@@ -144,135 +153,152 @@ export const RepayModal = ({
     setIsConfirmed(true);
     setConfirmedSteps([...steps]);
     const _steps = [...steps];
-    try {
-      setIsRepaying(true);
-      setActiveStep(0);
-      setFailedStep(0);
-      if (optionToWrap) {
-        try {
-          setActiveStep(1);
-          const WToken = getContract(
-            currentSdk.chainSpecificAddresses.W_TOKEN,
-            WETHAbi,
-            currentSdk.signer
-          );
-          const tx = await WToken.deposit({ from: address, value: amount });
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `Wrap ${nativeSymbol}`,
-          });
-          _steps[0] = {
-            ..._steps[0],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          await tx.wait();
-          _steps[0] = {
-            ..._steps[0],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            id: 'wrapped',
-            description: 'Successfully Wrapped!',
-          });
-        } catch (error) {
-          setFailedStep(1);
-          throw error;
-        }
-      }
-
+    setIsRepaying(true);
+    setActiveStep(0);
+    setFailedStep(0);
+    if (optionToWrap) {
       try {
-        setActiveStep(optionToWrap ? 2 : 1);
-        const token = currentSdk.getEIP20RewardTokenInstance(
-          asset.underlyingToken,
+        setActiveStep(1);
+        const WToken = getContract(
+          currentSdk.chainSpecificAddresses.W_TOKEN,
+          WETHAbi,
           currentSdk.signer
         );
-        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
-          amount
-        );
-
-        if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
-
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `Approve ${asset.underlyingSymbol}`,
-          });
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-
-          await tx.wait();
-
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            id: 'approved',
-            description: 'Successfully Approved!',
-          });
-        } else {
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            desc: 'Already approved!',
-            done: true,
-          };
-          setConfirmedSteps([..._steps]);
-        }
-      } catch (error) {
-        setFailedStep(optionToWrap ? 2 : 1);
-        throw error;
-      }
-
-      try {
-        setActiveStep(optionToWrap ? 3 : 2);
-        const isRepayingMax = amount.eq(asset.borrowBalance);
-        const resp = await currentSdk.repay(asset.cToken, isRepayingMax, amount);
-
-        if (resp.errorCode !== null) {
-          RepayError(resp.errorCode);
-        } else {
-          const tx = resp.tx;
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `${asset.underlyingSymbol} Token Repay`,
-          });
-          _steps[optionToWrap ? 2 : 1] = {
-            ..._steps[optionToWrap ? 2 : 1],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-
-          await tx.wait();
-          await queryClient.refetchQueries();
-
-          _steps[optionToWrap ? 2 : 1] = {
-            ..._steps[optionToWrap ? 2 : 1],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-        }
+        const tx = await WToken.deposit({ from: address, value: amount });
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `Wrap ${nativeSymbol}`,
+        });
+        _steps[0] = {
+          ..._steps[0],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        await tx.wait();
+        _steps[0] = {
+          ..._steps[0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
         successToast({
-          id: 'repaid',
-          description: 'Repaid!',
+          id: 'wrapped',
+          description: 'Successfully Wrapped!',
         });
       } catch (error) {
-        setFailedStep(optionToWrap ? 3 : 2);
+        setFailedStep(1);
         throw error;
       }
-    } catch (e) {
-      handleGenericError(e, errorToast);
-    } finally {
-      setIsRepaying(false);
     }
+
+    try {
+      setActiveStep(optionToWrap ? 2 : 1);
+      const token = currentSdk.getEIP20RewardTokenInstance(
+        asset.underlyingToken,
+        currentSdk.signer
+      );
+      const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+        amount
+      );
+
+      if (!hasApprovedEnough) {
+        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
+
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `Approve ${asset.underlyingSymbol}`,
+        });
+        _steps[optionToWrap ? 1 : 0] = {
+          ..._steps[optionToWrap ? 1 : 0],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+
+        await tx.wait();
+
+        _steps[optionToWrap ? 1 : 0] = {
+          ..._steps[optionToWrap ? 1 : 0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        successToast({
+          id: 'approved',
+          description: 'Successfully Approved!',
+        });
+      } else {
+        _steps[optionToWrap ? 1 : 0] = {
+          ..._steps[optionToWrap ? 1 : 0],
+          desc: 'Already approved!',
+          done: true,
+        };
+        setConfirmedSteps([..._steps]);
+      }
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+      };
+      const sentryInfo = {
+        contextName: 'Repay - Approving',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+
+      setFailedStep(optionToWrap ? 2 : 1);
+    }
+
+    try {
+      setActiveStep(optionToWrap ? 3 : 2);
+      const isRepayingMax = amount.eq(asset.borrowBalance);
+      const resp = await currentSdk.repay(asset.cToken, isRepayingMax, amount);
+
+      if (resp.errorCode !== null) {
+        RepayError(resp.errorCode);
+      } else {
+        const tx = resp.tx;
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `${asset.underlyingSymbol} Token Repay`,
+        });
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+
+        await tx.wait();
+        await queryClient.refetchQueries();
+
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+      }
+      successToast({
+        id: 'repaid',
+        description: 'Repaid!',
+      });
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Repaying',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+
+      setFailedStep(optionToWrap ? 3 : 2);
+    }
+
+    setIsRepaying(false);
   };
 
   useEffect(() => {
@@ -358,6 +384,7 @@ export const RepayModal = ({
                       optionToWrap={optionToWrap}
                       poolChainId={poolChainId}
                       setAmount={setAmount}
+                      comptrollerAddress={comptrollerAddress}
                     />
 
                     <Balance asset={asset} />

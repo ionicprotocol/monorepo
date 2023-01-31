@@ -7,9 +7,7 @@ import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { useErrorToast } from '@ui/hooks/useToast';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const AmountInput = ({
   asset,
@@ -23,7 +21,6 @@ export const AmountInput = ({
   updateAmount: (amount: string) => void;
 }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const errorToast = useErrorToast();
   const {
     data: { minBorrowAsset },
   } = useBorrowMinimum(asset, poolChainId);
@@ -31,17 +28,13 @@ export const AmountInput = ({
   const setToMin = () => {
     setIsLoading(true);
 
-    try {
-      if (minBorrowAsset) {
-        updateAmount(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals));
-      } else {
-        updateAmount('');
-      }
-    } catch (e) {
-      handleGenericError(e, errorToast);
-    } finally {
-      setIsLoading(false);
+    if (minBorrowAsset) {
+      updateAmount(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals));
+    } else {
+      updateAmount('');
     }
+
+    setIsLoading(false);
   };
 
   return (

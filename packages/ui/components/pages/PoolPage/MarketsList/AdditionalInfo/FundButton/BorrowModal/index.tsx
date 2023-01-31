@@ -170,8 +170,17 @@ export const BorrowModal = ({
         )) as BigNumber;
 
         return amount.lte(max) && amount.gte(minBorrowAsset);
-      } catch (e) {
-        handleGenericError(e, errorToast);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          token: asset.cToken,
+          comptroller: comptrollerAddress,
+        };
+        const sentryInfo = {
+          contextName: 'Fetching max borrow amount',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
 
         return false;
       }
@@ -241,9 +250,19 @@ export const BorrowModal = ({
           description: 'Successfully borrowed!',
         });
       }
-    } catch (e) {
+    } catch (error) {
       setFailedStep(1);
-      handleGenericError(e, errorToast);
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        token: asset.cToken,
+        comptroller: comptrollerAddress,
+        amount,
+      };
+      const sentryInfo = {
+        contextName: 'Borrowing',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsBorrowing(false);
     }

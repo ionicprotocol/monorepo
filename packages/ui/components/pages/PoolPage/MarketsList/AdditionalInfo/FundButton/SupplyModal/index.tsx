@@ -111,8 +111,17 @@ export const SupplyModal = ({
             )) as BigNumber);
 
         return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, errorToast);
+      } catch (error) {
+        const sentryProperties = {
+          chainId: currentSdk.chainId,
+          comptroller: comptrollerAddress,
+          token: asset.cToken,
+        };
+        const sentryInfo = {
+          contextName: 'Fetching max supply amount',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
         return false;
       }
     },
@@ -139,175 +148,195 @@ export const SupplyModal = ({
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
+
+    const sentryProperties = {
+      token: asset.cToken,
+      chainId: currentSdk.chainId,
+      comptroller: comptrollerAddress,
+    };
+
     setIsConfirmed(true);
     setConfirmedSteps([...steps]);
     const _steps = [...steps];
-    try {
-      setIsSupplying(true);
-      setActiveStep(0);
-      setFailedStep(0);
-      if (optionToWrap) {
-        try {
-          setActiveStep(1);
-          const WToken = getContract(
-            currentSdk.chainSpecificAddresses.W_TOKEN,
-            WETHAbi,
-            currentSdk.signer
-          );
-          const tx = await WToken.deposit({ from: address, value: amount });
 
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `Wrap ${nativeSymbol}`,
-          });
-          _steps[0] = {
-            ..._steps[0],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          await tx.wait();
-          _steps[0] = {
-            ..._steps[0],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            id: 'wrapped',
-            description: 'Successfully Wrapped!',
-          });
-        } catch (error) {
-          setFailedStep(1);
-          throw error;
-        }
-      }
-
+    setIsSupplying(true);
+    setActiveStep(0);
+    setFailedStep(0);
+    if (optionToWrap) {
       try {
-        setActiveStep(optionToWrap ? 2 : 1);
-        const token = currentSdk.getEIP20RewardTokenInstance(
-          asset.underlyingToken,
+        setActiveStep(1);
+        const WToken = getContract(
+          currentSdk.chainSpecificAddresses.W_TOKEN,
+          WETHAbi,
           currentSdk.signer
         );
-        const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
-          amount
-        );
+        const tx = await WToken.deposit({ from: address, value: amount });
 
-        if (!hasApprovedEnough) {
-          const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
-
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `Approve ${asset.underlyingSymbol}`,
-          });
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-
-          await tx.wait();
-
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            id: 'approved',
-            description: 'Successfully Approved!',
-          });
-        } else {
-          _steps[optionToWrap ? 1 : 0] = {
-            ..._steps[optionToWrap ? 1 : 0],
-            desc: 'Already approved!',
-            done: true,
-          };
-          setConfirmedSteps([..._steps]);
-        }
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `Wrap ${nativeSymbol}`,
+        });
+        _steps[0] = {
+          ..._steps[0],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        await tx.wait();
+        _steps[0] = {
+          ..._steps[0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        successToast({
+          id: 'wrapped',
+          description: 'Successfully Wrapped!',
+        });
       } catch (error) {
-        setFailedStep(optionToWrap ? 2 : 1);
-        throw error;
+        const sentryInfo = {
+          contextName: 'Supply - Wrapping native token',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
+        setFailedStep(1);
       }
-      if (enableAsCollateral) {
-        try {
-          setActiveStep(optionToWrap ? 3 : 2);
-          const tx = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `Entered ${asset.underlyingSymbol} market`,
-          });
-          _steps[optionToWrap ? 2 : 1] = {
-            ..._steps[optionToWrap ? 2 : 1],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
+    }
 
-          await tx.wait();
+    try {
+      setActiveStep(optionToWrap ? 2 : 1);
+      const token = currentSdk.getEIP20RewardTokenInstance(
+        asset.underlyingToken,
+        currentSdk.signer
+      );
+      const hasApprovedEnough = (await token.callStatic.allowance(address, asset.cToken)).gte(
+        amount
+      );
 
-          _steps[optionToWrap ? 2 : 1] = {
-            ..._steps[optionToWrap ? 2 : 1],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-          successToast({
-            id: 'collateralEnabled',
-            description: 'Collateral enabled!',
-          });
-        } catch (error) {
-          setFailedStep(optionToWrap ? 3 : 2);
-          throw error;
-        }
-      }
+      if (!hasApprovedEnough) {
+        const tx = await currentSdk.approve(asset.cToken, asset.underlyingToken);
 
-      try {
-        setActiveStep(
-          optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
-        );
-        const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
-        if (errorCode !== null) {
-          SupplyError(errorCode);
-        } else {
-          addRecentTransaction({
-            hash: tx.hash,
-            description: `${asset.underlyingSymbol} Token Supply`,
-          });
-          _steps[
-            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-          ] = {
-            ..._steps[
-              optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-            ],
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `Approve ${asset.underlyingSymbol}`,
+        });
+        _steps[optionToWrap ? 1 : 0] = {
+          ..._steps[optionToWrap ? 1 : 0],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
 
-          await tx.wait();
-          await queryClient.refetchQueries();
+        await tx.wait();
 
-          _steps[
-            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-          ] = {
-            ..._steps[
-              optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
-            ],
-            done: true,
-            txHash: tx.hash,
-          };
-          setConfirmedSteps([..._steps]);
-        }
-      } catch (error) {
-        setFailedStep(
-          optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
-        );
-        throw error;
+        _steps[optionToWrap ? 1 : 0] = {
+          ..._steps[optionToWrap ? 1 : 0],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        successToast({
+          id: 'approved',
+          description: 'Successfully Approved!',
+        });
+      } else {
+        _steps[optionToWrap ? 1 : 0] = {
+          ..._steps[optionToWrap ? 1 : 0],
+          desc: 'Already approved!',
+          done: true,
+        };
+        setConfirmedSteps([..._steps]);
       }
     } catch (error) {
-      handleGenericError(error, errorToast);
-    } finally {
-      setIsSupplying(false);
+      const sentryInfo = {
+        contextName: 'Supply - Approving',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+      setFailedStep(optionToWrap ? 2 : 1);
     }
+    if (enableAsCollateral) {
+      try {
+        setActiveStep(optionToWrap ? 3 : 2);
+        const tx = await currentSdk.enterMarkets(asset.cToken, comptrollerAddress);
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `Entered ${asset.underlyingSymbol} market`,
+        });
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+
+        await tx.wait();
+
+        _steps[optionToWrap ? 2 : 1] = {
+          ..._steps[optionToWrap ? 2 : 1],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+        successToast({
+          id: 'collateralEnabled',
+          description: 'Collateral enabled!',
+        });
+      } catch (error) {
+        const sentryInfo = {
+          contextName: 'Supply - Entering market',
+          properties: sentryProperties,
+        };
+        handleGenericError({ error, toast: errorToast, sentryInfo });
+        setFailedStep(optionToWrap ? 3 : 2);
+      }
+    }
+
+    try {
+      setActiveStep(
+        optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
+      );
+      const { tx, errorCode } = await currentSdk.mint(asset.cToken, amount);
+      if (errorCode !== null) {
+        SupplyError(errorCode);
+      } else {
+        addRecentTransaction({
+          hash: tx.hash,
+          description: `${asset.underlyingSymbol} Token Supply`,
+        });
+        _steps[
+          optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+        ] = {
+          ..._steps[
+            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+          ],
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+
+        await tx.wait();
+        await queryClient.refetchQueries();
+
+        _steps[
+          optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+        ] = {
+          ..._steps[
+            optionToWrap && enableAsCollateral ? 3 : optionToWrap || enableAsCollateral ? 2 : 1
+          ],
+          done: true,
+          txHash: tx.hash,
+        };
+        setConfirmedSteps([..._steps]);
+      }
+    } catch (error) {
+      const sentryInfo = {
+        contextName: 'Supply - Minting',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+      setFailedStep(
+        optionToWrap && enableAsCollateral ? 4 : optionToWrap || enableAsCollateral ? 3 : 2
+      );
+    }
+
+    setIsSupplying(false);
   };
 
   const onModalClose = () => {

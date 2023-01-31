@@ -18,10 +18,12 @@ export const AmountInput = ({
   asset,
   poolChainId,
   setAmount,
+  comptrollerAddress,
 }: {
   asset: MarketData;
   poolChainId: number;
   setAmount: (amount: BigNumber) => void;
+  comptrollerAddress: string;
 }) => {
   const { currentSdk, address } = useMultiMidas();
   const [userEnteredAmount, setUserEnteredAmount] = useState('');
@@ -68,8 +70,17 @@ export const AmountInput = ({
       }
 
       setIsLoading(false);
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        token: asset.cToken,
+      };
+      const sentryInfo = {
+        contextName: 'Fetching max withdraw amount',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 

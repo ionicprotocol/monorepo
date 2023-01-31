@@ -191,8 +191,17 @@ export const AssetSettings = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated max supply amount!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating supply cap',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsEditSupplyCap(false);
       setIsUpdating(false);
@@ -213,8 +222,17 @@ export const AssetSettings = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated max total borrow amount!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating borrow cap',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsEditBorrowCaps(false);
       setIsUpdating(false);
@@ -246,8 +264,17 @@ export const AssetSettings = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated loan-to-Value!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating loan-to-value',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -273,8 +300,17 @@ export const AssetSettings = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated reserve factor!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating reserve factor',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -300,8 +336,17 @@ export const AssetSettings = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated admin fee!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating admin fee',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -324,8 +369,17 @@ export const AssetSettings = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated interest rate modal!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating interest rate',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -342,8 +396,17 @@ export const AssetSettings = ({
       addRecentTransaction({ hash: tx.hash, description: 'Set borrowing status' });
       await tx.wait();
       await queryClient.refetchQueries();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: cTokenAddress,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Updating borrowing status',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }

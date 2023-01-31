@@ -119,8 +119,17 @@ const PoolConfiguration = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully changed whitelist status!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        status: enforce,
+      };
+      const sentryInfo = {
+        contextName: 'Changing whitelist status',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -151,8 +160,17 @@ const PoolConfiguration = ({
       onChange(newList);
 
       successToast({ description: 'Successfully added!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        newUser,
+      };
+      const sentryInfo = {
+        contextName: 'Adding to whitelist',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -190,8 +208,17 @@ const PoolConfiguration = ({
       onChange(whitelist.filter((v) => v !== removeUser));
 
       successToast({ description: 'Successfully removed from the whitelist!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        removeUser,
+      };
+      const sentryInfo = {
+        contextName: 'Removing from whitelist',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -213,8 +240,16 @@ const PoolConfiguration = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully changed admin rights!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Changing admin rights',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
@@ -253,8 +288,17 @@ const PoolConfiguration = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated close factor!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        closeFactor: bigCloseFactor,
+      };
+      const sentryInfo = {
+        contextName: 'Updating close factor',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsUpdating(false);
     }
@@ -291,18 +335,23 @@ const PoolConfiguration = ({
       await queryClient.refetchQueries();
 
       successToast({ description: 'Successfully updated liquidation incentive!' });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+        liquidationIncentive: bigLiquidationIncentive,
+      };
+      const sentryInfo = {
+        contextName: 'Updating liquidation incentive',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     }
   };
 
   const onSave = async () => {
-    if (!currentSdk) return;
+    if (!currentSdk || !inputPoolName) return;
 
-    if (!inputPoolName) {
-      handleGenericError('Input pool name', errorToast);
-      return;
-    }
     try {
       setIsSaving(true);
       const FusePoolDirectory = currentSdk.getFusePoolDirectoryInstance(currentSdk.signer);
@@ -310,8 +359,17 @@ const PoolConfiguration = ({
         from: address,
       });
       await tx.wait();
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        chainId: currentSdk.chainId,
+        poolId,
+        poolName: inputPoolName,
+      };
+      const sentryInfo = {
+        contextName: 'Setting pool name',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
     } finally {
       setIsSaving(false);
     }

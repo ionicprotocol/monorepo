@@ -59,8 +59,18 @@ const RemoveAssetButton = ({
       successToast({
         description: 'You have successfully removed an asset from this pool!',
       });
-    } catch (e) {
-      handleGenericError(e, errorToast);
+    } catch (error) {
+      const sentryProperties = {
+        token: asset.cToken,
+        chainId: currentSdk.chainId,
+        comptroller: comptrollerAddress,
+      };
+      const sentryInfo = {
+        contextName: 'Removing asset',
+        properties: sentryProperties,
+      };
+      handleGenericError({ error, toast: errorToast, sentryInfo });
+
       return;
     }
 
