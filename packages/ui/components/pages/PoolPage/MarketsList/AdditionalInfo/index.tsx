@@ -108,18 +108,16 @@ export const AdditionalInfo = ({
   };
 
   const { data: performanceFee } = usePerformanceFee(poolChainId, asset.plugin);
-  const { data: supplyCaps } = useSupplyCap(
-    comptrollerAddress,
-    asset.cToken,
-    asset.underlyingPrice,
-    poolChainId
-  );
-  const { data: borrowCaps } = useBorrowCap(
-    comptrollerAddress,
-    asset.cToken,
-    asset.underlyingPrice,
-    poolChainId
-  );
+  const { data: supplyCaps } = useSupplyCap({
+    comptroller: comptrollerAddress,
+    chainId: poolChainId,
+    market: asset,
+  });
+  const { data: borrowCaps } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    chainId: poolChainId,
+    market: asset,
+  });
   const { data: oracle } = useOracle(asset.underlyingToken, poolChainId);
   const { data: irm } = useIRM(asset.cToken, poolChainId);
 

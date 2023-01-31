@@ -43,7 +43,7 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
                 )} ${secondary.symbol}`}
               </Text>
               {cap && (
-                <Text variant="tnumber">{`/ ${smallFormatter.format(cap.nativeCap)} ${
+                <Text variant="tnumber">{`/ ${smallFormatter.format(cap.tokenCap)} ${
                   secondary.symbol
                 }`}</Text>
               )}
@@ -146,7 +146,7 @@ export const BalanceCell = ({ primary, secondary, cap }: BalanceCellProps) => {
             {cap && (
               <HStack spacing={0.5}>
                 <Text variant="tnumber" size="xs" opacity={0.6}>
-                  {midFormat(cap.nativeCap)}
+                  {midFormat(cap.tokenCap)}
                 </Text>
                 <Text
                   variant="tnumber"
