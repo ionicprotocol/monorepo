@@ -105,12 +105,11 @@ export const BorrowModal = ({
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
-  const { data: borrowCaps } = useBorrowCap(
-    comptrollerAddress,
-    asset.cToken,
-    asset.underlyingPrice,
-    poolChainId
-  );
+  const { data: borrowCaps } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -348,8 +347,8 @@ export const BorrowModal = ({
                       <AlertIcon />
                       <VStack alignItems="flex-start">
                         <Text fontWeight="bold">
-                          {smallFormatter.format(borrowCaps.nativeCap)} {asset.underlyingSymbol} /{' '}
-                          {smallFormatter.format(borrowCaps.nativeCap)} {asset.underlyingSymbol}
+                          {smallFormatter.format(borrowCaps.tokenCap)} {asset.underlyingSymbol} /{' '}
+                          {smallFormatter.format(borrowCaps.tokenCap)} {asset.underlyingSymbol}
                         </Text>
                         <Text>
                           The maximum borrow of assets for this asset has been reached. Once assets

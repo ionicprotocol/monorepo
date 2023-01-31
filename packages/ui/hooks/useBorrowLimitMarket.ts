@@ -16,12 +16,11 @@ export const useBorrowLimitMarket = (
 ) => {
   const coingeckoId = useCgId(poolChainId);
   const { data: usdPrice } = useUSDPrice(coingeckoId);
-  const { data: borrowCaps } = useBorrowCap(
-    comptrollerAddress,
-    asset.cToken,
-    asset.underlyingPrice,
-    poolChainId
-  );
+  const { data: borrowCaps } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
 
   return useQuery(
     [

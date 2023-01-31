@@ -82,7 +82,10 @@ export const ankrBNBContractAddress = '0xCb0006B31e6b403fEeEC257A8ABeE0817bEd7eB
 export const aprDays = 7;
 export const ankrBNBContractABI = [
   {
-    inputs: [{ internalType: 'uint256', name: 'day', type: 'uint256' }],
+    inputs: [
+      { internalType: 'address', name: 'addr', type: 'address' },
+      { internalType: 'uint256', name: 'day', type: 'uint256' },
+    ],
     name: 'averagePercentageRate',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
