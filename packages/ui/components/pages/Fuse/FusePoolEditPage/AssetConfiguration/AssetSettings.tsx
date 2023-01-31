@@ -209,7 +209,6 @@ export const AssetSettings = ({
         [utils.parseUnits(borrowCap.toString(), selectedAsset.underlyingDecimals)]
       );
       await tx.wait();
-      LogRocket.track('Fuse-UpdateTotalBorrowCaps');
 
       await queryClient.refetchQueries();
 
