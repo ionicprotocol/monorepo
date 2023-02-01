@@ -2,8 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { utils } from 'ethers';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
-import { useCgId } from '@ui/hooks/useChainConfig';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowLimitTotal = (
@@ -11,8 +10,7 @@ export const useBorrowLimitTotal = (
   poolChainId: number,
   options?: { ignoreIsEnabledCheckFor?: string }
 ) => {
-  const coingeckoId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
 
   return useQuery(
     [

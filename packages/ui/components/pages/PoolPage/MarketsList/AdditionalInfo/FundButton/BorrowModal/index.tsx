@@ -36,11 +36,10 @@ import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
@@ -72,8 +71,7 @@ export const BorrowModal = ({
 
   const addRecentTransaction = useAddRecentTransaction();
 
-  const cgId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(cgId);
+  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
 

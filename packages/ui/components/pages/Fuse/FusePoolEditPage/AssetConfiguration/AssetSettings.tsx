@@ -53,11 +53,10 @@ import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { TokenData } from '@ui/types/ComponentPropsType';
 import { smallUsdFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
@@ -119,8 +118,7 @@ export const AssetSettings = ({
   const { currentSdk, currentChain } = useMultiMidas();
   const addRecentTransaction = useAddRecentTransaction();
   const sdk = useSdk(poolChainId);
-  const cgId = useCgId(Number(poolChainId));
-  const { data: usdPrice } = useUSDPrice(cgId);
+  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
 
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();

@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
-import { useSdk } from './fuse/useSdk';
-import { UseAssetsData } from './useAssets';
-import { UseRewardsData } from './useRewards';
-
+import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { UseAssetsData } from '@ui/hooks/useAssets';
+import { UseRewardsData } from '@ui/hooks/useRewards';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { getBlockTimePerMinuteByChainId } from '@ui/utils/networkData';
 

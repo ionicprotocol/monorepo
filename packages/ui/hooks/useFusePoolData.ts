@@ -2,15 +2,13 @@ import { useQuery } from '@tanstack/react-query';
 
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useCgId } from '@ui/hooks/useChainConfig';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 
 export const useFusePoolData = (poolId: string, poolChainId: number) => {
   const { address } = useMultiMidas();
   const sdk = useSdk(poolChainId);
-  const coingeckoId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
   return useQuery(
     ['useFusePoolData', poolId, address, sdk?.chainId, usdPrice],
     async () => {
