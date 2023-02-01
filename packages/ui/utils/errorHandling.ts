@@ -11,8 +11,8 @@ export const handleGenericError = ({
   toast?: CreateToastFnReturn;
   sentryInfo: { contextName: string; properties: { [key: string]: any } };
 }) => {
-  console.error(error);
-  console.error(JSON.stringify(error));
+  console.error('Raw Error', error);
+
   let message: string;
 
   if (error instanceof Error) {
