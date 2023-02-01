@@ -17,11 +17,10 @@ import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useIsComptrollerAdmin } from '@ui/hooks/fuse/useIsComptrollerAdmin';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
-import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
 import { useFusePoolData } from '@ui/hooks/useFusePoolData';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 
 const FusePoolEditPage = memo(() => {
   const isMobile = useIsSemiSmallScreen();
@@ -38,8 +37,7 @@ const FusePoolEditPage = memo(() => {
   const poolId = router.query.poolId as string;
   const poolChainId = router.query.chainId as string;
   const { data } = useFusePoolData(poolId, Number(poolChainId));
-  const cg = useCgId(Number(poolChainId));
-  const { data: usdPrice } = useUSDPrice(cg || '');
+  const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
   const isAdmin = useIsComptrollerAdmin(data?.comptroller, data?.chainId);
   const isEditableAdmin = useIsEditableAdmin(data?.comptroller, Number(poolChainId));
   const { cPage } = useColors();
