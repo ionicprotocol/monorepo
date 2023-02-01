@@ -15,10 +15,14 @@ const RemoveAssetButton = ({
   comptrollerAddress,
   asset,
   poolChainId,
+  setSelectedAsset,
+  assets,
 }: {
   comptrollerAddress: string;
   asset: NativePricedFuseAsset;
   poolChainId: number;
+  setSelectedAsset: (value: NativePricedFuseAsset) => void;
+  assets: NativePricedFuseAsset[];
 }) => {
   const { currentSdk } = useMultiMidas();
   const errorToast = useErrorToast();
@@ -38,7 +42,7 @@ const RemoveAssetButton = ({
     if (!currentSdk) return;
 
     setIsRemoving(true);
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     const response = await comptroller.callStatic._unsupportMarket(asset.cToken);
 
     if (!response.eq(0)) {
@@ -54,6 +58,7 @@ const RemoveAssetButton = ({
       LogRocket.track('Fuse-RemoveAsset');
 
       await queryClient.refetchQueries();
+      setSelectedAsset(assets[0]);
 
       successToast({
         description: 'You have successfully removed an asset from this pool!',

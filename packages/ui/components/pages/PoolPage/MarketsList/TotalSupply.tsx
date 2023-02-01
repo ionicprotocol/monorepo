@@ -13,12 +13,11 @@ export const TotalSupply = ({
   poolChainId: number;
 }) => {
   const { data: tokenData } = useTokenData(asset.underlyingToken, poolChainId);
-  const { data: supplyCaps } = useSupplyCap(
-    comptrollerAddress,
-    asset.cToken,
-    asset.underlyingPrice,
-    poolChainId
-  );
+  const { data: supplyCaps } = useSupplyCap({
+    comptroller: comptrollerAddress,
+    chainId: poolChainId,
+    market: asset,
+  });
 
   return (
     <BalanceCell
@@ -30,7 +29,7 @@ export const TotalSupply = ({
         symbol: tokenData?.symbol || '',
         decimals: asset.underlyingDecimals.toNumber(),
       }}
-      supplyCaps={supplyCaps}
+      cap={supplyCaps}
     />
   );
 };

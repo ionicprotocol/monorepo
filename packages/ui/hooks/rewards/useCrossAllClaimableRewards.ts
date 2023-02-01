@@ -10,33 +10,37 @@ export const useCrossAllClaimableRewards = (chainIds: SupportedChains[]) => {
   return useQuery(
     ['useCrossAllClaimableRewards', address, chainIds],
     async () => {
-      const result = await Promise.all(
-        chainIds.map(async (chainId) => {
-          try {
-            const sdk = getSdk(Number(chainId));
+      if (address) {
+        const result = await Promise.all(
+          chainIds.map(async (chainId) => {
+            try {
+              const sdk = getSdk(Number(chainId));
 
-            if (sdk && address) {
-              return { [chainId.toString()]: await sdk.getFlywheelClaimableRewards(address) };
-            } else {
-              throw new Error('sdk or address not available');
+              if (sdk) {
+                return { [chainId.toString()]: await sdk.getFlywheelClaimableRewards(address) };
+              } else {
+                throw new Error('sdk not available');
+              }
+            } catch (e) {
+              console.warn('unable to fetch rewards for chainId: ', chainId, e);
+
+              return { [chainId.toString()]: null };
             }
-          } catch (e) {
-            console.warn('unable to fetch rewards for chainId: ', chainId, e);
+          })
+        );
 
-            return { [chainId.toString()]: null };
-          }
-        })
-      );
+        const rewardsPerChain: { [chainId: string]: FlywheelClaimableRewards[] | null } =
+          Object.assign({}, ...result);
 
-      const rewardsPerChain: { [chainId: string]: FlywheelClaimableRewards[] | null } =
-        Object.assign({}, ...result);
-
-      return rewardsPerChain;
+        return rewardsPerChain;
+      } else {
+        return null;
+      }
     },
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: chainIds.length > 0,
+      enabled: chainIds.length > 0 && !!address,
     }
   );
 };

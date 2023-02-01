@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Checkbox,
@@ -10,6 +12,7 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
@@ -29,16 +32,17 @@ import { Column } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { BORROW_STEPS, DEFAULT_DECIMALS, HIGH_RISK_RATIO } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
+import { useBorrowCap } from '@ui/hooks/useBorrowCap';
 import { useBorrowLimitMarket } from '@ui/hooks/useBorrowLimitMarket';
 import { useBorrowLimitTotal } from '@ui/hooks/useBorrowLimitTotal';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { useCgId } from '@ui/hooks/useChainConfig';
 import { useColors } from '@ui/hooks/useColors';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenData } from '@ui/hooks/useTokenData';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount, useMaxAmount } from '@ui/utils/fetchMaxAmount';
 import { toFixedNoRound } from '@ui/utils/formatNumber';
@@ -67,8 +71,7 @@ export const BorrowModal = ({
 
   const addRecentTransaction = useAddRecentTransaction();
 
-  const cgId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(cgId);
+  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
 
   const price = useMemo(() => (usdPrice ? usdPrice : 1), [usdPrice]);
 
@@ -79,9 +82,18 @@ export const BorrowModal = ({
   const [btnStr, setBtnStr] = useState<string>('Borrow');
   const { cCard } = useColors();
 
-  const { data: maxBorrowInAsset } = useMaxAmount(FundOperationMode.BORROW, asset);
+  const { data: maxBorrowInAsset } = useMaxAmount(
+    FundOperationMode.BORROW,
+    asset,
+    comptrollerAddress
+  );
   const { data: borrowLimitTotal } = useBorrowLimitTotal(assets, poolChainId);
-  const { data: borrowLimitMarket } = useBorrowLimitMarket(asset, assets, poolChainId);
+  const { data: borrowLimitMarket } = useBorrowLimitMarket(
+    asset,
+    assets,
+    poolChainId,
+    comptrollerAddress
+  );
   const [isBorrowing, setIsBorrowing] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [steps, setSteps] = useState<TxStep[]>([...BORROW_STEPS(asset.underlyingSymbol)]);
@@ -91,6 +103,11 @@ export const BorrowModal = ({
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
+  const { data: borrowCaps } = useBorrowCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
 
   const updateAmount = (newAmount: string) => {
     if (newAmount.startsWith('-') || !newAmount) {
@@ -146,7 +163,8 @@ export const BorrowModal = ({
           FundOperationMode.BORROW,
           currentSdk,
           address,
-          asset
+          asset,
+          comptrollerAddress
         )) as BigNumber;
 
         return amount.lte(max) && amount.gte(minBorrowAsset);
@@ -269,9 +287,9 @@ export const BorrowModal = ({
               />
             ) : (
               <>
-                <HStack width="100%" p={4} justifyContent="center">
+                <HStack width="100%" my={4} justifyContent="center">
                   <Text variant="title">Borrow</Text>
-                  <Box height="36px" width="36px" mx={3}>
+                  <Box height="36px" width="36px" mx={2}>
                     <TokenIcon size="36" address={asset.underlyingToken} chainId={poolChainId} />
                   </Box>
                   <EllipsisText
@@ -293,32 +311,51 @@ export const BorrowModal = ({
                   width="100%"
                   gap={4}
                 >
-                  {maxBorrowInAsset &&
-                  maxBorrowInAsset.number !== 0 &&
-                  borrowLimitTotal &&
-                  borrowLimitTotal !== 0 &&
-                  borrowLimitMarket ? (
-                    <MaxBorrowSlider
-                      userEnteredAmount={userEnteredAmount}
-                      updateAmount={updateAmount}
-                      borrowableAmount={maxBorrowInAsset.number}
-                      asset={asset}
-                      poolChainId={poolChainId}
-                      borrowBalanceFiat={borrowBalanceFiat}
-                      borrowLimitTotal={borrowLimitTotal}
-                      borrowLimitMarket={borrowLimitMarket}
-                    />
-                  ) : null}
-                  <Column gap={1} w="100%" mt={4}>
-                    <AmountInput
-                      asset={asset}
-                      poolChainId={poolChainId}
-                      userEnteredAmount={userEnteredAmount}
-                      updateAmount={updateAmount}
-                    />
+                  {!borrowCaps || asset.totalBorrowFiat < borrowCaps.usdCap ? (
+                    <>
+                      {maxBorrowInAsset &&
+                      maxBorrowInAsset.number !== 0 &&
+                      borrowLimitTotal &&
+                      borrowLimitTotal !== 0 &&
+                      borrowLimitMarket ? (
+                        <MaxBorrowSlider
+                          userEnteredAmount={userEnteredAmount}
+                          updateAmount={updateAmount}
+                          borrowableAmount={maxBorrowInAsset.number}
+                          asset={asset}
+                          poolChainId={poolChainId}
+                          borrowBalanceFiat={borrowBalanceFiat}
+                          borrowLimitTotal={borrowLimitTotal}
+                          borrowLimitMarket={borrowLimitMarket}
+                        />
+                      ) : null}
+                      <Column gap={1} w="100%" mt={4}>
+                        <AmountInput
+                          asset={asset}
+                          poolChainId={poolChainId}
+                          userEnteredAmount={userEnteredAmount}
+                          updateAmount={updateAmount}
+                        />
 
-                    <Balance asset={asset} />
-                  </Column>
+                        <Balance asset={asset} />
+                      </Column>
+                    </>
+                  ) : (
+                    <Alert status="info">
+                      <AlertIcon />
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          {smallFormatter.format(borrowCaps.tokenCap)} {asset.underlyingSymbol} /{' '}
+                          {smallFormatter.format(borrowCaps.tokenCap)} {asset.underlyingSymbol}
+                        </Text>
+                        <Text>
+                          The maximum borrow of assets for this asset has been reached. Once assets
+                          are repaid or the limit is increased you can again borrow from this
+                          market.
+                        </Text>
+                      </VStack>
+                    </Alert>
+                  )}
 
                   <StatsColumn
                     mode={FundOperationMode.BORROW}
@@ -326,6 +363,7 @@ export const BorrowModal = ({
                     assets={assets}
                     asset={asset}
                     poolChainId={poolChainId}
+                    comptrollerAddress={comptrollerAddress}
                   />
                   {amountIsValid && isRisky && (
                     <Box pt={4}>

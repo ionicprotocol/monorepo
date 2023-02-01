@@ -40,7 +40,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     async getFlywheelMarketRewardsByPool(pool: string): Promise<FlywheelMarketRewardsInfo[]> {
       const [flywheelsOfPool, marketsOfPool] = await Promise.all([
         this.getFlywheelsByPool(pool),
-        this.createComptroller(pool).callStatic.getAllMarkets(),
+        this.createComptroller(pool, this.provider).callStatic.getAllMarkets(),
       ]);
       const strategiesOfFlywheels = await Promise.all(flywheelsOfPool.map((fw) => fw.callStatic.getAllStrategies()));
 
@@ -72,7 +72,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelsByPool(poolAddress: string): Promise<MidasFlywheel[]> {
-      const pool = await this.createComptroller(poolAddress);
+      const pool = await this.createComptroller(poolAddress, this.provider);
       const allRewardDistributors = await pool.callStatic.getRewardsDistributors();
       const instances = allRewardDistributors.map((address) => {
         return new Contract(address, MidasFlywheelABI, this.provider) as MidasFlywheel;
@@ -112,7 +112,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelClaimableRewardsForPool(poolAddress: string, account: string) {
-      const pool = this.createComptroller(poolAddress);
+      const pool = this.createComptroller(poolAddress, this.provider);
       const marketsOfPool = await pool.callStatic.getAllMarkets();
 
       const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
@@ -141,7 +141,7 @@ export function withFlywheel<TBase extends CreateContractsModule = CreateContrac
     }
 
     async getFlywheelClaimableRewardsForAsset(poolAddress: string, market: string, account: string) {
-      const pool = this.createComptroller(poolAddress);
+      const pool = this.createComptroller(poolAddress, this.provider);
       const rewardDistributorsOfPool = await pool.callStatic.getRewardsDistributors();
       const flywheels = rewardDistributorsOfPool.map((address) => this.createMidasFlywheel(address));
       const flywheelWithRewards: FlywheelClaimableRewards[] = [];

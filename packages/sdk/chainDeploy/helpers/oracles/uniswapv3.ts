@@ -15,9 +15,20 @@ export const deployUniswapV3Oracle = async ({
   //// Uniswap Oracle
   const utpo = await deployments.deploy("UniswapV3PriceOracle", {
     from: deployer,
-    args: [deployer, true],
+    args: [],
     log: true,
+    proxy: {
+      execute: {
+        init: {
+          methodName: "initialize",
+          args: [deployConfig.wtoken, deployConfig.stableToken],
+        },
+      },
+      owner: deployer,
+      proxyContract: "OpenZeppelinTransparentProxy",
+    },
   });
+
   if (utpo.transactionHash) await ethers.provider.waitForTransaction(utpo.transactionHash);
   console.log("UniswapV3PriceOracle: ", utpo.address);
 
@@ -29,7 +40,8 @@ export const deployUniswapV3Oracle = async ({
       await uniswapV3Oracle.callStatic.poolFeeds(assetConfig.assetAddress);
     if (
       existingOracleAssetConfig.poolAddress != assetConfig.poolAddress ||
-      existingOracleAssetConfig.twapWindow != assetConfig.twapWindowSeconds
+      existingOracleAssetConfig.twapWindow != assetConfig.twapWindowSeconds ||
+      existingOracleAssetConfig.baseCurrency != assetConfig.baseCurrency
     ) {
       assetsToAdd.push(assetConfig);
     }
@@ -38,7 +50,11 @@ export const deployUniswapV3Oracle = async ({
   if (assetsToAdd.length > 0) {
     const underlyings = assetsToAdd.map((assetConfig) => assetConfig.assetAddress);
     const feedConfigs = assetsToAdd.map((assetConfig) => {
-      return { poolAddress: assetConfig.poolAddress, twapWindow: assetConfig.twapWindowSeconds };
+      return {
+        poolAddress: assetConfig.poolAddress,
+        twapWindow: assetConfig.twapWindowSeconds,
+        baseCurrency: assetConfig.baseCurrency,
+      };
     });
     const tx = await uniswapV3Oracle.setPoolFeeds(underlyings, feedConfigs);
     await tx.wait();

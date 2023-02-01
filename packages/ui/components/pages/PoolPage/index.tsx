@@ -1,19 +1,16 @@
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { AvatarGroup, Box, Flex, Grid, HStack, Skeleton, Text } from '@chakra-ui/react';
-import { SupportedChains } from '@midas-capital/types';
 import { SortingState, VisibilityState } from '@tanstack/react-table';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
-
-import { UserStat } from './UserStats/UserStat';
 
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
-import { Banner } from '@ui/components/shared/Banner';
+import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
@@ -159,16 +156,6 @@ const PoolPage = memo(() => {
               </HStack>
             ) : null}
           </HStack>
-
-          {chainId === SupportedChains.bsc.toString() && poolId === '7' && (
-            <Banner
-              text="Due to the exploit affecting aBNBc, this pool is currently paused. We are taking a snapshot for everyone that supplied to this pool. Handling of the situation is currently being done by Ankr. More information: "
-              linkText="https://twitter.com/ankr/status/1598624443642703872"
-              linkUrl="https://twitter.com/ankr/status/1598624443642703872"
-              status="warning"
-              mt={2}
-            />
-          )}
 
           {rewardTokens.length > 0 && data && (
             <RewardsBanner tokens={rewardTokens} poolChainId={data.chainId} />

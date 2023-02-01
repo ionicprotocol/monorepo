@@ -1,15 +1,16 @@
 import { Contract } from "ethers";
 
 import { logger } from "../../../../logger";
-import { FeedVerifierConfig, InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
+import { InvalidReason, PriceFeedValidity, VerifyFeedParams } from "../../../../types";
 
-export async function verifyChainLinkOraclePriceFeed(
-  { midasSdk, underlyingOracle, underlying }: VerifyFeedParams,
-  config: FeedVerifierConfig
-): Promise<PriceFeedValidity> {
-  logger.debug(`Verifying ChainLink oracle for ${underlying}`);
+export async function verifyChainLinkOraclePriceFeed({
+  midasSdk,
+  underlyingOracle,
+  asset,
+}: VerifyFeedParams): Promise<PriceFeedValidity> {
+  logger.debug(`Verifying ChainLink oracle for ${asset.underlying}`);
 
-  const feedAddress = await underlyingOracle.callStatic.priceFeeds(underlying);
+  const feedAddress = await underlyingOracle.callStatic.priceFeeds(asset.underlying);
   const chainLinkFeed = new Contract(
     feedAddress,
     [
@@ -25,11 +26,10 @@ export async function verifyChainLinkOraclePriceFeed(
   const updatedAtts = updatedAt.toNumber();
   const timeSinceLastUpdate = Math.floor(Date.now() / 1000) - updatedAtts;
 
-  // TODO: configure deviation threshold for each feed
-  if (timeSinceLastUpdate > config.maxObservationDelay && deviation > 1) {
+  if (timeSinceLastUpdate > asset.maxObservationDelay && deviation > asset.deviationThreshold) {
     return {
       invalidReason: InvalidReason.LAST_OBSERVATION_TOO_OLD,
-      message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${config.maxObservationDelay}`,
+      message: `Last updated happened ${timeSinceLastUpdate} seconds ago, more than than the max delay of ${asset.maxObservationDelay}`,
     };
   }
   return true;

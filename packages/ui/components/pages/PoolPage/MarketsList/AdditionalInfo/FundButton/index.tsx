@@ -59,6 +59,7 @@ export const FundButton = ({
           isOpen={isModalOpen}
           asset={asset}
           assets={assets}
+          comptrollerAddress={comptrollerAddress}
           onClose={closeModal}
           poolChainId={poolChainId}
         />
@@ -79,6 +80,7 @@ export const FundButton = ({
           isOpen={isModalOpen}
           asset={asset}
           assets={assets}
+          comptrollerAddress={comptrollerAddress}
           onClose={closeModal}
           poolChainId={poolChainId}
         />

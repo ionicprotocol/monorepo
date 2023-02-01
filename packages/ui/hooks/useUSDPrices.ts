@@ -3,7 +3,7 @@ import { SupportedChains } from '@midas-capital/types';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { COINGECKO_API, DEFI_LLAMA_API } from '../constants';
+import { COINGECKO_API, DEFI_LLAMA_API } from '@ui/constants/index';
 
 interface Price {
   value: number;
@@ -55,7 +55,7 @@ async function getUSDPriceOf(chainIds: SupportedChains[]): Promise<Record<string
 
 export function useUSDPrices(chainIds: SupportedChains[]) {
   return useQuery(
-    ['useUSDPrice', ...chainIds.sort()],
+    ['useUSDPrices', ...chainIds.sort()],
     async () => {
       return getUSDPriceOf(chainIds);
     },

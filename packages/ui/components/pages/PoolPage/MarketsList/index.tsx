@@ -41,8 +41,7 @@ import {
 import * as React from 'react';
 import { Fragment, useEffect, useMemo, useState } from 'react';
 
-import { CollateralRatioBar } from '../CollateralRatioBar';
-
+import { CollateralRatioBar } from '@ui/components/pages/PoolPage/CollateralRatioBar/index';
 import { AdditionalInfo } from '@ui/components/pages/PoolPage/MarketsList/AdditionalInfo/index';
 import { BorrowApy } from '@ui/components/pages/PoolPage/MarketsList/BorrowApy';
 import { BorrowBalance } from '@ui/components/pages/PoolPage/MarketsList/BorrowBalance';
@@ -82,11 +81,12 @@ import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 import { useAssetsClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
 import { useAssets } from '@ui/hooks/useAssets';
+import { useBorrowAPYs } from '@ui/hooks/useBorrowAPYs';
 import { useColors } from '@ui/hooks/useColors';
 import { useDebounce } from '@ui/hooks/useDebounce';
 import { UseRewardsData } from '@ui/hooks/useRewards';
 import { useIsMobile, useIsSemiSmallScreen } from '@ui/hooks/useScreenSize';
-import { useBorrowApyPerAsset, useTotalSupplyApyPerAsset } from '@ui/hooks/useTotalApy';
+import { useTotalSupplyAPYs } from '@ui/hooks/useTotalSupplyAPYs';
 import { MarketData, PoolData } from '@ui/types/TokensDataMap';
 import { sortAssets } from '@ui/utils/sorts';
 
@@ -141,13 +141,13 @@ export const MarketsList = ({
     ];
   }, [assets]);
 
-  const { data: totalSupplyApyPerAsset } = useTotalSupplyApyPerAsset(
+  const { data: totalSupplyApyPerAsset } = useTotalSupplyAPYs(
     assets,
     poolChainId,
     rewards,
     assetInfos
   );
-  const { data: borrowApyPerAsset } = useBorrowApyPerAsset(assets, poolChainId);
+  const { data: borrowApyPerAsset } = useBorrowAPYs(assets, poolChainId);
 
   const assetFilter: FilterFn<Market> = (row, columnId, value) => {
     if (
@@ -334,7 +334,11 @@ export const MarketsList = ({
         accessorFn: (row) => row.totalBorrow,
         id: TOTAL_BORROW,
         cell: ({ getValue }) => (
-          <TotalBorrow asset={getValue<MarketData>()} poolChainId={poolChainId} />
+          <TotalBorrow
+            asset={getValue<MarketData>()}
+            comptrollerAddress={comptrollerAddress}
+            poolChainId={poolChainId}
+          />
         ),
         header: (context) => <TableHeaderCell context={context}>Total Borrow</TableHeaderCell>,
 

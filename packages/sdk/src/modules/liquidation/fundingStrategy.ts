@@ -100,6 +100,13 @@ function getStrategyData(
       );
     case FundingStrategyContract.XBombLiquidatorFunder:
       return new ethers.utils.AbiCoder().encode(["address"], [inputToken]);
+    case FundingStrategyContract.CurveSwapLiquidatorFunder:
+      const curveV1Oracle = midasSdk.chainDeployment.CurveLpTokenPriceOracleNoRegistry.address;
+      const curveV2Oracle = midasSdk.chainDeployment.CurveV2LpTokenPriceOracleNoRegistry.address;
+      return new ethers.utils.AbiCoder().encode(
+        ["address", "address", "address", "address", "address"],
+        [curveV1Oracle, curveV2Oracle, inputToken, fundingToken, midasSdk.chainSpecificAddresses.W_TOKEN]
+      );
     default:
       return "";
   }
