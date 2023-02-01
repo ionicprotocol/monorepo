@@ -51,13 +51,13 @@ export default task("replace-fee-recipient", "Changes the system admin to a new 
 
       const currentOwner = await flywheelCore.callStatic.owner();
       console.log(`current owner ${currentOwner} of the flywheel at ${flywheelCore.address}`);
-      console.log("flywheel rewards address: ", await flywheelCore.callStatic.flywheelRewards());
       const feeRecipient = await flywheelCore.callStatic.feeRecipient();
       const performanceFee = await flywheelCore.callStatic.performanceFee();
       if (feeRecipient === newDeployer) {
         console.log("fee recipient already set to the new deployer");
         continue;
       } else {
+        console.log(`fee recipient needs to be replaced from ${feeRecipient} to ${newDeployer}}`);
         tx = await flywheelCore.updateFeeSettings(performanceFee, newDeployer);
         await tx.wait();
         console.log("fee recipient updated to the new deployer");
