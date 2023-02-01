@@ -6,7 +6,7 @@ import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
 import { z } from 'zod';
 
 const MimoAPYData = z.object({
-  network: z.string(),
+  network: z.number(),
   payees: z.array(
     z.object({
       minerAddress: z.string(),
