@@ -3,14 +3,19 @@ import axios from 'axios';
 import { BigNumber, utils } from 'ethers';
 import { functionsAlert } from '../../../alert';
 import { AbstractPluginAPYProvider } from './AbstractPluginAPYProvider';
-interface MimoAPYResponse
-  extends Array<{
-    network: number;
-    payees: Array<{
-      minerAddress: string;
-      apy: { type: 'BigNumber'; hex: string };
-    }>;
-  }> {}
+import { z } from 'zod';
+
+const MimoAPYData = z.object({
+  network: z.string(),
+  payees: z.array(
+    z.object({
+      minerAddress: z.string(),
+      apy: z.object({ type: z.enum(['BigNumber'] as const), hex: z.string() }),
+    })
+  ),
+});
+const MimoAPYResponse = z.array(MimoAPYData);
+type MimoAPYResponse = z.infer<typeof MimoAPYResponse>;
 
 interface MimoAPYs {
   [key: string]: number;
@@ -21,10 +26,12 @@ class MimoAPYProvider extends AbstractPluginAPYProvider {
   private mimoAPYs: MimoAPYs | undefined;
 
   async init() {
-    const mimoResponse = await axios.get(MimoAPYProvider.apyEndpoint);
-    const mimoData: MimoAPYResponse = await mimoResponse.data;
+    const mimoResponse = await axios
+      .get(MimoAPYProvider.apyEndpoint)
+      .then((response) => response.data)
+      .then((data) => MimoAPYResponse.parse(data));
 
-    this.mimoAPYs = mimoData
+    this.mimoAPYs = mimoResponse
       .flatMap((element) => element.payees)
       .reduce((acc, cur) => {
         return {
@@ -34,14 +41,15 @@ class MimoAPYProvider extends AbstractPluginAPYProvider {
           ),
         };
       }, {});
+
     if (!this.mimoAPYs) {
-      throw `MimoAPYProvider: unexpected Mimo APY response`;
+      throw `MimoAPYProvider: unable to format Mimo APY data as expected`;
     }
   }
 
   async getApy(pluginAddress: string, pluginData: MimoPlugin): Promise<Reward[]> {
+    // TODO should only be using Mimo
     if (pluginData.strategy != Strategy.Mimo && pluginData.strategy != Strategy.Arrakis)
-      // TODO should only be using Mimo
       throw `MimoAPYProvider: Not a Mimo Plugin ${pluginAddress}`;
 
     const [flywheel, vaultAddress, _, rewardTokens] = pluginData.otherParams;
