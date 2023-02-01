@@ -3,8 +3,7 @@ import { utils } from 'ethers';
 
 import { DEFAULT_DECIMALS } from '@ui/constants/index';
 import { useBorrowCap } from '@ui/hooks/useBorrowCap';
-import { useCgId } from '@ui/hooks/useChainConfig';
-import { useUSDPrice } from '@ui/hooks/useUSDPrice';
+import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { MarketData } from '@ui/types/TokensDataMap';
 
 export const useBorrowLimitMarket = (
@@ -14,8 +13,7 @@ export const useBorrowLimitMarket = (
   comptrollerAddress: string,
   options?: { ignoreIsEnabledCheckFor?: string }
 ) => {
-  const coingeckoId = useCgId(poolChainId);
-  const { data: usdPrice } = useUSDPrice(coingeckoId);
+  const { data: usdPrice } = useNativePriceInUSD(poolChainId);
   const { data: borrowCaps } = useBorrowCap({
     comptroller: comptrollerAddress,
     market: asset,

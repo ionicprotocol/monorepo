@@ -5,9 +5,8 @@ import { utils } from 'ethers';
 
 import { RewardsResponse } from '../pages/api/rewards';
 
-import { useFusePoolData } from './useFusePoolData';
-
 import { useSdk } from '@ui/hooks/fuse/useSdk';
+import { useFusePoolData } from '@ui/hooks/useFusePoolData';
 
 interface UseRewardsProps {
   chainId: number;

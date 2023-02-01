@@ -5,13 +5,12 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
 
-import { UserStat } from './UserStats/UserStat';
-
 import FusePageLayout from '@ui/components/pages/Layout/FusePageLayout';
 import { MarketsList } from '@ui/components/pages/PoolPage/MarketsList';
 import PoolDetails from '@ui/components/pages/PoolPage/PoolDetails';
 import { PoolStats } from '@ui/components/pages/PoolPage/PoolStats';
 import { RewardsBanner } from '@ui/components/pages/PoolPage/RewardsBanner';
+import { UserStat } from '@ui/components/pages/PoolPage/UserStats/UserStat';
 import { MidasBox } from '@ui/components/shared/Box';
 import PageTransitionLayout from '@ui/components/shared/PageTransitionLayout';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';

@@ -1,6 +1,6 @@
 import { AvatarGroup, AvatarGroupProps } from '@chakra-ui/avatar';
 
-import { TokenIcon } from './TokenIcon';
+import { TokenIcon } from '@ui/components/shared/TokenIcon';
 
 interface TokenIconGroupProps extends Partial<AvatarGroupProps> {
   tokenAddresses: string[];
