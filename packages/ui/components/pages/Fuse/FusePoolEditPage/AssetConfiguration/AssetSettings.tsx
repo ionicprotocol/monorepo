@@ -43,6 +43,7 @@ import {
   ADMIN_FEE,
   ADMIN_FEE_TOOLTIP,
   BORROW_CAP,
+  DEBT_CEILING,
   DEFAULT_DECIMALS,
   LOAN_TO_VALUE,
   LOAN_TO_VALUE_TOOLTIP,
@@ -54,8 +55,8 @@ import { useCTokenData } from '@ui/hooks/fuse/useCTokenData';
 import { useExtraPoolInfo } from '@ui/hooks/fuse/useExtraPoolInfo';
 import { useIsEditableAdmin } from '@ui/hooks/fuse/useIsEditableAdmin';
 import { useSdk } from '@ui/hooks/fuse/useSdk';
-import { useBorrowCapForAssetForCollateral } from '@ui/hooks/useBorrowCapForAssetForCollateral';
 import { useColors } from '@ui/hooks/useColors';
+import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useNativePriceInUSD } from '@ui/hooks/useNativePriceInUSD';
 import { usePluginInfo } from '@ui/hooks/usePluginInfo';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
@@ -131,10 +132,11 @@ export const AssetSettings = ({
   const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isEditSupplyCap, setIsEditSupplyCap] = useState<boolean>(false);
   const [isEditBorrowCap, setIsEditBorrowCap] = useState<boolean>(false);
-  const [borrowCapState, setBorrowCapState] = useState<{
+  const [isEditDebtCeilings, setIsEditDebtCeilings] = useState<boolean>(false);
+  const [debtCeilingState, setDebtCeilingState] = useState<{
     asset: NativePricedFuseAsset;
     collateralAsset: NativePricedFuseAsset;
-    borrowCap: number;
+    debtCeiling: number;
   }>();
   const { data: poolInfo } = useExtraPoolInfo(comptrollerAddress, poolChainId);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
@@ -154,6 +156,7 @@ export const AssetSettings = ({
       interestRateModel: sdk ? sdk.chainDeployment.JumpRateModel.address : '',
       supplyCap: SUPPLY_CAP.DEFAULT,
       borrowCap: BORROW_CAP.DEFAULT,
+      debtCeilings: DEBT_CEILING.DEFAULT,
       collateralAsset: assets[0].cToken,
     },
   });
@@ -167,12 +170,13 @@ export const AssetSettings = ({
   );
   const watchSupplyCap = Number(watch('supplyCap', SUPPLY_CAP.DEFAULT));
   const watchBorrowCap = Number(watch('borrowCap', BORROW_CAP.DEFAULT));
+  const watchDebtCeilings = Number(watch('debtCeilings', DEBT_CEILING.DEFAULT));
   const watchCollateralAsset = watch('collateralAsset', assets[0].cToken);
 
   const { data: pluginInfo } = usePluginInfo(poolChainId, selectedAsset.plugin);
 
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
-  const { data: borrowCapPerCollateral } = useBorrowCapForAssetForCollateral(
+  const { data: debtCeilingPerCollateral } = useDebtCeilingForAssetForCollateral(
     comptrollerAddress,
     [selectedAsset],
     assets,
@@ -180,16 +184,16 @@ export const AssetSettings = ({
   );
 
   useEffect(() => {
-    if (borrowCapPerCollateral && borrowCapPerCollateral.length > 0) {
-      const _borrowCap = borrowCapPerCollateral.find(
-        (_borrowCap) => _borrowCap.collateralAsset.cToken === watchCollateralAsset
+    if (debtCeilingPerCollateral && debtCeilingPerCollateral.length > 0) {
+      const _debtCeiling = debtCeilingPerCollateral.find(
+        (_debtCeiling) => _debtCeiling.collateralAsset.cToken === watchCollateralAsset
       );
 
-      setBorrowCapState(_borrowCap);
+      setDebtCeilingState(_debtCeiling);
     } else {
-      setBorrowCapState(undefined);
+      setDebtCeilingState(undefined);
     }
-  }, [borrowCapPerCollateral, watchCollateralAsset]);
+  }, [debtCeilingPerCollateral, watchCollateralAsset]);
 
   useEffect(() => {
     if (cTokenData) {
@@ -206,8 +210,8 @@ export const AssetSettings = ({
   }, [cTokenData, setValue]);
 
   useEffect(() => {
-    setValue('borrowCap', borrowCapState ? borrowCapState.borrowCap : 0);
-  }, [borrowCapState, setValue]);
+    setValue('debtCeilings', debtCeilingState ? debtCeilingState.debtCeiling : 0);
+  }, [debtCeilingState, setValue]);
 
   const updateSupplyCaps = async ({ supplyCap }: { supplyCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
@@ -256,12 +260,12 @@ export const AssetSettings = ({
     }
   };
 
-  const updateBorrowCaps = async ({
+  const updateDebtCeilings = async ({
     collateralAsset,
-    borrowCap,
+    debtCeilings,
   }: {
     collateralAsset: string;
-    borrowCap: string | number;
+    debtCeilings: string | number;
   }) => {
     if (!currentSdk) return;
 
@@ -269,7 +273,7 @@ export const AssetSettings = ({
 
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
-      if (Number(borrowCap) === -1) {
+      if (Number(debtCeilings) === -1) {
         const tx = await comptroller._blacklistBorrowingAgainstCollateral(
           selectedAsset.cToken,
           collateralAsset,
@@ -279,7 +283,7 @@ export const AssetSettings = ({
         await tx.wait();
       } else {
         // if it was blacklisted already, then remove from blacklisted first
-        if (borrowCapState?.borrowCap === -1) {
+        if (debtCeilingState?.debtCeiling === -1) {
           const txBlacklisted = await comptroller._blacklistBorrowingAgainstCollateral(
             selectedAsset.cToken,
             collateralAsset,
@@ -289,27 +293,27 @@ export const AssetSettings = ({
           await txBlacklisted.wait();
         }
 
-        const txBorrowCap = await comptroller._setBorrowCapForAssetForCollateral(
+        const txDebtCeilings = await comptroller._setBorrowCapForAssetForCollateral(
           selectedAsset.cToken,
           collateralAsset,
-          utils.parseUnits(borrowCap.toString(), selectedAsset.underlyingDecimals)
+          utils.parseUnits(debtCeilings.toString(), selectedAsset.underlyingDecimals)
         );
 
-        await txBorrowCap.wait();
+        await txDebtCeilings.wait();
       }
 
-      LogRocket.track('Midas-UpdateBorrowCaps', {
+      LogRocket.track('Midas-updateDebtCeilings', {
         comptroller: comptrollerAddress,
       });
 
       await queryClient.refetchQueries();
 
-      successToast({ description: 'Successfully updated borrow caps!' });
+      successToast({ description: 'Successfully updated debt ceilings!' });
     } catch (e) {
       handleGenericError(e, errorToast);
-      setBorrowCapsDefault();
+      setDebtCeilingsDefault();
     } finally {
-      setIsEditBorrowCap(false);
+      setIsEditDebtCeilings(false);
       setIsUpdating(false);
     }
   };
@@ -480,10 +484,10 @@ export const AssetSettings = ({
     setIsEditBorrowCap(false);
   };
 
-  const setBorrowCapsDefault = () => {
-    setValue('borrowCap', borrowCapState ? borrowCapState.borrowCap : 0);
+  const setDebtCeilingsDefault = () => {
+    setValue('debtCeilings', debtCeilingState ? debtCeilingState.debtCeiling : 0);
 
-    setIsEditBorrowCap(false);
+    setIsEditDebtCeilings(false);
   };
 
   const setReserveFactorDefault = () => {
@@ -713,7 +717,7 @@ export const AssetSettings = ({
                     isUpdating ||
                     !cTokenData ||
                     watchBorrowCap ===
-                      parseInt(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
+                      parseFloat(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
                   }
                 >
                   Save
@@ -744,7 +748,7 @@ export const AssetSettings = ({
             px={{ base: 4, md: 8 }}
             py={4}
             direction="column"
-            onSubmit={handleSubmit(updateBorrowCaps)}
+            onSubmit={handleSubmit(updateDebtCeilings)}
           >
             <Flex
               w="100%"
@@ -752,12 +756,12 @@ export const AssetSettings = ({
               direction={{ base: 'column', sm: 'row' }}
               alignItems="center"
             >
-              <FormLabel htmlFor="borrowCaps" margin={0}>
+              <FormLabel htmlFor="debtCeilings" margin={0}>
                 <HStack>
                   <Text size="md" width="max-content">
-                    Borrow Caps
+                    Debt Ceilings
                   </Text>
-                  <SimpleTooltip label={'It shows the market borrow caps.'}>
+                  <SimpleTooltip label={'It shows the market debt ceilings.'}>
                     <InfoOutlineIcon ml={1} />
                   </SimpleTooltip>
                 </HStack>
@@ -795,12 +799,12 @@ export const AssetSettings = ({
                 </FormControl>
                 <Controller
                   control={control}
-                  name="borrowCap"
+                  name="debtCeilings"
                   rules={{
-                    required: 'Borrow caps is required',
+                    required: 'Debt ceiling is required',
                     min: {
-                      value: BORROW_CAP.MIN,
-                      message: `Borrow caps must be at least ${BORROW_CAP.MIN} ${selectedAsset.underlyingSymbol}`,
+                      value: DEBT_CEILING.MIN,
+                      message: `Debt ceiling must be at least ${DEBT_CEILING.MIN} ${selectedAsset.underlyingSymbol}`,
                     },
                   }}
                   render={({ field: { name, value, ref, onChange } }) => (
@@ -810,9 +814,9 @@ export const AssetSettings = ({
                         clampValueOnBlur={false}
                         value={
                           selectedAsset.cToken === watchCollateralAsset ||
-                          (value === -1 && !isEditBorrowCap)
+                          (value === -1 && !isEditDebtCeilings)
                             ? 'Blacklisted'
-                            : value === 0 && !isEditBorrowCap
+                            : value === 0 && !isEditDebtCeilings
                             ? 'Unlimited'
                             : value
                         }
@@ -820,7 +824,7 @@ export const AssetSettings = ({
                         min={BORROW_CAP.MIN}
                         allowMouseWheel
                         isDisabled={!isEditableAdmin}
-                        isReadOnly={!isEditBorrowCap}
+                        isReadOnly={!isEditDebtCeilings}
                       >
                         <NumberInputField
                           paddingLeft={2}
@@ -847,7 +851,7 @@ export const AssetSettings = ({
                   )}
                 />
                 <FormErrorMessage maxWidth="200px" marginBottom="-10px">
-                  {errors.borrowCap && errors.borrowCap.message}
+                  {errors.debtCeilings && errors.debtCeilings.message}
                 </FormErrorMessage>
               </Flex>
             </Flex>
@@ -857,15 +861,15 @@ export const AssetSettings = ({
               alignSelf="end"
               isDisabled={selectedAsset.cToken === watchCollateralAsset}
             >
-              {isEditBorrowCap ? (
+              {isEditDebtCeilings ? (
                 <>
                   <Button
                     type="submit"
-                    disabled={isUpdating || watchBorrowCap === borrowCapState?.borrowCap}
+                    disabled={isUpdating || watchDebtCeilings === debtCeilingState?.debtCeiling}
                   >
                     Save
                   </Button>
-                  <Button variant="silver" disabled={isUpdating} onClick={setBorrowCapsDefault}>
+                  <Button variant="silver" disabled={isUpdating} onClick={setDebtCeilingsDefault}>
                     Cancel
                   </Button>
                 </>
@@ -874,7 +878,7 @@ export const AssetSettings = ({
                   disabled={
                     isUpdating || !isEditableAdmin || selectedAsset.cToken === watchCollateralAsset
                   }
-                  onClick={() => setIsEditBorrowCap(true)}
+                  onClick={() => setIsEditDebtCeilings(true)}
                 >
                   Edit
                 </CButton>

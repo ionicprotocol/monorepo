@@ -4,7 +4,7 @@ import { constants, utils } from 'ethers';
 
 import { useSdk } from '@ui/hooks/fuse/useSdk';
 
-export const useBorrowCapForAssetForCollateral = (
+export const useDebtCeilingForAssetForCollateral = (
   comptrollerAddress: string,
   assets: NativePricedFuseAsset[],
   collateralAssets: NativePricedFuseAsset[],
@@ -14,7 +14,7 @@ export const useBorrowCapForAssetForCollateral = (
 
   return useQuery(
     [
-      'useBorrowCapForAssetForCollateral',
+      'useDebtCeilingForAssetForCollateral',
       poolChainId,
       assets.sort((a, b) => a.cToken.localeCompare(b.cToken)),
       collateralAssets.sort((a, b) => a.cToken.localeCompare(b.cToken)),
@@ -22,10 +22,10 @@ export const useBorrowCapForAssetForCollateral = (
     async () => {
       if (!sdk || collateralAssets.length === 0) return null;
 
-      const borrowCapsPerCollateral: {
+      const debtCeilingPerCollateral: {
         asset: NativePricedFuseAsset;
         collateralAsset: NativePricedFuseAsset;
-        borrowCap: number;
+        debtCeiling: number;
       }[] = [];
       const comptroller = sdk.createComptroller(comptrollerAddress, sdk.provider);
 
@@ -41,22 +41,22 @@ export const useBorrowCapForAssetForCollateral = (
                   );
 
                 if (isInBlackList) {
-                  borrowCapsPerCollateral.push({
+                  debtCeilingPerCollateral.push({
                     asset,
                     collateralAsset,
-                    borrowCap: -1,
+                    debtCeiling: -1,
                   });
                 } else {
-                  const borrowCap = await comptroller.callStatic.borrowCapForAssetForCollateral(
+                  const debtCeiling = await comptroller.callStatic.borrowCapForAssetForCollateral(
                     asset.cToken,
                     collateralAsset.cToken
                   );
 
-                  if (borrowCap.gt(constants.Zero)) {
-                    borrowCapsPerCollateral.push({
+                  if (debtCeiling.gt(constants.Zero)) {
+                    debtCeilingPerCollateral.push({
                       asset,
                       collateralAsset,
-                      borrowCap: Number(utils.formatUnits(borrowCap, asset.underlyingDecimals)),
+                      debtCeiling: Number(utils.formatUnits(debtCeiling, asset.underlyingDecimals)),
                     });
                   }
                 }
@@ -66,7 +66,7 @@ export const useBorrowCapForAssetForCollateral = (
         })
       );
 
-      return borrowCapsPerCollateral;
+      return debtCeilingPerCollateral;
     },
     { cacheTime: Infinity, staleTime: Infinity, enabled: !!sdk && collateralAssets.length > 0 }
   );

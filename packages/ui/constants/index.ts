@@ -54,7 +54,7 @@ export const BORROW_CAP = {
   DEFAULT: 0,
 };
 
-export const BORROW_CAPS = {
+export const DEBT_CEILING = {
   MIN: -1, // -1: blacklisted, 0: unlimited
   DEFAULT: 0,
 };
