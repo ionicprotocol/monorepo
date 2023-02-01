@@ -9,14 +9,12 @@ import { useTokenData } from '@ui/hooks/useTokenData';
 const EditAssetSettings = ({
   comptrollerAddress,
   selectedAsset,
-  assets,
   poolChainId,
   setSelectedAsset,
   assets,
 }: {
   comptrollerAddress: string;
   selectedAsset: NativePricedFuseAsset;
-  assets: NativePricedFuseAsset[];
   poolChainId: number;
   setSelectedAsset: (value: NativePricedFuseAsset) => void;
   assets: NativePricedFuseAsset[];

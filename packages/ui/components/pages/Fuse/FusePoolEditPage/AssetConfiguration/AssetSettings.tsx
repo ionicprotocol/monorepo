@@ -266,7 +266,8 @@ export const AssetSettings = ({
     if (!currentSdk) return;
 
     setIsUpdating(true);
-    const comptroller = currentSdk.createComptroller(comptrollerAddress);
+
+    const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       if (Number(borrowCap) === -1) {
         const tx = await comptroller._blacklistBorrowingAgainstCollateral(
@@ -297,7 +298,9 @@ export const AssetSettings = ({
         await txBorrowCap.wait();
       }
 
-      LogRocket.track('Fuse-UpdateBorrowCaps');
+      LogRocket.track('Midas-UpdateBorrowCaps', {
+        comptroller: comptrollerAddress,
+      });
 
       await queryClient.refetchQueries();
 
