@@ -26,6 +26,7 @@ nextConfig = {
     SUPABASE_PLUGIN_REWARDS_TABLE_NAME: process.env.SUPABASE_PLUGIN_REWARDS_TABLE_NAME,
     SUPABASE_ASSET_APY_TABLE_NAME: process.env.SUPABASE_ASSET_APY_TABLE_NAME,
     SENTRY_DSN: process.env.SENTRY_DSN,
+    IS_SENTRY_ENABLED: process.env.IS_SENTRY_ENABLED,
   },
   sentry: {
     disableServerWebpackPlugin: true,
