@@ -48,7 +48,16 @@ export const fetchMaxAmount = async (
   comptrollerAddress?: string
 ): Promise<BigNumber> => {
   if (mode === FundOperationMode.SUPPLY) {
-    return await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
+    const tokenBalance = await fetchTokenBalance(asset.underlyingToken, midasSdk, address);
+
+    if (comptrollerAddress) {
+      const comptroller = midasSdk.createComptroller(comptrollerAddress);
+      const supplyCap = await comptroller.callStatic.supplyCaps(asset.cToken);
+
+      return supplyCap.gt(constants.Zero) && supplyCap.lte(tokenBalance) ? supplyCap : tokenBalance;
+    } else {
+      return tokenBalance;
+    }
   }
 
   if (mode === FundOperationMode.REPAY) {
