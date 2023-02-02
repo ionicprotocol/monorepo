@@ -1,9 +1,11 @@
 import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
 import { BigNumber, Contract } from "ethers";
-import { task } from "hardhat/config";
+import { task, types } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
+import { default as ERC20Abi } from "../../abis/EIP20Interface";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
+import axios from "axios";
 
 const LOG = process.env.LOG ? true : false;
 
@@ -14,6 +16,11 @@ async function setUpFeeCalculation(hre: HardhatRuntimeEnvironment) {
   const mpo = await hre.ethers.getContract("MasterPriceOracle", deployer);
   const [, pools] = await fpd.callStatic.getActivePools();
   return { pools, fpd, mpo };
+}
+
+async function cgPrice(cgId: string) {
+  const { data } = await axios.get(`https://api.coingecko.com/api/v3/simple/price?vs_currencies=usd&ids=${cgId}`);
+  return data[cgId].usd;
 }
 
 async function createComptroller(
@@ -186,11 +193,7 @@ task("revenue:flywheels:calculate", "Calculate the fees accrued from 4626 Perfor
           const performanceFeeRewardTokens = await flywheelContract.callStatic.rewardsAccrued(
             await flywheelContract.callStatic.feeRecipient()
           );
-          const rewardToken = new Contract(
-            await flywheelContract.callStatic.rewardToken(),
-            sdk.artifacts.ERC20.abi,
-            deployer
-          );
+          const rewardToken = new Contract(await flywheelContract.callStatic.rewardToken(), ERC20Abi, deployer);
           const rewardTokenPrice = await mpo.callStatic.price(rewardToken.address);
 
           const nativeFee = performanceFeeRewardTokens
@@ -221,3 +224,49 @@ task("revenue:all:calculate", "Calculate the fees accrued from 4626 Performance 
     console.log(`Total Fees: ${hre.ethers.utils.formatEther(pluginFees.add(adminFees).add(flywheelFees))}`);
   }
 );
+
+task("revenue:admin:withdraw", "Calculate the fees accrued from 4626 Performance Fees")
+  .addParam("signer", "The address of the current deployer", "deployer", types.string)
+  .addParam("comptroller", "The address of the comptroller", undefined, types.string)
+  .addParam("threshold", "Threshold for fuse fee seizing denominated in native", "0.01", types.string)
+  .setAction(async (taskArgs, hre) => {
+    const deployer = await hre.ethers.getNamedSigner("deployer");
+    // @ts-ignore
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
+    const cgId = sdk.chainSpecificParams.cgId;
+
+    const comptroller = sdk.createComptroller(taskArgs.comptroller, deployer);
+    const markets = await comptroller.callStatic.getAllMarkets();
+
+    const threshold = hre.ethers.utils.parseEther(taskArgs.threshold);
+
+    const priceUsd = await cgPrice(cgId);
+
+    for (const market of markets) {
+      const cToken = sdk.createCTokenWithExtensions(market, deployer);
+      const underlying = await cToken.callStatic.underlying();
+      const fuseFee = await cToken.callStatic.totalFuseFees();
+      const mpo = sdk.createMasterPriceOracle(deployer);
+      const nativePrice = await mpo.callStatic.price(underlying);
+      console.log("native price", hre.ethers.utils.formatEther(nativePrice));
+      const nativeFee = fuseFee.mul(nativePrice).div(BigNumber.from(10).pow(18));
+
+      console.log("USD FEE VALUE", parseFloat(hre.ethers.utils.formatEther(nativeFee)) * priceUsd);
+      console.log("USD THRESHOLD VALUE", parseFloat(taskArgs.threshold) * priceUsd);
+
+      if (fuseFee.gt(threshold)) {
+        console.log(`Withdrawing fee from ${await cToken.callStatic.symbol()} (underlying: ${underlying})`);
+        const tx = await cToken._withdrawFuseFees(fuseFee);
+        await tx.wait();
+        if (LOG)
+          console.log(
+            `Pool: ${comptroller} - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(
+              nativeFee
+            )}`
+          );
+      } else {
+        if (LOG) console.log(`Pool: ${comptroller} - Market: ${market} - No Fuse Fees`);
+      }
+    }
+  });
