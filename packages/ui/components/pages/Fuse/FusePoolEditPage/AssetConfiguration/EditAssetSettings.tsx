@@ -1,8 +1,7 @@
 import { Spinner, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
-import React from 'react';
 
-import { AssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AssetSettings';
+import { AssetSettings } from './AssetSettings';
 import { Center } from '@ui/components/shared/Flex';
 import { useTokenData } from '@ui/hooks/useTokenData';
 
@@ -37,7 +36,6 @@ const EditAssetSettings = ({
         tokenData={tokenData}
         poolChainId={poolChainId}
         setSelectedAsset={setSelectedAsset}
-        assets={assets}
       />
     );
   }
