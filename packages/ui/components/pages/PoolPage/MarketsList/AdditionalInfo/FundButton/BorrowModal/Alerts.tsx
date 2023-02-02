@@ -2,7 +2,7 @@ import { Alert, AlertIcon, HStack, Text, VStack } from '@chakra-ui/react';
 import { utils } from 'ethers';
 
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
-import { useBorrowCapForAssetForCollateral } from '@ui/hooks/useBorrowCapForAssetForCollateral';
+import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { toCeil } from '@ui/utils/formatNumber';
@@ -22,7 +22,7 @@ export const Alerts = ({
     data: { minBorrowAsset, minBorrowUSD },
   } = useBorrowMinimum(asset, poolChainId);
 
-  const { data: borrowCapsPerCollateral } = useBorrowCapForAssetForCollateral(
+  const { data: borrowCapsPerCollateral } = useDebtCeilingForAssetForCollateral(
     comptrollerAddress,
     [asset],
     assets,

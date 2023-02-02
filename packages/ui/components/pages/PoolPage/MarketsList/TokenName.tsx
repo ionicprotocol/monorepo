@@ -10,7 +10,7 @@ import { PopoverTooltip } from '@ui/components/shared/PopoverTooltip';
 import { SimpleTooltip } from '@ui/components/shared/SimpleTooltip';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useAssetClaimableRewards } from '@ui/hooks/rewards/useAssetClaimableRewards';
-import { useBorrowCapForAssetForCollateral } from '@ui/hooks/useBorrowCapForAssetForCollateral';
+import { useDebtCeilingForAssetForCollateral } from '@ui/hooks/useDebtCeilingForAssetForCollateral';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { MarketData } from '@ui/types/TokensDataMap';
 
@@ -32,7 +32,7 @@ export const TokenName = ({
   });
   const collateralAssets = useMemo(() => assets.filter((_asset) => _asset.membership), [assets]);
 
-  const { data: borrowCapForAssetForCollateral } = useBorrowCapForAssetForCollateral(
+  const { data: borrowCapForAssetForCollateral } = useDebtCeilingForAssetForCollateral(
     poolAddress,
     assets,
     collateralAssets,
