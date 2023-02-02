@@ -1,4 +1,4 @@
-import { providers } from "ethers";
+import { BigNumber, providers } from "ethers";
 import { task, types } from "hardhat/config";
 
 import { MidasERC4626 } from "../../typechain/MidasERC4626";
@@ -35,7 +35,7 @@ task("deploy-fwr", "Changes the system admin to a new address")
 
 task("replace-fw-fee-recipient", "Changes the system admin to a new address")
   .addParam("newDeployer", "The address of the new deployer", undefined, types.string)
-  .addParam("strategies", "The addresses of the strategies for which to update the fees", undefined, types.string)
+  .addParam("fwAddresses", "The addresses of the strategies for which to update the fees", undefined, types.string)
   .setAction(async ({ newDeployer, fwAddresses }, { ethers }) => {
     let tx: providers.TransactionResponse;
 
@@ -58,7 +58,7 @@ task("replace-fw-fee-recipient", "Changes the system admin to a new address")
         console.log("fee recipient already set to the new deployer");
         continue;
       } else {
-        console.log(`fee recipient needs to be replaced from ${feeRecipient} to ${newDeployer}}`);
+        console.log(`fee recipient needs to be replaced from ${feeRecipient} to ${newDeployer}`);
         tx = await flywheelCore.updateFeeSettings(performanceFee, newDeployer);
         await tx.wait();
         console.log("fee recipient updated to the new deployer");
@@ -83,12 +83,16 @@ export default task("replace-plugin-fee-recipient", "Changes the system admin to
       console.log(`current owner ${currentOwner} of the strategy at ${strategy.address}`);
       const feeRecipient = await strategy.callStatic.feeRecipient();
       const performanceFee = await strategy.callStatic.performanceFee();
-      if (feeRecipient === newDeployer) {
+      const newPFS = BigNumber.from("50000000000000000");
+
+      console.log({ previousPF: performanceFee.toString(), newPFS: newPFS.toString() });
+
+      if (feeRecipient === newDeployer && performanceFee.toString() === newPFS.toString()) {
         console.log("fee recipient already set to the new deployer");
         continue;
       } else {
-        console.log(`fee recipient needs to be replaced from ${feeRecipient} to ${newDeployer}}`);
-        tx = await strategy.updateFeeSettings(performanceFee, newDeployer);
+        console.log(`fee recipient needs to be replaced from ${feeRecipient} to ${newDeployer}`);
+        tx = await strategy.updateFeeSettings(newPFS, newDeployer);
         await tx.wait();
         console.log("fee recipient updated to the new deployer");
       }
