@@ -33,6 +33,7 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useMaxSupplyAmount } from '@ui/hooks/useMaxSupplyAmount';
 import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
@@ -41,7 +42,6 @@ import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
 interface SupplyModalProps {
   isOpen: boolean;
@@ -100,27 +100,21 @@ export const SupplyModal = ({
     chainId: poolChainId,
   });
 
+  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, poolChainId);
+
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidSupplyAmount', amount, currentSdk.chainId, address, asset.cToken],
+    ['isValidSupplyAmount', amount, currentSdk.chainId, address, asset.cToken, maxSupplyAmount],
     async () => {
-      if (!currentSdk || !address) return null;
+      if (!currentSdk || !address || !maxSupplyAmount) return null;
 
       if (amount.isZero()) {
         return false;
       }
 
       try {
-        const max = optionToWrap
-          ? (myNativeBalance as BigNumber)
-          : ((await fetchMaxAmount(
-              FundOperationMode.SUPPLY,
-              currentSdk,
-              address,
-              asset,
-              comptrollerAddress
-            )) as BigNumber);
+        const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
 
         return amount.lte(max);
       } catch (e) {
@@ -131,7 +125,7 @@ export const SupplyModal = ({
     {
       cacheTime: Infinity,
       staleTime: Infinity,
-      enabled: !!currentSdk && !!address,
+      enabled: !!currentSdk && !!address && !!maxSupplyAmount,
     }
   );
 
