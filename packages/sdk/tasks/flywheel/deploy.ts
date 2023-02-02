@@ -43,7 +43,8 @@ task("flywheel:deploy-static-rewards", "Deploy static rewards flywheel for LM re
     const midasSdkModule = await import("../../tests/utils/midasSdk");
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
-    await sdk.setFlywheelRewards(flywheel.address, rewards.address);
+    const tx = await sdk.setFlywheelRewards(flywheel.address, rewards.address);
+    await tx.wait();
 
     await run("flywheel:add-strategy-for-rewards", { flywheel: flywheel.address, strategy });
     await run("flywheel:add-to-pool", { flywheel: flywheel.address, pool });
@@ -75,10 +76,8 @@ task("flywheel:add-strategy-for-rewards", "Create pool if does not exist")
     const sdk = await midasSdkModule.getOrCreateMidas(deployer);
 
     const addTx = await sdk.addStrategyForRewardsToFlywheelCore(flywheelAddress, strategyAddress);
-    console.log(addTx);
-
     const receipt = await addTx.wait();
-    console.log(receipt);
+    console.log(receipt.transactionHash);
   });
 
 task("flywheel:add-to-pool", "Create pool if does not exist")
