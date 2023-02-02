@@ -1,16 +1,19 @@
 import { task } from "hardhat/config";
 
 task("fork:create-pool", "Create pool on forking node").setAction(async (taskArgs, hre) => {
+  // @ts-ignore
+  const midasSdkModule = await import("../../tests/utils/midasSdk");
+  const sdk = await midasSdkModule.getOrCreateMidas();
+
   console.log("Creating pool...");
 
   const poolAddress = await hre.run("pool:create", {
     name: "FORK:Testing Pool",
     creator: "deployer",
-    priceOracle: "0x429041250873643235cb3788871447c6fF3205aA",
+    priceOracle: sdk.chainDeployment.MasterPriceOracle.address,
     closeFactor: "50",
     liquidationIncentive: "8",
     enforceWhitelist: "false",
-    whitelist: "",
   });
 
   console.log("Pool created!");
