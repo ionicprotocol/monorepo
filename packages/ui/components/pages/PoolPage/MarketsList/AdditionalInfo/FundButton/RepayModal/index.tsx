@@ -13,7 +13,7 @@ import {
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
@@ -29,13 +29,13 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { REPAY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useMaxRepayAmount } from '@ui/hooks/useMaxRepayAmount';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
 import { handleGenericError } from '@ui/utils/errorHandling';
-import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
 interface RepayModalProps {
   isOpen: boolean;
@@ -75,6 +75,7 @@ export const RepayModal = ({
   const [btnStr, setBtnStr] = useState<string>('Repay');
   const [steps, setSteps] = useState<TxStep[]>([...REPAY_STEPS(asset.underlyingSymbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
+  const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
   const nativeSymbol = currentChain.nativeCurrency?.symbol;
 
   const optionToWrap = useMemo(() => {
@@ -91,38 +92,16 @@ export const RepayModal = ({
   ]);
 
   const queryClient = useQueryClient();
+  const { data: maxRepayAmount, isLoading } = useMaxRepayAmount(asset, poolChainId);
 
-  const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidRepayAmount', amount, currentSdk.chainId, address, asset.cToken],
-    async () => {
-      if (!currentSdk || !address) return null;
-
-      if (amount.isZero()) {
-        return false;
-      }
-
-      try {
-        const max = optionToWrap
-          ? (myNativeBalance as BigNumber)
-          : ((await fetchMaxAmount(
-              FundOperationMode.REPAY,
-              currentSdk,
-              address,
-              asset
-            )) as BigNumber);
-
-        return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, errorToast);
-        return false;
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!currentSdk && !!address,
+  useEffect(() => {
+    if (amount.isZero() || !maxRepayAmount) {
+      setIsAmountValid(false);
+    } else {
+      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxRepayAmount;
+      setIsAmountValid(amount.lte(max));
     }
-  );
+  }, [amount, maxRepayAmount, myNativeBalance, optionToWrap]);
 
   useEffect(() => {
     if (amount.isZero()) {
@@ -130,13 +109,13 @@ export const RepayModal = ({
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${asset.underlyingSymbol}...`);
     } else {
-      if (amountIsValid) {
+      if (isAmountValid) {
         setBtnStr('Repay');
       } else {
         setBtnStr(`You don't have enough ${asset.underlyingSymbol}`);
       }
     }
-  }, [amount, isLoading, amountIsValid, asset.underlyingSymbol]);
+  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
@@ -376,7 +355,7 @@ export const RepayModal = ({
                     id="confirmFund"
                     width="100%"
                     onClick={onConfirm}
-                    isDisabled={!amountIsValid}
+                    isDisabled={!isAmountValid}
                     height={16}
                   >
                     {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
