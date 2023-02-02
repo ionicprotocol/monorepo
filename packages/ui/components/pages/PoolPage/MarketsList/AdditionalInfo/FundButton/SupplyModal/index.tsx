@@ -411,17 +411,43 @@ export const SupplyModal = ({
                   gap={4}
                 >
                   {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
-                    <Column gap={1} w="100%">
-                      <AmountInput
+                    <>
+                      <Column gap={1} w="100%">
+                        <AmountInput
+                          asset={asset}
+                          optionToWrap={optionToWrap}
+                          poolChainId={poolChainId}
+                          setAmount={setAmount}
+                          comptrollerAddress={comptrollerAddress}
+                        />
+
+                        <Balance asset={asset} />
+                      </Column>
+                      <StatsColumn
+                        mode={FundOperationMode.SUPPLY}
+                        amount={amount}
+                        assets={assets}
                         asset={asset}
-                        optionToWrap={optionToWrap}
+                        enableAsCollateral={enableAsCollateral}
                         poolChainId={poolChainId}
-                        setAmount={setAmount}
                         comptrollerAddress={comptrollerAddress}
                       />
-
-                      <Balance asset={asset} />
-                    </Column>
+                      {!asset.membership && (
+                        <EnableCollateral
+                          enableAsCollateral={enableAsCollateral}
+                          setEnableAsCollateral={setEnableAsCollateral}
+                        />
+                      )}
+                      <Button
+                        id="confirmFund"
+                        width="100%"
+                        onClick={onConfirm}
+                        isDisabled={!amountIsValid}
+                        height={16}
+                      >
+                        {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
+                      </Button>
+                    </>
                   ) : (
                     <Alert status="info">
                       <AlertIcon />
@@ -438,31 +464,6 @@ export const SupplyModal = ({
                       </VStack>
                     </Alert>
                   )}
-
-                  <StatsColumn
-                    mode={FundOperationMode.SUPPLY}
-                    amount={amount}
-                    assets={assets}
-                    asset={asset}
-                    enableAsCollateral={enableAsCollateral}
-                    poolChainId={poolChainId}
-                    comptrollerAddress={comptrollerAddress}
-                  />
-                  {!asset.membership && (
-                    <EnableCollateral
-                      enableAsCollateral={enableAsCollateral}
-                      setEnableAsCollateral={setEnableAsCollateral}
-                    />
-                  )}
-                  <Button
-                    id="confirmFund"
-                    width="100%"
-                    onClick={onConfirm}
-                    isDisabled={!amountIsValid}
-                    height={16}
-                  >
-                    {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}
-                  </Button>
                 </Column>
               </>
             )}
