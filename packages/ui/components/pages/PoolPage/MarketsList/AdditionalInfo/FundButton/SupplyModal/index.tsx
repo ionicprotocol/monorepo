@@ -16,7 +16,7 @@ import {
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 import { getContract } from 'sdk/dist/cjs/src/MidasSdk/utils';
@@ -77,6 +77,7 @@ export const SupplyModal = ({
   const [activeStep, setActiveStep] = useState<number>(0);
   const [failedStep, setFailedStep] = useState<number>(0);
   const [btnStr, setBtnStr] = useState<string>('Supply');
+  const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
   const [steps, setSteps] = useState<TxStep[]>([...SUPPLY_STEPS(asset.underlyingSymbol)]);
   const [confirmedSteps, setConfirmedSteps] = useState<TxStep[]>([]);
   const successToast = useSuccessToast();
@@ -100,34 +101,22 @@ export const SupplyModal = ({
     chainId: poolChainId,
   });
 
-  const { data: maxSupplyAmount } = useMaxSupplyAmount(asset, comptrollerAddress, poolChainId);
+  const { data: maxSupplyAmount, isLoading } = useMaxSupplyAmount(
+    asset,
+    comptrollerAddress,
+    poolChainId
+  );
 
   const queryClient = useQueryClient();
 
-  const { data: amountIsValid, isLoading } = useQuery(
-    ['isValidSupplyAmount', amount, currentSdk.chainId, address, asset.cToken, maxSupplyAmount],
-    async () => {
-      if (!currentSdk || !address || !maxSupplyAmount) return null;
-
-      if (amount.isZero()) {
-        return false;
-      }
-
-      try {
-        const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
-
-        return amount.lte(max);
-      } catch (e) {
-        handleGenericError(e, errorToast);
-        return false;
-      }
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!currentSdk && !!address && !!maxSupplyAmount,
+  useEffect(() => {
+    if (amount.isZero() || !maxSupplyAmount) {
+      setIsAmountValid(false);
+    } else {
+      const max = optionToWrap ? (myNativeBalance as BigNumber) : maxSupplyAmount.bigNumber;
+      setIsAmountValid(amount.lte(max));
     }
-  );
+  }, [amount, maxSupplyAmount, optionToWrap, myNativeBalance]);
 
   useEffect(() => {
     if (amount.isZero()) {
@@ -135,13 +124,13 @@ export const SupplyModal = ({
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${asset.underlyingSymbol}...`);
     } else {
-      if (amountIsValid) {
+      if (isAmountValid) {
         setBtnStr('Supply');
       } else {
         setBtnStr(`You don't have enough ${asset.underlyingSymbol}`);
       }
     }
-  }, [amount, isLoading, amountIsValid, asset.underlyingSymbol]);
+  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
@@ -442,7 +431,7 @@ export const SupplyModal = ({
                         id="confirmFund"
                         width="100%"
                         onClick={onConfirm}
-                        isDisabled={!amountIsValid}
+                        isDisabled={!isAmountValid}
                         height={16}
                       >
                         {optionToWrap ? `Wrap ${nativeSymbol} & ${btnStr}` : btnStr}

@@ -1,15 +1,12 @@
 import { Box, Button, Input } from '@chakra-ui/react';
 import { utils } from 'ethers';
-import { useState } from 'react';
 
 import { MidasBox } from '@ui/components/shared/Box';
 import { EllipsisText } from '@ui/components/shared/EllipsisText';
 import { Row } from '@ui/components/shared/Flex';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useBorrowMinimum } from '@ui/hooks/useBorrowMinimum';
-import { useErrorToast } from '@ui/hooks/useToast';
 import { MarketData } from '@ui/types/TokensDataMap';
-import { handleGenericError } from '@ui/utils/errorHandling';
 
 export const AmountInput = ({
   asset,
@@ -22,25 +19,16 @@ export const AmountInput = ({
   userEnteredAmount: string;
   updateAmount: (amount: string) => void;
 }) => {
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const errorToast = useErrorToast();
   const {
     data: { minBorrowAsset },
+    isLoading,
   } = useBorrowMinimum(asset, poolChainId);
 
   const setToMin = () => {
-    setIsLoading(true);
-
-    try {
-      if (minBorrowAsset) {
-        updateAmount(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals));
-      } else {
-        updateAmount('');
-      }
-    } catch (e) {
-      handleGenericError(e, errorToast);
-    } finally {
-      setIsLoading(false);
+    if (minBorrowAsset) {
+      updateAmount(utils.formatUnits(minBorrowAsset, asset.underlyingDecimals));
+    } else {
+      updateAmount('');
     }
   };
 
