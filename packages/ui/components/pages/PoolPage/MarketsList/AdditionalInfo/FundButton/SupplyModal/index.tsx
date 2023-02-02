@@ -1,4 +1,6 @@
 import {
+  Alert,
+  AlertIcon,
   Box,
   Button,
   Divider,
@@ -9,6 +11,7 @@ import {
   ModalContent,
   ModalOverlay,
   Text,
+  VStack,
 } from '@chakra-ui/react';
 import { WETHAbi } from '@midas-capital/sdk';
 import { FundOperationMode } from '@midas-capital/types';
@@ -30,11 +33,13 @@ import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { SUPPLY_STEPS } from '@ui/constants/index';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
+import { useSupplyCap } from '@ui/hooks/useSupplyCap';
 import { useErrorToast, useSuccessToast } from '@ui/hooks/useToast';
 import { useTokenBalance } from '@ui/hooks/useTokenBalance';
 import { useTokenData } from '@ui/hooks/useTokenData';
 import { TxStep } from '@ui/types/ComponentPropsType';
 import { MarketData } from '@ui/types/TokensDataMap';
+import { smallFormatter } from '@ui/utils/bigUtils';
 import { handleGenericError } from '@ui/utils/errorHandling';
 import { fetchMaxAmount } from '@ui/utils/fetchMaxAmount';
 
@@ -89,6 +94,12 @@ export const SupplyModal = ({
     myNativeBalance,
   ]);
 
+  const { data: supplyCap } = useSupplyCap({
+    comptroller: comptrollerAddress,
+    market: asset,
+    chainId: poolChainId,
+  });
+
   const queryClient = useQueryClient();
 
   const { data: amountIsValid, isLoading } = useQuery(
@@ -107,7 +118,8 @@ export const SupplyModal = ({
               FundOperationMode.SUPPLY,
               currentSdk,
               address,
-              asset
+              asset,
+              comptrollerAddress
             )) as BigNumber);
 
         return amount.lte(max);
@@ -404,17 +416,34 @@ export const SupplyModal = ({
                   width="100%"
                   gap={4}
                 >
-                  <Column gap={1} w="100%">
-                    <AmountInput
-                      asset={asset}
-                      optionToWrap={optionToWrap}
-                      poolChainId={poolChainId}
-                      setAmount={setAmount}
-                      comptrollerAddress={comptrollerAddress}
-                    />
+                  {!supplyCap || asset.totalSupplyFiat < supplyCap.usdCap ? (
+                    <Column gap={1} w="100%">
+                      <AmountInput
+                        asset={asset}
+                        optionToWrap={optionToWrap}
+                        poolChainId={poolChainId}
+                        setAmount={setAmount}
+                        comptrollerAddress={comptrollerAddress}
+                      />
 
-                    <Balance asset={asset} />
-                  </Column>
+                      <Balance asset={asset} />
+                    </Column>
+                  ) : (
+                    <Alert status="info">
+                      <AlertIcon />
+                      <VStack alignItems="flex-start">
+                        <Text fontWeight="bold">
+                          {smallFormatter.format(supplyCap.tokenCap)} {asset.underlyingSymbol} /{' '}
+                          {smallFormatter.format(supplyCap.tokenCap)} {asset.underlyingSymbol}
+                        </Text>
+                        <Text>
+                          The maximum supply of assets for this asset has been reached. Once assets
+                          are withdrawn or the limit is increased you can again supply to this
+                          market.
+                        </Text>
+                      </VStack>
+                    </Alert>
+                  )}
 
                   <StatsColumn
                     mode={FundOperationMode.SUPPLY}
