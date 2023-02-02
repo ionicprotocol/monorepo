@@ -1,11 +1,12 @@
 import { ComptrollerWithExtension } from "@midas-capital/liquidity-monitor/src/types";
-import { BigNumber, Contract } from "ethers";
+import axios from "axios";
+import { BigNumber, Contract, providers } from "ethers";
 import { task, types } from "hardhat/config";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { default as ERC20Abi } from "../../abis/EIP20Interface";
 import { FusePoolDirectory } from "../../typechain/FusePoolDirectory";
-import axios from "axios";
+import { MidasERC4626 } from "../../typechain/MidasERC4626";
 
 const LOG = process.env.LOG ? true : false;
 
@@ -264,6 +265,65 @@ task("revenue:admin:withdraw", "Calculate the fees accrued from 4626 Performance
             `Pool: ${comptroller} - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(
               nativeFee
             )}`
+          );
+      } else {
+        if (LOG) console.log(`Pool: ${comptroller} - Market: ${market} - No Fuse Fees`);
+      }
+    }
+  });
+
+task("revenue:4626:withdraw", "Calculate the fees accrued from 4626 Performance Fees")
+  .addParam("signer", "The address of the current deployer", "deployer", types.string)
+  .addParam("threshold", "Threshold for fuse fee seizing denominated in native", "0.01", types.string)
+  .setAction(async (taskArgs, hre) => {
+    let tx: providers.TransactionResponse;
+    const deployer = await hre.ethers.getNamedSigner("deployer");
+    // @ts-ignore
+    const midasSdkModule = await import("../../tests/utils/midasSdk");
+    const sdk = await midasSdkModule.getOrCreateMidas(deployer);
+
+    const plugins = sdk.deployedPlugins;
+    const cgId = sdk.chainSpecificParams.cgId;
+
+    const comptroller = sdk.createComptroller(taskArgs.comptroller, deployer);
+
+    const threshold = hre.ethers.utils.parseEther(taskArgs.threshold);
+
+    const priceUsd = await cgPrice(cgId);
+
+    for (const pluginAddress of Object.keys(plugins)) {
+      const market = plugins[pluginAddress].market;
+      const cToken = sdk.createCErc20PluginRewardsDelegate(market, deployer);
+      const underlying = await cToken.callStatic.underlying();
+      const plugin = (await hre.ethers.getContractAt("MidasERC4636", pluginAddress, deployer)) as MidasERC4626;
+
+      console.log(`Harvesting fees from plugin ${plugins[pluginAddress].name}, (${pluginAddress})`);
+      tx = await plugin.takePerformanceFee();
+      await tx.wait();
+
+      const totalAssets = await plugin.callStatic.totalAssets();
+      const totalSupply = await plugin.callStatic.totalSupply();
+      const balance = await plugin.callStatic.balanceOf(deployer.address);
+      console.log({ totalAssets, totalSupply, balance });
+      const feeValue = balance.mul(totalAssets).div(totalSupply);
+
+      const mpo = sdk.createMasterPriceOracle(deployer);
+      const nativePrice = await mpo.callStatic.price(underlying);
+
+      const nativeFee = feeValue.mul(nativePrice).div(BigNumber.from(10).pow(18));
+
+      console.log("USD FEE VALUE", parseFloat(hre.ethers.utils.formatEther(nativeFee)) * priceUsd);
+      console.log("USD THRESHOLD VALUE", parseFloat(taskArgs.threshold) * priceUsd);
+
+      if (nativeFee.gt(threshold)) {
+        console.log(`Withdrawing fee from ${await cToken.callStatic.symbol()} (underlying: ${underlying})`);
+        tx = await plugin.withdrawAccruedFees();
+        await tx.wait();
+        if (LOG)
+          console.log(
+            `Plugin: ${
+              plugins[pluginAddress].name
+            } - Market: ${market} (underlying: ${underlying}) - Fuse Fee: ${hre.ethers.utils.formatEther(nativeFee)}`
           );
       } else {
         if (LOG) console.log(`Pool: ${comptroller} - Market: ${market} - No Fuse Fees`);
