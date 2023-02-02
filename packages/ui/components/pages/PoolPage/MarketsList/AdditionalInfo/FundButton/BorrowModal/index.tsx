@@ -16,7 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { FundOperationMode } from '@midas-capital/types';
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { BigNumber, constants, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -96,6 +96,7 @@ export const BorrowModal = ({
   const [failedStep, setFailedStep] = useState<number>(0);
   const [isRisky, setIsRisky] = useState<boolean>(false);
   const [isRiskyConfirmed, setIsRiskyConfirmed] = useState<boolean>(false);
+  const [isAmountValid, setIsAmountValid] = useState<boolean>(false);
   const queryClient = useQueryClient();
   const successToast = useSuccessToast();
   const { data: borrowCaps } = useBorrowCap({
@@ -143,33 +144,16 @@ export const BorrowModal = ({
 
   const {
     data: { minBorrowAsset, minBorrowUSD },
+    isLoading,
   } = useBorrowMinimum(asset, poolChainId);
 
-  const { data: amountIsValid, isLoading } = useQuery(
-    [
-      'isValidBorrowAmount',
-      amount,
-      minBorrowAsset,
-      currentSdk.chainId,
-      address,
-      asset.cToken,
-      maxBorrowAmount,
-    ],
-    async () => {
-      if (!currentSdk || !address || !maxBorrowAmount) return null;
-
-      if (amount.isZero() || !minBorrowAsset) {
-        return false;
-      }
-
-      return amount.lte(maxBorrowAmount.bigNumber) && amount.gte(minBorrowAsset);
-    },
-    {
-      cacheTime: Infinity,
-      staleTime: Infinity,
-      enabled: !!currentSdk && !!address,
+  useEffect(() => {
+    if (amount.isZero() || !maxBorrowAmount || !minBorrowAsset) {
+      setIsAmountValid(false);
+    } else {
+      setIsAmountValid(amount.lte(maxBorrowAmount.bigNumber) && amount.gte(minBorrowAsset));
     }
-  );
+  }, [amount, maxBorrowAmount, minBorrowAsset]);
 
   useEffect(() => {
     if (amount.isZero()) {
@@ -177,7 +161,7 @@ export const BorrowModal = ({
     } else if (isLoading) {
       setBtnStr(`Loading your balance of ${asset.underlyingSymbol}...`);
     } else {
-      if (amountIsValid) {
+      if (isAmountValid) {
         if (isRisky && !isRiskyConfirmed) {
           setBtnStr('Confirm Risk Of Borrow');
         } else {
@@ -187,7 +171,7 @@ export const BorrowModal = ({
         setBtnStr(`You cannot borrow this amount!`);
       }
     }
-  }, [amount, isLoading, amountIsValid, asset.underlyingSymbol, isRisky, isRiskyConfirmed]);
+  }, [amount, isLoading, isAmountValid, asset.underlyingSymbol, isRisky, isRiskyConfirmed]);
 
   const onConfirm = async () => {
     if (!currentSdk || !address) return;
@@ -337,7 +321,7 @@ export const BorrowModal = ({
                         poolChainId={poolChainId}
                         comptrollerAddress={comptrollerAddress}
                       />
-                      {amountIsValid && isRisky && (
+                      {isAmountValid && isRisky && (
                         <Box pt={4}>
                           <Checkbox
                             isChecked={isRiskyConfirmed}
@@ -355,7 +339,7 @@ export const BorrowModal = ({
                         id="confirmFund"
                         width="100%"
                         onClick={onConfirm}
-                        isDisabled={!amountIsValid || (isRisky && !isRiskyConfirmed)}
+                        isDisabled={!isAmountValid || (isRisky && !isRiskyConfirmed)}
                         height={16}
                       >
                         {btnStr}
