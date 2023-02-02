@@ -1,25 +1,17 @@
-import { parseUnits } from "ethers/lib/utils";
 import { task } from "hardhat/config";
 
 task("fork:create-pool", "Create pool on forking node").setAction(async (taskArgs, hre) => {
-  // @ts-ignore
-  const midasSdkModule = await import("../../tests/utils/midasSdk");
-  // @ts-ignore
-  const assetModule = await import("../../tests/utils/assets");
-
-  const signer = await hre.ethers.getNamedSigner("deployer");
-  const sdk = await midasSdkModule.getOrCreateMidas(signer);
-
   console.log("Creating pool...");
 
-  const [poolAddress] = await sdk.deployPool(
-    "FORK:Testing Pool",
-    false,
-    parseUnits("0.5"),
-    parseUnits((8 / 100 + 1).toString()),
-    "0x429041250873643235cb3788871447c6fF3205aA",
-    []
-  );
+  const poolAddress = await hre.run("pool:create", {
+    name: "FORK:Testing Pool",
+    creator: "deployer",
+    priceOracle: "0x429041250873643235cb3788871447c6fF3205aA",
+    closeFactor: "50",
+    liquidationIncentive: "8",
+    enforceWhitelist: "false",
+    whitelist: "",
+  });
 
   console.log("Pool created!");
 
@@ -30,24 +22,16 @@ task("fork:create-pool", "Create pool on forking node").setAction(async (taskArg
   const ETH = "0x2170Ed0880ac9A755fd29B2688956BD959F933F8";
   const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
 
-  const assets = await assetModule.getAssetsConf(
-    poolAddress,
-    sdk.contracts.FuseFeeDistributor.address,
-    sdk.chainDeployment.JumpRateModel.address,
-    hre.ethers
+  await Promise.all(
+    [USDC, BTCB, ETH, BUSD].map(
+      async (underlying) =>
+        await hre.run("market:create", {
+          comptroller: poolAddress,
+          underlying,
+          signer: "deployer",
+        })
+    )
   );
-
-  const assetConfigs = [USDC, BTCB, ETH, BUSD].map((underlying) => {
-    const assetConfig = assets.find((a) => a.underlying === underlying);
-
-    if (!assetConfig) {
-      throw `No asset config found for ${underlying}`;
-    }
-
-    return assetConfig;
-  });
-
-  await Promise.all(assetConfigs.map(async (config) => await sdk.deployAsset(config)));
 
   console.log("Added assets!");
 });
