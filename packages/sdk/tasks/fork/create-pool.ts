@@ -25,16 +25,13 @@ task("fork:create-pool", "Create pool on forking node").setAction(async (taskArg
   const ETH = "0x2170Ed0880ac9A755fd29B2688956BD959F933F8";
   const BUSD = "0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56";
 
-  await Promise.all(
-    [USDC, BTCB, ETH, BUSD].map(
-      async (underlying) =>
-        await hre.run("market:create", {
-          comptroller: poolAddress,
-          underlying,
-          signer: "deployer",
-        })
-    )
-  );
+  for (const underlying of [USDC, BTCB, ETH, BUSD]) {
+    await hre.run("market:create", {
+      comptroller: poolAddress,
+      underlying,
+      signer: "deployer",
+    });
+  }
 
   console.log("Added assets!");
 });
