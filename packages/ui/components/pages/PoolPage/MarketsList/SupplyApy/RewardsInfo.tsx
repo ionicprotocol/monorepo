@@ -61,15 +61,17 @@ export const RewardsInfo = ({ reward, chainId, asset }: RewardsInfoProps) => {
         )}
       </HStack>
 
-      {reward.status !== 'paused' && reward.apy !== undefined ? (
-        <Text fontWeight={'medium'} title={reward.apy * 100 + '%'} size="sm" variant="tnumber">
-          {(reward.apy * 100).toFixed(2) + '%'}
-        </Text>
-      ) : (
-        <Box marginTop="-2px !important">
-          <InfoOutlineIcon />
-        </Box>
-      )}
+      <HStack width="60px" justifyContent="flex-end">
+        {reward.status !== 'paused' && reward.apy !== undefined ? (
+          <Text fontWeight={'medium'} title={reward.apy * 100 + '%'} size="sm" variant="tnumber">
+            {(reward.apy * 100).toFixed(2) + '%'}
+          </Text>
+        ) : (
+          <Box marginTop="-2px !important">
+            <InfoOutlineIcon />
+          </Box>
+        )}
+      </HStack>
       <Text size="sm" variant="tnumber" fontWeight={'medium'} mr={-1}>
         {rewardAsset?.symbol}
       </Text>
