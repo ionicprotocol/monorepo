@@ -47,9 +47,10 @@ export const SupplyAndBorrowCaps = ({
   const { cToken: cTokenAddress } = selectedAsset;
   const { currentSdk } = useMultiMidas();
   const { data: usdPrice } = useNativePriceInUSD(Number(poolChainId));
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const [isEditSupplyCap, setIsEditSupplyCap] = useState<boolean>(false);
   const [isEditBorrowCap, setIsEditBorrowCap] = useState<boolean>(false);
+  const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
+
   const errorToast = useErrorToast();
   const successToast = useSuccessToast();
 
@@ -58,17 +59,18 @@ export const SupplyAndBorrowCaps = ({
     handleSubmit,
     setValue,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
       supplyCap: SUPPLY_CAP.DEFAULT,
       borrowCap: BORROW_CAP.DEFAULT,
     },
   });
+  console.log({ isSubmitting });
 
   const watchSupplyCap = Number(watch('supplyCap', SUPPLY_CAP.DEFAULT));
   const watchBorrowCap = Number(watch('borrowCap', BORROW_CAP.DEFAULT));
-  const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
+
   useEffect(() => {
     if (cTokenData) {
       setValue('supplyCap', parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS)));
@@ -78,7 +80,7 @@ export const SupplyAndBorrowCaps = ({
 
   const updateSupplyCaps = async ({ supplyCap }: { supplyCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
-    setIsUpdating(true);
+
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       const tx = await comptroller._setMarketSupplyCaps(
@@ -94,13 +96,12 @@ export const SupplyAndBorrowCaps = ({
       handleGenericError(e, errorToast);
     } finally {
       setIsEditSupplyCap(false);
-      setIsUpdating(false);
     }
   };
 
   const updateBorrowCap = async ({ borrowCap }: { borrowCap: number }) => {
     if (!cTokenAddress || !currentSdk) return;
-    setIsUpdating(true);
+
     const comptroller = currentSdk.createComptroller(comptrollerAddress, currentSdk.signer);
     try {
       const tx = await comptroller._setMarketBorrowCaps(
@@ -116,7 +117,6 @@ export const SupplyAndBorrowCaps = ({
       handleGenericError(e, errorToast);
     } finally {
       setIsEditBorrowCap(false);
-      setIsUpdating(false);
     }
   };
 
@@ -142,7 +142,7 @@ export const SupplyAndBorrowCaps = ({
     setIsEditBorrowCap(false);
   };
 
-  if (!cTokenData) return <Skeleton />;
+  if (!cTokenData) return null;
 
   return (
     <Column
@@ -190,6 +190,7 @@ export const SupplyAndBorrowCaps = ({
                       <NumberInput
                         allowMouseWheel
                         clampValueOnBlur={false}
+                        isDisabled={isSubmitting}
                         isReadOnly={!isEditSupplyCap}
                         min={SUPPLY_CAP.MIN}
                         onChange={onChange}
@@ -237,7 +238,7 @@ export const SupplyAndBorrowCaps = ({
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
               <Button
                 isDisabled={
-                  isUpdating ||
+                  isSubmitting ||
                   !cTokenData ||
                   watchSupplyCap ===
                     parseFloat(utils.formatUnits(cTokenData.supplyCap, DEFAULT_DECIMALS))
@@ -246,13 +247,13 @@ export const SupplyAndBorrowCaps = ({
               >
                 Save
               </Button>
-              <Button isDisabled={isUpdating} onClick={setSupplyCapsDefault} variant="silver">
+              <Button isDisabled={isSubmitting} onClick={setSupplyCapsDefault} variant="silver">
                 Cancel
               </Button>
             </ButtonGroup>
           ) : (
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
-              <CButton isDisabled={isUpdating} onClick={() => setIsEditSupplyCap(true)}>
+              <CButton isDisabled={isSubmitting} onClick={() => setIsEditSupplyCap(true)}>
                 Edit
               </CButton>
             </ButtonGroup>
@@ -296,6 +297,7 @@ export const SupplyAndBorrowCaps = ({
                       <NumberInput
                         allowMouseWheel
                         clampValueOnBlur={false}
+                        isDisabled={isSubmitting}
                         isReadOnly={!isEditBorrowCap}
                         min={BORROW_CAP.MIN}
                         onChange={onChange}
@@ -343,7 +345,7 @@ export const SupplyAndBorrowCaps = ({
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
               <Button
                 isDisabled={
-                  isUpdating ||
+                  isSubmitting ||
                   !cTokenData ||
                   watchBorrowCap ===
                     parseFloat(utils.formatUnits(cTokenData.borrowCap, DEFAULT_DECIMALS))
@@ -352,13 +354,17 @@ export const SupplyAndBorrowCaps = ({
               >
                 Save
               </Button>
-              <Button isDisabled={isUpdating} onClick={setTotalBorrowCapsDefault} variant="silver">
+              <Button
+                isDisabled={isSubmitting}
+                onClick={setTotalBorrowCapsDefault}
+                variant="silver"
+              >
                 Cancel
               </Button>
             </ButtonGroup>
           ) : (
             <ButtonGroup alignSelf="end" gap={0} mt={2}>
-              <CButton isDisabled={isUpdating} onClick={() => setIsEditBorrowCap(true)}>
+              <CButton isDisabled={isSubmitting} onClick={() => setIsEditBorrowCap(true)}>
                 Edit
               </CButton>
             </ButtonGroup>
