@@ -24,7 +24,7 @@ import {
 import { SupportedAsset } from '@midas-capital/types';
 import { useEffect, useMemo, useState } from 'react';
 
-import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetSettings';
+import { AddAssetSettings } from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetModal/AddAssetSettings';
 import { TokenIcon } from '@ui/components/shared/TokenIcon';
 import { useMultiMidas } from '@ui/context/MultiMidasContext';
 import { useColors } from '@ui/hooks/useColors';
@@ -88,7 +88,7 @@ const AddAsset = ({
       <VStack px={4} width="100%">
         <VStack>
           {tokenData && poolData && (
-            <TokenIcon size="lg" address={tokenData.address} chainId={poolData.chainId} my={4} />
+            <TokenIcon address={tokenData.address} chainId={poolData.chainId} my={4} size="lg" />
           )}
           <Heading as="h1" size="lg">
             {error && 'Invalid Address!'}
@@ -104,18 +104,18 @@ const AddAsset = ({
         <VStack width="100%">
           <InputGroup>
             <Input
-              textAlign="center"
-              placeholder={'Search name or paste address'}
-              value={nameOrAddress}
+              autoFocus
               isInvalid={!!error}
               onChange={(event) => setNameOrAddress(event.target.value)}
-              autoFocus
+              placeholder={'Search name or paste address'}
+              textAlign="center"
+              value={nameOrAddress}
             />
             <InputRightElement right={3}>
               {error ? (
                 <CloseIcon color="fail" />
               ) : isLoading ? (
-                <CircularProgress size={'16px'} isIndeterminate color="ecru" />
+                <CircularProgress color="ecru" isIndeterminate size={'16px'} />
               ) : tokenData ? (
                 <CheckIcon color="success" />
               ) : null}
@@ -129,29 +129,23 @@ const AddAsset = ({
       ) : tokenData ? (
         <AddAssetSettings
           comptrollerAddress={comptrollerAddress}
-          tokenData={tokenData}
           onSuccess={onSuccess}
-          poolName={poolName}
-          poolID={poolID}
           poolChainId={poolChainId}
+          poolID={poolID}
+          poolName={poolName}
+          tokenData={tokenData}
         />
       ) : (
         <>
           {poolData?.assets.length !== 0 && (
             <Box width="100%">
-              <Text textAlign="left" size="md" fontWeight="bold" mt={2} px={6}>
+              <Text fontWeight="bold" mt={2} px={6} size="md" textAlign="left">
                 Added assets
               </Text>
             </Box>
           )}
-          <Box width="100%" pr={2}>
+          <Box pr={2} width="100%">
             <Wrap
-              px={4}
-              spacing={2}
-              justify="flex-start"
-              width="100%"
-              maxHeight="200px"
-              overflowY="auto"
               css={{
                 '&::-webkit-scrollbar': {
                   display: 'block',
@@ -169,18 +163,24 @@ const AddAsset = ({
                   display: 'none',
                 },
               }}
+              justify="flex-start"
+              maxHeight="200px"
+              overflowY="auto"
+              px={4}
+              spacing={2}
+              width="100%"
             >
               {poolData &&
                 poolData.assets.map((asset, index) => {
                   return (
                     <WrapItem key={index}>
-                      <Button variant="_solid" px={2}>
+                      <Button px={2} variant="_solid">
                         <TokenIcon
-                          size="sm"
                           address={asset.underlyingToken}
                           chainId={poolData.chainId}
+                          size="sm"
                         />
-                        <Center pl={1} fontWeight="bold">
+                        <Center fontWeight="bold" pl={1}>
                           {asset.underlyingSymbol}
                         </Center>
                       </Button>
@@ -193,18 +193,14 @@ const AddAsset = ({
           {poolData && availableAssets.length !== 0 ? (
             <>
               <Box width="100%">
-                <Text textAlign="left" size="md" fontWeight="bold" px={6} mt={4}>
+                <Text fontWeight="bold" mt={4} px={6} size="md" textAlign="left">
                   Available supported assets
                 </Text>
               </Box>
-              <Box width="100%" pr={2}>
+              <Box pr={2} width="100%">
                 <Flex
-                  className="addAssetModal"
-                  direction="column"
-                  width="100%"
                   alignItems="center"
-                  maxHeight="400px"
-                  overflow="auto"
+                  className="addAssetModal"
                   css={{
                     '&::-webkit-scrollbar': {
                       display: 'block',
@@ -222,23 +218,27 @@ const AddAsset = ({
                       display: 'none',
                     },
                   }}
+                  direction="column"
+                  maxHeight="400px"
+                  overflow="auto"
+                  width="100%"
                 >
                   {availableAssets.map((asset, index) => {
                     return (
                       <Button
-                        variant="listed"
-                        key={index}
-                        width="100%"
-                        justifyContent="flex-start"
-                        onClick={() => setNameOrAddress(asset.underlying)}
                         disabled={
                           addedAssets && addedAssets.includes(asset.underlying.toLowerCase())
                         }
                         height="max-content"
+                        justifyContent="flex-start"
+                        key={index}
+                        onClick={() => setNameOrAddress(asset.underlying)}
+                        variant="listed"
+                        width="100%"
                       >
-                        <Flex direction="row" alignContent="center" py={2}>
+                        <Flex alignContent="center" direction="row" py={2}>
                           <TokenIcon address={asset.underlying} chainId={poolData.chainId} />
-                          <Flex ml={6} direction="column">
+                          <Flex direction="column" ml={6}>
                             <Text size="lg" textAlign="left">
                               {asset.symbol}
                             </Text>
@@ -255,11 +255,11 @@ const AddAsset = ({
               </Box>
             </>
           ) : error ? (
-            <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
+            <Text fontSize={18} fontWeight="bold" my={2} px={6} textAlign="left" width="100%">
               Invalid address
             </Text>
           ) : (
-            <Text px={6} textAlign="left" width="100%" fontSize={18} fontWeight="bold" my={2}>
+            <Text fontSize={18} fontWeight="bold" my={2} px={6} textAlign="left" width="100%">
               Not available
             </Text>
           )}
@@ -280,11 +280,11 @@ const AddAssetModal = ({
   onClose: () => void;
 } & AddAssetProps) => {
   return (
-    <Modal motionPreset="slideInBottom" isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal isCentered isOpen={isOpen} motionPreset="slideInBottom" onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          <Text variant="title" fontWeight="bold">
+          <Text fontWeight="bold" variant="title">
             Add Asset
           </Text>
         </ModalHeader>
