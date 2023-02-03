@@ -228,6 +228,7 @@ export const BorrowModal = ({
       onClose={() => {
         onClose();
         if (!isBorrowing) {
+          setUserEnteredAmount('');
           setAmount(constants.Zero);
           setIsConfirmed(false);
           setSteps([...BORROW_STEPS(asset.underlyingSymbol)]);
