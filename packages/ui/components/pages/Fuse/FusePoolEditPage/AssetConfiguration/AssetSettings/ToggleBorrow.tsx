@@ -23,17 +23,13 @@ export const ToggleBorrow = ({
   selectedAsset,
   poolChainId,
 }: ToggleBorrowProps) => {
+  const [isUpdating, setIsUpdating] = useState<boolean>(false);
   const { cToken: cTokenAddress, isBorrowPaused: isPaused } = selectedAsset;
   const { currentSdk } = useMultiMidas();
-  const addRecentTransaction = useAddRecentTransaction();
-
-  const errorToast = useErrorToast();
-
-  const queryClient = useQueryClient();
-
-  const [isUpdating, setIsUpdating] = useState<boolean>(false);
-
   const { data: cTokenData } = useCTokenData(comptrollerAddress, cTokenAddress, poolChainId);
+  const addRecentTransaction = useAddRecentTransaction();
+  const errorToast = useErrorToast();
+  const queryClient = useQueryClient();
 
   const toggleBorrowState = async () => {
     if (!cTokenAddress || !currentSdk) return;
@@ -80,10 +76,10 @@ export const ToggleBorrow = ({
             <Spacer />
             <Row mainAxisAlignment="center" mt={{ base: 4, sm: 0 }}>
               <Switch
+                isDisabled={isUpdating}
                 className="switch-borrowing"
                 h="20px"
                 isChecked={!isPaused}
-                isDisabled={isUpdating}
                 ml="auto"
                 onChange={toggleBorrowState}
               />

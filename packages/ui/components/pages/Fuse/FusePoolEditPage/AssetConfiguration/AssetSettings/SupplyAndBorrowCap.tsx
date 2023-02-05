@@ -66,7 +66,6 @@ export const SupplyAndBorrowCaps = ({
       borrowCap: BORROW_CAP.DEFAULT,
     },
   });
-  console.log({ isSubmitting });
 
   const watchSupplyCap = Number(watch('supplyCap', SUPPLY_CAP.DEFAULT));
   const watchBorrowCap = Number(watch('borrowCap', BORROW_CAP.DEFAULT));
