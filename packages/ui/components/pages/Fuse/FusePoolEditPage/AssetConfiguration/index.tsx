@@ -1,6 +1,6 @@
 import { Box, Divider, Flex, Text } from '@chakra-ui/react';
 import { NativePricedFuseAsset } from '@midas-capital/types';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import AddAssetButton from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/AddAssetButton';
 import EditAssetSettings from '@ui/components/pages/Fuse/FusePoolEditPage/AssetConfiguration/EditAssetSettings';
@@ -57,7 +57,10 @@ const AssetConfiguration = ({
   comptrollerAddress: string;
   poolChainId: number;
 }) => {
-  const [selectedAsset, setSelectedAsset] = useState(assets[0]);
+  const sortedAssets = useMemo(() => {
+    return assets.sort((a, b) => a.underlyingSymbol.localeCompare(b.underlyingSymbol));
+  }, [assets]);
+  const [selectedAsset, setSelectedAsset] = useState(sortedAssets[0]);
   const isEditableAdmin = useIsEditableAdmin(comptrollerAddress, poolChainId);
 
   return (
@@ -90,7 +93,7 @@ const AssetConfiguration = ({
               Assets:
             </Text>
             <Flex wrap="wrap">
-              {assets.map((asset, index) => {
+              {sortedAssets.map((asset, index) => {
                 return (
                   <AssetButton
                     key={index}
@@ -112,7 +115,7 @@ const AssetConfiguration = ({
             selectedAsset={selectedAsset}
             poolChainId={poolChainId}
             setSelectedAsset={setSelectedAsset}
-            assets={assets}
+            assets={sortedAssets}
           />
         </>
       ) : null}
